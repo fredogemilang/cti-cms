@@ -97,6 +97,15 @@
                                 class="px-4 py-3 border-b-2 text-sm font-bold transition-all whitespace-nowrap">
                                 Documentation
                             </button>
+                            <button @click="activeTab = 'questions'" :class="{ 'border-[#2563EB] text-[#2563EB]': activeTab === 'questions', 'border-transparent text-[#6F767E] hover:text-[#111827] dark:hover:text-white': activeTab !== 'questions' }"
+                                class="px-4 py-3 border-b-2 text-sm font-bold transition-all whitespace-nowrap flex items-center gap-1.5">
+                                Questions
+                                @if($eventId && \Plugins\Events\Models\EventCustomQuestion::where('event_id', $eventId)->exists())
+                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#2563EB] text-white text-[10px] font-bold">
+                                        {{ \Plugins\Events\Models\EventCustomQuestion::where('event_id', $eventId)->count() }}
+                                    </span>
+                                @endif
+                            </button>
                         </nav>
                     </div>
 
@@ -422,6 +431,19 @@
                                 </div>
                                 <p class="text-sm text-gray-500">Supported formats: JPG, PNG. Max size: 10MB.</p>
                             </div>
+                        </div>
+
+                        <!-- Questions Tab -->
+                        <div x-show="activeTab === 'questions'" x-cloak class="space-y-4">
+                            @if($eventId && $event)
+                                <livewire:plugins.events-questions-manager :event="$event" />
+                            @else
+                                <div class="flex flex-col items-center justify-center py-12 rounded-xl border-2 border-dashed border-gray-200 dark:border-[#272B30] text-center">
+                                    <span class="material-symbols-outlined text-4xl text-[#6F767E] mb-3">save</span>
+                                    <p class="text-sm font-semibold text-[#111827] dark:text-[#FCFCFC]">Save event first</p>
+                                    <p class="text-xs text-[#6F767E] mt-1">Custom questions can be added after creating the event.</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

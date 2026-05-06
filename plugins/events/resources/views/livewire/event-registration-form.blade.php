@@ -177,6 +177,123 @@
                     placeholder="Any special requirements?">
             </div>
 
+            {{-- ── Custom Questions Section ───────────────────────────────────────────── --}}
+            @if($event->customQuestions->count() > 0)
+            <div class="col-12 mt-4 pt-4 border-top">
+                <h5 class="fw-bold mb-4 text-primary">
+                    <span class="material-symbols-outlined align-middle me-2" style="font-size:1.2em;">quiz</span>
+                    Additional Information
+                </h5>
+
+                @foreach($event->customQuestions->ordered()->get() as $question)
+                    <div class="mb-4" data-question-id="{{ $question->id }}">
+
+                        {{-- Question Image --}}
+                        @if($question->image)
+                            <img src="{{ asset('storage/' . $question->image) }}"
+                                class="mb-2 rounded" style="max-height:120px; max-width:100%; object-fit:contain;">
+                        @endif
+
+                        <label class="form-label small fw-bold">
+                            {{ $question->question }}
+                            @if($question->required)
+                                <span class="text-danger">*</span>
+                            @endif
+                        </label>
+
+                        {{-- Help text --}}
+                        @if($question->question_description)
+                            <small class="text-muted d-block mb-1">{{ $question->question_description }}</small>
+                        @endif
+
+                        {{-- TEXT --}}
+                        @if($question->type === 'text')
+                            <input wire:model.live="custom_questions.{{ $question->short_label }}" type="text"
+                                class="form-control border-0 border-bottom rounded-0 px-0 @error('custom_questions.' . $question->short_label) is-invalid @enderror"
+                                placeholder="Your answer">
+                            @error('custom_questions.' . $question->short_label)
+                                <div class="text-danger" style="font-size:0.85em; margin-top:0.25rem;">{{ $message }}</div>
+                            @enderror
+
+                        {{-- TEXTAREA --}}
+                        @elseif($question->type === 'textarea')
+                            <textarea wire:model.live="custom_questions.{{ $question->short_label }}" rows="3"
+                                class="form-control border-0 border-bottom rounded-0 px-0 @error('custom_questions.' . $question->short_label) is-invalid @enderror"
+                                placeholder="Your answer"></textarea>
+                            @error('custom_questions.' . $question->short_label)
+                                <div class="text-danger" style="font-size:0.85em; margin-top:0.25rem;">{{ $message }}</div>
+                            @enderror
+
+                        {{-- EMAIL --}}
+                        @elseif($question->type === 'email')
+                            <input wire:model.live="custom_questions.{{ $question->short_label }}" type="email"
+                                class="form-control border-0 border-bottom rounded-0 px-0 @error('custom_questions.' . $question->short_label) is-invalid @enderror"
+                                placeholder="email@example.com">
+                            @error('custom_questions.' . $question->short_label)
+                                <div class="text-danger" style="font-size:0.85em; margin-top:0.25rem;">{{ $message }}</div>
+                            @enderror
+
+                        {{-- PHONE --}}
+                        @elseif($question->type === 'phone')
+                            <input wire:model.live="custom_questions.{{ $question->short_label }}" type="tel"
+                                class="form-control border-0 border-bottom rounded-0 px-0 @error('custom_questions.' . $question->short_label) is-invalid @enderror"
+                                placeholder="+62 812 3456 7890">
+                            @error('custom_questions.' . $question->short_label)
+                                <div class="text-danger" style="font-size:0.85em; margin-top:0.25rem;">{{ $message }}</div>
+                            @enderror
+
+                        {{-- DATE --}}
+                        @elseif($question->type === 'date')
+                            <input wire:model.live="custom_questions.{{ $question->short_label }}" type="date"
+                                class="form-control border-0 border-bottom rounded-0 px-0 @error('custom_questions.' . $question->short_label) is-invalid @enderror">
+                            @error('custom_questions.' . $question->short_label)
+                                <div class="text-danger" style="font-size:0.85em; margin-top:0.25rem;">{{ $message }}</div>
+                            @enderror
+
+                        {{-- SINGLE SELECT (radio-style buttons) --}}
+                        @elseif($question->type === 'single_select')
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach($question->options as $option)
+                                    <label class="cursor-pointer">
+                                        <input wire:model.live="custom_questions.{{ $question->short_label }}"
+                                            type="radio" name="custom_{{ $question->short_label }}"
+                                            value="{{ $option->option_text }}"
+                                            class="btn-check">
+                                        <span class="btn btn-outline-primary rounded-pill px-3 py-1">
+                                            {{ $option->option_text }}
+                                        </span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('custom_questions.' . $question->short_label)
+                                <div class="text-danger" style="font-size:0.85em; margin-top:0.25rem;">{{ $message }}</div>
+                            @enderror
+
+                        {{-- MULTI SELECT (checkboxes) --}}
+                        @elseif($question->type === 'multi_select')
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach($question->options as $option)
+                                    <label class="cursor-pointer">
+                                        <input wire:model.live="custom_questions.{{ $question->short_label }}"
+                                            type="checkbox" value="{{ $option->option_text }}"
+                                            class="btn-check">
+                                        <span class="btn btn-outline-primary rounded-pill px-3 py-1">
+                                            {{ $option->option_text }}
+                                        </span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            <small class="text-muted">Select all that apply</small>
+                            @error('custom_questions.' . $question->short_label)
+                                <div class="text-danger" style="font-size:0.85em; margin-top:0.25rem;">{{ $message }}</div>
+                            @enderror
+                        @endif
+
+                    </div>
+                @endforeach
+            </div>
+            @endif
+
             {{-- ── Consent Checkbox ──────────────────────────────────────────────── --}}
             <div class="col-12 mt-2">
                 <div class="form-check @error('consentCheckbox') is-invalid @enderror">

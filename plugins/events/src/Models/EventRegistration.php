@@ -182,6 +182,24 @@ class EventRegistration extends Model
     }
 
     /**
+     * Custom question answers for this registration.
+     */
+    public function customAnswers()
+    {
+        return $this->hasMany(EventCustomAnswer::class, 'event_registration_id');
+    }
+
+    /**
+     * Get answer for a specific question by short_label.
+     */
+    public function getCustomAnswer(string $shortLabel): mixed
+    {
+        return $this->customAnswers()
+            ->whereHas('question', fn($q) => $q->where('short_label', $shortLabel))
+            ->first()?->answer;
+    }
+
+    /**
      * Detect company type from company name.
      * Auto-detects PT, CV, Firma, UD, etc.
      */
@@ -273,6 +291,16 @@ class EventRegistration extends Model
         if ($this->custom_fields) {
             foreach ($this->custom_fields as $key => $value) {
                 $export[ucfirst(str_replace('_', ' ', $key))] = $value;
+            }
+        }
+
+        // Add custom question answers
+        foreach ($this->event->customQuestions as $question) {
+            $answer = $this->getCustomAnswer($question->short_label);
+            if (!is_null($answer)) {
+                $export[$question->short_label] = is_array($answer)
+                    ? implode(', ', $answer)
+                    : $answer;
             }
         }
 

@@ -338,4 +338,12 @@ class Event extends Model
                     ->withPivot('order')
                     ->orderByPivot('order');
     }
+
+    /**
+     * Custom questions for this event.
+     */
+    public function customQuestions()
+    {
+        return $this->hasMany(EventCustomQuestion::class, 'event_id')->ordered();
+    }
 }

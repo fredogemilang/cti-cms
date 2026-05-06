@@ -5,6 +5,8 @@ namespace Plugins\Events\Livewire;
 use Livewire\Component;
 use Plugins\Events\Models\Event;
 use Plugins\Events\Models\EventRegistration;
+use Plugins\Events\Models\EventCustomQuestion;
+use Plugins\Events\Models\EventCustomAnswer;
 use Plugins\Events\Models\ContactLevel;
 use Plugins\Events\Models\ContactDivision;
 use App\Rules\CorporateEmail;
@@ -29,6 +31,9 @@ class EventRegistrationForm extends Component
     public string $notes           = '';
     public string $referral_code   = '';
     public bool   $consentCheckbox = false;
+
+    // ─── Custom Question Answers ─────────────────────────────────────────────
+    public array $custom_questions = [];
 
     protected function getRules(): array
     {
@@ -79,7 +84,13 @@ class EventRegistrationForm extends Component
 
         $this->validate();
 
-        // ── Capacity check ──────────────────────────────────────────────
+        // ── Custom questions validation ─────────────────────────────────────
+        $customErrors = $this->validateCustomQuestions();
+        if (!empty($customErrors)) {
+            return;
+        }
+
+        // ── Capacity check ──────────────────────────────────────────────────
         if ($this->event->max_participants) {
             $query = $this->event->registrations()->whereIn('status', ['pending', 'confirmed']);
 
@@ -119,7 +130,7 @@ class EventRegistrationForm extends Component
         // ── Create registration ──────────────────────────────────────────
         $requiresApproval = (bool) ($this->event->registration_requires_approval ?? false);
 
-        EventRegistration::create([
+        $registration = EventRegistration::create([
             'event_id'              => $this->event->id,
             'uuid'                  => Str::uuid(),
             'salutation'            => $this->salutation ?: null,
@@ -149,6 +160,9 @@ class EventRegistrationForm extends Component
             $this->event->incrementRegisteredCount();
         }
 
+        // ── Save custom question answers ────────────────────────────────
+        $this->saveCustomAnswers($registration);
+
         $message = $requiresApproval
             ? 'Registration submitted! Your registration is pending admin approval.'
             : 'Registration successful! You will receive a confirmation email shortly.';
@@ -159,6 +173,104 @@ class EventRegistrationForm extends Component
             'slug'  => $this->event->slug,
             'email' => $this->email,
         ]);
+    }
+
+    /**
+     * Validate custom questions based on their type and required flag.
+     * Adds Livewire validation errors and returns false if any.
+     */
+    protected function validateCustomQuestions(): bool
+    {
+        $questions = $this->event->customQuestions()->ordered()->get();
+        $hasErrors = false;
+
+        foreach ($questions as $question) {
+            $answer = $this->custom_questions[$question->short_label] ?? null;
+
+            // Required check
+            if ($question->required) {
+                if ($question->type === 'multi_select') {
+                    if (empty($answer) || !is_array($answer) || count(array_filter($answer)) === 0) {
+                        $this->addError("custom_questions.{$question->short_label}", "{$question->question} is required.");
+                        $hasErrors = true;
+                    }
+                } else {
+                    if ($answer === null || $answer === '' || (is_string($answer) && trim($answer) === '')) {
+                        $this->addError("custom_questions.{$question->short_label}", "{$question->question} is required.");
+                        $hasErrors = true;
+                    }
+                }
+            }
+
+            // Skip type-specific validation if answer is empty and not required
+            if ($answer === null || $answer === '' || (is_array($answer) && empty(array_filter($answer)))) {
+                continue;
+            }
+
+            // Type-specific validation
+            if (!$hasErrors) {
+                switch ($question->type) {
+                    case 'email':
+                        if (!filter_var($answer, FILTER_VALIDATE_EMAIL)) {
+                            $this->addError("custom_questions.{$question->short_label}", "Please enter a valid email address.");
+                            $hasErrors = true;
+                        }
+                        break;
+                    case 'phone':
+                        if (!preg_match('/^[0-9\-\+\(\)\s]{6,20}$/', $answer)) {
+                            $this->addError("custom_questions.{$question->short_label}", "Please enter a valid phone number.");
+                            $hasErrors = true;
+                        }
+                        break;
+                    case 'date':
+                        $parsed = date_create($answer);
+                        if (!$parsed) {
+                            $this->addError("custom_questions.{$question->short_label}", "Please enter a valid date.");
+                            $hasErrors = true;
+                        }
+                        break;
+                }
+            }
+        }
+
+        return $hasErrors;
+    }
+
+    /**
+     * Save custom question answers linked to the registration.
+     */
+    protected function saveCustomAnswers(EventRegistration $registration): void
+    {
+        if (empty($this->custom_questions)) {
+            return;
+        }
+
+        foreach ($this->custom_questions as $shortLabel => $answer) {
+            // Skip empty answers
+            if ($answer === null || $answer === '' || (is_array($answer) && empty(array_filter($answer)))) {
+                continue;
+            }
+
+            $question = $this->event->customQuestions()
+                ->where('short_label', $shortLabel)
+                ->first();
+
+            if (!$question) {
+                continue;
+            }
+
+            // For multi-select, answer is already an array
+            // For others, store as scalar
+            $storeValue = is_array($answer) ? $answer : (is_string($answer) ? trim($answer) : $answer);
+
+            EventCustomAnswer::updateOrCreate(
+                [
+                    'event_registration_id' => $registration->id,
+                    'question_id' => $question->id,
+                ],
+                ['answer' => $storeValue]
+            );
+        }
     }
 
     public function render()
@@ -176,7 +288,7 @@ class EventRegistrationForm extends Component
 
         return view('events::livewire.event-registration-form', [
             'contactLevels'    => $contactLevels,
-            'contactDivisions'=> $contactDivisions,
+            'contactDivisions' => $contactDivisions,
             'countries'        => $countries,
         ]);
     }
