@@ -4,22 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'iCCom - Indonesia Cloud Community')</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <!-- AOS CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('themes/iccom/assets/style.css') }}">
-    @livewireStyles
+
+    <!-- Preconnect for external origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- DNS Prefetch for non-critical/deferred origins -->
+
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+
+    <!-- Preload critical JS to start downloads immediately -->
+    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js">
+
+    <!-- Critical CSS (render-blocking - needed for layout) -->
+    @if(config('app.debug'))
+        {{-- Development: separate files for easy debugging --}}
+        <link href="{{ asset('themes/iccom/assets/bootstrap.min.css') }}" rel="stylesheet">
+        <link rel="stylesheet" href="{{ asset('themes/iccom/assets/style.css') }}">
+    @else
+        {{-- Production: single bundled file (run: php build-css.php) --}}
+        <link rel="stylesheet" href="{{ asset('themes/iccom/assets/theme.bundle.css') }}">
+    @endif
+
+    <!-- Google Fonts with preload -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+
+    <!-- Non-critical CSS (deferred - not needed for initial render) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" /></noscript>
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"></noscript>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
+    @stack('livewire-styles')
     @stack('styles')
+
+    <!-- JS moved to head with defer: downloads in parallel, executes in order after parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
+    <script src="{{ asset('themes/iccom/assets/bootstrap.bundle.min.js') }}" defer></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
 </head>
-<body x-data="stickyNav()" @scroll.window="handleScroll()">
+<body>
 
     @include('iccom::components.social-sidebar')
     @include('iccom::components.navigation')
@@ -29,57 +60,41 @@
     </main>
 
     @include('iccom::components.footer')
-    @include('iccom::components.mobile-nav')
 
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- JS scripts moved to <head> with defer for parallel loading -->
     
-    @livewireScripts
+    @stack('livewire-scripts')
     
-    <!-- Sticky Nav Alpine Component -->
+    <!-- Sticky Nav (Vanilla JS – no Alpine dependency) -->
     <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('stickyNav', () => ({
-                lastScrollTop: 0,
-                handleScroll() {
-                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    const isMobile = window.innerWidth < 992;
-                    const navbar = document.querySelector('.navbar');
-                    const bottomNav = document.querySelector('.mobile-bottom-nav');
+        (function() {
+            var lastScrollTop = 0;
+            var navbar = document.querySelector('.navbar');
+            if (!navbar) return;
 
-                    if (!isMobile) {
-                        if (scrollTop > 10) {
-                            if(navbar) navbar.classList.add('scrolled');
-                        } else {
-                            if(navbar) navbar.classList.remove('scrolled');
-                        }
+            window.addEventListener('scroll', function() {
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-                        if (scrollTop > this.lastScrollTop && scrollTop > 100) {
-                            if(navbar) navbar.classList.add('navbar-hidden');
-                        } else {
-                            if(navbar) navbar.classList.remove('navbar-hidden');
-                        }
-                    } else {
-                        if(navbar) navbar.classList.remove('scrolled', 'navbar-hidden');
-                        if (bottomNav) {
-                            if (scrollTop > this.lastScrollTop && scrollTop > 50) {
-                                bottomNav.classList.add('nav-hidden');
-                            } else {
-                                bottomNav.classList.remove('nav-hidden');
-                            }
-                        }
-                    }
-
-                    this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+                // Apply scrolled state (white background + shadow)
+                if (scrollTop > 10) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
                 }
-            }));
-        });
+
+                // Show/hide on scroll direction
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    navbar.classList.add('navbar-hidden');
+                } else {
+                    navbar.classList.remove('navbar-hidden');
+                }
+
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }, { passive: true });
+        })();
     </script>
 
-    <!-- AOS JS and Init -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- AOS Init (script loaded via defer in head) -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 

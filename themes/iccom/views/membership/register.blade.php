@@ -53,13 +53,126 @@
                             <label class="form-label fw-bold small">Domicile:</label>
                             <select name="domicile" class="form-select form-control-flushed">
                                 <option value="">Select Domicile</option>
-                                <option value="Jakarta" {{ old('domicile') == 'Jakarta' ? 'selected' : '' }}>Jakarta</option>
-                                <option value="Bogor" {{ old('domicile') == 'Bogor' ? 'selected' : '' }}>Bogor</option>
-                                <option value="Depok" {{ old('domicile') == 'Depok' ? 'selected' : '' }}>Depok</option>
-                                <option value="Tangerang" {{ old('domicile') == 'Tangerang' ? 'selected' : '' }}>Tangerang</option>
-                                <option value="Bekasi" {{ old('domicile') == 'Bekasi' ? 'selected' : '' }}>Bekasi</option>
+
+                                {{-- Aceh --}}
+                                <option value="Banda Aceh" {{ old('domicile') == 'Banda Aceh' ? 'selected' : '' }}>Banda Aceh</option>
+                                <option value="Langsa" {{ old('domicile') == 'Langsa' ? 'selected' : '' }}>Langsa</option>
+                                <option value="Lhokseumawe" {{ old('domicile') == 'Lhokseumawe' ? 'selected' : '' }}>Lhokseumawe</option>
+                                <option value="Sabang" {{ old('domicile') == 'Sabang' ? 'selected' : '' }}>Sabang</option>
+                                <option value="Subulussalam" {{ old('domicile') == 'Subulussalam' ? 'selected' : '' }}>Subulussalam</option>
+
+                                {{-- Sumatera Utara --}}
+                                <option value="Medan" {{ old('domicile') == 'Medan' ? 'selected' : '' }}>Medan</option>
+                                <option value="Binjai" {{ old('domicile') == 'Binjai' ? 'selected' : '' }}>Binjai</option>
+                                <option value="Padangsidimpuan" {{ old('domicile') == 'Padangsidimpuan' ? 'selected' : '' }}>Padangsidimpuan</option>
+                                <option value="Pematangsiantar" {{ old('domicile') == 'Pematangsiantar' ? 'selected' : '' }}>Pematangsiantar</option>
+                                <option value="Sibolga" {{ old('domicile') == 'Sibolga' ? 'selected' : '' }}>Sibolga</option>
+                                <option value="Tanjungbalai" {{ old('domicile') == 'Tanjungbalai' ? 'selected' : '' }}>Tanjungbalai</option>
+                                <option value="Tebing Tinggi" {{ old('domicile') == 'Tebing Tinggi' ? 'selected' : '' }}>Tebing Tinggi</option>
+
+                                {{-- Sumatera Barat --}}
+                                <option value="Padang" {{ old('domicile') == 'Padang' ? 'selected' : '' }}>Padang</option>
+                                <option value="Bukittinggi" {{ old('domicile') == 'Bukittinggi' ? 'selected' : '' }}>Bukittinggi</option>
+                                <option value="Padang Panjang" {{ old('domicile') == 'Padang Panjang' ? 'selected' : '' }}>Padang Panjang</option>
+                                <option value="Pariaman" {{ old('domicile') == 'Pariaman' ? 'selected' : '' }}>Pariaman</option>
+                                <option value="Payakumbuh" {{ old('domicile') == 'Payakumbuh' ? 'selected' : '' }}>Payakumbuh</option>
+                                <option value="Sawahlunto" {{ old('domicile') == 'Sawahlunto' ? 'selected' : '' }}>Sawahlunto</option>
+                                <option value="Solok" {{ old('domicile') == 'Solok' ? 'selected' : '' }}>Solok</option>
+
+                                {{-- Riau --}}
+                                <option value="Pekanbaru" {{ old('domicile') == 'Pekanbaru' ? 'selected' : '' }}>Pekanbaru</option>
+                                <option value="Dumai" {{ old('domicile') == 'Dumai' ? 'selected' : '' }}>Dumai</option>
+
+                                {{-- Kepulauan Riau --}}
+                                <option value="Batam" {{ old('domicile') == 'Batam' ? 'selected' : '' }}>Batam</option>
+                                <option value="Tanjung Pinang" {{ old('domicile') == 'Tanjung Pinang' ? 'selected' : '' }}>Tanjung Pinang</option>
+
+                                {{-- Jambi --}}
+                                <option value="Jambi" {{ old('domicile') == 'Jambi' ? 'selected' : '' }}>Jambi</option>
+                                <option value="Sungai Penuh" {{ old('domicile') == 'Sungai Penuh' ? 'selected' : '' }}>Sungai Penuh</option>
+
+                                {{-- Sumatera Selatan --}}
+                                <option value="Palembang" {{ old('domicile') == 'Palembang' ? 'selected' : '' }}>Palembang</option>
+                                <option value="Lubuklinggau" {{ old('domicile') == 'Lubuklinggau' ? 'selected' : '' }}>Lubuklinggau</option>
+                                <option value="Pagar Alam" {{ old('domicile') == 'Pagar Alam' ? 'selected' : '' }}>Pagar Alam</option>
+                                <option value="Prabumulih" {{ old('domicile') == 'Prabumulih' ? 'selected' : '' }}>Prabumulih</option>
+
+                                {{-- Bengkulu --}}
+                                <option value="Bengkulu" {{ old('domicile') == 'Bengkulu' ? 'selected' : '' }}>Bengkulu</option>
+
+                                {{-- Lampung --}}
+                                <option value="Bandar Lampung" {{ old('domicile') == 'Bandar Lampung' ? 'selected' : '' }}>Bandar Lampung</option>
+                                <option value="Metro" {{ old('domicile') == 'Metro' ? 'selected' : '' }}>Metro</option>
+
+                                {{-- DKI Jakarta --}}
+                                <option value="Jakarta Pusat" {{ old('domicile') == 'Jakarta Pusat' ? 'selected' : '' }}>Jakarta Pusat</option>
+                                <option value="Jakarta Utara" {{ old('domicile') == 'Jakarta Utara' ? 'selected' : '' }}>Jakarta Utara</option>
+                                <option value="Jakarta Barat" {{ old('domicile') == 'Jakarta Barat' ? 'selected' : '' }}>Jakarta Barat</option>
+                                <option value="Jakarta Selatan" {{ old('domicile') == 'Jakarta Selatan' ? 'selected' : '' }}>Jakarta Selatan</option>
+                                <option value="Jakarta Timur" {{ old('domicile') == 'Jakarta Timur' ? 'selected' : '' }}>Jakarta Timur</option>
+
+                                {{-- Jawa Barat --}}
                                 <option value="Bandung" {{ old('domicile') == 'Bandung' ? 'selected' : '' }}>Bandung</option>
+                                <option value="Bekasi" {{ old('domicile') == 'Bekasi' ? 'selected' : '' }}>Bekasi</option>
+                                <option value="Bogor" {{ old('domicile') == 'Bogor' ? 'selected' : '' }}>Bogor</option>
+                                <option value="Cimahi" {{ old('domicile') == 'Cimahi' ? 'selected' : '' }}>Cimahi</option>
+                                <option value="Cirebon" {{ old('domicile') == 'Cirebon' ? 'selected' : '' }}>Cirebon</option>
+                                <option value="Depok" {{ old('domicile') == 'Depok' ? 'selected' : '' }}>Depok</option>
+                                <option value="Sukabumi" {{ old('domicile') == 'Sukabumi' ? 'selected' : '' }}>Sukabumi</option>
+                                <option value="Tasikmalaya" {{ old('domicile') == 'Tasikmalaya' ? 'selected' : '' }}>Tasikmalaya</option>
+
+                                {{-- Jawa Tengah --}}
+                                <option value="Semarang" {{ old('domicile') == 'Semarang' ? 'selected' : '' }}>Semarang</option>
+                                <option value="Surakarta" {{ old('domicile') == 'Surakarta' ? 'selected' : '' }}>Surakarta</option>
+                                <option value="Magelang" {{ old('domicile') == 'Magelang' ? 'selected' : '' }}>Magelang</option>
+                                <option value="Pekalongan" {{ old('domicile') == 'Pekalongan' ? 'selected' : '' }}>Pekalongan</option>
+                                <option value="Salatiga" {{ old('domicile') == 'Salatiga' ? 'selected' : '' }}>Salatiga</option>
+                                <option value="Tegal" {{ old('domicile') == 'Tegal' ? 'selected' : '' }}>Tegal</option>
+
+                                {{-- DI Yogyakarta --}}
+                                <option value="Yogyakarta" {{ old('domicile') == 'Yogyakarta' ? 'selected' : '' }}>Yogyakarta</option>
+
+                                {{-- Jawa Timur --}}
                                 <option value="Surabaya" {{ old('domicile') == 'Surabaya' ? 'selected' : '' }}>Surabaya</option>
+                                <option value="Malang" {{ old('domicile') == 'Malang' ? 'selected' : '' }}>Malang</option>
+                                <option value="Batu" {{ old('domicile') == 'Batu' ? 'selected' : '' }}>Batu</option>
+                                <option value="Blitar" {{ old('domicile') == 'Blitar' ? 'selected' : '' }}>Blitar</option>
+                                <option value="Kediri" {{ old('domicile') == 'Kediri' ? 'selected' : '' }}>Kediri</option>
+                                <option value="Madiun" {{ old('domicile') == 'Madiun' ? 'selected' : '' }}>Madiun</option>
+                                <option value="Mojokerto" {{ old('domicile') == 'Mojokerto' ? 'selected' : '' }}>Mojokerto</option>
+                                <option value="Pasuruan" {{ old('domicile') == 'Pasuruan' ? 'selected' : '' }}>Pasuruan</option>
+                                <option value="Probolinggo" {{ old('domicile') == 'Probolinggo' ? 'selected' : '' }}>Probolinggo</option>
+
+                                {{-- Bali --}}
+                                <option value="Denpasar" {{ old('domicile') == 'Denpasar' ? 'selected' : '' }}>Denpasar</option>
+
+                                {{-- Kalimantan --}}
+                                <option value="Pontianak" {{ old('domicile') == 'Pontianak' ? 'selected' : '' }}>Pontianak</option>
+                                <option value="Palangkaraya" {{ old('domicile') == 'Palangkaraya' ? 'selected' : '' }}>Palangkaraya</option>
+                                <option value="Banjarmasin" {{ old('domicile') == 'Banjarmasin' ? 'selected' : '' }}>Banjarmasin</option>
+                                <option value="Banjarbaru" {{ old('domicile') == 'Banjarbaru' ? 'selected' : '' }}>Banjarbaru</option>
+                                <option value="Samarinda" {{ old('domicile') == 'Samarinda' ? 'selected' : '' }}>Samarinda</option>
+                                <option value="Balikpapan" {{ old('domicile') == 'Balikpapan' ? 'selected' : '' }}>Balikpapan</option>
+                                <option value="Tarakan" {{ old('domicile') == 'Tarakan' ? 'selected' : '' }}>Tarakan</option>
+                                <option value="Nusantara" {{ old('domicile') == 'Nusantara' ? 'selected' : '' }}>Nusantara</option>
+
+                                {{-- Sulawesi --}}
+                                <option value="Makassar" {{ old('domicile') == 'Makassar' ? 'selected' : '' }}>Makassar</option>
+                                <option value="Manado" {{ old('domicile') == 'Manado' ? 'selected' : '' }}>Manado</option>
+                                <option value="Palu" {{ old('domicile') == 'Palu' ? 'selected' : '' }}>Palu</option>
+                                <option value="Kendari" {{ old('domicile') == 'Kendari' ? 'selected' : '' }}>Kendari</option>
+                                <option value="Gorontalo" {{ old('domicile') == 'Gorontalo' ? 'selected' : '' }}>Gorontalo</option>
+                                <option value="Parepare" {{ old('domicile') == 'Parepare' ? 'selected' : '' }}>Parepare</option>
+                                <option value="Palopo" {{ old('domicile') == 'Palopo' ? 'selected' : '' }}>Palopo</option>
+
+                                {{-- Maluku --}}
+                                <option value="Ambon" {{ old('domicile') == 'Ambon' ? 'selected' : '' }}>Ambon</option>
+                                <option value="Tual" {{ old('domicile') == 'Tual' ? 'selected' : '' }}>Tual</option>
+
+                                {{-- Papua --}}
+                                <option value="Jayapura" {{ old('domicile') == 'Jayapura' ? 'selected' : '' }}>Jayapura</option>
+                                <option value="Sorong" {{ old('domicile') == 'Sorong' ? 'selected' : '' }}>Sorong</option>
+
                                 <option value="Other" {{ old('domicile') == 'Other' ? 'selected' : '' }}>Other</option>
                             </select>
                         </div>

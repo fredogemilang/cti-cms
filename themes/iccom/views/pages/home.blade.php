@@ -17,7 +17,14 @@
                     <a href="#membership-form" class="btn btn-primary btn-cta rounded-pill px-4 py-2">Become a Member</a>
                 </div>
                 <div class="col-lg-7 position-relative" data-aos="fade-left" data-aos-delay="200">
-                    <img src="{{ asset('themes/iccom/assets/front-right-hero-img.png') }}" alt="Community Illustration" class="img-fluid hero-img">
+                    <img src="{{ asset('themes/iccom/assets/front-right-hero-img.webp') }}"
+                         srcset="{{ asset('themes/iccom/assets/front-right-hero-img-400w.webp') }} 400w,
+                                {{ asset('themes/iccom/assets/front-right-hero-img-600w.webp') }} 600w,
+                                {{ asset('themes/iccom/assets/front-right-hero-img-800w.webp') }} 800w,
+                                {{ asset('themes/iccom/assets/front-right-hero-img.webp') }} 1772w"
+                         sizes="(max-width: 576px) 100vw, (max-width: 768px) 90vw, (max-width: 992px) 58vw, 58vw"
+                         alt="Community Illustration" class="img-fluid hero-img"
+                         fetchpriority="high" width="1772" height="1319">
                 </div>
             </div>
         </div>
@@ -28,7 +35,13 @@
         <div class="container py-5">
             <div class="row align-items-center">
                 <div class="col-lg-5 mb-4 mb-lg-0" data-aos="fade-right">
-                    <img src="{{ asset('themes/iccom/assets/section-2-front-left-img.png') }}" alt="Who Are We" class="img-fluid">
+                    <img src="{{ asset('themes/iccom/assets/section-2-front-left-img.webp') }}"
+                         srcset="{{ asset('themes/iccom/assets/section-2-front-left-img-400w.webp') }} 400w,
+                                {{ asset('themes/iccom/assets/section-2-front-left-img-800w.webp') }} 800w,
+                                {{ asset('themes/iccom/assets/section-2-front-left-img.webp') }} 998w"
+                         sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 42vw"
+                         alt="Who Are We" class="img-fluid"
+                         loading="lazy" width="998" height="798">
                 </div>
                 <div class="col-lg-7 text-white" data-aos="fade-left" data-aos-delay="200">
                     <h2 class="fw-bold mb-4">{{ $page->getBlockValue('who_are_we_title', 'Who Are We?') }}</h2>
@@ -70,8 +83,13 @@
                     @endforeach
                 </div>
                 <div class="col-lg-6" data-aos="fade-left" data-aos-delay="200">
-                    <img src="{{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img.png') }}" alt="Core Values"
-                        class="img-fluid">
+                    <img src="{{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img.webp') }}"
+                         srcset="{{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img-400w.webp') }} 400w,
+                                {{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img-800w.webp') }} 800w,
+                                {{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img.webp') }} 1250w"
+                         sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 50vw"
+                         alt="Core Values" class="img-fluid"
+                         loading="lazy" width="1250" height="758">
                 </div>
             </div>
         </div>
@@ -98,11 +116,11 @@
                             <div class="testimonial-card text-center p-4 rounded shadow-sm bg-white h-100 border mx-2">
                                 <div class="quote-icon mb-3"><span>"</span></div>
                                 @if($testimonial->getMeta('photo'))
-                                    <img src="{{ asset('storage/' . $testimonial->getMeta('photo')) }}" class="user-img-circle mx-auto mb-3" alt="{{ $testimonial->title }}">
+                                    <img src="{{ asset('storage/' . $testimonial->getMeta('photo')) }}" class="user-img-circle mx-auto mb-3" alt="{{ $testimonial->title }}" width="175" height="175" loading="lazy">
                                 @elseif($testimonial->featured_image)
-                                    <img src="{{ asset('storage/' . $testimonial->featured_image) }}" class="user-img-circle mx-auto mb-3" alt="{{ $testimonial->title }}">
+                                    <img src="{{ asset('storage/' . $testimonial->featured_image) }}" class="user-img-circle mx-auto mb-3" alt="{{ $testimonial->title }}" width="175" height="175" loading="lazy">
                                 @else
-                                    <img src="https://i.pravatar.cc/300?u={{ $testimonial->id }}" class="user-img-circle mx-auto mb-3" alt="{{ $testimonial->title }}">
+                                    <img src="https://i.pravatar.cc/175?u={{ $testimonial->id }}" class="user-img-circle mx-auto mb-3" alt="{{ $testimonial->title }}" width="175" height="175" loading="lazy">
                                 @endif
                                 <h5 class="fw-bold mb-0">{{ $testimonial->title }}</h5>
                                 <small class="text-muted">{{ $testimonial->getMeta('position') ?? 'Member' }}</small>

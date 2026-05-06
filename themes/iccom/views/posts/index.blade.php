@@ -100,3 +100,11 @@
         @livewire('posts.blog-list', ['category' => $category ?? null])
     </section>
 @endsection
+
+@push('livewire-styles')
+    @livewireStyles
+@endpush
+
+@push('livewire-scripts')
+    @livewireScripts
+@endpush
