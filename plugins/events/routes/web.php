@@ -116,23 +116,45 @@ Route::prefix('event')->name('events.')->middleware(['web'])->group(function () 
         return view('iccom::events.index', compact('events', 'upcoming'));
     })->name('index');
     
-    // Event registration success page
+    // Event registration success page — accepts ?slug=&email= for detail card
     Route::get('/success', function () {
         return view('iccom::events.success');
     })->name('register.success');
 
+    // QR code image — on-the-fly via simplesoftwareio/simple-qrcode
+    Route::get('/qr/{slug}/{uuid}', function (string $slug, string $uuid) {
+        $event = \Plugins\Events\Models\Event::where('slug', $slug)->firstOrFail();
+        $registration = \Plugins\Events\Models\EventRegistration::where('uuid', $uuid)
+            ->where('event_id', $event->id)
+            ->firstOrFail();
+
+        // URL embedded in QR: check-in URL (PRD 05).
+        // Fallback to event URL if checkin route not yet registered.
+        try {
+            $qrUrl = route('events.checkin.scan', ['slug' => $slug, 'uuid' => $uuid], true);
+        } catch (\Exception $e) {
+            $qrUrl = url("/event/{$slug}?uuid={$uuid}");
+        }
+
+        $qrImage = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
+            ->size(300)
+            ->errorCorrection('H')
+            ->generate($qrUrl);
+
+        return response($qrImage, 200, ['Content-Type' => 'image/png']);
+    })->name('qr');
+
     // Single event
     Route::get('/{slug}', function ($slug) {
         $event = \Plugins\Events\Models\Event::where('slug', $slug)->published()->firstOrFail();
-        // return view('events::frontend.show', compact('event'));
-        
+
         // Check if event is completed (past end date)
         if ($event->is_past) {
-             return view('iccom::events.completed', compact('event'));
+            return view('iccom::events.completed', compact('event'));
         }
         return view('iccom::events.single', compact('event'));
     })->name('show');
-    
+
     // Event registration
     Route::post('/{slug}/register', [EventRegistrationController::class, 'register'])->name('register');
     Route::post('/{slug}/cancel', [EventRegistrationController::class, 'cancel'])->name('cancel');

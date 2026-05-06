@@ -33,10 +33,21 @@
                 @endif
             </div>
 
-            <!-- Right: Display -->
+            <!-- Right: Display + Walk-in -->
             <div class="flex items-center gap-3">
+                @if($eventFilter)
+                    @php $selectedEvent = $events->firstWhere('id', $eventFilter); @endphp
+                    @if($selectedEvent)
+                        <livewire:plugins.walk-in-registration
+                            :event="$selectedEvent"
+                            :key="'walkin-'.$selectedEvent->id"
+                            wire:on="registration-created"
+                        />
+                    @endif
+                @endif
+
                 <span class="text-sm font-medium text-[#6F767E]">Display:</span>
-                <select 
+                <select
                     wire:model.live="perPage"
                     class="h-12 rounded-xl border-none bg-white dark:bg-[#1A1A1A] pl-4 pr-10 text-sm font-bold text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all cursor-pointer"
                 >
