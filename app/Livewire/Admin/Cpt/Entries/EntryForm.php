@@ -41,11 +41,19 @@ class EntryForm extends Component
     // UI State
     public bool $showMediaPicker = false;
 
+    // === Translations state ===
+    public string $editingLocale = '';
+    /** Per-locale snapshots of translatable form fields: {locale: {title, slug, content, excerpt}} */
+    public array $localizedSnapshots = [];
+    public array $availableLocales = [];
+
     protected function rules(): array
     {
+        $isDefaultLocale = $this->editingLocale === CptEntry::defaultLocale();
+
         $rules = [
-            'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
+            'title' => $isDefaultLocale ? 'required|string|max:255' : 'nullable|string|max:255',
+            'slug'  => $isDefaultLocale ? 'required|string|max:255' : 'nullable|string|max:255',
             'content' => 'nullable|string',
             'excerpt' => 'nullable|string|max:500',
             'status' => 'required|in:draft,published,scheduled,archived',
@@ -96,6 +104,8 @@ class EntryForm extends Component
     public function mount(CustomPostType $postType, ?int $id = null)
     {
         $this->postType = $postType;
+        $this->availableLocales = available_locales();
+        $this->editingLocale = CptEntry::defaultLocale();
         
         // Initialize meta fields with defaults
         foreach ($postType->metaFields as $field) {
@@ -249,6 +259,48 @@ class EntryForm extends Component
         foreach ($entry->terms as $term) {
             $this->selectedTerms[$term->taxonomy_id][] = $term->id;
         }
+
+        // Hydrate per-locale snapshots from the translations JSON column.
+        $translations = $entry->translations ?? [];
+        foreach ($translations as $locale => $fields) {
+            if ($locale === CptEntry::defaultLocale()) continue;
+            $this->localizedSnapshots[$locale] = [
+                'title'   => $fields['title']   ?? '',
+                'slug'    => $fields['slug']    ?? '',
+                'content' => $fields['content'] ?? '',
+                'excerpt' => $fields['excerpt'] ?? '',
+            ];
+        }
+    }
+
+    /** Switch the form between locale tabs (mirrors PageForm pattern). */
+    public function switchLocale(string $newLocale): void
+    {
+        if ($newLocale === $this->editingLocale) return;
+        if (!in_array($newLocale, $this->availableLocales, true)) return;
+
+        // Snapshot current form into the OLD locale's slot
+        $this->localizedSnapshots[$this->editingLocale] = $this->currentLocaleFormSnapshot();
+
+        // Load NEW locale's snapshot (blank if none yet)
+        $next = $this->localizedSnapshots[$newLocale] ?? [];
+        $this->title   = $next['title']   ?? '';
+        $this->slug    = $next['slug']    ?? '';
+        $this->content = $next['content'] ?? '';
+        $this->excerpt = $next['excerpt'] ?? '';
+
+        $this->editingLocale = $newLocale;
+        $this->resetErrorBag();
+    }
+
+    protected function currentLocaleFormSnapshot(): array
+    {
+        return [
+            'title'   => $this->title,
+            'slug'    => $this->slug,
+            'content' => $this->content,
+            'excerpt' => $this->excerpt,
+        ];
     }
 
     public function updatedTitle($value)
@@ -316,6 +368,9 @@ class EntryForm extends Component
 
     public function save()
     {
+        // Mirror current form into the active locale's snapshot before validating
+        $this->localizedSnapshots[$this->editingLocale] = $this->currentLocaleFormSnapshot();
+
         try {
             $this->validate();
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -326,23 +381,44 @@ class EntryForm extends Component
             throw $e;
         }
 
-        // Ensure slug is unique for this post type with auto-increment
-        $this->slug = $this->ensureUniqueSlug($this->slug);
+        $defaultLocale = CptEntry::defaultLocale();
+        $defaultSnap = $this->localizedSnapshots[$defaultLocale] ?? $this->currentLocaleFormSnapshot();
+
+        // Default-locale slug uniqueness — only enforce when we have a real slug to dedupe
+        if (!empty($defaultSnap['slug'])) {
+            $defaultSnap['slug'] = $this->ensureUniqueSlug($defaultSnap['slug']);
+        }
+
+        // Build translations JSON from non-default locale snapshots
+        $translations = [];
+        foreach ($this->localizedSnapshots as $locale => $snap) {
+            if ($locale === $defaultLocale) continue;
+            $localeFields = array_filter([
+                'title'   => ($snap['title']   ?? '') ?: null,
+                'slug'    => ($snap['slug']    ?? '') ?: null,
+                'content' => ($snap['content'] ?? '') ?: null,
+                'excerpt' => ($snap['excerpt'] ?? '') ?: null,
+            ], fn ($v) => $v !== null);
+            if (!empty($localeFields)) {
+                $translations[$locale] = $localeFields;
+            }
+        }
 
         $data = [
             'post_type_id' => $this->postType->id,
-            'title' => $this->title,
-            'slug' => $this->slug,
-            'content' => $this->content ?: null,
-            'excerpt' => $this->excerpt ?: null,
+            'title'        => $defaultSnap['title']   ?? '',
+            'slug'         => $defaultSnap['slug']    ?? '',
+            'content'      => ($defaultSnap['content'] ?? '') ?: null,
+            'excerpt'      => ($defaultSnap['excerpt'] ?? '') ?: null,
             'featured_image' => $this->featuredImage,
             'status' => $this->status,
-            'published_at' => $this->status === 'published' && !$this->publishedAt 
-                ? now() 
+            'published_at' => $this->status === 'published' && !$this->publishedAt
+                ? now()
                 : ($this->publishedAt ? \Carbon\Carbon::parse($this->publishedAt) : null),
-            'parent_id' => $this->parentId,
+            'parent_id'  => $this->parentId,
             'menu_order' => $this->menuOrder,
-            'meta' => $this->meta,
+            'meta'       => $this->meta,
+            'translations' => $translations ?: null,
         ];
 
         if ($this->isEdit) {

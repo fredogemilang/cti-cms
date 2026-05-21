@@ -51,17 +51,38 @@ class PageForm extends Component
     // Slug generation
     public bool $manualSlug = false;
 
+    // === Translations state ===
+    /** Locale currently shown in the form. */
+    public string $editingLocale = '';
+
+    /** Snapshots of translatable fields per non-current locale. Default locale's data lives in the regular form props. */
+    public array $localizedSnapshots = [];
+
+    /**
+     * Per-locale block value snapshots: { locale => [ blockIndex => value, ... ] }
+     * For repeaters: value is itself an array { childIndex => childValue, ... }.
+     * Default locale's values stay in $blocks; we mirror them here on locale switches for round-trip.
+     */
+    public array $localizedBlockValues = [];
+
+    /** Cached list of available locales from Settings — populated in mount(). */
+    public array $availableLocales = [];
+
+    /** Translatable form fields (the form keys, not the DB columns). */
+    protected array $translatableFormFields = [
+        'title', 'slug', 'metaTitle', 'metaDescription', 'ogTitle', 'ogDescription', 'ogImage',
+    ];
+
     protected function rules(): array
     {
+        $isDefaultLocale = $this->editingLocale === Page::defaultLocale();
+
         return [
-            'title' => 'required|string|max:255',
-            'slug' => [
-                'required',
-                'string',
-                'max:255',
-                'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/',
-                Rule::unique('pages', 'slug')->ignore($this->pageId),
-            ],
+            // Title required on default locale; optional on translations (fallback to default).
+            'title' => $isDefaultLocale ? 'required|string|max:255' : 'nullable|string|max:255',
+            'slug' => $isDefaultLocale
+                ? ['required', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('pages', 'slug')->ignore($this->pageId)]
+                : ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
             'status' => 'required|in:draft,published,scheduled,private',
             'parentId' => 'nullable|exists:pages,id',
             'template' => 'required|string',
@@ -79,6 +100,9 @@ class PageForm extends Component
 
     public function mount(?int $id = null)
     {
+        $this->availableLocales = available_locales();
+        $this->editingLocale = Page::defaultLocale();
+
         if ($id) {
             $this->pageId = $id;
             $this->isEdit = true;
@@ -136,6 +160,133 @@ class PageForm extends Component
         })->toArray();
 
         $this->manualSlug = true;
+
+        // Hydrate per-locale snapshots from translations JSON for fields the form binds to.
+        $translations = $this->page->translations ?? [];
+        foreach ($translations as $locale => $fields) {
+            if ($locale === Page::defaultLocale()) continue;
+            $seo = is_array($fields['seo'] ?? null) ? $fields['seo'] : [];
+            $this->localizedSnapshots[$locale] = [
+                'title'           => $fields['title'] ?? '',
+                'slug'            => $fields['slug'] ?? '',
+                'metaTitle'       => $seo['meta_title'] ?? '',
+                'metaDescription' => $seo['meta_description'] ?? '',
+                'ogTitle'         => $seo['og_title'] ?? '',
+                'ogDescription'   => $seo['og_description'] ?? '',
+                'ogImage'         => $seo['og_image'] ?? null,
+            ];
+        }
+
+        // Hydrate per-locale block values. Each block (and repeater child) stores
+        // its own translations JSON, indexed at row level. We mirror them into
+        // an array keyed by block index so switchLocale can swap quickly.
+        $this->hydrateBlockTranslations();
+    }
+
+    protected function hydrateBlockTranslations(): void
+    {
+        $blockRows = $this->page->allBlocks()->get()->keyBy('id');
+        $defaultLocale = Page::defaultLocale();
+
+        foreach ($this->blocks as $bi => $block) {
+            if (empty($block['id']) || !isset($blockRows[$block['id']])) continue;
+
+            $rowTrans = $blockRows[$block['id']]->translations ?? [];
+            foreach ($rowTrans as $locale => $fields) {
+                if ($locale === $defaultLocale) continue;
+                $value = $fields['value'] ?? null;
+                // Decode JSON for repeater (whole rows array stored as JSON string)
+                if ($block['type'] === 'repeater' && is_string($value)) {
+                    $value = json_decode($value, true) ?: [];
+                }
+                $this->localizedBlockValues[$locale][$bi]['value'] = $value;
+            }
+        }
+    }
+
+    /**
+     * Switch the form between locale tabs.
+     * Snapshots current form values into the previous locale's slot, then loads
+     * the requested locale's values into the form.
+     */
+    public function switchLocale(string $newLocale): void
+    {
+        if ($newLocale === $this->editingLocale) return;
+        if (!in_array($newLocale, $this->availableLocales, true)) return;
+
+        $prevLocale = $this->editingLocale;
+
+        // 1. Snapshot current Page-level form into the OLD locale's slot
+        $this->localizedSnapshots[$prevLocale] = $this->currentLocaleFormSnapshot();
+
+        // 2. Snapshot current block values (only translatable types) into OLD locale's block slot
+        $this->snapshotBlocksToLocale($prevLocale);
+
+        // 3. Load NEW locale's Page-level form fields
+        $next = $this->localizedSnapshots[$newLocale] ?? [];
+        $this->title           = $next['title']           ?? '';
+        $this->slug            = $next['slug']            ?? '';
+        $this->metaTitle       = $next['metaTitle']       ?? '';
+        $this->metaDescription = $next['metaDescription'] ?? '';
+        $this->ogTitle         = $next['ogTitle']         ?? '';
+        $this->ogDescription   = $next['ogDescription']   ?? '';
+        $this->ogImage         = $next['ogImage']         ?? null;
+
+        // 4. Apply NEW locale's block values into $blocks (atomic blocks unchanged)
+        $this->applyBlocksFromLocale($newLocale);
+
+        $this->editingLocale = $newLocale;
+        $this->resetErrorBag();
+    }
+
+    protected function snapshotBlocksToLocale(string $locale): void
+    {
+        foreach ($this->blocks as $bi => $block) {
+            if (!$this->isTranslatableBlockType($block['type'] ?? '')) continue;
+            $this->localizedBlockValues[$locale][$bi]['value'] = $block['value'] ?? null;
+        }
+    }
+
+    protected function applyBlocksFromLocale(string $locale): void
+    {
+        $defaultLocale = Page::defaultLocale();
+
+        foreach ($this->blocks as $bi => $block) {
+            if (!$this->isTranslatableBlockType($block['type'] ?? '')) continue;
+
+            $snap = $this->localizedBlockValues[$locale][$bi]['value'] ?? null;
+
+            if ($snap !== null) {
+                $this->blocks[$bi]['value'] = $snap;
+            } elseif ($locale === $defaultLocale) {
+                // Default locale, no snapshot yet — keep whatever's currently in the form
+            } else {
+                // Non-default locale with no translation: blank for text types, empty array for repeater
+                $this->blocks[$bi]['value'] = ($block['type'] === 'repeater') ? [] : '';
+            }
+        }
+    }
+
+    /**
+     * Translatable block types — text fields and repeater (where rows can hold text).
+     * Atomic types (number, date, media, etc.) ignore locale.
+     */
+    protected function isTranslatableBlockType(string $type): bool
+    {
+        return in_array($type, PageBlock::$translatableTypes, true) || $type === 'repeater';
+    }
+
+    protected function currentLocaleFormSnapshot(): array
+    {
+        return [
+            'title'           => $this->title,
+            'slug'            => $this->slug,
+            'metaTitle'       => $this->metaTitle,
+            'metaDescription' => $this->metaDescription,
+            'ogTitle'         => $this->ogTitle,
+            'ogDescription'   => $this->ogDescription,
+            'ogImage'         => $this->ogImage,
+        ];
     }
 
     protected function loadChildBlocks(int $parentBlockId): array
@@ -507,6 +658,11 @@ class PageForm extends Component
 
     public function save()
     {
+        // Mirror current form into the active locale's snapshot before validating /
+        // assembling, so the active tab's edits are always persisted.
+        $this->localizedSnapshots[$this->editingLocale] = $this->currentLocaleFormSnapshot();
+        $this->snapshotBlocksToLocale($this->editingLocale);
+
         $this->validate();
 
         // Validate unique block names within the page
@@ -516,9 +672,13 @@ class PageForm extends Component
             return;
         }
 
+        $defaultLocale = Page::defaultLocale();
+        $defaultSnap   = $this->localizedSnapshots[$defaultLocale] ?? $this->currentLocaleFormSnapshot();
+
+        // Build default-locale data for the row columns
         $pageData = [
-            'title' => $this->title,
-            'slug' => $this->slug,
+            'title' => $defaultSnap['title'] ?? $this->title,
+            'slug'  => $defaultSnap['slug']  ?? $this->slug,
             'parent_id' => $this->parentId,
             'menu_order' => $this->menuOrder,
             'status' => $this->status,
@@ -527,13 +687,35 @@ class PageForm extends Component
             'template' => $this->template,
             'featured_image' => $this->featuredImage,
             'seo' => array_filter([
-                'meta_title' => $this->metaTitle ?: null,
-                'meta_description' => $this->metaDescription ?: null,
-                'og_title' => $this->ogTitle ?: null,
-                'og_description' => $this->ogDescription ?: null,
-                'og_image' => $this->ogImage,
+                'meta_title'       => ($defaultSnap['metaTitle']       ?? '') ?: null,
+                'meta_description' => ($defaultSnap['metaDescription'] ?? '') ?: null,
+                'og_title'         => ($defaultSnap['ogTitle']         ?? '') ?: null,
+                'og_description'   => ($defaultSnap['ogDescription']   ?? '') ?: null,
+                'og_image'         => $defaultSnap['ogImage']          ?? null,
             ]),
         ];
+
+        // Build translations JSON from snapshots for non-default locales
+        $translations = [];
+        foreach ($this->localizedSnapshots as $locale => $snap) {
+            if ($locale === $defaultLocale) continue;
+            $seo = array_filter([
+                'meta_title'       => ($snap['metaTitle']       ?? '') ?: null,
+                'meta_description' => ($snap['metaDescription'] ?? '') ?: null,
+                'og_title'         => ($snap['ogTitle']         ?? '') ?: null,
+                'og_description'   => ($snap['ogDescription']   ?? '') ?: null,
+                'og_image'         => $snap['ogImage']          ?? null,
+            ]);
+            $localeFields = array_filter([
+                'title' => ($snap['title'] ?? '') ?: null,
+                'slug'  => ($snap['slug']  ?? '') ?: null,
+                'seo'   => !empty($seo) ? $seo : null,
+            ], fn ($v) => $v !== null);
+            if (!empty($localeFields)) {
+                $translations[$locale] = $localeFields;
+            }
+        }
+        $pageData['translations'] = $translations ?: null;
 
         if ($this->isEdit) {
             $this->page->update($pageData);
@@ -557,15 +739,43 @@ class PageForm extends Component
 
     protected function saveBlocks()
     {
-        // Delete all existing blocks for this page
+        $defaultLocale = Page::defaultLocale();
+
+        // Delete all existing blocks for this page (clean slate)
         $this->page->allBlocks()->delete();
 
         // Recreate blocks
         foreach ($this->blocks as $index => $blockData) {
-            $value = $blockData['value'] ?? '';
-            // Encode JSON for specific types
+            // Resolve the value that goes into the `value` column (always the default locale).
+            // - Translatable types: if user is on a non-default tab, default value comes
+            //   from the snapshot stashed when they switched away from default.
+            // - Atomic types: always use $blockData['value'] — they're identical across locales,
+            //   so whatever's currently in the form is canonical.
+            $isTranslatable = $this->isTranslatableBlockType($blockData['type'] ?? '');
+            if ($isTranslatable && $this->editingLocale !== $defaultLocale) {
+                $defaultValue = $this->localizedBlockValues[$defaultLocale][$index]['value']
+                    ?? $blockData['value'] ?? '';
+            } else {
+                $defaultValue = $blockData['value'] ?? '';
+            }
+
+            // Encode JSON for collection-style types
             if (in_array($blockData['type'], ['checkbox', 'gallery', 'posts', 'repeater'])) {
-                $value = is_array($value) ? json_encode($value) : $value;
+                $defaultValue = is_array($defaultValue) ? json_encode($defaultValue) : $defaultValue;
+            }
+
+            // Build per-block translations JSON from non-default locale snapshots.
+            $blockTranslations = [];
+            if ($this->isTranslatableBlockType($blockData['type'] ?? '')) {
+                foreach ($this->localizedBlockValues as $locale => $snaps) {
+                    if ($locale === $defaultLocale) continue;
+                    $v = $snaps[$index]['value'] ?? null;
+                    if ($v === null || $v === '' || (is_array($v) && empty($v))) continue;
+                    if ($blockData['type'] === 'repeater' && is_array($v)) {
+                        $v = json_encode($v);
+                    }
+                    $blockTranslations[$locale]['value'] = $v;
+                }
             }
 
             $block = PageBlock::create([
@@ -574,13 +784,14 @@ class PageForm extends Component
                 'name' => $blockData['name'],
                 'type' => $blockData['type'],
                 'label' => $blockData['label'] ?? '',
-                'value' => $value,
+                'value' => $defaultValue,
                 'options' => $blockData['options'] ?? [],
+                'translations' => $blockTranslations ?: null,
                 'order' => $index,
                 'is_active' => $blockData['is_active'] ?? true,
             ]);
 
-            // Save repeater children (SCHEMA Definition)
+            // Save repeater children (SCHEMA Definition — no per-locale data)
             if (isset($blockData['children']) && is_array($blockData['children'])) {
                 foreach ($blockData['children'] as $childIndex => $childData) {
                     PageBlock::create([

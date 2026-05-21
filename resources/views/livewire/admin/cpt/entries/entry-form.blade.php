@@ -56,6 +56,44 @@
         <!-- Center Content -->
         <div class="flex-1 overflow-y-auto p-6 md:p-10 no-scrollbar">
             <div class="max-w-4xl mx-auto space-y-10">
+                {{-- Language tabs (only when more than one locale is configured) --}}
+                @if(count($availableLocales) > 1)
+                    @php
+                        $localeLabels = ['id' => 'Bahasa Indonesia', 'en' => 'English', 'ja' => '日本語', 'fr' => 'Français', 'de' => 'Deutsch', 'es' => 'Español', 'zh' => '中文'];
+                        $defaultLocale = \App\Models\CptEntry::defaultLocale();
+                    @endphp
+                    <div class="flex items-center gap-1 border-b border-gray-200 dark:border-[#272B30] -mb-px">
+                        @foreach($availableLocales as $loc)
+                            @php
+                                $active = $loc === $editingLocale;
+                                $hasContent = $loc === $defaultLocale
+                                    ? true
+                                    : !empty(($localizedSnapshots[$loc]['title'] ?? '') . ($localizedSnapshots[$loc]['content'] ?? ''));
+                            @endphp
+                            <button
+                                type="button"
+                                wire:click="switchLocale('{{ $loc }}')"
+                                @class([
+                                    'flex items-center gap-2 px-4 py-2.5 text-sm font-bold transition border-b-2 -mb-px',
+                                    'text-[#2563EB] border-[#2563EB]' => $active,
+                                    'text-[#6F767E] border-transparent hover:text-[#111827] dark:hover:text-[#FCFCFC]' => !$active,
+                                ])
+                            >
+                                <span class="material-symbols-outlined text-[16px]">{{ $loc === $defaultLocale ? 'star' : 'translate' }}</span>
+                                {{ $localeLabels[$loc] ?? strtoupper($loc) }}
+                                @if($hasContent)
+                                    <span class="h-1.5 w-1.5 rounded-full {{ $active ? 'bg-[#2563EB]' : 'bg-emerald-500' }}"></span>
+                                @endif
+                            </button>
+                        @endforeach
+                        @if($editingLocale !== $defaultLocale)
+                            <span class="ml-auto text-[11px] text-[#6F767E] py-2.5">
+                                Editing translation — meta fields, taxonomy, and image are shared across locales.
+                            </span>
+                        @endif
+                    </div>
+                @endif
+
                 <!-- Title & Permalink -->
                 <div class="space-y-4">
                     <input wire:model.blur="title"

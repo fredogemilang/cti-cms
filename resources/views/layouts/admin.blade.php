@@ -172,15 +172,9 @@
                     @hasSection('header-actions')
                         @yield('header-actions')
                     @else
-                        <!-- Search -->
-                        <div class="relative hidden md:block">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-[#6F767E]">
-                                <span class="material-symbols-outlined text-[24px]">search</span>
-                            </span>
-                            <input
-                                class="w-80 rounded-xl border border-gray-300 bg-white py-3 pl-12 pr-4 text-sm font-medium text-[#111827] placeholder-[#6F767E] shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-primary dark:bg-[#1A1D1F] dark:text-[#FCFCFC] dark:border-[#272B30] dark:ring-0 dark:focus:ring-white/20 transition-all"
-                                placeholder="Search anything..." type="text">
-                        </div>
+                        <!-- Global Search -->
+                        <livewire:admin.header.global-search />
+
                         <div class="flex items-center gap-4">
                             <!-- Theme Toggle -->
                             <button 
@@ -198,10 +192,8 @@
                                 <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
                             </button>
                             <!-- Notifications -->
-                            <button class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#6F767E] dark:hover:text-[#FCFCFC] transition-colors relative">
-                                <span class="material-symbols-outlined text-[24px]">notifications</span>
-                                <span class="absolute top-3 right-3 h-2 w-2 rounded-full bg-[#FF6A55] ring-2 ring-white dark:ring-[#0B0B0B]"></span>
-                            </button>
+                            <livewire:admin.header.notifications-dropdown />
+
                             <!-- User Avatar -->
                             <div x-data="{ userMenuOpen: false }" class="relative">
                                 <div 
@@ -224,8 +216,11 @@
                                         <p class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ auth()->user()->name }}</p>
                                         <p class="text-xs text-[#6F767E]">{{ auth()->user()->email }}</p>
                                     </div>
-                                    <a href="#" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Profile</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Settings</a>
+                                    <a wire:navigate href="{{ route('admin.profile.index') }}" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Profile</a>
+                                    {{-- Settings link aktif setelah Settings module landed --}}
+                                    @if(\Route::has('admin.settings.show'))
+                                        <a wire:navigate href="{{ route('admin.settings.show', 'general') }}" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Settings</a>
+                                    @endif
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition font-medium">

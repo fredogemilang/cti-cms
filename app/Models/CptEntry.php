@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
 
 class CptEntry extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasTranslations;
 
     protected $table = 'cpt_entries';
 
@@ -27,12 +28,53 @@ class CptEntry extends Model
         'status',
         'published_at',
         'meta',
+        'translations',
         'menu_order',
     ];
+
+    /** Fields that can carry per-locale values via the translations JSON column. */
+    protected array $translatable = ['title', 'slug', 'content', 'excerpt'];
+
+    /**
+     * Resolve a CptEntry by slug within a given post type, scanning the default
+     * `slug` column first then each locale's translated slug. On a non-default
+     * locale match, sets app()->setLocale() so the request renders accordingly.
+     */
+    public static function findByLocalizedSlug(CustomPostType|string $postType, string $slug): ?self
+    {
+        $postTypeId = $postType instanceof CustomPostType
+            ? $postType->id
+            : CustomPostType::where('slug', $postType)->value('id');
+
+        if (!$postTypeId) return null;
+
+        $base = static::query()
+            ->where('post_type_id', $postTypeId)
+            ->where('status', 'published');
+
+        $entry = (clone $base)->where('slug', $slug)->first();
+        if ($entry) return $entry;
+
+        $defaultLocale = static::defaultLocale();
+        $locales = array_filter(available_locales(), fn ($l) => $l !== $defaultLocale);
+
+        foreach ($locales as $locale) {
+            $entry = (clone $base)
+                ->whereRaw('JSON_EXTRACT(translations, ?) = ?', ["$.\"{$locale}\".slug", $slug])
+                ->first();
+            if ($entry) {
+                app()->setLocale($locale);
+                return $entry;
+            }
+        }
+
+        return null;
+    }
 
     protected $casts = [
         'published_at' => 'datetime',
         'meta' => 'array',
+        'translations' => 'array',
         'menu_order' => 'integer',
     ];
 

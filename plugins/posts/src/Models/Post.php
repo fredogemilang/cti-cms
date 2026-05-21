@@ -2,6 +2,9 @@
 
 namespace Plugins\Posts\Models;
 
+use App\Traits\FindsByLocalizedSlug;
+use App\Traits\HasTranslations;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,7 +14,15 @@ use App\Models\User;
 
 class Post extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasTranslations, FindsByLocalizedSlug;
+
+    protected static function baseLocalizedSlugQuery(): Builder
+    {
+        return static::query()
+            ->where('status', 'published')
+            ->where(fn ($q) => $q->whereNull('published_at')->orWhere('published_at', '<=', now()));
+    }
+
     protected $fillable = [
         'title',
         'slug',
@@ -26,13 +37,18 @@ class Post extends Model
         'is_featured',
         'views_count',
         'meta',
+        'translations',
     ];
+
+    /** Per-locale fields stored in the translations JSON column. */
+    protected array $translatable = ['title', 'slug', 'excerpt', 'content'];
 
     protected $casts = [
         'published_at' => 'datetime',
         'is_featured' => 'boolean',
         'views_count' => 'integer',
         'meta' => 'array',
+        'translations' => 'array',
     ];
 
     protected static function boot()

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PageBlock extends Model
 {
+    use HasTranslations;
+
     protected $fillable = [
         'page_id',
         'parent_block_id',
@@ -16,14 +19,24 @@ class PageBlock extends Model
         'label',
         'value',
         'options',
+        'translations',
         'order',
         'is_active',
     ];
+
+    /** Only `value` is translatable; type/name/options stay shared across locales. */
+    protected array $translatable = ['value'];
+
+    /** Block types whose `value` carries user-authored content per locale.
+     *  Atomic types (number, date, media ref, color, etc.) ignore locale.
+     *  Repeater is included because its rows may contain text fields. */
+    public static array $translatableTypes = ['text', 'textarea', 'wysiwyg', 'repeater'];
 
     protected function casts(): array
     {
         return [
             'options' => 'array',
+            'translations' => 'array',
             'order' => 'integer',
             'is_active' => 'boolean',
         ];
@@ -224,6 +237,32 @@ class PageBlock extends Model
         }
 
         return $this->value;
+    }
+
+    /**
+     * Locale-aware value resolver for the public theme.
+     * Translatable block types (text/textarea/wysiwyg) return the current-locale
+     * translation with default-locale fallback. Atomic types ignore locale.
+     */
+    public function localizedValue(?string $locale = null)
+    {
+        if (!in_array($this->type, static::$translatableTypes, true)) {
+            return $this->getDecodedValue();
+        }
+
+        $raw = $this->getTranslation('value', $locale);
+
+        // Repeater values are stored as JSON strings — decode for theme consumption.
+        if ($this->type === 'repeater' && is_string($raw)) {
+            return json_decode($raw, true) ?: [];
+        }
+        return $raw;
+    }
+
+    /** Accessor so themes can use `$block->localized_value` or `$block->localizedValue`. */
+    public function getLocalizedValueAttribute()
+    {
+        return $this->localizedValue();
     }
 
     public function getOption(string $key, $default = null)

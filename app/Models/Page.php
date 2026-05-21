@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
 
 class Page extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasTranslations;
 
     protected $fillable = [
         'title',
@@ -25,7 +26,11 @@ class Page extends Model
         'featured_image',
         'seo',
         'settings',
+        'translations',
     ];
+
+    /** Fields that can carry per-locale values via the translations JSON column. */
+    protected array $translatable = ['title', 'slug', 'seo'];
 
     protected function casts(): array
     {
@@ -33,6 +38,7 @@ class Page extends Model
             'published_at' => 'datetime',
             'seo' => 'array',
             'settings' => 'array',
+            'translations' => 'array',
             'menu_order' => 'integer',
         ];
     }
@@ -183,6 +189,46 @@ class Page extends Model
     public function getUrl(): string
     {
         return url($this->getFullPath());
+    }
+
+    /**
+     * Resolve a Page by slug, scanning the default `slug` column first and then
+     * each locale's translated slug. When the match is on a non-default locale,
+     * also sets app()->setLocale() so the request renders in that language.
+     */
+    public static function findByLocalizedSlug(string $slug): ?self
+    {
+        // Default column match (default locale)
+        $page = static::published()->where('slug', $slug)->first();
+        if ($page) {
+            return $page;
+        }
+
+        // Scan translated slugs across all configured locales
+        $defaultLocale = static::defaultLocale();
+        $locales = array_filter(available_locales(), fn ($l) => $l !== $defaultLocale);
+
+        foreach ($locales as $locale) {
+            // JSON_EXTRACT path: $.{locale}.slug
+            $page = static::published()
+                ->whereRaw('JSON_EXTRACT(translations, ?) = ?', ["$.\"{$locale}\".slug", $slug])
+                ->first();
+            if ($page) {
+                app()->setLocale($locale);
+                return $page;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Return a URL for this page in the given locale (uses that locale's slug if defined).
+     */
+    public function localizedUrl(string $locale): string
+    {
+        $slug = $this->getTranslation('slug', $locale);
+        return url('/' . ltrim($slug, '/'));
     }
 
     public function getMetaTitle(): string

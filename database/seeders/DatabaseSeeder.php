@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             MediaPermissionsSeeder::class,
             ThemePermissionsSeeder::class,
             PagesPermissionsSeeder::class,
+            SettingsPermissionsSeeder::class,
+            ActivityPermissionsSeeder::class,
             MenuItemSeeder::class,
         ]);
 

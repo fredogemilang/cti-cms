@@ -49,15 +49,17 @@ class FormNotificationService
         
         $subject = $notifications['subject'] ?? "New Form Submission: {$form->name}";
         $data = $entry->data ?? [];
-        
+
         $html = $this->buildAdminEmailHtml($form, $entry, $data);
-        
-        Mail::html($html, function ($message) use ($adminEmail, $subject, $form) {
-            $message->to($adminEmail)
-                ->subject($subject);
-                
-            // Set reply-to if user email exists in submission
-            $userEmail = $this->findUserEmail($form, $message);
+
+        // Pre-resolve the visitor's email so we can set Reply-To inside the Mail closure.
+        $replyTo = $this->findUserEmailFromData($form, $data);
+
+        Mail::html($html, function ($message) use ($adminEmail, $subject, $replyTo) {
+            $message->to($adminEmail)->subject($subject);
+            if ($replyTo) {
+                $message->replyTo($replyTo);
+            }
         });
     }
     

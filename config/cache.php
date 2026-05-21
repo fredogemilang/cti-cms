@@ -32,6 +32,8 @@ return [
     |
     */
 
+    'serializable_classes' => true,
+
     'stores' => [
 
         'array' => [

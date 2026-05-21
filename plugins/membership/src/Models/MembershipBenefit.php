@@ -2,10 +2,13 @@
 
 namespace Plugins\Membership\Models;
 
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class MembershipBenefit extends Model
 {
+    use HasTranslations;
+
     protected $fillable = [
         'tier_id',
         'benefit_type',
@@ -13,11 +16,15 @@ class MembershipBenefit extends Model
         'description',
         'value',
         'order',
+        'translations',
     ];
+
+    protected array $translatable = ['name', 'description'];
 
     protected $casts = [
         'value' => 'array',
         'order' => 'integer',
+        'translations' => 'array',
     ];
 
     /**

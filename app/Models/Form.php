@@ -199,9 +199,9 @@ class Form extends Model
             'user_id' => auth()->id(),
         ]);
         
-        // Send notifications (admin & user confirmation)
-        $notificationService = new \App\Services\FormNotificationService();
-        $notificationService->sendNotifications($this, $entry);
+        // Dispatch notifications onto the queue so the public POST returns quickly.
+        // (With QUEUE_CONNECTION=sync this still runs inline.)
+        \App\Jobs\SendFormNotificationJob::dispatch($this->id, $entry->id);
 
         return ['success' => true, 'entry' => $entry];
     }

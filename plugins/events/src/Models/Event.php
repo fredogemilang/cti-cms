@@ -2,6 +2,9 @@
 
 namespace Plugins\Events\Models;
 
+use App\Traits\FindsByLocalizedSlug;
+use App\Traits\HasTranslations;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -11,7 +14,12 @@ use Carbon\Carbon;
 
 class Event extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasTranslations, FindsByLocalizedSlug;
+
+    protected static function baseLocalizedSlugQuery(): Builder
+    {
+        return static::query()->where('status', 'published');
+    }
 
     protected $fillable = [
         'title',
@@ -60,6 +68,14 @@ class Event extends Model
         'meta_description',
         'meta_keywords',
         'settings',
+        'translations',
+    ];
+
+    /** Per-locale fields. Date / URL / numeric / IDs intentionally NOT translatable. */
+    protected array $translatable = [
+        'title', 'slug', 'description', 'content',
+        'location', 'location_address',
+        'meta_title', 'meta_description',
     ];
 
     protected $casts = [
@@ -83,6 +99,7 @@ class Event extends Model
         'gallery_images' => 'array',
         'meta_keywords' => 'array',
         'settings' => 'array',
+        'translations' => 'array',
     ];
 
     /**

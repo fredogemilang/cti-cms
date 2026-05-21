@@ -7,52 +7,23 @@ use Illuminate\Support\Facades\Route;
 // Get admin path from config
 $adminPath = config('admin.path', 'admin');
 
-// Redirect root to admin path (not login)
-Route::get('/', function () {
-    // return view('welcome');
-    
-    // Fetch Testimonials
-    $testimonials = [];
-    $testimonialCpt = \App\Models\CustomPostType::where('slug', 'testimonials')->first();
-    if ($testimonialCpt) {
-        $testimonials = \App\Models\CptEntry::with('author') // author of the review is likely in meta?
-            ->where('post_type_id', $testimonialCpt->id)
-            ->where('status', 'published')
-            ->latest()
-            ->take(6)
-            ->get();
-    }
+// Public homepage
+Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-    // Fetch Partners
-    $partners = [];
-    $partnerCpt = \App\Models\CustomPostType::where('slug', 'our-partners')->first();
-    if ($partnerCpt) {
-        $partners = \App\Models\CptEntry::where('post_type_id', $partnerCpt->id)
-            ->where('status', 'published')
-            ->latest()
-            ->get();
-    }
-
-    // Fetch Page content for Home (ID 2)
-    $page = \App\Models\Page::with(['blocks' => function ($q) {
-        $q->whereNull('parent_block_id')
-            ->orderBy('order');
-    }])->find(2);
-
-    return view('iccom::pages.home', compact('testimonials', 'partners', 'page'));
-});
+// Public SEO
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+Route::get('/robots.txt', [\App\Http\Controllers\RobotsController::class, 'index'])->name('robots');
 
 // Public Form Submission
-Route::post('/forms/{slug}/submit', [\App\Http\Controllers\FormSubmissionController::class, 'submit'])->name('forms.submit');
-Route::get('/forms/{slug}/success', [\App\Http\Controllers\FormSubmissionController::class, 'success'])->name('forms.success');
+Route::prefix('forms')->name('forms.')->group(function () {
+    Route::get('/{slug}', [\App\Http\Controllers\FormSubmissionController::class, 'show'])->name('show');
+    Route::post('/{slug}/submit', [\App\Http\Controllers\FormSubmissionController::class, 'submit'])->name('submit');
+    Route::post('/{slug}/ajax', [\App\Http\Controllers\FormSubmissionController::class, 'submitAjax'])->name('submit.ajax');
+    Route::get('/{slug}/success', [\App\Http\Controllers\FormSubmissionController::class, 'success'])->name('success');
+});
 
 // Admin base path redirect
-Route::get("/{$adminPath}", function () {
-    if (auth()->check()) {
-        return redirect()->route('admin.dashboard');
-    }
-    return redirect()->route('login');
-})->name('admin.index');
+Route::get("/{$adminPath}", [\App\Http\Controllers\Admin\AdminController::class, 'index'])->name('admin.index');
 
 // Authentication Routes (under admin path)
 Route::prefix($adminPath)->group(function () {
@@ -240,6 +211,24 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth'])->group(function 
         Route::delete('/entries/{entry}', [\App\Http\Controllers\Admin\FormController::class, 'deleteEntry'])
             ->name('entries.delete')
             ->middleware('permission:forms.delete');
+    });
+
+    // Audit log
+    Route::middleware('permission:activity.view')->group(function () {
+        Route::get('/activity', function () {
+            return view('admin.activity.index');
+        })->name('activity.index');
+    });
+
+    // Settings (generic, group-based)
+    Route::prefix('settings')->name('settings.')->middleware('permission:settings.view')->group(function () {
+        Route::get('/', function () {
+            return redirect()->route('admin.settings.show', 'general');
+        })->name('index');
+        Route::get('/{group}', function (string $group) {
+            abort_unless(app(\App\Services\SettingsRegistry::class)->hasGroup($group), 404);
+            return view('admin.settings.show', ['group' => $group]);
+        })->name('show');
     });
 
     // Custom Taxonomies Management

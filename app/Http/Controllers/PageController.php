@@ -10,17 +10,18 @@ class PageController extends Controller
 {
     public function show(string $slug)
     {
-        $page = Page::where('slug', $slug)
-            ->published()
-            ->with(['blocks' => function ($q) {
-                $q->whereNull('parent_block_id')
-                    ->with('childBlocks')
-                    ->orderBy('order');
-            }])
-            ->firstOrFail();
+        // Locale-aware slug lookup — auto-switches app locale if matched on a translated slug.
+        $page = Page::findByLocalizedSlug($slug);
+        abort_if(!$page, 404);
 
-        // Check template hierarchy
-        $viewName = $this->resolveTemplate($page->template, $slug);
+        // Load blocks (shared across locales for now)
+        $page->load(['blocks' => function ($q) {
+            $q->whereNull('parent_block_id')
+                ->with('childBlocks')
+                ->orderBy('order');
+        }]);
+
+        $viewName = $this->resolveTemplate($page->template, $page->slug);
 
         return view($viewName, [
             'page' => $page,

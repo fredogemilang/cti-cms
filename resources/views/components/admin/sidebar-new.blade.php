@@ -318,6 +318,15 @@
         </a>
     </li>
     @endcan
+    @can('activity.view')
+    <li>
+        <a wire:navigate class="flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 nav-item overflow-hidden {{ request()->routeIs('admin.activity.*') ? 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]' : 'text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none' }}"
+            href="{{ route('admin.activity.index') }}">
+            <span class="material-symbols-outlined shrink-0">history</span>
+            <span class="font-semibold text-[15px] sidebar-text">Activity Log</span>
+        </a>
+    </li>
+    @endcan
     @can('themes.view')
     <li x-data="{ open: {{ request()->routeIs('admin.themes.*') ? 'true' : 'false' }} }">
         <button
@@ -342,7 +351,12 @@
         </div>
     </li>
     @endcan
-    <li x-data="{ open: false }">
+    @can('settings.view')
+    @php
+        $settingsGroups = app(\App\Services\SettingsRegistry::class)->groups();
+    @endphp
+    @if(!empty($settingsGroups))
+    <li x-data="{ open: {{ request()->routeIs('admin.settings.*') ? 'true' : 'false' }} }">
         <button
             @click="open = !open"
             class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden">
@@ -354,39 +368,26 @@
         </button>
         <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 400px; opacity: 1' : 'max-height: 0; opacity: 0'">
             <ul class="submenu-list mt-1 space-y-1">
-                <li class="relative pl-6 py-1">
-                    <div class="submenu-item-connector"></div>
-                    <a class="flex items-center rounded-xl px-4 py-2.5 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 relative z-10" href="#">
-                        <span class="text-[14px] font-medium">General</span>
-                    </a>
-                </li>
-                <li class="relative pl-6 py-1">
-                    <div class="submenu-item-connector"></div>
-                    <a class="flex items-center rounded-xl px-4 py-2.5 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 relative z-10" href="#">
-                        <span class="text-[14px] font-medium">Brevo API</span>
-                    </a>
-                </li>
-                <li class="relative pl-6 py-1">
-                    <div class="submenu-item-connector"></div>
-                    <a class="flex items-center rounded-xl px-4 py-2.5 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 relative z-10" href="#">
-                        <span class="text-[14px] font-medium">Languages</span>
-                    </a>
-                </li>
-                <li class="relative pl-6 py-1">
-                    <div class="submenu-item-connector"></div>
-                    <a class="flex items-center rounded-xl px-4 py-2.5 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 relative z-10" href="#">
-                        <span class="text-[14px] font-medium">SEO</span>
-                    </a>
-                </li>
-                <li class="relative pl-6 py-1">
-                    <div class="submenu-item-connector"></div>
-                    <a class="flex items-center rounded-xl px-4 py-2.5 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 relative z-10" href="#">
-                        <span class="text-[14px] font-medium">Redirect</span>
-                    </a>
-                </li>
+                @foreach($settingsGroups as $sg)
+                    @can($sg['permission'] ?? 'settings.view')
+                    <li class="relative pl-6 py-1">
+                        <div class="submenu-item-connector"></div>
+                        <a wire:navigate
+                           class="flex items-center rounded-xl px-4 py-2.5 transition-all duration-200 relative z-10
+                                {{ request()->routeIs('admin.settings.show') && request()->route('group') === $sg['slug']
+                                    ? 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC] font-semibold'
+                                    : 'text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none' }}"
+                           href="{{ route('admin.settings.show', $sg['slug']) }}">
+                            <span class="text-[14px] font-medium">{{ $sg['label'] }}</span>
+                        </a>
+                    </li>
+                    @endcan
+                @endforeach
             </ul>
         </div>
     </li>
+    @endif
+    @endcan
     
     <!-- Litespeed Cache Menu -->
     <li x-data="{ open: false }">

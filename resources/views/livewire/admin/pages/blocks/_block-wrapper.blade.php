@@ -27,7 +27,8 @@
             @endif
         </div>
 
-        {{-- Block Actions (visible on hover) --}}
+        {{-- Block Actions (visible on hover) — only on default locale; structural edits are locked when translating --}}
+        @if($editingLocale === \App\Models\Page::defaultLocale())
         <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             {{-- Settings Button (only in entry mode) --}}
             @if($isConfigured)
@@ -63,6 +64,16 @@
                 <span class="material-symbols-outlined text-lg">delete</span>
             </button>
         </div>
+        @else
+        {{-- Translating mode: show translatable badge or "atomic" hint to clarify what user can edit --}}
+        <div class="flex items-center gap-1">
+            @if(in_array($block['type'], \App\Models\PageBlock::$translatableTypes, true) || $block['type'] === 'repeater')
+                <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-blue-50 text-[#2563EB] dark:bg-blue-500/10">translatable</span>
+            @else
+                <span class="text-[10px] font-bold px-2 py-1 rounded-full bg-gray-100 dark:bg-[#272B30] text-[#6F767E]" title="This field's value is shared across all languages.">shared</span>
+            @endif
+        </div>
+        @endif
     </div>
 
     @if(!$isConfigured)

@@ -2,6 +2,8 @@
 
 namespace Plugins\Posts\Models;
 
+use App\Traits\FindsByLocalizedSlug;
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,12 +12,21 @@ use Illuminate\Support\Str;
 
 class Category extends Model
 {
+    use HasTranslations, FindsByLocalizedSlug;
+
     protected $fillable = [
         'name',
         'slug',
         'description',
         'parent_id',
         'order',
+        'translations',
+    ];
+
+    protected array $translatable = ['name', 'slug', 'description'];
+
+    protected $casts = [
+        'translations' => 'array',
     ];
 
     protected static function boot()

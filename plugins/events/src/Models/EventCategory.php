@@ -2,13 +2,15 @@
 
 namespace Plugins\Events\Models;
 
+use App\Traits\FindsByLocalizedSlug;
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class EventCategory extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasTranslations, FindsByLocalizedSlug;
 
     protected $fillable = [
         'name',
@@ -18,10 +20,14 @@ class EventCategory extends Model
         'icon',
         'image_id',
         'order',
+        'translations',
     ];
+
+    protected array $translatable = ['name', 'slug', 'description'];
 
     protected $casts = [
         'order' => 'integer',
+        'translations' => 'array',
     ];
 
     /**

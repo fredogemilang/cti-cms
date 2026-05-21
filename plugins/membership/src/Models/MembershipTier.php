@@ -2,13 +2,14 @@
 
 namespace Plugins\Membership\Models;
 
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class MembershipTier extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasTranslations;
 
     protected $fillable = [
         'name',
@@ -21,7 +22,15 @@ class MembershipTier extends Model
         'order',
         'color',
         'icon',
+        'translations',
     ];
+
+    /**
+     * Per-locale fields. Price / duration / benefits list are factual and shared.
+     * `benefits` (array of strings) could be translatable too — kept shared for now
+     * since it's typically used as IDs/keys in this design.
+     */
+    protected array $translatable = ['name', 'slug', 'description'];
 
     protected $casts = [
         'price' => 'decimal:2',
@@ -29,6 +38,7 @@ class MembershipTier extends Model
         'benefits' => 'array',
         'is_active' => 'boolean',
         'order' => 'integer',
+        'translations' => 'array',
     ];
 
     /**

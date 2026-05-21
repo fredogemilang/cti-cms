@@ -1,5 +1,54 @@
 <?php
 
+if (!function_exists('activity')) {
+    /**
+     * Get the central audit log writer.
+     *
+     * Usage:
+     *   activity()->log('page.created', $page, "Created page '{$page->title}'");
+     */
+    function activity(): \App\Services\ActivityLogger
+    {
+        return app(\App\Services\ActivityLogger::class);
+    }
+}
+
+if (!function_exists('translate')) {
+    /**
+     * Get a translated field value from a model for the current locale.
+     * Falls back to the model's default-locale value if the translation is missing.
+     */
+    function translate(\Illuminate\Database\Eloquent\Model $model, string $field, ?string $locale = null): mixed
+    {
+        if (method_exists($model, 'getTranslation')) {
+            return $model->getTranslation($field, $locale);
+        }
+        return $model->getAttribute($field);
+    }
+}
+
+if (!function_exists('available_locales')) {
+    /**
+     * Return the list of locale codes the site supports.
+     *
+     * @return array<int, string>
+     */
+    function available_locales(): array
+    {
+        return array_values(array_filter(array_map('trim', explode(',', (string) \App\Models\Setting::get('available_locales', 'id,en')))));
+    }
+}
+
+if (!function_exists('setting')) {
+    /**
+     * Get a CMS setting value (cache-backed).
+     */
+    function setting(string $key, mixed $default = null): mixed
+    {
+        return \App\Models\Setting::get($key, $default);
+    }
+}
+
 if (!function_exists('admin_path')) {
     /**
      * Get the admin path from config.

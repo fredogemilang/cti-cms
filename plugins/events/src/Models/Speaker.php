@@ -2,13 +2,14 @@
 
 namespace Plugins\Events\Models;
 
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Media;
 
 class Speaker extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasTranslations;
 
     protected $fillable = [
         'name',
@@ -26,6 +27,17 @@ class Speaker extends Model
         'website',
         'order',
         'is_active',
+        'translations',
+    ];
+
+    /**
+     * Per-locale fields. Personal name is a proper noun (kept shared), but
+     * job title, company, and bio benefit from translation.
+     */
+    protected array $translatable = ['title', 'company', 'bio'];
+
+    protected $casts = [
+        'translations' => 'array',
     ];
 
     /**

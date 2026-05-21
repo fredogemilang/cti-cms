@@ -59,6 +59,44 @@
         {{-- Left Panel: Editor --}}
         <div class="flex-1 overflow-y-auto p-10 no-scrollbar">
             <div class="max-w-4xl mx-auto space-y-10">
+                {{-- Language tabs (only when more than one locale is configured) --}}
+                @if(count($availableLocales) > 1)
+                    @php
+                        $localeLabels = ['id' => 'Bahasa Indonesia', 'en' => 'English', 'ja' => '日本語', 'fr' => 'Français', 'de' => 'Deutsch', 'es' => 'Español', 'zh' => '中文'];
+                        $defaultLocale = \App\Models\Page::defaultLocale();
+                    @endphp
+                    <div class="flex items-center gap-1 border-b border-gray-200 dark:border-[#272B30] -mb-px">
+                        @foreach($availableLocales as $loc)
+                            @php
+                                $active = $loc === $editingLocale;
+                                $hasContent = $loc === $defaultLocale
+                                    ? true
+                                    : !empty(($localizedSnapshots[$loc]['title'] ?? '') . ($localizedSnapshots[$loc]['slug'] ?? ''));
+                            @endphp
+                            <button
+                                type="button"
+                                wire:click="switchLocale('{{ $loc }}')"
+                                @class([
+                                    'flex items-center gap-2 px-4 py-2.5 text-sm font-bold transition border-b-2 -mb-px',
+                                    'text-[#2563EB] border-[#2563EB]' => $active,
+                                    'text-[#6F767E] border-transparent hover:text-[#111827] dark:hover:text-[#FCFCFC]' => !$active,
+                                ])
+                            >
+                                <span class="material-symbols-outlined text-[16px]">{{ $loc === $defaultLocale ? 'star' : 'translate' }}</span>
+                                {{ $localeLabels[$loc] ?? strtoupper($loc) }}
+                                @if($hasContent)
+                                    <span class="h-1.5 w-1.5 rounded-full {{ $active ? 'bg-[#2563EB]' : 'bg-emerald-500' }}"></span>
+                                @endif
+                            </button>
+                        @endforeach
+                        @if($editingLocale !== $defaultLocale)
+                            <span class="ml-auto text-[11px] text-[#6F767E] py-2.5">
+                                Editing translation for <strong>{{ $localeLabels[$editingLocale] ?? strtoupper($editingLocale) }}</strong> — leave blank to inherit from default.
+                            </span>
+                        @endif
+                    </div>
+                @endif
+
                 {{-- Title & Slug --}}
                 <div class="space-y-4">
                     <input wire:model.live.debounce.500ms="title"
@@ -105,12 +143,26 @@
                             </div>
                         @endforelse
 
-                        {{-- Add Block Button --}}
-                        <button wire:click="openBlockSelector"
-                            class="w-full h-16 rounded-2xl border-2 border-dashed border-gray-300 dark:border-[#272B30] hover:border-primary/50 text-[#6F767E] hover:text-primary transition-all flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined">add_circle</span>
-                            <span class="font-bold">Add Block</span>
-                        </button>
+                        @php $isDefaultLocaleEditing = $editingLocale === \App\Models\Page::defaultLocale(); @endphp
+
+                        {{-- Add Block Button (only on default locale to keep structure consistent) --}}
+                        @if($isDefaultLocaleEditing)
+                            <button wire:click="openBlockSelector"
+                                class="w-full h-16 rounded-2xl border-2 border-dashed border-gray-300 dark:border-[#272B30] hover:border-primary/50 text-[#6F767E] hover:text-primary transition-all flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined">add_circle</span>
+                                <span class="font-bold">Add Block</span>
+                            </button>
+                        @else
+                            <div class="w-full p-4 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 flex items-start gap-3">
+                                <span class="material-symbols-outlined text-amber-600 dark:text-amber-400">info</span>
+                                <div class="flex-1 text-sm">
+                                    <p class="font-bold text-amber-900 dark:text-amber-300">Translating mode</p>
+                                    <p class="text-amber-800 dark:text-amber-400/80 text-xs mt-0.5">
+                                        Block structure (add / remove / reorder) is managed from the default locale only. Switch to the default tab to change the layout.
+                                    </p>
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
                     @error('blocks')

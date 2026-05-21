@@ -15,35 +15,72 @@
             </div>
 
             {{-- Filters --}}
-            <div class="flex gap-3 w-full md:w-auto">
-                {{-- Type Filter --}}
-                <select 
-                    wire:model.live="filterType"
-                    class="px-4 py-3 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="all">All Types</option>
+            <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                <select wire:model.live="filterType"
+                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="all">All types</option>
                     <option value="images">Images</option>
                     <option value="documents">Documents</option>
                 </select>
 
-                {{-- Sort By --}}
-                <select 
-                    wire:model.live="sortBy"
-                    class="px-4 py-3 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="latest">Latest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="name">Name (A-Z)</option>
-                    <option value="size">Size (Largest)</option>
+                <select wire:model.live="filterExtension"
+                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">All extensions</option>
+                    @foreach($availableExtensions as $ext)
+                        <option value="{{ $ext }}">.{{ strtoupper($ext) }}</option>
+                    @endforeach
                 </select>
 
-                {{-- View Mode Toggle --}}
+                <select wire:model.live="filterAltStatus"
+                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    title="Filter by alt text status (images only)">
+                    <option value="">Any alt status</option>
+                    <option value="missing">Missing alt</option>
+                    <option value="has">Has alt</option>
+                </select>
+
+                <select wire:model.live="filterUploader"
+                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Any uploader</option>
+                    @foreach($uploaders as $u)
+                        <option value="{{ $u->id }}">{{ $u->name }}</option>
+                    @endforeach
+                </select>
+
+                <select wire:model.live="filterUsage"
+                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Any usage</option>
+                    <option value="used">Used</option>
+                    <option value="orphan">Orphans only</option>
+                </select>
+
+                <input type="date" wire:model.live="dateFrom" title="From"
+                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                <input type="date" wire:model.live="dateTo" title="To"
+                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+
+                <select wire:model.live="sortBy"
+                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="latest">Latest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="name">Name A-Z</option>
+                    <option value="size">Size ↓</option>
+                </select>
+
+                @if($this->hasActiveFilters())
+                    <button wire:click="clearFilters"
+                        class="px-3 py-2 rounded-xl bg-gray-100 dark:bg-[#272B30] text-[#6F767E] hover:bg-gray-200 dark:hover:bg-[#333] text-sm font-medium flex items-center gap-1 transition">
+                        <span class="material-symbols-outlined text-lg">close</span>
+                        Clear
+                    </button>
+                @endif
+
                 <div class="flex gap-1 p-1 bg-gray-100 dark:bg-[#272B30] rounded-xl">
-                    <button 
-                        wire:click="$set('viewMode', 'grid')"
+                    <button wire:click="$set('viewMode', 'grid')"
                         class="px-3 py-2 rounded-lg transition-all {{ $viewMode === 'grid' ? 'bg-white dark:bg-[#1A1D1F] text-[#2563EB] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
                         <span class="material-symbols-outlined text-xl">grid_view</span>
                     </button>
-                    <button 
-                        wire:click="$set('viewMode', 'list')"
+                    <button wire:click="$set('viewMode', 'list')"
                         class="px-3 py-2 rounded-lg transition-all {{ $viewMode === 'list' ? 'bg-white dark:bg-[#1A1D1F] text-[#2563EB] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
                         <span class="material-symbols-outlined text-xl">view_list</span>
                     </button>
@@ -51,27 +88,77 @@
             </div>
         </div>
 
+        @php
+            $pageSelected = count(array_intersect($currentPageIds, $selectedMedia));
+            $allOnPage    = $pageSelected === count($currentPageIds) && count($currentPageIds) > 0;
+            $someOnPage   = $pageSelected > 0 && !$allOnPage;
+        @endphp
+
+        {{-- Header: select-all-on-page checkbox + total count --}}
+        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-[#272B30] flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <button
+                    type="button"
+                    wire:click="toggleSelectCurrentPage({{ json_encode($currentPageIds) }})"
+                    class="flex items-center gap-2 text-sm font-medium text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition"
+                    title="Select all on this page"
+                >
+                    <span @class([
+                        'h-5 w-5 rounded border-2 flex items-center justify-center transition',
+                        'bg-[#2563EB] border-[#2563EB] text-white' => $allOnPage,
+                        'bg-[#2563EB]/60 border-[#2563EB]/60 text-white' => $someOnPage,
+                        'bg-white dark:bg-transparent border-gray-300 dark:border-[#6F767E]' => !$allOnPage && !$someOnPage,
+                    ])>
+                        @if($allOnPage)
+                            <span class="material-symbols-outlined text-sm">check</span>
+                        @elseif($someOnPage)
+                            <span class="material-symbols-outlined text-sm">remove</span>
+                        @endif
+                    </span>
+                    Select page ({{ count($currentPageIds) }})
+                </button>
+
+                <span class="text-xs text-[#6F767E]">·</span>
+
+                <span class="text-xs text-[#6F767E]">
+                    {{ $media->total() }} total
+                </span>
+            </div>
+        </div>
+
         {{-- Bulk Actions Bar --}}
         @if(count($selectedMedia) > 0)
-        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-[#272B30] flex items-center justify-between">
+        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-[#272B30] flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
                 <span class="text-sm font-semibold text-[#111827] dark:text-[#FCFCFC]">
                     {{ count($selectedMedia) }} selected
                 </span>
-                <button 
-                    wire:click="deselectAll"
-                    class="text-sm text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-colors">
+                <button wire:click="deselectAll"
+                    class="text-sm text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition">
                     Clear selection
                 </button>
             </div>
-            @can('media.delete')
-            <button 
-                wire:click="confirmDelete"
-                class="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl font-semibold hover:bg-red-100 dark:hover:bg-red-900/30 transition-all">
-                <span class="material-symbols-outlined text-lg">delete</span>
-                <span>Delete Selected</span>
-            </button>
-            @endcan
+            <div class="flex flex-wrap items-center gap-2">
+                @can('media.edit')
+                <button wire:click="openBulkAlt"
+                    class="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 text-[#2563EB] dark:text-blue-400 rounded-xl font-semibold text-sm hover:bg-blue-100 dark:hover:bg-blue-900/30 transition">
+                    <span class="material-symbols-outlined text-lg">text_fields</span>
+                    Set alt text
+                </button>
+                @endcan
+                <button wire:click="downloadSelectedZip"
+                    class="flex items-center gap-2 px-3 py-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-xl font-semibold text-sm hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition">
+                    <span class="material-symbols-outlined text-lg">download</span>
+                    Download .zip
+                </button>
+                @can('media.delete')
+                <button wire:click="confirmDelete"
+                    class="flex items-center gap-2 px-3 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl font-semibold text-sm hover:bg-red-100 dark:hover:bg-red-900/30 transition">
+                    <span class="material-symbols-outlined text-lg">delete</span>
+                    Delete
+                </button>
+                @endcan
+            </div>
         </div>
         @endif
     </div>
@@ -131,6 +218,16 @@
                             <p class="text-xs font-medium text-white truncate">{{ $item->original_filename }}</p>
                             <p class="text-[10px] text-white/80">{{ $item->human_readable_size }}</p>
                         </div>
+
+                        {{-- Usage badge --}}
+                        @php $uses = $usageMap[$item->id] ?? 0; @endphp
+                        <div class="absolute top-2 right-2">
+                            @if($uses === 0)
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/95 text-white" title="Not referenced anywhere">Orphan</span>
+                            @else
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/60 text-white" title="Referenced in {{ $uses }} place(s)">{{ $uses }}×</span>
+                            @endif
+                        </div>
                     </div>
                     @endforeach
                 </div>
@@ -170,12 +267,21 @@
                             <p class="text-sm font-semibold text-[#111827] dark:text-[#FCFCFC] truncate">
                                 {{ $item->original_filename }}
                             </p>
-                            <div class="flex items-center gap-3 mt-1">
+                            <div class="flex items-center gap-3 mt-1 flex-wrap">
                                 <span class="text-xs text-[#6F767E]">{{ $item->human_readable_size }}</span>
                                 @if($item->width && $item->height)
                                     <span class="text-xs text-[#6F767E]">{{ $item->width }} × {{ $item->height }}</span>
                                 @endif
                                 <span class="text-xs text-[#6F767E]">{{ $item->created_at->format('M d, Y') }}</span>
+                                @php $uses = $usageMap[$item->id] ?? 0; @endphp
+                                @if($uses === 0)
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400">Orphan</span>
+                                @else
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/15 text-[#2563EB]">{{ $uses }}× used</span>
+                                @endif
+                                @if($item->isImage() && empty($item->alt_text))
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/15 text-red-600 dark:text-red-400" title="Missing alt text">No alt</span>
+                                @endif
                             </div>
                         </div>
 
@@ -232,6 +338,41 @@
             </div>
         @endif
     </div>
+
+    {{-- Bulk Alt Text Modal --}}
+    @if($showBulkAltModal)
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" wire:click="$set('showBulkAltModal', false)">
+        <div class="bg-white dark:bg-[#1A1A1A] rounded-3xl p-8 max-w-md w-full mx-4 shadow-xl" wire:click.stop>
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[#2563EB] dark:text-blue-400">text_fields</span>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Bulk Set Alt Text</h3>
+                    <p class="text-sm text-[#6F767E]">Applies to selected images only ({{ count($selectedMedia) }} item(s))</p>
+                </div>
+            </div>
+            <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-2">Alt text</label>
+            <textarea
+                wire:model.lazy="bulkAltText"
+                rows="3"
+                placeholder="e.g. Product photo on white background"
+                class="w-full rounded-xl border border-gray-300 dark:border-[#272B30] bg-white dark:bg-[#0F1113] px-4 py-2.5 text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:outline-none"
+            ></textarea>
+            <p class="text-xs text-[#6F767E] mt-2">Tip: leave blank to clear the alt text from all selected images.</p>
+            <div class="flex gap-3 mt-6">
+                <button wire:click="$set('showBulkAltModal', false)"
+                    class="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-[#272B30] text-sm font-semibold text-[#111827] dark:text-[#FCFCFC] hover:bg-gray-50 dark:hover:bg-[#272B30] transition">
+                    Cancel
+                </button>
+                <button wire:click="applyBulkAlt"
+                    class="flex-1 px-4 py-3 rounded-xl bg-[#2563EB] text-white text-sm font-semibold hover:bg-blue-700 transition">
+                    Apply
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
 
     {{-- Delete Confirmation Modal --}}
     @if($showDeleteModal)

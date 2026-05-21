@@ -31,7 +31,7 @@ class FormSubmissionController extends Controller
             ->with('fields')
             ->firstOrFail();
 
-        // Process the submission
+        // Process the submission (validation + entry creation + notifications)
         $result = $form->processSubmission($request->all(), $request);
 
         if (!$result['success']) {
@@ -40,11 +40,7 @@ class FormSubmissionController extends Controller
                 ->withInput();
         }
 
-        // Send email notification if configured
-        $notifications = $form->notifications ?? [];
-        if (!empty($notifications['admin_email'])) {
-            $this->sendNotification($form, $result['entry'], $notifications['admin_email']);
-        }
+        // Notifications are dispatched inside processSubmission() via FormNotificationService.
 
         // Handle confirmation based on type
         $confirmations = $form->confirmations ?? [];
@@ -82,23 +78,6 @@ class FormSubmissionController extends Controller
     }
 
     /**
-     * Send email notification.
-     */
-    protected function sendNotification($form, $entry, $email)
-    {
-        try {
-            // TODO: Implement email notification
-            // This would typically use Laravel's Mail facade
-            \Log::info("Form submission notification for form: {$form->name}", [
-                'entry_id' => $entry->id,
-                'email' => $email,
-            ]);
-        } catch (\Exception $e) {
-            \Log::error("Failed to send form notification: " . $e->getMessage());
-        }
-    }
-
-    /**
      * AJAX submission handler.
      */
     public function submitAjax(Request $request, $slug)
@@ -108,6 +87,7 @@ class FormSubmissionController extends Controller
             ->with('fields')
             ->firstOrFail();
 
+        // Process the submission (validation + entry creation + notifications)
         $result = $form->processSubmission($request->all(), $request);
 
         if (!$result['success']) {
@@ -117,18 +97,16 @@ class FormSubmissionController extends Controller
             ], 422);
         }
 
-        $settings = $form->settings ?? [];
-        $successMessage = $settings['success_message'] ?? 'Form submitted successfully!';
-
-        // Send email notification if configured
-        if (isset($settings['notification_email']) && !empty($settings['notification_email'])) {
-            $this->sendNotification($form, $result['entry'], $settings['notification_email']);
-        }
+        $confirmations = $form->confirmations ?? [];
+        $successMessage = $confirmations['message'] ?? 'Form submitted successfully!';
 
         return response()->json([
-            'success' => true,
-            'message' => $successMessage,
-            'entry_id' => $result['entry']->id,
+            'success'      => true,
+            'message'      => $successMessage,
+            'entry_id'     => $result['entry']->id,
+            'redirect_url' => ($confirmations['type'] ?? null) === 'redirect'
+                ? ($confirmations['redirect_url'] ?? null)
+                : null,
         ]);
     }
 }
