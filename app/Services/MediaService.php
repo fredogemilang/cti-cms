@@ -57,6 +57,11 @@ class MediaService
             }
         }
 
+        // Queue responsive variant generation for raster images.
+        if ($this->isImage($mimeType) && $mimeType !== 'image/svg+xml') {
+            \App\Jobs\GenerateImageVariants::dispatch($media->id);
+        }
+
         return $media;
     }
 

@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             SettingsPermissionsSeeder::class,
             ActivityPermissionsSeeder::class,
             MenuItemSeeder::class,
+            EmailTemplateSeeder::class,
         ]);
 
         // Create admin user

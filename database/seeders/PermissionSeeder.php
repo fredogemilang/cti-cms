@@ -41,6 +41,34 @@ class PermissionSeeder extends Seeder
             ['name' => 'plugins.activate', 'module' => 'plugins', 'action' => 'activate', 'description' => 'Activate plugin', 'source' => 'core', 'icon' => 'extension', 'sort_order' => 40],
             ['name' => 'plugins.deactivate', 'module' => 'plugins', 'action' => 'deactivate', 'description' => 'Deactivate plugin', 'source' => 'core', 'icon' => 'extension', 'sort_order' => 40],
             ['name' => 'plugins.delete', 'module' => 'plugins', 'action' => 'delete', 'description' => 'Delete plugin', 'source' => 'core', 'icon' => 'extension', 'sort_order' => 40],
+
+            // Trash
+            ['name' => 'content.trash.view',   'module' => 'trash', 'action' => 'view',   'description' => 'View trashed content',        'source' => 'core', 'icon' => 'delete', 'sort_order' => 55],
+            ['name' => 'content.trash.manage', 'module' => 'trash', 'action' => 'manage', 'description' => 'Restore / permanently delete', 'source' => 'core', 'icon' => 'delete', 'sort_order' => 55],
+
+            // Webhooks
+            ['name' => 'webhooks.view',   'module' => 'webhooks', 'action' => 'view',   'description' => 'View webhooks',  'source' => 'core', 'icon' => 'sync', 'sort_order' => 85],
+            ['name' => 'webhooks.create', 'module' => 'webhooks', 'action' => 'create', 'description' => 'Create webhook', 'source' => 'core', 'icon' => 'sync', 'sort_order' => 85],
+            ['name' => 'webhooks.edit',   'module' => 'webhooks', 'action' => 'edit',   'description' => 'Edit webhook',   'source' => 'core', 'icon' => 'sync', 'sort_order' => 85],
+            ['name' => 'webhooks.delete', 'module' => 'webhooks', 'action' => 'delete', 'description' => 'Delete webhook', 'source' => 'core', 'icon' => 'sync', 'sort_order' => 85],
+
+            // API Tokens
+            ['name' => 'api-tokens.view',   'module' => 'api-tokens', 'action' => 'view',   'description' => 'View API tokens',  'source' => 'core', 'icon' => 'key', 'sort_order' => 90],
+            ['name' => 'api-tokens.create', 'module' => 'api-tokens', 'action' => 'create', 'description' => 'Create API token', 'source' => 'core', 'icon' => 'key', 'sort_order' => 90],
+            ['name' => 'api-tokens.revoke', 'module' => 'api-tokens', 'action' => 'revoke', 'description' => 'Revoke API token', 'source' => 'core', 'icon' => 'key', 'sort_order' => 90],
+
+            // Email Templates
+            ['name' => 'email-templates.view', 'module' => 'email-templates', 'action' => 'view', 'description' => 'View email templates', 'source' => 'core', 'icon' => 'mail', 'sort_order' => 95],
+            ['name' => 'email-templates.edit', 'module' => 'email-templates', 'action' => 'edit', 'description' => 'Edit email templates', 'source' => 'core', 'icon' => 'mail', 'sort_order' => 95],
+            ['name' => 'email-templates.test', 'module' => 'email-templates', 'action' => 'test', 'description' => 'Test send email',      'source' => 'core', 'icon' => 'mail', 'sort_order' => 95],
+
+            // Queue
+            ['name' => 'queue.view',  'module' => 'queue', 'action' => 'view',  'description' => 'View job queue',   'source' => 'core', 'icon' => 'queue', 'sort_order' => 96],
+            ['name' => 'queue.retry', 'module' => 'queue', 'action' => 'retry', 'description' => 'Retry failed jobs', 'source' => 'core', 'icon' => 'queue', 'sort_order' => 96],
+
+            // SEO
+            ['name' => 'seo.view', 'module' => 'seo', 'action' => 'view', 'description' => 'View SEO data', 'source' => 'core', 'icon' => 'travel_explore', 'sort_order' => 97],
+            ['name' => 'seo.edit', 'module' => 'seo', 'action' => 'edit', 'description' => 'Edit SEO data', 'source' => 'core', 'icon' => 'travel_explore', 'sort_order' => 97],
         ];
 
         foreach ($permissions as $permission) {

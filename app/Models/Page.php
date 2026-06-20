@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,7 +13,7 @@ use Illuminate\Support\Str;
 
 class Page extends Model
 {
-    use SoftDeletes, HasTranslations;
+    use SoftDeletes, HasTranslations, HasSeoMeta;
 
     protected $fillable = [
         'title',

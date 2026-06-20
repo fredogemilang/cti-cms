@@ -28,6 +28,11 @@ class User extends Authenticatable
         'is_active',
         'last_login_at',
         'password_changed_at',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'two_factor_confirmed_at',
+        'failed_login_attempts',
+        'locked_until',
     ];
 
     /**
@@ -38,6 +43,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     /**
@@ -53,6 +60,9 @@ class User extends Authenticatable
             'is_active' => 'boolean',
             'last_login_at' => 'datetime',
             'password_changed_at' => 'datetime',
+            'two_factor_confirmed_at' => 'datetime',
+            'locked_until' => 'datetime',
+            'failed_login_attempts' => 'integer',
         ];
     }
 }

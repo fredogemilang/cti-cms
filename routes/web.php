@@ -30,13 +30,27 @@ Route::prefix($adminPath)->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
         Route::post('/login', [AuthController::class, 'login']);
+
+        Route::get('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showForm'])
+            ->name('password.request');
+        Route::post('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'send'])
+            ->name('password.email');
+        Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'showForm'])
+            ->name('password.reset');
+        Route::post('/reset-password', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'reset'])
+            ->name('password.update');
+
+        Route::get('/two-factor', [\App\Http\Controllers\Auth\TwoFactorController::class, 'showChallenge'])
+            ->name('two-factor.challenge');
+        Route::post('/two-factor', [\App\Http\Controllers\Auth\TwoFactorController::class, 'verify'])
+            ->name('two-factor.verify');
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 });
 
 // Admin Routes
-Route::prefix($adminPath)->name('admin.')->middleware(['auth'])->group(function () {
+Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard')
@@ -218,6 +232,44 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth'])->group(function 
         Route::get('/activity', function () {
             return view('admin.activity.index');
         })->name('activity.index');
+    });
+
+    // Trash
+    Route::middleware('permission:content.trash.view')->group(function () {
+        Route::get('/trash', function () {
+            return view('admin.trash.index');
+        })->name('trash.index');
+    });
+
+    // Email Templates
+    Route::middleware('permission:email-templates.view')->group(function () {
+        Route::get('/email-templates', function () {
+            return view('admin.email-templates.index');
+        })->name('email-templates.index');
+        Route::get('/email-templates/{id}/edit', function ($id) {
+            return view('admin.email-templates.edit', ['id' => (int) $id]);
+        })->name('email-templates.edit')->middleware('permission:email-templates.edit');
+    });
+
+    // Queue Dashboard
+    Route::middleware('permission:queue.view')->group(function () {
+        Route::get('/queue', function () {
+            return view('admin.queue.index');
+        })->name('queue.index');
+    });
+
+    // API Tokens
+    Route::middleware('permission:api-tokens.view')->group(function () {
+        Route::get('/api-tokens', function () {
+            return view('admin.api-tokens.index');
+        })->name('api-tokens.index');
+    });
+
+    // Webhooks
+    Route::middleware('permission:webhooks.view')->group(function () {
+        Route::get('/webhooks', function () {
+            return view('admin.webhooks.index');
+        })->name('webhooks.index');
     });
 
     // Settings (generic, group-based)

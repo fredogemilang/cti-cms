@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 class Media extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'media';
 
@@ -27,12 +28,19 @@ class Media extends Model
         'title',
         'description',
         'uploaded_by',
+        'variants',
+        'focal_x',
+        'focal_y',
+        'placeholder_data_uri',
     ];
 
     protected $casts = [
         'size' => 'integer',
         'width' => 'integer',
         'height' => 'integer',
+        'variants' => 'array',
+        'focal_x' => 'float',
+        'focal_y' => 'float',
     ];
 
     /**

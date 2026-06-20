@@ -41,10 +41,53 @@ class AppServiceProvider extends ServiceProvider
             $contentModel::deleted(fn () => \App\Http\Middleware\PageCache::purgeAll());
         }
 
+        // Sitemap: flush cache + ping search engines when published content changes.
+        $invalidateSitemap = function ($model) {
+            \Illuminate\Support\Facades\Cache::forget('sitemap.xml');
+            if (($model->status ?? null) === 'published') {
+                \App\Jobs\PingSitemap::dispatch(method_exists($model, 'getUrl') ? $model->getUrl() : null);
+            }
+        };
+        \App\Models\Page::saved($invalidateSitemap);
+        \App\Models\Page::deleted($invalidateSitemap);
+        \App\Models\CptEntry::saved($invalidateSitemap);
+        \App\Models\CptEntry::deleted($invalidateSitemap);
+
         // Audit log: track CRUD on core models
         \App\Models\Page::observe(\App\Observers\PageObserver::class);
         \App\Models\CptEntry::observe(\App\Observers\CptEntryObserver::class);
         \App\Models\User::observe(\App\Observers\UserObserver::class);
+
+        // Webhook event dispatch — only fires for active webhooks subscribing to the event.
+        $dispatcher = fn () => app(\App\Services\WebhookDispatcher::class);
+
+        \App\Models\Page::saved(function (\App\Models\Page $page) use ($dispatcher) {
+            if ($page->status === 'published' && ($page->wasRecentlyCreated || $page->wasChanged('status'))) {
+                $dispatcher()->dispatch('page.published', ['id' => $page->id, 'slug' => $page->slug, 'title' => $page->title]);
+            } elseif ($page->wasChanged() && ! $page->wasRecentlyCreated) {
+                $dispatcher()->dispatch('page.updated', ['id' => $page->id, 'slug' => $page->slug, 'title' => $page->title]);
+            }
+        });
+
+        \App\Models\FormEntry::created(function (\App\Models\FormEntry $entry) use ($dispatcher) {
+            $dispatcher()->dispatch('form.submitted', [
+                'form_id' => $entry->form_id,
+                'entry_id' => $entry->id,
+                'data' => $entry->data,
+            ]);
+        });
+
+        \App\Models\User::created(function (\App\Models\User $user) use ($dispatcher) {
+            $dispatcher()->dispatch('user.registered', [
+                'id' => $user->id, 'name' => $user->name, 'email' => $user->email,
+            ]);
+        });
+
+        \App\Models\Media::created(function (\App\Models\Media $media) use ($dispatcher) {
+            $dispatcher()->dispatch('media.uploaded', [
+                'id' => $media->id, 'mime' => $media->mime_type, 'size' => $media->size,
+            ]);
+        });
     }
 
     protected function registerSettingsGroups(): void
@@ -289,6 +332,12 @@ class AppServiceProvider extends ServiceProvider
                  ],
                  'rules' => ['required', 'string']],
 
+                // IndexNow
+                ['key' => 'seo_indexnow_key', 'label' => 'IndexNow Key', 'type' => 'text', 'section' => 'Indexing', 'order' => 65,
+                 'default' => '',
+                 'rules' => ['nullable', 'string', 'max:128', 'regex:/^[A-Za-z0-9_-]*$/'],
+                 'help'  => 'Optional. When set, the CMS pings Bing/Yandex/Seznam via IndexNow on publish. Generate at https://www.indexnow.org/.'],
+
                 // Verification
                 ['key' => 'seo_google_verification', 'label' => 'Google Site Verification', 'type' => 'text', 'section' => 'Verification', 'order' => 100,
                  'default' => '',
@@ -308,6 +357,74 @@ class AppServiceProvider extends ServiceProvider
                 ['key' => 'seo_org_logo', 'label' => 'Organization Logo URL', 'type' => 'text', 'section' => 'Schema.org', 'order' => 130,
                  'default' => '',
                  'rules' => ['nullable', 'string', 'max:500']],
+            ],
+        ]);
+
+        $registry->registerGroup('api', [
+            'label'       => 'API',
+            'icon'        => 'api',
+            'order'       => 80,
+            'description' => 'CORS, default rate limit, and headless content surface.',
+            'fields' => [
+                ['key' => 'api_cors_origins', 'label' => 'CORS Allowed Origins', 'type' => 'text', 'section' => 'CORS', 'order' => 10,
+                 'default' => '*',
+                 'rules' => ['nullable', 'string', 'max:1000'],
+                 'help'  => '`*` to allow all, or comma-separated list of full origins (e.g. `https://app.example.com,https://www.example.com`).'],
+
+                ['key' => 'api_default_rate_limit', 'label' => 'Default Rate Limit (req/min/token)', 'type' => 'number', 'section' => 'Rate Limit', 'order' => 20,
+                 'default' => 60,
+                 'rules' => ['required', 'integer', 'min:1', 'max:6000']],
+            ],
+        ]);
+
+        $registry->registerGroup('content', [
+            'label'       => 'Content',
+            'icon'        => 'article',
+            'order'       => 12,
+            'description' => 'Trash retention and scheduled publishing.',
+            'fields' => [
+                ['key' => 'content_trash_retention_days', 'label' => 'Trash Retention (days)', 'type' => 'number', 'section' => 'Trash', 'order' => 10,
+                 'default' => 30,
+                 'rules' => ['required', 'integer', 'min:1', 'max:3650'],
+                 'help'  => 'How long trashed content is kept before auto-purge. Runs daily at 02:30.'],
+            ],
+        ]);
+
+        $registry->registerGroup('auth', [
+            'label'       => 'Authentication',
+            'icon'        => 'lock',
+            'order'       => 15,
+            'description' => 'Login throttling, password reset, and optional 2FA enforcement.',
+            'fields' => [
+                ['key' => 'auth_login_max_attempts', 'label' => 'Max Failed Attempts (per IP+email window)', 'type' => 'number', 'section' => 'Rate Limit', 'order' => 10,
+                 'default' => 5,
+                 'rules' => ['required', 'integer', 'min:3', 'max:50']],
+
+                ['key' => 'auth_login_decay_minutes', 'label' => 'Throttle Window (minutes)', 'type' => 'number', 'section' => 'Rate Limit', 'order' => 20,
+                 'default' => 15,
+                 'rules' => ['required', 'integer', 'min:1', 'max:1440']],
+
+                ['key' => 'auth_login_lockout_after', 'label' => 'Hard Lockout After (failed attempts)', 'type' => 'number', 'section' => 'Lockout', 'order' => 30,
+                 'default' => 10,
+                 'rules' => ['required', 'integer', 'min:5', 'max:100']],
+
+                ['key' => 'auth_login_lockout_minutes', 'label' => 'Lockout Duration (minutes)', 'type' => 'number', 'section' => 'Lockout', 'order' => 40,
+                 'default' => 30,
+                 'rules' => ['required', 'integer', 'min:1', 'max:1440']],
+
+                ['key' => 'auth_password_reset_enabled', 'label' => 'Enable Password Reset', 'type' => 'boolean', 'section' => 'Password Reset', 'order' => 50,
+                 'default' => true,
+                 'rules' => ['boolean'],
+                 'help'  => 'Allow users to reset password via email link.'],
+
+                ['key' => 'auth_password_reset_expire_minutes', 'label' => 'Reset Link Expiry (minutes)', 'type' => 'number', 'section' => 'Password Reset', 'order' => 60,
+                 'default' => 60,
+                 'rules' => ['required', 'integer', 'min:5', 'max:1440']],
+
+                ['key' => 'auth_force_2fa_roles', 'label' => 'Enforce 2FA for Roles', 'type' => 'text', 'section' => 'Two-Factor', 'order' => 70,
+                 'default' => '',
+                 'rules' => ['nullable', 'string', 'max:300'],
+                 'help'  => 'Comma-separated role names. Users in these roles MUST enable 2FA. Leave blank to keep 2FA fully optional.'],
             ],
         ]);
 
