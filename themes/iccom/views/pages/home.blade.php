@@ -279,6 +279,48 @@
                                 this.errors.email = 'Please enter a valid e-mail address.';
                                 isValid = false;
                             }
+
+                            // Phone validation
+                            let phoneVal = this.$el.querySelector('[name=phone]')?.value || '';
+                            if (!phoneVal.trim()) {
+                                this.errors.phone = 'Phone Number is required.';
+                                isValid = false;
+                            }
+
+                            // Job Level validation
+                            let jobLevelVal = this.$el.querySelector('[name=job_level]')?.value || '';
+                            if (!jobLevelVal) {
+                                this.errors.job_level = 'Job Level is required.';
+                                isValid = false;
+                            }
+
+                            // Job Title validation
+                            let jobTitleVal = this.$el.querySelector('[name=job_title]')?.value || '';
+                            if (!jobTitleVal.trim()) {
+                                this.errors.job_title = 'Job Title is required.';
+                                isValid = false;
+                            }
+
+                            // Domicile validation
+                            let domicileVal = this.$el.querySelector('[name=domicile]')?.value || '';
+                            if (!domicileVal) {
+                                this.errors.domicile = 'Domicile is required.';
+                                isValid = false;
+                            }
+
+                            // Institution validation
+                            let institutionVal = this.$el.querySelector('[name=institution]')?.value || '';
+                            if (!institutionVal.trim()) {
+                                this.errors.institution = 'Institution/Company is required.';
+                                isValid = false;
+                            }
+
+                            // Industry validation
+                            let industryVal = this.$el.querySelector('[name=industry]')?.value || '';
+                            if (!industryVal) {
+                                this.errors.industry = 'Industry is required.';
+                                isValid = false;
+                            }
                             
                             return isValid;
                         },
@@ -308,8 +350,9 @@
                             </template>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Job Level:</label>
-                            <select name="job_level" class="form-select form-control-flushed">
+                            <label class="form-label fw-bold small">Job Level: <span class="text-danger">*</span></label>
+                            <select name="job_level" class="form-select form-control-flushed @error('job_level') is-invalid @enderror"
+                                :class="errors.job_level ? 'is-invalid' : ''" required>
                                 <option value="">Select Job Level</option>
                                 <option value="Entry Level" {{ old('job_level') == 'Entry Level' ? 'selected' : '' }}>Entry Level</option>
                                 <option value="Mid Level" {{ old('job_level') == 'Mid Level' ? 'selected' : '' }}>Mid Level</option>
@@ -318,10 +361,14 @@
                                 <option value="Director" {{ old('job_level') == 'Director' ? 'selected' : '' }}>Director</option>
                                 <option value="C-Level" {{ old('job_level') == 'C-Level' ? 'selected' : '' }}>C-Level</option>
                             </select>
+                            <template x-if="errors.job_level">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.job_level"></div>
+                            </template>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Domicile:</label>
-                            <select name="domicile" class="form-select form-control-flushed">
+                            <label class="form-label fw-bold small">Domicile: <span class="text-danger">*</span></label>
+                            <select name="domicile" class="form-select form-control-flushed @error('domicile') is-invalid @enderror"
+                                :class="errors.domicile ? 'is-invalid' : ''" required>
                                 <option value="">Select Domicile</option>
                                 <option value="Jakarta" {{ old('domicile') == 'Jakarta' ? 'selected' : '' }}>Jakarta</option>
                                 <option value="Bogor" {{ old('domicile') == 'Bogor' ? 'selected' : '' }}>Bogor</option>
@@ -332,6 +379,9 @@
                                 <option value="Surabaya" {{ old('domicile') == 'Surabaya' ? 'selected' : '' }}>Surabaya</option>
                                 <option value="Other" {{ old('domicile') == 'Other' ? 'selected' : '' }}>Other</option>
                             </select>
+                            <template x-if="errors.domicile">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.domicile"></div>
+                            </template>
                         </div>
 
                         <!-- Row 2 -->
@@ -346,8 +396,12 @@
                             </template>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Job Title:</label>
-                            <input type="text" name="job_title" class="form-control form-control-flushed" placeholder="e.g. Software Engineer" value="{{ old('job_title') }}">
+                            <label class="form-label fw-bold small">Job Title: <span class="text-danger">*</span></label>
+                            <input type="text" name="job_title" class="form-control form-control-flushed @error('job_title') is-invalid @enderror"
+                                :class="errors.job_title ? 'is-invalid' : ''" placeholder="e.g. Software Engineer" value="{{ old('job_title') }}" required>
+                            <template x-if="errors.job_title">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.job_title"></div>
+                            </template>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Linkedin Account:</label>
@@ -356,12 +410,20 @@
 
                         <!-- Row 3 -->
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Phone Number:</label>
-                            <input type="text" name="phone" class="form-control form-control-flushed" placeholder="08xxxxxxxxxx" value="{{ old('phone') }}">
+                            <label class="form-label fw-bold small">Phone Number: <span class="text-danger">*</span></label>
+                            <input type="text" name="phone" class="form-control form-control-flushed @error('phone') is-invalid @enderror"
+                                :class="errors.phone ? 'is-invalid' : ''" placeholder="08xxxxxxxxxx" value="{{ old('phone') }}" required>
+                            <template x-if="errors.phone">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.phone"></div>
+                            </template>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Institution/Company:</label>
-                            <input type="text" name="institution" class="form-control form-control-flushed" placeholder="Institution/Company" value="{{ old('institution') }}">
+                            <label class="form-label fw-bold small">Institution/Company: <span class="text-danger">*</span></label>
+                            <input type="text" name="institution" class="form-control form-control-flushed @error('institution') is-invalid @enderror"
+                                :class="errors.institution ? 'is-invalid' : ''" placeholder="Institution/Company" value="{{ old('institution') }}" required>
+                            <template x-if="errors.institution">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.institution"></div>
+                            </template>
                         </div>
                         <div class="col-md-4">
                             <!-- Empty Column -->
@@ -380,8 +442,9 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Industry:</label>
-                            <select name="industry" class="form-select form-control-flushed">
+                            <label class="form-label fw-bold small">Industry: <span class="text-danger">*</span></label>
+                            <select name="industry" class="form-select form-control-flushed @error('industry') is-invalid @enderror"
+                                :class="errors.industry ? 'is-invalid' : ''" required>
                                 <option value="">Select Industry</option>
                                 <option value="Technology" {{ old('industry') == 'Technology' ? 'selected' : '' }}>Technology</option>
                                 <option value="Finance" {{ old('industry') == 'Finance' ? 'selected' : '' }}>Finance</option>
@@ -393,6 +456,9 @@
                                 <option value="Consulting" {{ old('industry') == 'Consulting' ? 'selected' : '' }}>Consulting</option>
                                 <option value="Other" {{ old('industry') == 'Other' ? 'selected' : '' }}>Other</option>
                             </select>
+                            <template x-if="errors.industry">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.industry"></div>
+                            </template>
                         </div>
                         <div class="col-md-4">
                             <!-- Empty Column -->

@@ -17,12 +17,12 @@ class MembershipRegistrationController
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'job_level' => 'nullable|string|max:100',
-            'job_title' => 'nullable|string|max:100',
-            'domicile' => 'nullable|string|max:100',
-            'institution' => 'nullable|string|max:255',
-            'industry' => 'nullable|string|max:100',
+            'phone' => 'required|string|max:20',
+            'job_level' => 'required|string|max:100',
+            'job_title' => 'required|string|max:100',
+            'domicile' => 'required|string|max:100',
+            'institution' => 'required|string|max:255',
+            'industry' => 'required|string|max:100',
             'education_level' => 'nullable|string|max:100',
             'linkedin' => 'nullable|string|max:255',
         ]);
