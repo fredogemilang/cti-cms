@@ -1,4 +1,4 @@
-<ul class="space-y-1">
+<ul class="space-y-1 pb-12">
     <!-- Main Section -->
     <li class="px-4 pt-4 pb-2">
         <span class="text-[10px] font-bold text-[#6F767E] uppercase tracking-widest sidebar-text">Main</span>
@@ -366,7 +366,7 @@
             </div>
             <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
         </button>
-        <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 400px; opacity: 1' : 'max-height: 0; opacity: 0'">
+        <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 3000px; opacity: 1' : 'max-height: 0; opacity: 0'">
             <ul class="submenu-list mt-1 space-y-1">
                 @foreach($settingsGroups as $sg)
                     @can($sg['permission'] ?? 'settings.view')
@@ -389,44 +389,5 @@
     @endif
     @endcan
     
-    <!-- Litespeed Cache Menu -->
-    <li x-data="{ open: false }">
-        <button
-            @click="open = !open"
-            class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden">
-            <div class="flex items-center gap-3">
-                <span class="material-symbols-outlined shrink-0">bolt</span>
-                <span class="font-semibold text-[15px] sidebar-text">Litespeed Cache</span>
-            </div>
-            <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
-        </button>
-        <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 300px; opacity: 1' : 'max-height: 0; opacity: 0'">
-            <ul class="submenu-list mt-1 space-y-1">
-                <li class="relative pl-6 py-1">
-                    <div class="submenu-item-connector"></div>
-                    <a class="flex items-center rounded-xl px-4 py-2.5 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 relative z-10" href="#">
-                        <span class="text-[14px] font-medium">Cache</span>
-                    </a>
-                </li>
-                <li class="relative pl-6 py-1">
-                    <div class="submenu-item-connector"></div>
-                    <a class="flex items-center rounded-xl px-4 py-2.5 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 relative z-10" href="#">
-                        <span class="text-[14px] font-medium">CDN</span>
-                    </a>
-                </li>
-                <li class="relative pl-6 py-1">
-                    <div class="submenu-item-connector"></div>
-                    <a class="flex items-center rounded-xl px-4 py-2.5 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 relative z-10" href="#">
-                        <span class="text-[14px] font-medium">Image Optimization</span>
-                    </a>
-                </li>
-                <li class="relative pl-6 py-1">
-                    <div class="submenu-item-connector"></div>
-                    <a class="flex items-center rounded-xl px-4 py-2.5 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 relative z-10" href="#">
-                        <span class="text-[14px] font-medium">Page Optimization</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </li>
+<!-- Litespeed Cache menu removed — now under Settings > Cache -->
 </ul>
