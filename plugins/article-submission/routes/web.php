@@ -28,39 +28,42 @@ Route::prefix($adminPath . '/article-submissions')
             return back()->with('error', 'File not found.');
         })->name('download')->middleware('permission:submissions.view');
         
-        Route::get('/export/csv', function () {
+        Route::get('/export/excel', function () {
             $submissions = \Plugins\ArticleSubmission\Models\ArticleSubmission::all();
             
-            $headers = [
-                'Content-Type' => 'text/csv',
-                'Content-Disposition' => 'attachment; filename="article-submissions-' . date('Y-m-d') . '.csv"',
-            ];
+            $filename = 'article-submissions-' . date('Y-m-d') . '.xlsx';
             
-            $callback = function() use ($submissions) {
-                $file = fopen('php://output', 'w');
-                fputcsv($file, ['Name', 'Email', 'Phone', 'Job Level', 'Job Title', 'Domicile', 'LinkedIn', 'Institution', 'Education', 'Industry', 'Status', 'Submitted At']);
-                
-                foreach ($submissions as $submission) {
-                    fputcsv($file, [
-                        $submission->name,
-                        $submission->email,
-                        $submission->phone,
-                        $submission->job_level,
-                        $submission->job_title,
-                        $submission->domicile,
-                        $submission->linkedin,
-                        $submission->institution,
-                        $submission->education_level,
-                        $submission->industry,
-                        $submission->status,
-                        $submission->created_at->format('Y-m-d H:i:s'),
-                    ]);
-                }
-                
-                fclose($file);
-            };
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
             
-            return response()->stream($callback, 200, $headers);
+            $sheet->fromArray(['Name', 'Email', 'Phone', 'Job Level', 'Job Title', 'Domicile', 'LinkedIn', 'Institution', 'Education', 'Industry', 'Status', 'Submitted At'], null, 'A1');
+            
+            $rowNumber = 2;
+            foreach ($submissions as $submission) {
+                $sheet->fromArray([
+                    $submission->name,
+                    $submission->email,
+                    $submission->phone,
+                    $submission->job_level,
+                    $submission->job_title,
+                    $submission->domicile,
+                    $submission->linkedin,
+                    $submission->institution,
+                    $submission->education_level,
+                    $submission->industry,
+                    $submission->status,
+                    $submission->created_at->format('Y-m-d H:i:s'),
+                ], null, 'A' . $rowNumber);
+                $rowNumber++;
+            }
+            
+            return response()->streamDownload(function() use ($spreadsheet) {
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+                $writer->save('php://output');
+            }, $filename, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            ]);
         })->name('export')->middleware('permission:submissions.export');
     });
 

@@ -30,7 +30,6 @@
                     
                     <div x-show="open" x-transition.origin.top.right
                         class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#1A1A1A] rounded-xl shadow-lg border border-gray-200 dark:border-[#272B30] overflow-hidden z-50">
-                        <a href="{{ route('admin.forms.export', $form) }}?format=csv" class="block px-4 py-2.5 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] hover:bg-gray-50 dark:hover:bg-[#272B30]">Export CSV</a>
                         <a href="{{ route('admin.forms.export', $form) }}?format=xlsx" class="block px-4 py-2.5 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] hover:bg-gray-50 dark:hover:bg-[#272B30]">Export Excel</a>
                         <a href="{{ route('admin.forms.export', $form) }}?format=pdf" class="block px-4 py-2.5 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] hover:bg-gray-50 dark:hover:bg-[#272B30]">Export PDF</a>
                     </div>

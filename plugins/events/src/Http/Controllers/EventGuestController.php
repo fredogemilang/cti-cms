@@ -221,7 +221,7 @@ class EventGuestController extends Controller
     }
 
     /**
-     * Export guest list as CSV.
+     * Export guest list as Excel.
      */
     public function export(Event $event): StreamedResponse
     {
@@ -237,43 +237,43 @@ class EventGuestController extends Controller
             'Verified Type', 'Verified Note', 'Referral Source',
         ];
 
-        $callback = function () use ($registrations, $headers) {
-            $handle = fopen('php://output', 'w');
-            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF)); // BOM for UTF-8
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray($headers, null, 'A1');
 
-            fputcsv($handle, $headers);
+        $rowNumber = 2;
+        foreach ($registrations as $reg) {
+            $sheet->fromArray([
+                $reg->id,
+                $reg->uuid,
+                $reg->salutation ?? '',
+                $reg->full_name ?? $reg->name,
+                $reg->email,
+                $reg->mobile_phone ?? $reg->phone ?? '',
+                $reg->company_name ?? $reg->organization ?? '',
+                $reg->company_type ?? '',
+                $reg->job_title ?? '',
+                ucfirst($reg->status),
+                $reg->walk_in ? 'Yes' : 'No',
+                $reg->check_in ? 'Yes' : 'No',
+                $reg->created_at->format('Y-m-d H:i:s'),
+                $reg->confirmed_at?->format('Y-m-d H:i:s') ?? '',
+                $reg->verifiedBy?->name ?? '',
+                $reg->verified_at?->format('Y-m-d H:i:s') ?? '',
+                $reg->verified_type ?? '',
+                $reg->verified_note ?? '',
+                $reg->referral_source ?? '',
+            ], null, 'A' . $rowNumber);
+            $rowNumber++;
+        }
 
-            foreach ($registrations as $reg) {
-                fputcsv($handle, [
-                    $reg->id,
-                    $reg->uuid,
-                    $reg->salutation ?? '',
-                    $reg->full_name ?? $reg->name,
-                    $reg->email,
-                    $reg->mobile_phone ?? $reg->phone ?? '',
-                    $reg->company_name ?? $reg->organization ?? '',
-                    $reg->company_type ?? '',
-                    $reg->job_title ?? '',
-                    ucfirst($reg->status),
-                    $reg->walk_in ? 'Yes' : 'No',
-                    $reg->check_in ? 'Yes' : 'No',
-                    $reg->created_at->format('Y-m-d H:i:s'),
-                    $reg->confirmed_at?->format('Y-m-d H:i:s') ?? '',
-                    $reg->verifiedBy?->name ?? '',
-                    $reg->verified_at?->format('Y-m-d H:i:s') ?? '',
-                    $reg->verified_type ?? '',
-                    $reg->verified_note ?? '',
-                    $reg->referral_source ?? '',
-                ]);
-            }
+        $filename = Str::slug($event->title) . '-guests-' . date('Ymd') . '.xlsx';
 
-            fclose($handle);
-        };
-
-        $filename = Str::slug($event->title) . '-guests-' . date('Ymd') . '.csv';
-
-        return response()->streamDownload($callback, $filename, [
-            'Content-Type' => 'text/csv',
+        return response()->streamDownload(function() use ($spreadsheet) {
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ]);
     }

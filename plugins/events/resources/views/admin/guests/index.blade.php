@@ -20,7 +20,7 @@
                 <a href="{{ route('admin.events.admin.guests.export', $event->id) }}"
                    class="h-12 px-5 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] font-bold text-sm hover:border-[#2563EB] hover:text-[#2563EB] transition-all flex items-center gap-2">
                     <span class="material-symbols-outlined text-lg">download</span>
-                    Export CSV
+                    Export Excel
                 </a>
             </div>
         </div>

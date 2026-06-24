@@ -98,8 +98,8 @@
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-base font-bold text-text-primary">{{ $rd['total'] }} Response(s)</h3>
                 @if($rd['total'] > 0)
-                    <button wire:click="exportCsv" class="px-4 py-2 rounded-xl text-sm font-semibold text-text-secondary hover:text-text-primary bg-dark-surface border border-dark-border transition-all flex items-center gap-2">
-                        <span class="material-symbols-outlined text-sm">download</span> Export CSV
+                    <button wire:click="exportExcel" class="px-4 py-2 rounded-xl text-sm font-semibold text-text-secondary hover:text-text-primary bg-dark-surface border border-dark-border transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">download</span> Export Excel
                     </button>
                 @endif
             </div>

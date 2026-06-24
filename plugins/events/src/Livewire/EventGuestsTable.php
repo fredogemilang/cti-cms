@@ -7,6 +7,8 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Plugins\Events\Models\Event;
 use Plugins\Events\Models\EventRegistration;
+use Plugins\Events\Models\EventCustomAnswer;
+use Plugins\Events\Models\ContactLevel;
 
 class EventGuestsTable extends Component
 {
@@ -48,6 +50,22 @@ class EventGuestsTable extends Component
     public string $editCompany = '';
     public string $editJobTitle = '';
     public string $editNotes = '';
+    
+    // Check-in confirmation modal state
+    public bool $showCheckinConfirmModal = false;
+    public ?int $checkinRegistrationId = null;
+    public string $checkinRegistrationName = '';
+    public bool $showBulkCheckinConfirmModal = false;
+    
+    // New frontend-matching fields
+    public int $editContactLevelId = 0;
+    public string $editHighestEducationLevel = '';
+    public string $editIndustry = '';
+    public string $editDomicile = '';
+    public string $editLinkedin = '';
+
+    // Custom questions answers
+    public array $editCustomQuestions = [];
 
     protected $queryString = [
         'activeTab' => ['except' => 'all'],
@@ -118,9 +136,6 @@ class EventGuestsTable extends Component
         }
     }
 
-    /**
-     * Count badges per tab.
-     */
     public function getGuestCountsProperty(): array
     {
         $base = EventRegistration::query()->where('event_id', $this->event->id);
@@ -129,6 +144,7 @@ class EventGuestsTable extends Component
             'all'      => (clone $base)->count(),
             'pending'  => (clone $base)->where('status', 'pending')->count(),
             'approved' => (clone $base)->where('status', 'confirmed')->count(),
+            'checkin'  => (clone $base)->where('check_in', true)->count(),
             'rejected' => (clone $base)->where('status', 'cancelled')->count(),
         ];
     }
@@ -142,8 +158,14 @@ class EventGuestsTable extends Component
             ->with(['event', 'user', 'verifiedBy'])
             ->where('event_id', $this->event->id)
             ->when($this->activeTab !== 'all', function ($query) {
-                $map = ['pending' => 'pending', 'approved' => 'confirmed', 'rejected' => 'cancelled'];
-                $query->where('status', $map[$this->activeTab]);
+                if ($this->activeTab === 'checkin') {
+                    $query->where('check_in', true);
+                } else {
+                    $map = ['pending' => 'pending', 'approved' => 'confirmed', 'rejected' => 'cancelled'];
+                    if (isset($map[$this->activeTab])) {
+                        $query->where('status', $map[$this->activeTab]);
+                    }
+                }
             })
             ->when($this->search, function ($query) {
                 $term = '%' . $this->search . '%';
@@ -217,6 +239,72 @@ class EventGuestsTable extends Component
     }
 
     /**
+     * Start confirmation for checking in a guest.
+     */
+    public function confirmCheckin(int $id): void
+    {
+        $reg = EventRegistration::where('id', $id)
+            ->where('event_id', $this->event->id)
+            ->first();
+
+        if ($reg) {
+            $this->checkinRegistrationId = $id;
+            $this->checkinRegistrationName = $reg->full_name ?? $reg->name;
+            $this->showCheckinConfirmModal = true;
+        }
+    }
+
+    /**
+     * Cancel/close single check-in confirmation.
+     */
+    public function cancelCheckin(): void
+    {
+        $this->showCheckinConfirmModal = false;
+        $this->checkinRegistrationId = null;
+        $this->checkinRegistrationName = '';
+    }
+
+    /**
+     * Execute single check-in after confirmation.
+     */
+    public function executeCheckin(): void
+    {
+        if ($this->checkinRegistrationId) {
+            $this->checkin($this->checkinRegistrationId);
+            $this->cancelCheckin();
+        }
+    }
+
+    /**
+     * Start confirmation for bulk check-in.
+     */
+    public function confirmBulkCheckin(): void
+    {
+        if (empty($this->selectedItems)) {
+            $this->dispatch('show-toast', ['type' => 'error', 'message' => 'No attendees selected.']);
+            return;
+        }
+        $this->showBulkCheckinConfirmModal = true;
+    }
+
+    /**
+     * Cancel bulk check-in.
+     */
+    public function cancelBulkCheckin(): void
+    {
+        $this->showBulkCheckinConfirmModal = false;
+    }
+
+    /**
+     * Execute bulk check-in after confirmation.
+     */
+    public function executeBulkCheckin(): void
+    {
+        $this->bulkCheckin();
+        $this->cancelBulkCheckin();
+    }
+
+    /**
      * Check-in a guest.
      */
     public function checkin(int $id): void
@@ -237,6 +325,37 @@ class EventGuestsTable extends Component
         $this->dispatch('show-toast', ['type' => 'success', 'message' => 'Guest checked in.']);
     }
 
+    /**
+     * Bulk check-in selected guests.
+     */
+    public function bulkCheckin(): void
+    {
+        if (empty($this->selectedItems)) {
+            $this->dispatch('show-toast', ['type' => 'error', 'message' => 'No attendees selected.']);
+            return;
+        }
+
+        $registrations = EventRegistration::whereIn('id', $this->selectedItems)
+            ->where('event_id', $this->event->id)
+            ->get();
+
+        $count = 0;
+        foreach ($registrations as $reg) {
+            if (!$reg->check_in) {
+                $reg->checkIn();
+                if ($reg->status === 'confirmed') {
+                    $reg->update(['status' => 'attended']);
+                }
+                $count++;
+            }
+        }
+
+        $this->selectedItems = [];
+        $this->selectAll = false;
+
+        $this->dispatch('show-toast', ['type' => 'success', 'message' => "Successfully checked in {$count} attendee(s)."]);
+    }
+
     public function editGuest(int $id): void
     {
         $reg = EventRegistration::where('id', $id)
@@ -251,19 +370,80 @@ class EventGuestsTable extends Component
             $this->editCompany = $reg->company_name ?? $reg->organization ?? '';
             $this->editJobTitle = $reg->job_title ?? '';
             $this->editNotes = $reg->notes ?? '';
+            
+            // Load frontend fields
+            $this->editContactLevelId = $reg->contact_level_id ?? 0;
+            $customFields = $reg->custom_fields ?? [];
+            $this->editHighestEducationLevel = $customFields['highest_education_level'] ?? '';
+            $this->editIndustry = $customFields['industry'] ?? '';
+            $this->editDomicile = $customFields['domicile'] ?? '';
+            $this->editLinkedin = $customFields['linkedin'] ?? '';
+
+            // Load custom question answers
+            $this->editCustomQuestions = [];
+            foreach ($this->event->customQuestions as $question) {
+                $answer = $reg->getCustomAnswer($question->short_label);
+                if ($question->type === 'multi_select') {
+                    $this->editCustomQuestions[$question->short_label] = is_array($answer) ? $answer : ($answer ? explode(', ', $answer) : []);
+                } else {
+                    $this->editCustomQuestions[$question->short_label] = $answer ?? '';
+                }
+            }
+
             $this->showEditModal = true;
         }
     }
 
     public function saveGuest(): void
     {
-        $this->validate([
+        $rules = [
             'editFullName' => 'required|string|max:255',
             'editEmail' => 'required|email|max:255',
             'editPhone' => 'nullable|string|max:20',
             'editCompany' => 'nullable|string|max:255',
             'editJobTitle' => 'nullable|string|max:255',
             'editNotes' => 'nullable|string',
+            'editContactLevelId' => 'required|integer|min:1|exists:contact_levels,id',
+            'editHighestEducationLevel' => 'nullable|string',
+            'editIndustry' => 'required|string',
+            'editDomicile' => 'required|string',
+            'editLinkedin' => ['nullable', 'string', 'max:255', 'regex:/^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/i'],
+        ];
+
+        // Validate custom questions
+        foreach ($this->event->customQuestions as $question) {
+            $questionRules = [];
+            if ($question->required) {
+                if ($question->type === 'multi_select') {
+                    $questionRules[] = 'required';
+                    $questionRules[] = 'array';
+                    $questionRules[] = 'min:1';
+                } else {
+                    $questionRules[] = 'required';
+                }
+            } else {
+                $questionRules[] = 'nullable';
+            }
+
+            switch ($question->type) {
+                case 'email':
+                    $questionRules[] = 'email';
+                    break;
+                case 'phone':
+                    $questionRules[] = 'regex:/^[0-9\-\+\(\)\s]{6,20}$/';
+                    break;
+                case 'date':
+                    $questionRules[] = 'date';
+                    break;
+            }
+
+            if (!empty($questionRules)) {
+                $rules['editCustomQuestions.' . $question->short_label] = $questionRules;
+            }
+        }
+
+        $this->validate($rules, [
+            'editLinkedin.regex' => 'LinkedIn account must be a valid LinkedIn URL.',
         ]);
 
         $reg = EventRegistration::where('id', $this->editingGuestId)
@@ -271,17 +451,54 @@ class EventGuestsTable extends Component
             ->first();
 
         if ($reg) {
+            $customFields = [
+                'highest_education_level' => $this->editHighestEducationLevel,
+                'industry'                => $this->editIndustry,
+                'domicile'                => $this->editDomicile,
+                'linkedin'                => $this->editLinkedin,
+            ];
+
             $reg->update([
                 'full_name' => $this->editFullName,
                 'name' => $this->editFullName,
                 'email' => $this->editEmail,
-                'mobile_phone' => $this->editPhone,
+                'mobile_phone' => EventRegistration::formatPhoneNumber($this->editPhone),
                 'phone' => $this->editPhone,
                 'company_name' => $this->editCompany,
                 'organization' => $this->editCompany,
                 'job_title' => $this->editJobTitle,
                 'notes' => $this->editNotes,
+                'contact_level_id' => $this->editContactLevelId,
+                'custom_fields' => $customFields,
             ]);
+
+            // Save custom question answers
+            foreach ($this->editCustomQuestions as $shortLabel => $answer) {
+                $question = $this->event->customQuestions()
+                    ->where('short_label', $shortLabel)
+                    ->first();
+
+                if (!$question) {
+                    continue;
+                }
+
+                $storeValue = is_array($answer) ? $answer : (is_string($answer) ? trim($answer) : $answer);
+
+                if ($storeValue === null || $storeValue === '' || (is_array($storeValue) && empty(array_filter($storeValue)))) {
+                    \Plugins\Events\Models\EventCustomAnswer::where('event_registration_id', $reg->id)
+                        ->where('question_id', $question->id)
+                        ->delete();
+                    continue;
+                }
+
+                \Plugins\Events\Models\EventCustomAnswer::updateOrCreate(
+                    [
+                        'event_registration_id' => $reg->id,
+                        'question_id' => $question->id,
+                    ],
+                    ['answer' => $storeValue]
+                );
+            }
 
             $this->showEditModal = false;
             $this->editingGuestId = null;
@@ -495,8 +712,14 @@ class EventGuestsTable extends Component
         $registrations = EventRegistration::with(['event', 'user', 'verifiedBy'])
             ->where('event_id', $this->event->id)
             ->when($this->activeTab !== 'all', function ($query) {
-                $map = ['pending' => 'pending', 'approved' => 'confirmed', 'rejected' => 'cancelled'];
-                $query->where('status', $map[$this->activeTab]);
+                if ($this->activeTab === 'checkin') {
+                    $query->where('check_in', true);
+                } else {
+                    $map = ['pending' => 'pending', 'approved' => 'confirmed', 'rejected' => 'cancelled'];
+                    if (isset($map[$this->activeTab])) {
+                        $query->where('status', $map[$this->activeTab]);
+                    }
+                }
             })
             ->when($this->search, function ($query) {
                 $term = '%' . $this->search . '%';
@@ -525,56 +748,56 @@ class EventGuestsTable extends Component
             $headers[] = $question->question;
         }
 
-        $callback = function () use ($registrations, $headers, $customQuestions) {
-            $handle = fopen('php://output', 'w');
-            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF)); // BOM for UTF-8
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray($headers, null, 'A1');
 
-            fputcsv($handle, $headers);
+        $rowNumber = 2;
+        foreach ($registrations as $reg) {
+            $row = [
+                $reg->id,
+                $reg->uuid,
+                $reg->salutation ?? '',
+                $reg->full_name ?? $reg->name,
+                $reg->email,
+                $reg->mobile_phone ?? $reg->phone ?? '',
+                $reg->company_name ?? $reg->organization ?? '',
+                $reg->company_type ?? '',
+                $reg->job_title ?? '',
+                ucfirst($reg->status),
+                $reg->walk_in ? 'Yes' : 'No',
+                $reg->check_in ? 'Yes' : 'No',
+                $reg->created_at->format('Y-m-d H:i:s'),
+                $reg->confirmed_at?->format('Y-m-d H:i:s') ?? '',
+                $reg->verifiedBy?->name ?? '',
+                $reg->verified_at?->format('Y-m-d H:i:s') ?? '',
+                $reg->verified_type ?? '',
+                $reg->verified_note ?? '',
+                $reg->referral_source ?? '',
+            ];
 
-            foreach ($registrations as $reg) {
-                $row = [
-                    $reg->id,
-                    $reg->uuid,
-                    $reg->salutation ?? '',
-                    $reg->full_name ?? $reg->name,
-                    $reg->email,
-                    $reg->mobile_phone ?? $reg->phone ?? '',
-                    $reg->company_name ?? $reg->organization ?? '',
-                    $reg->company_type ?? '',
-                    $reg->job_title ?? '',
-                    ucfirst($reg->status),
-                    $reg->walk_in ? 'Yes' : 'No',
-                    $reg->check_in ? 'Yes' : 'No',
-                    $reg->created_at->format('Y-m-d H:i:s'),
-                    $reg->confirmed_at?->format('Y-m-d H:i:s') ?? '',
-                    $reg->verifiedBy?->name ?? '',
-                    $reg->verified_at?->format('Y-m-d H:i:s') ?? '',
-                    $reg->verified_type ?? '',
-                    $reg->verified_note ?? '',
-                    $reg->referral_source ?? '',
-                ];
-
-                // Fetch custom answers for this registration
-                $answers = \Plugins\Events\Models\EventCustomAnswer::where('event_registration_id', $reg->id)->get()->keyBy('question_id');
-                foreach ($customQuestions as $question) {
-                    $ans = $answers->get($question->id);
-                    $answerVal = '';
-                    if ($ans) {
-                        $answerVal = is_array($ans->answer) ? implode(', ', $ans->answer) : $ans->answer;
-                    }
-                    $row[] = $answerVal;
+            // Fetch custom answers for this registration
+            $answers = \Plugins\Events\Models\EventCustomAnswer::where('event_registration_id', $reg->id)->get()->keyBy('question_id');
+            foreach ($customQuestions as $question) {
+                $ans = $answers->get($question->id);
+                $answerVal = '';
+                if ($ans) {
+                    $answerVal = is_array($ans->answer) ? implode(', ', $ans->answer) : $ans->answer;
                 }
-
-                fputcsv($handle, $row);
+                $row[] = $answerVal;
             }
 
-            fclose($handle);
-        };
+            $sheet->fromArray($row, null, 'A' . $rowNumber);
+            $rowNumber++;
+        }
 
-        $filename = \Illuminate\Support\Str::slug($this->event->title) . '-guests-' . date('Ymd') . '.csv';
+        $filename = \Illuminate\Support\Str::slug($this->event->title) . '-guests-' . date('Ymd') . '.xlsx';
 
-        return response()->streamDownload($callback, $filename, [
-            'Content-Type' => 'text/csv',
+        return response()->streamDownload(function() use ($spreadsheet) {
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ]);
     }
@@ -584,6 +807,7 @@ class EventGuestsTable extends Component
         return view('events::livewire.event-guests-table', [
             'registrations' => $this->registrations,
             'guestCounts'   => $this->guestCounts,
+            'contactLevels' => \Plugins\Events\Models\ContactLevel::orderBy('id')->get(),
         ]);
     }
 }

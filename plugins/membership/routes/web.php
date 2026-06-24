@@ -49,37 +49,38 @@ Route::prefix(config('admin.path', 'admin'))->name('admin.')->middleware(['web',
         })->name('destroy')->middleware('permission:memberships.delete');
 
         // Export
-        Route::get('/export/csv', function () {
+        Route::get('/export/excel', function () {
             $memberships = Membership::with('user')->get();
             
-            $filename = 'members-' . now()->format('Y-m-d') . '.csv';
-            $headers = [
-                'Content-Type' => 'text/csv',
+            $filename = 'members-' . now()->format('Y-m-d') . '.xlsx';
+            
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            
+            // Write header row
+            $sheet->fromArray(['ID', 'Name', 'Email', 'Status', 'Joined Date', 'Registered Date'], null, 'A1');
+            
+            // Write data rows
+            $rowNumber = 2;
+            foreach ($memberships as $membership) {
+                $sheet->fromArray([
+                    $membership->id,
+                    $membership->user->name ?? '',
+                    $membership->user->email ?? '',
+                    ucfirst($membership->status),
+                    $membership->joined_at ? $membership->joined_at->format('Y-m-d') : 'N/A',
+                    $membership->created_at->format('Y-m-d H:i:s'),
+                ], null, 'A' . $rowNumber);
+                $rowNumber++;
+            }
+            
+            return response()->streamDownload(function() use ($spreadsheet) {
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+                $writer->save('php://output');
+            }, $filename, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-            ];
-
-            $callback = function() use ($memberships) {
-                $file = fopen('php://output', 'w');
-                
-                // Write header row
-                fputcsv($file, ['ID', 'Name', 'Email', 'Status', 'Joined Date', 'Registered Date']);
-                
-                // Write data rows
-                foreach ($memberships as $membership) {
-                    fputcsv($file, [
-                        $membership->id,
-                        $membership->user->name,
-                        $membership->user->email,
-                        ucfirst($membership->status),
-                        $membership->joined_at ? $membership->joined_at->format('Y-m-d') : 'N/A',
-                        $membership->created_at->format('Y-m-d H:i:s'),
-                    ]);
-                }
-                
-                fclose($file);
-            };
-
-            return response()->stream($callback, 200, $headers);
+            ]);
         })->name('export');
     });
 });

@@ -63,6 +63,7 @@
                     'all'      => ['label' => 'All',      'count' => $guestCounts['all']],
                     'pending'  => ['label' => 'Pending',  'count' => $guestCounts['pending']],
                     'approved' => ['label' => 'Approved', 'count' => $guestCounts['approved']],
+                    'checkin'  => ['label' => 'Checked In', 'count' => $guestCounts['checkin']],
                     'rejected' => ['label' => 'Rejected', 'count' => $guestCounts['rejected']],
                 ];
             @endphp
@@ -119,6 +120,7 @@
                         </th>
                         <th class="px-4 py-6 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">Company</th>
                         <th class="px-4 py-6 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">Status</th>
+                        <th class="px-4 py-6 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">Check In</th>
                         <th class="px-4 py-6">
                             <button wire:click="sortBy('created_at')" class="flex items-center gap-1 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest hover:text-[#2563EB] transition-colors">
                                 Registered
@@ -129,7 +131,6 @@
                                 @endif
                             </button>
                         </th>
-                        <th class="px-4 py-6 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">Verified By</th>
                         <th class="px-8 py-6 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest text-right">Actions</th>
                     </tr>
                 </thead>
@@ -149,14 +150,11 @@
                         <td class="px-4 py-5">
                             <div class="font-bold text-[#111827] dark:text-[#FCFCFC] text-[15px]">{{ $reg->full_name ?? $reg->name }}</div>
                             <div class="text-xs text-[#6F767E] mt-0.5">{{ $reg->job_title }}</div>
+                            @if($reg->walk_in)
                             <div class="flex flex-wrap gap-1.5 mt-2">
-                                @if($reg->walk_in)
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">Walk-in</span>
-                                @endif
-                                @if($reg->check_in)
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400">Checked In</span>
-                                @endif
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">Walk-in</span>
                             </div>
+                            @endif
                         </td>
 
                         {{-- Contact Details --}}
@@ -206,23 +204,29 @@
                             @endif
                         </td>
 
+                        {{-- Check In Status Pill --}}
+                        <td class="px-4 py-5">
+                            @if($reg->check_in)
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
+                                    Checked In
+                                </div>
+                                @if($reg->check_in_date)
+                                    <div class="text-[10px] text-[#6F767E] font-semibold mt-1.5">{{ $reg->check_in_date->format('M d, Y H:i') }}</div>
+                                @endif
+                            @else
+                                <button wire:click="confirmCheckin({{ $reg->id }})" type="button"
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider bg-gray-100 dark:bg-[#272B30] text-[#6F767E] hover:text-[#10B981] dark:hover:text-[#10B981] cursor-pointer transition-all hover:scale-[1.02]">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
+                                    Check In
+                                </button>
+                            @endif
+                        </td>
+
                         {{-- Registered date --}}
                         <td class="px-4 py-5 text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">
                             <div>{{ $reg->created_at->format('M d, Y') }}</div>
                             <div class="text-xs text-[#6F767E] mt-0.5">{{ $reg->created_at->format('H:i') }}</div>
-                        </td>
-
-                        {{-- Verified by --}}
-                        <td class="px-4 py-5 text-xs text-[#6F767E]">
-                            @if($reg->verifiedBy)
-                                <div class="font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $reg->verifiedBy->name }}</div>
-                                <div class="text-[10px] mt-0.5 text-[#6F767E]">{{ $reg->verified_at?->format('M d, Y H:i') }}</div>
-                                @if($reg->verified_note)
-                                    <div class="italic mt-1 px-2 py-1 rounded bg-[#0B0B0B]/20 text-[10px] border border-[#272B30] truncate max-w-[140px]" title="{{ $reg->verified_note }}">{{ $reg->verified_note }}</div>
-                                @endif
-                            @else
-                                <span class="text-[#6F767E]">—</span>
-                            @endif
                         </td>
 
                         {{-- Row Action Buttons --}}
@@ -315,6 +319,12 @@
                 <span class="text-sm font-semibold text-white">Selected</span>
             </div>
             <div class="flex items-center gap-4">
+                <button 
+                    wire:click="confirmBulkCheckin"
+                    class="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-white transition-colors cursor-pointer">
+                    <span class="material-symbols-outlined text-[20px]">how_to_reg</span>
+                    Check In
+                </button>
                 <button 
                     x-data
                     @click="$dispatch('open-bulk-approve-modal')"
@@ -615,6 +625,84 @@
         </div>
     </div>
 
+    {{-- ── Check-in Confirmation Modal ─────────────────────────────────────── --}}
+    <div
+        x-data="{ open: @entangle('showCheckinConfirmModal') }"
+        x-show="open"
+        x-cloak
+        class="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-[70] p-4"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100">
+
+        <div @click.away="$wire.cancelCheckin()"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            class="bg-white dark:bg-[#1A1A1A] border border-slate-100 dark:border-[#272B30] rounded-3xl max-w-md w-full shadow-2xl p-6 space-y-6">
+
+            <div class="flex flex-col items-center text-center">
+                <div class="h-16 w-16 rounded-full bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-teal-600 dark:text-teal-400 text-3xl">how_to_reg</span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-[#FCFCFC]">Konfirmasi Check-in</h3>
+                <p class="text-sm text-slate-500 dark:text-[#6F767E] mt-2 leading-relaxed">
+                    Apakah Anda yakin ingin melakukan check-in untuk peserta <span class="font-bold text-slate-800 dark:text-white">{{ $checkinRegistrationName }}</span>?
+                </p>
+            </div>
+
+            <div class="flex items-center gap-3 w-full">
+                <button wire:click="cancelCheckin" type="button"
+                    class="flex-1 h-12 rounded-xl bg-gray-100 dark:bg-[#272B30] text-gray-700 dark:text-[#FCFCFC] text-sm font-bold hover:bg-gray-200 dark:hover:bg-[#33383f] transition-all cursor-pointer">
+                    Batal
+                </button>
+                <button wire:click="executeCheckin" type="button"
+                    class="flex-1 h-12 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold shadow-lg shadow-teal-600/20 transition-all cursor-pointer">
+                    Ya, Check In
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- ── Bulk Check-in Confirmation Modal ────────────────────────────────── --}}
+    <div
+        x-data="{ open: @entangle('showBulkCheckinConfirmModal') }"
+        x-show="open"
+        x-cloak
+        class="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center z-[70] p-4"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100">
+
+        <div @click.away="$wire.cancelBulkCheckin()"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+            class="bg-white dark:bg-[#1A1A1A] border border-slate-100 dark:border-[#272B30] rounded-3xl max-w-md w-full shadow-2xl p-6 space-y-6">
+
+            <div class="flex flex-col items-center text-center">
+                <div class="h-16 w-16 rounded-full bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center mb-4">
+                    <span class="material-symbols-outlined text-teal-600 dark:text-teal-400 text-3xl">group</span>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-[#FCFCFC]">Konfirmasi Massal Check-in</h3>
+                <p class="text-sm text-slate-500 dark:text-[#6F767E] mt-2 leading-relaxed">
+                    Apakah Anda yakin ingin melakukan check-in untuk <span class="font-bold text-slate-800 dark:text-white">{{ count($selectedItems) }}</span> peserta terpilih?
+                </p>
+            </div>
+
+            <div class="flex items-center gap-3 w-full">
+                <button wire:click="cancelBulkCheckin" type="button"
+                    class="flex-1 h-12 rounded-xl bg-gray-100 dark:bg-[#272B30] text-gray-700 dark:text-[#FCFCFC] text-sm font-bold hover:bg-gray-200 dark:hover:bg-[#33383f] transition-all cursor-pointer">
+                    Batal
+                </button>
+                <button wire:click="executeBulkCheckin" type="button"
+                    class="flex-1 h-12 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold shadow-lg shadow-teal-600/20 transition-all cursor-pointer">
+                    Ya, Check In Semua
+                </button>
+            </div>
+        </div>
+    </div>
+
     {{-- ── Edit Modal ─────────────────────────────────────────────────────── --}}
     <div
         x-data="{ open: @entangle('showEditModal') }"
@@ -629,7 +717,7 @@
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-95 translate-y-4"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-            class="bg-white dark:bg-[#1A1A1A] border border-slate-100 dark:border-[#272B30] rounded-3xl max-w-md w-full shadow-2xl p-6 space-y-5">
+            class="bg-white dark:bg-[#1A1A1A] border border-slate-100 dark:border-[#272B30] rounded-3xl max-w-2xl w-full shadow-2xl p-6 space-y-5">
 
             <div class="flex items-center justify-between">
                 <div>
@@ -641,43 +729,194 @@
                 </button>
             </div>
 
-            <div class="space-y-3.5 max-h-[60vh] overflow-y-auto pr-1">
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Full Name</label>
-                    <input wire:model="editFullName" type="text"
-                        class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+            <div class="space-y-4 max-h-[65vh] overflow-y-auto pr-2">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {{-- Full Name --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Full Name</label>
+                        <input wire:model="editFullName" type="text"
+                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                        @error('editFullName')
+                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Email --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Email</label>
+                        <input wire:model="editEmail" type="email"
+                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                        @error('editEmail')
+                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Phone --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Phone</label>
+                        <input wire:model="editPhone" type="text"
+                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                        @error('editPhone')
+                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Company --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Company</label>
+                        <input wire:model="editCompany" type="text"
+                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                        @error('editCompany')
+                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Job Title --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Job Title</label>
+                        <input wire:model="editJobTitle" type="text"
+                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                        @error('editJobTitle')
+                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Job Level (Contact Level) --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Job Level</label>
+                        <select wire:model="editContactLevelId"
+                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                            <option value="0">Select Job Level</option>
+                            @foreach($contactLevels as $level)
+                                <option value="{{ $level->id }}">{{ $level->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('editContactLevelId')
+                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Highest Education Level --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Highest Education</label>
+                        <select wire:model="editHighestEducationLevel"
+                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                            <option value="">Select Education Level</option>
+                            <option value="High School">High School</option>
+                            <option value="Associate Degree">Associate Degree</option>
+                            <option value="Bachelor's Degree">Bachelor's Degree</option>
+                            <option value="Master's Degree">Master's Degree</option>
+                            <option value="Doctorate">Doctorate</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        @error('editHighestEducationLevel')
+                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Industry --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Industry</label>
+                        <input wire:model="editIndustry" type="text"
+                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                        @error('editIndustry')
+                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Domicile --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Domicile</label>
+                        <input wire:model="editDomicile" type="text"
+                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                        @error('editDomicile')
+                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- LinkedIn --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">LinkedIn Profile</label>
+                        <input wire:model="editLinkedin" type="text"
+                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all"
+                            placeholder="https://linkedin.com/in/username">
+                        @error('editLinkedin')
+                            <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                        @enderror
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Email</label>
-                    <input wire:model="editEmail" type="email"
-                        class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Phone</label>
-                    <input wire:model="editPhone" type="text"
-                        class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Company</label>
-                    <input wire:model="editCompany" type="text"
-                        class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Job Title</label>
-                    <input wire:model="editJobTitle" type="text"
-                        class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
-                </div>
-
+                {{-- Notes --}}
                 <div>
                     <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">Notes</label>
                     <textarea wire:model="editNotes" rows="2"
                         class="w-full rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 py-2.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent resize-none transition-all"
                         placeholder="Add special notes or requests..."></textarea>
+                    @error('editNotes')
+                        <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                    @enderror
                 </div>
+
+                {{-- ── Custom Questions Section ── --}}
+                @if($event->customQuestions->count() > 0)
+                    <div class="pt-4 border-t border-slate-100 dark:border-[#272B30] space-y-4">
+                        <h4 class="text-xs font-bold text-slate-900 dark:text-[#FCFCFC] uppercase tracking-widest">Additional Custom Information</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach($event->customQuestions as $question)
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 dark:text-[#6F767E] uppercase tracking-widest mb-1">
+                                        {{ $question->question }}
+                                        @if($question->required)
+                                            <span class="text-red-500">*</span>
+                                        @endif
+                                    </label>
+                                    
+                                    @if($question->type === 'text')
+                                        <input wire:model="editCustomQuestions.{{ $question->short_label }}" type="text"
+                                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                                    @elseif($question->type === 'textarea')
+                                        <textarea wire:model="editCustomQuestions.{{ $question->short_label }}" rows="2"
+                                            class="w-full rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 py-2 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent resize-none transition-all"></textarea>
+                                    @elseif($question->type === 'single_select')
+                                        <select wire:model="editCustomQuestions.{{ $question->short_label }}"
+                                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                                            <option value="">Select option</option>
+                                            @foreach($question->options as $option)
+                                                <option value="{{ $option->option_text }}">{{ $option->option_text }}</option>
+                                            @endforeach
+                                        </select>
+                                    @elseif($question->type === 'multi_select')
+                                        <div class="mt-1.5 space-y-1.5">
+                                            @foreach($question->options as $option)
+                                                <label class="flex items-center gap-2 cursor-pointer text-sm text-slate-700 dark:text-[#FCFCFC]">
+                                                    <input wire:model="editCustomQuestions.{{ $question->short_label }}" 
+                                                        type="checkbox" 
+                                                        value="{{ $option->option_text }}" 
+                                                        class="rounded border-slate-200 dark:border-[#272B30] text-indigo-600 focus:ring-indigo-500 bg-slate-50/50 dark:bg-[#0B0B0B]">
+                                                    <span>{{ $option->option_text }}</span>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    @elseif($question->type === 'email')
+                                        <input wire:model="editCustomQuestions.{{ $question->short_label }}" type="email"
+                                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                                    @elseif($question->type === 'phone')
+                                        <input wire:model="editCustomQuestions.{{ $question->short_label }}" type="tel"
+                                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3.5 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                                    @elseif($question->type === 'date')
+                                        <input wire:model="editCustomQuestions.{{ $question->short_label }}" type="date"
+                                            class="w-full h-10 rounded-xl border border-slate-200 dark:border-[#272B30] bg-slate-50/50 dark:bg-[#0B0B0B] px-3 text-sm text-slate-800 dark:text-[#FCFCFC] focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-indigo-500 focus:border-transparent transition-all">
+                                    @endif
+
+                                    @error('editCustomQuestions.' . $question->short_label)
+                                        <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100 dark:border-[#272B30]">

@@ -99,7 +99,7 @@
                     <a href="{{ route('admin.membership.export') }}"
                         class="w-full md:w-auto px-6 py-3 rounded-xl text-sm font-bold text-white bg-[#2563EB] hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 whitespace-nowrap">
                         <span class="material-symbols-outlined text-lg">download</span>
-                        <span>Export CSV</span>
+                        <span>Export Excel</span>
                     </a>
                 </div>
             </div>

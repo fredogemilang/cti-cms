@@ -13,6 +13,43 @@
     [type='submit'] {
         cursor: pointer;
     }
+
+    /* Professional Custom Scrollbar */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: #E2E8F0 transparent;
+    }
+
+    :where(.dark, .dark *) {
+        scrollbar-color: #272B30 transparent;
+    }
+
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #E2E8F0;
+        border-radius: 9999px;
+        transition: background-color 0.2s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #CBD5E1;
+    }
+
+    :where(.dark, .dark *) ::-webkit-scrollbar-thumb {
+        background: #272B30;
+    }
+
+    :where(.dark, .dark *) ::-webkit-scrollbar-thumb:hover {
+        background: #3a3f47;
+    }
 }
 
 @layer components {
@@ -165,6 +202,11 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../../app/**/*.php';
+@source '../../plugins/**/*.blade.php';
+@source '../../plugins/**/*.php';
+@source '../../themes/**/*.blade.php';
+@source '../../themes/**/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 

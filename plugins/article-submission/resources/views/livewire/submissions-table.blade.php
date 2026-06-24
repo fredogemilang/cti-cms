@@ -31,7 +31,7 @@
                 @endif
             </div>
 
-            <!-- Right: Display -->
+            <!-- Right: Display & Export -->
             <div class="flex flex-wrap items-center gap-3">
                 <div class="flex items-center gap-3">
                     <span class="text-sm font-medium text-[#6F767E]">Display:</span>
@@ -44,6 +44,14 @@
                         <option value="50">50 Rows</option>
                     </select>
                 </div>
+                
+                @if(auth()->user() && auth()->user()->can('submissions.export'))
+                <a href="{{ route('admin.article-submissions.export') }}"
+                    class="h-12 px-6 rounded-xl text-sm font-bold text-white bg-[#2563EB] hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 whitespace-nowrap">
+                    <span class="material-symbols-outlined text-lg">download</span>
+                    <span>Export Excel</span>
+                </a>
+                @endif
             </div>
         </div>
 

@@ -361,44 +361,40 @@ class EventConsoleFeedback extends Component
         ];
     }
 
-    public function exportCsv()
+    public function exportExcel()
     {
         $data = $this->responseData;
         $questions = $data['questions'];
         $rows = $data['rows'];
 
-        $csvData = [];
-
-        // Header
         $header = ['Name', 'Email', 'Submitted At'];
         foreach ($questions as $q) {
             $header[] = $q->short_label ?: $q->question;
         }
-        $csvData[] = $header;
 
-        // Rows
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray($header, null, 'A1');
+
+        $rowNumber = 2;
         foreach ($rows as $row) {
-            $csvRow = [$row['name'], $row['email'], $row['submitted_at']];
+            $excelRow = [$row['name'], $row['email'], $row['submitted_at']];
             foreach ($questions as $q) {
-                $csvRow[] = $row['answers'][$q->id] ?? '';
+                $excelRow[] = $row['answers'][$q->id] ?? '';
             }
-            $csvData[] = $csvRow;
+            $sheet->fromArray($excelRow, null, 'A' . $rowNumber);
+            $rowNumber++;
         }
 
-        // Generate CSV string
-        $handle = fopen('php://temp', 'r+');
-        foreach ($csvData as $csvRow) {
-            fputcsv($handle, $csvRow);
-        }
-        rewind($handle);
-        $csv = stream_get_contents($handle);
-        fclose($handle);
+        $filename = 'feedback-' . $this->event->slug . '-' . now()->format('Ymd') . '.xlsx';
 
-        $filename = 'feedback-' . $this->event->slug . '-' . now()->format('Ymd') . '.csv';
-
-        return response()->streamDownload(function () use ($csv) {
-            echo $csv;
-        }, $filename, ['Content-Type' => 'text/csv']);
+        return response()->streamDownload(function () use ($spreadsheet) {
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
     }
 
     // ═══════════════════════════════════════════════════════

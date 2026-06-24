@@ -162,7 +162,7 @@ class EventRegistrationController extends Controller
     }
 
     /**
-     * Export registrations to CSV.
+     * Export registrations to Excel.
      */
     public function export($eventId)
     {
@@ -173,27 +173,32 @@ class EventRegistrationController extends Controller
             return back()->with('error', 'No registrations to export.');
         }
 
-        $filename = \Str::slug($event->title) . '-registrations-' . now()->format('Y-m-d') . '.csv';
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-        ];
+        $filename = \Str::slug($event->title) . '-registrations-' . now()->format('Y-m-d') . '.xlsx';
 
-        $callback = function() use ($registrations) {
-            $file = fopen('php://output', 'w');
-            
-            // Write header row
-            $firstRegistration = $registrations->first();
-            fputcsv($file, array_keys($firstRegistration->toExportArray()));
-            
-            // Write data rows
-            foreach ($registrations as $registration) {
-                fputcsv($file, $registration->toExportArray());
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $firstRegistration = $registrations->first();
+        $headers = array_keys($firstRegistration->toExportArray());
+        $sheet->fromArray($headers, null, 'A1');
+
+        $rowNumber = 2;
+        foreach ($registrations as $registration) {
+            $rowData = [];
+            $exportArray = $registration->toExportArray();
+            foreach ($headers as $header) {
+                $rowData[] = $exportArray[$header] ?? '';
             }
-            
-            fclose($file);
-        };
+            $sheet->fromArray($rowData, null, 'A' . $rowNumber);
+            $rowNumber++;
+        }
 
-        return response()->stream($callback, 200, $headers);
+        return response()->streamDownload(function() use ($spreadsheet) {
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
     }
 }

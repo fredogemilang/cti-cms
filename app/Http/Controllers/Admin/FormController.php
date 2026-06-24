@@ -247,7 +247,7 @@ class FormController extends Controller
     public function exportEntries(Form $form, Request $request)
     {
         $entries = $form->entries()->with('user')->get();
-        $format = $request->get('format', 'csv');
+        $format = $request->get('format', 'xlsx');
         
         if ($entries->isEmpty()) {
             return back()->with('error', 'No entries to export');
@@ -256,40 +256,6 @@ class FormController extends Controller
         $baseFilename = Str::slug($form->name) . '-entries-' . now()->format('Y-m-d');
         
         switch ($format) {
-            case 'xlsx':
-            case 'excel':
-                // Export as tab-separated (can be opened in Excel)
-                $filename = $baseFilename . '.xlsx';
-                $callback = function() use ($entries, $form) {
-                    $file = fopen('php://output', 'w');
-                    
-                    // Header row
-                    $headers = ['ID', 'Submitted At', 'IP Address'];
-                    foreach ($form->fields as $field) {
-                        if (!in_array($field->type, ['section', 'divider', 'html'])) {
-                            $headers[] = $field->label;
-                        }
-                    }
-                    fputcsv($file, $headers, "\t");
-                    
-                    // Data rows
-                    foreach ($entries as $entry) {
-                        $row = [$entry->id, $entry->created_at->format('Y-m-d H:i:s'), $entry->ip_address];
-                        foreach ($form->fields as $field) {
-                            if (!in_array($field->type, ['section', 'divider', 'html'])) {
-                                $value = $entry->getFieldValue($field->field_id);
-                                $row[] = is_array($value) ? implode(', ', $value) : $value;
-                            }
-                        }
-                        fputcsv($file, $row, "\t");
-                    }
-                    fclose($file);
-                };
-                return response()->stream($callback, 200, [
-                    'Content-Type' => 'application/vnd.ms-excel',
-                    'Content-Disposition' => "attachment; filename=\"{$filename}\"",
-                ]);
-                
             case 'pdf':
                 // Generate simple HTML table for PDF
                 $html = $this->generatePdfHtml($form, $entries);
@@ -298,19 +264,40 @@ class FormController extends Controller
                     'Content-Disposition' => "attachment; filename=\"{$baseFilename}.html\"",
                 ]);
                 
-            default: // csv
-                $filename = $baseFilename . '.csv';
-                $callback = function() use ($entries) {
-                    $file = fopen('php://output', 'w');
-                    $firstEntry = $entries->first();
-                    fputcsv($file, array_keys($firstEntry->toExportArray()));
-                    foreach ($entries as $entry) {
-                        fputcsv($file, $entry->toExportArray());
+            default: // xlsx, excel, csv
+                $filename = $baseFilename . '.xlsx';
+                
+                $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                
+                // Header row
+                $headers = ['ID', 'Submitted At', 'IP Address'];
+                foreach ($form->fields as $field) {
+                    if (!in_array($field->type, ['section', 'divider', 'html'])) {
+                        $headers[] = $field->label;
                     }
-                    fclose($file);
-                };
-                return response()->stream($callback, 200, [
-                    'Content-Type' => 'text/csv',
+                }
+                $sheet->fromArray($headers, null, 'A1');
+                
+                // Data rows
+                $rowNumber = 2;
+                foreach ($entries as $entry) {
+                    $row = [$entry->id, $entry->created_at->format('Y-m-d H:i:s'), $entry->ip_address];
+                    foreach ($form->fields as $field) {
+                        if (!in_array($field->type, ['section', 'divider', 'html'])) {
+                            $value = $entry->getFieldValue($field->field_id);
+                            $row[] = is_array($value) ? implode(', ', $value) : $value;
+                        }
+                    }
+                    $sheet->fromArray($row, null, 'A' . $rowNumber);
+                    $rowNumber++;
+                }
+                
+                return response()->streamDownload(function() use ($spreadsheet) {
+                    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+                    $writer->save('php://output');
+                }, $filename, [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                     'Content-Disposition' => "attachment; filename=\"{$filename}\"",
                 ]);
         }
