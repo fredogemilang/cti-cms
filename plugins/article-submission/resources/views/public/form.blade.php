@@ -24,6 +24,9 @@
         .form-select.is-invalid {
             border-bottom-color: #EF4444 !important;
         }
+        .btn.is-invalid {
+            border-color: #EF4444 !important;
+        }
     </style>
 
     <!-- Form Section -->
@@ -71,14 +74,65 @@
                                 isValid = false;
                             }
 
-                            // Phone validation (optional, but if filled must be 9-13 digits)
+                            // Phone validation
                             let phoneVal = this.$el.querySelector('[name=phone]')?.value || '';
-                            if (phoneVal.trim()) {
+                            if (!phoneVal.trim()) {
+                                this.errors.phone = 'Phone Number is required.';
+                                isValid = false;
+                            } else {
                                 let cleanPhone = phoneVal.replace(/\D/g, '');
                                 if (cleanPhone.length < 9 || cleanPhone.length > 13) {
                                     this.errors.phone = 'Phone Number must be between 9 and 13 digits.';
                                     isValid = false;
                                 }
+                            }
+
+                            // Job Level validation
+                            let jobLevelVal = this.$el.querySelector('[name=job_level]')?.value || '';
+                            if (!jobLevelVal) {
+                                this.errors.job_level = 'Job Level is required.';
+                                isValid = false;
+                            }
+
+                            // Domicile validation
+                            let domicileVal = this.$el.querySelector('[name=domicile]')?.value || '';
+                            if (!domicileVal) {
+                                this.errors.domicile = 'Domicile is required.';
+                                isValid = false;
+                            } else if (domicileVal === 'Other') {
+                                let domicileOtherVal = this.$el.querySelector('[name=domicile_other]')?.value || '';
+                                if (!domicileOtherVal.trim()) {
+                                    this.errors.domicile = 'Please specify your domicile.';
+                                    isValid = false;
+                                }
+                            }
+
+                            // Job Title validation
+                            let jobTitleVal = this.$el.querySelector('[name=job_title]')?.value || '';
+                            if (!jobTitleVal.trim()) {
+                                this.errors.job_title = 'Job Title is required.';
+                                isValid = false;
+                            }
+
+                            // Institution validation
+                            let institutionVal = this.$el.querySelector('[name=institution]')?.value || '';
+                            if (!institutionVal.trim()) {
+                                this.errors.institution = 'Institution/Company is required.';
+                                isValid = false;
+                            }
+
+                            // Industry validation
+                            let industryVal = this.$el.querySelector('[name=industry]')?.value || '';
+                            if (!industryVal) {
+                                this.errors.industry = 'Industry is required.';
+                                isValid = false;
+                            }
+
+                            // Article File validation
+                            let articleFileVal = this.$el.querySelector('[name=article_file]')?.value || '';
+                            if (!articleFileVal) {
+                                this.errors.article_file = 'Article file is required.';
+                                isValid = false;
                             }
 
                             // LinkedIn validation (optional, but if filled must be valid link)
@@ -115,8 +169,9 @@
                             </template>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Job Level:</label>
-                            <select name="job_level" class="form-select form-control-flushed">
+                            <label class="form-label fw-bold small">Job Level: <span class="text-danger">*</span></label>
+                            <select name="job_level" class="form-select form-control-flushed @error('job_level') is-invalid @enderror"
+                                :class="errors.job_level ? 'is-invalid' : ''" required>
                                 <option value="">Job Level</option>
                                 <option value="Entry Level" {{ old('job_level') == 'Entry Level' ? 'selected' : '' }}>Entry Level</option>
                                 <option value="Mid Level" {{ old('job_level') == 'Mid Level' ? 'selected' : '' }}>Mid Level</option>
@@ -124,14 +179,19 @@
                                 <option value="Manager" {{ old('job_level') == 'Manager' ? 'selected' : '' }}>Manager</option>
                                 <option value="Director" {{ old('job_level') == 'Director' ? 'selected' : '' }}>Director</option>
                             </select>
+                            <template x-if="errors.job_level">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.job_level"></div>
+                            </template>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Domicile:</label>
-                            <select name="domicile" class="form-select form-control-flushed">
-                                <option value="">Domicile</option>
-                                <option value="Jakarta" {{ old('domicile') == 'Jakarta' ? 'selected' : '' }}>Jakarta</option>
-                                <option value="Outside Jakarta" {{ old('domicile') == 'Outside Jakarta' ? 'selected' : '' }}>Outside Jakarta</option>
-                            </select>
+                            <label class="form-label fw-bold small">Domicile: <span class="text-danger">*</span></label>
+                            @livewire('domicile-select', [
+                                'fieldName' => 'domicile',
+                                'oldValue' => old('domicile'),
+                                'oldOtherValue' => old('domicile_other'),
+                                'hasError' => $errors->has('domicile'),
+                                'errorMessage' => $errors->first('domicile')
+                            ])
                         </div>
 
                         <!-- Row 2 -->
@@ -146,12 +206,16 @@
                             </template>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Job Title:</label>
-                            <input type="text" name="job_title" class="form-control form-control-flushed" placeholder="Job Title" value="{{ old('job_title') }}">
+                            <label class="form-label fw-bold small">Job Title: <span class="text-danger">*</span></label>
+                            <input type="text" name="job_title" class="form-control form-control-flushed @error('job_title') is-invalid @enderror"
+                                :class="errors.job_title ? 'is-invalid' : ''" placeholder="Job Title" value="{{ old('job_title') }}" required>
+                            <template x-if="errors.job_title">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.job_title"></div>
+                            </template>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Linkedin Account:</label>
-                            <input type="text" name="linkedin" class="form-control form-control-flushed"
+                            <input type="text" name="linkedin" class="form-control form-control-flushed @error('linkedin') is-invalid @enderror"
                                 :class="errors.linkedin ? 'is-invalid' : ''"
                                 placeholder="Linkedin Account" value="{{ old('linkedin') }}">
                             <template x-if="errors.linkedin">
@@ -161,23 +225,28 @@
 
                         <!-- Row 3 -->
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Phone Number:</label>
-                            <input type="text" name="phone" class="form-control form-control-flushed"
+                            <label class="form-label fw-bold small">Phone Number: <span class="text-danger">*</span></label>
+                            <input type="text" name="phone" class="form-control form-control-flushed @error('phone') is-invalid @enderror"
                                 :class="errors.phone ? 'is-invalid' : ''"
-                                placeholder="Phone Number" value="{{ old('phone') }}">
+                                placeholder="Phone Number" value="{{ old('phone') }}" required>
                             <template x-if="errors.phone">
                                 <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.phone"></div>
                             </template>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Institution/Company:</label>
-                            <input type="text" name="institution" class="form-control form-control-flushed" placeholder="Institution/Company" value="{{ old('institution') }}">
+                            <label class="form-label fw-bold small">Institution/Company: <span class="text-danger">*</span></label>
+                            <input type="text" name="institution" class="form-control form-control-flushed @error('institution') is-invalid @enderror"
+                                :class="errors.institution ? 'is-invalid' : ''" placeholder="Institution/Company" value="{{ old('institution') }}" required>
+                            <template x-if="errors.institution">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.institution"></div>
+                            </template>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Upload Your Article</label>
+                            <label class="form-label fw-bold small">Upload Your Article: <span class="text-danger">*</span></label>
                             <div class="upload-btn-wrapper">
                                 <button type="button"
-                                    class="btn btn-outline-warning w-100 text-start d-flex justify-content-between align-items-center"
+                                    class="btn btn-outline-warning w-100 text-start d-flex justify-content-between align-items-center @error('article_file') is-invalid @enderror"
+                                    :class="errors.article_file ? 'is-invalid' : ''"
                                     onclick="document.getElementById('article_file').click()">
                                     <span class="small text-muted">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="me-2">
@@ -186,8 +255,11 @@
                                         <span id="file-name">Upload PDF Format</span>
                                     </span>
                                 </button>
-                                <input type="file" name="article_file" id="article_file" accept=".pdf" class="d-none" onchange="document.getElementById('file-name').textContent = this.files[0] ? this.files[0].name : 'Upload PDF Format'" />
+                                <input type="file" name="article_file" id="article_file" accept=".pdf" class="d-none" onchange="document.getElementById('file-name').textContent = this.files[0] ? this.files[0].name : 'Upload PDF Format'; delete errors.article_file;" required />
                             </div>
+                            <template x-if="errors.article_file">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.article_file"></div>
+                            </template>
                         </div>
 
                         <!-- Row 4 -->
@@ -203,8 +275,9 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold small">Industry:</label>
-                            <select name="industry" class="form-select form-control-flushed">
+                            <label class="form-label fw-bold small">Industry: <span class="text-danger">*</span></label>
+                            <select name="industry" class="form-select form-control-flushed @error('industry') is-invalid @enderror"
+                                :class="errors.industry ? 'is-invalid' : ''" required>
                                 <option value="">Industry</option>
                                 <option value="Technology" {{ old('industry') == 'Technology' ? 'selected' : '' }}>Technology</option>
                                 <option value="Finance" {{ old('industry') == 'Finance' ? 'selected' : '' }}>Finance</option>
@@ -213,6 +286,9 @@
                                 <option value="Manufacturing" {{ old('industry') == 'Manufacturing' ? 'selected' : '' }}>Manufacturing</option>
                                 <option value="Other" {{ old('industry') == 'Other' ? 'selected' : '' }}>Other</option>
                             </select>
+                            <template x-if="errors.industry">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.industry"></div>
+                            </template>
                         </div>
 
                         <!-- Submit Button -->

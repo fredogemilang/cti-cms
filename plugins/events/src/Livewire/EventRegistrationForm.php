@@ -37,6 +37,8 @@ class EventRegistrationForm extends Component
     public string $industry                = '';
     public string $domicile                = '';
     public string $linkedin                = '';
+    public string $domicileSearch          = '';
+    public ?string $domicile_other         = '';
 
     // ─── Custom Question Answers ─────────────────────────────────────────────
     public array $custom_questions = [];
@@ -50,6 +52,7 @@ class EventRegistrationForm extends Component
         'company_name'     => 'Institution/company',
         'industry'         => 'Industry',
         'domicile'         => 'Domicile',
+        'domicile_other'   => 'Specify Domicile',
     ];
 
     protected $messages = [
@@ -73,10 +76,43 @@ class EventRegistrationForm extends Component
             'company_name'            => 'required|string|max:255',
             'industry'                => 'required|string',
             'domicile'                => 'required|string',
+            'domicile_other'          => 'required_if:domicile,Other|nullable|string',
             'linkedin'                => ['nullable', 'string', 'max:255', 'regex:/^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/i'],
         ];
 
         return $rules;
+    }
+
+    public function getDomicileOptions(): array
+    {
+        if (strlen($this->domicileSearch) < 2 || $this->domicileSearch === 'Other') {
+            return [];
+        }
+
+        return \App\Models\Domicile::query()
+            ->where('name', 'like', '%' . $this->domicileSearch . '%')
+            ->limit(15)
+            ->get()
+            ->map(function ($item) {
+                if ($item->type === 'regency') {
+                    $parent = \App\Models\Domicile::where('code', $item->parent_code)->first();
+                    return [
+                        'value' => $item->name,
+                        'label' => $item->name . ($parent ? ', ' . $parent->name : ''),
+                    ];
+                }
+                return [
+                    'value' => $item->name,
+                    'label' => $item->name . ' (Provinsi)',
+                ];
+            })
+            ->toArray();
+    }
+
+    public function selectDomicile(string $value, string $label): void
+    {
+        $this->domicile = $value;
+        $this->domicileSearch = $label;
     }
 
     public function mount(string $slug): void
@@ -142,6 +178,11 @@ class EventRegistrationForm extends Component
         // ── Create registration ──────────────────────────────────────────
         $requiresApproval = (bool) ($this->event->registration_requires_approval ?? false);
 
+        $finalDomicile = $this->domicile;
+        if ($this->domicile === 'Other' && !empty($this->domicile_other)) {
+            $finalDomicile = $this->domicile_other;
+        }
+
         $registration = EventRegistration::create([
             'event_id'              => $this->event->id,
             'uuid'                  => Str::uuid(),
@@ -168,7 +209,7 @@ class EventRegistrationForm extends Component
             'custom_fields'         => [
                 'highest_education_level' => $this->highest_education_level,
                 'industry'                => $this->industry,
-                'domicile'                => $this->domicile,
+                'domicile'                => $finalDomicile,
                 'linkedin'                => $this->linkedin,
             ],
         ]);

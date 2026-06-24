@@ -30,6 +30,7 @@ class MembershipRegistrationController
             'job_level' => 'required|string|max:100',
             'job_title' => 'required|string|max:100',
             'domicile' => 'required|string|max:100',
+            'domicile_other' => 'required_if:domicile,Other|nullable|string|max:100',
             'institution' => 'required|string|max:255',
             'industry' => 'required|string|max:100',
             'education_level' => 'nullable|string|max:100',
@@ -37,6 +38,11 @@ class MembershipRegistrationController
         ], [
             'linkedin.regex' => 'LinkedIn account must be a valid LinkedIn URL.',
         ]);
+
+        if ($validated['domicile'] === 'Other' && !empty($validated['domicile_other'])) {
+            $validated['domicile'] = $validated['domicile_other'];
+        }
+        unset($validated['domicile_other']);
 
         // Check if email already registered as member
         $existingUser = User::where('email', $validated['email'])->first();

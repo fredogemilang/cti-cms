@@ -15,7 +15,7 @@ class SubmissionController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => [
-                'nullable',
+                'required',
                 'string',
                 function ($attribute, $value, $fail) {
                     $cleaned = preg_replace('/[^\d]/', '', $value);
@@ -24,17 +24,23 @@ class SubmissionController extends Controller
                     }
                 }
             ],
-            'job_level' => 'nullable|string|max:100',
-            'job_title' => 'nullable|string|max:255',
-            'domicile' => 'nullable|string|max:255',
+            'job_level' => 'required|string|max:100',
+            'job_title' => 'required|string|max:255',
+            'domicile' => 'required|string|max:255',
+            'domicile_other' => 'required_if:domicile,Other|nullable|string|max:255',
             'linkedin' => ['nullable', 'string', 'max:255', 'regex:/^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/i'],
-            'institution' => 'nullable|string|max:255',
+            'institution' => 'required|string|max:255',
             'education_level' => 'nullable|string|max:100',
-            'industry' => 'nullable|string|max:255',
-            'article_file' => 'nullable|file|mimes:pdf|max:10240', // 10MB max
+            'industry' => 'required|string|max:255',
+            'article_file' => 'required|file|mimes:pdf|max:10240', // 10MB max
         ], [
             'linkedin.regex' => 'LinkedIn account must be a valid LinkedIn URL.',
         ]);
+
+        if ($validated['domicile'] === 'Other' && !empty($validated['domicile_other'])) {
+            $validated['domicile'] = $validated['domicile_other'];
+        }
+        unset($validated['domicile_other']);
 
         // Handle file upload
         if ($request->hasFile('article_file')) {

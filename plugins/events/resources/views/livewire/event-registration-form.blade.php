@@ -67,6 +67,10 @@
             border-color: #E07D24 !important;
             box-shadow: 0 4px 14px rgba(242, 143, 53, 0.4);
         }
+        .domicile-option:hover, .hover-bg-light:hover {
+            background-color: #f8f9fa !important;
+            color: #F28F35 !important;
+        }
     </style>
 
     {{-- Capacity / duplicate / registration-period errors --}}
@@ -147,10 +151,16 @@
                 }
                 
                 // Domicile validation
-                let domicileVal = this.$el.querySelector('[name=domicile]')?.value || '';
+                let domicileVal = this.$wire.get('domicile') || '';
                 if (!domicileVal) {
                     this.errors.domicile = 'Domicile is required.';
                     isValid = false;
+                } else if (domicileVal === 'Other') {
+                    let domicileOtherVal = this.$wire.get('domicile_other') || '';
+                    if (!domicileOtherVal.trim()) {
+                        this.errors.domicile = 'Please specify your domicile.';
+                        isValid = false;
+                    }
                 }
 
                 // LinkedIn validation
@@ -326,20 +336,77 @@
                 <!-- Domicile -->
                 <div class="mb-4">
                     <label class="form-label">Domicile: <span class="text-danger">*</span></label>
-                    <select wire:model="domicile" name="domicile"
-                        class="form-select custom-orange-select @error('domicile') is-invalid @enderror"
-                        :class="errors.domicile ? 'is-invalid' : ''">
-                        <option value="">Domicile</option>
-                        @foreach($domiciles as $dom)
-                            <option value="{{ $dom }}">{{ $dom }}</option>
-                        @endforeach
-                    </select>
+                    
+                    <div class="position-relative" x-data="{ open: false }" @click.away="open = false">
+                        <input 
+                            type="text" 
+                            wire:model.live.debounce.150ms="domicileSearch"
+                            placeholder="Type to search Domicile..."
+                            class="form-control @error('domicile') is-invalid @enderror"
+                            :class="errors.domicile ? 'is-invalid' : ''"
+                            @focus="open = true"
+                            @keydown.escape="open = false"
+                            autocomplete="off"
+                            name="domicileSearch"
+                        />
+                        
+                        <input type="hidden" name="domicile" wire:model="domicile" />
+
+                        <div x-show="open" 
+                             class="position-absolute bg-white border border-light-subtle rounded-3 shadow-lg w-100 z-3 overflow-y-auto"
+                             style="max-height: 250px; top: 100%; left: 0; display: none;"
+                             x-transition>
+                            @if(strlen($domicileSearch) < 2)
+                                <div class="px-3 py-2 text-muted" style="font-size: 0.85rem;">
+                                    Type 2 or more characters to search...
+                                </div>
+                            @elseif(empty($this->getDomicileOptions()))
+                                <div class="px-3 py-2 text-muted" style="font-size: 0.85rem;">
+                                    No results found.
+                                </div>
+                            @else
+                                @foreach($this->getDomicileOptions() as $option)
+                                    <button type="button" 
+                                            wire:click="selectDomicile('{{ addslashes($option['value']) }}', '{{ addslashes($option['label']) }}')"
+                                            @click="open = false"
+                                            class="d-block w-100 text-start border-0 bg-transparent px-3 py-2 text-dark domicile-option"
+                                            style="font-size: 0.9rem; transition: background-color 0.1s;">
+                                        {{ $option['label'] }}
+                                    </button>
+                                @endforeach
+                            @endif
+                            <button type="button" 
+                                    wire:click="selectDomicile('Other', 'Other')"
+                                    @click="open = false"
+                                    class="d-block w-100 text-start border-0 bg-transparent px-3 py-2 text-[#F28F35] fw-bold hover-bg-light border-top border-light-subtle"
+                                    style="font-size: 0.9rem;">
+                                Other (Lainnya)
+                            </button>
+                        </div>
+                    </div>
+
                     <template x-if="errors.domicile">
                         <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.domicile"></div>
                     </template>
                     @error('domicile')
                         <div x-show="!errors.domicile" class="text-danger small mt-1" style="font-size:0.75rem;">{{ $message }}</div>
                     @enderror
+
+                    @if($domicile === 'Other')
+                        <div class="mt-2">
+                            <input 
+                                type="text"
+                                name="domicile_other"
+                                wire:model.blur="domicile_other"
+                                class="form-control"
+                                placeholder="Specify Domicile"
+                                required
+                            />
+                            @error('domicile_other')
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    @endif
                 </div>
 
                 <!-- LinkedIn Account -->

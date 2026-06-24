@@ -276,6 +276,15 @@ class AppServiceProvider extends ServiceProvider
             'component'   => 'admin.redirects.redirect-table',
         ]);
 
+        $registry->registerGroup('domicile', [
+            'label'       => 'Domicile',
+            'icon'        => 'location_on',
+            'order'       => 90,
+            'description' => 'Manage regional provinces and cities/regencies used for user registration.',
+            'component'   => 'admin.settings.domicile-manager',
+        ]);
+
+
         $registry->registerGroup('seo', [
             'label'       => 'SEO',
             'icon'        => 'travel_explore',

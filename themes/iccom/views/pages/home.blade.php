@@ -312,6 +312,12 @@
                             if (!domicileVal) {
                                 this.errors.domicile = 'Domicile is required.';
                                 isValid = false;
+                            } else if (domicileVal === 'Other') {
+                                let domicileOtherVal = this.$el.querySelector('[name=domicile_other]')?.value || '';
+                                if (!domicileOtherVal.trim()) {
+                                    this.errors.domicile = 'Please specify your domicile.';
+                                    isValid = false;
+                                }
                             }
 
                             // Institution validation
@@ -380,21 +386,13 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Domicile: <span class="text-danger">*</span></label>
-                            <select name="domicile" class="form-select form-control-flushed @error('domicile') is-invalid @enderror"
-                                :class="errors.domicile ? 'is-invalid' : ''" required>
-                                <option value="">Select Domicile</option>
-                                <option value="Jakarta" {{ old('domicile') == 'Jakarta' ? 'selected' : '' }}>Jakarta</option>
-                                <option value="Bogor" {{ old('domicile') == 'Bogor' ? 'selected' : '' }}>Bogor</option>
-                                <option value="Depok" {{ old('domicile') == 'Depok' ? 'selected' : '' }}>Depok</option>
-                                <option value="Tangerang" {{ old('domicile') == 'Tangerang' ? 'selected' : '' }}>Tangerang</option>
-                                <option value="Bekasi" {{ old('domicile') == 'Bekasi' ? 'selected' : '' }}>Bekasi</option>
-                                <option value="Bandung" {{ old('domicile') == 'Bandung' ? 'selected' : '' }}>Bandung</option>
-                                <option value="Surabaya" {{ old('domicile') == 'Surabaya' ? 'selected' : '' }}>Surabaya</option>
-                                <option value="Other" {{ old('domicile') == 'Other' ? 'selected' : '' }}>Other</option>
-                            </select>
-                            <template x-if="errors.domicile">
-                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.domicile"></div>
-                            </template>
+                            @livewire('domicile-select', [
+                                'fieldName' => 'domicile',
+                                'oldValue' => old('domicile'),
+                                'oldOtherValue' => old('domicile_other'),
+                                'hasError' => $errors->has('domicile'),
+                                'errorMessage' => $errors->first('domicile')
+                            ])
                         </div>
 
                         <!-- Row 2 -->
