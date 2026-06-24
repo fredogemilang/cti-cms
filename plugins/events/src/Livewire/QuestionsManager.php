@@ -199,7 +199,7 @@ class QuestionsManager extends Component
         }
     }
 
-    public function updatedOrder($orderedIds)
+    public function updateQuestionsOrder($orderedIds)
     {
         foreach ($orderedIds as $index => $id) {
             EventCustomQuestion::where('id', $id)->update(['order' => $index]);

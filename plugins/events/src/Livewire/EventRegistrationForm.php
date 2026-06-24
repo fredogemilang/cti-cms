@@ -55,9 +55,31 @@ class EventRegistrationForm extends Component
         'domicile_other'   => 'Specify Domicile',
     ];
 
-    protected $messages = [
-        'linkedin.regex' => 'LinkedIn account must be a valid LinkedIn URL.',
-    ];
+    public function messages(): array
+    {
+        $messages = [
+            'linkedin.regex' => 'LinkedIn account must be a valid LinkedIn URL.',
+        ];
+
+        foreach ($this->event->customQuestions as $question) {
+            if ($question->type === 'phone') {
+                $messages['custom_questions.' . $question->short_label . '.regex'] = 'Please enter a valid phone number.';
+            }
+        }
+
+        return $messages;
+    }
+
+    public function validationAttributes(): array
+    {
+        $attributes = $this->validationAttributes;
+
+        foreach ($this->event->customQuestions as $question) {
+            $attributes['custom_questions.' . $question->short_label] = $question->question;
+        }
+
+        return $attributes;
+    }
 
     public function getRules(): array
     {
@@ -79,6 +101,37 @@ class EventRegistrationForm extends Component
             'domicile_other'          => 'required_if:domicile,Other|nullable|string',
             'linkedin'                => ['nullable', 'string', 'max:255', 'regex:/^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/i'],
         ];
+
+        foreach ($this->event->customQuestions as $question) {
+            $questionRules = [];
+            if ($question->required) {
+                if ($question->type === 'multi_select') {
+                    $questionRules[] = 'required';
+                    $questionRules[] = 'array';
+                    $questionRules[] = 'min:1';
+                } else {
+                    $questionRules[] = 'required';
+                }
+            } else {
+                $questionRules[] = 'nullable';
+            }
+
+            switch ($question->type) {
+                case 'email':
+                    $questionRules[] = 'email';
+                    break;
+                case 'phone':
+                    $questionRules[] = 'regex:/^[0-9\-\+\(\)\s]{6,20}$/';
+                    break;
+                case 'date':
+                    $questionRules[] = 'date';
+                    break;
+            }
+
+            if (!empty($questionRules)) {
+                $rules['custom_questions.' . $question->short_label] = $questionRules;
+            }
+        }
 
         return $rules;
     }
@@ -118,6 +171,14 @@ class EventRegistrationForm extends Component
     public function mount(string $slug): void
     {
         $this->event = Event::where('slug', $slug)->published()->firstOrFail();
+
+        foreach ($this->event->customQuestions as $question) {
+            if ($question->type === 'multi_select') {
+                $this->custom_questions[$question->short_label] = [];
+            } else {
+                $this->custom_questions[$question->short_label] = '';
+            }
+        }
     }
 
     public function updatedContactDivisiId(int $value): void
@@ -131,12 +192,6 @@ class EventRegistrationForm extends Component
     public function register()
     {
         $this->validate();
-
-        // ── Custom questions validation ─────────────────────────────────────
-        $customErrors = $this->validateCustomQuestions();
-        if (!empty($customErrors)) {
-            return;
-        }
 
         // ── Capacity check ──────────────────────────────────────────────────
         if ($this->event->max_participants) {
@@ -186,6 +241,7 @@ class EventRegistrationForm extends Component
         $registration = EventRegistration::create([
             'event_id'              => $this->event->id,
             'uuid'                  => Str::uuid(),
+            'name'                  => $this->full_name,
             'salutation'            => null,
             'full_name'             => $this->full_name,
             'company_name'          => $this->company_name,
@@ -234,66 +290,7 @@ class EventRegistrationForm extends Component
         ]);
     }
 
-    /**
-     * Validate custom questions based on their type and required flag.
-     * Adds Livewire validation errors and returns false if any.
-     */
-    protected function validateCustomQuestions(): bool
-    {
-        $questions = $this->event->customQuestions()->ordered()->get();
-        $hasErrors = false;
 
-        foreach ($questions as $question) {
-            $answer = $this->custom_questions[$question->short_label] ?? null;
-
-            // Required check
-            if ($question->required) {
-                if ($question->type === 'multi_select') {
-                    if (empty($answer) || !is_array($answer) || count(array_filter($answer)) === 0) {
-                        $this->addError("custom_questions.{$question->short_label}", "{$question->question} is required.");
-                        $hasErrors = true;
-                    }
-                } else {
-                    if ($answer === null || $answer === '' || (is_string($answer) && trim($answer) === '')) {
-                        $this->addError("custom_questions.{$question->short_label}", "{$question->question} is required.");
-                        $hasErrors = true;
-                    }
-                }
-            }
-
-            // Skip type-specific validation if answer is empty and not required
-            if ($answer === null || $answer === '' || (is_array($answer) && empty(array_filter($answer)))) {
-                continue;
-            }
-
-            // Type-specific validation
-            if (!$hasErrors) {
-                switch ($question->type) {
-                    case 'email':
-                        if (!filter_var($answer, FILTER_VALIDATE_EMAIL)) {
-                            $this->addError("custom_questions.{$question->short_label}", "Please enter a valid email address.");
-                            $hasErrors = true;
-                        }
-                        break;
-                    case 'phone':
-                        if (!preg_match('/^[0-9\-\+\(\)\s]{6,20}$/', $answer)) {
-                            $this->addError("custom_questions.{$question->short_label}", "Please enter a valid phone number.");
-                            $hasErrors = true;
-                        }
-                        break;
-                    case 'date':
-                        $parsed = date_create($answer);
-                        if (!$parsed) {
-                            $this->addError("custom_questions.{$question->short_label}", "Please enter a valid date.");
-                            $hasErrors = true;
-                        }
-                        break;
-                }
-            }
-        }
-
-        return $hasErrors;
-    }
 
     /**
      * Save custom question answers linked to the registration.

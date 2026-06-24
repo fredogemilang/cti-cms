@@ -15,7 +15,7 @@
             ghostClass: 'opacity-30',
             onEnd: (evt) => {
                 const ids = [...evt.to.children].map(item => item.dataset.questionId);
-                @this.updatedOrder(ids);
+                @this.updateQuestionsOrder(ids);
             }
         });
     }
@@ -27,17 +27,80 @@
             <h3 class="text-base font-bold text-[#111827] dark:text-[#FCFCFC]">Custom Questions</h3>
             <p class="text-xs text-[#6F767E] mt-0.5">Collect additional information from registrants</p>
         </div>
-        <button wire:click="openAddModal" type="button"
-            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white bg-[#2563EB] hover:bg-blue-600 shadow-sm transition-all">
-            <span class="material-symbols-outlined text-lg">add</span>
-            Add Question
-        </button>
     </div>
 
-    {{-- Question List --}}
-    <div x-ref="questionsList" class="space-y-2">
-        @forelse($questions as $question)
-            <div data-question-id="{{ $question->id }}"
+    {{-- Standard Fields Section --}}
+    <div class="space-y-3">
+        <h4 class="text-[11px] font-bold uppercase tracking-wider text-[#6F767E] dark:text-[#9A9FA5]">Standard Fields (Automatic)</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {{-- Full Name --}}
+            <div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm">
+                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Full Name</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-blue-200/60 bg-blue-50/50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50">Required</span>
+            </div>
+            {{-- Email Address --}}
+            <div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm">
+                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Email Address</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-blue-200/60 bg-blue-50/50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50">Required</span>
+            </div>
+            {{-- Phone Number --}}
+            <div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm">
+                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Phone Number</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-blue-200/60 bg-blue-50/50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50">Required</span>
+            </div>
+            {{-- Job Level --}}
+            <div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm">
+                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Job Level</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-blue-200/60 bg-blue-50/50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50">Required</span>
+            </div>
+            {{-- Job Title --}}
+            <div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm">
+                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Job Title</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-blue-200/60 bg-blue-50/50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50">Required</span>
+            </div>
+            {{-- Institution / Company --}}
+            <div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm">
+                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Institution / Company</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-blue-200/60 bg-blue-50/50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50">Required</span>
+            </div>
+            {{-- Industry --}}
+            <div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm">
+                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Industry</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-blue-200/60 bg-blue-50/50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50">Required</span>
+            </div>
+            {{-- Domicile --}}
+            <div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm">
+                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Domicile</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-blue-200/60 bg-blue-50/50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50">Required</span>
+            </div>
+            {{-- Highest Education Level --}}
+            <div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm">
+                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Highest Education</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-gray-200 bg-gray-50 text-gray-500 dark:bg-gray-800/20 dark:text-gray-400 dark:border-gray-700/50">Optional</span>
+            </div>
+            {{-- LinkedIn Account --}}
+            <div class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm">
+                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">LinkedIn Account</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-gray-200 bg-gray-50 text-gray-500 dark:bg-gray-800/20 dark:text-gray-400 dark:border-gray-700/50">Optional</span>
+            </div>
+        </div>
+    </div>
+
+    {{-- Custom Fields Section --}}
+    <div class="space-y-3 pt-2">
+        <div class="flex items-center justify-between">
+            <h4 class="text-[11px] font-bold uppercase tracking-wider text-[#6F767E] dark:text-[#9A9FA5]">Custom Structured Questions</h4>
+            <button wire:click="openAddModal" type="button"
+                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold text-white bg-[#2563EB] hover:bg-blue-600 shadow-sm transition-all">
+                <span class="material-symbols-outlined text-lg">add</span>
+                Add Question
+            </button>
+        </div>
+        
+        {{-- Question List --}}
+        <div x-ref="questionsList" class="space-y-2">
+            @forelse($questions as $question)
+                <div data-question-id="{{ $question->id }}"
                 class="group flex items-center gap-3 p-4 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] hover:border-[#2563EB]/50 transition-all">
 
                 {{-- Drag Handle --}}
@@ -97,6 +160,7 @@
             </div>
         @endforelse
     </div>
+</div>
 
     {{-- ═══════════════════════════════════════════════════ ADD / EDIT MODAL ══ --}}
     @if($showModal)

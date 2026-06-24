@@ -71,6 +71,14 @@
             background-color: #f8f9fa !important;
             color: #F28F35 !important;
         }
+        .form-registration-container .form-check-input:checked {
+            background-color: #F28F35 !important;
+            border-color: #F28F35 !important;
+        }
+        .form-registration-container .form-check-input:focus {
+            border-color: #F28F35 !important;
+            box-shadow: 0 0 0 0.25rem rgba(242, 143, 53, 0.25) !important;
+        }
     </style>
 
     {{-- Capacity / duplicate / registration-period errors --}}
@@ -430,7 +438,7 @@
             <div class="col-12 mt-4 pt-4 border-top">
                 <h5 class="fw-bold mb-4" style="color: #333;">Additional Information</h5>
                 <div class="row">
-                    @foreach($event->customQuestions->ordered()->get() as $question)
+                    @foreach($event->customQuestions as $question)
                         <div class="col-md-6 mb-4" data-question-id="{{ $question->id }}">
                             <label class="form-label">
                                 {{ $question->question }}
@@ -438,6 +446,17 @@
                                     <span class="text-danger">*</span>
                                 @endif
                             </label>
+                            
+                            @if($question->question_description)
+                                <p class="text-muted small mb-2" style="font-size: 0.85rem; font-weight: normal; line-height: 1.4;">{{ $question->question_description }}</p>
+                            @endif
+
+                            @if($question->image)
+                                <div class="mb-2">
+                                    <img src="/storage/{{ $question->image }}" alt="{{ $question->question }}" class="img-fluid rounded-3" style="max-height: 180px; object-fit: contain;">
+                                </div>
+                            @endif
+
                             @if($question->type === 'text')
                                 <input wire:model.live="custom_questions.{{ $question->short_label }}" type="text"
                                     class="form-control" placeholder="Your answer">
@@ -452,6 +471,30 @@
                                         <option value="{{ $option->option_text }}">{{ $option->option_text }}</option>
                                     @endforeach
                                 </select>
+                            @elseif($question->type === 'multi_select')
+                                <div class="mt-2 d-flex flex-wrap gap-3">
+                                    @foreach($question->options as $option)
+                                        <div class="form-check">
+                                            <input wire:model.live="custom_questions.{{ $question->short_label }}" 
+                                                type="checkbox" 
+                                                value="{{ $option->option_text }}" 
+                                                id="q_{{ $question->id }}_{{ $loop->index }}"
+                                                class="form-check-input">
+                                            <label class="form-check-label small" for="q_{{ $question->id }}_{{ $loop->index }}">
+                                                {{ $option->option_text }}
+                                            </label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @elseif($question->type === 'email')
+                                <input wire:model.live="custom_questions.{{ $question->short_label }}" type="email"
+                                    class="form-control" placeholder="Your email address">
+                            @elseif($question->type === 'phone')
+                                <input wire:model.live="custom_questions.{{ $question->short_label }}" type="tel"
+                                    class="form-control" placeholder="Your phone number">
+                            @elseif($question->type === 'date')
+                                <input wire:model.live="custom_questions.{{ $question->short_label }}" type="date"
+                                    class="form-control">
                             @endif
                             @error('custom_questions.' . $question->short_label)
                                 <div class="text-danger small mt-1" style="font-size:0.75rem;">{{ $message }}</div>
