@@ -215,11 +215,20 @@
                                     <div class="text-[10px] text-[#6F767E] font-semibold mt-1.5">{{ $reg->check_in_date->format('M d, Y H:i') }}</div>
                                 @endif
                             @else
-                                <button wire:click="confirmCheckin({{ $reg->id }})" type="button"
-                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider bg-gray-100 dark:bg-[#272B30] text-[#6F767E] hover:text-[#10B981] dark:hover:text-[#10B981] cursor-pointer transition-all hover:scale-[1.02]">
-                                    <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                                    Check In
-                                </button>
+                                @if($reg->status !== 'confirmed')
+                                    <button disabled type="button"
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider bg-gray-100/50 dark:bg-[#272B30]/30 text-[#6F767E]/40 cursor-not-allowed opacity-50"
+                                        title="Hanya peserta yang disetujui (Approved) yang dapat check-in">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
+                                        Check In
+                                    </button>
+                                @else
+                                    <button wire:click="confirmCheckin({{ $reg->id }})" type="button"
+                                        class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider bg-gray-100 dark:bg-[#272B30] text-[#6F767E] hover:text-[#10B981] dark:hover:text-[#10B981] cursor-pointer transition-all hover:scale-[1.02]">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
+                                        Check In
+                                    </button>
+                                @endif
                             @endif
                         </td>
 
@@ -713,7 +722,7 @@
                 </div>
                 <h3 class="text-xl font-bold text-slate-900 dark:text-[#FCFCFC]">Konfirmasi Massal Check-in</h3>
                 <p class="text-sm text-slate-500 dark:text-[#6F767E] mt-2 leading-relaxed">
-                    Apakah Anda yakin ingin melakukan check-in untuk <span class="font-bold text-slate-800 dark:text-white">{{ count($selectedItems) }}</span> peserta terpilih?
+                    Apakah Anda yakin ingin melakukan check-in untuk <span class="font-bold text-slate-800 dark:text-white">{{ $eligibleCheckinCount }}</span> peserta terpilih yang berstatus Approved?
                 </p>
             </div>
 

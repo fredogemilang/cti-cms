@@ -56,6 +56,7 @@ class EventGuestsTable extends Component
     public ?int $checkinRegistrationId = null;
     public string $checkinRegistrationName = '';
     public bool $showBulkCheckinConfirmModal = false;
+    public int $eligibleCheckinCount = 0;
     
     // New frontend-matching fields
     public int $editContactLevelId = 0;
@@ -248,6 +249,10 @@ class EventGuestsTable extends Component
             ->first();
 
         if ($reg) {
+            if ($reg->status !== 'confirmed' && $reg->status !== 'attended') {
+                $this->dispatch('show-toast', ['type' => 'error', 'message' => 'Only approved guests can check in.']);
+                return;
+            }
             $this->checkinRegistrationId = $id;
             $this->checkinRegistrationName = $reg->full_name ?? $reg->name;
             $this->showCheckinConfirmModal = true;
@@ -284,6 +289,18 @@ class EventGuestsTable extends Component
             $this->dispatch('show-toast', ['type' => 'error', 'message' => 'No attendees selected.']);
             return;
         }
+
+        $this->eligibleCheckinCount = EventRegistration::whereIn('id', $this->selectedItems)
+            ->where('event_id', $this->event->id)
+            ->where('status', 'confirmed')
+            ->where('check_in', false)
+            ->count();
+
+        if ($this->eligibleCheckinCount === 0) {
+            $this->dispatch('show-toast', ['type' => 'error', 'message' => 'None of the selected guests are approved (Confirmed) and eligible for check-in.']);
+            return;
+        }
+
         $this->showBulkCheckinConfirmModal = true;
     }
 
@@ -293,6 +310,7 @@ class EventGuestsTable extends Component
     public function cancelBulkCheckin(): void
     {
         $this->showBulkCheckinConfirmModal = false;
+        $this->eligibleCheckinCount = 0;
     }
 
     /**
@@ -314,6 +332,11 @@ class EventGuestsTable extends Component
             ->first();
 
         if (!$reg) {
+            return;
+        }
+
+        if ($reg->status !== 'confirmed' && $reg->status !== 'attended') {
+            $this->dispatch('show-toast', ['type' => 'error', 'message' => 'Only approved guests can check in.']);
             return;
         }
 
@@ -341,11 +364,9 @@ class EventGuestsTable extends Component
 
         $count = 0;
         foreach ($registrations as $reg) {
-            if (!$reg->check_in) {
+            if (!$reg->check_in && $reg->status === 'confirmed') {
                 $reg->checkIn();
-                if ($reg->status === 'confirmed') {
-                    $reg->update(['status' => 'attended']);
-                }
+                $reg->update(['status' => 'attended']);
                 $count++;
             }
         }
@@ -353,7 +374,7 @@ class EventGuestsTable extends Component
         $this->selectedItems = [];
         $this->selectAll = false;
 
-        $this->dispatch('show-toast', ['type' => 'success', 'message' => "Successfully checked in {$count} attendee(s)."]);
+        $this->dispatch('show-toast', ['type' => 'success', 'message' => "Successfully checked in {$count} approved attendee(s)."]);
     }
 
     public function editGuest(int $id): void
