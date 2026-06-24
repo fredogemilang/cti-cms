@@ -67,6 +67,12 @@
                             if (!phoneVal.trim()) {
                                 this.errors.phone = 'Phone Number is required.';
                                 isValid = false;
+                            } else {
+                                let cleanPhone = phoneVal.replace(/\D/g, '');
+                                if (cleanPhone.length < 9 || cleanPhone.length > 13) {
+                                    this.errors.phone = 'Phone Number must be between 9 and 13 digits.';
+                                    isValid = false;
+                                }
                             }
 
                             // Job Level validation
@@ -101,6 +107,13 @@
                             let industryVal = this.$el.querySelector('[name=industry]')?.value || '';
                             if (!industryVal) {
                                 this.errors.industry = 'Industry is required.';
+                                isValid = false;
+                            }
+
+                            // LinkedIn validation
+                            let linkedinVal = this.$el.querySelector('[name=linkedin]')?.value || '';
+                            if (linkedinVal.trim() && !/^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/i.test(linkedinVal)) {
+                                this.errors.linkedin = 'LinkedIn account must be a valid LinkedIn URL.';
                                 isValid = false;
                             }
                             
@@ -299,7 +312,12 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Linkedin Account:</label>
-                            <input type="text" name="linkedin" class="form-control form-control-flushed" placeholder="linkedin.com/in/username" value="{{ old('linkedin') }}">
+                            <input type="text" name="linkedin" class="form-control form-control-flushed"
+                                :class="errors.linkedin ? 'is-invalid' : ''"
+                                placeholder="linkedin.com/in/username" value="{{ old('linkedin') }}">
+                            <template x-if="errors.linkedin">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.linkedin"></div>
+                            </template>
                         </div>
 
                         <!-- Row 3 -->

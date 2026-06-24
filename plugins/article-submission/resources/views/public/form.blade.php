@@ -70,6 +70,23 @@
                                 this.errors.email = 'Please enter a valid e-mail address.';
                                 isValid = false;
                             }
+
+                            // Phone validation (optional, but if filled must be 9-13 digits)
+                            let phoneVal = this.$el.querySelector('[name=phone]')?.value || '';
+                            if (phoneVal.trim()) {
+                                let cleanPhone = phoneVal.replace(/\D/g, '');
+                                if (cleanPhone.length < 9 || cleanPhone.length > 13) {
+                                    this.errors.phone = 'Phone Number must be between 9 and 13 digits.';
+                                    isValid = false;
+                                }
+                            }
+
+                            // LinkedIn validation (optional, but if filled must be valid link)
+                            let linkedinVal = this.$el.querySelector('[name=linkedin]')?.value || '';
+                            if (linkedinVal.trim() && !/^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/i.test(linkedinVal)) {
+                                this.errors.linkedin = 'LinkedIn account must be a valid LinkedIn URL.';
+                                isValid = false;
+                            }
                             
                             return isValid;
                         },
@@ -134,13 +151,23 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Linkedin Account:</label>
-                            <input type="text" name="linkedin" class="form-control form-control-flushed" placeholder="Linkedin Account" value="{{ old('linkedin') }}">
+                            <input type="text" name="linkedin" class="form-control form-control-flushed"
+                                :class="errors.linkedin ? 'is-invalid' : ''"
+                                placeholder="Linkedin Account" value="{{ old('linkedin') }}">
+                            <template x-if="errors.linkedin">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.linkedin"></div>
+                            </template>
                         </div>
 
                         <!-- Row 3 -->
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Phone Number:</label>
-                            <input type="text" name="phone" class="form-control form-control-flushed" placeholder="Phone Number" value="{{ old('phone') }}">
+                            <input type="text" name="phone" class="form-control form-control-flushed"
+                                :class="errors.phone ? 'is-invalid' : ''"
+                                placeholder="Phone Number" value="{{ old('phone') }}">
+                            <template x-if="errors.phone">
+                                <div class="text-danger small mt-1" style="font-size:0.75rem;" x-text="errors.phone"></div>
+                            </template>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-bold small">Institution/Company:</label>

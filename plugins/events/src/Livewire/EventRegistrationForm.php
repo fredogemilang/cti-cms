@@ -52,6 +52,10 @@ class EventRegistrationForm extends Component
         'domicile'         => 'Domicile',
     ];
 
+    protected $messages = [
+        'linkedin.regex' => 'LinkedIn account must be a valid LinkedIn URL.',
+    ];
+
     public function getRules(): array
     {
         $rules = [
@@ -69,7 +73,7 @@ class EventRegistrationForm extends Component
             'company_name'            => 'required|string|max:255',
             'industry'                => 'required|string',
             'domicile'                => 'required|string',
-            'linkedin'                => 'nullable|string|max:255',
+            'linkedin'                => ['nullable', 'string', 'max:255', 'regex:/^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/i'],
         ];
 
         return $rules;

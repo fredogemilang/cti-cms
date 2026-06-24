@@ -26,9 +26,9 @@ class PhoneNumberFormat implements ValidationRule
 
         $cleaned = preg_replace('/[^\d]/', '', (string) $value);
 
-        // Must be 9-17 digits
-        if (strlen($cleaned) < 9 || strlen($cleaned) > 17) {
-            $fail('Phone number must be 9–17 digits including country code (e.g., +6281234567890).');
+        // Must be 9-13 digits
+        if (strlen($cleaned) < 9 || strlen($cleaned) > 13) {
+            $fail('Phone number must be 9–13 digits including country code (e.g., +6281234567890).');
             return;
         }
 

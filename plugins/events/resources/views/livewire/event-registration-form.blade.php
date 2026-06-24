@@ -110,6 +110,12 @@
                 if (!phoneVal.trim()) {
                     this.errors.mobile_phone = 'Phone Number is required.';
                     isValid = false;
+                } else {
+                    let cleanPhone = phoneVal.replace(/\D/g, '');
+                    if (cleanPhone.length < 9 || cleanPhone.length > 13) {
+                        this.errors.mobile_phone = 'Phone Number must be between 9 and 13 digits.';
+                        isValid = false;
+                    }
                 }
                 
                 // Job Level validation
@@ -144,6 +150,13 @@
                 let domicileVal = this.$el.querySelector('[name=domicile]')?.value || '';
                 if (!domicileVal) {
                     this.errors.domicile = 'Domicile is required.';
+                    isValid = false;
+                }
+
+                // LinkedIn validation
+                let linkedinVal = this.$el.querySelector('[name=linkedin]')?.value || '';
+                if (linkedinVal.trim() && !/^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/i.test(linkedinVal)) {
+                    this.errors.linkedin = 'LinkedIn account must be a valid LinkedIn URL.';
                     isValid = false;
                 }
                 
