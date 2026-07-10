@@ -224,7 +224,7 @@
                 <select id="sessionSelect" onchange="onSessionChange()">
                     <option value="">— Select Session —</option>
                 </select>
-                <select id="prizeSelect" onchange="onPrizeChange()">
+                <select id="prizeSelect" onchange="onPrizeChange()" style="display:none">
                     <option value="">— Select Prize —</option>
                 </select>
             </div>
@@ -341,37 +341,29 @@ function onSessionChange() {
     currentSession = sessions.find(s => s.id === selectedSessionId) || null;
 
     const pSel = document.getElementById('prizeSelect');
-    pSel.innerHTML = '<option value="">— Select Prize —</option>';
+    pSel.style.display = 'none';
     
     if (currentSession) {
         isMultiMode = checkIsMultiMode(currentSession);
-        if (isMultiMode) {
-            pSel.style.display = 'none';
+        if (!isMultiMode && currentSession.prizes.length > 0) {
+            const p = currentSession.prizes[0];
+            selectedPrizeId = p.id;
+            currentPrize = p;
         } else {
-            pSel.style.display = '';
-            currentSession.prizes.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p.id;
-                opt.textContent = p.name + (p.remaining <= 0 ? ' (FULL)' : ` (${p.remaining} left)`);
-                if (p.remaining <= 0) opt.disabled = true;
-                pSel.appendChild(opt);
-            });
+            selectedPrizeId = null;
+            currentPrize = null;
         }
     } else {
-        pSel.style.display = '';
+        selectedPrizeId = null;
+        currentPrize = null;
         isMultiMode = false;
     }
     
-    selectedPrizeId = null;
-    currentPrize = null;
     updateUI();
 }
 
 function onPrizeChange() {
-    const sel = document.getElementById('prizeSelect');
-    selectedPrizeId = sel.value ? parseInt(sel.value) : null;
-    currentPrize = currentSession?.prizes.find(p => p.id === selectedPrizeId) || null;
-    updateUI();
+    // Deprecated, auto-selected now
 }
 
 function updateUI() {
