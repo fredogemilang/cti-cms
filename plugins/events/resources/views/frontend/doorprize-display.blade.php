@@ -234,7 +234,7 @@
         <div class="stage">
             <div id="prizeInfo" class="prize-info" style="display:none">
                 <div class="prize-name" id="prizeNameDisplay"></div>
-                <div>Remaining: <span id="prizeRemaining"></span> / <span id="prizeTotal"></span></div>
+                <div style="display:none">Remaining: <span id="prizeRemaining"></span> / <span id="prizeTotal"></span></div>
             </div>
 
             {{-- Idle --}}
