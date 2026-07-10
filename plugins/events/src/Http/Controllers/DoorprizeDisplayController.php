@@ -148,6 +148,24 @@ class DoorprizeDisplayController extends Controller
 
         // Refresh session data
         $session->load(['prizes.winners.registration', 'prizes.activeWinners', 'bans']);
+        $prizesData = $session->prizes->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'name' => $p->name,
+                'max_winners' => $p->max_winners,
+                'winners_count' => $p->activeWinners->count(),
+                'remaining' => $p->getRemainingSlots(),
+                'winners' => $p->winners->map(fn($w) => [
+                    'id' => $w->id,
+                    'name' => $w->registration->name ?? $w->registration->full_name ?? 'Unknown',
+                    'email' => $w->registration->email ?? '',
+                    'organization' => $w->registration->organization ?? $w->registration->company_name ?? '',
+                    'status' => $w->status,
+                    'won_at' => $w->won_at?->format('H:i'),
+                ]),
+            ];
+        });
+
         $updatedPrize = $session->prizes->firstWhere('id', $prize->id);
 
         return response()->json([
@@ -164,6 +182,7 @@ class DoorprizeDisplayController extends Controller
                 'remaining' => $updatedPrize->getRemainingSlots(),
                 'winners_count' => $updatedPrize->activeWinners->count(),
             ],
+            'prizes' => $prizesData,
             'eligibleNames' => $eligibleNames,
             'poolSize' => $eligible->count(),
         ]);
@@ -276,6 +295,14 @@ class DoorprizeDisplayController extends Controller
                 'max_winners' => $prize->max_winners,
                 'winners_count' => $prize->activeWinners->count(),
                 'remaining' => $prize->getRemainingSlots(),
+                'winners' => $prize->winners->map(fn($w) => [
+                    'id' => $w->id,
+                    'name' => $w->registration->name ?? $w->registration->full_name ?? 'Unknown',
+                    'email' => $w->registration->email ?? '',
+                    'organization' => $w->registration->organization ?? $w->registration->company_name ?? '',
+                    'status' => $w->status,
+                    'won_at' => $w->won_at?->format('H:i'),
+                ]),
             ];
         });
 
@@ -318,13 +345,10 @@ class DoorprizeDisplayController extends Controller
         $winner->update(['status' => 'redraw']);
 
         $event = Event::where('slug', $slug)->firstOrFail();
-        $session = $winner->prize->session;
+        $session = DoorprizeSession::with(['prizes.winners.registration', 'prizes.activeWinners', 'bans'])->find($winner->prize->session_id);
 
         // Refresh eligible names
         $eligibleNames = $this->getEligibleNames($event);
-
-        // Refresh session data
-        $session->load(['prizes.winners.registration', 'prizes.activeWinners', 'bans']);
         $prizesData = $session->prizes->map(function ($prize) {
             return [
                 'id' => $prize->id,
@@ -332,6 +356,14 @@ class DoorprizeDisplayController extends Controller
                 'max_winners' => $prize->max_winners,
                 'winners_count' => $prize->activeWinners->count(),
                 'remaining' => $prize->getRemainingSlots(),
+                'winners' => $prize->winners->map(fn($w) => [
+                    'id' => $w->id,
+                    'name' => $w->registration->name ?? $w->registration->full_name ?? 'Unknown',
+                    'email' => $w->registration->email ?? '',
+                    'organization' => $w->registration->organization ?? $w->registration->company_name ?? '',
+                    'status' => $w->status,
+                    'won_at' => $w->won_at?->format('H:i'),
+                ]),
             ];
         });
 

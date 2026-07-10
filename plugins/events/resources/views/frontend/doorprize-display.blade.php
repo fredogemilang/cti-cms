@@ -719,18 +719,20 @@ function updateUI() {
 
     if (isMultiMode) {
         // Multi Mode
+        multiStage.style.display = '';
+        buildMultiModeSlots();
+
         const totalRemaining = currentSession.prizes.reduce((sum, p) => sum + p.remaining, 0);
         if (totalRemaining <= 0) {
             btn.disabled = true;
+            btn.className = 'draw-btn start';
             document.getElementById('btnLabel').textContent = 'No Slots';
             state = 'idle';
         } else {
-            multiStage.style.display = '';
             btn.disabled = false;
             btn.className = 'draw-btn start';
             document.getElementById('btnLabel').textContent = 'Start';
             state = 'ready';
-            buildMultiModeSlots();
         }
     } else {
         // Single Mode
@@ -745,20 +747,41 @@ function updateUI() {
         document.getElementById('prizeTotal').textContent = currentPrize.max_winners;
         info.style.display = '';
 
+        const activeWinners = currentPrize.winners ? currentPrize.winners.filter(w => w.status !== 'redraw') : [];
+
         if (currentPrize.remaining <= 0) {
             btn.disabled = true;
+            btn.className = 'draw-btn start';
             document.getElementById('btnLabel').textContent = 'No Slots';
             state = 'idle';
+
+            if (activeWinners.length > 0) {
+                const lastW = activeWinners[activeWinners.length - 1];
+                lastWinnerRecordId = lastW.id;
+                showWinnerCardOnly(lastW, currentPrize.name);
+            } else {
+                roller.style.display = 'none';
+                reveal.classList.remove('visible');
+            }
         } else {
             roller.style.display = '';
             btn.disabled = false;
             btn.className = 'draw-btn start';
             document.getElementById('btnLabel').textContent = 'Start';
             state = 'ready';
+            reveal.classList.remove('visible');
             buildRoller();
         }
     }
     updateEligibleCount();
+}
+
+function showWinnerCardOnly(winner, prizeName) {
+    document.getElementById('winnerName').textContent = winner.name;
+    document.getElementById('winnerOrg').textContent = winner.organization || '';
+    document.getElementById('winnerPrize').textContent = '🎁 ' + prizeName;
+    document.getElementById('winnerReveal').classList.add('visible');
+    document.getElementById('rollerContainer').style.display = 'none';
 }
 
 function updateEligibleCount() {
@@ -805,16 +828,35 @@ function highlightCenter() {
 function buildMultiModeSlots() {
     const grid = document.getElementById('slotsGrid');
     grid.innerHTML = '';
-    if (eligibleNames.length === 0) return;
+    
+    if (!currentSession || !currentSession.prizes) return;
 
     currentSession.prizes.forEach(p => {
-        if (p.remaining <= 0) return;
-
         const card = document.createElement('div');
         card.className = 'slot-card';
         
+        const activeWinners = p.winners ? p.winners.filter(w => w.status !== 'redraw') : [];
+        const emptyCount = Math.max(0, p.max_winners - activeWinners.length);
+        
         let slotsHtml = '';
-        for (let i = 0; i < p.remaining; i++) {
+        
+        // 1. Render active winners
+        activeWinners.forEach(w => {
+            slotsHtml += `
+                <div class="slot-item winner-drawn" data-winner-id="${w.id}">
+                    <button class="slot-redraw-btn" onclick="handleRedrawSlot(this)">
+                        <span class="material-symbols-outlined" style="font-size:14px">autorenew</span>
+                        <span>Redraw</span>
+                    </button>
+                    <span class="material-symbols-outlined trophy-icon">emoji_events</span>
+                    <div class="winner-name">${escHtml(w.name)}</div>
+                    <div class="winner-company">${escHtml(w.organization || '')}</div>
+                </div>
+            `;
+        });
+        
+        // 2. Render empty slots
+        for (let i = 0; i < emptyCount; i++) {
             slotsHtml += `
                 <div class="slot-item">
                     <button class="slot-redraw-btn" onclick="handleRedrawSlot(this)">
@@ -948,6 +990,7 @@ async function stopMultiModeRolling() {
             if (updatedP) {
                 p.remaining = updatedP.remaining;
                 p.winners_count = updatedP.winners_count;
+                p.winners = updatedP.winners || [];
             }
         });
     }
@@ -1031,10 +1074,24 @@ async function stopRolling() {
     }
     eligibleNames = getFilteredEligibleNames();
 
-    if (currentPrize) {
-        currentPrize.remaining = result.prize.remaining;
-        currentPrize.winners_count = result.prize.winners_count;
-        document.getElementById('prizeRemaining').textContent = result.prize.remaining;
+    if (currentPrize && result.prizes) {
+        const updatedP = result.prizes.find(up => up.id === currentPrize.id);
+        if (updatedP) {
+            currentPrize.remaining = updatedP.remaining;
+            currentPrize.winners_count = updatedP.winners_count;
+            currentPrize.winners = updatedP.winners || [];
+            document.getElementById('prizeRemaining').textContent = updatedP.remaining;
+        }
+    }
+    if (currentSession && result.prizes) {
+        currentSession.prizes.forEach(p => {
+            const updatedP = result.prizes.find(up => up.id === p.id);
+            if (updatedP) {
+                p.remaining = updatedP.remaining;
+                p.winners_count = updatedP.winners_count;
+                p.winners = updatedP.winners || [];
+            }
+        });
     }
 
     cancelAnimationFrame(rollerAnim);
@@ -1198,6 +1255,7 @@ async function handleRedrawSingle() {
                 if (updatedP) {
                     p.remaining = updatedP.remaining;
                     p.winners_count = updatedP.winners_count;
+                    p.winners = updatedP.winners || [];
                 }
             });
         }
@@ -1206,6 +1264,7 @@ async function handleRedrawSingle() {
             if (updatedP) {
                 currentPrize.remaining = updatedP.remaining;
                 currentPrize.winners_count = updatedP.winners_count;
+                currentPrize.winners = updatedP.winners || [];
             }
         }
 
@@ -1249,6 +1308,7 @@ async function handleRedrawSlot(btn) {
                 if (updatedP) {
                     p.remaining = updatedP.remaining;
                     p.winners_count = updatedP.winners_count;
+                    p.winners = updatedP.winners || [];
                 }
             });
         }
