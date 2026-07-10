@@ -137,7 +137,7 @@ class DoorprizeDisplayController extends Controller
         $winner = $eligible->random();
 
         // Record winner
-        DoorprizeWinner::create([
+        $newWinner = DoorprizeWinner::create([
             'prize_id' => $prize->id,
             'registration_id' => $winner->id,
             'won_at' => Carbon::now(),
@@ -153,6 +153,7 @@ class DoorprizeDisplayController extends Controller
         return response()->json([
             'success' => true,
             'winner' => [
+                'id' => $newWinner->id,
                 'registration_id' => $winner->id,
                 'name' => $winner->name ?? $winner->full_name,
                 'email' => $winner->email,
@@ -236,13 +237,15 @@ class DoorprizeDisplayController extends Controller
                     $eligiblePool = $eligiblePool->reject(fn($item) => $item->id === $winner->id);
 
                     // Record winner
-                    DoorprizeWinner::create([
+                    $wRecord = DoorprizeWinner::create([
                         'prize_id' => $prize->id,
                         'registration_id' => $winner->id,
                         'won_at' => Carbon::now(),
                     ]);
 
                     $newWinners[] = [
+                        'id' => $wRecord->id,
+                        'registration_id' => $winner->id,
                         'name' => $winner->name ?? $winner->full_name,
                         'email' => $winner->email,
                         'organization' => $winner->organization ?? $winner->company_name ?? '',
@@ -298,5 +301,50 @@ class DoorprizeDisplayController extends Controller
             'check_in' => (bool)$r->check_in,
             'feedback_submitted' => (bool)$r->feedback_submitted,
         ])->values()->toArray();
+    }
+
+    /**
+     * AJAX: Mark a winner as redraw.
+     */
+    public function redrawWinner(Request $request, string $slug)
+    {
+        $winnerId = $request->input('winner_id');
+        $winner = DoorprizeWinner::find($winnerId);
+
+        if (!$winner) {
+            return response()->json(['error' => 'Winner record not found'], 404);
+        }
+
+        $winner->update(['status' => 'redraw']);
+
+        $event = Event::where('slug', $slug)->firstOrFail();
+        $session = $winner->prize->session;
+
+        // Refresh eligible names
+        $eligibleNames = $this->getEligibleNames($event);
+
+        // Refresh session data
+        $session->load(['prizes.winners.registration', 'prizes.activeWinners', 'bans']);
+        $prizesData = $session->prizes->map(function ($prize) {
+            return [
+                'id' => $prize->id,
+                'name' => $prize->name,
+                'max_winners' => $prize->max_winners,
+                'winners_count' => $prize->activeWinners->count(),
+                'remaining' => $prize->getRemainingSlots(),
+            ];
+        });
+
+        // Also fetch all event doorprize winners to update globalWonIds on display page
+        $globalWonIds = DoorprizeWinner::whereHas('prize.session', function ($q) use ($event) {
+            $q->where('event_id', $event->id);
+        })->pluck('registration_id')->toArray();
+
+        return response()->json([
+            'success' => true,
+            'prizes' => $prizesData,
+            'eligibleNames' => $eligibleNames,
+            'globalWonIds' => $globalWonIds,
+        ]);
     }
 }

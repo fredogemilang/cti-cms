@@ -207,4 +207,5 @@ Route::prefix('event')->name('events.')->middleware(['web'])->group(function () 
     Route::get('/{slug}/doorprize/display', [DoorprizeDisplayController::class, 'show'])->name('doorprize.display');
     Route::post('/{slug}/doorprize/draw', [DoorprizeDisplayController::class, 'draw'])->name('doorprize.draw');
     Route::post('/{slug}/doorprize/draw-session', [DoorprizeDisplayController::class, 'drawSession'])->name('doorprize.draw-session');
+    Route::post('/{slug}/doorprize/redraw', [DoorprizeDisplayController::class, 'redrawWinner'])->name('doorprize.redraw');
 });

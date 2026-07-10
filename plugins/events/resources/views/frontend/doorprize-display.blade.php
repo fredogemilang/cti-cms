@@ -203,6 +203,33 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
+        .slot-item .slot-redraw-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            color: #f87171;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            display: none;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 5;
+        }
+        .slot-item.winner-drawn:hover .slot-redraw-btn {
+            display: flex;
+        }
+        .slot-item .slot-redraw-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.5);
+            transform: scale(1.05);
+        }
+
         /* Controls Right */
         .controls-right {
             display: flex;
@@ -433,6 +460,10 @@
                 <div class="wname" id="winnerName"></div>
                 <div class="worg" id="winnerOrg"></div>
                 <div class="wprize" id="winnerPrize"></div>
+                <button id="singleRedrawBtn" class="icon-btn" style="margin-top: 24px; background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #f87171;" onclick="handleRedrawSingle()">
+                    <span class="material-symbols-outlined">autorenew</span>
+                    <span>Redraw</span>
+                </button>
             </div>
 
             {{-- Multi Mode Stage --}}
@@ -474,12 +505,14 @@
 // ─── Data ───
 const DRAW_URL = @json(route('events.doorprize.draw', $event->slug));
 const DRAW_SESSION_URL = @json(route('events.doorprize.draw-session', $event->slug));
+const REDRAW_URL = @json(route('events.doorprize.redraw', $event->slug));
 const CSRF = document.querySelector('meta[name="csrf-token"]').content;
 let sessions = {!! $sessionsJson !!};
 let allParticipants = {!! $eligibleNamesJson !!};
 let globalBannedIds = @json($event->settings['doorprize_global_banned_ids'] ?? []);
 let globalWonIds = @json($globalWonIds);
 let eligibleNames = [];
+let lastWinnerRecordId = null;
 
 let selectedSessionId = null;
 let selectedPrizeId = null;
@@ -784,6 +817,10 @@ function buildMultiModeSlots() {
         for (let i = 0; i < p.remaining; i++) {
             slotsHtml += `
                 <div class="slot-item">
+                    <button class="slot-redraw-btn" onclick="handleRedrawSlot(this)">
+                        <span class="material-symbols-outlined" style="font-size:14px">autorenew</span>
+                        <span>Redraw</span>
+                    </button>
                     <span class="material-symbols-outlined trophy-icon">emoji_events</span>
                     <div class="winner-name">???</div>
                     <div class="winner-company">Ready to draw</div>
@@ -807,9 +844,8 @@ function startMultiModeRolling() {
     btn.className = 'draw-btn stop';
     document.getElementById('btnLabel').textContent = 'Stop';
 
-    const items = document.querySelectorAll('.slot-item');
+    const items = document.querySelectorAll('.slot-item:not(.winner-drawn)');
     items.forEach(item => {
-        item.classList.remove('winner-drawn');
         item.classList.add('rolling');
     });
 
@@ -850,7 +886,7 @@ async function stopMultiModeRolling() {
     multiModeIntervals.forEach(id => clearInterval(id));
     multiModeIntervals = [];
 
-    const items = document.querySelectorAll('.slot-item');
+    const items = document.querySelectorAll('.slot-item.rolling');
     const winners = result.winners;
 
     // Sequential reveal animation of the winners
@@ -863,6 +899,7 @@ async function stopMultiModeRolling() {
 
             item.classList.remove('rolling');
             item.classList.add('winner-drawn');
+            item.setAttribute('data-winner-id', winner.id);
             item.querySelector('.winner-name').textContent = winner.name;
             item.querySelector('.winner-company').textContent = winner.organization || '';
 
@@ -987,6 +1024,7 @@ async function stopRolling() {
 
     allParticipants = result.eligibleNames;
     if (result.winner && result.winner.registration_id) {
+        lastWinnerRecordId = result.winner.id;
         if (!globalWonIds.includes(result.winner.registration_id)) {
             globalWonIds.push(result.winner.registration_id);
         }
@@ -1133,6 +1171,108 @@ function escHtml(s) {
     const d = document.createElement('div');
     d.textContent = s;
     return d.innerHTML;
+}
+
+async function handleRedrawSingle() {
+    if (!lastWinnerRecordId) return;
+
+    if (!confirm('Redraw this winner?')) return;
+
+    try {
+        const resp = await fetch(REDRAW_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+            body: JSON.stringify({ winner_id: lastWinnerRecordId }),
+        });
+        const res = await resp.json();
+        if (res.error) { alert(res.error); return; }
+
+        // Update local data
+        allParticipants = res.eligibleNames;
+        globalWonIds = res.globalWonIds || [];
+        eligibleNames = getFilteredEligibleNames();
+
+        if (currentSession) {
+            currentSession.prizes.forEach(p => {
+                const updatedP = res.prizes.find(up => up.id === p.id);
+                if (updatedP) {
+                    p.remaining = updatedP.remaining;
+                    p.winners_count = updatedP.winners_count;
+                }
+            });
+        }
+        if (currentPrize) {
+            const updatedP = res.prizes.find(up => up.id === currentPrize.id);
+            if (updatedP) {
+                currentPrize.remaining = updatedP.remaining;
+                currentPrize.winners_count = updatedP.winners_count;
+            }
+        }
+
+        updateEligibleCount();
+        lastWinnerRecordId = null;
+
+        // Hide winner reveal, show idle / ready to draw
+        document.getElementById('winnerReveal').classList.remove('visible');
+        
+        // Reset state
+        resetToReady();
+    } catch (e) {
+        alert('Network error');
+    }
+}
+
+async function handleRedrawSlot(btn) {
+    const item = btn.closest('.slot-item');
+    const winnerId = item.getAttribute('data-winner-id');
+    if (!winnerId) return;
+
+    if (!confirm('Redraw this slot winner?')) return;
+
+    try {
+        const resp = await fetch(REDRAW_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+            body: JSON.stringify({ winner_id: winnerId }),
+        });
+        const res = await resp.json();
+        if (res.error) { alert(res.error); return; }
+
+        // Update local data
+        allParticipants = res.eligibleNames;
+        globalWonIds = res.globalWonIds || [];
+        eligibleNames = getFilteredEligibleNames();
+
+        if (currentSession) {
+            currentSession.prizes.forEach(p => {
+                const updatedP = res.prizes.find(up => up.id === p.id);
+                if (updatedP) {
+                    p.remaining = updatedP.remaining;
+                    p.winners_count = updatedP.winners_count;
+                }
+            });
+        }
+
+        updateEligibleCount();
+
+        // Reset this slot item to empty
+        item.classList.remove('winner-drawn');
+        item.removeAttribute('data-winner-id');
+        item.querySelector('.winner-name').textContent = '???';
+        item.querySelector('.winner-company').textContent = 'Ready to draw';
+
+        // Check if there are any remaining unfilled slots
+        const unfilled = document.querySelectorAll('.slot-item:not(.winner-drawn)').length;
+        if (unfilled > 0) {
+            state = 'ready';
+            const drawBtn = document.getElementById('drawBtn');
+            drawBtn.className = 'draw-btn start';
+            drawBtn.disabled = false;
+            document.getElementById('btnLabel').textContent = 'Start';
+        }
+    } catch (e) {
+        alert('Network error');
+    }
 }
 </script>
 </body>
