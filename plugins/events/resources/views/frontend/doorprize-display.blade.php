@@ -202,6 +202,178 @@
             70% { transform: scale(0.9); }
             100% { transform: scale(1); opacity: 1; }
         }
+
+        /* Controls Right */
+        .controls-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .icon-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Modal Style */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 25, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 16px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+            margin: 0;
+        }
+
+        .modal-close-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            color: #fff;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .session-modal-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+        }
+
+        .session-modal-item:hover {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateX(4px);
+        }
+
+        .session-modal-item.active {
+            background: rgba(99, 102, 241, 0.15);
+            border-color: #6366f1;
+        }
+
+        .session-modal-item .session-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .session-modal-item .session-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .session-modal-item .session-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+        }
+
+        .session-modal-item .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .session-modal-item.active .status-dot {
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -220,13 +392,18 @@
                 <span class="material-symbols-outlined">redeem</span>
                 {{ $event->title }} — Doorprize
             </div>
-            <div class="selectors">
-                <select id="sessionSelect" onchange="onSessionChange()">
-                    <option value="">— Select Session —</option>
-                </select>
+            <div class="controls-right">
+                <button class="icon-btn" onclick="openSessionModal()" title="Select Session">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Session</span>
+                </button>
+                <button class="icon-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">
+                    <span class="material-symbols-outlined" id="fsIcon">fullscreen</span>
+                </button>
                 <select id="prizeSelect" onchange="onPrizeChange()" style="display:none">
                     <option value="">— Select Prize —</option>
                 </select>
+                <select id="sessionSelect" style="display:none"></select>
             </div>
         </div>
 
@@ -264,20 +441,31 @@
             </div>
         </div>
 
-        {{-- Bottom Bar --}}
         <div class="bottom-bar">
             <div>
-                <div class="recent-winners" id="recentWinners">
-                    <span class="label">Recent Winners:</span>
-                    <span style="font-size:12px;color:rgba(255,255,255,.25);font-weight:500">No winners yet</span>
-                </div>
-                <div class="eligible-count" id="eligibleCount" style="margin-top:6px"></div>
+                <div id="recentWinners" style="display:none"></div>
+                <div class="eligible-count" id="eligibleCount"></div>
             </div>
             <div id="btnArea">
                 <button class="draw-btn start" id="drawBtn" disabled onclick="handleDrawBtn()">
                     <span class="material-symbols-outlined">casino</span>
                     <span id="btnLabel">Start</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Session Selection Modal --}}
+    <div id="sessionModal" class="modal-overlay" style="display:none" onclick="closeSessionModalOnOverlay(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Select Drawing Session</h2>
+                <button class="modal-close-btn" onclick="closeSessionModal()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="modal-body" id="sessionModalList">
+                <!-- Session items will be dynamically generated here -->
             </div>
         </div>
     </div>
@@ -308,13 +496,23 @@ let recentWinnersList = [];
 
 // ─── Init ───
 (function init() {
-    const sel = document.getElementById('sessionSelect');
-    sessions.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s.id;
-        opt.textContent = s.name;
-        sel.appendChild(opt);
-    });
+    // Restore session from localStorage if exists
+    const stored = localStorage.getItem('selectedSessionId_' + @json($event->slug));
+    if (stored) {
+        selectedSessionId = parseInt(stored);
+        currentSession = sessions.find(s => s.id === selectedSessionId) || null;
+        if (currentSession) {
+            isMultiMode = checkIsMultiMode(currentSession);
+            if (!isMultiMode && currentSession.prizes.length > 0) {
+                const p = currentSession.prizes[0];
+                selectedPrizeId = p.id;
+                currentPrize = p;
+            }
+        } else {
+            selectedSessionId = null;
+        }
+    }
+
     updateEligibleCount();
 
     // Collect existing winners
@@ -326,6 +524,12 @@ let recentWinnersList = [];
         });
     });
     renderRecentWinners();
+    
+    // Build modal list
+    buildSessionModalList();
+    
+    // Initial UI update
+    updateUI();
 })();
 
 function checkIsMultiMode(session) {
@@ -335,13 +539,69 @@ function checkIsMultiMode(session) {
     return false;
 }
 
-function onSessionChange() {
-    const sel = document.getElementById('sessionSelect');
-    selectedSessionId = sel.value ? parseInt(sel.value) : null;
-    currentSession = sessions.find(s => s.id === selectedSessionId) || null;
+// ─── Fullscreen ───
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
 
-    const pSel = document.getElementById('prizeSelect');
-    pSel.style.display = 'none';
+document.addEventListener('fullscreenchange', () => {
+    const icon = document.getElementById('fsIcon');
+    if (document.fullscreenElement) {
+        icon.textContent = 'fullscreen_exit';
+    } else {
+        icon.textContent = 'fullscreen';
+    }
+});
+
+// ─── Modal drawing session selection ───
+function openSessionModal() {
+    buildSessionModalList();
+    document.getElementById('sessionModal').style.display = 'flex';
+}
+
+function closeSessionModal() {
+    document.getElementById('sessionModal').style.display = 'none';
+}
+
+function closeSessionModalOnOverlay(event) {
+    if (event.target === document.getElementById('sessionModal')) {
+        closeSessionModal();
+    }
+}
+
+function buildSessionModalList() {
+    const listContainer = document.getElementById('sessionModalList');
+    listContainer.innerHTML = '';
+    
+    sessions.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'session-modal-item' + (s.id === selectedSessionId ? ' active' : '');
+        item.onclick = () => selectSession(s.id);
+        
+        const totalRemaining = s.prizes.reduce((sum, p) => sum + p.remaining, 0);
+        
+        item.innerHTML = `
+            <div class="session-info">
+                <div class="session-name">${escHtml(s.name)}</div>
+                <div class="session-meta">${s.prizes.length} prizes • ${totalRemaining} slots left</div>
+            </div>
+            <div class="status-dot"></div>
+        `;
+        listContainer.appendChild(item);
+    });
+}
+
+function selectSession(sessionId) {
+    selectedSessionId = sessionId;
+    localStorage.setItem('selectedSessionId_' + @json($event->slug), sessionId);
+    
+    currentSession = sessions.find(s => s.id === selectedSessionId) || null;
     
     if (currentSession) {
         isMultiMode = checkIsMultiMode(currentSession);
@@ -358,12 +618,17 @@ function onSessionChange() {
         currentPrize = null;
         isMultiMode = false;
     }
-    
+
+    closeSessionModal();
     updateUI();
 }
 
+function onSessionChange() {
+    // Deprecated, replaced by selectSession(sessionId)
+}
+
 function onPrizeChange() {
-    // Deprecated, auto-selected now
+    // Deprecated
 }
 
 function updateUI() {
