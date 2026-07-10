@@ -699,7 +699,7 @@ function updateUI() {
 
 function updateEligibleCount() {
     document.getElementById('eligibleCount').textContent =
-        `Eligible pool: ${eligibleNames.length} participants`;
+        `Eligible Users: ${eligibleNames.length}`;
 }
 
 // ─── Roller (Single Mode) ───
