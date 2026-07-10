@@ -52,6 +52,7 @@ class Event extends Model
         'feedback_foreground',
         'feedback_primary_color',
         'feedback_redirect_url',
+        'doorprize_background',
         'feedback_require_checkin',
         'feedback_step_count',
         'gallery_images',

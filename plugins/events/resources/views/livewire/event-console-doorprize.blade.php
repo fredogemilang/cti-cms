@@ -1,8 +1,24 @@
 <div>
+    {{-- Display Link + Background --}}
+    <div class="glass-panel rounded-2xl p-4 mb-6 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-emerald-500">cast</span>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-text-primary">Live Display</h4>
+                <p class="text-[10px] text-text-secondary">Open on projector/big screen for live drawing</p>
+            </div>
+        </div>
+        <a href="{{ $this->displayUrl }}" target="_blank" class="px-4 py-2 rounded-xl text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">open_in_new</span> Open Display
+        </a>
+    </div>
+
     {{-- Sub-tab Navigation --}}
     <div class="flex items-center justify-between mb-6">
         <div class="flex gap-2">
-            @foreach(['sessions' => 'Sessions & Prizes', 'winners' => 'All Winners'] as $key => $label)
+            @foreach(['sessions' => 'Sessions & Prizes', 'winners' => 'All Winners', 'settings' => 'Settings'] as $key => $label)
                 <button wire:click="$set('activeSubTab', '{{ $key }}')"
                     class="px-4 py-2 rounded-xl text-sm font-semibold transition-all border
                         {{ $activeSubTab === $key
@@ -167,6 +183,49 @@
                     </table>
                 </div>
             @endif
+        </div>
+    @endif
+
+    {{-- ═══ SETTINGS TAB ═══ --}}
+    @if($activeSubTab === 'settings')
+        <div class="glass-panel rounded-2xl p-6">
+            <h3 class="text-base font-bold text-text-primary mb-4">Display Settings</h3>
+            <div class="space-y-6">
+                {{-- Background Image --}}
+                <div>
+                    <label class="block text-sm font-bold text-text-primary mb-1.5">Display Background Image</label>
+                    <p class="text-xs text-text-secondary mb-3">This image will be shown as the background on the fullscreen doorprize display page.</p>
+
+                    @if($event->doorprize_background)
+                        <div class="relative rounded-xl overflow-hidden border border-dark-border mb-3" style="max-width:400px">
+                            <img src="{{ asset('storage/' . $event->doorprize_background) }}" class="w-full h-40 object-cover"/>
+                            <button wire:click="removeBackground" wire:confirm="Remove background image?" class="absolute top-2 right-2 p-1.5 rounded-lg bg-red-600/90 text-white hover:bg-red-700 transition-all">
+                                <span class="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    <div class="flex items-center gap-3">
+                        <input type="file" wire:model="backgroundUpload" accept="image/*" class="text-sm text-text-secondary file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-[#2563EB]/10 file:text-[#2563EB] hover:file:bg-[#2563EB]/20 file:cursor-pointer"/>
+                        @if($backgroundUpload)
+                            <button wire:click="uploadBackground" class="px-4 py-2 rounded-xl text-sm font-bold text-white bg-[#2563EB] hover:bg-blue-600 transition-all">Upload</button>
+                        @endif
+                    </div>
+                    @error('backgroundUpload') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                </div>
+
+                {{-- Display URL --}}
+                <div>
+                    <label class="block text-sm font-bold text-text-primary mb-1.5">Display URL</label>
+                    <p class="text-xs text-text-secondary mb-2">Share this link to open the doorprize display on a projector or big screen.</p>
+                    <div class="flex items-center gap-2">
+                        <input type="text" value="{{ $this->displayUrl }}" readonly class="flex-1 h-10 rounded-xl border border-dark-border bg-console-input px-4 text-xs text-text-secondary font-mono"/>
+                        <button onclick="navigator.clipboard.writeText('{{ $this->displayUrl }}')" class="px-3 py-2 rounded-xl text-xs font-bold text-text-secondary hover:text-text-primary border border-dark-border hover:border-[#2563EB]/30 transition-all flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">content_copy</span> Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     @endif
 

@@ -3,6 +3,7 @@
 namespace Plugins\Events\Livewire;
 
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Plugins\Events\Models\Event;
 use Plugins\Events\Models\DoorprizeSession;
 use Plugins\Events\Models\DoorprizePrize;
@@ -14,6 +15,7 @@ use Carbon\Carbon;
 
 class EventConsoleDoorprize extends Component
 {
+    use WithFileUploads;
     // ─── Core ───
     public Event $event;
     public string $activeSubTab = 'sessions'; // sessions | winners
@@ -49,6 +51,9 @@ class EventConsoleDoorprize extends Component
     public bool $showBanModal = false;
     public ?int $banSessionId = null;
     public string $banSearch = '';
+
+    // ─── Background Upload ───
+    public $backgroundUpload;
 
     protected $listeners = [];
 
@@ -369,6 +374,39 @@ class EventConsoleDoorprize extends Component
     {
         DoorprizeWinner::destroy($winnerId);
         $this->dispatch('notify', type: 'success', message: 'Winner removed');
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // BACKGROUND IMAGE
+    // ═══════════════════════════════════════════════════════
+
+    public function uploadBackground()
+    {
+        $this->validate(['backgroundUpload' => 'image|max:2048']);
+
+        // Delete old background
+        if ($this->event->doorprize_background) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($this->event->doorprize_background);
+        }
+
+        $path = $this->backgroundUpload->store('events/doorprize', 'public');
+        $this->event->update(['doorprize_background' => $path]);
+        $this->backgroundUpload = null;
+        $this->dispatch('notify', type: 'success', message: 'Background uploaded');
+    }
+
+    public function removeBackground()
+    {
+        if ($this->event->doorprize_background) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($this->event->doorprize_background);
+            $this->event->update(['doorprize_background' => null]);
+        }
+        $this->dispatch('notify', type: 'success', message: 'Background removed');
+    }
+
+    public function getDisplayUrlProperty(): string
+    {
+        return route('events.doorprize.display', $this->event->slug);
     }
 
     // ═══════════════════════════════════════════════════════

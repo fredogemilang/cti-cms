@@ -6,6 +6,7 @@ use Plugins\Events\Http\Controllers\EventConsoleController;
 use Plugins\Events\Http\Controllers\EventRegistrationController;
 use Plugins\Events\Http\Controllers\EventGuestController;
 use Plugins\Events\Http\Controllers\FeedbackFormController;
+use Plugins\Events\Http\Controllers\DoorprizeDisplayController;
 
 // Admin Routes
 Route::prefix(config('admin.path', 'admin'))->name('admin.')->middleware(['web', 'auth'])->group(function () {
@@ -201,4 +202,8 @@ Route::prefix('event')->name('events.')->middleware(['web'])->group(function () 
     Route::post('/{slug}/feedback/verify', [FeedbackFormController::class, 'verifyEmail'])->name('feedback.verify');
     Route::get('/{slug}/feedback/{uuid}', [FeedbackFormController::class, 'showByUuid'])->name('feedback.uuid');
     Route::post('/{slug}/feedback/{uuid}', [FeedbackFormController::class, 'submit'])->name('feedback.submit');
+
+    // Doorprize display (public — for projector/big screen)
+    Route::get('/{slug}/doorprize/display', [DoorprizeDisplayController::class, 'show'])->name('doorprize.display');
+    Route::post('/{slug}/doorprize/draw', [DoorprizeDisplayController::class, 'draw'])->name('doorprize.draw');
 });
