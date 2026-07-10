@@ -476,7 +476,10 @@ const DRAW_URL = @json(route('events.doorprize.draw', $event->slug));
 const DRAW_SESSION_URL = @json(route('events.doorprize.draw-session', $event->slug));
 const CSRF = document.querySelector('meta[name="csrf-token"]').content;
 let sessions = {!! $sessionsJson !!};
-let eligibleNames = {!! $eligibleNamesJson !!};
+let allParticipants = {!! $eligibleNamesJson !!};
+let globalBannedIds = @json($event->settings['doorprize_global_banned_ids'] ?? []);
+let globalWonIds = @json($globalWonIds);
+let eligibleNames = [];
 
 let selectedSessionId = null;
 let selectedPrizeId = null;
@@ -513,6 +516,9 @@ let recentWinnersList = [];
         }
     }
 
+    // Filter eligibleNames immediately
+    eligibleNames = getFilteredEligibleNames();
+
     updateEligibleCount();
 
     // Collect existing winners
@@ -537,6 +543,29 @@ function checkIsMultiMode(session) {
     if (session.prizes.length > 1) return true;
     if (session.prizes.length === 1 && session.prizes[0].max_winners > 1) return true;
     return false;
+}
+
+function getFilteredEligibleNames() {
+    if (!currentSession) return [];
+
+    return allParticipants.filter(p => {
+        // 1. Exclude if globally banned
+        if (globalBannedIds.includes(p.id)) return false;
+
+        // 2. Exclude if already won (anti-double winner)
+        if (globalWonIds.includes(p.id)) return false;
+
+        // 3. Exclude if session-specific banned
+        if (currentSession.banned_ids && currentSession.banned_ids.includes(p.id)) return false;
+
+        // 4. Require check-in
+        if (currentSession.require_checkin && !p.check_in) return false;
+
+        // 5. Require feedback
+        if (currentSession.require_feedback && !p.feedback_submitted) return false;
+
+        return true;
+    });
 }
 
 // ─── Fullscreen ───
@@ -618,6 +647,8 @@ function selectSession(sessionId) {
         currentPrize = null;
         isMultiMode = false;
     }
+
+    eligibleNames = getFilteredEligibleNames();
 
     closeSessionModal();
     updateUI();
@@ -863,7 +894,15 @@ async function stopMultiModeRolling() {
         });
     }, 200);
 
-    eligibleNames = result.eligibleNames;
+    allParticipants = result.eligibleNames;
+    if (result.winners) {
+        result.winners.forEach(w => {
+            if (w.registration_id && !globalWonIds.includes(w.registration_id)) {
+                globalWonIds.push(w.registration_id);
+            }
+        });
+    }
+    eligibleNames = getFilteredEligibleNames();
     
     // Update currentSession prizes remaining counters
     if (currentSession) {
@@ -946,7 +985,14 @@ async function stopRolling() {
 
     await decelerate(result.winner.name);
 
-    eligibleNames = result.eligibleNames;
+    allParticipants = result.eligibleNames;
+    if (result.winner && result.winner.registration_id) {
+        if (!globalWonIds.includes(result.winner.registration_id)) {
+            globalWonIds.push(result.winner.registration_id);
+        }
+    }
+    eligibleNames = getFilteredEligibleNames();
+
     if (currentPrize) {
         currentPrize.remaining = result.prize.remaining;
         currentPrize.winners_count = result.prize.winners_count;

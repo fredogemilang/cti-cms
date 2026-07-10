@@ -34,6 +34,7 @@ class DoorprizeDisplayController extends Controller
                 'name' => $session->name,
                 'require_checkin' => $session->require_checkin,
                 'require_feedback' => $session->require_feedback,
+                'banned_ids' => $session->bans->pluck('registration_id')->toArray(),
                 'prizes' => $session->prizes->map(function ($prize) {
                     return [
                         'id' => $prize->id,
@@ -57,10 +58,15 @@ class DoorprizeDisplayController extends Controller
         // Get all eligible names for rolling animation
         $eligibleNames = $this->getEligibleNames($event);
 
+        $globalWonIds = DoorprizeWinner::whereHas('prize.session', function ($q) use ($event) {
+            $q->where('event_id', $event->id);
+        })->pluck('registration_id')->toArray();
+
         return view('events::frontend.doorprize-display', [
             'event' => $event,
             'sessionsJson' => $sessionsData->toJson(),
             'eligibleNamesJson' => json_encode($eligibleNames),
+            'globalWonIds' => $globalWonIds,
         ]);
     }
 
@@ -146,6 +152,7 @@ class DoorprizeDisplayController extends Controller
         return response()->json([
             'success' => true,
             'winner' => [
+                'registration_id' => $winner->id,
                 'name' => $winner->name ?? $winner->full_name,
                 'email' => $winner->email,
                 'organization' => $winner->organization ?? $winner->company_name ?? '',
@@ -277,18 +284,18 @@ class DoorprizeDisplayController extends Controller
         ]);
     }
 
-    /**
-     * Get all eligible participant names for the rolling animation.
-     */
     private function getEligibleNames(Event $event): array
     {
         $registrations = EventRegistration::where('event_id', $event->id)
             ->where('status', 'approved')
-            ->get(['id', 'name', 'full_name', 'organization', 'company_name']);
+            ->get(['id', 'name', 'full_name', 'organization', 'company_name', 'check_in', 'feedback_submitted']);
 
         return $registrations->map(fn($r) => [
+            'id' => $r->id,
             'name' => $r->name ?? $r->full_name ?? 'Unknown',
             'organization' => $r->organization ?? $r->company_name ?? '',
+            'check_in' => (bool)$r->check_in,
+            'feedback_submitted' => (bool)$r->feedback_submitted,
         ])->values()->toArray();
     }
 }
