@@ -425,9 +425,16 @@
     {{-- ═══ ALL WINNERS TAB ═══ --}}
     @if($activeSubTab === 'winners')
         <div class="space-y-4">
-            <div>
-                <h3 class="text-base font-bold text-[#111827] dark:text-[#FCFCFC]">All Winners ({{ $this->allWinners->count() }})</h3>
-                <p class="text-xs text-[#6F767E]">List of all participants who have won doorprizes.</p>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-[#111827] dark:text-[#FCFCFC]">All Winners ({{ $this->allWinners->count() }})</h3>
+                    <p class="text-xs text-[#6F767E]">List of all participants who have won doorprizes.</p>
+                </div>
+                @if($this->allWinners->isNotEmpty())
+                    <button wire:click="confirmResetAllWinners" class="px-4 py-2 rounded-xl text-sm font-bold text-red-500 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm">restart_alt</span> Reset All Winners
+                    </button>
+                @endif
             </div>
 
             @if($this->allWinners->isEmpty())
@@ -635,6 +642,26 @@
                 <div class="flex justify-end gap-3">
                     <button wire:click="$set('showDeleteModal', false)" class="px-4 py-2 rounded-xl text-sm font-semibold text-text-secondary">Cancel</button>
                     <button wire:click="deleteItem" class="px-4 py-2 rounded-xl text-sm font-bold text-white bg-red-600 hover:bg-red-700 transition-all">Delete</button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- ═══ RESET ALL WINNERS MODAL ═══ --}}
+    @if($showResetAllModal)
+        <div class="fixed inset-0 bg-black/60 flex items-center justify-center z-[70] p-4">
+            <div class="bg-dark-surface border border-dark-border rounded-2xl max-w-sm w-full p-6 shadow-xl text-text-primary">
+                <div class="h-14 w-14 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                    <span class="material-symbols-outlined text-2xl text-red-500">warning</span>
+                </div>
+                <h3 class="text-lg font-bold text-text-primary mb-2 text-center">Reset All Winners?</h3>
+                <p class="text-sm text-text-secondary mb-1 text-center">This will permanently delete <span class="font-bold text-red-500">all {{ $this->allWinners->count() }} winner record(s)</span> across all sessions for this event.</p>
+                <p class="text-xs text-red-400 text-center mb-6">This action cannot be undone.</p>
+                <div class="flex justify-end gap-3">
+                    <button wire:click="$set('showResetAllModal', false)" class="px-4 py-2 rounded-xl text-sm font-semibold text-text-secondary">Cancel</button>
+                    <button wire:click="resetAllWinners" class="px-4 py-2 rounded-xl text-sm font-bold text-white bg-red-600 hover:bg-red-700 transition-all flex items-center gap-1.5">
+                        <span class="material-symbols-outlined text-sm">restart_alt</span> Yes, Reset All
+                    </button>
                 </div>
             </div>
         </div>

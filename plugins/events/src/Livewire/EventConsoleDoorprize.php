@@ -67,6 +67,9 @@ class EventConsoleDoorprize extends Component
     public string $deleteType = ''; // session | prize
     public ?int $deletingId = null;
 
+    // ─── Reset All ───
+    public bool $showResetAllModal = false;
+
     // ─── Ban ───
     public bool $showBanModal = false;
     public ?int $banSessionId = null;
@@ -412,6 +415,25 @@ class EventConsoleDoorprize extends Component
             $winner->update(['status' => $status]);
             $this->dispatch('notify', type: 'success', message: 'Winner status updated to ' . $status);
         }
+    }
+
+    public function confirmResetAllWinners()
+    {
+        $this->showResetAllModal = true;
+    }
+
+    public function resetAllWinners()
+    {
+        $count = DoorprizeWinner::whereHas('prize.session', function ($q) {
+            $q->where('event_id', $this->event->id);
+        })->count();
+
+        DoorprizeWinner::whereHas('prize.session', function ($q) {
+            $q->where('event_id', $this->event->id);
+        })->delete();
+
+        $this->showResetAllModal = false;
+        $this->dispatch('notify', type: 'success', message: "All {$count} winner(s) have been reset");
     }
 
     // ═══════════════════════════════════════════════════════
