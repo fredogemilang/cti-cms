@@ -937,7 +937,7 @@ async function stopMultiModeRolling() {
         const winner = winners[i];
 
         if (winner) {
-            await new Promise(resolve => setTimeout(resolve, 400)); // 400ms delay per slot reveal
+            await new Promise(resolve => setTimeout(resolve, 200)); // 200ms delay per slot reveal
 
             item.classList.remove('rolling');
             item.classList.add('winner-drawn');
@@ -1052,18 +1052,22 @@ async function stopRolling() {
     btn.disabled = true;
     document.getElementById('btnLabel').textContent = '...';
 
+    // Fire AJAX and deceleration in parallel so stop feels instant
+    const fetchPromise = fetch(DRAW_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
+        body: JSON.stringify({ session_id: selectedSessionId, prize_id: selectedPrizeId }),
+    }).then(r => r.json());
+
+    const deceleratePromise = decelerate();
+
+    // Wait for both to finish
     let result;
     try {
-        const resp = await fetch(DRAW_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF, 'Accept': 'application/json' },
-            body: JSON.stringify({ session_id: selectedSessionId, prize_id: selectedPrizeId }),
-        });
-        result = await resp.json();
+        const [fetchResult] = await Promise.all([fetchPromise, deceleratePromise]);
+        result = fetchResult;
         if (result.error) { alert(result.error); resetToReady(); return; }
     } catch (e) { alert('Network error'); resetToReady(); return; }
-
-    await decelerate(result.winner.name);
 
     allParticipants = result.eligibleNames;
     if (result.winner && result.winner.registration_id) {
@@ -1106,10 +1110,10 @@ async function stopRolling() {
     startCooldown(5);
 }
 
-function decelerate(winnerName) {
+function decelerate() {
     return new Promise(resolve => {
         let speed = rollerSpeed;
-        const decayRate = 0.96;
+        const decayRate = 0.88; // Faster deceleration for snappier stop
         const track = document.getElementById('rollerTrack');
         const totalH = track.children.length * ITEM_H;
 
