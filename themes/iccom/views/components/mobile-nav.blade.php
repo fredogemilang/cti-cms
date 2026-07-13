@@ -1,5 +1,12 @@
 @php
-    $postsArchiveSlug = \Plugins\Posts\Models\Setting::get('archive_slug', 'blog');
+    $postsArchiveSlug = 'blog'; // default fallback
+    if (class_exists(\Plugins\Posts\Models\Setting::class)) {
+        try {
+            $postsArchiveSlug = \Plugins\Posts\Models\Setting::get('archive_slug', 'blog');
+        } catch (\Throwable) {
+            // Silently fall back to default
+        }
+    }
 @endphp
 <nav class="mobile-bottom-nav d-lg-none">
     <a href="{{ url('/') }}" class="nav-item {{ request()->is('/') ? 'active' : '' }}">

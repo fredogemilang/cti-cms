@@ -10,12 +10,19 @@
         $reg   = null;
         $event = null;
         if (request('email') && request('slug')) {
-            $reg = \Plugins\Events\Models\EventRegistration::where('email', request('email'))
-                ->whereHas('event', fn($q) => $q->where('slug', request('slug')))
-                ->with('event')
-                ->latest()
-                ->first();
-            $event = $reg?->event;
+            if (class_exists(\Plugins\Events\Models\EventRegistration::class)) {
+                try {
+                    $reg = \Plugins\Events\Models\EventRegistration::where('email', request('email'))
+                        ->whereHas('event', fn($q) => $q->where('slug', request('slug')))
+                        ->with('event')
+                        ->latest()
+                        ->first();
+                    $event = $reg?->event;
+                } catch (\Throwable) {
+                    $reg   = null;
+                    $event = null;
+                }
+            }
         }
     @endphp
 

@@ -142,11 +142,18 @@
 
     <!-- Related Articles Section -->
     @php
-        $relatedPosts = \Plugins\Posts\Models\Post::where('status', 'published')
-            ->where('id', '!=', $post->id)
-            ->latest()
-            ->take(3)
-            ->get();
+        $relatedPosts = collect(); // empty fallback
+        if (class_exists(\Plugins\Posts\Models\Post::class)) {
+            try {
+                $relatedPosts = \Plugins\Posts\Models\Post::where('status', 'published')
+                    ->where('id', '!=', $post->id)
+                    ->latest()
+                    ->take(3)
+                    ->get();
+            } catch (\Throwable) {
+                $relatedPosts = collect();
+            }
+        }
     @endphp
     @if($relatedPosts->count() > 0)
     <section class="related-articles-section py-5 bg-light">

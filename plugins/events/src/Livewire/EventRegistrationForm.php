@@ -9,7 +9,7 @@ use Plugins\Events\Models\EventCustomQuestion;
 use Plugins\Events\Models\EventCustomAnswer;
 use Plugins\Events\Models\ContactLevel;
 use Plugins\Events\Models\ContactDivision;
-use App\Rules\CorporateEmail;
+use Plugins\Events\Rules\CorporateEmail;
 use App\Rules\PhoneNumberFormat;
 use Illuminate\Support\Str;
 

@@ -157,13 +157,105 @@
 
                         <div class="px-6 py-4 border-t border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#111315]/50 rounded-b-3xl flex items-center gap-3">
                             @if($plugin->is_active)
-                                <form action="{{ route('admin.plugins.deactivate', $plugin->id) }}" method="POST" class="flex-1">
-                                    @csrf
-                                    <button type="submit" class="w-full px-4 py-2 text-sm font-semibold text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 hover:border-amber-300 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20 dark:hover:bg-amber-500/20 rounded-xl transition-all duration-200 flex items-center justify-center gap-2">
+                                <div x-data="{ showDeactivateModal: false }" class="flex-1">
+                                    <!-- Deactivate Button -->
+                                    <button @click.stop="showDeactivateModal = true" type="button"
+                                        class="w-full px-4 py-2 text-sm font-semibold text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 hover:border-amber-300 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20 dark:hover:bg-amber-500/20 rounded-xl transition-all duration-200 flex items-center justify-center gap-2">
                                         <span class="material-symbols-outlined text-lg">power_settings_new</span>
                                         Deactivate
                                     </button>
-                                </form>
+
+                                    <!-- Deactivate Confirmation Modal -->
+                                    <template x-teleport="body">
+                                        <div x-show="showDeactivateModal" x-cloak
+                                            @keydown.escape.window="showDeactivateModal = false"
+                                            class="fixed inset-0 z-50 flex items-center justify-center p-4"
+                                            x-transition:enter="transition ease-out duration-200"
+                                            x-transition:enter-start="opacity-0"
+                                            x-transition:enter-end="opacity-100"
+                                            x-transition:leave="transition ease-in duration-150"
+                                            x-transition:leave-start="opacity-100"
+                                            x-transition:leave-end="opacity-0">
+
+                                            <!-- Backdrop -->
+                                            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+                                                 @click="showDeactivateModal = false"></div>
+
+                                            <!-- Modal Content -->
+                                            <div class="relative bg-white dark:bg-[#1A1A1A] rounded-3xl shadow-2xl w-full max-w-md border border-gray-200 dark:border-[#272B30]"
+                                                @click.stop
+                                                x-transition:enter="transition ease-out duration-200"
+                                                x-transition:enter-start="opacity-0 scale-95"
+                                                x-transition:enter-end="opacity-100 scale-100">
+
+                                                <div class="p-6">
+                                                    <div class="flex items-center gap-4 mb-4">
+                                                        <div class="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center">
+                                                            <span class="material-symbols-outlined text-2xl text-amber-600 dark:text-amber-400">power_settings_new</span>
+                                                        </div>
+                                                        <div>
+                                                            <h3 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Deactivate Plugin</h3>
+                                                            <p class="text-sm text-[#6F767E]">{{ $plugin->name }}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <p class="text-[#6F767E] mb-4">
+                                                        Are you sure you want to deactivate <strong>{{ $plugin->name }}</strong>?
+                                                    </p>
+
+                                                    <div class="bg-amber-50 dark:bg-amber-500/5 border border-amber-200 dark:border-amber-500/20 rounded-xl p-4 mb-4">
+                                                        <div class="flex items-start gap-3">
+                                                            <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-xl shrink-0">info</span>
+                                                            <div class="text-sm text-amber-800 dark:text-amber-300">
+                                                                <p class="font-semibold mb-1">What happens when deactivated:</p>
+                                                                <ul class="list-disc list-inside space-y-0.5 text-amber-700 dark:text-amber-400">
+                                                                    <li>Plugin routes and menus will disappear</li>
+                                                                    <li>Permissions will be hidden</li>
+                                                                    <li>Plugin data is preserved and restored on reactivation</li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    @if(!empty($dependencyMap[$plugin->id] ?? []))
+                                                        <div class="bg-red-50 dark:bg-red-500/5 border border-red-200 dark:border-red-500/20 rounded-xl p-4 mb-4">
+                                                            <div class="flex items-start gap-3">
+                                                                <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-xl shrink-0">warning</span>
+                                                                <div class="text-sm text-red-800 dark:text-red-300">
+                                                                    <p class="font-semibold mb-1">Dependent plugins will break:</p>
+                                                                    <p class="text-red-700 dark:text-red-400 mb-2">
+                                                                        The following active plugins depend on <strong>{{ $plugin->name }}</strong>
+                                                                        and may not function correctly after deactivation:
+                                                                    </p>
+                                                                    <ul class="list-disc list-inside space-y-0.5 font-medium">
+                                                                        @foreach($dependencyMap[$plugin->id] as $dep)
+                                                                            <li>{{ $dep['name'] }}</li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+
+                                                    <form action="{{ route('admin.plugins.deactivate', $plugin->id) }}" method="POST">
+                                                        @csrf
+                                                        <div class="flex gap-3">
+                                                            <button type="button" @click="showDeactivateModal = false"
+                                                                class="flex-1 px-4 py-2.5 text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] rounded-xl transition-colors">
+                                                                Cancel
+                                                            </button>
+                                                            <button type="submit"
+                                                                class="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 rounded-xl transition-colors flex items-center justify-center gap-2">
+                                                                <span class="material-symbols-outlined text-lg">power_settings_new</span>
+                                                                Deactivate
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
                             @else
                                 <form action="{{ route('admin.plugins.activate', $plugin->id) }}" method="POST" class="flex-1">
                                     @csrf

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\PluginDependencyException;
 use App\Http\Controllers\Controller;
 use App\Models\Plugin;
 use App\Services\PluginManager;
@@ -23,7 +24,19 @@ class PluginController extends Controller
     public function index()
     {
         $plugins = Plugin::orderBy('name')->get();
-        return view('admin.plugins.index', compact('plugins'));
+
+        // Pre-compute reverse-dependency map for the confirmation modal
+        $dependencyMap = [];
+        foreach ($plugins as $plugin) {
+            if ($plugin->is_active) {
+                $dependents = $this->pluginManager->getDependentPlugins($plugin);
+                if (!empty($dependents)) {
+                    $dependencyMap[$plugin->id] = $dependents;
+                }
+            }
+        }
+
+        return view('admin.plugins.index', compact('plugins', 'dependencyMap'));
     }
 
     /**
@@ -69,6 +82,9 @@ class PluginController extends Controller
         try {
             $this->pluginManager->deactivate($plugin);
             return back()->with('success', "Plugin '{$plugin->name}' deactivated successfully.");
+        } catch (PluginDependencyException $e) {
+            Log::warning("Plugin deactivation blocked by dependencies: " . $e->getMessage());
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error("Plugin deactivation failed: " . $e->getMessage());
             return back()->with('error', 'Failed to deactivate plugin: ' . $e->getMessage());
@@ -83,12 +99,15 @@ class PluginController extends Controller
         try {
             $deleteData = $request->boolean('delete_data', false);
             $this->pluginManager->uninstall($plugin, $deleteData);
-            
-            $message = $deleteData 
+
+            $message = $deleteData
                 ? "Plugin '{$plugin->name}' uninstalled and all data deleted."
                 : "Plugin '{$plugin->name}' uninstalled. Permissions retained.";
-            
+
             return back()->with('success', $message);
+        } catch (PluginDependencyException $e) {
+            Log::warning("Plugin uninstall blocked by dependencies: " . $e->getMessage());
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             Log::error("Plugin uninstall failed: " . $e->getMessage());
             return back()->with('error', 'Failed to uninstall plugin: ' . $e->getMessage());

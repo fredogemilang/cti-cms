@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\PluginDependencyException;
 use App\Models\Plugin;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
@@ -232,6 +233,8 @@ class PluginManager
 
     /**
      * Deactivate a plugin.
+     *
+     * @throws PluginDependencyException When other active plugins depend on this one.
      */
     public function deactivate(Plugin $plugin): void
     {
@@ -239,10 +242,63 @@ class PluginManager
             return;
         }
 
+        $this->validateReverseDependencies($plugin);
+
         $plugin->update(['is_active' => false]);
-        
+
         // Hide permissions
         $this->permissionRegistry->hideByPlugin($plugin->slug);
+    }
+
+    /**
+     * Find all active plugins that declare a dependency on the given plugin.
+     *
+     * Scans every other active plugin's plugin.json for requires.plugins entries.
+     *
+     * @return array<int, array{slug: string, name: string}>
+     */
+    public function getDependentPlugins(Plugin $plugin): array
+    {
+        $dependents = [];
+        $allActive = Plugin::where('is_active', true)
+            ->where('id', '!=', $plugin->id)
+            ->get();
+
+        foreach ($allActive as $active) {
+            $manifestPath = $this->pluginPath . '/' . $active->slug . '/plugin.json';
+            if (!File::exists($manifestPath)) {
+                continue;
+            }
+
+            $manifest = json_decode(file_get_contents($manifestPath), true);
+            if (!isset($manifest['requires']['plugins']) || !is_array($manifest['requires']['plugins'])) {
+                continue;
+            }
+
+            if (in_array($plugin->slug, $manifest['requires']['plugins'], true)) {
+                $dependents[] = [
+                    'slug' => $active->slug,
+                    'name' => $active->name,
+                ];
+            }
+        }
+
+        return $dependents;
+    }
+
+    /**
+     * Throw if any active plugins depend on the given plugin.
+     *
+     * @throws PluginDependencyException
+     */
+    public function validateReverseDependencies(Plugin $plugin): void
+    {
+        $dependents = $this->getDependentPlugins($plugin);
+
+        if (!empty($dependents)) {
+            $names = array_column($dependents, 'name');
+            throw new PluginDependencyException($plugin->name, $names);
+        }
     }
 
     /**
