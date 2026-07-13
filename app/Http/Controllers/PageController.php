@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use App\Services\ThemeLoader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
@@ -31,8 +32,9 @@ class PageController extends Controller
 
     protected function resolveTemplate(string $template, string $slug): string
     {
-        // Try to find the most specific template first
-        $themeNamespace = 'iccom';
+        // Use active theme's slug as namespace, fallback to 'iccom'
+        $theme = app(ThemeLoader::class)->getActiveTheme();
+        $themeNamespace = $theme?->slug ?? 'iccom';
         
         $candidates = [
             // Theme Specific

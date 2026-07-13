@@ -80,18 +80,15 @@
             <div class="position-relative" data-aos="fade-up" data-aos-delay="100">
                 <div class="swiper gallery-swiper">
                     <div class="swiper-wrapper">
-                        <div class="swiper-slide gallery-slide">
-                            <img src="https://dummyimage.com/600x400/ccc/fff&text=Event+1" alt="Event">
-                        </div>
-                        <div class="swiper-slide gallery-slide">
-                            <img src="https://dummyimage.com/600x400/ccc/fff&text=Event+2" alt="Event">
-                        </div>
-                        <div class="swiper-slide gallery-slide">
-                            <img src="https://dummyimage.com/600x400/ccc/fff&text=Event+3" alt="Event">
-                        </div>
-                        <div class="swiper-slide gallery-slide">
-                            <img src="https://dummyimage.com/600x400/ccc/fff&text=Event+4" alt="Event">
-                        </div>
+                        @forelse($galleryImages as $galleryImage)
+                            <div class="swiper-slide gallery-slide">
+                                <img src="{{ $galleryImage['url'] }}" alt="{{ $galleryImage['title'] }}">
+                            </div>
+                        @empty
+                            <div class="swiper-slide gallery-slide">
+                                <img src="{{ asset('themes/iccom/assets/events-front-right-hero-img.png') }}" alt="No gallery images yet">
+                            </div>
+                        @endforelse
                     </div>
                 </div>
                 <div class="gallery-prev swiper-button-prev start-0 ms-n5"></div>

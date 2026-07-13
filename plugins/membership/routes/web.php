@@ -85,16 +85,6 @@ Route::prefix(config('admin.path', 'admin'))->name('admin.')->middleware(['web',
     });
 });
 
-// Member Portal Routes (Optional - for future)
-Route::prefix('member')->name('member.')->middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        $membership = Membership::where('user_id', auth()->id())
-                                ->with('user')
-                                ->first();
-        return view('membership::member.dashboard', compact('membership'));
-    })->name('dashboard');
-});
-
 // Public Routes
 Route::prefix('membership')->name('membership.')->middleware(['web'])->group(function () {
     Route::get('/', function () {

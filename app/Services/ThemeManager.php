@@ -201,6 +201,9 @@ class ThemeManager
         // Publish assets
         $this->publishAssets($theme);
 
+        // Auto-create pages defined in theme.json page_templates
+        $this->seedTemplatePages($theme);
+
         // Clear caches
         $this->clearCaches();
     }
@@ -381,6 +384,30 @@ class ThemeManager
         }
 
         return $discovered;
+    }
+
+    /**
+     * Auto-create pages defined in theme.json page_templates on activation.
+     */
+    protected function seedTemplatePages(Theme $theme): void
+    {
+        $pageTemplates = $theme->getPageTemplates();
+        if (empty($pageTemplates)) return;
+
+        $templateService = app(PageTemplateService::class);
+
+        foreach ($pageTemplates as $templateKey => $templateDef) {
+            $page = \App\Models\Page::firstOrCreate(
+                ['slug' => $templateKey],
+                [
+                    'title'     => $templateDef['label'] ?? ucfirst($templateKey),
+                    'status'    => 'published',
+                    'template'  => $templateKey,
+                    'author_id' => 1,
+                ]
+            );
+            $templateService->seedBlocks($page);
+        }
     }
 
     /**

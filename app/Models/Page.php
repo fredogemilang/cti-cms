@@ -44,7 +44,7 @@ class Page extends Model
         ];
     }
 
-    // Available templates
+    // Available templates (static fallback when theme defines no page_templates)
     public static array $templates = [
         'default' => 'Default',
         'full-width' => 'Full Width',
@@ -52,6 +52,23 @@ class Page extends Model
         'sidebar-left' => 'Sidebar Left',
         'sidebar-right' => 'Sidebar Right',
     ];
+
+    /**
+     * Get available page templates from the active theme, fallback to legacy list.
+     */
+    public static function getTemplates(): array
+    {
+        $theme = app(\App\Services\ThemeLoader::class)->getActiveTheme();
+        if ($theme) {
+            $templates = $theme->getPageTemplates();
+            if (!empty($templates)) {
+                return collect($templates)
+                    ->mapWithKeys(fn($t, $key) => [$key => $t['label'] ?? ucfirst($key)])
+                    ->toArray();
+            }
+        }
+        return static::$templates;
+    }
 
     // === RELATIONSHIPS ===
 

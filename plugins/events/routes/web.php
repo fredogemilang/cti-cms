@@ -150,8 +150,25 @@ Route::prefix('event')->name('events.')->middleware(['web'])->group(function () 
         }
         
         $events = $query->paginate(12);
-        
-        return view('iccom::events.index', compact('events', 'upcoming'));
+
+        // Gallery images: collect featured images from recent published events
+        $galleryImages = \Plugins\Events\Models\Event::published()
+            ->whereNotNull('featured_image_id')
+            ->with('featuredImage')
+            ->latest('start_date')
+            ->take(12)
+            ->get()
+            ->map(function ($event) {
+                $img = $event->featuredImage;
+                return [
+                    'url'   => $img ? $img->url : null,
+                    'title' => $event->title,
+                ];
+            })
+            ->filter(fn ($item) => !empty($item['url']))
+            ->values();
+
+        return view('iccom::events.index', compact('events', 'upcoming', 'galleryImages'));
     })->name('index');
     
     // Event registration success page — accepts ?slug=&email= for detail card

@@ -12,36 +12,47 @@
                     <h1 class="display-3 fw-bold mb-2">{{ $page->getBlockValue('hero_title', 'iCCom') }}</h1>
                     <h2 class="h3 fw-bold mb-4">{{ $page->getBlockValue('hero_subtitle', 'Indonesia Cloud Community') }}</h2>
                     <p class="lead text-muted mb-4">
-                        {{ $page->getBlockValue('hero_description') }}
+                        {{ $page->getBlockValue('hero_description', 'Join us to level up your skills in becoming cloud engineer, and take a step forward to improve the development of cloud in Indonesia.') }}
                     </p>
-                    <a href="#membership-form" class="btn btn-primary btn-cta rounded-pill px-4 py-2">Become a Member</a>
+                    <a href="#about" class="btn btn-primary btn-cta rounded-pill px-4 py-2">ABOUT US</a>
                 </div>
                 <div class="col-lg-7 position-relative" data-aos="fade-left" data-aos-delay="200">
-                    <img src="{{ asset('themes/iccom/assets/front-right-hero-img.webp') }}"
-                         srcset="{{ asset('themes/iccom/assets/front-right-hero-img-400w.webp') }} 400w,
-                                {{ asset('themes/iccom/assets/front-right-hero-img-600w.webp') }} 600w,
-                                {{ asset('themes/iccom/assets/front-right-hero-img-800w.webp') }} 800w,
-                                {{ asset('themes/iccom/assets/front-right-hero-img.webp') }} 1772w"
-                         sizes="(max-width: 576px) 100vw, (max-width: 768px) 90vw, (max-width: 992px) 58vw, 58vw"
-                         alt="Community Illustration" class="img-fluid hero-img"
-                         fetchpriority="high" width="1772" height="1319">
+                    @if($page->getBlockValue('hero_image'))
+                        <img src="{{ asset('storage/' . $page->getBlockValue('hero_image')) }}"
+                             alt="Community Illustration" class="img-fluid hero-img"
+                             fetchpriority="high">
+                    @else
+                        <img src="{{ asset('themes/iccom/assets/front-right-hero-img.webp') }}"
+                             srcset="{{ asset('themes/iccom/assets/front-right-hero-img-400w.webp') }} 400w,
+                                    {{ asset('themes/iccom/assets/front-right-hero-img-600w.webp') }} 600w,
+                                    {{ asset('themes/iccom/assets/front-right-hero-img-800w.webp') }} 800w,
+                                    {{ asset('themes/iccom/assets/front-right-hero-img.webp') }} 1772w"
+                             sizes="(max-width: 576px) 100vw, (max-width: 768px) 90vw, (max-width: 992px) 58vw, 58vw"
+                             alt="Community Illustration" class="img-fluid hero-img"
+                             fetchpriority="high" width="1772" height="1319">
+                    @endif
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Who Are We Section -->
-    <section class="who-we-are position-relative">
+    <section class="who-we-are position-relative" id="about">
         <div class="container py-5">
             <div class="row align-items-center">
                 <div class="col-lg-5 mb-4 mb-lg-0" data-aos="fade-right">
-                    <img src="{{ asset('themes/iccom/assets/section-2-front-left-img.webp') }}"
-                         srcset="{{ asset('themes/iccom/assets/section-2-front-left-img-400w.webp') }} 400w,
-                                {{ asset('themes/iccom/assets/section-2-front-left-img-800w.webp') }} 800w,
-                                {{ asset('themes/iccom/assets/section-2-front-left-img.webp') }} 998w"
-                         sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 42vw"
-                         alt="Who Are We" class="img-fluid"
-                         loading="lazy" width="998" height="798">
+                    @if($page->getBlockValue('who_are_we_image'))
+                        <img src="{{ asset('storage/' . $page->getBlockValue('who_are_we_image')) }}"
+                             alt="Who Are We" class="img-fluid" loading="lazy">
+                    @else
+                        <img src="{{ asset('themes/iccom/assets/section-2-front-left-img.webp') }}"
+                             srcset="{{ asset('themes/iccom/assets/section-2-front-left-img-400w.webp') }} 400w,
+                                    {{ asset('themes/iccom/assets/section-2-front-left-img-800w.webp') }} 800w,
+                                    {{ asset('themes/iccom/assets/section-2-front-left-img.webp') }} 998w"
+                             sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 42vw"
+                             alt="Who Are We" class="img-fluid"
+                             loading="lazy" width="998" height="798">
+                    @endif
                 </div>
                 <div class="col-lg-7 text-white" data-aos="fade-left" data-aos-delay="200">
                     <h2 class="fw-bold mb-4">{{ $page->getBlockValue('who_are_we_title', 'Who Are We?') }}</h2>
@@ -61,35 +72,48 @@
         </div>
     </section>
 
-    <!-- Core Value Section -->
+    <!-- Our Missions Section -->
     <section class="core-values position-relative py-5">
         <div class="container mt-5 pt-5">
-            <h2 class="fw-bold mb-5" data-aos="fade-up">{{ $page->getBlockValue('iccom_core_value_title', 'iCCom Core Value') }}</h2>
+            <h2 class="fw-bold mb-5" data-aos="fade-up">{{ $page->getBlockValue('iccom_core_value_title', 'Our Missions') }}</h2>
             <div class="row align-items-center">
                 <div class="col-lg-6" data-aos="fade-right" data-aos-delay="100">
                     @php
-                        $coreValues = json_decode($page->getBlockValue('iccom_core_value_loop'), true) ?? [];
+                        $missionsBlock = $page->getBlock('iccom_core_value_loop');
+                        $missions = $missionsBlock ? $missionsBlock->localizedValue() : [];
+                        if (!is_array($missions)) $missions = [];
                     @endphp
-                    @foreach($coreValues as $value)
+                    @foreach($missions as $mission)
                     <div class="d-flex mb-4">
                         <div class="flex-shrink-0 me-3">
-                            <img src="{{ asset('storage/' . ($value['core_icon'] ?? '')) }}" alt="{{ $value['core_title'] ?? '' }}" width="64">
+                            @if(!empty($mission['core_image']))
+                                <img src="{{ asset('storage/' . $mission['core_image']) }}" alt="{{ $mission['core_title'] ?? '' }}" width="48" height="48" style="object-fit: cover; border-radius: 50%;">
+                            @else
+                                <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <span class="material-symbols-outlined text-primary">cloud</span>
+                                </div>
+                            @endif
                         </div>
                         <div>
-                            <h5 class="fw-bold">{{ $value['core_title'] ?? '' }}</h5>
-                            <p class="text-muted">{{ $value['core_description'] ?? '' }}</p>
+                            <h5 class="fw-bold">{{ $mission['core_title'] ?? '' }}</h5>
+                            <p class="text-muted">{{ $mission['core_description'] ?? '' }}</p>
                         </div>
                     </div>
                     @endforeach
                 </div>
                 <div class="col-lg-6" data-aos="fade-left" data-aos-delay="200">
-                    <img src="{{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img.webp') }}"
-                         srcset="{{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img-400w.webp') }} 400w,
-                                {{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img-800w.webp') }} 800w,
-                                {{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img.webp') }} 1250w"
-                         sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 50vw"
-                         alt="Core Values" class="img-fluid"
-                         loading="lazy" width="1250" height="758">
+                    @if($page->getBlockValue('missions_image'))
+                        <img src="{{ asset('storage/' . $page->getBlockValue('missions_image')) }}"
+                             alt="Our Missions" class="img-fluid" loading="lazy">
+                    @else
+                        <img src="{{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img.webp') }}"
+                             srcset="{{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img-400w.webp') }} 400w,
+                                    {{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img-800w.webp') }} 800w,
+                                    {{ asset('themes/iccom/assets/iCCom-Core-Value-section-3-front-right-img.webp') }} 1250w"
+                             sizes="(max-width: 576px) 100vw, (max-width: 992px) 50vw, 50vw"
+                             alt="Our Missions" class="img-fluid"
+                             loading="lazy" width="1250" height="758">
+                    @endif
                 </div>
             </div>
         </div>
@@ -162,17 +186,20 @@
         </div>
     </section>
 
-    <!-- Grow Together Section -->
+    <!-- CTA Section -->
     <section class="grow-section text-white text-center py-5">
         <div class="container py-5" data-aos="fade-up">
-            <h2 class="fw-bold mb-4">{{ $page->getBlockValue('talent_referral_title') }}</h2>
+            <h2 class="fw-bold mb-4">{{ $page->getBlockValue('talent_referral_title', 'Join us for FREE!') }}</h2>
             <div class="row justify-content-center">
                 <div class="col-md-8 lead">
-                    {!! $page->getBlockValue('talent_referral_description') !!}
+                    {!! nl2br(e($page->getBlockValue('talent_referral_description', "Enjoy all of our exclusive community activities!"))) !!}
+                    <div class="mt-4">
+                        <a href="#membership-form" class="text-white fw-bold fs-4 text-decoration-none">#UNITED@CLOUD</a>
+                    </div>
                     <button type="button" @click="showModal = true" class="btn btn-warning btn-cta rounded-pill px-5 py-2 fw-bold text-white shadow mt-4">Upload Your CV Here</button>
                 </div>
             </div>
-            
+
         </div>
     </section>
 

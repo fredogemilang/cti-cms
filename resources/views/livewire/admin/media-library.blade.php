@@ -1,30 +1,74 @@
-<div>
+<div x-data="{ showAdvanced: @entangle('showAdvancedFilters') }">
     {{-- Filter Bar --}}
-    <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] p-6 shadow-sm border border-gray-200 dark:border-[#272B30] mb-6">
-        <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+    <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] p-5 shadow-sm border border-gray-200 dark:border-[#272B30] mb-6">
+        {{-- Row 1: Primary controls (always visible) --}}
+        <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
             {{-- Search --}}
-            <div class="flex-1 w-full md:max-w-md">
+            <div class="flex-1 w-full sm:max-w-sm">
                 <div class="relative">
-                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E]">search</span>
-                    <input 
-                        type="text" 
-                        wire:model.live.debounce.300ms="search"
-                        placeholder="Search media..." 
-                        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6F767E] text-lg">search</span>
+                    <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search media..."
+                        class="w-full h-10 pl-10 pr-4 rounded-xl border border-gray-200 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-[#6F767E]">
                 </div>
             </div>
 
-            {{-- Filters --}}
-            <div class="flex flex-wrap gap-2 w-full md:w-auto">
+            <div class="flex items-center gap-2 flex-wrap">
+                {{-- Type filter --}}
                 <select wire:model.live="filterType"
-                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    class="h-10 px-3 rounded-xl border border-gray-200 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
                     <option value="all">All types</option>
                     <option value="images">Images</option>
                     <option value="documents">Documents</option>
                 </select>
 
+                {{-- Sort --}}
+                <select wire:model.live="sortBy"
+                    class="h-10 px-3 rounded-xl border border-gray-200 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
+                    <option value="latest">Latest</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="name">Name A-Z</option>
+                    <option value="size">Size ↓</option>
+                </select>
+
+                {{-- Advanced filters toggle --}}
+                <button @click="showAdvanced = !showAdvanced" type="button"
+                    class="h-10 px-3 rounded-xl border text-sm font-medium flex items-center gap-1.5 transition-all cursor-pointer
+                        {{ $this->hasActiveFilters() ? 'border-blue-400 dark:border-blue-500 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400' : 'border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] hover:border-gray-300 dark:hover:border-[#333]' }}">
+                    <span class="material-symbols-outlined text-lg">tune</span>
+                    Filters
+                    @php $advCount = ($filterExtension ? 1:0) + ($filterAltStatus ? 1:0) + ($filterUploader ? 1:0) + ($filterUsage ? 1:0) + ($dateFrom||$dateTo ? 1:0); @endphp
+                    @if($advCount)
+                        <span class="ml-0.5 bg-blue-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center leading-none">{{ $advCount }}</span>
+                    @endif
+                </button>
+
+                {{-- Clear --}}
+                @if($this->hasActiveFilters())
+                    <button wire:click="clearFilters" title="Clear all filters"
+                        class="h-10 w-10 rounded-xl bg-gray-100 dark:bg-[#272B30] text-[#6F767E] hover:bg-red-100 dark:hover:bg-red-500/10 hover:text-red-500 flex items-center justify-center transition">
+                        <span class="material-symbols-outlined text-lg">filter_alt_off</span>
+                    </button>
+                @endif
+
+                {{-- View mode --}}
+                <div class="flex gap-0.5 p-0.5 bg-gray-100 dark:bg-[#272B30] rounded-xl h-10">
+                    <button wire:click="$set('viewMode', 'grid')"
+                        class="px-2.5 h-full rounded-lg transition-all flex items-center {{ $viewMode === 'grid' ? 'bg-white dark:bg-[#1A1D1F] text-[#2563EB] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                        <span class="material-symbols-outlined text-lg">grid_view</span>
+                    </button>
+                    <button wire:click="$set('viewMode', 'list')"
+                        class="px-2.5 h-full rounded-lg transition-all flex items-center {{ $viewMode === 'list' ? 'bg-white dark:bg-[#1A1D1F] text-[#2563EB] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                        <span class="material-symbols-outlined text-lg">view_list</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {{-- Row 2: Advanced filters (collapsible) --}}
+        <div x-show="showAdvanced" x-collapse x-cloak>
+            <div class="mt-4 pt-4 border-t border-gray-100 dark:border-[#272B30] flex flex-wrap gap-2 items-center">
                 <select wire:model.live="filterExtension"
-                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    class="h-10 px-3 rounded-xl border border-gray-200 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
                     <option value="">All extensions</option>
                     @foreach($availableExtensions as $ext)
                         <option value="{{ $ext }}">.{{ strtoupper($ext) }}</option>
@@ -32,15 +76,14 @@
                 </select>
 
                 <select wire:model.live="filterAltStatus"
-                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    title="Filter by alt text status (images only)">
+                    class="h-10 px-3 rounded-xl border border-gray-200 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
                     <option value="">Any alt status</option>
-                    <option value="missing">Missing alt</option>
-                    <option value="has">Has alt</option>
+                    <option value="missing">Missing alt text</option>
+                    <option value="has">Has alt text</option>
                 </select>
 
                 <select wire:model.live="filterUploader"
-                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    class="h-10 px-3 rounded-xl border border-gray-200 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
                     <option value="">Any uploader</option>
                     @foreach($uploaders as $u)
                         <option value="{{ $u->id }}">{{ $u->name }}</option>
@@ -48,42 +91,19 @@
                 </select>
 
                 <select wire:model.live="filterUsage"
-                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    class="h-10 px-3 rounded-xl border border-gray-200 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
                     <option value="">Any usage</option>
                     <option value="used">Used</option>
                     <option value="orphan">Orphans only</option>
                 </select>
 
-                <input type="date" wire:model.live="dateFrom" title="From"
-                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                <input type="date" wire:model.live="dateTo" title="To"
-                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-
-                <select wire:model.live="sortBy"
-                    class="px-3 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="latest">Latest</option>
-                    <option value="oldest">Oldest</option>
-                    <option value="name">Name A-Z</option>
-                    <option value="size">Size ↓</option>
-                </select>
-
-                @if($this->hasActiveFilters())
-                    <button wire:click="clearFilters"
-                        class="px-3 py-2 rounded-xl bg-gray-100 dark:bg-[#272B30] text-[#6F767E] hover:bg-gray-200 dark:hover:bg-[#333] text-sm font-medium flex items-center gap-1 transition">
-                        <span class="material-symbols-outlined text-lg">close</span>
-                        Clear
-                    </button>
-                @endif
-
-                <div class="flex gap-1 p-1 bg-gray-100 dark:bg-[#272B30] rounded-xl">
-                    <button wire:click="$set('viewMode', 'grid')"
-                        class="px-3 py-2 rounded-lg transition-all {{ $viewMode === 'grid' ? 'bg-white dark:bg-[#1A1D1F] text-[#2563EB] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                        <span class="material-symbols-outlined text-xl">grid_view</span>
-                    </button>
-                    <button wire:click="$set('viewMode', 'list')"
-                        class="px-3 py-2 rounded-lg transition-all {{ $viewMode === 'list' ? 'bg-white dark:bg-[#1A1D1F] text-[#2563EB] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                        <span class="material-symbols-outlined text-xl">view_list</span>
-                    </button>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-medium text-[#6F767E]">Date:</span>
+                    <input type="date" wire:model.live="dateFrom"
+                        class="h-10 px-3 rounded-xl border border-gray-200 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
+                    <span class="text-xs text-[#6F767E]">–</span>
+                    <input type="date" wire:model.live="dateTo"
+                        class="h-10 px-3 rounded-xl border border-gray-200 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
                 </div>
             </div>
         </div>

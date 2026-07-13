@@ -22,6 +22,9 @@ Route::prefix('forms')->name('forms.')->group(function () {
     Route::get('/{slug}/success', [\App\Http\Controllers\FormSubmissionController::class, 'success'])->name('success');
 });
 
+// Public Partnership Inquiry
+Route::post('/partner', [\App\Http\Controllers\PartnershipController::class, 'store'])->name('partner.store');
+
 // Admin base path redirect
 Route::get("/{$adminPath}", [\App\Http\Controllers\Admin\AdminController::class, 'index'])->name('admin.index');
 

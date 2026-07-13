@@ -14,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(\App\Services\SettingsRegistry::class);
         $this->app->singleton(\App\Services\ActivityLogger::class);
         $this->app->singleton(\App\Services\MediaUsageService::class);
+        $this->app->singleton(\App\Services\PageTemplateService::class);
     }
 
     /**

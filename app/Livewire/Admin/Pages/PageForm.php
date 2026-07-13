@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Pages;
 use App\Models\Page;
 use App\Models\PageBlock;
 use App\Models\PageRevision;
+use App\Services\PageTemplateService;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Support\Str;
@@ -13,6 +14,8 @@ use Illuminate\Validation\Rule;
 
 class PageForm extends Component
 {
+    protected PageTemplateService $templateService;
+
     public ?Page $page = null;
     public ?int $pageId = null;
     public bool $isEdit = false;
@@ -98,6 +101,11 @@ class PageForm extends Component
         'blocks.*.name.required' => 'Block name is required.',
     ];
 
+    public function boot(PageTemplateService $templateService): void
+    {
+        $this->templateService = $templateService;
+    }
+
     public function mount(?int $id = null)
     {
         $this->availableLocales = available_locales();
@@ -107,6 +115,9 @@ class PageForm extends Component
             $this->pageId = $id;
             $this->isEdit = true;
             $this->loadPage();
+        } else {
+            // New page: seed blocks from default template preset
+            $this->seedTemplateBlocks();
         }
     }
 
@@ -345,6 +356,46 @@ class PageForm extends Component
         }
 
         return $slug;
+    }
+
+    // === TEMPLATE CHANGE HOOK ===
+
+    public function updatedTemplate($value): void
+    {
+        $this->template = $value;
+        $this->hasUnsavedChanges = true;
+        $this->seedTemplateBlocks();
+    }
+
+    // === BLOCK PRESET SEEDING ===
+
+    /**
+     * Add preset blocks from the template schema that don't exist in the form yet.
+     * Preset blocks always start in configured mode (no setup needed).
+     */
+    protected function seedTemplateBlocks(): void
+    {
+        $schema = $this->templateService->getTemplateSchema($this->template);
+        $existingNames = array_column($this->blocks, 'name');
+
+        foreach ($schema as $blockDef) {
+            if (in_array($blockDef['name'], $existingNames)) {
+                continue; // already in the form
+            }
+
+            $this->blocks[] = [
+                'id'             => null,
+                'name'           => $blockDef['name'],
+                'type'           => $blockDef['type'],
+                'label'          => $blockDef['label'] ?? ucfirst(str_replace('_', ' ', $blockDef['name'])),
+                'value'          => $blockDef['default'] ?? $this->getDefaultValue($blockDef['type']),
+                'options'        => $blockDef['options'] ?? $this->getDefaultOptions($blockDef['type']),
+                'order'          => count($this->blocks),
+                'is_active'      => true,
+                'is_configured'  => true, // pre-configured — skip setup mode
+                'children'       => [],
+            ];
+        }
     }
 
     // === BLOCK MANAGEMENT ===
@@ -893,7 +944,7 @@ class PageForm extends Component
 
         return view('livewire.admin.pages.page-form', [
             'parentPages' => $parentPages,
-            'templates' => Page::$templates,
+            'templates' => Page::getTemplates(),
             'blockTypes' => PageBlock::$blockTypes,
             'colorClasses' => PageBlock::$colorClasses,
         ]);

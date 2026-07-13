@@ -22,6 +22,7 @@ class MediaLibrary extends Component
     public $sortBy = 'latest';         // latest, oldest, name, size
     public $viewMode = 'grid';         // grid, list
     public $perPage = 24;
+    public $showAdvancedFilters = false;
 
     public $selectedMedia = [];
     public $showDeleteModal = false;
