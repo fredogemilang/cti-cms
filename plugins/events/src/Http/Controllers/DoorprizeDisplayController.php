@@ -62,12 +62,16 @@ class DoorprizeDisplayController extends Controller
             $q->where('event_id', $event->id);
         })->pluck('registration_id')->toArray();
 
-        return view('events::frontend.doorprize-display', [
-            'event' => $event,
-            'sessionsJson' => $sessionsData->toJson(),
-            'eligibleNamesJson' => json_encode($eligibleNames),
-            'globalWonIds' => $globalWonIds,
-        ]);
+        return response()
+            ->view('events::frontend.doorprize-display', [
+                'event' => $event,
+                'sessionsJson' => $sessionsData->toJson(),
+                'eligibleNamesJson' => json_encode($eligibleNames),
+                'globalWonIds' => $globalWonIds,
+            ])
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', 'Sat, 01 Jan 2000 00:00:00 GMT');
     }
 
     /**

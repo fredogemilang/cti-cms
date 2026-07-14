@@ -30,9 +30,9 @@
         .prize-info .prize-name { font-size:26px; font-weight:900; color:#d97706; margin-bottom:2px; }
 
         /* Roller */
-        .roller-container { width:100%; max-width:700px; height:340px; flex-shrink:0; position:relative; overflow:hidden; border-radius:32px; background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.5); }
+        .roller-container { width:100%; max-width:700px; height:270px; flex-shrink:0; position:relative; overflow:hidden; border-radius:32px; background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.5); }
         .roller-mask { position:absolute; inset:0; z-index:3; pointer-events:none; background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, 0.95) 100%); }
-        .roller-highlight { position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:94px; border-top: 2px solid rgba(99, 102, 241, 0.35); border-bottom: 2px solid rgba(99, 102, 241, 0.35); background: rgba(99, 102, 241, 0.08); z-index:2; pointer-events:none; }
+        .roller-highlight { position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:90px; border-top: 2px solid rgba(99, 102, 241, 0.35); border-bottom: 2px solid rgba(99, 102, 241, 0.35); background: rgba(99, 102, 241, 0.08); z-index:2; pointer-events:none; }
         .roller-track { position:absolute; left:0; right:0; top:0; transition:none; z-index:1; }
         .roller-item { height:90px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap: 4px; }
         .roller-item .rname { font-size:28px; font-weight:800; color:rgba(30, 41, 59, 0.35); transition:all 0.2s ease; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90%; line-height: 1.1; }
