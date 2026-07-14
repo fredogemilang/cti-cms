@@ -32,9 +32,9 @@
         /* Roller */
         .roller-container { width:100%; max-width:700px; height:340px; position:relative; overflow:hidden; border-radius:32px; background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.5); }
         .roller-mask { position:absolute; inset:0; z-index:3; pointer-events:none; background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, 0.95) 100%); }
-        .roller-highlight { position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:76px; border-top: 2px solid rgba(99, 102, 241, 0.35); border-bottom: 2px solid rgba(99, 102, 241, 0.35); background: rgba(99, 102, 241, 0.08); z-index:2; pointer-events:none; }
+        .roller-highlight { position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:94px; border-top: 2px solid rgba(99, 102, 241, 0.35); border-bottom: 2px solid rgba(99, 102, 241, 0.35); background: rgba(99, 102, 241, 0.08); z-index:2; pointer-events:none; }
         .roller-track { position:absolute; left:0; right:0; top:0; transition:none; z-index:1; }
-        .roller-item { height:72px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap: 2px; }
+        .roller-item { height:90px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap: 4px; }
         .roller-item .rname { font-size:28px; font-weight:800; color:rgba(30, 41, 59, 0.35); transition:all 0.2s ease; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90%; line-height: 1.1; }
         .roller-item .rorg { font-size:13px; font-weight:600; color:rgba(30, 41, 59, 0.25); line-height: 1.1; }
         .roller-item.active .rname { color: #4f46e5; font-size: 34px; font-weight: 900; text-shadow: 0 4px 15px rgba(99, 102, 241, 0.2); line-height: 1.1; }
@@ -547,7 +547,7 @@ let state = 'idle'; // idle | rolling | stopping | revealed | cooldown
 let rollerAnim = null;
 let rollerPos = 0;
 let rollerSpeed = 0;
-const ITEM_H = 72;
+const ITEM_H = 90;
 let multiModeIntervals = [];
 let cooldownTimer = null;
 let recentWinnersList = [];
@@ -1156,7 +1156,7 @@ async function stopRolling() {
         const items = track.querySelectorAll('.roller-item');
         let targetIndex = -1;
         let minDiff = Infinity;
-        const currentCenterIndex = Math.round((170 - rollerPos - 36) / 72);
+        const currentCenterIndex = Math.round((170 - rollerPos - ITEM_H / 2) / ITEM_H);
 
         items.forEach((item, index) => {
             if (item.getAttribute('data-registration-id') == targetRegId) {
@@ -1169,7 +1169,7 @@ async function stopRolling() {
         });
 
         if (targetIndex !== -1) {
-            const targetPos = 134 - targetIndex * 72;
+            const targetPos = 170 - (targetIndex * ITEM_H + ITEM_H / 2);
             track.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
             track.style.transform = `translateY(${targetPos}px)`;
             rollerPos = targetPos;
