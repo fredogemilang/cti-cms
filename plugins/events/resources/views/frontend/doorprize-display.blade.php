@@ -62,7 +62,7 @@
         .recent-winners .label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#475569; margin-right:4px; }
         .winner-chip { padding:6px 14px; border-radius:100px; background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(251, 191, 36, 0.4); font-size:12px; font-weight:700; color:#b45309; display:flex; align-items:center; gap:5px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03); }
         .winner-chip .material-symbols-outlined { font-size:14px; color: #f59e0b; }
-        .eligible-count { font-size:13px; font-weight:700; color:#475569; }
+        .eligible-count { display: none; }
 
         /* Draw button */
         .draw-btn { padding:16px 48px; border-radius:16px; font-size:16px; font-weight:800; font-family:inherit; cursor:pointer; border:none; transition:all .2s; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:10px; }
