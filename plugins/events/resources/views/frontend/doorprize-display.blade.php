@@ -12,8 +12,8 @@
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Plus Jakarta Sans',sans-serif; background:#0a0a0f; color:#fff; height:100vh; overflow:hidden; display:flex; flex-direction:column; position:relative; }
         .bg-layer { position:absolute; inset:0; z-index:0; }
-        .bg-layer img { width:100%; height:100%; object-fit:cover; opacity:.35; }
-        .bg-overlay { position:absolute; inset:0; background:linear-gradient(180deg,rgba(10,10,15,.6) 0%,rgba(10,10,15,.85) 50%,rgba(10,10,15,.95) 100%); z-index:1; }
+        .bg-layer img { width:100%; height:100%; object-fit:cover; opacity:.85; }
+        .bg-overlay { position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,10,15,.7) 0%, rgba(10,10,15,.2) 20%, rgba(10,10,15,0) 100%); z-index:1; }
         .content { position:relative; z-index:2; display:flex; flex-direction:column; height:100vh; }
 
         /* Top bar */
