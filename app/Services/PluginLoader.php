@@ -11,12 +11,12 @@ class PluginLoader
 {
     public function boot(): void
     {
-        // Check if plugins table exists to avoid errors during initial migration
-        if (! Schema::hasTable('plugins')) {
-            return;
-        }
-
         try {
+            // Check if plugins table exists to avoid errors during initial migration
+            if (! Schema::hasTable('plugins')) {
+                return;
+            }
+
             $plugins = Plugin::active()->get();
             $loader = require base_path('vendor/autoload.php');
 
