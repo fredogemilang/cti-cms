@@ -13,12 +13,12 @@ class ThemeLoader
 
     public function boot(): void
     {
-        // Check if themes table exists to avoid errors during initial migration
-        if (! Schema::hasTable('themes')) {
-            return;
-        }
-
         try {
+            // Check if themes table exists to avoid errors during initial migration
+            if (! Schema::hasTable('themes')) {
+                return;
+            }
+
             $this->activeTheme = Theme::active()->first();
 
             if (! $this->activeTheme) {
