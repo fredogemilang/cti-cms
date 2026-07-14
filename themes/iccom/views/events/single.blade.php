@@ -1,6 +1,6 @@
 @extends('iccom::layouts.app')
 
-@section('title', 'Event Details - iCCom Indonesia Cloud Community')
+@section('title', $event->title . ' - ' . setting('site_name', 'iCCom'))
 
 @section('content')
     <!-- Event Detail Section -->

@@ -1,6 +1,6 @@
 @extends('iccom::layouts.app')
 
-@section('title', $post->title . ' - iCCom')
+@section('title', $post->title . ' - ' . setting('site_name', 'iCCom'))
 
 @section('content')
     <!-- Article Header Section -->

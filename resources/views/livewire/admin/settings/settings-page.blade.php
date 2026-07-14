@@ -94,4 +94,7 @@
             @endif
         </main>
     </div>
+
+    {{-- Media picker modal (for media-type fields like logo, favicon) --}}
+    @livewire('admin.tiptap-media-picker')
 </div>

@@ -1,6 +1,6 @@
 @extends('iccom::layouts.app')
 
-@section('title', 'iCCom - Indonesia Cloud Community')
+@section('title', setting('site_name', 'iCCom') . ' - ' . setting('site_tagline', 'Indonesia Cloud Community'))
 
 @section('content')
     <div x-data="{ showModal: false }">

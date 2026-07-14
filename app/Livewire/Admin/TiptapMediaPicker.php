@@ -26,15 +26,27 @@ class TiptapMediaPicker extends Component
     public $uploadFile = null;
     public bool $uploading = false;
 
-    protected $listeners = ['openTiptapMediaPicker' => 'openModal'];
+    protected $listeners = [
+        'openTiptapMediaPicker' => 'openModal',
+        'open-media-picker'     => 'openForField',
+    ];
 
-    public function openModal()
+    /** Field name that requested the picker (for settings pages, etc.) */
+    public ?string $requestingField = null;
+
+    public function openModal(?string $field = null): void
     {
         $this->showModal = true;
         $this->activeTab = 'library';
         $this->search = '';
         $this->selectedMediaId = null;
         $this->selectedMedia = null;
+        $this->requestingField = $field;
+    }
+
+    public function openForField(?string $field = null): void
+    {
+        $this->openModal($field);
     }
 
     public function closeModal()
@@ -65,12 +77,20 @@ class TiptapMediaPicker extends Component
         if ($this->selectedMedia) {
             $imageUrl = $this->selectedMedia['webp_url'] ?? $this->selectedMedia['url'];
             $altText = $this->selectedMedia['alt_text'] ?? $this->selectedMedia['original_filename'];
-            
-            // Dispatch browser event for TipTap to listen
-            $this->dispatch('tiptap-media-selected', 
+
+            // Dispatch browser event for TipTap editor
+            $this->dispatch('tiptap-media-selected',
                 url: $imageUrl,
                 alt: $altText
             );
+
+            // Dispatch Livewire event for settings pages, page forms, etc.
+            if ($this->requestingField) {
+                $this->dispatch('media-selected',
+                    mediaPath: $this->selectedMedia['path'],
+                    field: $this->requestingField
+                );
+            }
         }
         $this->closeModal();
     }

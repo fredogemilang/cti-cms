@@ -14,23 +14,21 @@
             </div>
         </div>
         <div class="flex items-center gap-4">
-            <div class="flex items-center gap-2">
-                <button 
-                    x-data="{ 
-                        darkMode: document.documentElement.classList.contains('dark'),
-                        toggle() {
-                            this.darkMode = !this.darkMode;
-                            document.documentElement.classList.toggle('dark');
-                            localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+            <button
+                onclick="const d=document.documentElement;const isDark=d.classList.contains('dark');isDark?d.classList.remove('dark'):d.classList.add('dark');localStorage.setItem('theme',isDark?'light':'dark');this.querySelector('.icon-dark').style.display=isDark?'inline':'none';this.querySelector('.icon-light').style.display=isDark?'none':'inline';"
+                class="flex h-10 w-10 items-center justify-center rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-colors"
+                title="Toggle dark mode">
+                <span class="material-symbols-outlined text-xl icon-dark" style="display:none">light_mode</span>
+                <span class="material-symbols-outlined text-xl icon-light">dark_mode</span>
+                <script>
+                    (function(btn){
+                        if(document.documentElement.classList.contains('dark')){
+                            btn.querySelector('.icon-dark').style.display='inline';
+                            btn.querySelector('.icon-light').style.display='none';
                         }
-                    }"
-                    @click="toggle()"
-                    class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#FCFCFC] transition-colors focus:outline-none ml-2"
-                    title="Toggle Theme">
-                    <span class="material-symbols-outlined text-[24px]" x-show="!darkMode" x-cloak>dark_mode</span>
-                    <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
-                </button>
-            </div>
+                    })(document.currentScript?.parentElement||document.querySelector('[title="Toggle dark mode"]'));
+                </script>
+            </button>
             <div class="h-8 w-px bg-gray-200 dark:bg-[#272B30]"></div>
             <div class="flex items-center gap-3">
                 <button wire:click="save('draft')" wire:loading.attr="disabled"
@@ -62,6 +60,42 @@
         <!-- Main Content -->
         <div class="flex-1 overflow-y-auto p-6 md:p-10 no-scrollbar">
             <div class="max-w-4xl mx-auto space-y-10">
+                {{-- Language tabs --}}
+                @if(count($availableLocales) > 1)
+                    @php
+                        $localeLabels = ['id' => 'Bahasa Indonesia', 'en' => 'English', 'ja' => '日本語', 'fr' => 'Français', 'de' => 'Deutsch', 'es' => 'Español', 'zh' => '中文'];
+                        $defaultLocale = \Plugins\Posts\Models\Post::defaultLocale();
+                    @endphp
+                    <div class="flex items-center gap-1 border-b border-gray-200 dark:border-[#272B30] -mb-px">
+                        @foreach($availableLocales as $loc)
+                            @php
+                                $active = $loc === $editingLocale;
+                                $hasContent = $loc === $defaultLocale
+                                    ? true
+                                    : !empty(($localizedSnapshots[$loc]['title'] ?? '') . ($localizedSnapshots[$loc]['slug'] ?? ''));
+                            @endphp
+                            <button type="button" wire:click="switchLocale('{{ $loc }}')"
+                                @class([
+                                    'flex items-center gap-2 px-4 py-2.5 text-sm font-bold transition border-b-2 -mb-px',
+                                    'text-[#2563EB] border-[#2563EB]' => $active,
+                                    'text-[#6F767E] border-transparent hover:text-[#111827] dark:hover:text-[#FCFCFC]' => !$active,
+                                ])
+                            >
+                                <span class="material-symbols-outlined text-[16px]">{{ $loc === $defaultLocale ? 'star' : 'translate' }}</span>
+                                {{ $localeLabels[$loc] ?? strtoupper($loc) }}
+                                @if($hasContent)
+                                    <span class="h-1.5 w-1.5 rounded-full {{ $active ? 'bg-[#2563EB]' : 'bg-emerald-500' }}"></span>
+                                @endif
+                            </button>
+                        @endforeach
+                        @if($editingLocale !== $defaultLocale)
+                            <span class="ml-auto text-[11px] text-[#6F767E] py-2.5">
+                                Editing translation — leave blank to use default values.
+                            </span>
+                        @endif
+                    </div>
+                @endif
+
                 <!-- Title -->
                 <div class="space-y-4">
                     <input wire:model.live="title"

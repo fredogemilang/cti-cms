@@ -1,6 +1,6 @@
 @extends('iccom::layouts.app')
 
-@section('title', 'Events - iCCom Indonesia Cloud Community')
+@section('title', 'Events - ' . setting('site_name', 'iCCom'))
 
 @section('content')
     <!-- Hero Section -->

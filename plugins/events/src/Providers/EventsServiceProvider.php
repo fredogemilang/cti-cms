@@ -93,16 +93,6 @@ class EventsServiceProvider extends ServiceProvider
                         'children' => [],
                     ],
                     [
-                        'title' => 'Registrations',
-                        'route' => 'admin.events.registrations',
-                        'url' => route('admin.events.registrations'),
-                        'icon' => 'people',
-                        'permission' => 'events.view',
-                        'is_active' => true,
-                        'source' => 'plugin:events',
-                        'children' => [],
-                    ],
-                    [
                         'title' => 'Calendar',
                         'route' => 'admin.events.calendar',
                         'url' => route('admin.events.calendar'),

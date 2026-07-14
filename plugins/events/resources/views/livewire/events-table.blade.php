@@ -280,9 +280,9 @@
                                     @endcan
                                     
                                     @can('events.edit')
-                                    <a href="{{ route('admin.events.edit', $event->id) }}" wire:navigate
+                                    <a href="{{ route('admin.events.console.overview', $event) }}" wire:navigate
                                         class="relative group/edit w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] transition-colors">
-                                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                                        <span class="material-symbols-outlined text-[20px]">dashboard</span>
                                     </a>
                                     @endcan
                                     

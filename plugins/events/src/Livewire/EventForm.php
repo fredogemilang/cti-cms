@@ -260,7 +260,7 @@ class EventForm extends Component
             $event->speakers()->sync($this->speakers);
             $this->eventId = $event->id;
             session()->flash('success', 'Event created successfully!');
-            return redirect()->route('admin.events.edit', $event->id);
+            return redirect()->route('admin.events.console.overview', $event->id);
         }
         
         // Reset uploads

@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'iCCom - Indonesia Cloud Community')</title>
+    <title>@yield('title', setting('site_name', 'iCCom') . ' - ' . setting('site_tagline', 'Indonesia Cloud Community'))</title>
+
+    {{-- Favicon --}}
+    @if(setting('site_favicon'))
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
+    @endif
 
     <!-- Preconnect for external origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>

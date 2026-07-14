@@ -459,6 +459,16 @@ class AppServiceProvider extends ServiceProvider
                  'rules' => ['nullable', 'email'],
                  'help'  => 'Used as the From/Reply-To for outgoing system notifications.'],
 
+                ['key' => 'site_logo',    'label' => 'Site Logo',     'type' => 'media',    'section' => 'Site Identity', 'order' => 32,
+                 'default' => '',
+                 'rules' => ['nullable', 'string', 'max:500'],
+                 'help'  => 'Main logo shown in the header/navbar. Recommended: PNG or SVG, max height 60px.'],
+
+                ['key' => 'site_favicon', 'label' => 'Favicon',       'type' => 'media',    'section' => 'Site Identity', 'order' => 34,
+                 'default' => '',
+                 'rules' => ['nullable', 'string', 'max:500'],
+                 'help'  => 'Browser tab icon. Recommended: 32×32 or 16×16 PNG, or .ico file.'],
+
                 // Regional
                 ['key' => 'timezone',      'label' => 'Timezone',      'type' => 'select',   'section' => 'Regional', 'order' => 40,
                  'default' => 'Asia/Jakarta',

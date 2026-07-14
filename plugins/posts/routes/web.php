@@ -68,9 +68,8 @@ Route::middleware(['web'])->group(function () {
     })->name('posts.category');
 
     Route::get("/{$archiveSlug}/{slug}", function ($slug) {
-        $post = \Plugins\Posts\Models\Post::where('slug', $slug)
-            ->where('status', 'published')
-            ->firstOrFail();
+        $post = \Plugins\Posts\Models\Post::findByLocalizedSlug($slug);
+        abort_if(!$post, 404);
 
         $dateFormat = \Plugins\Posts\Models\Setting::get('date_format', 'M d, Y');
         $enableComments = (bool) \Plugins\Posts\Models\Setting::get('enable_comments', true);

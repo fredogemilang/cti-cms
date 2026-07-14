@@ -1,6 +1,6 @@
 @extends('iccom::layouts.app')
 
-@section('title', 'Article Submitted - iCCom Indonesia Cloud Community')
+@section('title', 'Article Submitted - ' . setting('site_name', 'iCCom'))
 
 @section('content')
     <section class="py-5" style="min-height: 60vh;">

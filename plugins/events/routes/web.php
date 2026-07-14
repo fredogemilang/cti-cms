@@ -40,11 +40,6 @@ Route::prefix(config('admin.path', 'admin'))->name('admin.')->middleware(['web',
             return view('events::admin.categories.index');
         })->name('categories')->middleware('permission:event_categories.view');
         
-        // Registrations
-        Route::get('/registrations', function () {
-            return view('events::admin.registrations.index');
-        })->name('registrations');
-        
         Route::get('/{event}/registrations', [EventRegistrationController::class, 'index'])->name('registrations.event');
         Route::get('/{event}/registrations/export', [EventRegistrationController::class, 'export'])->name('registrations.export');
         
@@ -66,7 +61,7 @@ Route::prefix(config('admin.path', 'admin'))->name('admin.')->middleware(['web',
                         'end' => $event->end_date ? $event->end_date->toIso8601String() : null,
                         'backgroundColor' => $event->category->color ?? '#2563EB',
                         'borderColor' => $event->category->color ?? '#2563EB',
-                        'url' => route('admin.events.edit', $event->id),
+                        'url' => route('admin.events.console.overview', $event->id),
                     ];
                 });
             

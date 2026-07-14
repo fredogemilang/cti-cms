@@ -80,6 +80,26 @@
             />
             @break
 
+        @case('media')
+            <div class="flex items-start gap-4">
+                @if(!empty($values[$key] ?? null))
+                    <div class="relative group shrink-0">
+                        <img src="{{ asset('storage/' . $values[$key]) }}" alt="{{ $label }}" class="h-20 w-20 rounded-xl object-cover border border-gray-200 dark:border-[#272B30]">
+                        <button type="button" wire:click="$set('{{ $model }}', '')"
+                            class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow">
+                            <span class="material-symbols-outlined text-sm">close</span>
+                        </button>
+                    </div>
+                @endif
+                <button type="button"
+                    wire:click="$dispatch('open-media-picker', { field: '{{ $key }}' })"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-[#272B30] text-sm font-medium text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] hover:border-gray-300 dark:hover:border-[#333] transition bg-white dark:bg-[#0F1113]">
+                    <span class="material-symbols-outlined text-lg">{{ empty($values[$key] ?? null) ? 'add_photo_alternate' : 'swap_horiz' }}</span>
+                    {{ empty($values[$key] ?? null) ? 'Choose image...' : 'Change' }}
+                </button>
+            </div>
+            @break
+
         @case('code')
             <textarea
                 id="{{ $key }}"

@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         events: '{{ route("admin.events.calendar.data") ?? "/admin/events/calendar/data" }}',
         eventClick: function(info) {
-            window.location.href = '/admin/events/' + info.event.id + '/edit';
+            window.location.href = '/admin/events/' + info.event.id + '/console/overview';
         },
         eventClassNames: function(arg) {
             return ['fc-event-custom'];

@@ -6,6 +6,7 @@ use App\Models\Setting;
 use App\Services\SettingsRegistry;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 #[Layout('layouts.admin')]
@@ -15,6 +16,15 @@ class SettingsPage extends Component
 
     /** @var array<string, mixed> Current form values keyed by setting key. */
     public array $values = [];
+
+    /** Receives media-selected events from the media picker modal. */
+    #[On('media-selected')]
+    public function onMediaSelected(string $mediaPath, ?string $field = null): void
+    {
+        if ($field && array_key_exists($field, $this->values)) {
+            $this->values[$field] = $mediaPath;
+        }
+    }
 
     public function mount(string $group = 'general'): void
     {

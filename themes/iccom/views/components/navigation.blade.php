@@ -11,11 +11,15 @@
 <nav class="navbar fixed-top py-2 py-lg-3">
     <div class="container d-flex align-items-center">
         <a class="navbar-brand" href="{{ url('/') }}">
-            <picture>
-                <source media="(max-width: 576px)" srcset="{{ asset('themes/iccom/assets/logo-40h.webp') }}" type="image/webp">
-                <source srcset="{{ asset('themes/iccom/assets/logo-80h.webp') }}" type="image/webp">
-                <img src="{{ asset('themes/iccom/assets/logo.png') }}" alt="iCCom Logo" height="80" width="77" fetchpriority="high">
-            </picture>
+            @if(setting('site_logo'))
+                <img src="{{ asset('storage/' . setting('site_logo')) }}" alt="{{ setting('site_name', 'iCCom') }} Logo" height="80" fetchpriority="high">
+            @else
+                <picture>
+                    <source media="(max-width: 576px)" srcset="{{ asset('themes/iccom/assets/logo-40h.webp') }}" type="image/webp">
+                    <source srcset="{{ asset('themes/iccom/assets/logo-80h.webp') }}" type="image/webp">
+                    <img src="{{ asset('themes/iccom/assets/logo.png') }}" alt="iCCom Logo" height="80" width="77" fetchpriority="high">
+                </picture>
+            @endif
         </a>
 
         {{-- Always-visible nav pill container (no collapse) --}}

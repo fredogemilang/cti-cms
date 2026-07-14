@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lupa Password — {{ setting('site_name', config('app.name')) }}</title>
+    @if(setting('site_favicon'))
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
+    @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen flex items-center justify-center p-4">

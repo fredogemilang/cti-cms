@@ -1,6 +1,6 @@
 @extends('iccom::layouts.app')
 
-@section('title', 'Become a Member - iCCom Indonesia Cloud Community')
+@section('title', 'Become a Member - ' . setting('site_name', 'iCCom'))
 
 @section('content')
     <div style="height: 100px;"></div> <!-- Spacer logic from template .spacer css might need to be checked, using inline style for safety -->
