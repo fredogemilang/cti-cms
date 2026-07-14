@@ -34,7 +34,26 @@
                 </div>
             </div>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+                <button 
+                    x-data="{ 
+                        darkMode: document.documentElement.classList.contains('dark'),
+                        toggle() {
+                            this.darkMode = !this.darkMode;
+                            document.documentElement.classList.toggle('dark');
+                            localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+                        }
+                    }"
+                    @click="toggle()"
+                    class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#FCFCFC] transition-colors focus:outline-none ml-2"
+                    title="Toggle Theme">
+                    <span class="material-symbols-outlined text-[24px]" x-show="!darkMode" x-cloak>dark_mode</span>
+                    <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
+                </button>
+            </div>
+            <div class="h-8 w-px bg-gray-200 dark:bg-[#272B30]"></div>
+            <div class="flex items-center gap-3">
             <button wire:click="saveAsDraft" wire:loading.attr="disabled"
                 class="px-4 py-2 rounded-lg text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all disabled:opacity-50">
                 <span wire:loading.remove wire:target="saveAsDraft">Save Draft</span>
@@ -51,6 +70,7 @@
                 <span wire:loading.remove wire:target="publish">Publish</span>
                 <span wire:loading wire:target="publish">Publishing...</span>
             </button>
+            </div>
         </div>
     </header>
 
