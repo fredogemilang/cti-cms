@@ -128,21 +128,21 @@
                                     <a 
                                         href="{{ route('admin.cpt.entries.index', $cpt->slug) }}"
                                         class="h-9 w-9 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-emerald-500 flex items-center justify-center transition-colors"
-                                        title="View {{ $cpt->plural_label }}"
+                                        data-tooltip="View Entries"
                                     >
                                         <span class="material-symbols-outlined text-[20px]">folder_open</span>
                                     </a>
                                     <a 
                                         href="{{ route('admin.cpt.edit', $cpt->id) }}"
                                         class="h-9 w-9 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] flex items-center justify-center transition-colors"
-                                        title="Edit"
+                                        data-tooltip="Edit"
                                     >
                                         <span class="material-symbols-outlined text-[20px]">edit</span>
                                     </a>
                                     <button 
                                         wire:click="confirmDelete({{ $cpt->id }})"
                                         class="h-9 w-9 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 text-[#6F767E] hover:text-[#FF6A55] flex items-center justify-center transition-colors"
-                                        title="Delete"
+                                        data-tooltip="Delete"
                                     >
                                         <span class="material-symbols-outlined text-[20px]">delete</span>
                                     </button>

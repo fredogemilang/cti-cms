@@ -194,36 +194,36 @@
                                     @if($status === 'trash')
                                         <button wire:click="restore({{ $page->id }})"
                                             class="h-9 w-9 rounded-xl hover:bg-green-50 dark:hover:bg-green-500/10 text-[#6F767E] hover:text-green-500 flex items-center justify-center transition-colors"
-                                            title="Restore">
+                                            data-tooltip="Restore">
                                             <span class="material-symbols-outlined text-lg">restore_from_trash</span>
                                         </button>
                                         <button wire:click="forceDelete({{ $page->id }})"
                                             wire:confirm="Are you sure? This will permanently delete this page and cannot be undone."
                                             class="h-9 w-9 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 text-[#6F767E] hover:text-[#FF6A55] flex items-center justify-center transition-colors"
-                                            title="Delete Permanently">
+                                            data-tooltip="Delete Permanently">
                                             <span class="material-symbols-outlined text-lg">delete_forever</span>
                                         </button>
                                     @else
                                     <a href="{{ route('admin.pages.edit', $page->id) }}"
                                         class="h-9 w-9 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] flex items-center justify-center transition-colors"
-                                        title="Edit">
+                                        data-tooltip="Edit">
                                         <span class="material-symbols-outlined text-lg">edit</span>
                                     </a>
                                     <button wire:click="duplicate({{ $page->id }})"
                                         class="h-9 w-9 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] flex items-center justify-center transition-colors"
-                                        title="Duplicate">
+                                        data-tooltip="Duplicate">
                                         <span class="material-symbols-outlined text-lg">content_copy</span>
                                     </button>
                                     @if($page->status === 'published')
                                         <a href="{{ url($page->slug) }}" target="_blank"
                                             class="h-9 w-9 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] flex items-center justify-center transition-colors"
-                                            title="View">
+                                            data-tooltip="View">
                                             <span class="material-symbols-outlined text-lg">visibility</span>
                                         </a>
                                     @endif
                                     <button wire:click="confirmDelete({{ $page->id }})"
                                         class="h-9 w-9 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 text-[#6F767E] hover:text-[#FF6A55] flex items-center justify-center transition-colors"
-                                        title="Move to Trash">
+                                        data-tooltip="Move to Trash">
                                         <span class="material-symbols-outlined text-lg">delete</span>
                                     </button>
                                     @endif

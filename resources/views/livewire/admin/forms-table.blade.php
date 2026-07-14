@@ -179,7 +179,7 @@
                                     <button 
                                         wire:click="restore({{ $form->id }})"
                                         class="relative group/restore w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] transition-colors"
-                                        title="Restore">
+                                        data-tooltip="Restore">
                                         <span class="material-symbols-outlined text-[20px]">restore_from_trash</span>
                                     </button>
                                     
@@ -187,7 +187,7 @@
                                         x-data
                                         @click="$dispatch('open-force-delete-modal', { formId: {{ $form->id }}, formName: '{{ addslashes($form->name) }}' })"
                                         class="relative group/delete w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#FF6A55] transition-colors"
-                                        title="Delete Permanently">
+                                        data-tooltip="Delete Permanently">
                                         <span class="material-symbols-outlined text-[20px]">delete_forever</span>
                                     </button>
                                     @endcan
@@ -195,7 +195,7 @@
                                     @can('forms.view')
                                     <a href="{{ route('admin.forms.entries', $form) }}"
                                         class="relative group/entries w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] transition-colors"
-                                        title="View Submissions">
+                                        data-tooltip="View Submissions">
                                         <span class="material-symbols-outlined text-[20px]">list_alt</span>
                                     </a>
                                     @endcan
@@ -205,7 +205,7 @@
                                     @can('forms.edit')
                                     <a href="{{ route('admin.forms.edit', $form) }}" wire:navigate
                                         class="relative group/edit w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] transition-colors"
-                                        title="Edit Form">
+                                        data-tooltip="Edit Form">
                                         <span class="material-symbols-outlined text-[20px]">edit</span>
                                     </a>
                                     @endcan
@@ -215,7 +215,7 @@
                                         x-data
                                         @click="$dispatch('open-delete-modal', { formId: {{ $form->id }}, formName: '{{ addslashes($form->name) }}' })"
                                         class="relative group/delete w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#FF6A55] transition-colors"
-                                        title="Delete Form">
+                                        data-tooltip="Delete Form">
                                         <span class="material-symbols-outlined text-[20px]">delete</span>
                                     </button>
                                     @endcan

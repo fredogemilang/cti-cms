@@ -181,23 +181,17 @@
                             <div class="flex gap-2 items-center justify-end">
                                 @can('users.view')
                                 <a href="{{ route('admin.users.show', $user) }}" wire:navigate
-                                    class="relative group/view w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] transition-colors">
+                                    class="w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] flex items-center justify-center transition-colors"
+                                    data-tooltip="View User">
                                     <span class="material-symbols-outlined text-[20px]">visibility</span>
-                                    <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-3 opacity-0 group-hover/view:opacity-100 bg-[#1C1F26] text-white text-xs px-3 py-2 rounded-xl whitespace-nowrap z-10">
-                                        View User
-                                        <span class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#1C1F26]"></span>
-                                    </span>
                                 </a>
                                 @endcan
                                 
                                 @can('users.edit')
                                 <a href="{{ route('admin.users.edit', $user) }}" wire:navigate
-                                    class="relative group/edit w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] transition-colors">
+                                    class="w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] flex items-center justify-center transition-colors"
+                                    data-tooltip="Edit User">
                                     <span class="material-symbols-outlined text-[20px]">edit</span>
-                                    <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-3 opacity-0 group-hover/edit:opacity-100 bg-[#1C1F26] text-white text-xs px-3 py-2 rounded-xl whitespace-nowrap z-10">
-                                        Edit User
-                                        <span class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#1C1F26]"></span>
-                                    </span>
                                 </a>
                                 @endcan
                                 
@@ -206,12 +200,9 @@
                                 <button 
                                     x-data
                                     @click="$dispatch('open-delete-modal', { userId: {{ $user->id }}, userName: '{{ addslashes($user->name) }}' })"
-                                    class="relative group/delete w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#FF6A55] transition-colors">
+                                    class="w-9 h-9 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#FF6A55] flex items-center justify-center transition-colors"
+                                    data-tooltip="Delete User">
                                     <span class="material-symbols-outlined text-[20px]">delete</span>
-                                    <span class="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-3 opacity-0 group-hover/delete:opacity-100 bg-[#1C1F26] text-white text-xs px-3 py-2 rounded-xl whitespace-nowrap z-10">
-                                        Delete User
-                                        <span class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#1C1F26]"></span>
-                                    </span>
                                 </button>
                                 @endif
                                 @endcan
