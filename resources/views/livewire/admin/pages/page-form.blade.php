@@ -243,10 +243,28 @@
                                 placeholder="Social Media Description"></textarea>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">OG Image URL</label>
-                            <input wire:model="ogImage" type="text"
-                                class="w-full h-11 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-4"
-                                placeholder="https://example.com/image.jpg" />
+                            <div class="flex items-center justify-between">
+                                <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">OG Image</label>
+                                @if($ogImage)
+                                    <button type="button" wire:click="clearOgImage" class="text-[11px] font-bold text-red-500 hover:text-red-600 transition-colors">Remove</button>
+                                @endif
+                            </div>
+                            @if($ogImage)
+                                <div class="relative aspect-video w-full rounded-xl overflow-hidden border border-gray-200 dark:border-[#272B30]">
+                                    <img src="{{ asset('storage/' . $ogImage) }}" alt="OG Image" class="w-full h-full object-cover" />
+                                    <button type="button" wire:click="openMediaPicker('og_image')"
+                                        class="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold text-sm gap-2">
+                                        <span class="material-symbols-outlined text-lg">swap_horiz</span>
+                                        Change Image
+                                    </button>
+                                </div>
+                            @else
+                                <div wire:click="openMediaPicker('og_image')"
+                                    class="w-full h-28 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-2 border-dashed border-gray-200 dark:border-[#272B30] flex flex-col items-center justify-center gap-1.5 hover:bg-gray-100 dark:hover:bg-[#1A1A1A] hover:border-primary/40 transition-all cursor-pointer">
+                                    <span class="material-symbols-outlined text-2xl text-gray-300 dark:text-[#272B30]">add_photo_alternate</span>
+                                    <span class="text-[11px] font-bold text-[#6F767E]">Upload OG Image</span>
+                                </div>
+                            @endif
                             <p class="text-[11px] text-[#6F767E]">Leave empty to use featured image</p>
                         </div>
                     </div>

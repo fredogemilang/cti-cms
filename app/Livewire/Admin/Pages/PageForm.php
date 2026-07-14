@@ -721,6 +721,12 @@ class PageForm extends Component
         $this->hasUnsavedChanges = true;
     }
 
+    public function clearOgImage()
+    {
+        $this->ogImage = null;
+        $this->hasUnsavedChanges = true;
+    }
+
     // === SAVE OPERATIONS ===
 
     public function save()
