@@ -10,6 +10,7 @@ use App\Models\EventsModel;
 use App\Models\SubsidiariesLimitModel;
 use App\Models\SubsidiariesModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
+use Config\Services;
 use DateTime;
 
 class EventController extends BaseController
@@ -257,7 +258,7 @@ class EventController extends BaseController
                         'step' => 3,
                     ];
 
-                    $parser = \Config\Services::parser();
+                    $parser = Services::parser();
 
                     $dataDefault = [
                         'event' => $event['name'],

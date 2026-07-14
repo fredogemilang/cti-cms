@@ -85,10 +85,14 @@ class PagesTable extends Component
 
     protected function buildQuery()
     {
-        $query = Page::with(['author']);
+        if ($this->status === 'trash') {
+            $query = Page::onlyTrashed()->with(['author']);
+        } else {
+            $query = Page::with(['author']);
 
-        if ($this->status) {
-            $query->where('status', $this->status);
+            if ($this->status) {
+                $query->where('status', $this->status);
+            }
         }
 
         if ($this->search) {
@@ -147,6 +151,60 @@ class PagesTable extends Component
         $this->selectAll = false;
         $this->showBulkDeleteModal = false;
         $this->dispatch('notify', type: 'success', message: 'Selected pages moved to trash!');
+    }
+
+    // === TRASH OPERATIONS ===
+
+    public function restore(int $id)
+    {
+        $page = Page::onlyTrashed()->find($id);
+        if ($page) {
+            $page->restore();
+            $this->dispatch('notify', type: 'success', message: 'Page restored!');
+        }
+    }
+
+    public function forceDelete(int $id)
+    {
+        $page = Page::onlyTrashed()->find($id);
+        if ($page) {
+            $page->blocks()->delete();
+            $page->forceDelete();
+            $this->dispatch('notify', type: 'success', message: 'Page permanently deleted!');
+        }
+    }
+
+    public function emptyTrash()
+    {
+        $trashedPages = Page::onlyTrashed()->get();
+        foreach ($trashedPages as $page) {
+            $page->blocks()->delete();
+            $page->forceDelete();
+        }
+
+        $this->dispatch('notify', type: 'success', message: 'Trash emptied!');
+    }
+
+    public function bulkRestore()
+    {
+        Page::onlyTrashed()->whereIn('id', $this->selectedPages)->restore();
+        $this->selectedPages = [];
+        $this->selectAll = false;
+        $this->dispatch('notify', type: 'success', message: 'Selected pages restored!');
+    }
+
+    public function bulkForceDelete()
+    {
+        $pages = Page::onlyTrashed()->whereIn('id', $this->selectedPages)->get();
+        foreach ($pages as $page) {
+            $page->blocks()->delete();
+            $page->forceDelete();
+        }
+
+        $this->selectedPages = [];
+        $this->selectAll = false;
+        $this->showBulkDeleteModal = false;
+        $this->dispatch('notify', type: 'success', message: 'Selected pages permanently deleted!');
     }
 
     // === BULK ACTIONS ===

@@ -22,6 +22,7 @@
                     'draft' => ['label' => 'Draft', 'count' => $statusCounts['draft']],
                     'scheduled' => ['label' => 'Scheduled', 'count' => $statusCounts['scheduled']],
                     'private' => ['label' => 'Private', 'count' => $statusCounts['private']],
+                    'trash' => ['label' => 'Trash', 'count' => $statusCounts['trash']],
                 ];
             @endphp
 
@@ -190,6 +191,19 @@
                             </td>
                             <td class="px-8 py-5">
                                 <div class="flex items-center justify-end gap-1">
+                                    @if($status === 'trash')
+                                        <button wire:click="restore({{ $page->id }})"
+                                            class="h-9 w-9 rounded-xl hover:bg-green-50 dark:hover:bg-green-500/10 text-[#6F767E] hover:text-green-500 flex items-center justify-center transition-colors"
+                                            title="Restore">
+                                            <span class="material-symbols-outlined text-lg">restore_from_trash</span>
+                                        </button>
+                                        <button wire:click="forceDelete({{ $page->id }})"
+                                            wire:confirm="Are you sure? This will permanently delete this page and cannot be undone."
+                                            class="h-9 w-9 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 text-[#6F767E] hover:text-[#FF6A55] flex items-center justify-center transition-colors"
+                                            title="Delete Permanently">
+                                            <span class="material-symbols-outlined text-lg">delete_forever</span>
+                                        </button>
+                                    @else
                                     <a href="{{ route('admin.pages.edit', $page->id) }}"
                                         class="h-9 w-9 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] flex items-center justify-center transition-colors"
                                         title="Edit">
@@ -209,9 +223,10 @@
                                     @endif
                                     <button wire:click="confirmDelete({{ $page->id }})"
                                         class="h-9 w-9 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 text-[#6F767E] hover:text-[#FF6A55] flex items-center justify-center transition-colors"
-                                        title="Delete">
+                                        title="Move to Trash">
                                         <span class="material-symbols-outlined text-lg">delete</span>
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -289,26 +304,50 @@
                 <span class="text-sm font-semibold text-white">Selected</span>
             </div>
             <div class="flex items-center gap-4">
-                <button wire:click="bulkPublish"
-                    class="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-white transition-colors cursor-pointer">
-                    <span class="material-symbols-outlined text-[20px]">publish</span>
-                    Publish
-                </button>
-                <button wire:click="bulkDraft"
-                    class="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-white transition-colors cursor-pointer">
-                    <span class="material-symbols-outlined text-[20px]">edit_document</span>
-                    Draft
-                </button>
-                <button wire:click="confirmBulkDelete"
-                    class="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-[#FF6A55] transition-colors cursor-pointer">
-                    <span class="material-symbols-outlined text-[20px]">delete</span>
-                    Delete
-                </button>
+                @if($status === 'trash')
+                    <button wire:click="bulkRestore"
+                        class="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-white transition-colors cursor-pointer">
+                        <span class="material-symbols-outlined text-[20px]">restore_from_trash</span>
+                        Restore
+                    </button>
+                    <button wire:click="confirmBulkDelete"
+                        class="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-[#FF6A55] transition-colors cursor-pointer">
+                        <span class="material-symbols-outlined text-[20px]">delete_forever</span>
+                        Delete Forever
+                    </button>
+                @else
+                    <button wire:click="bulkPublish"
+                        class="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-white transition-colors cursor-pointer">
+                        <span class="material-symbols-outlined text-[20px]">publish</span>
+                        Publish
+                    </button>
+                    <button wire:click="bulkDraft"
+                        class="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-white transition-colors cursor-pointer">
+                        <span class="material-symbols-outlined text-[20px]">edit_document</span>
+                        Draft
+                    </button>
+                    <button wire:click="confirmBulkDelete"
+                        class="flex items-center gap-2 text-sm font-bold text-white/70 hover:text-[#FF6A55] transition-colors cursor-pointer">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                        Delete
+                    </button>
+                @endif
             </div>
             <button wire:click="clearSelection" class="ml-2 w-8 h-8 flex items-center justify-center rounded-xl hover:bg-white/10 text-white/70 hover:text-white transition-colors cursor-pointer">
                 <span class="material-symbols-outlined text-[20px]">close</span>
             </button>
         </div>
+    </div>
+    @endif
+
+    {{-- Empty Trash Button --}}
+    @if($status === 'trash' && $statusCounts['trash'] > 0)
+    <div class="flex justify-end">
+        <button wire:click="emptyTrash" wire:confirm="Are you sure you want to permanently delete ALL trashed pages? This cannot be undone."
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-[#FF6A55] hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
+            <span class="material-symbols-outlined text-lg">delete_sweep</span>
+            Empty Trash
+        </button>
     </div>
     @endif
 
@@ -320,8 +359,8 @@
                 <div class="h-12 w-12 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-4">
                     <span class="material-symbols-outlined text-red-500 text-2xl">delete</span>
                 </div>
-                <h3 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC] mb-2">Delete Page</h3>
-                <p class="text-sm text-[#6F767E] mb-6">Are you sure you want to delete this page? This action cannot be undone.</p>
+                <h3 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC] mb-2">Move to Trash</h3>
+                <p class="text-sm text-[#6F767E] mb-6">This page will be moved to the trash. You can restore it later from the Trash tab.</p>
                 <div class="flex items-center gap-3">
                     <button wire:click="cancelDelete"
                         class="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-[#111827] dark:text-[#FCFCFC] bg-gray-100 dark:bg-[#272B30] hover:bg-gray-200 dark:hover:bg-[#272B30]/80 transition-colors">
@@ -329,7 +368,7 @@
                     </button>
                     <button wire:click="delete"
                         class="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition-colors">
-                        Delete
+                        Move to Trash
                     </button>
                 </div>
             </div>
@@ -345,17 +384,29 @@
                 <div class="h-12 w-12 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-4">
                     <span class="material-symbols-outlined text-red-500 text-2xl">delete_sweep</span>
                 </div>
-                <h3 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC] mb-2">Delete {{ count($selectedPages) }} Pages</h3>
-                <p class="text-sm text-[#6F767E] mb-6">Are you sure you want to delete the selected pages? This action cannot be undone.</p>
+                @if($status === 'trash')
+                    <h3 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC] mb-2">Permanently Delete {{ count($selectedPages) }} Pages</h3>
+                    <p class="text-sm text-[#6F767E] mb-6">This will permanently delete the selected pages. This action cannot be undone.</p>
+                @else
+                    <h3 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC] mb-2">Move {{ count($selectedPages) }} Pages to Trash</h3>
+                    <p class="text-sm text-[#6F767E] mb-6">The selected pages will be moved to the trash. You can restore them later.</p>
+                @endif
                 <div class="flex items-center gap-3">
                     <button wire:click="cancelBulkDelete"
                         class="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-[#111827] dark:text-[#FCFCFC] bg-gray-100 dark:bg-[#272B30] hover:bg-gray-200 dark:hover:bg-[#272B30]/80 transition-colors">
                         Cancel
                     </button>
-                    <button wire:click="bulkDelete"
-                        class="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition-colors">
-                        Delete All
-                    </button>
+                    @if($status === 'trash')
+                        <button wire:click="bulkForceDelete"
+                            class="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition-colors">
+                            Delete Forever
+                        </button>
+                    @else
+                        <button wire:click="bulkDelete"
+                            class="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition-colors">
+                            Move to Trash
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>

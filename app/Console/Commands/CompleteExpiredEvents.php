@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Plugins\Events\Models\Event;
 
 class CompleteExpiredEvents extends Command
 {
@@ -26,9 +25,18 @@ class CompleteExpiredEvents extends Command
      */
     public function handle()
     {
+        /** @var class-string $eventClass */
+        $eventClass = 'Plugins\\Events\\Models\\Event';
+
+        if (! class_exists($eventClass)) {
+            $this->warn('Events plugin is not installed — skipping.');
+
+            return self::SUCCESS;
+        }
+
         $this->info('Checking for expired events...');
 
-        $expiredEvents = Event::where('status', 'published')
+        $expiredEvents = $eventClass::where('status', 'published')
             ->where('end_date', '<', now())
             ->get();
 

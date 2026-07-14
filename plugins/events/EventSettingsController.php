@@ -8,6 +8,7 @@ use App\Models\EventAccessModel;
 use App\Models\EventsModel;
 use App\Models\SubsidiariesModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
+use Config\Services;
 
 class EventSettingsController extends BaseController
 {
@@ -139,7 +140,7 @@ class EventSettingsController extends BaseController
                     $reason = $this->request->getPost('reason');
                     $event = $this->eventsModel->find($eventId);
 
-                    $parser = \Config\Services::parser();
+                    $parser = Services::parser();
 
                     $dataHTML = [
                         'event' => $event['name'],
@@ -194,7 +195,7 @@ class EventSettingsController extends BaseController
                     $reason = $this->request->getPost('reason');
                     $event = $this->eventsModel->find($eventId);
 
-                    $parser = \Config\Services::parser();
+                    $parser = Services::parser();
 
                     $dataHTML = [
                         'event' => $event['name'],

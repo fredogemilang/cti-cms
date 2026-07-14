@@ -963,6 +963,17 @@ class PageForm extends Component
         $this->save();
     }
 
+    public function delete()
+    {
+        if ($this->isEdit && $this->page) {
+            $this->page->blocks()->delete();
+            $this->page->delete();
+            session()->flash('success', 'Page deleted successfully.');
+
+            return redirect()->route('admin.pages.index');
+        }
+    }
+
     // === AUTOSAVE ===
 
     public function autosave()

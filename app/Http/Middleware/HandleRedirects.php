@@ -17,7 +17,7 @@ class HandleRedirects
         }
 
         // Skip admin path entirely so admin UX isn't accidentally redirected
-        $adminPath = trim(config('admin.path', 'admin'), '/');
+        $adminPath = trim(config('cms.path', 'admin'), '/');
         if ($adminPath !== '' && str_starts_with(ltrim($request->path(), '/'), $adminPath)) {
             return $next($request);
         }
