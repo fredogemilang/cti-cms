@@ -193,70 +193,61 @@
                     @enderror
                 </div>
 
-                {{-- SEO & Open Graph Settings --}}
-                <div x-data="{ seoOpen: false, activeTab: 'seo' }" class="bg-white dark:bg-[#1A1A1A] rounded-3xl border border-gray-200 dark:border-[#272B30] overflow-hidden">
-                    <button type="button" @click="seoOpen = !seoOpen" class="w-full flex items-center justify-between px-6 py-5 hover:bg-gray-50/50 dark:hover:bg-[#272B30]/30 transition-colors">
-                        <div class="flex items-center gap-3">
-                            <div class="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                                <span class="material-symbols-outlined text-xl">search</span>
-                            </div>
-                            <div class="text-left">
-                                <h3 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">SEO & Open Graph</h3>
-                                <p class="text-[11px] text-[#6F767E] mt-0.5">Search engine optimization and social sharing</p>
-                            </div>
-                        </div>
-                        <span class="material-symbols-outlined text-[#6F767E] transition-transform duration-200" :class="seoOpen ? 'rotate-180' : ''">expand_more</span>
-                    </button>
-
-                    <div x-show="seoOpen" x-collapse x-cloak>
-                        {{-- Tabs --}}
-                        <div class="flex border-t border-b border-gray-200 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#0B0B0B]/20">
-                            <button type="button" @click="activeTab = 'seo'"
-                                :class="activeTab === 'seo' ? 'text-blue-600 border-b-2 border-blue-600 bg-white dark:bg-[#1A1A1A]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white border-b-2 border-transparent'"
-                                class="px-6 py-3 text-xs font-bold uppercase tracking-widest transition-all">
-                                SEO Settings
+                {{-- SEO Settings --}}
+                <div x-data="{ activeTab: 'meta' }" class="bg-white dark:bg-[#1A1A1A] rounded-3xl border border-gray-200 dark:border-[#272B30] overflow-hidden">
+                    {{-- Header with title left + tabs right --}}
+                    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-[#272B30]">
+                        <h3 class="text-xs font-bold text-[#6F767E] uppercase tracking-widest">SEO Settings</h3>
+                        <div class="flex items-center bg-[#F4F5F6] dark:bg-[#0B0B0B] rounded-lg p-0.5">
+                            <button type="button" @click="activeTab = 'meta'"
+                                :class="activeTab === 'meta' ? 'bg-white dark:bg-[#272B30] text-[#111827] dark:text-[#FCFCFC] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]'"
+                                class="px-4 py-1.5 rounded-md text-xs font-bold transition-all">
+                                Meta Data
                             </button>
                             <button type="button" @click="activeTab = 'og'"
-                                :class="activeTab === 'og' ? 'text-blue-600 border-b-2 border-blue-600 bg-white dark:bg-[#1A1A1A]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white border-b-2 border-transparent'"
-                                class="px-6 py-3 text-xs font-bold uppercase tracking-widest transition-all">
+                                :class="activeTab === 'og' ? 'bg-white dark:bg-[#272B30] text-[#111827] dark:text-[#FCFCFC] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]'"
+                                class="px-4 py-1.5 rounded-md text-xs font-bold transition-all">
                                 Open Graph
                             </button>
                         </div>
+                    </div>
 
-                        {{-- SEO Tab --}}
-                        <div x-show="activeTab === 'seo'" class="p-6 space-y-5">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Meta Title</label>
-                                <input wire:model="metaTitle" type="text"
-                                    class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary"
-                                    placeholder="Enter meta title..." />
-                                <p class="text-[10px] text-[#6F767E]">Recommended: 50-60 characters</p>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Meta Description</label>
-                                <textarea wire:model="metaDescription" rows="3"
-                                    class="w-full rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary p-3 resize-none"
-                                    placeholder="Enter meta description..."></textarea>
-                                <p class="text-[10px] text-[#6F767E]">Recommended: 150-160 characters</p>
-                            </div>
+                    {{-- Meta Data Tab --}}
+                    <div x-show="activeTab === 'meta'" class="p-6 space-y-5">
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">Meta Title</label>
+                            <input wire:model="metaTitle" type="text"
+                                class="w-full h-11 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-4"
+                                placeholder="Page Title for Search Engines" />
                         </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">Meta Description</label>
+                            <textarea wire:model="metaDescription" rows="3"
+                                class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary p-4 resize-y"
+                                placeholder="Brief description for search engine results"></textarea>
+                        </div>
+                    </div>
 
-                        {{-- Open Graph Tab --}}
-                        <div x-show="activeTab === 'og'" style="display: none;" class="p-6 space-y-5">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">OG Title</label>
-                                <input wire:model="ogTitle" type="text"
-                                    class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary"
-                                    placeholder="Open Graph title..." />
-                                <p class="text-[10px] text-[#6F767E]">Title shown when shared on social media</p>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">OG Description</label>
-                                <textarea wire:model="ogDescription" rows="2"
-                                    class="w-full rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary p-3 resize-none"
-                                    placeholder="Open Graph description..."></textarea>
-                                <p class="text-[10px] text-[#6F767E]">Description shown when shared on social media</p>
-                            </div>
+                    {{-- Open Graph Tab --}}
+                    <div x-show="activeTab === 'og'" style="display: none;" class="p-6 space-y-5">
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">OG Title</label>
+                            <input wire:model="ogTitle" type="text"
+                                class="w-full h-11 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-4"
+                                placeholder="Social Media Title" />
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">OG Description</label>
+                            <textarea wire:model="ogDescription" rows="3"
+                                class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary p-4 resize-y"
+                                placeholder="Social Media Description"></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">OG Image URL</label>
+                            <input wire:model="ogImage" type="text"
+                                class="w-full h-11 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-4"
+                                placeholder="https://example.com/image.jpg" />
+                            <p class="text-[11px] text-[#6F767E]">Leave empty to use featured image</p>
                         </div>
                     </div>
                 </div>
