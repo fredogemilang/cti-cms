@@ -34,11 +34,11 @@
         .roller-mask { position:absolute; inset:0; z-index:3; pointer-events:none; background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, 0.95) 100%); }
         .roller-highlight { position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:76px; border-top: 2px solid rgba(99, 102, 241, 0.35); border-bottom: 2px solid rgba(99, 102, 241, 0.35); background: rgba(99, 102, 241, 0.08); z-index:2; pointer-events:none; }
         .roller-track { position:absolute; left:0; right:0; top:0; transition:none; z-index:1; }
-        .roller-item { height:72px; display:flex; align-items:center; justify-content:center; flex-direction:column; }
-        .roller-item .rname { font-size:28px; font-weight:800; color:rgba(30, 41, 59, 0.35); transition:all 0.2s ease; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90%; }
-        .roller-item .rorg { font-size:13px; font-weight:600; color:rgba(30, 41, 59, 0.25); }
-        .roller-item.active .rname { color: #4f46e5; font-size: 34px; font-weight: 900; text-shadow: 0 4px 15px rgba(99, 102, 241, 0.2); }
-        .roller-item.active .rorg { color: #6366f1; font-weight: 700; }
+        .roller-item { height:72px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap: 2px; }
+        .roller-item .rname { font-size:28px; font-weight:800; color:rgba(30, 41, 59, 0.35); transition:all 0.2s ease; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90%; line-height: 1.1; }
+        .roller-item .rorg { font-size:13px; font-weight:600; color:rgba(30, 41, 59, 0.25); line-height: 1.1; }
+        .roller-item.active .rname { color: #4f46e5; font-size: 34px; font-weight: 900; text-shadow: 0 4px 15px rgba(99, 102, 241, 0.2); line-height: 1.1; }
+        .roller-item.active .rorg { color: #6366f1; font-weight: 700; line-height: 1.1; }
 
         /* Winner reveal */
         .winner-reveal { display:none; flex-direction:column; align-items:center; text-align:center; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); border: 2px dashed rgba(251, 191, 36, 0.6); padding: 40px 60px; border-radius: 36px; box-shadow: 0 30px 65px rgba(251, 191, 36, 0.15), 0 10px 25px rgba(0, 0, 0, 0.04); max-width: 600px; width: 100%; }
@@ -844,6 +844,7 @@ function buildRoller() {
         const data = eligibleNames[i % eligibleNames.length];
         const div = document.createElement('div');
         div.className = 'roller-item';
+        div.setAttribute('data-registration-id', data.id);
         div.innerHTML = `<div class="rname">${escHtml(data.name)}</div><div class="rorg">${escHtml(data.organization)}</div>`;
         track.appendChild(div);
     }
@@ -1148,6 +1149,37 @@ async function stopRolling() {
     }
 
     cancelAnimationFrame(rollerAnim);
+
+    if (result.winner && result.winner.registration_id) {
+        const targetRegId = result.winner.registration_id;
+        const track = document.getElementById('rollerTrack');
+        const items = track.querySelectorAll('.roller-item');
+        let targetIndex = -1;
+        let minDiff = Infinity;
+        const currentCenterIndex = Math.round((170 - rollerPos - 36) / 72);
+
+        items.forEach((item, index) => {
+            if (item.getAttribute('data-registration-id') == targetRegId) {
+                const diff = Math.abs(index - currentCenterIndex);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    targetIndex = index;
+                }
+            }
+        });
+
+        if (targetIndex !== -1) {
+            const targetPos = 134 - targetIndex * 72;
+            track.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+            track.style.transform = `translateY(${targetPos}px)`;
+            rollerPos = targetPos;
+            highlightCenter();
+            
+            await new Promise(resolve => setTimeout(resolve, 600));
+            track.style.transition = 'none';
+        }
+    }
+
     document.getElementById('rollerContainer').style.display = 'none';
     showWinner(result.winner, result.prize.name);
 
