@@ -25,7 +25,6 @@ class CompleteExpiredEvents extends Command
      */
     public function handle()
     {
-        /** @var class-string $eventClass */
         $eventClass = 'Plugins\\Events\\Models\\Event';
 
         if (! class_exists($eventClass)) {

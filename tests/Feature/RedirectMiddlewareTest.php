@@ -59,6 +59,8 @@ class RedirectMiddlewareTest extends TestCase
     #[Test]
     public function admin_path_is_never_intercepted_even_when_a_rule_matches(): void
     {
+        config(['cms.path' => 'ctrlpanel']);
+
         Redirect::create([
             'from_path' => '/ctrlpanel/login',
             'to_url' => '/somewhere',
