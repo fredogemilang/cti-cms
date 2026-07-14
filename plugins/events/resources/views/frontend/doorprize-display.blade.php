@@ -10,58 +10,59 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Plus Jakarta Sans',sans-serif; background:#0a0a0f; color:#fff; height:100vh; overflow:hidden; display:flex; flex-direction:column; position:relative; }
-        .bg-layer { position:absolute; inset:0; z-index:0; background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #0f172a 60%, #020617 100%); }
-        .bg-layer img { width:100%; height:100%; object-fit:cover; opacity:.85; }
-        .bg-overlay { position:absolute; inset:0; background:linear-gradient(180deg, rgba(10,10,15,0.7) 0%, rgba(10,10,15,0.3) 30%, rgba(10,10,15,0.4) 100%); z-index:1; }
+        body { font-family:'Plus Jakarta Sans',sans-serif; background:#f8fafc; color:#1e293b; height:100vh; overflow:hidden; display:flex; flex-direction:column; position:relative; }
+        .bg-layer { position:absolute; inset:0; z-index:0; background: radial-gradient(circle at 50% 50%, #f0f7ff 0%, #e0e7ff 40%, #c7d2fe 100%); }
+        .bg-layer img { width:100%; height:100%; object-fit:cover; opacity:.9; }
+        .bg-overlay { position:absolute; inset:0; background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(236, 72, 153, 0.12) 50%, rgba(255, 255, 255, 0.1) 100%); z-index:1; }
         .content { position:relative; z-index:2; display:flex; flex-direction:column; height:100vh; }
 
         /* Top bar */
-        .top-bar { padding:24px 40px; display:flex; align-items:center; justify-content:space-between; }
-        .top-bar .event-title { font-size:18px; font-weight:800; opacity:.95; display:flex; align-items:center; gap:10px; text-shadow: 0 2px 4px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.4); }
-        .top-bar .event-title .material-symbols-outlined { font-size:24px; color:#fbbf24; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .top-bar { padding:16px 40px; display:flex; align-items:center; justify-content:space-between; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03); }
+        .top-bar .event-title { font-size:18px; font-weight:800; color:#1e293b; display:flex; align-items:center; gap:10px; }
+        .top-bar .event-title .material-symbols-outlined { font-size:24px; color:#fbbf24; filter: drop-shadow(0 2px 4px rgba(251,191,36,0.3)); }
         .selectors { display:flex; gap:12px; }
         .selectors select { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:#fff; padding:10px 16px; border-radius:12px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; min-width:180px; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; }
         .selectors select:focus { outline:none; border-color:rgba(99,102,241,.6); }
 
         /* Center stage */
-        .stage { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:0 40px; }
-        .prize-info { text-align:center; font-size:14px; font-weight:600; color:rgba(255,255,255,.85); text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        .prize-info .prize-name { font-size:24px; font-weight:800; color:#fbbf24; margin-bottom:4px; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
+        .stage { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:0 40px; }
+        .prize-info { text-align:center; font-size:14px; font-weight:700; color:#475569; background: rgba(255, 255, 255, 0.65); padding: 10px 28px; border-radius: 100px; border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); }
+        .prize-info .prize-name { font-size:26px; font-weight:900; color:#d97706; margin-bottom:2px; }
 
         /* Roller */
-        .roller-container { width:100%; max-width:700px; height:340px; position:relative; overflow:hidden; border-radius:24px; background:rgba(10,10,15,0.75); backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.1); box-shadow:0 20px 50px rgba(0,0,0,0.4); }
-        .roller-mask { position:absolute; inset:0; z-index:3; pointer-events:none; background:linear-gradient(180deg,rgba(10,10,15,0.95) 0%,transparent 35%,transparent 65%,rgba(10,10,15,0.95) 100%); }
-        .roller-highlight { position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:72px; border-top:2px solid rgba(99,102,241,.4); border-bottom:2px solid rgba(99,102,241,.4); background:rgba(99,102,241,.06); z-index:2; pointer-events:none; }
+        .roller-container { width:100%; max-width:700px; height:340px; position:relative; overflow:hidden; border-radius:32px; background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.5); }
+        .roller-mask { position:absolute; inset:0; z-index:3; pointer-events:none; background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, 0.95) 100%); }
+        .roller-highlight { position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); height:76px; border-top: 2px solid rgba(99, 102, 241, 0.35); border-bottom: 2px solid rgba(99, 102, 241, 0.35); background: rgba(99, 102, 241, 0.08); z-index:2; pointer-events:none; }
         .roller-track { position:absolute; left:0; right:0; top:0; transition:none; z-index:1; }
         .roller-item { height:72px; display:flex; align-items:center; justify-content:center; flex-direction:column; }
-        .roller-item .rname { font-size:28px; font-weight:800; color:rgba(255,255,255,.3); transition:color .15s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90%; }
-        .roller-item .rorg { font-size:13px; font-weight:600; color:rgba(255,255,255,.12); }
-        .roller-item.active .rname { color:#fff; }
-        .roller-item.active .rorg { color:rgba(255,255,255,.4); }
+        .roller-item .rname { font-size:28px; font-weight:800; color:rgba(30, 41, 59, 0.35); transition:all 0.2s ease; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90%; }
+        .roller-item .rorg { font-size:13px; font-weight:600; color:rgba(30, 41, 59, 0.25); }
+        .roller-item.active .rname { color: #4f46e5; font-size: 34px; font-weight: 900; text-shadow: 0 4px 15px rgba(99, 102, 241, 0.2); }
+        .roller-item.active .rorg { color: #6366f1; font-weight: 700; }
 
         /* Winner reveal */
-        .winner-reveal { display:none; flex-direction:column; align-items:center; text-align:center; }
+        .winner-reveal { display:none; flex-direction:column; align-items:center; text-align:center; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); border: 2px dashed rgba(251, 191, 36, 0.6); padding: 40px 60px; border-radius: 36px; box-shadow: 0 30px 65px rgba(251, 191, 36, 0.15), 0 10px 25px rgba(0, 0, 0, 0.04); max-width: 600px; width: 100%; }
         .winner-reveal.visible { display:flex; animation:winnerPop .6s cubic-bezier(.175,.885,.32,1.275); }
-        .winner-reveal .trophy { font-size:64px; color:#fbbf24; margin-bottom:12px; filter:drop-shadow(0 0 30px rgba(251,191,36,.4)); }
-        .winner-reveal .wname { font-size:52px; font-weight:900; background:linear-gradient(135deg,#fbbf24,#f59e0b,#fcd34d); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.2; }
-        .winner-reveal .worg { font-size:20px; font-weight:600; color:rgba(255,255,255,.6); margin-top:8px; }
-        .winner-reveal .wprize { font-size:14px; font-weight:700; color:rgba(99,102,241,.8); margin-top:16px; padding:8px 20px; border-radius:100px; background:rgba(99,102,241,.1); border:1px solid rgba(99,102,241,.2); }
+        .winner-reveal .trophy { font-size:72px; color:#fbbf24; margin-bottom:16px; animation: prizeBounce 1s infinite alternate; filter: drop-shadow(0 4px 10px rgba(251,191,36,0.3)); }
+        .winner-reveal .wname { font-size:48px; font-weight:900; background: linear-gradient(135deg, #4f46e5, #ec4899, #f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1.2; }
+        .winner-reveal .worg { font-size:20px; font-weight:700; color:#475569; margin-top:8px; }
+        .winner-reveal .wprize { font-size:15px; font-weight:800; color:#b45309; margin-top:18px; padding:10px 28px; border-radius:100px; background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.3); }
         @keyframes winnerPop { 0%{transform:scale(.5);opacity:0} 100%{transform:scale(1);opacity:1} }
+        @keyframes prizeBounce { from { transform: translateY(0) scale(1); } to { transform: translateY(-10px) scale(1.05); } }
 
         /* Idle state */
-        .idle-msg { text-align:center; color:rgba(255,255,255,.9); font-size:16px; font-weight:600; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        .idle-msg .material-symbols-outlined { font-size:48px; display:block; margin-bottom:8px; opacity:.85; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .idle-msg { text-align:center; color:#475569; font-size:18px; font-weight:700; background: rgba(255, 255, 255, 0.5); padding: 24px 48px; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02); }
+        .idle-msg .material-symbols-outlined { font-size:56px; color:#6366f1; margin-bottom:12px; display:block; opacity:0.9; }
         .pulse { animation:pulse 2s ease-in-out infinite; }
         @keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:.95} }
 
         /* Bottom bar */
-        .bottom-bar { padding:20px 40px 28px; display:flex; align-items:center; justify-content:space-between; }
+        .bottom-bar { padding:20px 40px 28px; display:flex; align-items:center; justify-content:space-between; background: rgba(255, 255, 255, 0.45); backdrop-filter: blur(15px); border-top: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.03); }
         .recent-winners { display:flex; align-items:center; gap:8px; flex-wrap:wrap; max-width:65%; }
-        .recent-winners .label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,.8); text-shadow: 0 1px 3px rgba(0,0,0,0.8); margin-right:4px; }
-        .winner-chip { padding:6px 14px; border-radius:100px; background:rgba(10,10,15,0.6); border:1px solid rgba(251,191,36,.3); backdrop-filter: blur(5px); font-size:12px; font-weight:700; color:#fbbf24; display:flex; align-items:center; gap:5px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
-        .winner-chip .material-symbols-outlined { font-size:14px; }
-        .eligible-count { font-size:13px; font-weight:600; color:rgba(255,255,255,.8); text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .recent-winners .label { font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#475569; margin-right:4px; }
+        .winner-chip { padding:6px 14px; border-radius:100px; background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(251, 191, 36, 0.4); font-size:12px; font-weight:700; color:#b45309; display:flex; align-items:center; gap:5px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03); }
+        .winner-chip .material-symbols-outlined { font-size:14px; color: #f59e0b; }
+        .eligible-count { font-size:13px; font-weight:700; color:#475569; }
 
         /* Draw button */
         .draw-btn { padding:16px 48px; border-radius:16px; font-size:16px; font-weight:800; font-family:inherit; cursor:pointer; border:none; transition:all .2s; text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:10px; }
@@ -88,9 +89,9 @@
 
         /* Slot card style */
         .slot-card {
-            background: rgba(10, 10, 15, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 24px;
             padding: 24px;
             text-align: center;
             position: relative;
@@ -101,18 +102,18 @@
             flex-direction: column;
             justify-content: flex-start;
             min-height: 200px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04);
         }
 
         .slot-card .prize-tag {
             font-size: 13px;
             font-weight: 800;
-            color: #fbbf24;
+            color: #b45309;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             margin-bottom: 16px;
-            opacity: 0.9;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            opacity: 0.95;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
             padding-bottom: 8px;
         }
 
@@ -125,9 +126,9 @@
 
         /* Slot Item style */
         .slot-item {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
             padding: 16px;
             position: relative;
             transition: all 0.3s ease;
@@ -135,25 +136,26 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
 
         .slot-item.rolling {
             border-color: rgba(99, 102, 241, 0.4);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
-            background: rgba(99, 102, 241, 0.02);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+            background: rgba(99, 102, 241, 0.05);
         }
 
         .slot-item.winner-drawn {
-            border-color: rgba(251, 191, 36, 0.4);
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.15);
-            background: rgba(251, 191, 36, 0.05);
-            transform: scale(1.02);
+            border-color: rgba(251, 191, 36, 0.5);
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.18);
+            background: rgba(251, 191, 36, 0.08);
+            transform: scale(1.03);
         }
 
         .slot-item .winner-name {
             font-size: 20px;
             font-weight: 800;
-            color: rgba(255, 255, 255, 0.9);
+            color: #1e293b;
             margin-bottom: 4px;
             text-align: center;
             white-space: nowrap;
@@ -165,7 +167,7 @@
         .slot-item .winner-company {
             font-size: 12px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.4);
+            color: #64748b;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
@@ -174,14 +176,15 @@
         }
 
         .slot-item.winner-drawn .winner-name {
-            color: #fff;
-            background: linear-gradient(135deg, #fff, #fbbf24);
+            background: linear-gradient(135deg, #b45309, #d97706);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 900;
         }
 
         .slot-item.winner-drawn .winner-company {
-            color: rgba(255, 255, 255, 0.7);
+            color: #b45309;
+            opacity: 0.9;
         }
 
         .slot-item .trophy-icon {
@@ -239,29 +242,32 @@
         }
 
         .icon-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 12px;
-            color: #fff;
+            color: #334155;
             padding: 8px 16px;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .icon-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.2);
+            background: #ffffff;
+            border-color: #6366f1;
+            color: #4f46e5;
             transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.15);
         }
 
         .icon-btn:active {
             transform: translateY(0);
-        }
+        } }
 
         /* Modal Style */
         .modal-overlay {
