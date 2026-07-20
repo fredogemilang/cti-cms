@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\ThemeLoader;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Plugins\Posts\Models\Post;
@@ -59,7 +60,15 @@ Route::middleware(['web'])->group(function () {
             ->take(4)
             ->get();
 
-        return view('iccom::posts.index', compact('featuredPosts'));
+        $activeTheme = app(ThemeLoader::class)->getActiveTheme();
+        $themeSlug = $activeTheme ? $activeTheme->slug : 'default';
+
+        $view = "{$themeSlug}::posts.index";
+        if (! view()->exists($view)) {
+            $view = view()->exists('iccom::posts.index') ? 'iccom::posts.index' : 'posts::index';
+        }
+
+        return view($view, compact('featuredPosts'));
     })->name('posts.index');
 
     // Category Index
@@ -70,7 +79,15 @@ Route::middleware(['web'])->group(function () {
             ->take(4)
             ->get();
 
-        return view('iccom::posts.index', compact('featuredPosts', 'category'));
+        $activeTheme = app(ThemeLoader::class)->getActiveTheme();
+        $themeSlug = $activeTheme ? $activeTheme->slug : 'default';
+
+        $view = "{$themeSlug}::posts.index";
+        if (! view()->exists($view)) {
+            $view = view()->exists('iccom::posts.index') ? 'iccom::posts.index' : 'posts::index';
+        }
+
+        return view($view, compact('featuredPosts', 'category'));
     })->name('posts.category');
 
     Route::get("/{$archiveSlug}/{slug}", function ($slug) {
@@ -82,7 +99,13 @@ Route::middleware(['web'])->group(function () {
         $closeCommentsDays = (int) Setting::get('close_comments_days', 0);
 
         // Theme-aware view resolution
-        $viewName = 'iccom::posts.single';
+        $activeTheme = app(ThemeLoader::class)->getActiveTheme();
+        $themeSlug = $activeTheme ? $activeTheme->slug : 'default';
+
+        $viewName = "{$themeSlug}::posts.single";
+        if (! view()->exists($viewName)) {
+            $viewName = view()->exists('iccom::posts.single') ? 'iccom::posts.single' : 'posts::show';
+        }
 
         return view($viewName, [
             'post' => $post,
