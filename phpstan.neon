@@ -8,6 +8,8 @@ parameters:
 
     level: 5
 
+    reportUnmatchedIgnoredErrors: false
+
     ignoreErrors:
 
     excludePaths:

@@ -24,16 +24,20 @@ class FormEntry extends Model
 
     /**
      * Get the form that owns the entry.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Form, $this>
      */
-    public function form()
+    public function form(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Form::class);
     }
 
     /**
      * Get the user that submitted the entry.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, $this>
      */
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
     }

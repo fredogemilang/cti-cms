@@ -58,16 +58,20 @@ class Form extends Model
 
     /**
      * Get the fields for the form.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\FormField, $this>
      */
-    public function fields()
+    public function fields(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(FormField::class)->orderBy('order');
     }
 
     /**
      * Get the entries for the form.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\FormEntry, $this>
      */
-    public function entries()
+    public function entries(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(FormEntry::class);
     }
