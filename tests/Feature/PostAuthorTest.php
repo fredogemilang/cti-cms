@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Artisan;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Plugins\Posts\Livewire\AuthorsManager;
+use Plugins\Posts\Livewire\CategoriesManager;
 use Plugins\Posts\Livewire\PostForm;
+use Plugins\Posts\Models\Category;
 use Plugins\Posts\Models\Post;
 use Plugins\Posts\Models\PostAuthor;
 use Plugins\Posts\Providers\PostsServiceProvider;
@@ -57,6 +59,10 @@ class PostAuthorTest extends TestCase
             '--path' => 'plugins/posts/database/migrations',
             '--force' => true,
         ]);
+
+        // Run translations column migration for plugin tables
+        $translationMigration = require base_path('database/migrations/2026_05_21_203448_add_translations_to_plugin_tables.php');
+        $translationMigration->up();
 
         // Refresh route name lookups
         app('router')->getRoutes()->refreshNameLookups();
@@ -211,5 +217,93 @@ class PostAuthorTest extends TestCase
         $response = $this->get('/blog/sample-view-test-post');
         $response->assertStatus(200);
         $this->assertEquals(1, $post->fresh()->views_count);
+    }
+
+    #[Test]
+    public function default_uncategorized_category_cannot_be_deleted(): void
+    {
+        $this->actingAs($this->user);
+
+        $uncategorized = Category::firstOrCreate([
+            'slug' => 'uncategorized',
+        ], [
+            'name' => 'Uncategorized',
+        ]);
+
+        // Attempt deletion via model level returning false
+        $result = $uncategorized->delete();
+        $this->assertFalse($result);
+        $this->assertDatabaseHas('categories', ['id' => $uncategorized->id]);
+
+        // Attempt deletion via Livewire controller
+        $test = Livewire::test(CategoriesManager::class);
+        $test->call('delete', $uncategorized->id);
+
+        $this->assertDatabaseHas('categories', ['id' => $uncategorized->id]);
+    }
+
+    #[Test]
+    public function saving_post_without_categories_defaults_to_uncategorized(): void
+    {
+        $this->actingAs($this->user);
+
+        $author = PostAuthor::create([
+            'name' => 'Writer Name',
+            'slug' => 'writer-name',
+        ]);
+
+        // Create post via Livewire form leaving selectedCategories empty
+        Livewire::test(PostForm::class)
+            ->set('title', 'Post with No Custom Category')
+            ->set('slug', 'post-with-no-custom-category')
+            ->set('content', 'Testing default categories')
+            ->set('author_id', $author->id)
+            ->set('selectedCategories', [])
+            ->call('save');
+
+        $post = Post::where('slug', 'post-with-no-custom-category')->first();
+        $this->assertNotNull($post);
+        $this->assertCount(1, $post->categories);
+        $this->assertEquals('uncategorized', $post->categories->first()->slug);
+    }
+
+    #[Test]
+    public function deleting_category_reassigns_orphaned_posts_to_uncategorized(): void
+    {
+        $this->actingAs($this->user);
+
+        $author = PostAuthor::create([
+            'name' => 'Writer Name',
+            'slug' => 'writer-name',
+        ]);
+
+        // Create a custom category
+        $customCategory = Category::create([
+            'name' => 'Custom Category',
+            'slug' => 'custom-category',
+        ]);
+
+        // Create post attached ONLY to custom category
+        $post = Post::create([
+            'title' => 'Post to Reassign',
+            'slug' => 'post-to-reassign',
+            'content' => 'Content',
+            'author_id' => $author->id,
+        ]);
+        $post->categories()->attach($customCategory->id);
+
+        $this->assertCount(1, $post->fresh()->categories);
+        $this->assertEquals('custom-category', $post->fresh()->categories->first()->slug);
+
+        // Delete the custom category via Livewire controller
+        Livewire::test(CategoriesManager::class)
+            ->call('delete', $customCategory->id);
+
+        $this->assertDatabaseMissing('categories', ['id' => $customCategory->id]);
+
+        // Assert post is now reassigned to Uncategorized
+        $post = $post->fresh();
+        $this->assertCount(1, $post->categories);
+        $this->assertEquals('uncategorized', $post->categories->first()->slug);
     }
 }

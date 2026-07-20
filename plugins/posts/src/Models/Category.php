@@ -38,6 +38,12 @@ class Category extends Model
                 $category->slug = Str::slug($category->name);
             }
         });
+
+        static::deleting(function ($category) {
+            if ($category->slug === 'uncategorized') {
+                return false;
+            }
+        });
     }
 
     public function parent(): BelongsTo

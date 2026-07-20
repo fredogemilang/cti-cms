@@ -126,7 +126,36 @@ class CategoriesManager extends Component
 
     public function delete($id)
     {
-        Category::find($id)->delete();
+        $category = Category::find($id);
+
+        if (! $category) {
+            return;
+        }
+
+        if ($category->slug === 'uncategorized') {
+            session()->flash('error', 'The default Uncategorized category cannot be deleted.');
+
+            return;
+        }
+
+        // Get all posts associated with this category
+        $posts = $category->posts()->get();
+
+        $category->delete();
+
+        // Ensure default Uncategorized category exists
+        $uncategorized = Category::firstOrCreate(
+            ['slug' => 'uncategorized'],
+            ['name' => 'Uncategorized', 'description' => 'Default category']
+        );
+
+        // Reassign posts with no categories left
+        foreach ($posts as $post) {
+            if ($post->categories()->count() === 0) {
+                $post->categories()->attach($uncategorized->id);
+            }
+        }
+
         session()->flash('success', 'Category deleted successfully.');
     }
 }
