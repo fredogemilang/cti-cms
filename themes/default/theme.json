@@ -1,0 +1,29 @@
+{
+    "name": "Default",
+    "slug": "default",
+    "version": "1.0.0",
+    "description": "A clean, modern default theme for the Web CMS. Zero external dependencies — pure CSS with responsive design, dark mode support, and polished typography.",
+    "author": "Web CMS",
+    "screenshot": "screenshot.png",
+    "supports": [
+        "pages",
+        "posts",
+        "menus"
+    ],
+    "page_templates": {
+        "default": {
+            "label": "Default",
+            "description": "Standard page with flexible block content",
+            "blocks": []
+        },
+        "home": {
+            "label": "Homepage",
+            "description": "Main landing page with hero, features, and CTA",
+            "blocks": [
+                {"name": "hero_title", "type": "text", "label": "Hero Title", "default": "Welcome"},
+                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "Build something amazing with your new CMS."},
+                {"name": "hero_image", "type": "media", "label": "Hero Image", "default": ""}
+            ]
+        }
+    }
+}
