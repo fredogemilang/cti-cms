@@ -120,5 +120,11 @@ class FormAssignmentTest extends TestCase
         $compiled = Blade::render($blade);
         $this->assertStringContainsString('action="'.route('forms.submit', 'general-inquiry-form').'"', $compiled);
         $this->assertStringContainsString('name="your_name"', $compiled);
+
+        // 3. Render with success session message
+        session()->flash('success', 'Form submitted successfully!');
+        $renderedWithSuccess = render_theme_form('contact_form');
+        $this->assertStringContainsString('id="form-success-general-inquiry-form"', $renderedWithSuccess);
+        $this->assertStringContainsString('class="alert alert-success alert-dismissible fade show mb-4 elementor-message elementor-message-success"', $renderedWithSuccess);
     }
 }

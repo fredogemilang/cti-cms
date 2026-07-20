@@ -205,14 +205,14 @@ if (! function_exists('render_theme_form')) {
 
         // Flash message handling
         if (session('success')) {
-            $html .= '<div class="alert alert-success alert-dismissible fade show mb-4" role="alert">';
+            $html .= '<div id="form-success-'.$form->slug.'" class="alert alert-success alert-dismissible fade show mb-4 elementor-message elementor-message-success" role="alert">';
             $html .= '<strong>Success!</strong> '.e(session('success'));
             $html .= '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
             $html .= '</div>';
         }
 
         if (session('form_success_message')) {
-            $html .= '<div class="alert alert-success alert-dismissible fade show mb-4" role="alert">';
+            $html .= '<div id="form-success-'.$form->slug.'" class="alert alert-success alert-dismissible fade show mb-4 elementor-message elementor-message-success" role="alert">';
             $html .= '<strong>Success!</strong> '.e(session('form_success_message'));
             $html .= '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
             $html .= '</div>';
