@@ -1,123 +1,338 @@
-# Web CMS - Modular Laravel CMS
+# Web CMS
 
-A powerful, modular CMS built with Laravel 12, featuring a robust plugin architecture and modern UI.
+A modular, extensible CMS built with Laravel 12. Designed for distribution — create plugins and themes to customize for any project.
 
-![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel)
-![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=for-the-badge&logo=php)
+![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat-square&logo=laravel)
+![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat-square&logo=php)
+![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 
-## 🚀 Deployment & Installation
+---
 
-### 1. Pulling from GitHub
-To get the latest version of the code on your server:
+## Quick Start
 
 ```bash
-cd /path/to/your/project
-git pull origin main
+# 1. Clone
+git clone https://github.com/fredogemilang/web-cms.git my-site
+cd my-site
+
+# 2. Install dependencies
+composer install
+
+# 3. Environment
+cp .env.example .env
+php artisan key:generate
+
+# 4. Create your MySQL database, then:
+php artisan cms:install
 ```
 
-### 2. Installation on Shared Hosting
+The installer wizard will guide you through: database migration, core data seeding, admin user creation, default theme activation, and asset publishing.
 
-This guide assumes you are using cPanel or a similar shared hosting environment.
-
-#### Option A: With SSH Access (Recommended)
-1.  **Clone/Pull Repository**:
-    ```bash
-    git clone https://github.com/fredogemilang/web-cms.git .
-    ```
-2.  **Install Dependencies**:
-    ```bash
-    composer install --optimize-autoloader --no-dev
-    ```
-3.  **Environment Setup**:
-    - Copy `.env.example` to `.env`
-    - Configure your database credentials in `.env`
-    - Run `php artisan key:generate`
-4.  **Database & Storage**:
-    ```bash
-    php artisan migrate
-    php artisan db:seed
-    php artisan storage:link
-    ```
-
-#### Option B: Without SSH (File Manager/FTP)
-1.  **Upload Files**: Upload all files to your server (preferably outside `public_html` for security, or in a subdirectory).
-2.  **Vendor Folder**: Since you cannot run `composer install`, upload the `vendor` folder from your local machine to the server.
-3.  **Environment**: 
-    - Upload `.env` file (ensure hidden files are visible).
-    - Edit `.env` with your database details.
-4.  **Symlink Storage**:
-    - You may need to create a symlink manually via PHP script if `php artisan storage:link` is unavailable:
-    ```php
-    <?php
-    symlink('/path/to/storage/app/public', '/path/to/public_html/storage');
-    ?>
-    ```
-
-### 3. Public Folder Setup (Important)
-Laravel serves from the `public` folder. On shared hosting:
--   **Best Practice**: Point your domain's "Document Root" to the `/public` folder of the project.
--   **Alternative**: If you must use `public_html`, move the contents of `public/` into `public_html/` and update `index.php` to point back to the correct paths in `bootstrap/app.php`.
+After install, run `php artisan serve` and visit `http://localhost:8000`.
 
 ---
 
-## ✨ Features
+## Features
 
-This CMS is built with a modular plugin system. Here are the active modules:
+### Core
+- **Page Builder** — create pages with 15+ block types (text, wysiwyg, media, gallery, repeater, etc.)
+- **Media Library** — centralized file/image management with variants
+- **Form Builder** — drag-and-drop forms with entries, notifications, honeypot, CAPTCHA
+- **Dynamic Menus** — manage navigation via admin
+- **Role-Based Access** — granular permissions per module
+- **Email Templates** — editable system emails with variable substitution
+- **SEO Meta** — per-page title, description, OG tags
+- **Activity Log** — audit trail for all admin actions
+- **Redirects** — regex-capable redirect manager
+- **Webhooks** — event-driven HTTP callbacks
+- **API Tokens** — scoped API authentication
+- **i18n** — translatable pages and content blocks
 
-### 📅 Events Management (`/plugins/events`)
-Complete solution for managing offline/online events.
--   **Registration System**: User registration with capacity limits and status tracking.
--   **Categories**: Organized by color-coded categories (iC-Talk, iC-Class, etc.).
--   **Doorprize System**: Built-in tool for event engagement and giveaways.
--   **Gallery**: Event photo galleries.
--   **Location**: Google Maps integration.
--   **Automation**: Auto-completes expired events via scheduled tasks.
+### Plugin System
+- Convention-based auto-discovery (routes, views, migrations, Livewire)
+- Manifest-driven settings and scheduled tasks
+- Dependency validation between plugins
+- Upload & activate via admin panel
 
-### 👥 Membership System (`/plugins/membership`)
-Simple and effective community member management.
--   **Registration Flow**: Users register -> Admin Approves -> Member Active.
--   **Member Portal**: Dedicated dashboard for members.
--   **Management**: Admin interface to filter, approve, reject, or suspend members.
--   **Export**: CSV export for member data.
-
-### 📰 Blog & News (`/plugins/posts`)
-Full-featured blogging platform.
--   **Rich Text Editor**: Uses TipTap for effortless content creation.
--   **Organization**: Categories and Tags support.
--   **WordPress Migration**: Tool to import content from WordPress.
--   **Frontend Submission**: Community members can submit articles via `/upload-article`.
-
-### 📂 Article Submission (`/plugins/article-submission`)
--   **Public Uploads**: Dedicated form for users to upload documents/articles.
--   **Admin Review**: Backend interface to review and download submissions.
-
-### 🛠 Core CMS Capabilities
--   **Page Builder**: Create custom pages like Homepage, About Us, etc.
--   **Media Library**: Centralized file and image management.
--   **Theme System**: Support for switching frontend themes (Blade-based).
--   **Dynamic Menus**: Manage header and footer links via admin.
--   **Settings**: Global site configuration (Name, Logo, Meta).
+### Theme System
+- Blade-based with view namespace isolation
+- Page template definitions in `theme.json`
+- Asset publishing via `theme:publish` command
+- Multiple themes, one active at a time
 
 ---
 
-## ⏰ Scheduled Tasks (Cron Jobs)
+## Architecture
 
-To ensure events auto-complete and maintenance scripts run, set up a Cron Job:
+```
+web-cms/
+├── app/
+│   ├── Console/Commands/       # Artisan commands (cms:install, make:plugin, etc.)
+│   ├── Http/Controllers/       # Core controllers
+│   ├── Models/                 # Eloquent models
+│   ├── Providers/              # Service providers
+│   │   ├── CmsPluginServiceProvider.php  ← base class for plugins
+│   │   ├── CmsEventServiceProvider.php
+│   │   └── CmsSettingsServiceProvider.php
+│   └── Services/               # PluginLoader, ThemeLoader, SettingsRegistry
+├── config/
+│   ├── cms.php                 # CMS version, admin path, feature toggles
+│   └── admin.php               # Admin panel config
+├── plugins/                    # Plugin directory
+│   └── posts/                  # Example: Blog plugin
+├── themes/                     # Theme directory
+│   ├── default/                # Ships with CMS
+│   └── iccom/                  # Example: client theme
+├── database/
+│   ├── migrations/             # Core migrations (42 files)
+│   └── seeders/                # Core seeders (roles, permissions, menus)
+└── docs/                       # Developer guides
+```
 
-**Command**:
+---
+
+## Artisan Commands
+
+| Command | Description |
+|---------|-------------|
+| `php artisan cms:install` | Interactive installation wizard |
+| `php artisan make:plugin {slug}` | Scaffold a new plugin |
+| `php artisan make:theme {slug}` | Scaffold a new theme |
+| `php artisan theme:publish {slug}` | Publish theme assets to `public/` |
+| `php artisan theme:publish --all` | Publish all theme assets |
+
+---
+
+## Creating a Plugin
+
+### Scaffold
+
 ```bash
-* * * * * /usr/local/bin/php /path/to/your/project/artisan schedule:run >> /dev/null 2>&1
+php artisan make:plugin contact-form
 ```
 
-**Common Duties**:
--   `events:complete-expired`: Marks past events as completed (Daily @ 00:01).
+This generates:
+
+```
+plugins/contact-form/
+├── plugin.json
+├── src/Providers/ContactFormServiceProvider.php
+├── routes/web.php
+├── resources/views/
+├── database/migrations/
+└── README.md
+```
+
+### Service Provider
+
+Plugins extend `CmsPluginServiceProvider` — just set `$pluginSlug` and everything auto-loads:
+
+```php
+class ContactFormServiceProvider extends CmsPluginServiceProvider
+{
+    protected string $pluginSlug = 'contact-form';
+
+    // Routes, views, migrations, Livewire components — all auto-discovered ✨
+
+    protected function registerMenuItems(RenderAdminMenu $event): void
+    {
+        $event->addMenuItem([
+            'title'      => 'Contact Form',
+            'route'      => 'admin.contact-form.index',
+            'url'        => route('admin.contact-form.index'),
+            'icon'       => 'mail',
+            'permission' => 'contact-form.view',
+            'is_active'  => true,
+            'source'     => 'plugin:contact-form',
+            'children'   => [],
+        ]);
+    }
+}
+```
+
+### Auto-Discovery Conventions
+
+| Directory | Auto-loaded as |
+|-----------|---------------|
+| `routes/web.php` | Web routes with `web` + `auth` middleware |
+| `routes/api.php` | API routes with `api` middleware |
+| `resources/views/` | Blade views as `{slug}::` namespace |
+| `database/migrations/` | Database migrations |
+| `config/{slug}.php` | Config file |
+| `src/Livewire/` | Livewire components as `plugins.{slug}.*` |
+
+### Manifest Settings (plugin.json)
+
+Declare settings and schedules without PHP code:
+
+```json
+{
+    "name": "Contact Form",
+    "slug": "contact-form",
+    "version": "1.0.0",
+    "settings": {
+        "label": "Contact Form",
+        "icon": "mail",
+        "fields": [
+            {"key": "cf_email", "label": "Recipient Email", "type": "email", "default": ""}
+        ]
+    },
+    "schedule": [
+        {"command": "contact-form:cleanup", "cron": "daily"}
+    ]
+}
+```
+
+> For the full plugin development guide, see [docs/plugin-development.md](docs/plugin-development.md).
 
 ---
 
-## 🔒 Security Vulnerabilities
+## Creating a Theme
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com).
+### Scaffold
 
-## 📄 License
+```bash
+php artisan make:theme starter --author="Your Name"
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Theme Structure
+
+```
+themes/starter/
+├── theme.json                  # Manifest
+├── assets/css/theme.css        # Stylesheets
+├── views/
+│   ├── layouts/app.blade.php   # Base HTML
+│   ├── pages/
+│   │   ├── home.blade.php      # Homepage
+│   │   └── single.blade.php    # Default page
+│   └── partials/
+│       ├── header.blade.php
+│       └── footer.blade.php
+```
+
+### Available Template Variables
+
+| Variable | Type | Description |
+|----------|------|-------------|
+| `$activeTheme` | `Theme` | Active theme model (always available) |
+| `$page` | `Page` | Current page with blocks |
+| `$blocks` | `Collection` | Page blocks (on single pages) |
+| `$testimonials` | `Collection` | CPT entries (homepage) |
+
+### Referencing Assets
+
+```blade
+<link rel="stylesheet" href="{{ asset('themes/starter/assets/css/theme.css') }}">
+```
+
+After editing theme CSS/JS, publish to public:
+
+```bash
+php artisan theme:publish starter
+```
+
+> For the full theme development guide, see [docs/theme-development.md](docs/theme-development.md).
+
+---
+
+## Configuration
+
+### config/cms.php
+
+```php
+return [
+    'version'   => '1.0.0',
+    'path'      => env('ADMIN_PATH', 'ctrlpanel'),
+    'installed' => file_exists(storage_path('cms_installed')),
+    'features'  => [
+        'pages'           => true,
+        'forms'           => true,
+        'media'           => true,
+        'menus'           => true,
+        'api'             => true,
+        'webhooks'        => true,
+        'email_templates' => true,
+        'activity_log'    => true,
+    ],
+];
+```
+
+### Environment Variables
+
+Key variables in `.env`:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `APP_NAME` | `My CMS` | Site name |
+| `ADMIN_PATH` | `ctrlpanel` | Admin panel URL prefix |
+| `DB_DATABASE` | `web_cms` | Database name |
+| `MAIL_MAILER` | `log` | Mail driver (`log`, `smtp`, `brevo`) |
+
+---
+
+## Production Deployment
+
+```bash
+# 1. Set environment
+APP_ENV=production
+APP_DEBUG=false
+
+# 2. Install (no dev dependencies)
+composer install --optimize-autoloader --no-dev
+
+# 3. Cache everything
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# 4. Setup cron (required for scheduled tasks)
+* * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1
+
+# 5. Start queue worker (required for async mail/jobs)
+php artisan queue:work --daemon
+```
+
+### Production Checklist
+
+- [ ] `APP_ENV=production` and `APP_DEBUG=false`
+- [ ] `APP_URL` set to your domain with HTTPS
+- [ ] Strong `DB_PASSWORD`
+- [ ] `SESSION_DRIVER=redis` or `database`
+- [ ] `CACHE_STORE=redis` (recommended)
+- [ ] Supervisor running `queue:work`
+- [ ] Cron running `schedule:run` every minute
+- [ ] `php artisan storage:link` executed
+- [ ] HTTPS enforced at web server level
+- [ ] `.env` file not readable by web (chmod 600)
+
+---
+
+## Testing
+
+```bash
+php artisan test
+```
+
+Current: **53 tests, 107 assertions** covering:
+- Plugin dependency validation
+- Form submission flow
+- Page translations
+- Redirect middleware
+- Settings encryption
+- Activity logging
+
+---
+
+## Requirements
+
+- PHP 8.2+
+- MySQL 8.0+ or MariaDB 10.6+
+- Composer 2.x
+- Node.js 18+ (for Vite, optional)
+
+---
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
