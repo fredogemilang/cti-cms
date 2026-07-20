@@ -11,6 +11,7 @@ use Livewire\WithFileUploads;
 use Plugins\Posts\Models\Category;
 use Plugins\Posts\Models\Post;
 use Plugins\Posts\Models\Tag;
+use Plugins\Posts\Services\DocxParserService;
 
 class PostForm extends Component
 {
@@ -35,6 +36,8 @@ class PostForm extends Component
     public ?Post $post = null;
 
     public $postId = null;
+
+    public $docxFile = null;
 
     // Form Fields
     public $title = '';
@@ -197,6 +200,35 @@ class PostForm extends Component
     {
         if (! $this->postId && empty($this->slug)) {
             $this->slug = $this->ensureUniqueSlug(Str::slug($value));
+        }
+    }
+
+    public function updatedDocxFile()
+    {
+        $this->validate([
+            'docxFile' => 'required|file|mimes:docx|max:10240', // 10MB
+        ]);
+
+        try {
+            $parser = new DocxParserService;
+            $result = $parser->parse($this->docxFile->getRealPath());
+
+            $this->title = $result['title'];
+            $this->content = $result['content'];
+
+            if (empty($this->slug)) {
+                $this->slug = $this->ensureUniqueSlug(Str::slug($this->title));
+            }
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'Word document imported successfully!',
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Failed to import Word document: '.$e->getMessage(),
+            ]);
         }
     }
 

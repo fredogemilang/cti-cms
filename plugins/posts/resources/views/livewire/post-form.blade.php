@@ -304,6 +304,36 @@
             <!-- Sidebar -->
             <aside class="w-[320px] bg-[#F4F5F6] dark:bg-[#0B0B0B] border-l border-gray-200 dark:border-[#272B30] overflow-y-auto no-scrollbar hidden lg:block">
                 <div class="p-6 space-y-6">
+                    <!-- Word Document Import Card -->
+                    <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none">
+                        <div class="flex items-center gap-2 mb-4 text-[#6F767E]">
+                            <span class="material-symbols-outlined text-lg">description</span>
+                            <span class="text-xs font-bold uppercase tracking-widest">DOCX Source</span>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <p class="text-xs text-[#6F767E]">Import post title, structure, format, and embedded images directly from a Word document (.docx).</p>
+                            
+                            <div class="relative flex items-center justify-center border-2 border-dashed border-gray-200 dark:border-[#272B30] hover:border-[#2563EB] transition-colors rounded-xl p-4 cursor-pointer">
+                                <input type="file" wire:model="docxFile" accept=".docx" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+                                <div class="text-center space-y-1">
+                                    <span class="material-symbols-outlined text-[#6F767E] text-2xl">cloud_upload</span>
+                                    <span class="block text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Upload .docx file</span>
+                                    <span class="block text-[10px] text-[#6F767E]">Max 10MB</span>
+                                </div>
+                            </div>
+                            
+                            <div wire:loading wire:target="docxFile" class="text-xs text-[#2563EB] font-semibold animate-pulse flex items-center gap-2 mt-2">
+                                <span class="inline-block animate-spin w-3 h-3 border-2 border-[#2563EB] border-t-transparent rounded-full"></span>
+                                <span>Parsing Word document...</span>
+                            </div>
+
+                            @error('docxFile')
+                                <p class="text-xs text-red-500 font-medium mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
                     <!-- Publishing Info Card -->
                     <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none" x-data="{ editingStatus: false, editingVisibility: false }">
                         <div class="flex items-center gap-2 mb-6 text-[#6F767E]">

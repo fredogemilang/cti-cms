@@ -88,6 +88,13 @@ document.addEventListener('alpine:init', () => {
                 });
 
                 window._tiptapEditors[editorId] = editorInstance;
+
+                // Sync from Livewire model changes (e.g. Docx upload)
+                this.$watch('$wire.' + modelName, (value) => {
+                    if (editorInstance && value !== editorInstance.getHTML()) {
+                        editorInstance.commands.setContent(value || '', false);
+                    }
+                });
                 
                 // Listen for media picker selection
                 Livewire.on('tiptap-media-selected', (data) => {

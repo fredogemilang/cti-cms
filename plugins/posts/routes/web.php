@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Plugins\Posts\Models\Post;
 use Plugins\Posts\Models\Setting;
 
@@ -45,7 +46,10 @@ Route::middleware(['web', 'auth', 'permission:posts.view'])->prefix("{$adminPath
 
 // Public Routes
 Route::middleware(['web'])->group(function () {
-    $archiveSlug = Setting::get('archive_slug', 'blog');
+    $archiveSlug = 'blog';
+    if (Schema::hasTable('posts_settings')) {
+        $archiveSlug = Setting::get('archive_slug', 'blog');
+    }
 
     // Blog Index
     Route::get("/{$archiveSlug}", function () {
