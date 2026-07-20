@@ -26,7 +26,7 @@
     </div>
     @endif
 
-    <div class="bg-white dark:bg-[#1C2024] rounded-2xl border border-gray-100 dark:border-[#272B30] shadow-sm overflow-hidden p-6">
+    <div class="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-gray-200 dark:border-[#272B30] shadow-sm overflow-hidden p-6">
         @if(empty($placeholders))
         <div class="text-center py-12">
             <span class="material-symbols-outlined text-gray-400 dark:text-gray-600 text-5xl">layers_clear</span>
@@ -39,7 +39,7 @@
         <form action="{{ route('admin.forms.assignments.save') }}" method="POST" class="space-y-6">
             @csrf
             
-            <div class="divide-y divide-gray-100 dark:divide-[#272B30]">
+            <div class="divide-y divide-gray-200 dark:divide-[#272B30]">
                 @foreach($placeholders as $placeholder)
                 <div class="py-6 first:pt-0 last:pb-0 flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
                     <div class="max-w-xl">
@@ -47,7 +47,7 @@
                         @if(isset($placeholder['description']))
                         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $placeholder['description'] }}</p>
                         @endif
-                        <span class="inline-block mt-2 font-mono text-[11px] bg-gray-100 dark:bg-[#272B30] px-2 py-0.5 rounded text-gray-600 dark:text-gray-400">
+                        <span class="inline-block mt-2 font-mono text-[11px] bg-gray-100 dark:bg-[#0B0B0B] px-2 py-0.5 rounded text-gray-600 dark:text-gray-400">
                             @@form('{{ $placeholder['key'] }}')
                         </span>
                     </div>
@@ -55,7 +55,7 @@
                     <div class="w-full md:w-80">
                         <select 
                             name="assignments[{{ $placeholder['key'] }}]" 
-                            class="w-full rounded-xl border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500 dark:text-[#FCFCFC]"
+                            class="w-full rounded-xl border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#0B0B0B] px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500 dark:text-[#FCFCFC]"
                         >
                             <option value="">-- None / Disabled --</option>
                             @foreach($forms as $form)
@@ -72,7 +72,7 @@
                 @endforeach
             </div>
 
-            <div class="pt-6 border-t border-gray-100 dark:border-[#272B30] flex justify-end">
+            <div class="pt-6 border-t border-gray-200 dark:border-[#272B30] flex justify-end">
                 <button 
                     type="submit" 
                     class="px-5 py-2.5 bg-[#2563EB] hover:bg-blue-600 text-white rounded-xl font-semibold text-sm shadow-sm transition-all duration-200"
