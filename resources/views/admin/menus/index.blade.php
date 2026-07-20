@@ -6,7 +6,7 @@
 @section('content')
 <div class="space-y-6">
     <!-- Header with Actions -->
-    <div class="glass rounded-3xl shadow-lg p-6 flex items-center justify-between">
+    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl shadow-sm p-6 flex items-center justify-between">
         <div>
             <h2 class="text-2xl font-bold text-gray-900 dark:text-[#FCFCFC]">Navigation Menus</h2>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Manage sidebar navigation structure</p>
@@ -23,30 +23,22 @@
 
     <!-- Success Message -->
     @if(session('success'))
-    <div class="glass-card rounded-2xl p-4 border-l-4 border-green-500 bg-green-50/50">
-        <div class="flex items-center">
-            <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <p class="text-green-800 font-medium">{{ session('success') }}</p>
-        </div>
+    <div class="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 p-4 rounded-xl flex items-center gap-3">
+        <span class="material-symbols-outlined">check_circle</span>
+        <span class="font-medium text-sm">{{ session('success') }}</span>
     </div>
     @endif
 
     <!-- Error Message -->
     @if(session('error'))
-    <div class="glass-card rounded-2xl p-4 border-l-4 border-red-500 bg-red-50/50">
-        <div class="flex items-center">
-            <svg class="w-5 h-5 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <p class="text-red-800 font-medium">{{ session('error') }}</p>
-        </div>
+    <div class="bg-rose-50 dark:bg-rose-950/20 border border-rose-500/30 text-rose-600 dark:text-rose-400 p-4 rounded-xl flex items-center gap-3">
+        <span class="material-symbols-outlined">error</span>
+        <span class="font-medium text-sm">{{ session('error') }}</span>
     </div>
     @endif
 
     <!-- Menu Items -->
-    <div class="glass-card rounded-3xl p-6">
+    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl shadow-sm p-6">
         <div class="space-y-3" id="menu-list">
             @forelse($menus as $menu)
             <div class="bg-white/50 dark:bg-[#1A1A1A]/50 rounded-2xl border border-gray-200 dark:border-[#272B30] overflow-hidden">

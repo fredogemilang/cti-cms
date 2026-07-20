@@ -14,7 +14,7 @@
     </a>
 
     <!-- Form Card -->
-    <div class="glass-card rounded-3xl p-8">
+    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl shadow-sm p-8">
         <form action="{{ route('admin.menus.update', $menu) }}" method="POST" class="space-y-6">
             @csrf
             @method('PUT')
