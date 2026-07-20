@@ -99,7 +99,17 @@ Route::middleware(['web'])->group(function () {
         $post = Post::findByLocalizedSlug($slug);
         abort_if(! $post, 404);
 
-        $post->increment('views_count');
+        // Track view if it's a real user (not bot/crawler) and hasn't been viewed in current session
+        $userAgent = request()->header('User-Agent') ?: '';
+        $isBot = preg_match('/bot|crawl|spider|slurp|mediapartners|google|bing|yandex|baidu|feedburner|facebookexternalhit|twitterbot|slackbot|whatsapp|discordbot/i', $userAgent);
+
+        if (! $isBot) {
+            $sessionKey = 'viewed_posts.'.$post->id;
+            if (! session()->has($sessionKey)) {
+                $post->increment('views_count');
+                session()->put($sessionKey, true);
+            }
+        }
 
         $dateFormat = Setting::get('date_format', 'M d, Y');
         $enableComments = (bool) Setting::get('enable_comments', true);

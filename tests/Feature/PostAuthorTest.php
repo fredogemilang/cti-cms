@@ -177,7 +177,7 @@ class PostAuthorTest extends TestCase
     }
 
     #[Test]
-    public function visiting_a_single_post_increments_its_views_count(): void
+    public function visiting_a_single_post_increments_its_views_count_using_session_and_filters_bots(): void
     {
         $author = PostAuthor::create([
             'name' => 'Writer',
@@ -195,17 +195,21 @@ class PostAuthorTest extends TestCase
 
         $this->assertEquals(0, $post->fresh()->views_count);
 
-        // Visit the single post page
-        $response = $this->get('/blog/sample-view-test-post');
+        // 1. Visit as a bot crawler - views_count should remain 0
+        $response = $this->withHeaders(['User-Agent' => 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'])
+            ->get('/blog/sample-view-test-post');
         $response->assertStatus(200);
+        $this->assertEquals(0, $post->fresh()->views_count);
 
-        // Assert views_count incremented to 1
+        // 2. Visit as a real user - views_count should become 1
+        $response = $this->withHeaders(['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'])
+            ->get('/blog/sample-view-test-post');
+        $response->assertStatus(200);
         $this->assertEquals(1, $post->fresh()->views_count);
 
-        // Visit it again
-        $this->get('/blog/sample-view-test-post');
-
-        // Assert views_count incremented to 2
-        $this->assertEquals(2, $post->fresh()->views_count);
+        // 3. Visit again in the same session - views_count should remain 1
+        $response = $this->get('/blog/sample-view-test-post');
+        $response->assertStatus(200);
+        $this->assertEquals(1, $post->fresh()->views_count);
     }
 }
