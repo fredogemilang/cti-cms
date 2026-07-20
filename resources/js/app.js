@@ -1,11 +1,52 @@
 import './bootstrap';
 
-import { Editor } from '@tiptap/core';
+import { Editor, Node } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import TextAlign from '@tiptap/extension-text-align';
 import OfficePaste from '@intevation/tiptap-extension-office-paste';
+
+const CustomButton = Node.create({
+    name: 'customButton',
+    group: 'inline',
+    inline: true,
+    selectable: true,
+    draggable: true,
+    atom: true,
+
+    addAttributes() {
+        return {
+            href: { default: '#' },
+            text: { default: 'Button' },
+            style: { default: 'btn-primary' },
+            download: { default: false },
+        };
+    },
+
+    parseHTML() {
+        return [
+            {
+                tag: 'a[data-type="custom-button"]',
+            },
+        ];
+    },
+
+    renderHTML({ HTMLAttributes }) {
+        const classes = ['btn', HTMLAttributes.style || 'btn-primary'];
+        const attrs = {
+            'data-type': 'custom-button',
+            href: HTMLAttributes.href || '#',
+            class: classes.join(' '),
+        };
+
+        if (HTMLAttributes.download) {
+            attrs.download = '';
+        }
+
+        return ['a', attrs, HTMLAttributes.text || 'Button'];
+    },
+});
 
 // Store editor instances outside Alpine's reactive scope
 window._tiptapEditors = window._tiptapEditors || {};
@@ -19,6 +60,15 @@ document.addEventListener('alpine:init', () => {
         let editorId = null;
         
         return {
+            // Button Creator State
+            showButtonCreator: false,
+            buttonText: '',
+            buttonUrl: '',
+            buttonStyle: 'btn-primary',
+            buttonDownload: false,
+            buttonLinkType: 'url',
+            mediaPickerPurpose: 'image',
+
             // Return editor via function to bypass Alpine proxy
             getEditor() {
                 return editorInstance;
@@ -49,6 +99,7 @@ document.addEventListener('alpine:init', () => {
                         Image.configure({
                             HTMLAttributes: { class: 'rounded-lg max-w-full h-auto' },
                         }),
+                        CustomButton,
                         Placeholder.configure({
                             placeholder: 'Start writing your story...',
                             emptyEditorClass: 'is-editor-empty',
@@ -100,10 +151,19 @@ document.addEventListener('alpine:init', () => {
                 Livewire.on('tiptap-media-selected', (data) => {
                     // Only process if this is the active editor
                     if (editorInstance && window.activeTiptapEditorId === editorId) {
-                        editorInstance.chain().focus().setImage({ 
-                            src: data.url, 
-                            alt: data.alt || '' 
-                        }).run();
+                        if (this.mediaPickerPurpose === 'button') {
+                            this.buttonUrl = data.url;
+                            if (! this.buttonText) {
+                                const parts = data.url.split('/');
+                                const filename = parts[parts.length - 1];
+                                this.buttonText = decodeURIComponent(filename);
+                            }
+                        } else {
+                            editorInstance.chain().focus().setImage({ 
+                                src: data.url, 
+                                alt: data.alt || '' 
+                            }).run();
+                        }
                     }
                 });
             },
@@ -165,8 +225,39 @@ document.addEventListener('alpine:init', () => {
                 }
             },
             openMediaPicker() {
+                this.mediaPickerPurpose = 'image';
                 window.activeTiptapEditorId = editorId;
                 Livewire.dispatch('openTiptapMediaPicker');
+            },
+            openButtonCreator() {
+                this.buttonText = '';
+                this.buttonUrl = '';
+                this.buttonStyle = 'btn-primary';
+                this.buttonDownload = false;
+                this.buttonLinkType = 'url';
+                this.showButtonCreator = true;
+            },
+            openButtonMediaPicker() {
+                this.mediaPickerPurpose = 'button';
+                window.activeTiptapEditorId = editorId;
+                Livewire.dispatch('openTiptapMediaPicker');
+            },
+            insertButton() {
+                if (! this.buttonUrl) {
+                    alert('Please enter a target URL or select a file.');
+                    return;
+                }
+                const text = this.buttonText || 'Button';
+                editorInstance.chain().focus().insertContent({
+                    type: 'customButton',
+                    attrs: {
+                        href: this.buttonUrl,
+                        text: text,
+                        style: this.buttonStyle,
+                        download: this.buttonDownload,
+                    }
+                }).run();
+                this.showButtonCreator = false;
             },
             // Insert image from Media Library (called via Livewire event)
             insertMediaImage(url, alt) {
