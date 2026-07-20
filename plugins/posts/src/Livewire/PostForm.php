@@ -2,7 +2,6 @@
 
 namespace Plugins\Posts\Livewire;
 
-use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
@@ -10,6 +9,7 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use Plugins\Posts\Models\Category;
 use Plugins\Posts\Models\Post;
+use Plugins\Posts\Models\PostAuthor;
 use Plugins\Posts\Models\Tag;
 use Plugins\Posts\Services\DocxParserService;
 
@@ -70,6 +70,10 @@ class PostForm extends Component
 
     public $author_id;
 
+    public $newAuthorName = '';
+
+    public $addingAuthor = false;
+
     // Relationships
     public $selectedCategories = [];
 
@@ -125,7 +129,14 @@ class PostForm extends Component
         } else {
             $this->status = 'draft';
             $this->visibility = 'public';
-            $this->author_id = auth()->id();
+            if (auth()->check()) {
+                $currentUser = auth()->user();
+                $author = PostAuthor::firstOrCreate(
+                    ['name' => $currentUser->name],
+                    ['slug' => Str::slug($currentUser->name), 'email' => $currentUser->email]
+                );
+                $this->author_id = $author->id;
+            }
         }
     }
 
@@ -268,7 +279,7 @@ class PostForm extends Component
                 'status' => 'required|in:draft,published,scheduled,archived',
                 'visibility' => 'required|in:public,private,password',
                 'password' => 'required_if:visibility,password',
-                'author_id' => 'required|exists:users,id',
+                'author_id' => 'required|exists:post_authors,id',
                 'is_featured' => 'boolean',
             ]);
         } catch (ValidationException $e) {
@@ -441,6 +452,24 @@ class PostForm extends Component
         }
     }
 
+    public function addAuthor($name)
+    {
+        if (empty($name)) {
+            return;
+        }
+
+        $author = PostAuthor::firstOrCreate(
+            ['name' => $name],
+            ['slug' => Str::slug($name)]
+        );
+
+        $this->author_id = $author->id;
+        $this->newAuthorName = '';
+        $this->addingAuthor = false;
+
+        $this->dispatch('notify', ['type' => 'success', 'message' => "Author '{$author->name}' created successfully."]);
+    }
+
     public function addTag($name)
     {
         if (empty($name)) {
@@ -458,7 +487,7 @@ class PostForm extends Component
     {
         return view('posts::livewire.post-form', [
             'categories' => Category::orderBy('name')->get(),
-            'users' => User::orderBy('name')->get(),
+            'authors' => PostAuthor::orderBy('name')->get(),
         ]);
     }
 }

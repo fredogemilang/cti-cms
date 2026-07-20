@@ -491,14 +491,27 @@
                             <div class="flex items-center justify-between" x-show="!editingAuthor">
                                 <span class="text-sm text-[#6F767E]">Author:</span>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $users->find($author_id)->name ?? 'Unknown' }}</span>
+                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $authors->find($author_id)->name ?? 'Unknown' }}</span>
                                     <button @click="editingAuthor = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
                                 </div>
                             </div>
-                            <div x-show="editingAuthor" class="bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2 relative z-10 shadow-lg" x-cloak @click.away="editingAuthor = false">
+                            <div x-show="editingAuthor" class="bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2 relative z-10 shadow-lg animate-in fade-in duration-200" x-cloak @click.away="editingAuthor = false">
+                                <div class="flex items-center justify-between gap-2 border-b border-gray-100 dark:border-[#272B30] pb-1.5 mb-1.5">
+                                    <span class="text-[10px] font-bold text-[#6F767E] uppercase">Select Author</span>
+                                    <button type="button" @click="$wire.set('addingAuthor', !$wire.get('addingAuthor'))" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Add New</button>
+                                </div>
+
+                                <div x-show="$wire.addingAuthor" class="flex gap-2 mb-2" x-transition>
+                                    <input type="text" wire:model="newAuthorName" 
+                                        @keydown.enter.prevent="$wire.addAuthor(newAuthorName)"
+                                        class="flex-1 h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]" 
+                                        placeholder="Author name">
+                                    <button type="button" @click="$wire.addAuthor(newAuthorName)" class="px-2 h-8 rounded-md bg-[#2563EB] text-white text-xs font-bold">Add</button>
+                                </div>
+
                                 <select wire:model="author_id" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                    @foreach($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @foreach($authors as $author)
+                                    <option value="{{ $author->id }}">{{ $author->name }}</option>
                                     @endforeach
                                 </select>
                                 <div class="flex justify-end">

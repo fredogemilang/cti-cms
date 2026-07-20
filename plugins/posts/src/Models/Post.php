@@ -2,7 +2,6 @@
 
 namespace Plugins\Posts\Models;
 
-use App\Models\User;
 use App\Traits\FindsByLocalizedSlug;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
@@ -59,15 +58,20 @@ class Post extends Model
             if (empty($post->slug)) {
                 $post->slug = Str::slug($post->title);
             }
-            if (empty($post->author_id)) {
-                $post->author_id = auth()->id();
+            if (empty($post->author_id) && auth()->check()) {
+                $currentUser = auth()->user();
+                $author = PostAuthor::firstOrCreate(
+                    ['name' => $currentUser->name],
+                    ['slug' => Str::slug($currentUser->name), 'email' => $currentUser->email]
+                );
+                $post->author_id = $author->id;
             }
         });
     }
 
     public function author(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsTo(PostAuthor::class, 'author_id');
     }
 
     public function categories(): BelongsToMany
