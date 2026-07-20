@@ -45,6 +45,11 @@ class ThemeServiceProvider extends ServiceProvider
             return "<?php echo theme_asset({$expression}); ?>";
         });
 
+        // @form('placeholder_key') - Render the assigned form for the active theme's placeholder
+        Blade::directive('form', function ($expression) {
+            return "<?php echo render_theme_form({$expression}); ?>";
+        });
+
         // @activeTheme - Access active theme object (already shared via View::share)
         // Usage: @activeTheme->name
     }

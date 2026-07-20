@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Form;
 use App\Models\Setting;
 use App\Models\Theme;
 use App\Services\ActivityLogger;
@@ -170,5 +171,68 @@ if (! function_exists('theme_path')) {
         }
 
         return $basePath;
+    }
+}
+
+if (! function_exists('render_theme_form')) {
+    /**
+     * Render the form assigned to the active theme's placeholder.
+     */
+    function render_theme_form(string $placeholder): string
+    {
+        $theme = active_theme();
+        if (! $theme) {
+            return '';
+        }
+
+        $assignments = setting("theme_{$theme->slug}_form_assignments", []);
+        $formId = $assignments[$placeholder] ?? null;
+
+        if (! $formId) {
+            return '';
+        }
+
+        $form = Form::where('id', $formId)
+            ->where('is_active', true)
+            ->with('fields')
+            ->first();
+
+        if (! $form) {
+            return '';
+        }
+
+        $html = '';
+
+        // Flash message handling
+        if (session('success')) {
+            $html .= '<div class="alert alert-success alert-dismissible fade show mb-4" role="alert">';
+            $html .= '<strong>Success!</strong> '.e(session('success'));
+            $html .= '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+            $html .= '</div>';
+        }
+
+        if (session('form_success_message')) {
+            $html .= '<div class="alert alert-success alert-dismissible fade show mb-4" role="alert">';
+            $html .= '<strong>Success!</strong> '.e(session('form_success_message'));
+            $html .= '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+            $html .= '</div>';
+        }
+
+        $errors = session('errors');
+        if ($errors && method_exists($errors, 'any') && $errors->any()) {
+            $html .= '<div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">';
+            $html .= '<strong>Please fix the following errors:</strong>';
+            $html .= '<ul class="mb-0 mt-2">';
+            foreach ($errors->all() as $error) {
+                $html .= '<li>'.e($error).'</li>';
+            }
+            $html .= '</ul>';
+            $html .= '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+            $html .= '</div>';
+        }
+
+        $html .= $form->renderForm(['class' => 'needs-validation form-dynamic', 'novalidate' => true]);
+
+        return $html;
     }
 }

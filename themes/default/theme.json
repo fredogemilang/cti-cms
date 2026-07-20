@@ -10,6 +10,13 @@
         "posts",
         "menus"
     ],
+    "form_placeholders": [
+        {
+            "key": "contact_form",
+            "label": "Contact Form",
+            "description": "Form displayed on the main contact sections."
+        }
+    ],
     "page_templates": {
         "default": {
             "label": "Default",

@@ -227,6 +227,8 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
         Route::post('/', [FormController::class, 'store'])
             ->name('store')
             ->middleware('permission:forms.create');
+        Route::get('/assignments', [FormController::class, 'assignments'])->name('assignments');
+        Route::post('/assignments', [FormController::class, 'saveAssignments'])->name('assignments.save');
         Route::get('/{form}', [FormController::class, 'show'])->name('show');
         Route::get('/{form}/edit', [FormController::class, 'edit'])
             ->name('edit')

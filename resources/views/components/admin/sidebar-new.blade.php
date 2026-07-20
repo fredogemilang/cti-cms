@@ -155,6 +155,14 @@
                     </a>
                 </li>
                 @endcan
+                @can('forms.edit')
+                <li class="relative pl-6 py-1">
+                    <div class="submenu-item-connector"></div>
+                    <a wire:navigate class="flex items-center rounded-xl px-4 py-2.5 transition-all duration-200 relative z-10 {{ request()->routeIs('admin.forms.assignments') ? 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC] font-semibold' : 'text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none' }}" href="{{ route('admin.forms.assignments') }}">
+                        <span class="text-[14px] font-medium">Form Assignments</span>
+                    </a>
+                </li>
+                @endcan
             </ul>
         </div>
     </li>

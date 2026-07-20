@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Form;
 use App\Models\FormEntry;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -382,5 +383,47 @@ class FormController extends Controller
                 'message' => 'Failed to delete entry: '.$e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Display theme form assignments.
+     */
+    public function assignments()
+    {
+        $theme = active_theme();
+        if (! $theme) {
+            return redirect()->route('admin.forms.index')
+                ->with('error', 'No active theme found.');
+        }
+
+        $config = $theme->loadConfig();
+        $placeholders = $config['form_placeholders'] ?? [];
+
+        $forms = Form::where('is_active', true)->get();
+        $currentAssignments = Setting::get("theme_{$theme->slug}_form_assignments", []);
+
+        return view('admin.forms.assignments', compact('theme', 'placeholders', 'forms', 'currentAssignments'));
+    }
+
+    /**
+     * Save theme form assignments.
+     */
+    public function saveAssignments(Request $request)
+    {
+        $theme = active_theme();
+        if (! $theme) {
+            return redirect()->route('admin.forms.index')
+                ->with('error', 'No active theme found.');
+        }
+
+        $assignments = $request->input('assignments', []);
+
+        // Clean up empty assignments
+        $assignments = array_filter($assignments, fn ($v) => ! empty($v));
+
+        Setting::set("theme_{$theme->slug}_form_assignments", $assignments, 'theme', 'array');
+
+        return redirect()->route('admin.forms.assignments')
+            ->with('success', 'Form assignments saved successfully.');
     }
 }
