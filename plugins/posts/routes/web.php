@@ -99,6 +99,8 @@ Route::middleware(['web'])->group(function () {
         $post = Post::findByLocalizedSlug($slug);
         abort_if(! $post, 404);
 
+        $post->increment('views_count');
+
         $dateFormat = Setting::get('date_format', 'M d, Y');
         $enableComments = (bool) Setting::get('enable_comments', true);
         $closeCommentsDays = (int) Setting::get('close_comments_days', 0);

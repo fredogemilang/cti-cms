@@ -175,4 +175,37 @@ class PostAuthorTest extends TestCase
             'id' => $author->id,
         ]);
     }
+
+    #[Test]
+    public function visiting_a_single_post_increments_its_views_count(): void
+    {
+        $author = PostAuthor::create([
+            'name' => 'Writer',
+            'slug' => 'writer',
+        ]);
+
+        $post = Post::create([
+            'title' => 'Sample View Test Post',
+            'slug' => 'sample-view-test-post',
+            'content' => 'Sample content',
+            'status' => 'published',
+            'author_id' => $author->id,
+            'views_count' => 0,
+        ]);
+
+        $this->assertEquals(0, $post->fresh()->views_count);
+
+        // Visit the single post page
+        $response = $this->get('/blog/sample-view-test-post');
+        $response->assertStatus(200);
+
+        // Assert views_count incremented to 1
+        $this->assertEquals(1, $post->fresh()->views_count);
+
+        // Visit it again
+        $this->get('/blog/sample-view-test-post');
+
+        // Assert views_count incremented to 2
+        $this->assertEquals(2, $post->fresh()->views_count);
+    }
 }
