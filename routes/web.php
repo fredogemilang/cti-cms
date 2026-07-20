@@ -17,7 +17,6 @@ use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\FormSubmissionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\PartnershipController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
 use App\Models\CustomPostType;
@@ -42,9 +41,6 @@ Route::prefix('forms')->name('forms.')->group(function () {
     Route::post('/{slug}/ajax', [FormSubmissionController::class, 'submitAjax'])->name('submit.ajax');
     Route::get('/{slug}/success', [FormSubmissionController::class, 'success'])->name('success');
 });
-
-// Public Partnership Inquiry
-Route::post('/partner', [PartnershipController::class, 'store'])->name('partner.store');
 
 // Admin base path redirect
 Route::get("/{$adminPath}", [AdminController::class, 'index'])->name('admin.index');
