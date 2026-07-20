@@ -14,7 +14,7 @@
     </a>
 
     <!-- Menu Profile Card -->
-    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl shadow-sm p-8">
+    <x-admin.ui.card padding="p-8">
         <div class="flex items-start justify-between mb-6">
             <div class="flex items-center">
                 <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
@@ -123,11 +123,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </x-admin.ui.card>
 
     <!-- Child Menu Items -->
     @if($menu->children->isNotEmpty())
-    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl shadow-sm p-8">
+    <x-admin.ui.card padding="p-8">
         <h3 class="text-lg font-bold text-gray-900 dark:text-[#FCFCFC] mb-4">Sub-Menu Items ({{ $menu->children->count() }})</h3>
         <div class="space-y-2">
             @foreach($menu->children as $child)
@@ -160,7 +160,7 @@
             </div>
             @endforeach
         </div>
-    </div>
+    </x-admin.ui.card>
     @endif
 </div>
 @endsection

@@ -83,18 +83,21 @@
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#6F767E] text-xl">search</span>
                 <input
                     id="role-search"
-                    class="w-full bg-white dark:bg-[#1A1A1A] border-gray-200 dark:border-[#272B30] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-primary focus:border-primary"
+                    class="w-full bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                     placeholder="Search roles..." type="text" />
             </div>
             
             <!-- Add New Role Button -->
             @can('roles.create')
-            <button
+            <x-admin.ui.button
                 id="btn-add-role"
-                class="w-full flex items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-[#272B30] px-5 py-2.5 text-sm font-semibold text-[#111827] dark:text-[#FCFCFC] hover:bg-gray-50 dark:hover:bg-[#1A1A1A] transition-all">
+                type="button"
+                variant="outline"
+                class="w-full flex items-center justify-center gap-2 !py-2.5 !rounded-xl"
+            >
                 <span class="material-symbols-outlined text-lg">add</span>
                 Add New Role
-            </button>
+            </x-admin.ui.button>
             @endcan
         </div>
         
@@ -102,21 +105,21 @@
         <div class="flex-1 overflow-y-auto no-scrollbar px-4 pb-4 space-y-2" id="role-list">
             @foreach($roles as $role)
             <div
-                class="role-item w-full group p-4 rounded-2xl border transition-all relative cursor-pointer {{ $selectedRole && $selectedRole->id === $role->id ? 'active bg-blue-100 dark:bg-blue-900/30 border-primary dark:border-primary' : 'bg-white dark:bg-transparent border-gray-200 dark:border-[#272B30] hover:bg-gray-50 dark:hover:bg-[#1A1A1A] ' }}"
+                class="role-item w-full group p-4 rounded-2xl border transition-all relative cursor-pointer {{ $selectedRole && $selectedRole->id === $role->id ? 'active bg-blue-50 dark:bg-[#272B30]/30 border-blue-600 dark:border-blue-500' : 'bg-white dark:bg-transparent border-gray-200 dark:border-[#272B30] hover:bg-gray-50 dark:hover:bg-[#272B30]/20' }}"
                 data-role-id="{{ $role->id }}"
                 data-role-name="{{ $role->name }}"
                 data-role-description="{{ $role->description }}">
                 <div class="flex justify-between items-start">
                     <div class="flex flex-col mb-3">
                         <div class="flex items-center gap-2">
-                        <span class="font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $role->name }}</span>
-                        @if($selectedRole && $selectedRole->id === $role->id)
-                        <span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+                            <span class="font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $role->name }}</span>
+                            @if($selectedRole && $selectedRole->id === $role->id)
+                                <span class="material-symbols-outlined text-blue-600 dark:text-blue-500 text-lg">check_circle</span>
+                            @endif
+                        </div>
+                        @if($role->is_super_admin)
+                            <span class="inline-flex w-fit text-[10px] bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400 px-2 py-0.5 rounded uppercase font-bold tracking-wider">Super Admin</span>
                         @endif
-                    </div>
-                    @if($role->is_super_admin)
-                        <span class="inline-flex w-fit text-[10px] bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-2 py-0.5 rounded uppercase font-bold tracking-wider">Super Admin</span>
-                    @endif
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -156,11 +159,11 @@
         @if($selectedRole)
         <div class="px-8 py-6 border-b border-gray-200 dark:border-[#272B30] flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-primary text-xl">edit_note</span>
+                <div class="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-blue-600 text-xl">edit_note</span>
                 </div>
                 <h2 class="font-bold text-lg text-[#111827] dark:text-[#FCFCFC]">
-                    Editing Permissions: <span class="text-primary" id="selected-role-name">{{ $selectedRole->name }}</span>
+                    Editing Permissions: <span class="text-blue-600 dark:text-blue-400" id="selected-role-name">{{ $selectedRole->name }}</span>
                 </h2>
             </div>
             @if($selectedRole->is_super_admin)
@@ -172,190 +175,174 @@
         
         <div class="flex-1 overflow-y-auto p-8 no-scrollbar">
             @if($selectedRole->is_super_admin)
-            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 mb-6">
+            <x-admin.ui.alert type="danger" class="mb-6">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-red-600 text-2xl">shield</span>
                     <div>
-                        <p class="font-bold text-red-900 dark:text-red-300">Super Admin Role</p>
-                        <p class="text-sm text-red-700 dark:text-red-400">This role automatically has access to all permissions. Permission assignment is not required.</p>
+                        <p class="font-bold text-red-950 dark:text-red-300">Super Admin Role</p>
+                        <p class="text-sm text-red-800 dark:text-red-400">This role automatically has access to all permissions. Permission assignment is not required.</p>
                     </div>
                 </div>
-            </div>
+            </x-admin.ui.alert>
             @endif
             
-            <div class="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-gray-200 dark:border-[#272B30] overflow-hidden">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-gray-200 dark:border-[#272B30]">
-                            <th class="px-6 py-4 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">
-                                Capability Module
-                            </th>
-                            <th class="px-4 py-4 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest text-center">
-                                View
-                            </th>
-                            <th class="px-4 py-4 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest text-center">
-                                Create
-                            </th>
-                            <th class="px-4 py-4 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest text-center">
-                                Edit
-                            </th>
-                            <th class="px-4 py-4 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest text-center">
-                                Delete
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="permission-matrix">
-                        <!-- CORE MODULES Section -->
-                        <tr class="bg-emerald-50 dark:bg-emerald-900/10">
-                            <td class="px-6 py-3" colspan="5">
-                                <div class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-emerald-600 text-lg">verified</span>
-                                    <span class="text-[11px] font-black text-emerald-700 dark:text-emerald-400 tracking-widest uppercase">Core Modules</span>
-                                </div>
-                            </td>
-                        </tr>
-                        
-                        @foreach($modules['core'] ?? [] as $module)
-                        <!-- Module Row -->
-                        <tr class="border-b border-gray-200 dark:border-[#272B30]/50 hover:bg-gray-50 dark:hover:bg-[#272B30]/10 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    @php
-                                        $modulePermission = ($permissions[$module] ?? collect())->first();
-                                        $icon = $modulePermission->icon ?? null;
-                                    @endphp
-                                    <span class="material-symbols-outlined text-[#6F767E] text-lg">
-                                        @if($icon)
-                                            {{ $icon }}
-                                        @else
-                                            @switch($module)
-                                                @case('dashboard') layers @break
-                                                @case('users') group @break
-                                                @case('roles') shield @break
-                                                @case('permissions') lock @break
-                                                @case('menus') menu @break
-                                                @case('pages') article @break
-                                                @case('posts') rss_feed @break
-                                                @default layers
-                                            @endswitch
-                                        @endif
-                                    </span>
-                                    <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC] capitalize">{{ str_replace('.', ' › ', $module) }}</span>
-                                </div>
-                            </td>
+            <x-admin.ui.table>
+                <x-slot:thead>
+                    <x-admin.ui.table-header class="px-6">Capability Module</x-admin.ui.table-header>
+                    <x-admin.ui.table-header class="text-center">View</x-admin.ui.table-header>
+                    <x-admin.ui.table-header class="text-center">Create</x-admin.ui.table-header>
+                    <x-admin.ui.table-header class="text-center">Edit</x-admin.ui.table-header>
+                    <x-admin.ui.table-header class="text-center">Delete</x-admin.ui.table-header>
+                </x-slot:thead>
+
+                <!-- CORE MODULES Section -->
+                <tr class="bg-emerald-50/50 dark:bg-emerald-950/20">
+                    <td class="px-6 py-3" colspan="5">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-emerald-600 text-lg">verified</span>
+                            <span class="text-[11px] font-black text-emerald-700 dark:text-emerald-400 tracking-widest uppercase">Core Modules</span>
+                        </div>
+                    </td>
+                </tr>
+                
+                @foreach($modules['core'] ?? [] as $module)
+                <x-admin.ui.table-row class="border-b border-gray-200 dark:border-[#272B30]/50 hover:bg-gray-50 dark:hover:bg-[#272B30]/10 transition-colors">
+                    <x-admin.ui.table-cell class="px-6">
+                        <div class="flex items-center gap-3">
                             @php
-                                $actions = ['view', 'create', 'edit', 'delete'];
-                                $modulePermissions = $permissions[$module] ?? collect();
+                                $modulePermission = ($permissions[$module] ?? collect())->first();
+                                $icon = $modulePermission->icon ?? null;
                             @endphp
-                            @foreach($actions as $action)
-                                @php
-                                    $permission = $modulePermissions->firstWhere('action', $action);
-                                    $hasPermission = $permission && $selectedRole->permissions->contains($permission->id);
-                                @endphp
-                                <td class="px-4 py-4 text-center">
-                                    @if($permission)
-                                    <div class="loading-container">
-                                        <input
-                                            type="checkbox"
-                                            class="h-5 w-5 rounded bg-blue-50 dark:bg-[#0B0B0B] border-blue-300 dark:border-[#272B30] text-primary checked:bg-primary checked:border-primary dark:checked:bg-primary dark:checked:border-primary focus:ring-primary matrix-checkbox"
-                                            data-role-id="{{ $selectedRole->id }}"
-                                            data-permission-id="{{ $permission->id }}"
-                                            {{ $hasPermission ? 'checked' : '' }}
-                                            {{ $selectedRole->is_super_admin ? 'disabled' : '' }}
-                                            @if(!$selectedRole->is_super_admin)
-                                            onchange="togglePermission(this)"
-                                            @endif
-                                        />
-                                        <div class="loading-indicator">
-                                            <svg class="spinner w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    @else
-                                    <span class="text-[#6F767E]">—</span>
+                            <span class="material-symbols-outlined text-[#6F767E] text-lg">
+                                @if($icon)
+                                    {{ $icon }}
+                                @else
+                                    @switch($module)
+                                        @case('dashboard') layers @break
+                                        @case('users') group @break
+                                        @case('roles') shield @break
+                                        @case('permissions') lock @break
+                                        @case('menus') menu @break
+                                        @case('pages') article @break
+                                        @case('posts') rss_feed @break
+                                        @default layers
+                                    @endswitch
+                                @endif
+                            </span>
+                            <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC] capitalize">{{ str_replace('.', ' › ', $module) }}</span>
+                        </div>
+                    </x-admin.ui.table-cell>
+                    @php
+                        $actions = ['view', 'create', 'edit', 'delete'];
+                        $modulePermissions = $permissions[$module] ?? collect();
+                    @endphp
+                    @foreach($actions as $action)
+                        @php
+                            $permission = $modulePermissions->firstWhere('action', $action);
+                            $hasPermission = $permission && $selectedRole->permissions->contains($permission->id);
+                        @endphp
+                        <x-admin.ui.table-cell class="text-center">
+                            @if($permission)
+                            <div class="loading-container">
+                                <input
+                                    type="checkbox"
+                                    class="h-5 w-5 rounded bg-blue-50 dark:bg-[#0B0B0B] border-blue-300 dark:border-[#272B30] text-blue-600 checked:bg-blue-600 checked:border-blue-600 dark:checked:bg-blue-600 dark:checked:border-blue-600 focus:ring-blue-500 matrix-checkbox"
+                                    data-role-id="{{ $selectedRole->id }}"
+                                    data-permission-id="{{ $permission->id }}"
+                                    {{ $hasPermission ? 'checked' : '' }}
+                                    {{ $selectedRole->is_super_admin ? 'disabled' : '' }}
+                                    @if(!$selectedRole->is_super_admin)
+                                    onchange="togglePermission(this)"
                                     @endif
-                                </td>
-                            @endforeach
-                        </tr>
-                        @endforeach
-                        
-                        @if(!empty($modules['plugins']))
-                        <!-- PLUGINS Section -->
-                        <tr class="bg-violet-50 dark:bg-violet-900/10">
-                            <td class="px-6 py-3" colspan="5">
-                                <div class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-violet-600 text-lg">extension</span>
-                                    <span class="text-[11px] font-black text-violet-700 dark:text-violet-400 tracking-widest uppercase">Plugin Modules</span>
+                                />
+                                <div class="loading-indicator">
+                                    <svg class="spinner w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+                                    </svg>
                                 </div>
-                            </td>
-                        </tr>
-                        
-                        @foreach($modules['plugins'] as $pluginSlug => $pluginModules)
-                        <!-- Plugin Group Header -->
-                        <tr class="bg-violet-50/50 dark:bg-violet-900/5">
-                            <td class="px-6 py-2" colspan="5">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs px-2 py-0.5 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 rounded font-semibold uppercase">{{ $pluginSlug }}</span>
-                                </div>
-                            </td>
-                        </tr>
-                        
-                        @foreach($pluginModules as $module)
-                        <tr class="border-b border-gray-200 dark:border-[#272B30]/50 hover:bg-gray-50 dark:hover:bg-[#272B30]/10 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    @php
-                                        $modulePermission = ($permissions[$module] ?? collect())->first();
-                                        $icon = $modulePermission->icon ?? 'extension';
-                                    @endphp
-                                    <span class="material-symbols-outlined text-violet-500 text-lg">{{ $icon }}</span>
-                                    <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC] capitalize">{{ str_replace('.', ' › ', $module) }}</span>
-                                </div>
-                            </td>
+                            </div>
+                            @else
+                            <span class="text-[#6F767E]">—</span>
+                            @endif
+                        </x-admin.ui.table-cell>
+                    @endforeach
+                </x-admin.ui.table-row>
+                @endforeach
+                
+                @if(!empty($modules['plugins']))
+                <!-- PLUGINS Section -->
+                <tr class="bg-violet-50/50 dark:bg-violet-950/20">
+                    <td class="px-6 py-3" colspan="5">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-violet-600 text-lg">extension</span>
+                            <span class="text-[11px] font-black text-violet-700 dark:text-violet-400 tracking-widest uppercase">Plugin Modules</span>
+                        </div>
+                    </td>
+                </tr>
+                
+                @foreach($modules['plugins'] as $pluginSlug => $pluginModules)
+                <!-- Plugin Group Header -->
+                <tr class="bg-violet-50/20 dark:bg-violet-950/10">
+                    <td class="px-6 py-2" colspan="5">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs px-2 py-0.5 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 rounded font-semibold uppercase">{{ $pluginSlug }}</span>
+                        </div>
+                    </td>
+                </tr>
+                
+                @foreach($pluginModules as $module)
+                <x-admin.ui.table-row class="border-b border-gray-200 dark:border-[#272B30]/50 hover:bg-gray-50 dark:hover:bg-[#272B30]/10 transition-colors">
+                    <x-admin.ui.table-cell class="px-6">
+                        <div class="flex items-center gap-3">
                             @php
-                                $actions = ['view', 'create', 'edit', 'delete'];
-                                $modulePermissions = $permissions[$module] ?? collect();
+                                $modulePermission = ($permissions[$module] ?? collect())->first();
+                                $icon = $modulePermission->icon ?? 'extension';
                             @endphp
-                            @foreach($actions as $action)
-                                @php
-                                    $permission = $modulePermissions->firstWhere('action', $action);
-                                    $hasPermission = $permission && $selectedRole->permissions->contains($permission->id);
-                                @endphp
-                                <td class="px-4 py-4 text-center">
-                                    @if($permission)
-                                    <div class="loading-container">
-                                        <input
-                                            type="checkbox"
-                                            class="h-5 w-5 rounded bg-violet-50 dark:bg-[#0B0B0B] border-violet-300 dark:border-[#272B30] text-violet-600 checked:bg-violet-600 checked:border-violet-600 dark:checked:bg-violet-600 dark:checked:border-violet-600 focus:ring-violet-500 matrix-checkbox"
-                                            data-role-id="{{ $selectedRole->id }}"
-                                            data-permission-id="{{ $permission->id }}"
-                                            {{ $hasPermission ? 'checked' : '' }}
-                                            {{ $selectedRole->is_super_admin ? 'disabled' : '' }}
-                                            @if(!$selectedRole->is_super_admin)
-                                            onchange="togglePermission(this)"
-                                            @endif
-                                        />
-                                        <div class="loading-indicator">
-                                            <svg class="spinner w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    @else
-                                    <span class="text-[#6F767E]">—</span>
+                            <span class="material-symbols-outlined text-violet-500 text-lg">{{ $icon }}</span>
+                            <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC] capitalize">{{ str_replace('.', ' › ', $module) }}</span>
+                        </div>
+                    </x-admin.ui.table-cell>
+                    @php
+                        $actions = ['view', 'create', 'edit', 'delete'];
+                        $modulePermissions = $permissions[$module] ?? collect();
+                    @endphp
+                    @foreach($actions as $action)
+                        @php
+                            $permission = $modulePermissions->firstWhere('action', $action);
+                            $hasPermission = $permission && $selectedRole->permissions->contains($permission->id);
+                        @endphp
+                        <x-admin.ui.table-cell class="text-center">
+                            @if($permission)
+                            <div class="loading-container">
+                                <input
+                                    type="checkbox"
+                                    class="h-5 w-5 rounded bg-violet-50 dark:bg-[#0B0B0B] border-violet-300 dark:border-[#272B30] text-violet-600 checked:bg-violet-600 checked:border-violet-600 dark:checked:bg-violet-600 dark:checked:border-violet-600 focus:ring-violet-500 matrix-checkbox"
+                                    data-role-id="{{ $selectedRole->id }}"
+                                    data-permission-id="{{ $permission->id }}"
+                                    {{ $hasPermission ? 'checked' : '' }}
+                                    {{ $selectedRole->is_super_admin ? 'disabled' : '' }}
+                                    @if(!$selectedRole->is_super_admin)
+                                    onchange="togglePermission(this)"
                                     @endif
-                                </td>
-                            @endforeach
-                        </tr>
-                        @endforeach
-                        @endforeach
-                        @endif
-                    </tbody>
-                </table>
-            </div>
+                                />
+                                <div class="loading-indicator">
+                                    <svg class="spinner w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" fill="currentColor"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            @else
+                            <span class="text-[#6F767E]">—</span>
+                            @endif
+                        </x-admin.ui.table-cell>
+                    @endforeach
+                </x-admin.ui.table-row>
+                @endforeach
+                @endforeach
+                @endif
+            </x-admin.ui.table>
         </div>
         @else
         <div class="flex-1 flex items-center justify-center">
@@ -393,30 +380,29 @@
             @csrf
             <input type="hidden" id="role-id" name="role_id" value="">
             <div class="p-6 space-y-5">
+                <x-admin.ui.input 
+                    name="name" 
+                    id="role-name"
+                    label="Role Name" 
+                    placeholder="e.g. Content Curator" 
+                    required 
+                />
                 <div class="space-y-2">
-                    <label class="text-xs font-bold text-[#6F767E] uppercase tracking-widest">Role Name</label>
-                    <input
-                        id="role-name"
-                        name="name"
-                        class="w-full bg-gray-50 dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] rounded-xl px-4 py-3 text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-primary focus:border-primary placeholder-[#6F767E]"
-                        placeholder="e.g. Content Curator" type="text" required />
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-[#6F767E] uppercase tracking-widest">Role Description</label>
+                    <label class="block text-sm font-bold text-gray-700 dark:text-[#FCFCFC]">Role Description</label>
                     <textarea
                         id="role-description"
                         name="description"
-                        class="w-full bg-gray-50 dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] rounded-xl px-4 py-3 text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-primary focus:border-primary placeholder-[#6F767E] resize-none h-24"
+                        class="w-full bg-white dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] rounded-2xl px-4 py-3 text-sm text-[#111827] dark:text-[#FCFCFC] focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900/30 transition placeholder-[#6F767E] resize-none h-24"
                         placeholder="Briefly describe this role's responsibilities..."></textarea>
                 </div>
             </div>
             <div class="px-6 py-4 bg-gray-50 dark:bg-[#272B30]/20 flex items-center justify-end gap-3">
-                <button type="button"
-                    class="px-5 py-2 text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-colors"
-                    onclick="closeRoleModal()">Cancel</button>
-                <button type="submit"
-                    class="px-6 py-2 bg-primary rounded-xl text-sm font-bold text-white hover:bg-blue-600 transition-all shadow-lg shadow-primary/20"
-                    id="modal-submit-btn">Create Role</button>
+                <x-admin.ui.button type="button" variant="secondary" onclick="closeRoleModal()" class="!py-2 !px-4 text-xs font-semibold uppercase tracking-wider">
+                    Cancel
+                </x-admin.ui.button>
+                <x-admin.ui.button type="submit" variant="primary" id="modal-submit-btn" class="!py-2 !px-4 text-xs font-bold uppercase tracking-wider">
+                    Create Role
+                </x-admin.ui.button>
             </div>
         </form>
     </div>
@@ -435,12 +421,12 @@
             <p class="text-[#111827] dark:text-[#FCFCFC]">Are you sure you want to delete this role? This action cannot be undone.</p>
         </div>
         <div class="px-6 py-4 bg-gray-50 dark:bg-[#272B30]/20 flex items-center justify-end gap-3">
-            <button type="button"
-                class="px-5 py-2 text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-colors"
-                onclick="closeDeleteModal()">Cancel</button>
-            <button type="button"
-                class="px-6 py-2 bg-red-600 rounded-xl text-sm font-bold text-white hover:bg-red-700 transition-all shadow-lg shadow-red-600/20"
-                id="confirm-delete-btn">Delete Role</button>
+            <x-admin.ui.button type="button" variant="secondary" onclick="closeDeleteModal()" class="!py-2 !px-4 text-xs font-semibold uppercase tracking-wider">
+                Cancel
+            </x-admin.ui.button>
+            <x-admin.ui.button type="button" variant="danger" id="confirm-delete-btn" class="!py-2 !px-4 text-xs font-bold uppercase tracking-wider">
+                Delete Role
+            </x-admin.ui.button>
         </div>
     </div>
 </div>

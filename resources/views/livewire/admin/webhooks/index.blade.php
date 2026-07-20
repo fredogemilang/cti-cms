@@ -1,129 +1,169 @@
 <div class="space-y-6">
     @if (session('success'))
-        <div class="p-3 bg-green-50 text-green-700 rounded">{{ session('success') }}</div>
+        <x-admin.ui.alert type="success" class="mb-4">
+            {{ session('success') }}
+        </x-admin.ui.alert>
     @endif
 
     <div class="flex justify-between items-center">
-        <h2 class="font-semibold text-gray-900">Webhooks</h2>
-        <button wire:click="startCreate" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">+ New Webhook</button>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Webhooks</h2>
+        <x-admin.ui.button 
+            wire:click="startCreate" 
+            variant="primary"
+            class="!py-2 !px-4 text-sm"
+        >
+            + New Webhook
+        </x-admin.ui.button>
     </div>
 
     @if ($showForm)
-        <div class="bg-white border border-gray-200 rounded-lg p-6 space-y-4">
-            <h3 class="font-semibold">{{ $editingId ? 'Edit' : 'Create' }} Webhook</h3>
+        <x-admin.ui.card padding="p-6" class="space-y-4">
+            <h3 class="font-semibold text-lg text-gray-900 dark:text-white">{{ $editingId ? 'Edit' : 'Create' }} Webhook</h3>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Name</label>
-                <input type="text" wire:model="name" class="mt-1 w-full rounded border-gray-300">
-                @error('name') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
+                <x-admin.ui.input 
+                    name="name" 
+                    type="text" 
+                    label="Name" 
+                    wire:model="name" 
+                    class="!py-2.5" 
+                />
+                @error('name') <p class="text-xs text-[#FF6A55] mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">URL</label>
-                <input type="url" wire:model="url" placeholder="https://example.com/hooks/x" class="mt-1 w-full rounded border-gray-300">
-                @error('url') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
+                <x-admin.ui.input 
+                    name="url" 
+                    type="url" 
+                    label="URL" 
+                    wire:model="url" 
+                    placeholder="https://example.com/hooks/x" 
+                    class="!py-2.5" 
+                />
+                @error('url') <p class="text-xs text-[#FF6A55] mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Events</label>
-                <div class="grid grid-cols-2 gap-2">
+                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-2">Events</label>
+                <div class="grid grid-cols-2 gap-3 bg-gray-50/50 dark:bg-[#0B0B0B]/20 p-4 rounded-2xl border border-gray-100 dark:border-[#272B30]">
                     @foreach ($eventOptions as $ev)
-                        <label class="text-sm flex items-center gap-2">
-                            <input type="checkbox" wire:model="events" value="{{ $ev }}"> <code class="text-xs">{{ $ev }}</code>
+                        <label class="text-sm flex items-center gap-2 cursor-pointer text-[#111827] dark:text-[#FCFCFC]">
+                            <input type="checkbox" wire:model="events" value="{{ $ev }}" class="h-4 w-4 rounded accent-[#2563EB]">
+                            <code class="text-xs bg-gray-100 dark:bg-[#272B30] px-1.5 py-0.5 rounded font-mono">{{ $ev }}</code>
                         </label>
                     @endforeach
                 </div>
-                @error('events') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
+                @error('events') <p class="text-xs text-[#FF6A55] mt-1">{{ $message }}</p> @enderror
             </div>
-            <label class="text-sm flex items-center gap-2">
-                <input type="checkbox" wire:model="is_active"> Active
+            <label class="text-sm flex items-center gap-2 cursor-pointer text-[#111827] dark:text-[#FCFCFC]">
+                <input type="checkbox" wire:model="is_active" class="h-4 w-4 rounded accent-[#2563EB]"> Active
             </label>
             <div class="flex gap-3">
-                <button wire:click="save" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
-                <button wire:click="$set('showForm', false)" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                <x-admin.ui.button wire:click="save" variant="primary" class="!py-2 !px-4 text-sm">Save</x-admin.ui.button>
+                <x-admin.ui.button wire:click="$set('showForm', false)" variant="secondary" class="!py-2 !px-4 text-sm">Cancel</x-admin.ui.button>
             </div>
-        </div>
+        </x-admin.ui.card>
     @endif
 
-    <div class="bg-white border border-gray-200 rounded-lg">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-gray-600 text-left">
-                <tr>
-                    <th class="p-3">Name</th>
-                    <th class="p-3">URL</th>
-                    <th class="p-3">Events</th>
-                    <th class="p-3">Status</th>
-                    <th class="p-3 w-64">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($webhooks as $w)
-                    <tr class="border-t">
-                        <td class="p-3 font-medium">{{ $w->name }}</td>
-                        <td class="p-3"><code class="text-xs">{{ \Illuminate\Support\Str::limit($w->url, 60) }}</code></td>
-                        <td class="p-3">
-                            <div class="flex flex-wrap gap-1">
-                                @foreach ((array) $w->events as $ev)
-                                    <span class="px-1.5 py-0.5 bg-gray-100 text-xs rounded">{{ $ev }}</span>
-                                @endforeach
-                            </div>
-                        </td>
-                        <td class="p-3">
-                            @if ($w->is_active) <span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded">active</span>
-                            @else <span class="px-2 py-0.5 bg-gray-200 text-gray-700 text-xs rounded">inactive</span> @endif
-                        </td>
-                        <td class="p-3 space-x-2 text-xs">
-                            <button wire:click="edit({{ $w->id }})" class="text-blue-600 hover:underline">Edit</button>
-                            <button wire:click="test({{ $w->id }})" class="text-green-600 hover:underline">Test</button>
-                            <button wire:click="rotateSecret({{ $w->id }})" wire:confirm="Rotate signing secret? Existing receivers will break until updated." class="text-yellow-600 hover:underline">Rotate Secret</button>
-                            <button wire:click="delete({{ $w->id }})" wire:confirm="Delete this webhook?" class="text-red-600 hover:underline">Delete</button>
-                        </td>
-                    </tr>
-                    @if ($editingId === $w->id || ! $showForm)
-                        <tr class="bg-gray-50 border-t">
-                            <td colspan="5" class="px-3 py-2 text-xs text-gray-600">
-                                <strong>Signing secret:</strong> <code class="bg-white px-1 py-0.5 rounded">{{ $w->signing_secret }}</code>
-                                — receivers verify with: <code>hash_hmac('sha256', body, secret)</code>
-                            </td>
-                        </tr>
+    <x-admin.ui.table>
+        <x-slot:thead>
+            <x-admin.ui.table-header>Name</x-admin.ui.table-header>
+            <x-admin.ui.table-header>URL</x-admin.ui.table-header>
+            <x-admin.ui.table-header>Events</x-admin.ui.table-header>
+            <x-admin.ui.table-header>Status</x-admin.ui.table-header>
+            <x-admin.ui.table-header align="right" class="w-64 px-6">Actions</x-admin.ui.table-header>
+        </x-slot:thead>
+
+        @forelse ($webhooks as $w)
+            <x-admin.ui.table-row>
+                <x-admin.ui.table-cell class="font-semibold">{{ $w->name }}</x-admin.ui.table-cell>
+                <x-admin.ui.table-cell><code class="text-xs font-mono text-[#2563EB] bg-gray-50 dark:bg-[#272B30]/30 px-1.5 py-0.5 rounded border border-gray-200 dark:border-[#272B30]/50">{{ \Illuminate\Support\Str::limit($w->url, 60) }}</code></x-admin.ui.table-cell>
+                <x-admin.ui.table-cell>
+                    <div class="flex flex-wrap gap-1">
+                        @foreach ((array) $w->events as $ev)
+                            <span class="px-1.5 py-0.5 bg-gray-100 dark:bg-[#272B30] text-xs rounded font-mono">{{ $ev }}</span>
+                        @endforeach
+                    </div>
+                </x-admin.ui.table-cell>
+                <x-admin.ui.table-cell>
+                    @if ($w->is_active) 
+                        <span class="px-2 py-0.5 bg-[#3F8C5826] text-[#83BF6E] text-xs rounded-lg font-bold uppercase tracking-wider">active</span>
+                    @else 
+                        <span class="px-2 py-0.5 bg-gray-100 dark:bg-[#272B30] text-[#6F767E] text-xs rounded-lg font-bold uppercase tracking-wider">inactive</span> 
                     @endif
-                @empty
-                    <tr><td colspan="5" class="p-6 text-center text-gray-500">No webhooks yet.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                </x-admin.ui.table-cell>
+                <x-admin.ui.table-cell align="right" class="px-6">
+                    <div class="flex items-center justify-end gap-2">
+                        <x-admin.ui.button wire:click="edit({{ $w->id }})" variant="secondary" class="!py-1.5 !px-3 text-xs">Edit</x-admin.ui.button>
+                        <x-admin.ui.button wire:click="test({{ $w->id }})" variant="outline" class="!py-1.5 !px-3 text-xs">Test</x-admin.ui.button>
+                        <x-admin.ui.button wire:click="rotateSecret({{ $w->id }})" wire:confirm="Rotate signing secret? Existing receivers will break until updated." variant="outline" class="!py-1.5 !px-3 text-xs">Secret</x-admin.ui.button>
+                        <x-admin.ui.button wire:click="delete({{ $w->id }})" wire:confirm="Delete this webhook?" variant="danger" class="!py-1.5 !px-3 text-xs">Delete</x-admin.ui.button>
+                    </div>
+                </x-admin.ui.table-cell>
+            </x-admin.ui.table-row>
+            @if ($editingId === $w->id || ! $showForm)
+                <tr class="bg-gray-50/50 dark:bg-[#0B0B0B]/10 border-t border-gray-100 dark:border-[#272B30]">
+                    <td colspan="5" class="px-6 py-3 text-xs text-[#6F767E]">
+                        <strong>Signing secret:</strong> <code class="bg-white dark:bg-[#272B30] text-[#2563EB] px-2 py-0.5 rounded font-mono border border-gray-200 dark:border-[#272B30]/50">{{ $w->signing_secret }}</code>
+                        — receivers verify with: <code class="text-gray-500 dark:text-gray-400">hash_hmac('sha256', body, secret)</code>
+                    </td>
+                </tr>
+            @endif
+        @empty
+            <tr>
+                <td colspan="5" class="p-12 text-center">
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="material-symbols-outlined text-4xl text-[#6F767E]">webhook</span>
+                        <p class="text-sm font-medium text-[#6F767E]">No webhooks yet.</p>
+                    </div>
+                </td>
+            </tr>
+        @endforelse
+    </x-admin.ui.table>
 
     {{-- Recent deliveries --}}
     @php $recent = \App\Models\WebhookDelivery::with('webhook')->latest()->limit(20)->get(); @endphp
-    <div class="bg-white border border-gray-200 rounded-lg">
-        <div class="p-3 border-b font-semibold">Recent Deliveries</div>
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-gray-600 text-left">
+    <div class="space-y-3 mt-6">
+        <h3 class="text-base font-bold text-gray-900 dark:text-white">Recent Deliveries</h3>
+        <x-admin.ui.table>
+            <x-slot:thead>
+                <x-admin.ui.table-header class="w-24">ID</x-admin.ui.table-header>
+                <x-admin.ui.table-header>Webhook</x-admin.ui.table-header>
+                <x-admin.ui.table-header>Event</x-admin.ui.table-header>
+                <x-admin.ui.table-header>Status</x-admin.ui.table-header>
+                <x-admin.ui.table-header>Code</x-admin.ui.table-header>
+                <x-admin.ui.table-header>When</x-admin.ui.table-header>
+            </x-slot:thead>
+
+            @forelse ($recent as $d)
+                <x-admin.ui.table-row>
+                    <x-admin.ui.table-cell class="font-mono text-xs">#{{ $d->id }}</x-admin.ui.table-cell>
+                    <x-admin.ui.table-cell class="font-semibold">{{ $d->webhook?->name ?? '(deleted)' }}</x-admin.ui.table-cell>
+                    <x-admin.ui.table-cell><code class="text-xs font-mono bg-gray-100 dark:bg-[#272B30] px-1.5 py-0.5 rounded">{{ $d->event }}</code></x-admin.ui.table-cell>
+                    <x-admin.ui.table-cell>
+                        @php
+                            $statusColors = [
+                                'success' => 'bg-[#3F8C5826] text-[#83BF6E]',
+                                'failed' => 'bg-red-500/10 text-[#FF6A55]',
+                                'retrying' => 'bg-yellow-500/10 text-yellow-500',
+                                'pending' => 'bg-blue-500/10 text-blue-500',
+                            ];
+                            $badgeClass = $statusColors[$d->status] ?? 'bg-gray-100 text-gray-700';
+                        @endphp
+                        <span class="px-2 py-0.5 rounded-lg text-xs font-bold uppercase tracking-wider {{ $badgeClass }}">{{ $d->status }}</span>
+                        <span class="text-xs text-[#6F767E] ml-1">(attempt {{ $d->attempts }})</span>
+                    </x-admin.ui.table-cell>
+                    <x-admin.ui.table-cell class="text-xs font-mono font-bold">{{ $d->response_code ?? '—' }}</x-admin.ui.table-cell>
+                    <x-admin.ui.table-cell class="text-xs text-[#6F767E]">{{ $d->created_at?->diffForHumans() }}</x-admin.ui.table-cell>
+                </x-admin.ui.table-row>
+            @empty
                 <tr>
-                    <th class="p-3 w-24">ID</th>
-                    <th class="p-3">Webhook</th>
-                    <th class="p-3">Event</th>
-                    <th class="p-3">Status</th>
-                    <th class="p-3">Code</th>
-                    <th class="p-3">When</th>
+                    <td colspan="6" class="p-12 text-center">
+                        <div class="flex flex-col items-center gap-2">
+                            <span class="material-symbols-outlined text-4xl text-[#6F767E]">send</span>
+                            <p class="text-sm font-medium text-[#6F767E]">No deliveries yet.</p>
+                        </div>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @forelse ($recent as $d)
-                    <tr class="border-t">
-                        <td class="p-3 font-mono text-xs">#{{ $d->id }}</td>
-                        <td class="p-3">{{ $d->webhook?->name ?? '(deleted)' }}</td>
-                        <td class="p-3"><code class="text-xs">{{ $d->event }}</code></td>
-                        <td class="p-3">
-                            @php $colors = ['success' => 'green', 'failed' => 'red', 'retrying' => 'yellow', 'pending' => 'blue']; $c = $colors[$d->status] ?? 'gray'; @endphp
-                            <span class="px-2 py-0.5 bg-{{ $c }}-100 text-{{ $c }}-700 text-xs rounded">{{ $d->status }}</span>
-                            <span class="text-xs text-gray-500">(attempt {{ $d->attempts }})</span>
-                        </td>
-                        <td class="p-3 text-xs">{{ $d->response_code ?? '—' }}</td>
-                        <td class="p-3 text-xs text-gray-500">{{ $d->created_at?->diffForHumans() }}</td>
-                    </tr>
-                @empty
-                    <tr><td colspan="6" class="p-6 text-center text-gray-500">No deliveries yet.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+            @endforelse
+        </x-admin.ui.table>
     </div>
 </div>
+

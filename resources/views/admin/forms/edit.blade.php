@@ -45,13 +45,17 @@
             <div class="h-8 w-px bg-gray-200 dark:bg-[#272B30]"></div>
 
             <div class="flex items-center gap-3">
-                <button @click="updateForm"
-                    class="flex h-10 items-center gap-2 rounded-xl bg-[#2563EB] px-5 text-sm font-bold text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"
-                    :class="{ 'opacity-50 cursor-not-allowed': isSaving }" :disabled="isSaving">
-                    <span class="material-symbols-outlined text-lg"
-                        x-text="isSaving ? 'hourglass_empty' : 'save'"></span>
+                <x-admin.ui.button 
+                    type="button" 
+                    variant="primary" 
+                    @click="updateForm"
+                    class="!h-10 !px-5 text-sm"
+                    ::class="{ 'opacity-50 cursor-not-allowed': isSaving }" 
+                    ::disabled="isSaving"
+                >
+                    <span class="material-symbols-outlined text-lg" x-text="isSaving ? 'hourglass_empty' : 'save'"></span>
                     <span x-text="isSaving ? 'Saving...' : 'Update Form'"></span>
-                </button>
+                </x-admin.ui.button>
             </div>
         </div>
     </header>
@@ -403,14 +407,15 @@
                 
                 {{-- General Settings Tab --}}
                 <div x-show="settingsTab === 'general'" class="space-y-4">
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Status</label>
-                        <select x-model="isActive"
-                            class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary">
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
-                        </select>
-                    </div>
+                    <x-admin.ui.select 
+                        name="isActive" 
+                        label="Status" 
+                        x-model="isActive" 
+                        class="!h-10 !py-0 !rounded-lg !bg-[#F4F5F6] dark:!bg-[#0B0B0B] !border-none text-sm font-medium"
+                    >
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </x-admin.ui.select>
 
                     <div class="space-y-2">
                         <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Description</label>
@@ -419,12 +424,13 @@
                             placeholder="Describe this form..."></textarea>
                     </div>
                     
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Submit Button Text</label>
-                        <input x-model="submitButtonText" type="text"
-                            class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                            placeholder="Submit">
-                    </div>
+                    <x-admin.ui.input 
+                        name="submitButtonText" 
+                        label="Submit Button Text" 
+                        x-model="submitButtonText" 
+                        class="!h-10 !py-0 !rounded-lg !bg-[#F4F5F6] dark:!bg-[#0B0B0B] !border-none text-sm font-medium" 
+                        placeholder="Submit"
+                    />
                     
                     {{-- Spam Protection --}}
                     <div class="pt-4 border-t border-gray-200 dark:border-[#272B30]">
@@ -437,19 +443,20 @@
                             </div>
                         </label>
                         
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">CAPTCHA Provider</label>
-                            <select x-model="spamProtection.captcha_provider"
-                                class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3">
-                                <option value="none">No CAPTCHA</option>
-                                <option value="recaptcha_v2">Google reCAPTCHA v2</option>
-                                <option value="recaptcha_v3">Google reCAPTCHA v3 (Invisible)</option>
-                                <option value="turnstile">Cloudflare Turnstile</option>
-                            </select>
-                            <p class="text-xs text-[#6F767E]" x-show="spamProtection.captcha_provider !== 'none'">
-                                Configure API keys in .env file
-                            </p>
-                        </div>
+                        <x-admin.ui.select 
+                            name="captcha_provider" 
+                            label="CAPTCHA Provider" 
+                            x-model="spamProtection.captcha_provider" 
+                            class="!h-10 !py-0 !rounded-lg !bg-[#F4F5F6] dark:!bg-[#0B0B0B] !border-none text-sm font-medium"
+                        >
+                            <option value="none">No CAPTCHA</option>
+                            <option value="recaptcha_v2">Google reCAPTCHA v2</option>
+                            <option value="recaptcha_v3">Google reCAPTCHA v3 (Invisible)</option>
+                            <option value="turnstile">Cloudflare Turnstile</option>
+                        </x-admin.ui.select>
+                        <p class="text-xs text-[#6F767E] mt-2" x-show="spamProtection.captcha_provider !== 'none'">
+                            Configure API keys in .env file
+                        </p>
                     </div>
                 </div>
                 
@@ -464,19 +471,23 @@
                     </label>
                     
                     <div x-show="notifications.enabled" class="space-y-4">
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Admin Email</label>
-                            <input x-model="notifications.admin_email" type="email"
-                                class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                                placeholder="admin@example.com">
-                        </div>
+                        <x-admin.ui.input 
+                            name="admin_email" 
+                            type="email"
+                            label="Admin Email" 
+                            x-model="notifications.admin_email" 
+                            class="!h-10 !py-0 !rounded-lg !bg-[#F4F5F6] dark:!bg-[#0B0B0B] !border-none text-sm font-medium" 
+                            placeholder="admin@example.com"
+                        />
                         
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Email Subject</label>
-                            <input x-model="notifications.subject" type="text"
-                                class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                                placeholder="New Form Submission">
-                        </div>
+                        <x-admin.ui.input 
+                            name="subject" 
+                            type="text"
+                            label="Email Subject" 
+                            x-model="notifications.subject" 
+                            class="!h-10 !py-0 !rounded-lg !bg-[#F4F5F6] dark:!bg-[#0B0B0B] !border-none text-sm font-medium" 
+                            placeholder="New Form Submission"
+                        />
                         
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox" x-model="notifications.send_to_user" class="rounded border-gray-300 text-primary focus:ring-primary">
@@ -487,15 +498,16 @@
                 
                 {{-- Confirmations Tab --}}
                 <div x-show="settingsTab === 'confirmations'" class="space-y-4">
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">After Submission</label>
-                        <select x-model="confirmations.type"
-                            class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary">
-                            <option value="message">Show Message</option>
-                            <option value="redirect">Redirect to URL</option>
-                            <option value="success_page">Redirect to Success Page</option>
-                        </select>
-                    </div>
+                    <x-admin.ui.select 
+                        name="confirmations_type" 
+                        label="After Submission" 
+                        x-model="confirmations.type" 
+                        class="!h-10 !py-0 !rounded-lg !bg-[#F4F5F6] dark:!bg-[#0B0B0B] !border-none text-sm font-medium"
+                    >
+                        <option value="message">Show Message</option>
+                        <option value="redirect">Redirect to URL</option>
+                        <option value="success_page">Redirect to Success Page</option>
+                    </x-admin.ui.select>
                     
                     <div x-show="confirmations.type === 'message'" class="space-y-2">
                         <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Success Message</label>
@@ -504,20 +516,26 @@
                             placeholder="Thank you for your submission!"></textarea>
                     </div>
                     
-                    <div x-show="confirmations.type === 'redirect'" class="space-y-2">
-                        <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Redirect URL</label>
-                        <input x-model="confirmations.redirect_url" type="url"
-                            class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                            placeholder="https://example.com/thank-you">
+                    <div x-show="confirmations.type === 'redirect'">
+                        <x-admin.ui.input 
+                            name="redirect_url" 
+                            type="url"
+                            label="Redirect URL" 
+                            x-model="confirmations.redirect_url" 
+                            class="!h-10 !py-0 !rounded-lg !bg-[#F4F5F6] dark:!bg-[#0B0B0B] !border-none text-sm font-medium" 
+                            placeholder="https://example.com/thank-you"
+                        />
                     </div>
                     
                     <div x-show="confirmations.type === 'success_page'" class="space-y-4">
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Title</label>
-                            <input x-model="confirmations.success_title" type="text"
-                                class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                                placeholder="Thank You!">
-                        </div>
+                        <x-admin.ui.input 
+                            name="success_title" 
+                            type="text"
+                            label="Title" 
+                            x-model="confirmations.success_title" 
+                            class="!h-10 !py-0 !rounded-lg !bg-[#F4F5F6] dark:!bg-[#0B0B0B] !border-none text-sm font-medium" 
+                            placeholder="Thank You!"
+                        />
                         <div class="space-y-2">
                             <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Description</label>
                             <textarea x-model="confirmations.success_description" rows="3"

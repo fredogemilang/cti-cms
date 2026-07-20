@@ -1,15 +1,16 @@
 <div class="space-y-6">
     <!-- Filters & Actions -->
-    <div class="flex flex-col sm:flex-row gap-4">
+    <div class="flex flex-col sm:flex-row gap-4 items-center">
         <!-- Search -->
         <div class="relative flex-1">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-            <input 
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10">search</span>
+            <x-admin.ui.input 
+                name="search" 
                 type="text" 
-                wire:model.live.debounce.300ms="search"
-                placeholder="Search terms..."
-                class="h-12 w-full md:w-[320px] rounded-xl border-none bg-white dark:bg-[#1A1A1A] pl-12 pr-4 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all placeholder:text-[#6F767E]"
-            >
+                wire:model.live.debounce.300ms="search" 
+                class="!pl-10 !py-2 !rounded-xl !h-12 text-sm !w-full md:!w-[320px]" 
+                placeholder="Search terms..." 
+            />
         </div>
         
         <!-- Per Page -->
@@ -27,137 +28,115 @@
     </div>
 
     <!-- Table -->
-    <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] overflow-hidden relative">
-        <div class="overflow-x-auto no-scrollbar">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-50/50 dark:bg-[#0B0B0B]/20 border-b border-gray-100 dark:border-[#272B30]">
-                        <th class="px-8 py-5 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">
-                            <button wire:click="sortBy('name')" class="flex items-center gap-1 hover:text-[#2563EB] transition-colors">
-                                Name
-                                @if($sortField === 'name')
-                                    <span class="material-symbols-outlined text-base">{{ $sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
-                                @else
-                                    <span class="material-symbols-outlined text-base opacity-30">unfold_more</span>
-                                @endif
-                            </button>
-                        </th>
-                        <th class="px-4 py-5 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">
-                            <button wire:click="sortBy('slug')" class="flex items-center gap-1 hover:text-[#2563EB] transition-colors">
-                                Slug
-                                @if($sortField === 'slug')
-                                    <span class="material-symbols-outlined text-base">{{ $sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
-                                @else
-                                    <span class="material-symbols-outlined text-base opacity-30">unfold_more</span>
-                                @endif
-                            </button>
-                        </th>
-                        <th class="px-8 py-5 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest text-right">Count</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50 dark:divide-[#272B30]/30">
-                    @forelse($terms as $term)
-                        <tr class="group hover:bg-gray-50 dark:hover:bg-[#272B30]/30 transition-colors">
-                            <td class="px-8 py-5">
-                                <div class="flex items-center gap-2" style="padding-left: {{ ($term->depth ?? 0) * 1.5 }}rem">
-                                    @if(($term->depth ?? 0) > 0)
-                                        <span class="material-symbols-outlined text-[#6F767E] text-base shrink-0 select-none">subdirectory_arrow_right</span>
-                                    @endif
-                                    <div>
-                                        <div class="font-semibold text-[#111827] dark:text-[#FCFCFC] group-hover:text-[#2563EB] transition-colors">{{ $term->name }}</div>
-                                        
-                                        <!-- WP Style Hover Actions -->
-                                        <div class="flex items-center gap-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                                            <button 
-                                                wire:click="$dispatch('edit-term', { id: {{ $term->id }} })"
-                                                class="text-[11px] font-bold text-[#2563EB] hover:underline uppercase tracking-wider"
-                                            >
-                                                Edit
-                                            </button>
-                                            <span class="text-gray-300 dark:text-[#272B30]">|</span>
-                                            <button 
-                                                wire:click="confirmDelete({{ $term->id }})"
-                                                class="text-[11px] font-bold text-[#FF6A55] hover:underline uppercase tracking-wider"
-                                            >
-                                                Delete
-                                            </button>
-                                        </div>
+    <x-admin.ui.table>
+        <x-slot:thead>
+            <x-admin.ui.table-header sortBy="name" :field="$sortField" :direction="$sortDirection" class="px-8">
+                Name
+            </x-admin.ui.table-header>
+            <x-admin.ui.table-header sortBy="slug" :field="$sortField" :direction="$sortDirection">
+                Slug
+            </x-admin.ui.table-header>
+            <x-admin.ui.table-header align="right" class="px-8 text-right w-24">Count</x-admin.ui.table-header>
+        </x-slot:thead>
 
-                                        @if($term->description)
-                                            <div class="text-xs text-[#6F767E] truncate max-w-xs mt-1">{{ $term->description }}</div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-4 py-5">
-                                <code class="px-2.5 py-1 bg-gray-100 dark:bg-[#272B30] text-[#2563EB] rounded-lg text-xs font-mono">{{ $term->slug }}</code>
-                            </td>
+        @forelse($terms as $term)
+            <x-admin.ui.table-row class="group">
+                <x-admin.ui.table-cell class="px-8">
+                    <div class="flex items-center gap-2" style="padding-left: {{ ($term->depth ?? 0) * 1.5 }}rem">
+                        @if(($term->depth ?? 0) > 0)
+                            <span class="material-symbols-outlined text-[#6F767E] text-base shrink-0 select-none">subdirectory_arrow_right</span>
+                        @endif
+                        <div>
+                            <div class="font-semibold text-[#111827] dark:text-[#FCFCFC] group-hover:text-[#2563EB] transition-colors">{{ $term->name }}</div>
+                            
+                            <!-- WP Style Hover Actions -->
+                            <div class="flex items-center gap-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                                <button 
+                                    wire:click="$dispatch('edit-term', { id: {{ $term->id }} })"
+                                    class="text-[11px] font-bold text-[#2563EB] hover:underline uppercase tracking-wider"
+                                >
+                                    Edit
+                                </button>
+                                <span class="text-gray-300 dark:text-[#272B30]">|</span>
+                                <button 
+                                    wire:click="confirmDelete({{ $term->id }})"
+                                    class="text-[11px] font-bold text-[#FF6A55] hover:underline uppercase tracking-wider"
+                                >
+                                    Delete
+                                </button>
+                            </div>
 
-                            <td class="px-8 py-5 text-right">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-[#2563EB] dark:bg-blue-900/30">
-                                    {{ $term->entries_count }}
-                                </span>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="3" class="px-8 py-16 text-center">
-                                <div class="flex flex-col items-center">
-                                    <div class="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-[#272B30] flex items-center justify-center mb-4">
-                                        <span class="material-symbols-outlined text-3xl text-gray-400">category</span>
-                                    </div>
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">No terms found</h3>
-                                    <p class="text-gray-500 dark:text-gray-400">Use the form on the left to add a new term.</p>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Pagination -->
-        @if($terms->hasPages())
-        <div class="px-8 py-6 border-t border-gray-100 dark:border-[#272B30] flex items-center justify-between">
-            <p class="text-sm font-medium text-[#6F767E]">
-                Showing {{ $terms->firstItem() }} to {{ $terms->lastItem() }} of {{ $terms->total() }} terms
-            </p>
-            <div class="flex items-center gap-2">
-                @if($terms->onFirstPage())
-                <button disabled
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed">
-                    <span class="material-symbols-outlined text-xl">chevron_left</span>
-                </button>
+                            @if($term->description)
+                                <div class="text-xs text-[#6F767E] truncate max-w-xs mt-1">{{ $term->description }}</div>
+                            @endif
+                        </div>
+                    </div>
+                </x-admin.ui.table-cell>
+                <x-admin.ui.table-cell>
+                    <code class="px-2.5 py-1 bg-gray-100 dark:bg-[#272B30] text-[#2563EB] rounded-lg text-xs font-mono">{{ $term->slug }}</code>
+                </x-admin.ui.table-cell>
+                <x-admin.ui.table-cell align="right" class="px-8">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-[#2563EB] dark:bg-blue-900/30">
+                        {{ $term->entries_count }}
+                    </span>
+                </x-admin.ui.table-cell>
+            </x-admin.ui.table-row>
+        @empty
+            <tr>
+                <td colspan="3" class="px-8 py-16 text-center">
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-[#272B30] flex items-center justify-center mb-4">
+                            <span class="material-symbols-outlined text-3xl text-gray-400">category</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">No terms found</h3>
+                        <p class="text-gray-500 dark:text-gray-400">Use the form on the left to add a new term.</p>
+                    </div>
+                </td>
+            </tr>
+        @endforelse
+    </x-admin.ui.table>
+    
+    <!-- Pagination -->
+    @if($terms->hasPages())
+    <div class="mt-6 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl p-6 flex items-center justify-between shadow-sm">
+        <p class="text-sm font-medium text-[#6F767E]">
+            Showing {{ $terms->firstItem() }} to {{ $terms->lastItem() }} of {{ $terms->total() }} terms
+        </p>
+        <div class="flex items-center gap-2">
+            @if($terms->onFirstPage())
+            <button disabled
+                class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed border border-gray-200 dark:border-[#272B30]">
+                <span class="material-symbols-outlined text-xl">chevron_left</span>
+            </button>
+            @else
+            <button wire:click="previousPage"
+                class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
+                <span class="material-symbols-outlined text-xl">chevron_left</span>
+            </button>
+            @endif
+
+            @foreach($terms->getUrlRange(max(1, $terms->currentPage() - 2), min($terms->lastPage(), $terms->currentPage() + 2)) as $page => $url)
+                @if($page == $terms->currentPage())
+                <button class="h-10 w-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-blue-500/20">{{ $page }}</button>
                 @else
-                <button wire:click="previousPage"
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
-                    <span class="material-symbols-outlined text-xl">chevron_left</span>
-                </button>
+                <button wire:click="gotoPage({{ $page }})" class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-sm font-bold text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30] transition-all">{{ $page }}</button>
                 @endif
+            @endforeach
 
-                @foreach($terms->getUrlRange(max(1, $terms->currentPage() - 2), min($terms->lastPage(), $terms->currentPage() + 2)) as $page => $url)
-                    @if($page == $terms->currentPage())
-                    <button class="h-10 w-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-blue-500/20">{{ $page }}</button>
-                    @else
-                    <button wire:click="gotoPage({{ $page }})" class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] flex items-center justify-center text-sm font-bold text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30] transition-all">{{ $page }}</button>
-                    @endif
-                @endforeach
-
-                @if($terms->hasMorePages())
-                <button wire:click="nextPage"
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
-                    <span class="material-symbols-outlined text-xl">chevron_right</span>
-                </button>
-                @else
-                <button disabled
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed">
-                    <span class="material-symbols-outlined text-xl">chevron_right</span>
-                </button>
-                @endif
-            </div>
+            @if($terms->hasMorePages())
+            <button wire:click="nextPage"
+                class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
+                <span class="material-symbols-outlined text-xl">chevron_right</span>
+            </button>
+            @else
+            <button disabled
+                class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed border border-gray-200 dark:border-[#272B30]">
+                <span class="material-symbols-outlined text-xl">chevron_right</span>
+            </button>
+            @endif
         </div>
-        @endif
     </div>
+    @endif
 
     <!-- Delete Confirmation Modal -->
     <div 
@@ -209,23 +188,26 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 dark:bg-[#1A1A1A]/50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-gray-100 dark:border-[#272B30]">
-                    <button 
+                <div class="bg-gray-50 dark:bg-[#1A1A1A]/50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-gray-100 dark:border-[#272B30] gap-3">
+                    <x-admin.ui.button 
                         type="button" 
+                        variant="danger"
                         wire:click="performDelete"
-                        class="inline-flex w-full justify-center rounded-xl bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto transition-all"
+                        class="w-full sm:ml-3 sm:w-auto !py-2 !px-4 text-sm"
                     >
                         Delete
-                    </button>
-                    <button 
+                    </x-admin.ui.button>
+                    <x-admin.ui.button 
                         type="button" 
+                        variant="secondary"
                         wire:click="cancelDelete"
-                        class="mt-3 inline-flex w-full justify-center rounded-xl bg-white dark:bg-[#272B30] px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-[#2C3035] sm:mt-0 sm:w-auto transition-all"
+                        class="mt-3 w-full sm:mt-0 sm:w-auto !py-2 !px-4 text-sm"
                     >
                         Cancel
-                    </button>
+                    </x-admin.ui.button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+

@@ -36,8 +36,8 @@
                 </div>
 
                 <a href="{{ route('admin.forms.edit', $form) }}" 
-                    class="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#2563EB] text-white text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20">
-                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                    class="px-6 py-3 font-bold rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white text-sm h-10 px-4 !py-0">
+                    <span class="material-symbols-outlined text-[20px] mr-2">edit</span>
                     Edit Form
                 </a>
             </div>
@@ -45,7 +45,7 @@
 
         {{-- Statistics --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-white dark:bg-[#1A1A1A] rounded-2xl p-5 border border-gray-200 dark:border-[#272B30] relative overflow-hidden group">
+            <x-admin.ui.card padding="p-5" class="relative overflow-hidden group">
                 <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                     <span class="material-symbols-outlined text-6xl text-blue-500">inbox</span>
                 </div>
@@ -53,8 +53,8 @@
                     <p class="text-xs font-bold text-[#6F767E] uppercase tracking-widest mb-1">Total</p>
                     <h3 class="text-2xl font-bold text-[#111827] dark:text-white">{{ $stats['total'] }}</h3>
                 </div>
-            </div>
-            <div class="bg-white dark:bg-[#1A1A1A] rounded-2xl p-5 border border-gray-200 dark:border-[#272B30] relative overflow-hidden group">
+            </x-admin.ui.card>
+            <x-admin.ui.card padding="p-5" class="relative overflow-hidden group">
                 <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                     <span class="material-symbols-outlined text-6xl text-green-500">today</span>
                 </div>
@@ -62,8 +62,8 @@
                     <p class="text-xs font-bold text-[#6F767E] uppercase tracking-widest mb-1">Today</p>
                     <h3 class="text-2xl font-bold text-[#111827] dark:text-white">{{ $stats['today'] }}</h3>
                 </div>
-            </div>
-            <div class="bg-white dark:bg-[#1A1A1A] rounded-2xl p-5 border border-gray-200 dark:border-[#272B30] relative overflow-hidden group">
+            </x-admin.ui.card>
+            <x-admin.ui.card padding="p-5" class="relative overflow-hidden group">
                 <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                     <span class="material-symbols-outlined text-6xl text-yellow-500">date_range</span>
                 </div>
@@ -71,8 +71,8 @@
                     <p class="text-xs font-bold text-[#6F767E] uppercase tracking-widest mb-1">This Week</p>
                     <h3 class="text-2xl font-bold text-[#111827] dark:text-white">{{ $stats['this_week'] }}</h3>
                 </div>
-            </div>
-            <div class="bg-white dark:bg-[#1A1A1A] rounded-2xl p-5 border border-gray-200 dark:border-[#272B30] relative overflow-hidden group">
+            </x-admin.ui.card>
+            <x-admin.ui.card padding="p-5" class="relative overflow-hidden group">
                 <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                     <span class="material-symbols-outlined text-6xl text-purple-500">calendar_month</span>
                 </div>
@@ -80,45 +80,57 @@
                     <p class="text-xs font-bold text-[#6F767E] uppercase tracking-widest mb-1">This Month</p>
                     <h3 class="text-2xl font-bold text-[#111827] dark:text-white">{{ $stats['this_month'] }}</h3>
                 </div>
-            </div>
+            </x-admin.ui.card>
         </div>
 
         {{-- Filters --}}
-        <div class="bg-white dark:bg-[#1A1A1A] rounded-3xl border border-gray-200 dark:border-[#272B30] p-5">
+        <x-admin.ui.card padding="p-5">
             <form method="GET" action="{{ route('admin.forms.entries', $form) }}" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                 <div class="md:col-span-4">
                     <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] mb-2 block">Search</label>
                     <div class="relative">
-                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[#6F767E]">search</span>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            class="w-full h-10 pl-10 pr-4 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB]"
-                            placeholder="Search in entries...">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[#6F767E] z-10">search</span>
+                        <x-admin.ui.input 
+                            name="search" 
+                            type="text" 
+                            value="{{ request('search') }}"
+                            class="!pl-10 !py-2 !rounded-xl !h-10 text-sm" 
+                            placeholder="Search in entries..." 
+                        />
                     </div>
                 </div>
                 <div class="md:col-span-3">
-                    <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] mb-2 block">From Date</label>
-                    <input type="date" name="date_from" value="{{ request('date_from') }}"
-                        class="w-full h-10 px-4 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#6F767E] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB]">
+                    <x-admin.ui.input 
+                        name="date_from" 
+                        type="date" 
+                        label="From Date"
+                        value="{{ request('date_from') }}"
+                        class="!py-2 !rounded-xl !h-10 text-sm" 
+                    />
                 </div>
                 <div class="md:col-span-3">
-                    <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] mb-2 block">To Date</label>
-                    <input type="date" name="date_to" value="{{ request('date_to') }}"
-                        class="w-full h-10 px-4 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#6F767E] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB]">
+                    <x-admin.ui.input 
+                        name="date_to" 
+                        type="date" 
+                        label="To Date"
+                        value="{{ request('date_to') }}"
+                        class="!py-2 !rounded-xl !h-10 text-sm" 
+                    />
                 </div>
                 <div class="md:col-span-2 flex gap-2">
-                    <button type="submit" class="flex-1 h-10 rounded-xl bg-[#2563EB] text-white text-sm font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-2">
+                    <x-admin.ui.button type="submit" variant="primary" class="flex-1 !h-10 !rounded-xl text-sm font-bold">
                         Filter
-                    </button>
+                    </x-admin.ui.button>
                     @if(request()->hasAny(['search', 'date_from', 'date_to']))
                     <a href="{{ route('admin.forms.entries', $form) }}" 
-                        class="h-10 w-10 rounded-xl bg-gray-100 dark:bg-[#272B30] text-[#6F767E] hover:text-red-500 transition-all flex items-center justify-center"
+                        class="h-10 w-10 rounded-xl bg-gray-100 dark:bg-[#272B30] text-[#6F767E] hover:text-red-500 transition-all flex items-center justify-center border border-gray-200 dark:border-[#272B30]"
                         title="Clear filters">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </a>
                     @endif
                 </div>
             </form>
-        </div>
+        </x-admin.ui.card>
 
         {{-- Entries Table --}}
         <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] overflow-hidden">
@@ -142,67 +154,62 @@
                     @endif
                 </div>
             @else
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-gray-50/50 dark:bg-[#0B0B0B]/20 border-b border-gray-100 dark:border-[#272B30]">
-                                <th class="px-6 py-4 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest w-20">ID</th>
-                                @foreach($form->fields->take(4) as $field)
-                                    @if(!in_array($field->type, ['section', 'divider', 'html']))
-                                    <th class="px-6 py-4 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest whitespace-nowrap">{{ Str::limit($field->label, 20) }}</th>
-                                    @endif
-                                @endforeach
-                                <th class="px-6 py-4 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest whitespace-nowrap">Submitted</th>
-                                <th class="px-6 py-4 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-50 dark:divide-[#272B30]/30 text-sm">
-                            @foreach($entries as $entry)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-[#272B30] transition-colors">
-                                <td class="px-6 py-4 font-mono font-medium text-[#6F767E]">
-                                    #{{ $entry->id }}
-                                </td>
-                                @foreach($form->fields->take(4) as $field)
-                                    @if(!in_array($field->type, ['section', 'divider', 'html']))
-                                    <td class="px-6 py-4 text-[#111827] dark:text-[#FCFCFC]">
-                                        @php
-                                            $value = $entry->getFieldValue($field->field_id);
-                                            // Handle arrays (checkboxes/multiple uploads)
-                                            if (is_array($value)) {
-                                                $displayValue = implode(', ', $value);
-                                            } else {
-                                                $displayValue = $value;
-                                            }
-                                            
-                                            // Handle file uploads - showing generic file link/icon
-                                            if (in_array($field->type, ['file', 'image']) && $value) {
-                                                $isImage = $field->type === 'image';
-                                                $displayValue = '<span class="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-[#272B30] px-2 py-1 rounded text-[#2563EB]"><span class="material-symbols-outlined text-[14px]">'.($isImage ? 'image' : 'description').'</span> File</span>';
-                                            }
-                                        @endphp
-                                        
-                                        @if(in_array($field->type, ['file', 'image']) && $value)
-                                            {!! $displayValue !!}
-                                        @else
-                                            <span class="line-clamp-1 block max-w-xs">{{ $displayValue }}</span>
-                                        @endif
-                                    </td>
-                                    @endif
-                                @endforeach
-                                <td class="px-6 py-4 whitespace-nowrap text-[#6F767E]">
-                                    {{ $entry->created_at->format('M d, Y H:i') }}
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <button onclick="viewEntry({{ $entry->id }})" 
-                                        class="text-[#2563EB] hover:text-blue-700 font-bold text-xs">
-                                        View Details
-                                    </button>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                <x-admin.ui.table>
+                    <x-slot:thead>
+                        <x-admin.ui.table-header class="px-6 py-4 w-20">ID</x-admin.ui.table-header>
+                        @foreach($form->fields->take(4) as $field)
+                            @if(!in_array($field->type, ['section', 'divider', 'html']))
+                            <x-admin.ui.table-header>{{ Str::limit($field->label, 20) }}</x-admin.ui.table-header>
+                            @endif
+                        @endforeach
+                        <x-admin.ui.table-header>Submitted</x-admin.ui.table-header>
+                        <x-admin.ui.table-header align="right" class="px-6 py-4 text-right">Actions</x-admin.ui.table-header>
+                    </x-slot:thead>
+                    
+                    @foreach($entries as $entry)
+                    <x-admin.ui.table-row>
+                        <x-admin.ui.table-cell class="font-mono font-medium text-[#6F767E]">
+                            #{{ $entry->id }}
+                        </x-admin.ui.table-cell>
+                        @foreach($form->fields->take(4) as $field)
+                            @if(!in_array($field->type, ['section', 'divider', 'html']))
+                            <x-admin.ui.table-cell class="text-[#111827] dark:text-[#FCFCFC]">
+                                @php
+                                    $value = $entry->getFieldValue($field->field_id);
+                                    // Handle arrays (checkboxes/multiple uploads)
+                                    if (is_array($value)) {
+                                        $displayValue = implode(', ', $value);
+                                    } else {
+                                        $displayValue = $value;
+                                    }
+                                    
+                                    // Handle file uploads - showing generic file link/icon
+                                    if (in_array($field->type, ['file', 'image']) && $value) {
+                                        $isImage = $field->type === 'image';
+                                        $displayValue = '<span class="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-[#272B30] px-2 py-1 rounded text-[#2563EB]"><span class="material-symbols-outlined text-[14px]">'.($isImage ? 'image' : 'description').'</span> File</span>';
+                                    }
+                                @endphp
+                                
+                                @if(in_array($field->type, ['file', 'image']) && $value)
+                                    {!! $displayValue !!}
+                                @else
+                                    <span class="line-clamp-1 block max-w-xs">{{ $displayValue }}</span>
+                                @endif
+                            </x-admin.ui.table-cell>
+                            @endif
+                        @endforeach
+                        <x-admin.ui.table-cell class="whitespace-nowrap text-[#6F767E]">
+                            {{ $entry->created_at->format('M d, Y H:i') }}
+                        </x-admin.ui.table-cell>
+                        <x-admin.ui.table-cell align="right" class="px-6">
+                            <button onclick="viewEntry({{ $entry->id }})" 
+                                class="text-[#2563EB] hover:text-blue-700 font-bold text-xs">
+                                View Details
+                            </button>
+                        </x-admin.ui.table-cell>
+                    </x-admin.ui.table-row>
+                    @endforeach
+                </x-admin.ui.table>
                 
                 <!-- Pagination -->
                 @if($entries->hasPages())
@@ -212,12 +219,12 @@
                     </p>
                     <div class="flex items-center gap-2">
                         @if($entries->onFirstPage())
-                        <span class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed select-none">
+                        <span class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed select-none border border-gray-200 dark:border-[#272B30]">
                             <span class="material-symbols-outlined text-xl">chevron_left</span>
                         </span>
                         @else
                         <a href="{{ $entries->previousPageUrl() }}"
-                            class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
+                            class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
                             <span class="material-symbols-outlined text-xl">chevron_left</span>
                         </a>
                         @endif
@@ -226,17 +233,17 @@
                             @if($page == $entries->currentPage())
                             <span class="h-10 w-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-blue-500/20 select-none">{{ $page }}</span>
                             @else
-                            <a href="{{ $url }}" class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] flex items-center justify-center text-sm font-bold text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30] transition-all">{{ $page }}</a>
+                            <a href="{{ $url }}" class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-sm font-bold text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30] transition-all">{{ $page }}</a>
                             @endif
                         @endforeach
 
                         @if($entries->hasMorePages())
                         <a href="{{ $entries->nextPageUrl() }}"
-                            class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
+                            class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
                             <span class="material-symbols-outlined text-xl">chevron_right</span>
                         </a>
                         @else
-                        <span class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed select-none">
+                        <span class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed select-none border border-gray-200 dark:border-[#272B30]">
                             <span class="material-symbols-outlined text-xl">chevron_right</span>
                         </span>
                         @endif
@@ -327,7 +334,7 @@
                 html += `
                     <div class="bg-gray-50 dark:bg-[#0B0B0B] rounded-xl p-4">
                         <div class="text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-2">${field.label}</div>
-                        ${valueHtml}
+                        \${valueHtml}
                     </div>
                 `;
             });
@@ -339,11 +346,11 @@
                     <div class="text-sm text-[#6F767E]">
                         <div class="flex justify-between py-1">
                             <span>IP Address</span>
-                            <span class="font-mono">${entry.ip_address || 'N/A'}</span>
+                            <span class="font-mono">\${entry.ip_address || 'N/A'}</span>
                         </div>
                         <div class="flex justify-between py-1">
                             <span>Submitted</span>
-                            <span>${entry.submitted_at}</span>
+                            <span>\${entry.submitted_at}</span>
                         </div>
                     </div>
                 </div>

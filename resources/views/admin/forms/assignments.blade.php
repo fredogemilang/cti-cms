@@ -13,20 +13,14 @@
     </div>
 
     @if(session('success'))
-    <div class="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 p-4 rounded-xl flex items-center gap-3">
-        <span class="material-symbols-outlined">check_circle</span>
-        <span class="font-medium text-sm">{{ session('success') }}</span>
-    </div>
+    <x-admin.ui.alert type="success">{{ session('success') }}</x-admin.ui.alert>
     @endif
 
     @if(session('error'))
-    <div class="bg-rose-50 dark:bg-rose-950/20 border border-rose-500/30 text-rose-600 dark:text-rose-400 p-4 rounded-xl flex items-center gap-3">
-        <span class="material-symbols-outlined">error</span>
-        <span class="font-medium text-sm">{{ session('error') }}</span>
-    </div>
+    <x-admin.ui.alert type="danger">{{ session('error') }}</x-admin.ui.alert>
     @endif
 
-    <div class="bg-white dark:bg-[#1A1A1A] rounded-2xl border border-gray-200 dark:border-[#272B30] shadow-sm overflow-hidden p-6">
+    <x-admin.ui.card padding="p-6">
         @if(empty($placeholders))
         <div class="text-center py-12">
             <span class="material-symbols-outlined text-gray-400 dark:text-gray-600 text-5xl">layers_clear</span>
@@ -53,10 +47,7 @@
                     </div>
                     
                     <div class="w-full md:w-80">
-                        <select 
-                            name="assignments[{{ $placeholder['key'] }}]" 
-                            class="w-full rounded-xl border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#0B0B0B] px-4 py-2.5 text-sm focus:border-blue-500 focus:ring-blue-500 dark:text-[#FCFCFC]"
-                        >
+                        <x-admin.ui.select name="assignments[{{ $placeholder['key'] }}]">
                             <option value="">-- None / Disabled --</option>
                             @foreach($forms as $form)
                             <option 
@@ -66,22 +57,19 @@
                                 {{ $form->name }}
                             </option>
                             @endforeach
-                        </select>
+                        </x-admin.ui.select>
                     </div>
                 </div>
                 @endforeach
             </div>
 
             <div class="pt-6 border-t border-gray-200 dark:border-[#272B30] flex justify-end">
-                <button 
-                    type="submit" 
-                    class="px-5 py-2.5 bg-[#2563EB] hover:bg-blue-600 text-white rounded-xl font-semibold text-sm shadow-sm transition-all duration-200"
-                >
+                <x-admin.ui.button type="submit" variant="primary">
                     Save Assignments
-                </button>
+                </x-admin.ui.button>
             </div>
         </form>
         @endif
-    </div>
+    </x-admin.ui.card>
 </div>
 @endsection

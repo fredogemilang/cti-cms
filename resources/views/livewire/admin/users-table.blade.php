@@ -59,7 +59,7 @@
             </select>
             @can('users.create')
             <a href="{{ route('admin.users.create') }}" wire:navigate
-                class="flex items-center justify-center rounded-xl bg-[#2563EB] px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20">
+                class="px-6 py-3 font-bold rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white text-sm">
                 Add New User
             </a>
             @endcan
@@ -67,215 +67,189 @@
     </div>
 
     <!-- Users Table -->
-    <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] overflow-hidden relative">
-        <!-- Professional Linear Loading Bar -->
-        <div wire:loading.delay.shortest class="absolute top-0 left-0 right-0 h-1 z-20 overflow-hidden">
-            <div class="h-full bg-[#2563EB] animate-indeterminate origin-left"></div>
-        </div>
-        
-        <div class="overflow-x-auto no-scrollbar">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-50/50 dark:bg-[#0B0B0B]/20 border-b border-gray-100 dark:border-[#272B30]">
-                        <th class="px-8 py-6 w-10">
-                            <input
-                                wire:model.live="selectAll"
-                                class="custom-checkbox"
-                                type="checkbox" />
-                        </th>
-                        <th class="px-4 py-6">
-                            <button wire:click="sortBy('name')" class="flex items-center gap-1 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest hover:text-[#2563EB] transition-colors">
-                                User
-                                @if($sortField === 'name')
-                                    <span class="material-symbols-outlined text-base">{{ $sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
-                                @else
-                                    <span class="material-symbols-outlined text-base opacity-30">unfold_more</span>
-                                @endif
-                            </button>
-                        </th>
-                        <th class="px-4 py-6 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">Roles</th>
-                        <th class="px-4 py-6 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">Status</th>
-                        <th class="px-4 py-6">
-                            <button wire:click="sortBy('last_login_at')" class="flex items-center gap-1 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest hover:text-[#2563EB] transition-colors">
-                                Last Login
-                                @if($sortField === 'last_login_at')
-                                    <span class="material-symbols-outlined text-base">{{ $sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
-                                @else
-                                    <span class="material-symbols-outlined text-base opacity-30">unfold_more</span>
-                                @endif
-                            </button>
-                        </th>
-                        <th class="px-8 py-6 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50 dark:divide-[#272B30]/30 transition-opacity duration-200" wire:loading.class="opacity-50 pointer-events-none">
-                    @forelse($users as $user)
-                    @php
-                        $colors = ['blue', 'purple', 'orange', 'green', 'pink', 'cyan', 'amber', 'indigo'];
-                        $colorIndex = crc32($user->email) % count($colors);
-                        $avatarColor = $colors[$colorIndex];
-                        $colorClasses = [
-                            'blue' => 'bg-blue-500/10 text-blue-500',
-                            'purple' => 'bg-purple-500/10 text-purple-500',
-                            'orange' => 'bg-orange-500/10 text-orange-500',
-                            'green' => 'bg-green-500/10 text-green-500',
-                            'pink' => 'bg-pink-500/10 text-pink-500',
-                            'cyan' => 'bg-cyan-500/10 text-cyan-500',
-                            'amber' => 'bg-amber-500/10 text-amber-500',
-                            'indigo' => 'bg-indigo-500/10 text-indigo-500',
-                        ];
-                    @endphp
-                    <tr class="group hover:bg-gray-50/50 dark:hover:bg-[#272B30]/10 transition-colors" wire:key="user-{{ $user->id }}">
-                        <td class="px-8 py-5">
-                            <input
-                                wire:model.live="selectedUsers"
-                                value="{{ $user->id }}"
-                                class="custom-checkbox"
-                                type="checkbox" />
-                        </td>
-                        <td class="px-4 py-5">
-                            <div class="flex items-center gap-4">
-                                <div class="h-11 w-11 rounded-2xl {{ $colorClasses[$avatarColor] }} flex items-center justify-center font-bold text-sm">
-                                    {{ strtoupper(substr($user->name, 0, 2)) }}
-                                </div>
-                                <div>
-                                    <p class="text-[15px] font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $user->name }}</p>
-                                    <p class="text-xs text-[#6F767E]">{{ $user->email }}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-4 py-5">
-                            @if($user->roles->isNotEmpty())
-                                <div class="flex flex-wrap gap-1">
-                                    @foreach($user->roles as $role)
-                                        @if($role->is_super_admin)
-                                            <span class="inline-flex items-center rounded-lg bg-red-100 dark:bg-red-900/30 px-2.5 py-1 text-[11px] font-bold text-red-700 dark:text-red-400 uppercase tracking-wider">{{ $role->name }}</span>
-                                        @else
-                                            <span class="inline-flex items-center rounded-lg bg-gray-100 dark:bg-[#272B30] px-2.5 py-1 text-[11px] font-bold text-[#6F767E] dark:text-[#FCFCFC] uppercase tracking-wider">{{ $role->name }}</span>
-                                        @endif
-                                    @endforeach
-                                </div>
-                            @else
-                                <span class="inline-flex items-center rounded-lg bg-gray-100 dark:bg-[#272B30] px-2.5 py-1 text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">No Role</span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-5">
-                            @if($user->is_active)
-                            <span class="inline-flex items-center gap-1.5 rounded-lg bg-[#3F8C5826] px-2.5 py-1 text-[11px] font-bold text-[#83BF6E] uppercase tracking-wider">
-                                <span class="h-1.5 w-1.5 rounded-full bg-[#83BF6E]"></span>
-                                Active
-                            </span>
-                            @else
-                            <span class="inline-flex items-center gap-1.5 rounded-lg bg-red-100 dark:bg-red-900/30 px-2.5 py-1 text-[11px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">
-                                <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
-                                Inactive
-                            </span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-5">
-                            <p class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">
-                                {{ $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Never' }}
-                            </p>
-                        </td>
-                        <td class="px-8 py-5 text-right">
-                            <div class="flex gap-2 items-center justify-end">
-                                @can('users.view')
-                                <a href="{{ route('admin.users.show', $user) }}" wire:navigate
-                                    class="w-9 h-9 p-2 rounded-xl text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-950/20 flex items-center justify-center transition-colors"
-                                    data-tooltip="View User">
-                                    <span class="material-symbols-outlined text-[20px]">visibility</span>
-                                </a>
-                                @endcan
-                                
-                                @can('users.edit')
-                                <a href="{{ route('admin.users.edit', $user) }}" wire:navigate
-                                    class="w-9 h-9 p-2 rounded-xl text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 flex items-center justify-center transition-colors"
-                                    data-tooltip="Edit User">
-                                    <span class="material-symbols-outlined text-[20px]">edit</span>
-                                </a>
-                                @endcan
-                                
-                                @can('users.delete')
-                                @if($user->id !== auth()->id())
-                                <button 
-                                    x-data
-                                    @click="$dispatch('open-delete-modal', { userId: {{ $user->id }}, userName: '{{ addslashes($user->name) }}' })"
-                                    class="w-9 h-9 p-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
-                                    data-tooltip="Delete User">
-                                    <span class="material-symbols-outlined text-[20px]">delete</span>
-                                </button>
-                                @endif
-                                @endcan
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="px-8 py-16 text-center">
-                            <div class="flex flex-col items-center">
-                                <div class="h-16 w-16 rounded-full bg-gray-100 dark:bg-[#272B30] flex items-center justify-center mb-4">
-                                    <span class="material-symbols-outlined text-3xl text-[#6F767E]">group</span>
-                                </div>
-                                <p class="text-[#6F767E] font-medium">
-                                    @if($search || $roleFilter || $statusFilter)
-                                        No users found matching your criteria
-                                    @else
-                                        No users found
-                                    @endif
-                                </p>
-                                @if($search || $roleFilter || $statusFilter)
-                                <button wire:click="clearFilters" class="mt-3 text-sm text-[#2563EB] hover:underline">Clear filters</button>
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <x-admin.ui.table>
+        <x-slot:thead>
+            <x-admin.ui.table-header class="px-8 w-10">
+                <input
+                    wire:model.live="selectAll"
+                    class="custom-checkbox"
+                    type="checkbox" />
+            </x-admin.ui.table-header>
+            <x-admin.ui.table-header sortBy="name" :field="$sortField" :direction="$sortDirection">
+                User
+            </x-admin.ui.table-header>
+            <x-admin.ui.table-header>Roles</x-admin.ui.table-header>
+            <x-admin.ui.table-header>Status</x-admin.ui.table-header>
+            <x-admin.ui.table-header sortBy="last_login_at" :field="$sortField" :direction="$sortDirection">
+                Last Login
+            </x-admin.ui.table-header>
+            <x-admin.ui.table-header align="right" class="px-8">Actions</x-admin.ui.table-header>
+        </x-slot:thead>
 
-        <!-- Pagination -->
-        @if($users->hasPages())
-        <div class="px-8 py-6 border-t border-gray-100 dark:border-[#272B30] flex items-center justify-between">
-            <p class="text-sm font-medium text-[#6F767E]">
-                Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} users
-            </p>
-            <div class="flex items-center gap-2">
-                @if($users->onFirstPage())
-                <button disabled
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed">
-                    <span class="material-symbols-outlined text-xl">chevron_left</span>
-                </button>
+        @forelse($users as $user)
+        @php
+            $colors = ['blue', 'purple', 'orange', 'green', 'pink', 'cyan', 'amber', 'indigo'];
+            $colorIndex = crc32($user->email) % count($colors);
+            $avatarColor = $colors[$colorIndex];
+            $colorClasses = [
+                'blue' => 'bg-blue-500/10 text-blue-500',
+                'purple' => 'bg-purple-500/10 text-purple-500',
+                'orange' => 'bg-orange-500/10 text-orange-500',
+                'green' => 'bg-green-500/10 text-green-500',
+                'pink' => 'bg-pink-500/10 text-pink-500',
+                'cyan' => 'bg-cyan-500/10 text-cyan-500',
+                'amber' => 'bg-amber-500/10 text-amber-500',
+                'indigo' => 'bg-indigo-500/10 text-indigo-500',
+            ];
+        @endphp
+        <x-admin.ui.table-row wire:key="user-{{ $user->id }}">
+            <x-admin.ui.table-cell class="px-8">
+                <input
+                    wire:model.live="selectedUsers"
+                    value="{{ $user->id }}"
+                    class="custom-checkbox"
+                    type="checkbox" />
+            </x-admin.ui.table-cell>
+            <x-admin.ui.table-cell>
+                <div class="flex items-center gap-4">
+                    <div class="h-11 w-11 rounded-2xl {{ $colorClasses[$avatarColor] }} flex items-center justify-center font-bold text-sm">
+                        {{ strtoupper(substr($user->name, 0, 2)) }}
+                    </div>
+                    <div>
+                        <p class="text-[15px] font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $user->name }}</p>
+                        <p class="text-xs text-[#6F767E]">{{ $user->email }}</p>
+                    </div>
+                </div>
+            </x-admin.ui.table-cell>
+            <x-admin.ui.table-cell>
+                @if($user->roles->isNotEmpty())
+                    <div class="flex flex-wrap gap-1">
+                        @foreach($user->roles as $role)
+                            @if($role->is_super_admin)
+                                <span class="inline-flex items-center rounded-lg bg-red-100 dark:bg-red-900/30 px-2.5 py-1 text-[11px] font-bold text-red-700 dark:text-red-400 uppercase tracking-wider">{{ $role->name }}</span>
+                            @else
+                                <span class="inline-flex items-center rounded-lg bg-gray-100 dark:bg-[#272B30] px-2.5 py-1 text-[11px] font-bold text-[#6F767E] dark:text-[#FCFCFC] uppercase tracking-wider">{{ $role->name }}</span>
+                            @endif
+                        @endforeach
+                    </div>
                 @else
-                <button wire:click="previousPage"
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
-                    <span class="material-symbols-outlined text-xl">chevron_left</span>
-                </button>
+                    <span class="inline-flex items-center rounded-lg bg-gray-100 dark:bg-[#272B30] px-2.5 py-1 text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">No Role</span>
                 @endif
-
-                @foreach($users->getUrlRange(max(1, $users->currentPage() - 2), min($users->lastPage(), $users->currentPage() + 2)) as $page => $url)
-                    @if($page == $users->currentPage())
-                    <button class="h-10 w-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-blue-500/20">{{ $page }}</button>
-                    @else
-                    <button wire:click="gotoPage({{ $page }})" class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] flex items-center justify-center text-sm font-bold text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30] transition-all">{{ $page }}</button>
+            </x-admin.ui.table-cell>
+            <x-admin.ui.table-cell>
+                @if($user->is_active)
+                <span class="inline-flex items-center gap-1.5 rounded-lg bg-[#3F8C5826] px-2.5 py-1 text-[11px] font-bold text-[#83BF6E] uppercase tracking-wider">
+                    <span class="h-1.5 w-1.5 rounded-full bg-[#83BF6E]"></span>
+                    Active
+                </span>
+                @else
+                <span class="inline-flex items-center gap-1.5 rounded-lg bg-red-100 dark:bg-red-900/30 px-2.5 py-1 text-[11px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">
+                    <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+                    Inactive
+                </span>
+                @endif
+            </x-admin.ui.table-cell>
+            <x-admin.ui.table-cell>
+                <p class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">
+                    {{ $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Never' }}
+                </p>
+            </x-admin.ui.table-cell>
+            <x-admin.ui.table-cell align="right" class="px-8">
+                <div class="flex gap-2 items-center justify-end">
+                    @can('users.view')
+                    <a href="{{ route('admin.users.show', $user) }}" wire:navigate
+                        class="w-9 h-9 p-2 rounded-xl text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-950/20 flex items-center justify-center transition-colors"
+                        data-tooltip="View User">
+                        <span class="material-symbols-outlined text-[20px]">visibility</span>
+                    </a>
+                    @endcan
+                    
+                    @can('users.edit')
+                    <a href="{{ route('admin.users.edit', $user) }}" wire:navigate
+                        class="w-9 h-9 p-2 rounded-xl text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 flex items-center justify-center transition-colors"
+                        data-tooltip="Edit User">
+                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                    </a>
+                    @endcan
+                    
+                    @can('users.delete')
+                    @if($user->id !== auth()->id())
+                    <button 
+                        x-data
+                        @click="$dispatch('open-delete-modal', { userId: {{ $user->id }}, userName: '{{ addslashes($user->name) }}' })"
+                        class="w-9 h-9 p-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
+                        data-tooltip="Delete User">
+                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                    </button>
                     @endif
-                @endforeach
+                    @endcan
+                </div>
+            </x-admin.ui.table-cell>
+        </x-admin.ui.table-row>
+        @empty
+        <tr>
+            <td colspan="6" class="px-8 py-16 text-center">
+                <div class="flex flex-col items-center">
+                    <div class="h-16 w-16 rounded-full bg-gray-100 dark:bg-[#272B30] flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-3xl text-[#6F767E]">group</span>
+                    </div>
+                    <p class="text-[#6F767E] font-medium">
+                        @if($search || $roleFilter || $statusFilter)
+                            No users found matching your criteria
+                        @else
+                            No users found
+                        @endif
+                    </p>
+                    @if($search || $roleFilter || $statusFilter)
+                    <button wire:click="clearFilters" class="mt-3 text-sm text-[#2563EB] hover:underline">Clear filters</button>
+                    @endif
+                </div>
+            </td>
+        </tr>
+        @endforelse
+    </x-admin.ui.table>
 
-                @if($users->hasMorePages())
-                <button wire:click="nextPage"
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
-                    <span class="material-symbols-outlined text-xl">chevron_right</span>
-                </button>
+    <!-- Pagination -->
+    @if($users->hasPages())
+    <div class="mt-6 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl p-6 flex items-center justify-between shadow-sm">
+        <p class="text-sm font-medium text-[#6F767E]">
+            Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} users
+        </p>
+        <div class="flex items-center gap-2">
+            @if($users->onFirstPage())
+            <button disabled
+                class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed border border-gray-200 dark:border-[#272B30]">
+                <span class="material-symbols-outlined text-xl">chevron_left</span>
+            </button>
+            @else
+            <button wire:click="previousPage"
+                class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
+                <span class="material-symbols-outlined text-xl">chevron_left</span>
+            </button>
+            @endif
+
+            @foreach($users->getUrlRange(max(1, $users->currentPage() - 2), min($users->lastPage(), $users->currentPage() + 2)) as $page => $url)
+                @if($page == $users->currentPage())
+                <button class="h-10 w-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-blue-500/20">{{ $page }}</button>
                 @else
-                <button disabled
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed">
-                    <span class="material-symbols-outlined text-xl">chevron_right</span>
-                </button>
+                <button wire:click="gotoPage({{ $page }})" class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-sm font-bold text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30] transition-all">{{ $page }}</button>
                 @endif
-            </div>
+            @endforeach
+
+            @if($users->hasMorePages())
+            <button wire:click="nextPage"
+                class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
+                <span class="material-symbols-outlined text-xl">chevron_right</span>
+            </button>
+            @else
+            <button disabled
+                class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed border border-gray-200 dark:border-[#272B30]">
+                <span class="material-symbols-outlined text-xl">chevron_right</span>
+            </button>
+            @endif
         </div>
-        @endif
     </div>
+    @endif
 
     <!-- Bulk Action Bar (Floating) -->
     @if(count($selectedUsers) > 0)
@@ -338,15 +312,17 @@
                 @endforeach
             </select>
             <div class="flex gap-2">
-                <button @click="showRoleModal = false" class="flex-1 h-10 rounded-xl bg-gray-100 dark:bg-[#272B30] text-[#6F767E] text-sm font-bold hover:bg-gray-200 dark:hover:bg-[#333] transition-all">
+                <x-admin.ui.button type="button" variant="secondary" @click="showRoleModal = false" class="flex-1 !h-10 !py-0 !rounded-xl text-sm">
                     Cancel
-                </button>
-                <button 
+                </x-admin.ui.button>
+                <x-admin.ui.button 
+                    type="button"
+                    variant="primary"
                     wire:click="changeRoleSelected($wire.bulkRoleId)"
                     @click="showRoleModal = false"
-                    class="flex-1 h-10 rounded-xl bg-[#2563EB] text-white text-sm font-bold hover:bg-blue-700 transition-all">
+                    class="flex-1 !h-10 !py-0 !rounded-xl text-sm">
                     Apply
-                </button>
+                </x-admin.ui.button>
             </div>
         </div>
     </div>
@@ -395,11 +371,12 @@
                     </template>
                 </p>
                 <div class="flex items-center gap-3 w-full">
-                    <button @click="show = false"
-                        class="flex-1 h-12 rounded-xl bg-gray-100 dark:bg-[#272B30] text-gray-700 dark:text-[#FCFCFC] text-sm font-bold hover:bg-gray-200 dark:hover:bg-[#33383f] transition-all active:scale-95">
+                    <x-admin.ui.button type="button" variant="secondary" @click="show = false" class="flex-1">
                         Cancel
-                    </button>
-                    <button 
+                    </x-admin.ui.button>
+                    <x-admin.ui.button 
+                        type="button"
+                        variant="danger"
                         @click="
                             if (bulk) {
                                 $wire.deleteSelected();
@@ -408,9 +385,9 @@
                             }
                             show = false;
                         "
-                        class="flex-1 h-12 rounded-xl bg-[#FF6A55] text-white text-sm font-bold hover:bg-[#E55F4D] transition-all shadow-lg shadow-[#FF6A55]/20 active:scale-95">
+                        class="flex-1">
                         Delete
-                    </button>
+                    </x-admin.ui.button>
                 </div>
             </div>
         </div>
@@ -448,15 +425,15 @@
                     Are you sure you want to activate <span class="font-bold">{{ count($selectedUsers) }}</span> selected user(s)? They will be able to access the system.
                 </p>
                 <div class="flex items-center gap-3 w-full">
-                    <button @click="show = false"
-                        class="flex-1 h-12 rounded-xl bg-gray-100 dark:bg-[#272B30] text-gray-700 dark:text-[#FCFCFC] text-sm font-bold hover:bg-gray-200 dark:hover:bg-[#33383f] transition-all active:scale-95">
+                    <x-admin.ui.button type="button" variant="secondary" @click="show = false" class="flex-1">
                         Cancel
-                    </button>
-                    <button 
+                    </x-admin.ui.button>
+                    <x-admin.ui.button 
+                        type="button"
                         @click="$wire.activateSelected(); show = false;"
-                        class="flex-1 h-12 rounded-xl bg-[#83BF6E] text-white text-sm font-bold hover:bg-[#6fa85a] transition-all shadow-lg shadow-[#83BF6E]/20 active:scale-95">
+                        class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold rounded-2xl py-3 px-6 shadow-sm transition-all">
                         Activate
-                    </button>
+                    </x-admin.ui.button>
                 </div>
             </div>
         </div>
@@ -494,15 +471,15 @@
                     Are you sure you want to deactivate <span class="font-bold">{{ count($selectedUsers) }}</span> selected user(s)? They will no longer be able to access the system.
                 </p>
                 <div class="flex items-center gap-3 w-full">
-                    <button @click="show = false"
-                        class="flex-1 h-12 rounded-xl bg-gray-100 dark:bg-[#272B30] text-gray-700 dark:text-[#FCFCFC] text-sm font-bold hover:bg-gray-200 dark:hover:bg-[#33383f] transition-all active:scale-95">
+                    <x-admin.ui.button type="button" variant="secondary" @click="show = false" class="flex-1">
                         Cancel
-                    </button>
-                    <button 
+                    </x-admin.ui.button>
+                    <x-admin.ui.button 
+                        type="button"
                         @click="$wire.deactivateSelected(); show = false;"
-                        class="flex-1 h-12 rounded-xl bg-amber-500 text-white text-sm font-bold hover:bg-amber-600 transition-all shadow-lg shadow-amber-500/20 active:scale-95">
+                        class="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-2xl py-3 px-6 shadow-sm transition-all">
                         Deactivate
-                    </button>
+                    </x-admin.ui.button>
                 </div>
             </div>
         </div>

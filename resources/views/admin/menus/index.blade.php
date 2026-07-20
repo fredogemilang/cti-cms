@@ -6,39 +6,35 @@
 @section('content')
 <div class="space-y-6">
     <!-- Header with Actions -->
-    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl shadow-sm p-6 flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-[#FCFCFC]">Navigation Menus</h2>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Manage sidebar navigation structure</p>
+    <x-admin.ui.card padding="p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-[#FCFCFC]">Navigation Menus</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Manage sidebar navigation structure</p>
+            </div>
+            @can('menus.create')
+            <a href="{{ route('admin.menus.create') }}" wire:navigate class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add Menu Item
+            </a>
+            @endcan
         </div>
-        @can('menus.create')
-        <a href="{{ route('admin.menus.create') }}" wire:navigate class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            Add Menu Item
-        </a>
-        @endcan
-    </div>
+    </x-admin.ui.card>
 
     <!-- Success Message -->
     @if(session('success'))
-    <div class="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 p-4 rounded-xl flex items-center gap-3">
-        <span class="material-symbols-outlined">check_circle</span>
-        <span class="font-medium text-sm">{{ session('success') }}</span>
-    </div>
+    <x-admin.ui.alert type="success">{{ session('success') }}</x-admin.ui.alert>
     @endif
 
     <!-- Error Message -->
     @if(session('error'))
-    <div class="bg-rose-50 dark:bg-rose-950/20 border border-rose-500/30 text-rose-600 dark:text-rose-400 p-4 rounded-xl flex items-center gap-3">
-        <span class="material-symbols-outlined">error</span>
-        <span class="font-medium text-sm">{{ session('error') }}</span>
-    </div>
+    <x-admin.ui.alert type="danger">{{ session('error') }}</x-admin.ui.alert>
     @endif
 
     <!-- Menu Items -->
-    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl shadow-sm p-6">
+    <x-admin.ui.card padding="p-6">
         <div class="space-y-3" id="menu-list">
             @forelse($menus as $menu)
             <div class="bg-white/50 dark:bg-[#1A1A1A]/50 rounded-2xl border border-gray-200 dark:border-[#272B30] overflow-hidden">
@@ -191,6 +187,6 @@
             </div>
             @endforelse
         </div>
-    </div>
+    </x-admin.ui.card>
 </div>
 @endsection

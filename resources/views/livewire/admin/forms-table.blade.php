@@ -22,12 +22,14 @@
                 </div>
 
                 @if($search || $statusFilter)
-                <button
+                <x-admin.ui.button
                     wire:click="clearFilters"
-                    class="h-12 px-4 rounded-xl bg-gray-100 dark:bg-[#272B30] text-[#6F767E] font-medium text-sm hover:bg-gray-200 dark:hover:bg-[#333] transition-all flex items-center gap-2">
-                    <span class="material-symbols-outlined text-lg">close</span>
+                    variant="outline"
+                    class="!h-12 !py-0 !rounded-xl text-sm"
+                >
+                    <span class="material-symbols-outlined text-lg mr-2">close</span>
                     Clear
-                </button>
+                </x-admin.ui.button>
                 @endif
             </div>
 
@@ -47,7 +49,7 @@
                 
                 @can('forms.create')
                 <a href="{{ route('admin.forms.create') }}" wire:navigate
-                    class="flex items-center justify-center rounded-xl bg-[#2563EB] px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 h-12 whitespace-nowrap">
+                    class="px-6 py-3 font-bold rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white text-sm h-12 whitespace-nowrap">
                     <span class="material-symbols-outlined text-[20px] mr-2">add</span>
                     Create Form
                 </a>
@@ -82,212 +84,186 @@
     </div>
 
     {{-- Forms Table --}}
-    <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] overflow-hidden relative">
-        {{-- Loading Bar --}}
-        <div wire:loading.delay.shortest class="absolute top-0 left-0 right-0 h-1 z-20 overflow-hidden">
-            <div class="h-full bg-[#2563EB] animate-indeterminate origin-left"></div>
-        </div>
-        
-        <div class="overflow-x-auto no-scrollbar">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-50/50 dark:bg-[#0B0B0B]/20 border-b border-gray-100 dark:border-[#272B30]">
-                        <th class="px-8 py-6 w-10">
-                            <input
-                                wire:model.live="selectAll"
-                                class="custom-checkbox"
-                                type="checkbox" />
-                        </th>
-                        <th class="px-4 py-6">
-                            <button wire:click="sortBy('name')" class="flex items-center gap-1 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest hover:text-[#2563EB] transition-colors">
-                                Form Name
-                                @if($sortField === 'name')
-                                    <span class="material-symbols-outlined text-base">{{ $sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
-                                @else
-                                    <span class="material-symbols-outlined text-base opacity-30">unfold_more</span>
-                                @endif
-                            </button>
-                        </th>
-                        <th class="px-4 py-6 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">Slug</th>
-                        <th class="px-4 py-6 text-center">
-                            <button wire:click="sortBy('entries_count')" class="flex items-center gap-1 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest hover:text-[#2563EB] transition-colors mx-auto">
-                                Submissions
-                                @if($sortField === 'entries_count')
-                                    <span class="material-symbols-outlined text-base">{{ $sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
-                                @else
-                                    <span class="material-symbols-outlined text-base opacity-30">unfold_more</span>
-                                @endif
-                            </button>
-                        </th>
-                        <th class="px-4 py-6 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest text-center">Status</th>
-                        <th class="px-4 py-6">
-                            <button wire:click="sortBy('created_at')" class="flex items-center gap-1 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest hover:text-[#2563EB] transition-colors">
-                                Created
-                                @if($sortField === 'created_at')
-                                    <span class="material-symbols-outlined text-base">{{ $sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
-                                @else
-                                    <span class="material-symbols-outlined text-base opacity-30">unfold_more</span>
-                                @endif
-                            </button>
-                        </th>
-                        <th class="px-8 py-6 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50 dark:divide-[#272B30]/30 transition-opacity duration-200" wire:loading.class="opacity-50 pointer-events-none">
-                    @forelse($forms as $form)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-[#272B30] transition-colors" wire:key="form-{{ $form->id }}">
-                        <td class="px-8 py-5">
-                            <input
-                                wire:model.live="selectedForms"
-                                value="{{ $form->id }}"
-                                class="custom-checkbox"
-                                type="checkbox" />
-                        </td>
-                        <td class="px-4 py-5">
-                            <div>
-                                <p class="text-[15px] font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $form->name }}</p>
-                                @if($form->description)
-                                <p class="text-xs text-[#6F767E] line-clamp-1 mt-1">{{ Str::limit($form->description, 60) }}</p>
-                                @endif
-                            </div>
-                        </td>
-                        <td class="px-4 py-5">
-                            <code class="text-xs bg-gray-100 dark:bg-[#272B30] text-[#2563EB] px-2 py-1 rounded-lg font-mono">{{ $form->slug }}</code>
-                        </td>
-                        <td class="px-4 py-5 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined text-[#6F767E] text-[18px]">description</span>
-                                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ number_format($form->entries_count) }}</span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-5 text-center">
-                            <button 
-                                wire:click="toggleStatus({{ $form->id }})"
-                                class="inline-flex items-center gap-1.5 rounded-lg {{ $form->is_active ? 'bg-[#3F8C5826] text-[#83BF6E]' : 'bg-gray-100 dark:bg-[#272B30] text-[#6F767E]' }} px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider hover:opacity-80 transition-opacity">
-                                <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
-                                {{ $form->is_active ? 'Active' : 'Inactive' }}
-                            </button>
-                        </td>
-                        <td class="px-4 py-5">
-                            <p class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">{{ $form->created_at->format('M d, Y') }}</p>
-                            <p class="text-xs text-[#6F767E]">{{ $form->created_at->format('H:i') }}</p>
-                        </td>
-                        <td class="px-8 py-5 text-right">
-                            <div class="flex gap-2 items-center justify-end">
-                                @if($statusFilter === 'trashed')
-                                    @can('forms.delete')
-                                    <button 
-                                        wire:click="restore({{ $form->id }})"
-                                        class="w-9 h-9 p-2 rounded-xl text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 flex items-center justify-center transition-colors"
-                                        data-tooltip="Restore">
-                                        <span class="material-symbols-outlined text-[20px]">restore_from_trash</span>
-                                    </button>
-                                    
-                                    <button 
-                                        x-data
-                                        @click="$dispatch('open-force-delete-modal', { formId: {{ $form->id }}, formName: '{{ addslashes($form->name) }}' })"
-                                        class="w-9 h-9 p-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
-                                        data-tooltip="Delete Permanently">
-                                        <span class="material-symbols-outlined text-[20px]">delete_forever</span>
-                                    </button>
-                                    @endcan
-                                @else
-                                    @can('forms.view')
-                                    <a href="{{ route('admin.forms.entries', $form) }}"
-                                        class="w-9 h-9 p-2 rounded-xl text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 flex items-center justify-center transition-colors"
-                                        data-tooltip="View Submissions">
-                                        <span class="material-symbols-outlined text-[20px]">list_alt</span>
-                                    </a>
-                                    @endcan
-                                    
-                                    @can('forms.edit')
-                                    <a href="{{ route('admin.forms.edit', $form) }}" wire:navigate
-                                        class="w-9 h-9 p-2 rounded-xl text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 flex items-center justify-center transition-colors"
-                                        data-tooltip="Edit Form">
-                                        <span class="material-symbols-outlined text-[20px]">edit</span>
-                                    </a>
-                                    @endcan
-                                    
-                                    @can('forms.delete')
-                                    <button 
-                                        x-data
-                                        @click="$dispatch('open-delete-modal', { formId: {{ $form->id }}, formName: '{{ addslashes($form->name) }}' })"
-                                        class="w-9 h-9 p-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
-                                        data-tooltip="Delete Form">
-                                        <span class="material-symbols-outlined text-[20px]">delete</span>
-                                    </button>
-                                    @endcan
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="7" class="px-8 py-16 text-center">
-                            <div class="flex flex-col items-center">
-                                <div class="h-16 w-16 rounded-full bg-gray-100 dark:bg-[#272B30] flex items-center justify-center mb-4">
-                                    <span class="material-symbols-outlined text-3xl text-[#6F767E]">description</span>
-                                </div>
-                                <p class="text-[#6F767E] font-medium">
-                                    @if($search || $statusFilter)
-                                        No forms found matching your criteria
-                                    @else
-                                        No forms yet. Create your first form!
-                                    @endif
-                                </p>
-                                @if($search || $statusFilter)
-                                <button wire:click="clearFilters" class="mt-3 text-sm text-[#2563EB] hover:underline">Clear filters</button>
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        {{-- Pagination --}}
-        @if($forms->hasPages())
-        <div class="px-8 py-6 border-t border-gray-100 dark:border-[#272B30] flex items-center justify-between">
-            <p class="text-sm font-medium text-[#6F767E]">
-                Showing {{ $forms->firstItem() }} to {{ $forms->lastItem() }} of {{ $forms->total() }} forms
-            </p>
-            <div class="flex items-center gap-2">
-                @if($forms->onFirstPage())
-                <button disabled
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed">
-                    <span class="material-symbols-outlined text-xl">chevron_left</span>
-                </button>
-                @else
-                <button wire:click="previousPage"
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
-                    <span class="material-symbols-outlined text-xl">chevron_left</span>
-                </button>
-                @endif
-
-                @foreach($forms->getUrlRange(max(1, $forms->currentPage() - 2), min($forms->lastPage(), $forms->currentPage() + 2)) as $page => $url)
-                    @if($page == $forms->currentPage())
-                    <button class="h-10 w-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-blue-500/20">{{ $page }}</button>
+    <x-admin.ui.table>
+        <x-slot:thead>
+            <x-admin.ui.table-header class="px-8 w-10">
+                <input
+                    wire:model.live="selectAll"
+                    class="custom-checkbox"
+                    type="checkbox" />
+            </x-admin.ui.table-header>
+            <x-admin.ui.table-header sortBy="name" :field="$sortField" :direction="$sortDirection">
+                Form Name
+            </x-admin.ui.table-header>
+            <x-admin.ui.table-header>Slug</x-admin.ui.table-header>
+            <x-admin.ui.table-header class="text-center">
+                <button wire:click="sortBy('entries_count')" class="flex items-center gap-1 hover:text-[#2563EB] transition-colors focus:outline-none mx-auto">
+                    Submissions
+                    @if($sortField === 'entries_count')
+                        <span class="material-symbols-outlined text-base text-[#2563EB]">{{ $sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
                     @else
-                    <button wire:click="gotoPage({{ $page }})" class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] flex items-center justify-center text-sm font-bold text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30] transition-all">{{ $page }}</button>
+                        <span class="material-symbols-outlined text-base opacity-30">unfold_more</span>
                     @endif
-                @endforeach
+                </button>
+            </x-admin.ui.table-header>
+            <x-admin.ui.table-header class="text-center">Status</x-admin.ui.table-header>
+            <x-admin.ui.table-header sortBy="created_at" :field="$sortField" :direction="$sortDirection">
+                Created
+            </x-admin.ui.table-header>
+            <x-admin.ui.table-header align="right" class="px-8 w-24">Actions</x-admin.ui.table-header>
+        </x-slot:thead>
 
-                @if($forms->hasMorePages())
-                <button wire:click="nextPage"
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
-                    <span class="material-symbols-outlined text-xl">chevron_right</span>
+        @forelse($forms as $form)
+        <x-admin.ui.table-row wire:key="form-{{ $form->id }}">
+            <x-admin.ui.table-cell class="px-8">
+                <input
+                    wire:model.live="selectedForms"
+                    value="{{ $form->id }}"
+                    class="custom-checkbox"
+                    type="checkbox" />
+            </x-admin.ui.table-cell>
+            <x-admin.ui.table-cell>
+                <div>
+                    <p class="text-[15px] font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $form->name }}</p>
+                    @if($form->description)
+                    <p class="text-xs text-[#6F767E] line-clamp-1 mt-1">{{ Str::limit($form->description, 60) }}</p>
+                    @endif
+                </div>
+            </x-admin.ui.table-cell>
+            <x-admin.ui.table-cell>
+                <code class="text-xs bg-gray-100 dark:bg-[#272B30] text-[#2563EB] px-2 py-1 rounded-lg font-mono">{{ $form->slug }}</code>
+            </x-admin.ui.table-cell>
+            <x-admin.ui.table-cell class="text-center">
+                <div class="flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-[#6F767E] text-[18px]">description</span>
+                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ number_format($form->entries_count) }}</span>
+                </div>
+            </x-admin.ui.table-cell>
+            <x-admin.ui.table-cell class="text-center">
+                <button 
+                    wire:click="toggleStatus({{ $form->id }})"
+                    class="inline-flex items-center gap-1.5 rounded-lg {{ $form->is_active ? 'bg-[#3F8C5826] text-[#83BF6E]' : 'bg-gray-100 dark:bg-[#272B30] text-[#6F767E]' }} px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider hover:opacity-80 transition-opacity">
+                    <span class="h-1.5 w-1.5 rounded-full bg-current"></span>
+                    {{ $form->is_active ? 'Active' : 'Inactive' }}
                 </button>
+            </x-admin.ui.table-cell>
+            <x-admin.ui.table-cell>
+                <p class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">{{ $form->created_at->format('M d, Y') }}</p>
+                <p class="text-xs text-[#6F767E]">{{ $form->created_at->format('H:i') }}</p>
+            </x-admin.ui.table-cell>
+            <x-admin.ui.table-cell align="right" class="px-8">
+                <div class="flex gap-2 items-center justify-end">
+                    @if($statusFilter === 'trashed')
+                        @can('forms.delete')
+                        <button 
+                            wire:click="restore({{ $form->id }})"
+                            class="w-9 h-9 p-2 rounded-xl text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950/20 flex items-center justify-center transition-colors"
+                            data-tooltip="Restore">
+                            <span class="material-symbols-outlined text-[20px]">restore_from_trash</span>
+                        </button>
+                        
+                        <button 
+                            x-data
+                            @click="$dispatch('open-force-delete-modal', { formId: {{ $form->id }}, formName: '{{ addslashes($form->name) }}' })"
+                            class="w-9 h-9 p-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
+                            data-tooltip="Delete Permanently">
+                            <span class="material-symbols-outlined text-[20px]">delete_forever</span>
+                        </button>
+                        @endcan
+                    @else
+                        @can('forms.view')
+                        <a href="{{ route('admin.forms.entries', $form) }}"
+                            class="w-9 h-9 p-2 rounded-xl text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 flex items-center justify-center transition-colors"
+                            data-tooltip="View Submissions">
+                            <span class="material-symbols-outlined text-[20px]">list_alt</span>
+                        </a>
+                        @endcan
+                        
+                        @can('forms.edit')
+                        <a href="{{ route('admin.forms.edit', $form) }}" wire:navigate
+                            class="w-9 h-9 p-2 rounded-xl text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 flex items-center justify-center transition-colors"
+                            data-tooltip="Edit Form">
+                            <span class="material-symbols-outlined text-[20px]">edit</span>
+                        </a>
+                        @endcan
+                        
+                        @can('forms.delete')
+                        <button 
+                            x-data
+                            @click="$dispatch('open-delete-modal', { formId: {{ $form->id }}, formName: '{{ addslashes($form->name) }}' })"
+                            class="w-9 h-9 p-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
+                            data-tooltip="Delete Form">
+                            <span class="material-symbols-outlined text-[20px]">delete</span>
+                        </button>
+                        @endcan
+                    @endif
+                </div>
+            </x-admin.ui.table-cell>
+        </x-admin.ui.table-row>
+        @empty
+        <tr>
+            <td colspan="7" class="px-8 py-16 text-center">
+                <div class="flex flex-col items-center">
+                    <div class="h-16 w-16 rounded-full bg-gray-100 dark:bg-[#272B30] flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-3xl text-[#6F767E]">description</span>
+                    </div>
+                    <p class="text-[#6F767E] font-medium">
+                        @if($search || $statusFilter)
+                            No forms found matching your criteria
+                        @else
+                            No forms yet. Create your first form!
+                        @endif
+                    </p>
+                    @if($search || $statusFilter)
+                    <button wire:click="clearFilters" class="mt-3 text-sm text-[#2563EB] hover:underline">Clear filters</button>
+                    @endif
+                </div>
+            </td>
+        </tr>
+        @endforelse
+    </x-admin.ui.table>
+
+    {{-- Pagination --}}
+    @if($forms->hasPages())
+    <div class="mt-6 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl p-6 flex items-center justify-between shadow-sm">
+        <p class="text-sm font-medium text-[#6F767E]">
+            Showing {{ $forms->firstItem() }} to {{ $forms->lastItem() }} of {{ $forms->total() }} forms
+        </p>
+        <div class="flex items-center gap-2">
+            @if($forms->onFirstPage())
+            <button disabled
+                class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed border border-gray-200 dark:border-[#272B30]">
+                <span class="material-symbols-outlined text-xl">chevron_left</span>
+            </button>
+            @else
+            <button wire:click="previousPage"
+                class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
+                <span class="material-symbols-outlined text-xl">chevron_left</span>
+            </button>
+            @endif
+
+            @foreach($forms->getUrlRange(max(1, $forms->currentPage() - 2), min($forms->lastPage(), $forms->currentPage() + 2)) as $page => $url)
+                @if($page == $forms->currentPage())
+                <button class="h-10 w-10 rounded-xl bg-[#2563EB] text-white flex items-center justify-center text-sm font-bold shadow-lg shadow-blue-500/20">{{ $page }}</button>
                 @else
-                <button disabled
-                    class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed">
-                    <span class="material-symbols-outlined text-xl">chevron_right</span>
-                </button>
+                <button wire:click="gotoPage({{ $page }})" class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-sm font-bold text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30] transition-all">{{ $page }}</button>
                 @endif
-            </div>
+            @endforeach
+
+            @if($forms->hasMorePages())
+            <button wire:click="nextPage"
+                class="h-10 w-10 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] flex items-center justify-center text-[#6F767E] hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
+                <span class="material-symbols-outlined text-xl">chevron_right</span>
+            </button>
+            @else
+            <button disabled
+                class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] flex items-center justify-center text-[#6F767E] opacity-50 cursor-not-allowed border border-gray-200 dark:border-[#272B30]">
+                <span class="material-symbols-outlined text-xl">chevron_right</span>
+            </button>
+            @endif
         </div>
-        @endif
     </div>
+    @endif
 
     {{-- Bulk Action Bar --}}
     @if(count($selectedForms) > 0)
@@ -368,15 +344,16 @@
                     </template>
                 </p>
                 <div class="flex items-center gap-3 w-full">
-                    <button @click="show = false"
-                        class="flex-1 h-12 rounded-xl bg-gray-100 dark:bg-[#272B30] text-gray-700 dark:text-[#FCFCFC] text-sm font-bold hover:bg-gray-200 dark:hover:bg-[#33383f] transition-all">
+                    <x-admin.ui.button type="button" variant="secondary" @click="show = false" class="flex-1">
                         Cancel
-                    </button>
-                    <button 
+                    </x-admin.ui.button>
+                    <x-admin.ui.button 
+                        type="button"
+                        variant="danger"
                         @click="if (bulk) { $wire.deleteSelected(); } else { $wire.deleteForm(formId); } show = false;"
-                        class="flex-1 h-12 rounded-xl bg-[#FF6A55] text-white text-sm font-bold hover:bg-[#E55F4D] transition-all shadow-lg shadow-[#FF6A55]/20">
+                        class="flex-1">
                         Delete
-                    </button>
+                    </x-admin.ui.button>
                 </div>
             </div>
         </div>
@@ -409,36 +386,19 @@
                     </template>
                 </p>
                 <div class="flex items-center gap-3 w-full">
-                    <button @click="show = false"
-                        class="flex-1 h-12 rounded-xl bg-gray-100 dark:bg-[#272B30] text-gray-700 dark:text-[#FCFCFC] text-sm font-bold hover:bg-gray-200 dark:hover:bg-[#33383f] transition-all">
+                    <x-admin.ui.button type="button" variant="secondary" @click="show = false" class="flex-1">
                         Cancel
-                    </button>
-                    <button 
+                    </x-admin.ui.button>
+                    <x-admin.ui.button 
+                        type="button"
+                        variant="danger"
                         @click="if (bulk) { $wire.forceDeleteSelected(); } else { $wire.forceDelete(formId); } show = false;"
-                        class="flex-1 h-12 rounded-xl bg-[#FF6A55] text-white text-sm font-bold hover:bg-[#E55F4D] transition-all shadow-lg shadow-[#FF6A55]/20">
+                        class="flex-1">
                         Delete Permanently
-                    </button>
+                    </x-admin.ui.button>
                 </div>
             </div>
         </div>
     </div>
-
-    <style>
-        @keyframes indeterminate {
-            0% {
-                transform: translateX(-100%);
-            }
-            100% {
-                transform: translateX(400%);
-            }
-        }
-
-        .animate-indeterminate {
-            animation: indeterminate 1.5s ease-in-out infinite;
-        }
-
-        [x-cloak] { 
-            display: none !important; 
-        }
-    </style>
 </div>
+

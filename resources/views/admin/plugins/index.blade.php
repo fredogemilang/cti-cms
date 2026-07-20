@@ -6,7 +6,8 @@
 @section('content')
 <div class="flex flex-col gap-8">
     <!-- Upload Section -->
-    <div x-data="{ 
+    <x-admin.ui.card 
+        x-data="{ 
             isDropping: false, 
             file: null,
             handleDrop(e) {
@@ -25,10 +26,9 @@
                 }
             }
         }" 
-        class="relative rounded-3xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm overflow-hidden transition-all duration-300"
-        :class="{ 'ring-2 ring-[#2563EB] border-[#2563EB] bg-[#2563EB]/5': isDropping }">
-        
-        <div class="p-8">
+        :class="{ 'ring-2 ring-[#2563EB] border-[#2563EB] bg-[#2563EB]/5': isDropping }"
+        padding="p-8"
+    >
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
                 <div>
                     <h3 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">Install New Plugin</h3>
@@ -87,8 +87,7 @@
                     </div>
                 </div>
             </form>
-        </div>
-    </div>
+    </x-admin.ui.card>
 
     <!-- Plugins List -->
     <div class="space-y-6">
@@ -100,21 +99,20 @@
         </div>
 
         @if($plugins->isEmpty())
-            <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm p-12 text-center">
+            <x-admin.ui.card padding="p-12" class="text-center">
                 <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-50 dark:bg-[#272B30] mb-6">
                     <span class="material-symbols-outlined text-4xl text-[#6F767E]">extension_off</span>
                 </div>
                 <h3 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC] mb-2">No plugins installed</h3>
                 <p class="text-[#6F767E] max-w-md mx-auto">Your plugin library is empty. Upload a plugin ZIP file above to add new features to your CMS.</p>
-            </div>
+            </x-admin.ui.card>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 @foreach($plugins as $plugin)
-                    <div class="group relative flex flex-col bg-white dark:bg-[#1A1A1A] rounded-3xl border transition-all duration-300 hover:shadow-xl hover:-translate-y-1
-                        {{ $plugin->is_active 
-                            ? 'border-[#2563EB]/30 ring-1 ring-[#2563EB]/30 shadow-[0_4px_20px_rgba(37,99,235,0.08)]' 
-                            : 'border-gray-200 dark:border-[#272B30] hover:border-gray-300 dark:hover:border-[#3F444D]' 
-                        }}">
+                    <x-admin.ui.card 
+                        padding="p-0"
+                        class="group relative flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 {{ $plugin->is_active ? 'border-[#2563EB]/30 ring-1 ring-[#2563EB]/30 shadow-[0_4px_20px_rgba(37,99,235,0.08)]' : 'border-gray-200 dark:border-[#272B30] hover:border-gray-300 dark:hover:border-[#3F444D]' }}"
+                    >
                         
                         <div class="p-6 flex-1">
                             <div class="flex items-start justify-between mb-6">
@@ -353,7 +351,7 @@
                                 </div>
                             @endif
                         </div>
-                    </div>
+                    </x-admin.ui.card>
                 @endforeach
             </div>
         @endif
