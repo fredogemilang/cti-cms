@@ -28,6 +28,11 @@ Route::middleware(['web', 'auth', 'permission:posts.view'])->prefix("{$adminPath
         return view('posts::categories.index');
     })->name('categories')->middleware('permission:categories.view');
 
+    // Authors
+    Route::get('/authors', function () {
+        return view('posts::authors.index');
+    })->name('authors')->middleware('permission:posts.view');
+
     // Tags
     Route::get('/tags', function () {
         return view('posts::tags.index');

@@ -4,6 +4,7 @@ namespace Plugins\Posts\Providers;
 
 use App\Events\RenderAdminMenu;
 use App\Providers\CmsPluginServiceProvider;
+use Plugins\Posts\Livewire\AuthorsManager;
 use Plugins\Posts\Livewire\BlogList;
 use Plugins\Posts\Livewire\CategoriesManager;
 use Plugins\Posts\Livewire\PostForm;
@@ -25,6 +26,7 @@ class PostsServiceProvider extends CmsPluginServiceProvider
         'plugins.posts-table' => PostsTable::class,
         'plugins.post-form' => PostForm::class,
         'plugins.categories-manager' => CategoriesManager::class,
+        'plugins.authors-manager' => AuthorsManager::class,
         'plugins.posts-settings' => Settings::class,
         'plugins.wordpress-migration' => WordPressMigration::class,
         'posts.blog-list' => BlogList::class,
@@ -80,6 +82,16 @@ class PostsServiceProvider extends CmsPluginServiceProvider
                     'url' => route('admin.posts.tags'),
                     'icon' => 'label',
                     'permission' => 'tags.view',
+                    'is_active' => true,
+                    'source' => 'plugin:posts',
+                    'children' => [],
+                ],
+                [
+                    'title' => 'Authors',
+                    'route' => 'admin.posts.authors',
+                    'url' => route('admin.posts.authors'),
+                    'icon' => 'group',
+                    'permission' => 'posts.view',
                     'is_active' => true,
                     'source' => 'plugin:posts',
                     'children' => [],

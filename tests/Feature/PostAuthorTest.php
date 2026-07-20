@@ -2,11 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Role;
 use App\Models\User;
+use App\Services\ThemeLoader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
+use Plugins\Posts\Livewire\AuthorsManager;
 use Plugins\Posts\Livewire\PostForm;
 use Plugins\Posts\Models\Post;
 use Plugins\Posts\Models\PostAuthor;
@@ -30,11 +33,33 @@ class PostAuthorTest extends TestCase
         // Register plugin provider
         app()->register(PostsServiceProvider::class);
 
+        // Seed default theme
+        \DB::table('themes')->updateOrInsert(
+            ['slug' => 'default'],
+            [
+                'name' => 'Default',
+                'version' => '1.0.0',
+                'description' => 'A clean, modern default theme for the Web CMS.',
+                'author' => 'Web CMS',
+                'is_active' => true,
+                'supports' => json_encode(['pages', 'posts', 'menus']),
+                'installed_at' => now(),
+                'activated_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        // Boot ThemeLoader so view paths are registered
+        app(ThemeLoader::class)->boot();
+
         // Run migrations
         Artisan::call('migrate', [
             '--path' => 'plugins/posts/database/migrations',
             '--force' => true,
         ]);
+
+        // Refresh route name lookups
+        app('router')->getRoutes()->refreshNameLookups();
 
         $this->user = User::factory()->create();
     }
@@ -95,5 +120,59 @@ class PostAuthorTest extends TestCase
         $this->assertNotNull($newAuthor);
         $this->assertEquals($newAuthor->id, $test->get('author_id'));
         $this->assertEquals($initialAuthorsCount + 1, PostAuthor::count());
+    }
+
+    #[Test]
+    public function authorized_user_can_access_authors_page(): void
+    {
+        $role = Role::create([
+            'name' => 'Super Admin',
+            'slug' => 'super-admin',
+            'is_super_admin' => true,
+        ]);
+        $this->user->roles()->attach($role->id);
+
+        $response = $this->actingAs($this->user)->get('/ctrlpanel/posts/authors');
+        $response->assertStatus(200);
+        $response->assertSeeLivewire('plugins.authors-manager');
+    }
+
+    #[Test]
+    public function authors_manager_handles_crud_operations(): void
+    {
+        $this->actingAs($this->user);
+
+        // 1. Store
+        $test = Livewire::test(AuthorsManager::class)
+            ->set('name', 'John CRUD')
+            ->set('slug', 'john-crud')
+            ->set('email', 'crud@example.com')
+            ->set('bio', 'CRUD developer bio')
+            ->call('store');
+
+        $this->assertDatabaseHas('post_authors', [
+            'name' => 'John CRUD',
+            'slug' => 'john-crud',
+            'email' => 'crud@example.com',
+            'bio' => 'CRUD developer bio',
+        ]);
+
+        $author = PostAuthor::where('slug', 'john-crud')->first();
+
+        // 2. Edit & Update
+        $test->call('edit', $author->id)
+            ->set('name', 'John CRUD Edited')
+            ->call('update');
+
+        $this->assertDatabaseHas('post_authors', [
+            'id' => $author->id,
+            'name' => 'John CRUD Edited',
+        ]);
+
+        // 3. Delete
+        $test->call('delete', $author->id);
+        $this->assertDatabaseMissing('post_authors', [
+            'id' => $author->id,
+        ]);
     }
 }
