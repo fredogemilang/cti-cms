@@ -1,8 +1,8 @@
 # Web CMS
 
-A modular, extensible CMS built with Laravel 12. Designed for distribution — create plugins and themes to customize for any project.
+A modular, extensible CMS built with Laravel 13. Designed for distribution — create plugins and themes to customize for any project.
 
-![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat-square&logo=laravel)
+![Laravel](https://img.shields.io/badge/Laravel-13.x-FF2D20?style=flat-square&logo=laravel)
 ![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat-square&logo=php)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 
