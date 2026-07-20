@@ -220,8 +220,6 @@ abstract class CmsPluginServiceProvider extends ServiceProvider
     /**
      * Register admin menu items.
      * Override to add entries to the admin sidebar.
-     *
-     * @param  RenderAdminMenu  $event
      */
     protected function registerMenuItems(RenderAdminMenu $event): void
     {
@@ -231,8 +229,6 @@ abstract class CmsPluginServiceProvider extends ServiceProvider
     /**
      * Register settings fields.
      * Override to add a settings tab under Admin → Settings.
-     *
-     * @param  SettingsRegistry  $registry
      */
     protected function registerSettings(SettingsRegistry $registry): void
     {
@@ -242,8 +238,6 @@ abstract class CmsPluginServiceProvider extends ServiceProvider
     /**
      * Register scheduled tasks.
      * Override to schedule artisan commands or closures.
-     *
-     * @param  Schedule  $schedule
      */
     protected function registerScheduledTasks(Schedule $schedule): void
     {

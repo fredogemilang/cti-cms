@@ -88,7 +88,7 @@ class MakeTheme extends Command
 
         $this->newLine();
         $this->comment('Next steps:');
-        $this->line("  1. Go to Admin → Appearance → Themes");
+        $this->line('  1. Go to Admin → Appearance → Themes');
         $this->line("  2. Activate the \"{$name}\" theme");
         $this->line("  3. Edit views in themes/{$slug}/views/");
 
@@ -101,7 +101,7 @@ class MakeTheme extends Command
             'name' => $name,
             'slug' => $slug,
             'version' => '1.0.0',
-            'description' => "A starter theme for the CMS.",
+            'description' => 'A starter theme for the CMS.',
             'author' => $author,
             'screenshot' => 'screenshot.png',
             'supports' => [

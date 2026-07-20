@@ -62,4 +62,3 @@ class HomeController extends Controller
             ->first();
     }
 }
-

@@ -104,7 +104,7 @@ class ThemePublish extends Command
 
         foreach (File::allFiles($source) as $file) {
             $relativePath = $file->getRelativePathname();
-            $targetFile = $target . DIRECTORY_SEPARATOR . $relativePath;
+            $targetFile = $target.DIRECTORY_SEPARATOR.$relativePath;
 
             $targetDir = dirname($targetFile);
             if (! is_dir($targetDir)) {

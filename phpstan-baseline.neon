@@ -66,11 +66,6 @@ parameters:
 			count: 3
 			path: app/Http/Controllers/FormSubmissionController.php
 
-		-
-			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Http/Controllers/PageController.php
 
 		-
 			message: '#^Call to an undefined method DateTimeInterface\:\:toAtomString\(\)\.$#'

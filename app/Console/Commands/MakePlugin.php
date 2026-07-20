@@ -84,11 +84,11 @@ class MakePlugin extends Command
         ]);
 
         $this->newLine();
-        $this->comment("Next steps:");
-        $this->line("  1. Upload & install via Admin → Plugins, or register manually:");
+        $this->comment('Next steps:');
+        $this->line('  1. Upload & install via Admin → Plugins, or register manually:');
         $this->line("     INSERT INTO plugins (name, slug, provider, is_active) VALUES ('{$pascalName}', '{$slug}', '{$provider}', 1);");
-        $this->line("  2. Run: php artisan migrate");
-        $this->line("  3. Clear cache: php artisan optimize:clear");
+        $this->line('  2. Run: php artisan migrate');
+        $this->line('  3. Clear cache: php artisan optimize:clear');
 
         return self::SUCCESS;
     }

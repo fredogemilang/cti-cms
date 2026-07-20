@@ -4,6 +4,16 @@ namespace App\Console\Commands;
 
 use App\Models\Role;
 use App\Models\User;
+use Database\Seeders\ActivityPermissionsSeeder;
+use Database\Seeders\EmailTemplateSeeder;
+use Database\Seeders\FormsPermissionsSeeder;
+use Database\Seeders\MediaPermissionsSeeder;
+use Database\Seeders\MenuItemSeeder;
+use Database\Seeders\PagesPermissionsSeeder;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
+use Database\Seeders\SettingsPermissionsSeeder;
+use Database\Seeders\ThemePermissionsSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -201,16 +211,16 @@ class CmsInstall extends Command
     protected function seedCoreData(): void
     {
         $seeders = [
-            'Roles' => \Database\Seeders\RoleSeeder::class,
-            'Core Permissions' => \Database\Seeders\PermissionSeeder::class,
-            'Media Permissions' => \Database\Seeders\MediaPermissionsSeeder::class,
-            'Theme Permissions' => \Database\Seeders\ThemePermissionsSeeder::class,
-            'Pages Permissions' => \Database\Seeders\PagesPermissionsSeeder::class,
-            'Settings Permissions' => \Database\Seeders\SettingsPermissionsSeeder::class,
-            'Activity Permissions' => \Database\Seeders\ActivityPermissionsSeeder::class,
-            'Forms Permissions' => \Database\Seeders\FormsPermissionsSeeder::class,
-            'Admin Menu' => \Database\Seeders\MenuItemSeeder::class,
-            'Email Templates' => \Database\Seeders\EmailTemplateSeeder::class,
+            'Roles' => RoleSeeder::class,
+            'Core Permissions' => PermissionSeeder::class,
+            'Media Permissions' => MediaPermissionsSeeder::class,
+            'Theme Permissions' => ThemePermissionsSeeder::class,
+            'Pages Permissions' => PagesPermissionsSeeder::class,
+            'Settings Permissions' => SettingsPermissionsSeeder::class,
+            'Activity Permissions' => ActivityPermissionsSeeder::class,
+            'Forms Permissions' => FormsPermissionsSeeder::class,
+            'Admin Menu' => MenuItemSeeder::class,
+            'Email Templates' => EmailTemplateSeeder::class,
         ];
 
         foreach ($seeders as $label => $class) {
@@ -344,7 +354,7 @@ class CmsInstall extends Command
         $this->newLine();
         $this->line('<fg=cyan>  ╔══════════════════════════════════════════╗</>');
         $this->line('<fg=cyan>  ║</>      <fg=white;options=bold>Web CMS — Installation Wizard</>       <fg=cyan>║</>');
-        $this->line('<fg=cyan>  ║</>      <fg=gray>v' . config('cms.version', '1.0.0') . '</>' . str_repeat(' ', 30 - strlen(config('cms.version', '1.0.0'))) . '<fg=cyan>║</>');
+        $this->line('<fg=cyan>  ║</>      <fg=gray>v'.config('cms.version', '1.0.0').'</>'.str_repeat(' ', 30 - strlen(config('cms.version', '1.0.0'))).'<fg=cyan>║</>');
         $this->line('<fg=cyan>  ╚══════════════════════════════════════════╝</>');
     }
 

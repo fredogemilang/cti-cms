@@ -4,6 +4,12 @@ namespace Plugins\Posts\Providers;
 
 use App\Events\RenderAdminMenu;
 use App\Providers\CmsPluginServiceProvider;
+use Plugins\Posts\Livewire\BlogList;
+use Plugins\Posts\Livewire\CategoriesManager;
+use Plugins\Posts\Livewire\PostForm;
+use Plugins\Posts\Livewire\PostsTable;
+use Plugins\Posts\Livewire\Settings;
+use Plugins\Posts\Livewire\WordPressMigration;
 
 class PostsServiceProvider extends CmsPluginServiceProvider
 {
@@ -16,12 +22,12 @@ class PostsServiceProvider extends CmsPluginServiceProvider
      * with existing view references like @livewire('plugins.posts-table').
      */
     protected array $livewireComponents = [
-        'plugins.posts-table' => \Plugins\Posts\Livewire\PostsTable::class,
-        'plugins.post-form' => \Plugins\Posts\Livewire\PostForm::class,
-        'plugins.categories-manager' => \Plugins\Posts\Livewire\CategoriesManager::class,
-        'plugins.posts-settings' => \Plugins\Posts\Livewire\Settings::class,
-        'plugins.wordpress-migration' => \Plugins\Posts\Livewire\WordPressMigration::class,
-        'posts.blog-list' => \Plugins\Posts\Livewire\BlogList::class,
+        'plugins.posts-table' => PostsTable::class,
+        'plugins.post-form' => PostForm::class,
+        'plugins.categories-manager' => CategoriesManager::class,
+        'plugins.posts-settings' => Settings::class,
+        'plugins.wordpress-migration' => WordPressMigration::class,
+        'posts.blog-list' => BlogList::class,
     ];
 
     /**
