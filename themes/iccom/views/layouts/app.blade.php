@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {{-- Google Site Kit Snippet --}}
+    @if(view()->exists('google-site-kit::partials.tracking-snippet'))
+        @include('google-site-kit::partials.tracking-snippet')
+    @endif
+
     <title>@yield('title', setting('site_name', 'iCCom') . ' - ' . setting('site_tagline', 'Indonesia Cloud Community'))</title>
 
     {{-- Favicon --}}

@@ -149,6 +149,14 @@ class Page extends Model
         return $block ? $block->value : $default;
     }
 
+    /**
+     * Shortcut alias for getBlockValue().
+     */
+    public function block(string $name, $default = null)
+    {
+        return $this->getBlockValue($name, $default);
+    }
+
     public function isPublished(): bool
     {
         return $this->status === 'published' &&

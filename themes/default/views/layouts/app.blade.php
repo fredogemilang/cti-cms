@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    {{-- Google Site Kit Snippet --}}
+    @if(view()->exists('google-site-kit::partials.tracking-snippet'))
+        @include('google-site-kit::partials.tracking-snippet')
+    @endif
+
     <title>@yield('title', setting('site_name', config('app.name', 'CMS')))</title>
 
     @if(setting('site_favicon'))
