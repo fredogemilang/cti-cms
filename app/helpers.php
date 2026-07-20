@@ -8,6 +8,7 @@ use App\Services\ThemeLoader;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\ViewErrorBag;
 
 if (! function_exists('activity')) {
     /**
@@ -219,7 +220,7 @@ if (! function_exists('render_theme_form')) {
         }
 
         $errors = session('errors');
-        if ($errors instanceof \Illuminate\Support\ViewErrorBag && $errors->any()) {
+        if ($errors instanceof ViewErrorBag && $errors->any()) {
             $html .= '<div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">';
             $html .= '<strong>Please fix the following errors:</strong>';
             $html .= '<ul class="mb-0 mt-2">';

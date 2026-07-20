@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FormEntry extends Model
@@ -25,9 +26,9 @@ class FormEntry extends Model
     /**
      * Get the form that owns the entry.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Form, $this>
+     * @return BelongsTo<Form, $this>
      */
-    public function form(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function form(): BelongsTo
     {
         return $this->belongsTo(Form::class);
     }
@@ -35,9 +36,9 @@ class FormEntry extends Model
     /**
      * Get the user that submitted the entry.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, $this>
+     * @return BelongsTo<User, $this>
      */
-    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

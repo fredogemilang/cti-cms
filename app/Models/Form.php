@@ -7,6 +7,7 @@ use App\Services\CaptchaService;
 use App\Services\FormConditionalLogic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -59,9 +60,9 @@ class Form extends Model
     /**
      * Get the fields for the form.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\FormField, $this>
+     * @return HasMany<FormField, $this>
      */
-    public function fields(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function fields(): HasMany
     {
         return $this->hasMany(FormField::class)->orderBy('order');
     }
@@ -69,9 +70,9 @@ class Form extends Model
     /**
      * Get the entries for the form.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\FormEntry, $this>
+     * @return HasMany<FormEntry, $this>
      */
-    public function entries(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function entries(): HasMany
     {
         return $this->hasMany(FormEntry::class);
     }
