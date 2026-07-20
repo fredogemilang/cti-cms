@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CptEntry;
 use App\Models\CustomPostType;
 use App\Models\Page;
+use App\Services\ThemeLoader;
 
 /**
  * Public homepage controller. Pulls the active theme's home view with:
@@ -18,7 +19,15 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('iccom::pages.home', [
+        $theme = app(ThemeLoader::class)->getActiveTheme();
+        $themeNamespace = $theme?->slug;
+
+        // Resolve home view: theme namespace first, then fallback to default
+        $viewName = $themeNamespace && view()->exists("{$themeNamespace}::pages.home")
+            ? "{$themeNamespace}::pages.home"
+            : 'pages.home';
+
+        return view($viewName, [
             'testimonials' => $this->latestEntries('testimonials', 6),
             'partners' => $this->latestEntries('our-partners'),
             'page' => $this->loadHomePage(),
@@ -53,3 +62,4 @@ class HomeController extends Controller
             ->first();
     }
 }
+

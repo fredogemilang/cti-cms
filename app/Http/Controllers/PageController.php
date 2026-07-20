@@ -31,22 +31,24 @@ class PageController extends Controller
 
     protected function resolveTemplate(string $template, string $slug): string
     {
-        // Use active theme's slug as namespace, fallback to 'iccom'
+        // Use active theme's slug as namespace (null if no active theme)
         $theme = app(ThemeLoader::class)->getActiveTheme();
-        $themeNamespace = $theme?->slug ?? 'iccom';
+        $themeNamespace = $theme?->slug;
 
-        $candidates = [
-            // Theme Specific
-            "{$themeNamespace}::pages.{$slug}",
-            "{$themeNamespace}::pages.template-{$template}",
-            "{$themeNamespace}::pages.single",
+        $candidates = [];
 
-            // Default
-            "pages.{$slug}",                    // page-about-us.blade.php
-            "pages.template-{$template}",       // page-template-landing.blade.php
-            'pages.single',                     // pages/single.blade.php
-            'layouts.page',                     // layouts/page.blade.php
-        ];
+        // Theme-specific candidates (only if a theme is active)
+        if ($themeNamespace) {
+            $candidates[] = "{$themeNamespace}::pages.{$slug}";
+            $candidates[] = "{$themeNamespace}::pages.template-{$template}";
+            $candidates[] = "{$themeNamespace}::pages.single";
+        }
+
+        // Default fallback candidates
+        $candidates[] = "pages.{$slug}";
+        $candidates[] = "pages.template-{$template}";
+        $candidates[] = 'pages.single';
+        $candidates[] = 'layouts.page';
 
         foreach ($candidates as $view) {
             if (View::exists($view)) {

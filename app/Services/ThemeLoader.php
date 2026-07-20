@@ -65,7 +65,7 @@ class ThemeLoader
         View::addNamespace('themes', base_path('themes'));
 
         // Register namespace matching the active theme's slug
-        // so @extends('iccom::layouts.app') resolves dynamically
+        // so @extends('{slug}::layouts.app') resolves dynamically
         View::addNamespace($theme->slug, $themePath);
 
         Log::info("Theme views registered: {$themePath}");

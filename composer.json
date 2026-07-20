@@ -1,11 +1,14 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "fredogemilang/web-cms",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "A modular, plugin-based content management system built on Laravel. Supports themes, custom post types, page builder, RBAC, and REST API.",
     "keywords": [
+        "cms",
         "laravel",
-        "framework"
+        "content-management",
+        "themes",
+        "plugins"
     ],
     "license": "MIT",
     "require": {
