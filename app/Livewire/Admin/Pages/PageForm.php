@@ -72,6 +72,9 @@ class PageForm extends Component
     // Slug generation
     public bool $manualSlug = false;
 
+    // System page flag
+    public bool $isSystemPage = false;
+
     // === Translations state ===
     /** Locale currently shown in the form. */
     public string $editingLocale = '';
@@ -189,6 +192,9 @@ class PageForm extends Component
         })->toArray();
 
         $this->manualSlug = true;
+
+        // Check if this is a system page
+        $this->isSystemPage = $this->page->isSystem();
 
         // Hydrate per-locale snapshots from translations JSON for fields the form binds to.
         $translations = $this->page->translations ?? [];
@@ -364,6 +370,9 @@ class PageForm extends Component
 
     public function updatedSlug($value)
     {
+        if ($this->isSystemPage) {
+            return; // Prevent slug changes on system pages
+        }
         $this->slug = Str::slug($value);
         $this->manualSlug = true;
         $this->hasUnsavedChanges = true;
@@ -396,6 +405,9 @@ class PageForm extends Component
 
     public function updatedTemplate($value): void
     {
+        if ($this->isSystemPage) {
+            return; // Prevent template changes on system pages
+        }
         $this->template = $value;
         $this->hasUnsavedChanges = true;
         $this->seedTemplateBlocks();
@@ -965,6 +977,12 @@ class PageForm extends Component
 
     public function delete()
     {
+        if ($this->isSystemPage) {
+            $this->dispatch('notify', type: 'error', message: 'System pages cannot be deleted.');
+
+            return;
+        }
+
         if ($this->isEdit && $this->page) {
             $this->page->blocks()->delete();
             $this->page->delete();

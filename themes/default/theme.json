@@ -32,5 +32,28 @@
                 {"name": "hero_image", "type": "media", "label": "Hero Image", "default": ""}
             ]
         }
-    }
+    },
+    "seed_pages": [
+        {
+            "title": "Home",
+            "slug": "home",
+            "template": "home",
+            "status": "published",
+            "menu_order": 0
+        },
+        {
+            "title": "About",
+            "slug": "about",
+            "template": "default",
+            "status": "draft",
+            "menu_order": 1
+        },
+        {
+            "title": "Contact",
+            "slug": "contact",
+            "template": "default",
+            "status": "draft",
+            "menu_order": 2
+        }
+    ]
 }

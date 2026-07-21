@@ -29,6 +29,7 @@ class Page extends Model
         'seo',
         'settings',
         'translations',
+        'is_system',
     ];
 
     /** Fields that can carry per-locale values via the translations JSON column. */
@@ -42,6 +43,7 @@ class Page extends Model
             'settings' => 'array',
             'translations' => 'array',
             'menu_order' => 'integer',
+            'is_system' => 'boolean',
         ];
     }
 
@@ -135,6 +137,18 @@ class Page extends Model
         return $query->whereNull('parent_id');
     }
 
+    public function scopeSystem($query)
+    {
+        return $query->where('is_system', true);
+    }
+
+    public function scopeUserCreated($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('is_system', false)->orWhereNull('is_system');
+        });
+    }
+
     // === HELPERS ===
 
     public function getBlock(string $name): ?PageBlock
@@ -155,6 +169,11 @@ class Page extends Model
     public function block(string $name, $default = null)
     {
         return $this->getBlockValue($name, $default);
+    }
+
+    public function isSystem(): bool
+    {
+        return (bool) $this->is_system;
     }
 
     public function isPublished(): bool
@@ -292,6 +311,16 @@ class Page extends Model
         });
 
         static::updating(function ($page) {
+            // Protect system page slug and template from being changed
+            if ($page->is_system) {
+                if ($page->isDirty('slug')) {
+                    $page->slug = $page->getOriginal('slug');
+                }
+                if ($page->isDirty('template')) {
+                    $page->template = $page->getOriginal('template');
+                }
+            }
+
             // Ensure unique slug on update
             if ($page->isDirty('slug')) {
                 $originalSlug = $page->slug;
@@ -300,6 +329,13 @@ class Page extends Model
                     $page->slug = $originalSlug.'-'.$counter;
                     $counter++;
                 }
+            }
+        });
+
+        static::deleting(function ($page) {
+            // Prevent soft-deleting system pages
+            if ($page->is_system) {
+                return false;
             }
         });
     }

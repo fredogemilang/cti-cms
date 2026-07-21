@@ -11,6 +11,13 @@
                     {{ $isEdit ? 'Edit Page' : 'Add New Page' }}
                 </h1>
                 <div class="flex items-center gap-2 text-xs text-[#6F767E] mt-0.5">
+                    @if($isSystemPage)
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+                            <span class="material-symbols-outlined text-[10px]">shield</span>
+                            System Page
+                        </span>
+                        <span class="mx-1">•</span>
+                    @endif
                     @if($status === 'published')
                         <span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
                         <span>Published</span>
@@ -130,13 +137,20 @@
                     <div class="flex items-center gap-2 text-xs font-bold text-[#6F767E] uppercase tracking-wider pl-1">
                         <span>PERMALINK:</span>
                         <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}/</span>
-                        <div x-data="{ editing: false }" class="relative flex items-center gap-2">
-                            <span x-show="!editing" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30]">{{ $slug }}</span>
-                            <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[100px]" x-cloak>
-                            <button @click="editing = !editing; $nextTick(() => $el.previousElementSibling.focus())" class="text-[#6F767E] hover:text-[#FCFCFC] transition-colors">
-                                <span class="material-symbols-outlined text-[14px]">edit</span>
-                            </button>
-                        </div>
+                        @if($isSystemPage)
+                            <span class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30] flex items-center gap-1">
+                                {{ $slug }}
+                                <span class="material-symbols-outlined text-[12px] text-amber-500" title="System page slug is locked">lock</span>
+                            </span>
+                        @else
+                            <div x-data="{ editing: false }" class="relative flex items-center gap-2">
+                                <span x-show="!editing" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30]">{{ $slug }}</span>
+                                <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[100px]" x-cloak>
+                                <button @click="editing = !editing; $nextTick(() => $el.previousElementSibling.focus())" class="text-[#6F767E] hover:text-[#FCFCFC] transition-colors">
+                                    <span class="material-symbols-outlined text-[14px]">edit</span>
+                                </button>
+                            </div>
+                        @endif
                     </div>
                     @endif
                     @error('slug')
@@ -333,9 +347,14 @@
                                 <span class="text-sm text-[#6F767E]">Template:</span>
                                 <div class="flex items-center gap-2">
                                     <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $templates[$template] ?? ucfirst($template) }}</span>
-                                    <button @click="editingTemplate = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
+                                    @if($isSystemPage)
+                                        <span class="material-symbols-outlined text-[12px] text-amber-500" title="System page template is locked">lock</span>
+                                    @else
+                                        <button @click="editingTemplate = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
+                                    @endif
                                 </div>
                             </div>
+                            @if(!$isSystemPage)
                             <div x-show="editingTemplate" class="bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
                                 <select wire:model="template" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
                                     @foreach($templates as $value => $label)
@@ -346,6 +365,7 @@
                                     <button @click="editingTemplate = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
                                 </div>
                             </div>
+                            @endif
                         </div>
 
                         {{-- Parent Page --}}
@@ -390,7 +410,7 @@
                     </div>
 
                     {{-- Delete action --}}
-                    @if($isEdit)
+                    @if($isEdit && !$isSystemPage)
                     <div class="mt-8 pt-4 border-t border-gray-100 dark:border-[#272B30] flex items-center justify-end">
                         <button wire:click="delete" wire:confirm="Are you sure you want to delete this page?" class="text-xs font-bold text-[#FF6A55] hover:text-[#ff4f38] transition-colors">
                             Move to Trash

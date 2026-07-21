@@ -109,6 +109,13 @@ class PagesTable extends Component
 
     public function confirmDelete(int $id)
     {
+        $page = Page::find($id);
+        if ($page && $page->isSystem()) {
+            $this->dispatch('notify', type: 'error', message: 'System pages cannot be deleted.');
+
+            return;
+        }
+
         $this->pageToDelete = $id;
         $this->showDeleteModal = true;
     }
@@ -146,11 +153,18 @@ class PagesTable extends Component
 
     public function bulkDelete()
     {
-        Page::whereIn('id', $this->selectedPages)->delete();
+        // Filter out system pages
+        $deletableIds = Page::whereIn('id', $this->selectedPages)
+            ->where(function ($q) {
+                $q->where('is_system', false)->orWhereNull('is_system');
+            })
+            ->pluck('id');
+
+        Page::whereIn('id', $deletableIds)->delete();
         $this->selectedPages = [];
         $this->selectAll = false;
         $this->showBulkDeleteModal = false;
-        $this->dispatch('notify', type: 'success', message: 'Selected pages moved to trash!');
+        $this->dispatch('notify', type: 'success', message: 'Selected pages moved to trash! (System pages were skipped.)');
     }
 
     // === TRASH OPERATIONS ===
@@ -259,12 +273,13 @@ class PagesTable extends Component
     {
         $page = Page::with('allBlocks')->find($id);
         if ($page) {
-            // Create duplicate page
+            // Create duplicate page (always as non-system, user-created)
             $newPage = $page->replicate();
             $newPage->title = $page->title.' (Copy)';
             $newPage->slug = $page->slug.'-copy';
             $newPage->status = 'draft';
             $newPage->published_at = null;
+            $newPage->is_system = false;
             $newPage->save();
 
             // Duplicate blocks

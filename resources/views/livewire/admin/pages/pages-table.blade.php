@@ -99,14 +99,28 @@
         @forelse($pages as $page)
             <x-admin.ui.table-row wire:key="page-{{ $page->id }}">
                 <x-admin.ui.table-cell class="px-8">
-                    <input type="checkbox" wire:model.live="selectedPages" value="{{ $page->id }}" class="h-4 w-4 rounded accent-[#2563EB]" />
+                    @if($page->is_system)
+                        <span class="inline-flex items-center justify-center h-4 w-4 rounded bg-gray-100 dark:bg-[#272B30]" title="System page — cannot be selected for bulk actions">
+                            <span class="material-symbols-outlined text-[12px] text-[#6F767E]">lock</span>
+                        </span>
+                    @else
+                        <input type="checkbox" wire:model.live="selectedPages" value="{{ $page->id }}" class="h-4 w-4 rounded accent-[#2563EB]" />
+                    @endif
                 </x-admin.ui.table-cell>
                 <x-admin.ui.table-cell>
                     <div>
-                        <a href="{{ route('admin.pages.edit', $page->id) }}"
-                            class="font-bold text-[#111827] dark:text-[#FCFCFC] hover:text-[#2563EB] transition-colors">
-                            {{ $page->title }}
-                        </a>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('admin.pages.edit', $page->id) }}"
+                                class="font-bold text-[#111827] dark:text-[#FCFCFC] hover:text-[#2563EB] transition-colors">
+                                {{ $page->title }}
+                            </a>
+                            @if($page->is_system)
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+                                    <span class="material-symbols-outlined text-[10px]">shield</span>
+                                    System
+                                </span>
+                            @endif
+                        </div>
                         <div class="text-xs text-[#6F767E] flex items-center gap-1 mt-1">
                             <span class="material-symbols-outlined text-xs">link</span>
                             /{{ $page->slug }}
@@ -184,11 +198,13 @@
                                     <span class="material-symbols-outlined text-lg">visibility</span>
                                 </a>
                             @endif
-                            <button wire:click="confirmDelete({{ $page->id }})"
-                                class="h-9 w-9 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
-                                title="Move to Trash">
-                                <span class="material-symbols-outlined text-lg">delete</span>
-                            </button>
+                            @if(!$page->is_system)
+                                <button wire:click="confirmDelete({{ $page->id }})"
+                                    class="h-9 w-9 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
+                                    title="Move to Trash">
+                                    <span class="material-symbols-outlined text-lg">delete</span>
+                                </button>
+                            @endif
                         @endif
                     </div>
                 </x-admin.ui.table-cell>

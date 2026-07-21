@@ -126,4 +126,13 @@ class Theme extends Model
 
         return $template['blocks'] ?? [];
     }
+
+    /**
+     * Get the seed_pages section from theme.json.
+     * Returns array of page definitions to auto-create on activation.
+     */
+    public function getSeedPages(): array
+    {
+        return $this->loadConfig()['seed_pages'] ?? [];
+    }
 }
