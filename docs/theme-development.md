@@ -6,8 +6,10 @@ Build themes to customize the frontend look and feel. Themes are self-contained 
 - [Quick Start](#quick-start)
 - [Theme Structure](#theme-structure)
 - [Theme Manifest](#theme-manifest)
+- [Seed Pages](#seed-pages)
 - [Layout Template](#layout-template)
 - [Page Templates](#page-templates)
+- [Archive Views](#archive-views)
 - [Block Rendering](#block-rendering)
 - [Asset Management](#asset-management)
 - [Available Variables](#available-variables)
@@ -44,6 +46,11 @@ themes/starter/
 │   ├── pages/
 │   │   ├── home.blade.php          # Homepage template (required)
 │   │   └── single.blade.php        # Default page template (required)
+│   ├── archive.blade.php           # CPT archive listing (optional)
+│   ├── archive-{cpt}.blade.php     # CPT-specific archive (optional)
+│   ├── single-entry.blade.php      # CPT single entry (optional)
+│   ├── single-{cpt}.blade.php      # CPT-specific single (optional)
+│   ├── taxonomy-{tax}.blade.php    # Taxonomy term archive (optional)
 │   └── partials/
 │       ├── header.blade.php        # Site header/navigation
 │       ├── footer.blade.php        # Site footer
@@ -85,9 +92,70 @@ Every theme needs a `theme.json`:
                 {"name": "hero_image", "type": "media", "label": "Hero Image"}
             ]
         }
+    },
+    "seed_pages": [
+        {"title": "Home", "slug": "home", "template": "home", "status": "published", "menu_order": 0},
+        {"title": "About", "slug": "about", "template": "default", "status": "draft", "menu_order": 1},
+        {"title": "Contact", "slug": "contact", "template": "default", "status": "draft", "menu_order": 2}
+    ],
+    "archive_settings": {
+        "per_page": 12,
+        "layout": "grid",
+        "show_sidebar": true,
+        "show_excerpt": true,
+        "show_author": true,
+        "show_date": true,
+        "excerpt_length": 150
     }
 }
 ```
+
+---
+
+## Seed Pages
+
+Themes can define **core pages** that are auto-created when the theme is activated. These "system pages" cannot be deleted by admins, and their slug & template are locked.
+
+### Configuration
+
+Add `seed_pages` to `theme.json`:
+
+```json
+"seed_pages": [
+    {
+        "title": "Home",
+        "slug": "home",
+        "template": "home",
+        "status": "published",
+        "menu_order": 0
+    },
+    {
+        "title": "About",
+        "slug": "about",
+        "template": "default",
+        "status": "draft",
+        "menu_order": 1
+    }
+]
+```
+
+### How It Works
+
+1. On theme activation, the CMS creates pages defined in `seed_pages`
+2. Each page is marked as `is_system = true` (protected)
+3. If a page with the same slug already exists, it's marked as system instead of duplicated
+4. Admins can still edit **content** (title, blocks, SEO) but cannot change slug, template, or delete
+5. Admins can still create custom pages via "Add New Page" — these are user-created and fully editable
+
+### System Page Protection
+
+| Action | System Page | User-Created Page |
+|--------|-------------|-------------------|
+| Edit title & content | ✅ | ✅ |
+| Change slug | 🔒 Locked | ✅ |
+| Change template | 🔒 Locked | ✅ |
+| Delete | 🔒 Blocked | ✅ |
+| Duplicate | ✅ (creates user copy) | ✅ |
 
 ---
 
@@ -192,12 +260,143 @@ The CMS looks for templates in this order:
 
 ---
 
+## Archive Views
+
+Themes can provide archive and single entry views for Custom Post Types (CPTs) and taxonomy term archives.
+
+### URL Structure
+
+```
+/{cpt-slug}/                    → Archive listing (paginated)
+/{cpt-slug}/{entry-slug}        → Single entry view
+/{taxonomy-slug}/{term-slug}/   → Taxonomy term archive
+```
+
+**Example:**
+```
+/blog/                          → All blog posts
+/blog/hello-world               → Single blog post
+/category/teknologi/            → Posts in "Teknologi" category
+/tag/laravel/                   → Posts tagged "Laravel"
+```
+
+> **Note:** These routes are only active for CPTs with `has_archive = true` and active taxonomies.
+
+### Archive Template (`archive.blade.php`)
+
+Controller passes: `$postType`, `$entries` (paginated), `$taxonomies`
+
+```blade
+@extends($activeTheme->slug . '::layouts.app')
+
+@section('title', $postType->plural_label)
+
+@section('content')
+    <h1>{{ $postType->plural_label }}</h1>
+
+    @foreach($entries as $entry)
+        <article>
+            <h2><a href="{{ $entry->getUrl() }}">{{ $entry->title }}</a></h2>
+            <p>{{ Str::limit(strip_tags($entry->excerpt), 150) }}</p>
+            <time>{{ $entry->published_at->format('M d, Y') }}</time>
+        </article>
+    @endforeach
+
+    {{ $entries->links() }}
+@endsection
+```
+
+### Single Entry Template (`single-entry.blade.php`)
+
+Controller passes: `$postType`, `$entry`, `$taxonomies`, `$previousEntry`, `$nextEntry`
+
+```blade
+@extends($activeTheme->slug . '::layouts.app')
+
+@section('title', $entry->title)
+
+@section('content')
+    <h1>{{ $entry->title }}</h1>
+    <div>{!! $entry->content !!}</div>
+
+    {{-- Taxonomy terms --}}
+    @foreach($entry->terms as $term)
+        <a href="{{ $term->getUrl() }}">{{ $term->name }}</a>
+    @endforeach
+
+    {{-- Prev/Next --}}
+    @if($previousEntry)
+        <a href="{{ $previousEntry->getUrl() }}">&larr; {{ $previousEntry->title }}</a>
+    @endif
+    @if($nextEntry)
+        <a href="{{ $nextEntry->getUrl() }}">{{ $nextEntry->title }} &rarr;</a>
+    @endif
+@endsection
+```
+
+### Taxonomy Term Template
+
+For taxonomy term archives, the controller passes: `$taxonomy`, `$term`, `$terms`, `$entries` (paginated)
+
+You can create a taxonomy-specific view at `taxonomy-{taxonomy-slug}.blade.php`.
+
+### Archive View Resolution
+
+| View Type | Resolution Priority |
+|-----------|-------------------|
+| **CPT Archive** | `{theme}::archive-{cpt}` → `{theme}::archive` → `archive-{cpt}` → `archive` |
+| **Single Entry** | `{theme}::single-{cpt}` → `{theme}::single-entry` → `single-{cpt}` → `single-entry` |
+| **Taxonomy Term** | `{theme}::taxonomy-{tax}` → `{theme}::archive` → `taxonomy-{tax}` → `archive` |
+
+### Archive Settings (`theme.json`)
+
+Configure archive behavior in `theme.json`:
+
+```json
+"archive_settings": {
+    "per_page": 12,
+    "layout": "grid",
+    "show_sidebar": true,
+    "show_excerpt": true,
+    "show_author": true,
+    "show_date": true,
+    "excerpt_length": 150
+}
+```
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| `per_page` | int | 12 | Entries per page |
+| `layout` | string | `grid` | Layout style (`grid`, `list`) |
+| `show_sidebar` | bool | true | Show taxonomy sidebar |
+| `show_excerpt` | bool | true | Show entry excerpts |
+| `show_author` | bool | true | Show author name |
+| `show_date` | bool | true | Show published date |
+| `excerpt_length` | int | 150 | Max excerpt characters |
+
+### Entry URL Helpers
+
+Use these in your templates:
+
+```blade
+{{-- Entry URL --}}
+<a href="{{ $entry->getUrl() }}">{{ $entry->title }}</a>
+
+{{-- CPT archive URL --}}
+<a href="{{ $postType->getArchiveUrl() }}">All {{ $postType->plural_label }}</a>
+
+{{-- Taxonomy term URL --}}
+<a href="{{ $term->getUrl() }}">{{ $term->name }}</a>
+```
+
+---
+
 ## Block Rendering
 
 The CMS page builder supports these block types:
 
 | Type | Value | Rendering |
-|------|-------|-----------|
+|------|-------|-----------| 
 | `text` | `string` | `$block->localizedValue` |
 | `textarea` | `string` | `nl2br(e($block->localizedValue))` |
 | `wysiwyg` | `HTML` | `{!! $block->localizedValue !!}` |
@@ -262,15 +461,39 @@ These are shared with all theme views via `View::share()`:
 | `$activeTheme` | `Theme` model | Name, slug, version of active theme |
 | `$themeConfig` | `array` | Merged config from `themes/{slug}/config/*.php` |
 
+### Page Variables
+
+| Variable | Available In | Type | Description |
+|----------|-------------|------|-------------|
+| `$page` | Page views | `Page` | Page model with blocks |
+| `$blocks` | Page views | `Collection` | Page blocks |
+
+### Archive Variables
+
+| Variable | Available In | Type | Description |
+|----------|-------------|------|-------------|
+| `$postType` | Archive / Single | `CustomPostType` | CPT model |
+| `$entries` | Archive | `LengthAwarePaginator` | Paginated entries |
+| `$entry` | Single Entry | `CptEntry` | Single entry model |
+| `$taxonomies` | Archive / Single | `Collection` | Available taxonomies |
+| `$previousEntry` | Single Entry | `CptEntry\|null` | Previous entry |
+| `$nextEntry` | Single Entry | `CptEntry\|null` | Next entry |
+| `$taxonomy` | Term Archive | `CustomTaxonomy` | Taxonomy model |
+| `$term` | Term Archive | `TaxonomyTerm` | Current term |
+| `$terms` | Term Archive | `Collection` | All terms with count |
+
 ### Helpers
 
 | Helper | Returns | Example |
-|--------|---------|---------|
+|--------|---------|---------| 
 | `setting('key', 'default')` | Mixed | `setting('site_name', 'My Site')` |
 | `$page->block('name')` | String/null | `$page->block('hero_title')` |
 | `$block->localizedValue` | String | Locale-aware block value |
 | `$block->getDecodedValue()` | Array/null | JSON-decoded value |
 | `$block->getOption('key')` | String/null | Block metadata option |
+| `$entry->getUrl()` | String | Full URL to single entry |
+| `$postType->getArchiveUrl()` | String | Full URL to CPT archive |
+| `$term->getUrl()` | String | Full URL to term archive |
 
 ---
 
@@ -283,10 +506,12 @@ These are shared with all theme views via `View::share()`:
 5. **Include a `screenshot.png`** (800×600) for the admin theme picker
 6. **Use `@stack` for page-specific assets** — don't load everything globally
 7. **Reference `$activeTheme->slug`** instead of hardcoding your theme slug in `@extends` and `@include`
+8. **Define `seed_pages`** for core pages your theme needs — admin can focus on content instead of setup
+9. **Provide archive views** if your theme is meant for content-heavy sites (blogs, news, portfolios)
 
 ---
 
 **Reference:** See `themes/default/` for a complete working theme.
 
-**Last Updated:** 2026-07-20
-**Version:** 2.0
+**Last Updated:** 2026-07-21
+**Version:** 3.0

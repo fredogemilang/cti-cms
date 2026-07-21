@@ -204,4 +204,40 @@ class CptEntry extends Model
             default => ['color' => 'gray', 'label' => ucfirst($this->status)],
         };
     }
+
+    /**
+     * Get the public frontend URL for this entry.
+     */
+    public function getUrl(): string
+    {
+        $cptSlug = $this->relationLoaded('postType') && $this->postType instanceof CustomPostType
+            ? $this->postType->slug
+            : (string) CustomPostType::where('id', $this->post_type_id)->value('slug');
+
+        return url('/'.$cptSlug.'/'.$this->slug);
+    }
+
+    /**
+     * Get the previous published entry (by published_at) within the same CPT.
+     */
+    public function getPreviousEntry(): ?self
+    {
+        return static::where('post_type_id', $this->post_type_id)
+            ->where('status', 'published')
+            ->where('published_at', '<', $this->published_at)
+            ->orderByDesc('published_at')
+            ->first();
+    }
+
+    /**
+     * Get the next published entry (by published_at) within the same CPT.
+     */
+    public function getNextEntry(): ?self
+    {
+        return static::where('post_type_id', $this->post_type_id)
+            ->where('status', 'published')
+            ->where('published_at', '>', $this->published_at)
+            ->orderBy('published_at')
+            ->first();
+    }
 }

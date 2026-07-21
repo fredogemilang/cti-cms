@@ -120,4 +120,16 @@ class TaxonomyTerm extends Model
 
         return $ancestors->reverse();
     }
+
+    /**
+     * Get the public frontend URL for this term's archive.
+     */
+    public function getUrl(): string
+    {
+        $taxonomySlug = $this->relationLoaded('taxonomy') && $this->taxonomy instanceof CustomTaxonomy
+            ? $this->taxonomy->slug
+            : (string) CustomTaxonomy::where('id', $this->taxonomy_id)->value('slug');
+
+        return url('/'.$taxonomySlug.'/'.$this->slug);
+    }
 }

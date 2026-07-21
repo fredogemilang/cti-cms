@@ -139,4 +139,20 @@ class CustomPostType extends Model
     {
         return in_array($feature, $this->supports ?? []);
     }
+
+    /**
+     * Scope for CPTs that have a public archive enabled.
+     */
+    public function scopeWithArchive($query)
+    {
+        return $query->where('has_archive', true)->where('is_active', true);
+    }
+
+    /**
+     * Get the public archive URL for this CPT.
+     */
+    public function getArchiveUrl(): string
+    {
+        return url('/'.$this->slug);
+    }
 }

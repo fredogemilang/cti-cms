@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Events\BuildSitemap;
+use App\Models\CptEntry;
+use App\Models\CustomPostType;
+use App\Models\CustomTaxonomy;
 use App\Models\Page;
+use App\Models\TaxonomyTerm;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 class SitemapController extends Controller
 {
@@ -27,6 +32,9 @@ class SitemapController extends Controller
                     'alternates' => $alternates,
                 ];
             }
+
+            // CPT Archive & Entries
+            $this->addCptUrls($urls);
 
             // Let plugins inject their URLs
             $event = new BuildSitemap;
@@ -104,5 +112,61 @@ class SitemapController extends Controller
         $xml .= '</urlset>'."\n";
 
         return $xml;
+    }
+
+    /**
+     * Add CPT archive pages, entries, and taxonomy term archives to the sitemap.
+     */
+    protected function addCptUrls(array &$urls): void
+    {
+        if (! Schema::hasTable('custom_post_types')) {
+            return;
+        }
+
+        $cpts = CustomPostType::withArchive()->get();
+
+        foreach ($cpts as $cpt) {
+            // CPT Archive page
+            $urls[] = [
+                'loc' => $cpt->getArchiveUrl(),
+                'lastmod' => $cpt->updated_at,
+                'changefreq' => 'daily',
+                'priority' => 0.7,
+            ];
+
+            // Individual entries
+            $entries = CptEntry::where('post_type_id', $cpt->id)
+                ->published()
+                ->orderByDesc('published_at')
+                ->get();
+
+            foreach ($entries as $entry) {
+                $urls[] = [
+                    'loc' => $entry->getUrl(),
+                    'lastmod' => $entry->updated_at,
+                    'changefreq' => 'weekly',
+                    'priority' => 0.6,
+                ];
+            }
+        }
+
+        // Taxonomy term archives
+        if (! Schema::hasTable('custom_taxonomies') || ! Schema::hasTable('taxonomy_terms')) {
+            return;
+        }
+
+        $taxonomies = CustomTaxonomy::active()->get();
+
+        foreach ($taxonomies as $taxonomy) {
+            $terms = TaxonomyTerm::where('taxonomy_id', $taxonomy->id)->get();
+            foreach ($terms as $term) {
+                $urls[] = [
+                    'loc' => $term->getUrl(),
+                    'lastmod' => $term->updated_at,
+                    'changefreq' => 'weekly',
+                    'priority' => 0.5,
+                ];
+            }
+        }
     }
 }

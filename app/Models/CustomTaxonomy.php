@@ -125,4 +125,20 @@ class CustomTaxonomy extends Model
         $postTypes = array_filter($this->post_types ?? [], fn ($slug) => $slug !== $postTypeSlug);
         $this->update(['post_types' => array_values($postTypes)]);
     }
+
+    /**
+     * Get the public archive URL for this taxonomy.
+     */
+    public function getArchiveUrl(): string
+    {
+        return url('/'.$this->slug);
+    }
+
+    /**
+     * Get the terms for this taxonomy.
+     */
+    public function terms()
+    {
+        return TaxonomyTerm::where('taxonomy_id', $this->id)->orderBy('order');
+    }
 }

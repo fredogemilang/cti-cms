@@ -55,5 +55,14 @@
             "status": "draft",
             "menu_order": 2
         }
-    ]
+    ],
+    "archive_settings": {
+        "per_page": 12,
+        "layout": "grid",
+        "show_sidebar": true,
+        "show_excerpt": true,
+        "show_author": true,
+        "show_date": true,
+        "excerpt_length": 150
+    }
 }
