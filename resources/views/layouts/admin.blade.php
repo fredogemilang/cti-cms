@@ -101,6 +101,9 @@
             position: relative;
             overflow: visible !important;
         }
+        aside.collapsed li.flyout-active .sidebar-tooltip {
+            display: none !important;
+        }
         aside.collapsed .nav-item:hover .sidebar-tooltip {
             display: flex;
             align-items: center;
