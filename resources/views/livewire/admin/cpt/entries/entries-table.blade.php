@@ -1,105 +1,108 @@
 <div class="space-y-6">
-    <!-- Header -->
-    <!-- Filters & Search -->
-    <div class="space-y-4">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            <!-- Left: Search & Category -->
-            <div class="flex flex-wrap items-center gap-3 flex-1">
-                <div class="relative group w-full sm:w-auto">
-                    <input
-                        wire:model.live.debounce.300ms="search"
-                        class="h-12 w-full sm:w-[320px] rounded-xl border-none bg-white dark:bg-[#1A1A1A] pl-12 pr-4 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all placeholder:text-[#6F767E]"
-                        placeholder="Search {{ strtolower($postType->plural_label) }}..." type="text" />
-                    <span
-                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] group-focus-within:text-[#2563EB] transition-colors">search</span>
-                    
-                    <!-- Loading indicator -->
-                    <div wire:loading wire:target="search" class="absolute right-4 top-1/2 -translate-y-1/2">
-                        <svg class="animate-spin h-5 w-5 text-[#2563EB]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
+    {{-- Status Filter Buttons --}}
+    <div>
+        <div class="inline-flex flex-wrap w-fit items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30] gap-1">
+            <!-- All -->
+            <button
+                wire:click="$set('status', '')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === '' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                All
+                <span class="px-2 py-0.5 rounded-lg {{ $status === '' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['all'] }}
+                </span>
+            </button>
 
-            <!-- Right: Display & Add New -->
-            <div class="flex flex-wrap items-center gap-3">
-                <div class="flex items-center gap-3">
-                    <span class="text-sm font-medium text-[#6F767E]">Display:</span>
-                    <select
-                        wire:model.live="perPage"
-                        class="h-12 rounded-xl border-none bg-white dark:bg-[#1A1A1A] pl-4 pr-10 text-sm font-bold text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all cursor-pointer">
-                        <option value="10">10 Rows</option>
-                        <option value="25">25 Rows</option>
-                        <option value="50">50 Rows</option>
-                    </select>
-                </div>
-                
-                <a href="{{ route('admin.cpt.entries.create', $postType->slug) }}" 
-                   class="flex items-center justify-center rounded-xl bg-[#2563EB] px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 h-12 whitespace-nowrap">
-                    Add {{ $postType->singular_label }}
-                </a>
-            </div>
+            <!-- Published -->
+            <button
+                wire:click="$set('status', 'published')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'published' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                Published
+                <span class="px-2 py-0.5 rounded-lg {{ $status === 'published' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['published'] }}
+                </span>
+            </button>
+
+            <!-- Draft -->
+            <button
+                wire:click="$set('status', 'draft')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'draft' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                Draft
+                <span class="px-2 py-0.5 rounded-lg {{ $status === 'draft' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['draft'] }}
+                </span>
+            </button>
+
+            <!-- Scheduled -->
+            @if($statusCounts['scheduled'] > 0)
+            <button
+                wire:click="$set('status', 'scheduled')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'scheduled' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                Scheduled
+                <span class="px-2 py-0.5 rounded-lg {{ $status === 'scheduled' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['scheduled'] }}
+                </span>
+            </button>
+            @endif
+
+            <!-- Trash -->
+            @if($statusCounts['trash'] > 0)
+            <button
+                wire:click="$set('status', 'trash')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'trash' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                Trash
+                <span class="px-2 py-0.5 rounded-lg {{ $status === 'trash' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['trash'] }}
+                </span>
+            </button>
+            @endif
         </div>
+    </div>
 
-        <!-- Status Filter Buttons -->
-        <div class="mb-4">
-             <div class="inline-flex w-fit items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30]">
-                <!-- All -->
-                <button
-                    wire:click="$set('status', '')"
-                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === '' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                    All
-                    <span class="px-2 py-0.5 rounded-lg {{ $status === '' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
-                        {{ $statusCounts['all'] }}
-                    </span>
-                </button>
-
-                <!-- Published -->
-                <button
-                    wire:click="$set('status', 'published')"
-                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'published' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                    Published
-                    <span class="px-2 py-0.5 rounded-lg {{ $status === 'published' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
-                        {{ $statusCounts['published'] }}
-                    </span>
-                </button>
-
-                <!-- Draft -->
-                <button
-                    wire:click="$set('status', 'draft')"
-                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'draft' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                    Draft
-                    <span class="px-2 py-0.5 rounded-lg {{ $status === 'draft' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
-                        {{ $statusCounts['draft'] }}
-                    </span>
-                </button>
-
-                <!-- Scheduled -->
-                @if($statusCounts['scheduled'] > 0)
-                <button
-                    wire:click="$set('status', 'scheduled')"
-                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'scheduled' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                    Scheduled
-                    <span class="px-2 py-0.5 rounded-lg {{ $status === 'scheduled' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
-                        {{ $statusCounts['scheduled'] }}
-                    </span>
-                </button>
-                @endif
-
-                <!-- Trash -->
-                @if($statusCounts['trash'] > 0)
-                <button
-                    wire:click="$set('status', 'trash')"
-                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'trash' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                    Trash
-                    <span class="px-2 py-0.5 rounded-lg {{ $status === 'trash' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
-                        {{ $statusCounts['trash'] }}
-                    </span>
-                </button>
-                @endif
+    {{-- Filters & Search --}}
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Search box -->
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="relative w-full md:w-[320px]">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] z-10">search</span>
+                <x-admin.ui.input
+                    name="search"
+                    type="text"
+                    wire:model.live.debounce.300ms="search"
+                    class="!pl-12 !py-2.5 !rounded-xl !h-12 text-sm !w-full"
+                    placeholder="Search {{ strtolower($postType->plural_label) }}..." 
+                />
+                
+                <!-- Loading indicator -->
+                <div wire:loading wire:target="search" class="absolute right-4 top-1/2 -translate-y-1/2 z-10">
+                    <svg class="animate-spin h-5 w-5 text-[#2563EB]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
             </div>
+            
+            @if($search || $status)
+                <x-admin.ui.button
+                    wire:click="$set('status', ''); $set('search', '')"
+                    variant="secondary"
+                    class="h-12 !px-4 !rounded-xl text-sm font-semibold flex items-center gap-2"
+                >
+                    <span class="material-symbols-outlined text-lg">close</span>
+                    Clear Filters
+                </x-admin.ui.button>
+            @endif
+        </div>
+        
+        <!-- Display Row Size -->
+        <div class="flex items-center gap-3">
+            <span class="text-sm font-medium text-[#6F767E]">Display:</span>
+            <select
+                wire:model.live="perPage"
+                class="h-12 rounded-xl border-none bg-white dark:bg-[#1A1A1A] pl-4 pr-10 text-sm font-bold text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all cursor-pointer">
+                <option value="10">10 Rows</option>
+                <option value="25">25 Rows</option>
+                <option value="50">50 Rows</option>
+            </select>
         </div>
     </div>
 

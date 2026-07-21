@@ -306,7 +306,7 @@
             @endif
 
             <!-- Page Content -->
-            <div class="@hasSection('hide-header') h-full @else px-6 pb-6 md:px-10 md:pb-10 @endif">
+            <div class="@hasSection('hide-header') h-full @elseif(View::hasSection('hide-title') && !View::hasSection('page-title')) h-full @else px-6 pb-6 md:px-10 md:pb-10 @endif">
                 <!-- Page Title & Subtitle Section -->
                 @sectionMissing('hide-title')
                 @hasSection('page-title')
