@@ -28,8 +28,17 @@ class CptEntry extends Model
         'status',
         'published_at',
         'meta',
+        'seo',
         'translations',
         'menu_order',
+    ];
+
+    protected $casts = [
+        'meta' => 'array',
+        'seo' => 'array',
+        'translations' => 'array',
+        'published_at' => 'datetime',
+        'menu_order' => 'integer',
     ];
 
     /** Fields that can carry per-locale values via the translations JSON column. */
@@ -75,13 +84,6 @@ class CptEntry extends Model
 
         return null;
     }
-
-    protected $casts = [
-        'published_at' => 'datetime',
-        'meta' => 'array',
-        'translations' => 'array',
-        'menu_order' => 'integer',
-    ];
 
     /**
      * Boot method to auto-generate slug

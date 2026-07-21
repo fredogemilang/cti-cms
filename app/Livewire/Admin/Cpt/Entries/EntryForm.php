@@ -42,6 +42,17 @@ class EntryForm extends Component
 
     public int $menuOrder = 0;
 
+    // SEO fields
+    public string $metaTitle = '';
+
+    public string $metaDescription = '';
+
+    public string $ogTitle = '';
+
+    public string $ogDescription = '';
+
+    public ?string $ogImage = null;
+
     // Meta Fields
     public array $meta = [];
 
@@ -211,6 +222,8 @@ class EntryForm extends Component
     {
         if ($field === 'featured_image') {
             $this->featuredImage = $mediaPath;
+        } elseif ($field === 'og_image') {
+            $this->ogImage = $mediaPath;
         }
         // Handle Meta Fields
         elseif (str_starts_with($field, 'meta.')) {
@@ -232,6 +245,8 @@ class EntryForm extends Component
     {
         if ($field === 'featured_image') {
             $this->featuredImage = null;
+        } elseif ($field === 'og_image') {
+            $this->ogImage = null;
         }
         // Handle Meta Fields
         elseif (str_starts_with($field, 'meta.')) {
@@ -262,6 +277,14 @@ class EntryForm extends Component
         $this->parentId = $entry->parent_id;
         $this->menuOrder = $entry->menu_order;
 
+        // Load SEO
+        $seo = $entry->seo ?? [];
+        $this->metaTitle = $seo['meta_title'] ?? '';
+        $this->metaDescription = $seo['meta_description'] ?? '';
+        $this->ogTitle = $seo['og_title'] ?? '';
+        $this->ogDescription = $seo['og_description'] ?? '';
+        $this->ogImage = $seo['og_image'] ?? null;
+
         // Load meta values
         if ($entry->meta) {
             foreach ($entry->meta as $key => $value) {
@@ -285,6 +308,11 @@ class EntryForm extends Component
                 'slug' => $fields['slug'] ?? '',
                 'content' => $fields['content'] ?? '',
                 'excerpt' => $fields['excerpt'] ?? '',
+                'metaTitle' => $fields['seo']['meta_title'] ?? '',
+                'metaDescription' => $fields['seo']['meta_description'] ?? '',
+                'ogTitle' => $fields['seo']['og_title'] ?? '',
+                'ogDescription' => $fields['seo']['og_description'] ?? '',
+                'ogImage' => $fields['seo']['og_image'] ?? null,
             ];
         }
     }
@@ -308,9 +336,19 @@ class EntryForm extends Component
         $this->slug = $next['slug'] ?? '';
         $this->content = $next['content'] ?? '';
         $this->excerpt = $next['excerpt'] ?? '';
+        $this->metaTitle = $next['metaTitle'] ?? '';
+        $this->metaDescription = $next['metaDescription'] ?? '';
+        $this->ogTitle = $next['ogTitle'] ?? '';
+        $this->ogDescription = $next['ogDescription'] ?? '';
+        $this->ogImage = $next['ogImage'] ?? null;
 
         $this->editingLocale = $newLocale;
         $this->resetErrorBag();
+    }
+
+    public function clearOgImage()
+    {
+        $this->ogImage = null;
     }
 
     protected function currentLocaleFormSnapshot(): array
@@ -320,6 +358,11 @@ class EntryForm extends Component
             'slug' => $this->slug,
             'content' => $this->content,
             'excerpt' => $this->excerpt,
+            'metaTitle' => $this->metaTitle,
+            'metaDescription' => $this->metaDescription,
+            'ogTitle' => $this->ogTitle,
+            'ogDescription' => $this->ogDescription,
+            'ogImage' => $this->ogImage,
         ];
     }
 
@@ -415,11 +458,19 @@ class EntryForm extends Component
             if ($locale === $defaultLocale) {
                 continue;
             }
+            $seo = array_filter([
+                'meta_title' => ($snap['metaTitle'] ?? '') ?: null,
+                'meta_description' => ($snap['metaDescription'] ?? '') ?: null,
+                'og_title' => ($snap['ogTitle'] ?? '') ?: null,
+                'og_description' => ($snap['ogDescription'] ?? '') ?: null,
+                'og_image' => $snap['ogImage'] ?? null,
+            ]);
             $localeFields = array_filter([
                 'title' => ($snap['title'] ?? '') ?: null,
                 'slug' => ($snap['slug'] ?? '') ?: null,
                 'content' => ($snap['content'] ?? '') ?: null,
                 'excerpt' => ($snap['excerpt'] ?? '') ?: null,
+                'seo' => ! empty($seo) ? $seo : null,
             ], fn ($v) => $v !== null);
             if (! empty($localeFields)) {
                 $translations[$locale] = $localeFields;
@@ -440,6 +491,13 @@ class EntryForm extends Component
             'parent_id' => $this->parentId,
             'menu_order' => $this->menuOrder,
             'meta' => $this->meta,
+            'seo' => array_filter([
+                'meta_title' => ($defaultSnap['metaTitle'] ?? '') ?: null,
+                'meta_description' => ($defaultSnap['metaDescription'] ?? '') ?: null,
+                'og_title' => ($defaultSnap['ogTitle'] ?? '') ?: null,
+                'og_description' => ($defaultSnap['ogDescription'] ?? '') ?: null,
+                'og_image' => $defaultSnap['ogImage'] ?? null,
+            ]),
             'translations' => $translations ?: null,
         ];
 

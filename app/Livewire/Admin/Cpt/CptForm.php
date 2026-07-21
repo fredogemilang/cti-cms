@@ -37,6 +37,8 @@ class CptForm extends Component
 
     public bool $hasArchive = true;
 
+    public bool $publiclyQueryable = true;
+
     public array $supports = ['title', 'editor', 'thumbnail', 'excerpt', 'author'];
 
     public array $taxonomies = [];
@@ -145,6 +147,7 @@ class CptForm extends Component
         $this->showInMenu = $cpt->show_in_menu;
         $this->showInRest = $cpt->show_in_rest;
         $this->hasArchive = $cpt->has_archive;
+        $this->publiclyQueryable = $cpt->publicly_queryable;
         $this->supports = $cpt->supports ?? [];
 
         $this->metaFields = $cpt->metaFields->map(function ($field) {
@@ -508,6 +511,7 @@ class CptForm extends Component
             'show_in_menu' => $this->showInMenu,
             'show_in_rest' => $this->showInRest,
             'has_archive' => $this->hasArchive,
+            'publicly_queryable' => $this->publiclyQueryable,
             'supports' => $this->supports,
             'settings' => array_merge($this->isEdit ? (CustomPostType::find($this->cptId)->settings ?? []) : [], [
                 'meta_boxes' => $this->metaBoxes,

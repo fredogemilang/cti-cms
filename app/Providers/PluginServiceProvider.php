@@ -72,10 +72,11 @@ class PluginServiceProvider extends ServiceProvider
             }
 
             // Collect slugs to build regex constraints
-            $cptSlugs = CustomPostType::withArchive()->pluck('slug')->toArray();
+            $archiveSlugs = CustomPostType::withArchive()->pluck('slug')->toArray();
+            $singleSlugs = CustomPostType::publiclyQueryable()->pluck('slug')->toArray();
             $taxonomySlugs = CustomTaxonomy::active()->pluck('slug')->toArray();
 
-            if (empty($cptSlugs) && empty($taxonomySlugs)) {
+            if (empty($archiveSlugs) && empty($singleSlugs) && empty($taxonomySlugs)) {
                 return;
             }
 
@@ -88,17 +89,20 @@ class PluginServiceProvider extends ServiceProvider
                     ->name('taxonomy.term.archive');
             }
 
-            // CPT single entries: /{cpt-slug}/{entry-slug}
-            if (! empty($cptSlugs)) {
-                $cptPattern = implode('|', array_map('preg_quote', $cptSlugs));
+            // CPT single entries: /{cpt-slug}/{entry-slug} (requires publicly_queryable)
+            if (! empty($singleSlugs)) {
+                $singlePattern = implode('|', array_map('preg_quote', $singleSlugs));
                 Route::get('/{cptSlug}/{entrySlug}', [ArchiveController::class, 'single'])
-                    ->where('cptSlug', $cptPattern)
+                    ->where('cptSlug', $singlePattern)
                     ->where('entrySlug', '[a-zA-Z0-9\\-]+')
                     ->name('cpt.entry.show');
+            }
 
-                // CPT archive listings: /{cpt-slug}
+            // CPT archive listings: /{cpt-slug} (requires has_archive)
+            if (! empty($archiveSlugs)) {
+                $archivePattern = implode('|', array_map('preg_quote', $archiveSlugs));
                 Route::get('/{cptSlug}', [ArchiveController::class, 'archive'])
-                    ->where('cptSlug', $cptPattern)
+                    ->where('cptSlug', $archivePattern)
                     ->name('cpt.archive');
             }
         } catch (\Exception $e) {

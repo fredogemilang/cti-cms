@@ -572,10 +572,20 @@
                         <div class="flex items-center justify-between">
                             <div class="flex flex-col">
                                 <span class="text-sm font-semibold text-gray-900 dark:text-[#FCFCFC]">Has Archive</span>
-                                <span class="text-[11px] text-[#6F767E]">Enable archive pages</span>
+                                <span class="text-[11px] text-[#6F767E]">Enable archive listing page (e.g. /posts)</span>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" wire:model="hasArchive" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 dark:bg-[#272B30] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#6F767E] peer-checked:after:bg-blue-600 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600/20"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-semibold text-gray-900 dark:text-[#FCFCFC]">Publicly Queryable</span>
+                                <span class="text-[11px] text-[#6F767E]">Each entry has its own URL & page</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" wire:model="publiclyQueryable" class="sr-only peer">
                                 <div class="w-11 h-6 bg-gray-200 dark:bg-[#272B30] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#6F767E] peer-checked:after:bg-blue-600 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600/20"></div>
                             </label>
                         </div>

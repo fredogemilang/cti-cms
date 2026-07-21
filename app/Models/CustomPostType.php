@@ -19,6 +19,7 @@ class CustomPostType extends Model
         'show_in_menu',
         'show_in_rest',
         'has_archive',
+        'publicly_queryable',
         'supports',
         'settings',
         'is_active',
@@ -29,6 +30,7 @@ class CustomPostType extends Model
         'show_in_menu' => 'boolean',
         'show_in_rest' => 'boolean',
         'has_archive' => 'boolean',
+        'publicly_queryable' => 'boolean',
         'supports' => 'array',
         'settings' => 'array',
         'is_active' => 'boolean',
@@ -146,6 +148,14 @@ class CustomPostType extends Model
     public function scopeWithArchive($query)
     {
         return $query->where('has_archive', true)->where('is_active', true);
+    }
+
+    /**
+     * Scope for CPTs where each entry has its own URL page.
+     */
+    public function scopePubliclyQueryable($query)
+    {
+        return $query->where('publicly_queryable', true)->where('is_active', true);
     }
 
     /**

@@ -47,6 +47,7 @@ class ArchiveController extends Controller
     {
         $postType = CustomPostType::where('slug', $cptSlug)
             ->where('is_active', true)
+            ->where('publicly_queryable', true)
             ->firstOrFail();
 
         $entry = CptEntry::findByLocalizedSlug($postType, $entrySlug);
@@ -63,6 +64,7 @@ class ArchiveController extends Controller
         return view($viewName, [
             'postType' => $postType,
             'entry' => $entry,
+            'seo' => $entry->seo ?? [],
             'taxonomies' => $taxonomies,
             'previousEntry' => $previousEntry,
             'nextEntry' => $nextEntry,
