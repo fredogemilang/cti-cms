@@ -26,7 +26,7 @@
                 }
             }
         }" 
-        :class="{ 'ring-2 ring-[#2563EB] border-[#2563EB] bg-[#2563EB]/5': isDropping }"
+        x-bind:class="{ 'ring-2 ring-[#2563EB] border-[#2563EB] bg-[#2563EB]/5': isDropping }"
         padding="p-8"
     >
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">

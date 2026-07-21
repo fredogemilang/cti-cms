@@ -304,11 +304,12 @@
     </li>
     @foreach($pluginMenus as $pluginMenu)
         @can($pluginMenu['permission'] ?? '')
-        <li x-data="{ open: {{ request()->routeIs($pluginMenu['route'] . '*') ? 'true' : 'false' }} }">
+        <li class="relative" x-data="{ open: {{ request()->routeIs(($pluginMenu['route'] ?? '') . '*') ? 'true' : 'false' }}, flyoutOpen: false }" @click.away="flyoutOpen = false" :class="{ 'flyout-active': flyoutOpen }">
             @if(!empty($pluginMenu['children']))
                 <button
-                    @click="open = !open"
-                    class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden">
+                    @click="if (sidebarCollapsed) { flyoutOpen = !flyoutOpen; } else { open = !open; }"
+                    class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden"
+                    :class="{ 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]': sidebarCollapsed && flyoutOpen }">
                     <div class="flex items-center gap-3">
                         <span class="material-symbols-outlined shrink-0">{{ $pluginMenu['icon'] ?? 'extension' }}</span>
                         <span class="font-semibold text-[15px] sidebar-text">{{ $pluginMenu['title'] }}</span>
@@ -316,13 +317,40 @@
                     <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
                     <span class="sidebar-tooltip">{{ $pluginMenu['title'] }}</span>
                 </button>
+
+                <!-- Flyout Dropdown for Collapsed Sidebar -->
+                <div 
+                    x-show="sidebarCollapsed && flyoutOpen"
+                    x-transition:enter="transition ease-out duration-150 transform"
+                    x-transition:enter-start="opacity-0 scale-95 -translate-x-2"
+                    x-transition:enter-end="opacity-100 scale-100 translate-x-0"
+                    x-transition:leave="transition ease-in duration-100 transform"
+                    x-transition:leave-start="opacity-100 scale-100 translate-x-0"
+                    x-transition:leave-end="opacity-0 scale-95 -translate-x-2"
+                    x-cloak
+                    class="absolute left-[calc(100%+12px)] top-0 z-[100] min-w-[200px] w-max rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2.5 shadow-2xl text-white">
+                    <div class="absolute -left-3 top-4 w-0 h-0 border-[6px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
+                    <div class="space-y-1">
+                        <div class="px-3 py-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1.5 pb-1 whitespace-nowrap">
+                            {{ $pluginMenu['title'] }}
+                        </div>
+                        @foreach($pluginMenu['children'] as $child)
+                            @can($child['permission'] ?? '')
+                            <a href="{{ $child['url'] ?? '#' }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
+                                {{ $child['title'] }}
+                            </a>
+                            @endcan
+                        @endforeach
+                    </div>
+                </div>
+
                 <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 300px; opacity: 1' : 'max-height: 0; opacity: 0'">
                     <ul class="submenu-list mt-1 space-y-1">
                         @foreach($pluginMenu['children'] as $child)
                             @can($child['permission'] ?? '')
                             <li class="relative pl-6 py-1">
                                 <div class="submenu-item-connector"></div>
-                                <a class="flex items-center rounded-xl px-4 py-2.5 transition-all duration-200 relative z-10 {{ request()->routeIs($child['route']) ? 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC] font-semibold' : 'text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none' }}" 
+                                <a class="flex items-center rounded-xl px-4 py-2.5 transition-all duration-200 relative z-10 {{ request()->routeIs($child['route'] ?? '') ? 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC] font-semibold' : 'text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none' }}" 
                                    href="{{ $child['url'] ?? '#' }}">
                                     <span class="text-[14px] font-medium">{{ $child['title'] }}</span>
                                 </a>
@@ -332,7 +360,7 @@
                     </ul>
                 </div>
             @else
-                <a class="flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 nav-item overflow-hidden {{ request()->routeIs($pluginMenu['route']) ? 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]' : 'text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none' }}"
+                <a class="flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 nav-item overflow-hidden {{ request()->routeIs($pluginMenu['route'] ?? '') ? 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]' : 'text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none' }}"
                     href="{{ $pluginMenu['url'] ?? '#' }}">
                     <span class="material-symbols-outlined shrink-0">{{ $pluginMenu['icon'] ?? 'extension' }}</span>
                     <span class="font-semibold text-[15px] sidebar-text">{{ $pluginMenu['title'] }}</span>
