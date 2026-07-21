@@ -39,16 +39,16 @@
             x-transition:leave-start="opacity-100 scale-100 translate-x-0"
             x-transition:leave-end="opacity-0 scale-95 -translate-x-2"
             x-cloak
-            class="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-[100] w-52 rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2 shadow-2xl text-white">
-            <div class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-[7px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
+            class="absolute left-[calc(100%+12px)] top-0 z-[100] min-w-[200px] w-max rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2.5 shadow-2xl text-white">
+            <div class="absolute -left-3 top-4 w-0 h-0 border-[6px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
             <div class="space-y-1">
-                <div class="px-3 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1">
+                <div class="px-3 py-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1.5 pb-1 whitespace-nowrap">
                     Pages
                 </div>
-                <a wire:navigate href="{{ route('admin.pages.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.pages.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     All Pages
                 </a>
-                <a wire:navigate href="{{ route('admin.pages.create') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.pages.create') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Add Page
                 </a>
             </div>
@@ -105,20 +105,20 @@
             x-transition:leave-start="opacity-100 scale-100 translate-x-0"
             x-transition:leave-end="opacity-0 scale-95 -translate-x-2"
             x-cloak
-            class="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-[100] w-52 rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2 shadow-2xl text-white">
-            <div class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-[7px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
+            class="absolute left-[calc(100%+12px)] top-0 z-[100] min-w-[200px] w-max rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2.5 shadow-2xl text-white">
+            <div class="absolute -left-3 top-4 w-0 h-0 border-[6px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
             <div class="space-y-1">
-                <div class="px-3 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1">
+                <div class="px-3 py-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1.5 pb-1 whitespace-nowrap">
                     {{ $cpt->plural_label }}
                 </div>
-                <a wire:navigate href="{{ route('admin.cpt.entries.index', $cpt->slug) }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.cpt.entries.index', $cpt->slug) }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     All {{ $cpt->plural_label }}
                 </a>
-                <a wire:navigate href="{{ route('admin.cpt.entries.create', $cpt->slug) }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.cpt.entries.create', $cpt->slug) }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Add {{ $cpt->singular_label }}
                 </a>
                 @foreach($cptTaxonomies as $taxonomy)
-                    <a wire:navigate href="{{ route('admin.taxonomies.terms.index', $taxonomy->id) }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                    <a wire:navigate href="{{ route('admin.taxonomies.terms.index', $taxonomy->id) }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                         {{ $taxonomy->plural_label }}
                     </a>
                 @endforeach
@@ -179,17 +179,17 @@
             x-transition:leave-start="opacity-100 scale-100 translate-x-0"
             x-transition:leave-end="opacity-0 scale-95 -translate-x-2"
             x-cloak
-            class="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-[100] w-52 rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2 shadow-2xl text-white">
-            <div class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-[7px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
+            class="absolute left-[calc(100%+12px)] top-0 z-[100] min-w-[200px] w-max rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2.5 shadow-2xl text-white">
+            <div class="absolute -left-3 top-4 w-0 h-0 border-[6px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
             <div class="space-y-1">
-                <div class="px-3 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1">
+                <div class="px-3 py-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1.5 pb-1 whitespace-nowrap">
                     Media
                 </div>
-                <a wire:navigate href="{{ route('admin.media.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.media.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Library
                 </a>
                 @can('media.upload')
-                <a wire:navigate href="{{ route('admin.media.create') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.media.create') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Add Media
                 </a>
                 @endcan
@@ -241,22 +241,22 @@
             x-transition:leave-start="opacity-100 scale-100 translate-x-0"
             x-transition:leave-end="opacity-0 scale-95 -translate-x-2"
             x-cloak
-            class="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-[100] w-52 rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2 shadow-2xl text-white">
-            <div class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-[7px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
+            class="absolute left-[calc(100%+12px)] top-0 z-[100] min-w-[200px] w-max rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2.5 shadow-2xl text-white">
+            <div class="absolute -left-3 top-4 w-0 h-0 border-[6px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
             <div class="space-y-1">
-                <div class="px-3 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1">
+                <div class="px-3 py-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1.5 pb-1 whitespace-nowrap">
                     Forms
                 </div>
-                <a wire:navigate href="{{ route('admin.forms.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.forms.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     All Forms
                 </a>
                 @can('forms.create')
-                <a wire:navigate href="{{ route('admin.forms.create') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.forms.create') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Create Form
                 </a>
                 @endcan
                 @can('forms.edit')
-                <a wire:navigate href="{{ route('admin.forms.assignments') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.forms.assignments') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Form Assignments
                 </a>
                 @endcan
@@ -372,16 +372,16 @@
             x-transition:leave-start="opacity-100 scale-100 translate-x-0"
             x-transition:leave-end="opacity-0 scale-95 -translate-x-2"
             x-cloak
-            class="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-[100] w-52 rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2 shadow-2xl text-white">
-            <div class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-[7px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
+            class="absolute left-[calc(100%+12px)] top-0 z-[100] min-w-[200px] w-max rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2.5 shadow-2xl text-white">
+            <div class="absolute -left-3 top-4 w-0 h-0 border-[6px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
             <div class="space-y-1">
-                <div class="px-3 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1">
+                <div class="px-3 py-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1.5 pb-1 whitespace-nowrap">
                     CPT
                 </div>
-                <a wire:navigate href="{{ route('admin.cpt.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.cpt.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Post Types
                 </a>
-                <a wire:navigate href="{{ route('admin.taxonomies.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.taxonomies.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Taxonomies
                 </a>
             </div>
@@ -428,32 +428,32 @@
             x-transition:leave-start="opacity-100 scale-100 translate-x-0"
             x-transition:leave-end="opacity-0 scale-95 -translate-x-2"
             x-cloak
-            class="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-[100] w-52 rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2 shadow-2xl text-white">
-            <div class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-[7px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
+            class="absolute left-[calc(100%+12px)] top-0 z-[100] min-w-[200px] w-max rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2.5 shadow-2xl text-white">
+            <div class="absolute -left-3 top-4 w-0 h-0 border-[6px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
             <div class="space-y-1">
-                <div class="px-3 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1">
+                <div class="px-3 py-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1.5 pb-1 whitespace-nowrap">
                     User
                 </div>
                 @can('users.view')
-                <a wire:navigate href="{{ route('admin.users.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.users.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     All Users
                 </a>
                 @endcan
                 @can('users.create')
-                <a wire:navigate href="{{ route('admin.users.create') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.users.create') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Add User
                 </a>
                 @endcan
-                <a wire:navigate href="{{ route('admin.profile.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.profile.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Profile
                 </a>
                 @can('roles.view')
-                <a wire:navigate href="{{ route('admin.role-permission.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.role-permission.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Role & Permission
                 </a>
                 @endcan
                 @can('menus.view')
-                <a wire:navigate href="{{ route('admin.menus.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.menus.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Menu Access
                 </a>
                 @endcan
@@ -557,13 +557,13 @@
             x-transition:leave-start="opacity-100 scale-100 translate-x-0"
             x-transition:leave-end="opacity-0 scale-95 -translate-x-2"
             x-cloak
-            class="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-[100] w-52 rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2 shadow-2xl text-white">
-            <div class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-[7px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
+            class="absolute left-[calc(100%+12px)] top-0 z-[100] min-w-[200px] w-max rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2.5 shadow-2xl text-white">
+            <div class="absolute -left-3 top-4 w-0 h-0 border-[6px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
             <div class="space-y-1">
-                <div class="px-3 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1">
+                <div class="px-3 py-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1.5 pb-1 whitespace-nowrap">
                     Appearance
                 </div>
-                <a wire:navigate href="{{ route('admin.themes.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                <a wire:navigate href="{{ route('admin.themes.index') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Themes
                 </a>
             </div>
@@ -609,15 +609,15 @@
             x-transition:leave-start="opacity-100 scale-100 translate-x-0"
             x-transition:leave-end="opacity-0 scale-95 -translate-x-2"
             x-cloak
-            class="absolute left-[calc(100%+12px)] top-1/2 -translate-y-1/2 z-[100] w-52 rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2 shadow-2xl text-white">
-            <div class="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-[7px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
+            class="absolute left-[calc(100%+12px)] top-0 z-[100] min-w-[200px] w-max rounded-2xl bg-[#1E2430] dark:bg-[#1A1A1A] border border-gray-700/50 dark:border-[#272B30] p-2.5 shadow-2xl text-white">
+            <div class="absolute -left-3 top-4 w-0 h-0 border-[6px] border-solid border-r-[#1E2430] dark:border-r-[#1A1A1A] border-y-transparent border-l-transparent"></div>
             <div class="space-y-1">
-                <div class="px-3 py-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1">
+                <div class="px-3 py-1 text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700/40 dark:border-gray-800 mb-1.5 pb-1 whitespace-nowrap">
                     Settings
                 </div>
                 @foreach($settingsGroups as $sg)
                     @can($sg['permission'] ?? 'settings.view')
-                    <a wire:navigate href="{{ route('admin.settings.show', $sg['slug']) }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors">
+                    <a wire:navigate href="{{ route('admin.settings.show', $sg['slug']) }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                         {{ $sg['label'] }}
                     </a>
                     @endcan
