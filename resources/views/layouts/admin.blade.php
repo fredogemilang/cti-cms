@@ -89,6 +89,68 @@
         aside.collapsed .logo-container span:not(:first-child) {
             display: none;
         }
+
+        /* Sidebar Tooltip Styles */
+        .sidebar-tooltip {
+            display: none;
+        }
+        aside.collapsed nav {
+            overflow: visible !important;
+        }
+        aside.collapsed .nav-item {
+            position: relative;
+            overflow: visible !important;
+        }
+        aside.collapsed .nav-item:hover .sidebar-tooltip {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            left: calc(100% + 12px);
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 99;
+            white-space: nowrap;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+            pointer-events: none;
+            animation: tooltipFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        /* Light mode tooltip: Dark background, white text */
+        .sidebar-tooltip {
+            background-color: #0F172A;
+            color: #FFFFFF;
+        }
+        .sidebar-tooltip::before {
+            content: '';
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent #0F172A transparent transparent;
+        }
+        /* Dark mode tooltip: White background, dark text */
+        .dark .sidebar-tooltip {
+            background-color: #FFFFFF;
+            color: #111827;
+        }
+        .dark .sidebar-tooltip::before {
+            border-color: transparent #FFFFFF transparent transparent;
+        }
+        @keyframes tooltipFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50%) translateX(-4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(-50%) translateX(0);
+            }
+        }
         /* Admin gradient backgrounds */
         .admin-body {
             background: radial-gradient(ellipse at top, #ffffff 0%, #F4F5F6 50%, #E8EAED 100%);
@@ -160,88 +222,105 @@
             <!-- Header -->
             <header 
                 :class="{ 'bg-white/80 dark:bg-[#0B0B0B]/80 backdrop-blur-md border-b border-gray-200/50 dark:border-[#272B30]/50 shadow-sm': scrolled, 'bg-transparent border-b border-transparent': !scrolled }"
-                class="sticky top-0 z-30 flex flex-col gap-6 md:flex-row md:items-center md:justify-between px-6 py-6 md:px-10 md:pt-8 md:pb-6 transition-all duration-300">
-                <div class="flex items-center gap-4">
+                class="sticky top-0 z-30 flex items-center justify-between px-6 py-4 md:px-10 md:py-5 transition-all duration-300">
+                <div class="flex items-center gap-4 flex-1 max-w-xl">
                     <button 
                         @click="toggleSidebar()"
-                        class="p-2 rounded-xl hover:bg-gray-200 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#111827] dark:text-[#FCFCFC] transition-colors focus:outline-none">
-                        <span class="material-symbols-outlined text-2xl" x-text="sidebarCollapsed ? 'menu' : 'menu_open'"></span>
+                        class="p-2 rounded-xl hover:bg-gray-200 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#111827] dark:text-[#FCFCFC] dark:hover:text-white transition-colors focus:outline-none shrink-0">
+                        <span class="material-symbols-outlined text-3xl" x-text="sidebarCollapsed ? 'chevron_right' : 'chevron_left'"></span>
                     </button>
-                    <h1 class="text-4xl font-bold tracking-tight text-[#111827] dark:text-[#FCFCFC]">
-                        @yield('page-title', 'Dashboard')
-                    </h1>
+
+                    <!-- Global Search -->
+                    <livewire:admin.header.global-search />
                 </div>
-                <div class="flex items-center gap-6">
+                <div class="flex items-center gap-4 md:gap-6">
                     @hasSection('header-actions')
                         @yield('header-actions')
-                    @else
-                        <!-- Global Search -->
-                        <livewire:admin.header.global-search />
+                    @endif
 
-                        <div class="flex items-center gap-4">
-                            <!-- Theme Toggle -->
-                            <button 
-                                x-data="{ 
-                                    darkMode: document.documentElement.classList.contains('dark'),
-                                    toggle() {
-                                        this.darkMode = !this.darkMode;
-                                        document.documentElement.classList.toggle('dark');
-                                        localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
-                                    }
-                                }"
-                                @click="toggle()"
-                                class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#FCFCFC] transition-colors focus:outline-none">
-                                <span class="material-symbols-outlined text-[24px]" x-show="!darkMode" x-cloak>dark_mode</span>
-                                <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
-                            </button>
-                            <!-- Notifications -->
-                            <livewire:admin.header.notifications-dropdown />
+                    <div class="flex items-center gap-4">
+                        <!-- Theme Toggle -->
+                        <button 
+                            x-data="{ 
+                                darkMode: document.documentElement.classList.contains('dark'),
+                                toggle() {
+                                    this.darkMode = !this.darkMode;
+                                    document.documentElement.classList.toggle('dark');
+                                    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+                                }
+                            }"
+                            @click="toggle()"
+                            class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#FCFCFC] transition-colors focus:outline-none">
+                            <span class="material-symbols-outlined text-[24px]" x-show="!darkMode" x-cloak>dark_mode</span>
+                            <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
+                        </button>
+                        <!-- Notifications -->
+                        <livewire:admin.header.notifications-dropdown />
 
-                            <!-- User Avatar -->
-                            <div x-data="{ userMenuOpen: false }" class="relative">
-                                <div 
-                                    @click="userMenuOpen = !userMenuOpen"
-                                    class="h-12 w-12 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center cursor-pointer border-2 border-transparent hover:border-primary transition-all overflow-hidden">
-                                    @if(auth()->user()->avatar)
-                                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover">
-                                    @else
-                                        <span class="text-white font-bold">{{ substr(auth()->user()->name, 0, 2) }}</span>
-                                    @endif
+                        <!-- User Avatar -->
+                        <div x-data="{ userMenuOpen: false }" class="relative">
+                            <div 
+                                @click="userMenuOpen = !userMenuOpen"
+                                class="h-12 w-12 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center cursor-pointer border-2 border-transparent hover:border-primary transition-all overflow-hidden">
+                                @if(auth()->user()->avatar)
+                                    <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover">
+                                @else
+                                    <span class="text-white font-bold">{{ substr(auth()->user()->name, 0, 2) }}</span>
+                                @endif
+                            </div>
+                            <!-- Dropdown -->
+                            <div 
+                                x-show="userMenuOpen"
+                                @click.away="userMenuOpen = false"
+                                x-transition
+                                x-cloak
+                                class="absolute right-0 mt-2 w-56 bg-white dark:bg-[#1A1A1A] rounded-xl shadow-xl py-2 z-50 border border-gray-200 dark:border-[#272B30]">
+                                <div class="px-4 py-3 border-b border-gray-100 dark:border-[#272B30]">
+                                    <p class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ auth()->user()->name }}</p>
+                                    <p class="text-xs text-[#6F767E]">{{ auth()->user()->email }}</p>
                                 </div>
-                                <!-- Dropdown -->
-                                <div 
-                                    x-show="userMenuOpen"
-                                    @click.away="userMenuOpen = false"
-                                    x-transition
-                                    x-cloak
-                                    class="absolute right-0 mt-2 w-56 bg-white dark:bg-[#1A1A1A] rounded-xl shadow-xl py-2 z-50 border border-gray-200 dark:border-[#272B30]">
-                                    <div class="px-4 py-3 border-b border-gray-100 dark:border-[#272B30]">
-                                        <p class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ auth()->user()->name }}</p>
-                                        <p class="text-xs text-[#6F767E]">{{ auth()->user()->email }}</p>
-                                    </div>
-                                    <a wire:navigate href="{{ route('admin.profile.index') }}" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Profile</a>
-                                    {{-- Settings link aktif setelah Settings module landed --}}
-                                    @if(\Route::has('admin.settings.show'))
-                                        <a wire:navigate href="{{ route('admin.settings.show', 'general') }}" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Settings</a>
-                                    @endif
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition font-medium">
-                                            Logout
-                                        </button>
-                                    </form>
-                                </div>
+                                <a wire:navigate href="{{ route('admin.profile.index') }}" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Profile</a>
+                                {{-- Settings link aktif setelah Settings module landed --}}
+                                @if(\Route::has('admin.settings.show'))
+                                    <a wire:navigate href="{{ route('admin.settings.show', 'general') }}" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Settings</a>
+                                @endif
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition font-medium">
+                                        Logout
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                    @endif
+                    </div>
                 </div>
             </header>
             @endif
 
             <!-- Page Content -->
             <div class="@hasSection('hide-header') h-full @else px-6 pb-6 md:px-10 md:pb-10 @endif">
-                <!-- Alert Messages -->
-                <!-- Alert Messages Removed (Using Toasts) -->
+                <!-- Page Title & Subtitle Section -->
+                @sectionMissing('hide-title')
+                @hasSection('page-title')
+                    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8 pt-4">
+                        <div>
+                            <h1 class="text-4xl font-bold tracking-tight text-[#111827] dark:text-[#FCFCFC]">
+                                @yield('page-title')
+                            </h1>
+                            @hasSection('page-subtitle')
+                                <p class="text-base font-normal text-[#6F767E] dark:text-[#9A9FA5] mt-1">
+                                    @yield('page-subtitle')
+                                </p>
+                            @endif
+                        </div>
+                        @hasSection('page-actions')
+                            <div class="flex items-center gap-3">
+                                @yield('page-actions')
+                            </div>
+                        @endif
+                    </div>
+                @endif
+                @endif
 
                 @yield('content')
             </div>

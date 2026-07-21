@@ -8,6 +8,7 @@
             href="{{ route('admin.dashboard') }}">
             <span class="material-symbols-outlined shrink-0">dashboard</span>
             <span class="font-semibold text-[15px] sidebar-text">Dashboard</span>
+            <span class="sidebar-tooltip">Dashboard</span>
         </a>
     </li>
 
@@ -24,6 +25,7 @@
                 <span class="font-semibold text-[15px] sidebar-text">Pages</span>
             </div>
             <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
+            <span class="sidebar-tooltip">Pages</span>
         </button>
         <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 200px; opacity: 1' : 'max-height: 0; opacity: 0'">
             <ul class="submenu-list mt-1 space-y-1">
@@ -63,6 +65,7 @@
                 <span class="font-semibold text-[15px] sidebar-text">{{ $cpt->plural_label }}</span>
             </div>
             <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
+            <span class="sidebar-tooltip">{{ $cpt->plural_label }}</span>
         </button>
         <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 500px; opacity: 1' : 'max-height: 0; opacity: 0'">
             <ul class="submenu-list mt-1 space-y-1">
@@ -105,6 +108,7 @@
                 <span class="font-semibold text-[15px] sidebar-text">Media</span>
             </div>
             <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
+            <span class="sidebar-tooltip">Media</span>
         </button>
         <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 200px; opacity: 1' : 'max-height: 0; opacity: 0'">
             <ul class="submenu-list mt-1 space-y-1">
@@ -138,6 +142,7 @@
                 <span class="font-semibold text-[15px] sidebar-text">Forms</span>
             </div>
             <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
+            <span class="sidebar-tooltip">Forms</span>
         </button>
         <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 200px; opacity: 1' : 'max-height: 0; opacity: 0'">
             <ul class="submenu-list mt-1 space-y-1">
@@ -191,6 +196,7 @@
                         <span class="font-semibold text-[15px] sidebar-text">{{ $pluginMenu['title'] }}</span>
                     </div>
                     <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
+                    <span class="sidebar-tooltip">{{ $pluginMenu['title'] }}</span>
                 </button>
                 <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 300px; opacity: 1' : 'max-height: 0; opacity: 0'">
                     <ul class="submenu-list mt-1 space-y-1">
@@ -212,6 +218,7 @@
                     href="{{ $pluginMenu['url'] ?? '#' }}">
                     <span class="material-symbols-outlined shrink-0">{{ $pluginMenu['icon'] ?? 'extension' }}</span>
                     <span class="font-semibold text-[15px] sidebar-text">{{ $pluginMenu['title'] }}</span>
+                    <span class="sidebar-tooltip">{{ $pluginMenu['title'] }}</span>
                 </a>
             @endif
         </li>
@@ -233,6 +240,7 @@
                 <span class="font-semibold text-[15px] sidebar-text">CPT</span>
             </div>
             <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
+            <span class="sidebar-tooltip">CPT</span>
         </button>
         <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 200px; opacity: 1' : 'max-height: 0; opacity: 0'">
             <ul class="submenu-list mt-1 space-y-1">
@@ -262,6 +270,7 @@
                 <span class="font-semibold text-[15px] sidebar-text">User</span>
             </div>
             <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
+            <span class="sidebar-tooltip">User</span>
         </button>
         <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 350px; opacity: 1' : 'max-height: 0; opacity: 0'">
             <ul class="submenu-list mt-1 space-y-1">
@@ -323,6 +332,7 @@
             href="{{ route('admin.plugins.index') }}">
             <span class="material-symbols-outlined shrink-0">extension</span>
             <span class="font-semibold text-[15px] sidebar-text">Plugins</span>
+            <span class="sidebar-tooltip">Plugins</span>
         </a>
     </li>
     @endcan
@@ -332,6 +342,7 @@
             href="{{ route('admin.activity.index') }}">
             <span class="material-symbols-outlined shrink-0">history</span>
             <span class="font-semibold text-[15px] sidebar-text">Activity Log</span>
+            <span class="sidebar-tooltip">Activity Log</span>
         </a>
     </li>
     @endcan
@@ -345,6 +356,7 @@
                 <span class="font-semibold text-[15px] sidebar-text">Appearance</span>
             </div>
             <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
+            <span class="sidebar-tooltip">Appearance</span>
         </button>
         <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 200px; opacity: 1' : 'max-height: 0; opacity: 0'">
             <ul class="submenu-list mt-1 space-y-1">
@@ -373,6 +385,7 @@
                 <span class="font-semibold text-[15px] sidebar-text">Settings</span>
             </div>
             <span class="material-symbols-outlined text-xl transition-transform duration-300 expand-icon" :class="{ 'rotate-180': open }">expand_more</span>
+            <span class="sidebar-tooltip">Settings</span>
         </button>
         <div class="submenu-container overflow-hidden" :style="open ? 'max-height: 3000px; opacity: 1' : 'max-height: 0; opacity: 0'">
             <ul class="submenu-list mt-1 space-y-1">
