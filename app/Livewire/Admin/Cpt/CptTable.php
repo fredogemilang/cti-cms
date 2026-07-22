@@ -6,6 +6,9 @@ use App\Models\CustomPostType;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+/**
+ * @property-read array<string, int> $statusCounts
+ */
 class CptTable extends Component
 {
     use WithPagination;
@@ -98,6 +101,25 @@ class CptTable extends Component
         $this->targetDeleteId = null;
     }
 
+    public function getStatusCountsProperty(): array
+    {
+        $baseQuery = CustomPostType::query()
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('singular_label', 'like', '%'.$this->search.'%')
+                        ->orWhere('plural_label', 'like', '%'.$this->search.'%')
+                        ->orWhere('slug', 'like', '%'.$this->search.'%');
+                });
+            });
+
+        return [
+            'all' => (clone $baseQuery)->count(),
+            'active' => (clone $baseQuery)->where('is_active', true)->count(),
+            'inactive' => (clone $baseQuery)->where('is_active', false)->count(),
+        ];
+    }
+
     public function render()
     {
         $postTypes = CustomPostType::query()
@@ -121,6 +143,7 @@ class CptTable extends Component
 
         return view('livewire.admin.cpt.cpt-table', [
             'postTypes' => $postTypes,
+            'statusCounts' => $this->statusCounts,
         ]);
     }
 }

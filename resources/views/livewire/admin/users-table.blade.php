@@ -1,17 +1,53 @@
-<div>
-    <!-- Filters & Search -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div class="flex items-center gap-3">
-            <div class="relative group">
-                <input
+<div class="space-y-6">
+    {{-- Status Filter Buttons --}}
+    <div>
+        <div class="inline-flex flex-wrap w-fit items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30] gap-1">
+            <button 
+                wire:click="$set('statusFilter', '')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $statusFilter === '' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
+            >
+                All
+                <span class="px-2 py-0.5 rounded-lg {{ $statusFilter === '' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['all'] }}
+                </span>
+            </button>
+            <button 
+                wire:click="$set('statusFilter', 'active')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $statusFilter === 'active' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
+            >
+                Active
+                <span class="px-2 py-0.5 rounded-lg {{ $statusFilter === 'active' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['active'] }}
+                </span>
+            </button>
+            <button 
+                wire:click="$set('statusFilter', 'inactive')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $statusFilter === 'inactive' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
+            >
+                Inactive
+                <span class="px-2 py-0.5 rounded-lg {{ $statusFilter === 'inactive' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['inactive'] }}
+                </span>
+            </button>
+        </div>
+    </div>
+
+    {{-- Filters & Search --}}
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Search & Filters (Left) -->
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="relative group w-full md:w-[320px]">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] group-focus-within:text-[#2563EB] transition-colors z-10">search</span>
+                <x-admin.ui.input
+                    name="search"
+                    type="text"
                     wire:model.live.debounce.300ms="search"
-                    class="h-12 w-full md:w-[320px] rounded-xl border-none bg-white dark:bg-[#1A1A1A] pl-12 pr-4 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all placeholder:text-[#6F767E]"
-                    placeholder="Search users by name or email..." type="text" />
-                <span
-                    class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] group-focus-within:text-[#2563EB] transition-colors">search</span>
+                    class="!pl-12 !py-2.5 !rounded-xl !h-12 text-sm !w-full"
+                    placeholder="Search users by name or email..."
+                />
                 
-                <!-- Loading indicator for search -->
-                <div wire:loading wire:target="search" class="absolute right-4 top-1/2 -translate-y-1/2">
+                <!-- Loading indicator -->
+                <div wire:loading wire:target="search" class="absolute right-4 top-1/2 -translate-y-1/2 z-10">
                     <svg class="animate-spin h-5 w-5 text-[#2563EB]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -29,24 +65,19 @@
                 @endforeach
             </select>
 
-            <!-- Status Filter -->
-            <select
-                wire:model.live="statusFilter"
-                class="h-12 rounded-xl border-none bg-white dark:bg-[#1A1A1A] pl-4 pr-10 text-sm font-bold text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all cursor-pointer">
-                <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-            </select>
-
             @if($search || $roleFilter || $statusFilter)
-            <button
+            <x-admin.ui.button
                 wire:click="clearFilters"
-                class="h-12 px-4 rounded-xl bg-gray-100 dark:bg-[#272B30] text-[#6F767E] font-medium text-sm hover:bg-gray-200 dark:hover:bg-[#333] transition-all flex items-center gap-2">
-                <span class="material-symbols-outlined text-lg">close</span>
+                variant="outline"
+                class="!h-12 !py-0 !rounded-xl text-sm"
+            >
+                <span class="material-symbols-outlined text-lg mr-2">close</span>
                 Clear
-            </button>
+            </x-admin.ui.button>
             @endif
         </div>
+
+        <!-- Display Row Size (Right) -->
         <div class="flex items-center gap-3">
             <span class="text-sm font-medium text-[#6F767E]">Display:</span>
             <select
@@ -57,12 +88,6 @@
                 <option value="50">50 Rows</option>
                 <option value="100">100 Rows</option>
             </select>
-            @can('users.create')
-            <a href="{{ route('admin.users.create') }}" wire:navigate
-                class="px-6 py-3 font-bold rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white text-sm">
-                Add New User
-            </a>
-            @endcan
         </div>
     </div>
 

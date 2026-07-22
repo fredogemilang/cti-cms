@@ -236,10 +236,10 @@
                                     @else
                                         <h3 class="text-[#111827] dark:text-[#FCFCFC] font-medium mb-1">No {{ strtolower($postType->plural_label) }} yet</h3>
                                         <p class="text-[#6F767E] text-sm mb-6">Create your first {{ strtolower($postType->singular_label) }} to get started</p>
-                                        <a href="{{ route('admin.cpt.entries.create', $postType->slug) }}" class="inline-flex items-center gap-2 px-6 py-3 bg-[#2563EB] hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20">
-                                            <span class="material-symbols-outlined text-lg">add</span>
+                                        <x-admin.ui.button href="{{ route('admin.cpt.entries.create', $postType->slug) }}" variant="primary">
+                                            <span class="material-symbols-outlined text-lg mr-1">add</span>
                                             <span>Add {{ $postType->singular_label }}</span>
-                                        </a>
+                                        </x-admin.ui.button>
                                     @endif
                                 </div>
                             </td>

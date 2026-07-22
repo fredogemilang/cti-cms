@@ -1,43 +1,65 @@
 <div class="space-y-6">
-    <!-- Filters & Actions -->
-    <div class="flex flex-col sm:flex-row gap-4 items-center">
-        <!-- Search -->
-        <div class="flex flex-wrap items-center gap-3 flex-1">
-            <div class="relative">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10">search</span>
+    {{-- Status Filter Buttons --}}
+    <div>
+        <div class="inline-flex flex-wrap w-fit items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30] gap-1">
+            <button 
+                wire:click="$set('status', '')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === '' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
+            >
+                All
+                <span class="px-2 py-0.5 rounded-lg {{ $status === '' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['all'] }}
+                </span>
+            </button>
+            <button 
+                wire:click="$set('status', 'active')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'active' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
+            >
+                Active
+                <span class="px-2 py-0.5 rounded-lg {{ $status === 'active' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['active'] }}
+                </span>
+            </button>
+            <button 
+                wire:click="$set('status', 'inactive')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'inactive' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
+            >
+                Inactive
+                <span class="px-2 py-0.5 rounded-lg {{ $status === 'inactive' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['inactive'] }}
+                </span>
+            </button>
+        </div>
+    </div>
+
+    {{-- Filters & Search --}}
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Search box -->
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="relative group w-full md:w-[320px]">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] group-focus-within:text-[#2563EB] transition-colors z-10">search</span>
                 <x-admin.ui.input 
                     name="search" 
                     type="text" 
                     wire:model.live.debounce.300ms="search" 
-                    class="!pl-10 !py-2 !rounded-xl !h-12 text-sm !w-full md:!w-[320px]" 
+                    class="!pl-12 !py-2.5 !rounded-xl !h-12 text-sm !w-full" 
                     placeholder="Search taxonomies..." 
                 />
             </div>
-            
-            <!-- Status Filter -->
-            <div class="inline-flex w-fit items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30]">
-                <button 
-                    wire:click="$set('status', '')"
-                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === '' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
-                >
-                    All
-                </button>
-                <button 
-                    wire:click="$set('status', 'active')"
-                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'active' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
-                >
-                    Active
-                </button>
-                <button 
-                    wire:click="$set('status', 'inactive')"
-                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'inactive' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
-                >
-                    Inactive
-                </button>
-            </div>
+
+            @if($search || $status)
+            <x-admin.ui.button
+                wire:click="$set('status', ''); $set('search', '')"
+                variant="outline"
+                class="!h-12 !py-0 !rounded-xl text-sm"
+            >
+                <span class="material-symbols-outlined text-lg mr-2">close</span>
+                Clear
+            </x-admin.ui.button>
+            @endif
         </div>
         
-        <!-- Per Page -->
+        <!-- Display Row Size -->
         <div class="flex items-center gap-3">
             <span class="text-sm font-medium text-[#6F767E]">Display:</span>
             <select 
@@ -49,12 +71,6 @@
                 <option value="50">50 Rows</option>
             </select>
         </div>
-
-        <!-- Add Button -->
-        <a href="{{ route('admin.taxonomies.create') }}" 
-           class="px-6 py-3 font-bold rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white text-sm h-12 whitespace-nowrap">
-            <span>Add Taxonomy</span>
-        </a>
     </div>
 
     <!-- Table -->
@@ -116,25 +132,25 @@
                 </x-admin.ui.table-cell>
                 <x-admin.ui.table-cell align="right" class="px-8">
                     <div class="flex items-center justify-end gap-1">
-                         <a 
+                        <a 
                             href="{{ route('admin.taxonomies.terms.index', $taxonomy->id) }}"
-                            class="h-9 w-9 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-emerald-500 flex items-center justify-center transition-colors"
-                            title="Manage Terms"
+                            class="h-9 w-9 rounded-xl text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 flex items-center justify-center transition-colors"
+                            data-tooltip="Manage Terms"
                         >
                             <span class="material-symbols-outlined text-[20px]">list</span>
                         </a>
                         <a 
                             href="{{ route('admin.taxonomies.edit', $taxonomy->id) }}"
-                            class="h-9 w-9 rounded-xl hover:bg-gray-100 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#2563EB] flex items-center justify-center transition-colors"
-                            title="Edit"
+                            class="h-9 w-9 rounded-xl text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 flex items-center justify-center transition-colors"
+                            data-tooltip="Edit"
                         >
                             <span class="material-symbols-outlined text-[20px]">edit</span>
                         </a>
                         <button 
                             wire:click="delete({{ $taxonomy->id }})"
                             wire:confirm="Are you sure you want to delete this taxonomy?"
-                            class="h-9 w-9 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 text-[#6F767E] hover:text-[#FF6A55] flex items-center justify-center transition-colors"
-                            title="Delete"
+                            class="h-9 w-9 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
+                            data-tooltip="Delete"
                         >
                             <span class="material-symbols-outlined text-[20px]">delete</span>
                         </button>
@@ -142,21 +158,21 @@
                 </x-admin.ui.table-cell>
             </x-admin.ui.table-row>
         @empty
-            <tr>
-                <td colspan="6" class="px-8 py-16 text-center">
+            <x-admin.ui.table-row>
+                <x-admin.ui.table-cell colspan="6" class="px-8 py-16 text-center">
                     <div class="flex flex-col items-center">
                         <div class="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-[#272B30] flex items-center justify-center mb-4">
                             <span class="material-symbols-outlined text-3xl text-gray-400">category</span>
                         </div>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">No taxonomies yet</h3>
                         <p class="text-gray-500 dark:text-gray-400 mb-4">Create your first taxonomy to get started</p>
-                        <a href="{{ route('admin.taxonomies.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-[#2563EB] hover:bg-blue-600 text-white font-medium rounded-xl transition-all">
-                            <span class="material-symbols-outlined text-lg">add</span>
+                        <x-admin.ui.button href="{{ route('admin.taxonomies.create') }}" variant="primary">
+                            <span class="material-symbols-outlined text-lg mr-1">add</span>
                             <span>Create Taxonomy</span>
-                        </a>
+                        </x-admin.ui.button>
                     </div>
-                </td>
-            </tr>
+                </x-admin.ui.table-cell>
+            </x-admin.ui.table-row>
         @endforelse
     </x-admin.ui.table>
     

@@ -1,85 +1,75 @@
-<div>
+<div class="space-y-6">
+    {{-- Status Filter Buttons --}}
+    <div>
+        <div class="inline-flex flex-wrap w-fit items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30] gap-1">
+            @php
+                $statuses = [
+                    '' => ['label' => 'All', 'count' => $statusCounts['all']],
+                    'active' => ['label' => 'Active', 'count' => $statusCounts['active']],
+                    'inactive' => ['label' => 'Inactive', 'count' => $statusCounts['inactive']],
+                    'trashed' => ['label' => 'Trash', 'count' => $statusCounts['trashed']],
+                ];
+            @endphp
+
+            @foreach($statuses as $value => $data)
+                <button
+                    wire:click="$set('statusFilter', '{{ $value }}')"
+                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $statusFilter === $value ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                    {{ $data['label'] }}
+                    <span class="px-2 py-0.5 rounded-lg {{ $statusFilter === $value ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                        {{ $data['count'] }}
+                    </span>
+                </button>
+            @endforeach
+        </div>
+    </div>
+
     {{-- Filters & Search --}}
-    <div class="space-y-4">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-            {{-- Left: Search --}}
-            <div class="flex flex-wrap items-center gap-3 flex-1">
-                <div class="relative group w-full sm:w-auto">
-                    <input
-                        wire:model.live.debounce.300ms="search"
-                        class="h-12 w-full sm:w-[320px] rounded-xl border-none bg-white dark:bg-[#1A1A1A] pl-12 pr-4 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all placeholder:text-[#6F767E]"
-                        placeholder="Search forms by name..." type="text" />
-                    <span
-                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] group-focus-within:text-[#2563EB] transition-colors">search</span>
-                    
-                    {{-- Loading indicator --}}
-                    <div wire:loading wire:target="search" class="absolute right-4 top-1/2 -translate-y-1/2">
-                        <svg class="animate-spin h-5 w-5 text-[#2563EB]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </div>
-                </div>
-
-                @if($search || $statusFilter)
-                <x-admin.ui.button
-                    wire:click="clearFilters"
-                    variant="outline"
-                    class="!h-12 !py-0 !rounded-xl text-sm"
-                >
-                    <span class="material-symbols-outlined text-lg mr-2">close</span>
-                    Clear
-                </x-admin.ui.button>
-                @endif
-            </div>
-
-            {{-- Right: Display & Add New --}}
-            <div class="flex flex-wrap items-center gap-3">
-                <div class="flex items-center gap-3">
-                    <span class="text-sm font-medium text-[#6F767E]">Display:</span>
-                    <select 
-                        wire:model.live="perPage"
-                        class="h-12 rounded-xl border-none bg-white dark:bg-[#1A1A1A] pl-4 pr-10 text-sm font-bold text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all cursor-pointer"
-                    >
-                        <option value="10">10 Rows</option>
-                        <option value="25">25 Rows</option>
-                        <option value="50">50 Rows</option>
-                    </select>
-                </div>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Search box -->
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="relative group w-full md:w-[320px]">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] group-focus-within:text-[#2563EB] transition-colors z-10">search</span>
+                <x-admin.ui.input
+                    name="search"
+                    type="text"
+                    wire:model.live.debounce.300ms="search"
+                    class="!pl-12 !py-2.5 !rounded-xl !h-12 text-sm !w-full"
+                    placeholder="Search forms by name..."
+                />
                 
-                @can('forms.create')
-                <a href="{{ route('admin.forms.create') }}" wire:navigate
-                    class="px-6 py-3 font-bold rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 inline-flex items-center justify-center bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white text-sm h-12 whitespace-nowrap">
-                    <span class="material-symbols-outlined text-[20px] mr-2">add</span>
-                    Create Form
-                </a>
-                @endcan
+                <!-- Loading indicator -->
+                <div wire:loading wire:target="search" class="absolute right-4 top-1/2 -translate-y-1/2 z-10">
+                    <svg class="animate-spin h-5 w-5 text-[#2563EB]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
             </div>
+
+            @if($search || $statusFilter)
+            <x-admin.ui.button
+                wire:click="clearFilters"
+                variant="outline"
+                class="!h-12 !py-0 !rounded-xl text-sm"
+            >
+                <span class="material-symbols-outlined text-lg mr-2">close</span>
+                Clear
+            </x-admin.ui.button>
+            @endif
         </div>
 
-        {{-- Row 2: Status Filter Buttons --}}
-        <div class="mb-4">
-             <div class="inline-flex w-fit items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30]">
-                @php
-                    $statuses = [
-                        '' => ['label' => 'All', 'count' => $statusCounts['all']],
-                        'active' => ['label' => 'Active', 'count' => $statusCounts['active']],
-                        'inactive' => ['label' => 'Inactive', 'count' => $statusCounts['inactive']],
-                        'trashed' => ['label' => 'Trash', 'count' => $statusCounts['trashed']],
-                    ];
-                @endphp
-
-                @foreach($statuses as $value => $data)
-                    <button
-                        wire:click="$set('statusFilter', '{{ $value }}')"
-                        class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $statusFilter === $value ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                        {{ $data['label'] }}
-                        <span class="px-2 py-0.5 rounded-lg {{ $statusFilter === $value ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
-                            {{ $data['count'] }}
-                        </span>
-                    </button>
-                @endforeach
-            </div>
+        <!-- Display Row Size -->
+        <div class="flex items-center gap-3">
+            <span class="text-sm font-medium text-[#6F767E]">Display:</span>
+            <select 
+                wire:model.live="perPage"
+                class="h-12 rounded-xl border-none bg-white dark:bg-[#1A1A1A] pl-4 pr-10 text-sm font-bold text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all cursor-pointer"
+            >
+                <option value="10">10 Rows</option>
+                <option value="25">25 Rows</option>
+                <option value="50">50 Rows</option>
+            </select>
         </div>
     </div>
 

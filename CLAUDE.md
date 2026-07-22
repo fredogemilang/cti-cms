@@ -73,7 +73,7 @@ Themes live in `themes/{slug}/` with a `theme.json` manifest. On activation, ass
 ### Admin Panel
 
 - **Path**: Configurable via `ADMIN_PATH` env var (default `admin`), accessible at `config('admin.path')`.
-- **UI**: Livewire full-page components with dark-mode-ready design. All admin views extend `layouts.admin`.
+- **UI**: Livewire full-page components with dark-mode-ready design (`dark:bg-[#1A1A1A]`). All admin index views MUST adhere to the 5 standard UI rules (Header `@section('page-actions')`, filter status tabs with `getStatusCountsProperty()` count badges, search via `<x-admin.ui.input>`, shared `<x-admin.ui.table>`, and `data-tooltip` action buttons — see `docs/plugin-development.md#admin-index-page--ui-standards`).
 - **Auth**: Custom `AuthController` with 2FA support (`EnforceTwoFactor` middleware). Optional enforced 2FA per role.
 - **RBAC**: Users → Roles → Permissions. `CheckPermission` middleware gates all admin routes.
 

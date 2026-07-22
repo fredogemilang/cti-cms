@@ -336,6 +336,27 @@ All admin views **must** extend `layouts.admin`:
 | `content` | Main content area |
 | `hide-header` | Set `true` for create/edit pages |
 
+### Admin Index Page & UI Standards
+
+All admin list/index pages (both core and plugin views) **must** follow these 5 UI standards for visual consistency:
+
+1. **Header Action Button (`@section('page-actions')`)**:
+   Primary page action buttons (e.g. `+ Add ...`, `+ Create ...`) **must** be placed in the header action slot using `@section('page-actions')` with `<x-admin.ui.button variant="primary">`.
+
+2. **Filter Status Tabs with Counts (`getStatusCountsProperty()`)**:
+   Top row filter tabs (`All`, `Active`, `Inactive`, `Published`, `Draft`, etc.) **must** include numeric count badges (`px-2 py-0.5 rounded-lg text-[10px] font-bold`) computed dynamically via Livewire `getStatusCountsProperty()`.
+
+3. **Search Input (`<x-admin.ui.input>`) & Controls Placement**:
+   - **Row 1**: Filter Status Tabs.
+   - **Row 2 (Left)**: Search input using `<x-admin.ui.input>` (`dark:bg-[#1A1A1A]`), focus-within icon transition (`group-focus-within:text-[#2563EB]`), plus secondary filter dropdowns and a `Clear Filters` button when active.
+   - **Row 2 (Right)**: Display rows dropdown (`Display: 10 Rows`).
+
+4. **Shared Table Components (`<x-admin.ui.table>`)**:
+   Tables **must** use shared UI components: `<x-admin.ui.table>`, `<x-slot:thead>`, `<x-admin.ui.table-header>`, `<x-admin.ui.table-row>`, and `<x-admin.ui.table-cell>`.
+
+5. **Action Buttons & Tooltips (`data-tooltip`)**:
+   All table column action buttons **must** specify `data-tooltip="..."` (e.g. `data-tooltip="Edit"`, `data-tooltip="Delete"`) and use consistent hover styling (`emerald` for view/manage, `blue` for edit, `red` for delete).
+
 ### Frontend Views
 
 Reference views using your plugin's namespace:

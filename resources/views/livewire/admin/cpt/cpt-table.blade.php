@@ -1,39 +1,65 @@
 <div class="space-y-6">
-    <!-- Filters & Actions -->
-    <div class="flex flex-col sm:flex-row gap-4">
-        <!-- Search -->
-        <div class="relative flex-1">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-            <input 
-                type="text" 
-                wire:model.live.debounce.300ms="search"
-                placeholder="Search post types..."
-                class="h-12 w-full md:w-[320px] rounded-xl border-none bg-white dark:bg-[#1A1A1A] pl-12 pr-4 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all placeholder:text-[#6F767E]"
+    {{-- Status Filter Buttons --}}
+    <div>
+        <div class="inline-flex flex-wrap w-fit items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30] gap-1">
+            <button 
+                wire:click="$set('status', '')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === '' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
             >
-            <!-- Status Filter -->
-            <div class="inline-flex w-fit items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30] ml-2">
-                <button 
-                    wire:click="$set('status', '')"
-                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === '' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
-                >
-                    All
-                </button>
-                <button 
-                    wire:click="$set('status', 'active')"
-                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'active' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
-                >
-                    Active
-                </button>
-                <button 
-                    wire:click="$set('status', 'inactive')"
-                    class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'inactive' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
-                >
-                    Inactive
-                </button>
+                All
+                <span class="px-2 py-0.5 rounded-lg {{ $status === '' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['all'] }}
+                </span>
+            </button>
+            <button 
+                wire:click="$set('status', 'active')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'active' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
+            >
+                Active
+                <span class="px-2 py-0.5 rounded-lg {{ $status === 'active' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['active'] }}
+                </span>
+            </button>
+            <button 
+                wire:click="$set('status', 'inactive')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'inactive' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}"
+            >
+                Inactive
+                <span class="px-2 py-0.5 rounded-lg {{ $status === 'inactive' ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['inactive'] }}
+                </span>
+            </button>
+        </div>
+    </div>
+
+    {{-- Filters & Search --}}
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- Search box -->
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="relative group w-full md:w-[320px]">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] group-focus-within:text-[#2563EB] transition-colors z-10">search</span>
+                <x-admin.ui.input
+                    name="search"
+                    type="text"
+                    wire:model.live.debounce.300ms="search"
+                    class="!pl-12 !py-2.5 !rounded-xl !h-12 text-sm !w-full"
+                    placeholder="Search post types..."
+                />
             </div>
+            
+            @if($search || $status)
+            <x-admin.ui.button
+                wire:click="$set('status', ''); $set('search', '')"
+                variant="outline"
+                class="!h-12 !py-0 !rounded-xl text-sm"
+            >
+                <span class="material-symbols-outlined text-lg mr-2">close</span>
+                Clear
+            </x-admin.ui.button>
+            @endif
         </div>
         
-        <!-- Per Page -->
+        <!-- Display Row Size -->
         <div class="flex items-center gap-3">
             <span class="text-sm font-medium text-[#6F767E]">Display:</span>
             <select 
@@ -45,130 +71,97 @@
                 <option value="50">50 Rows</option>
             </select>
         </div>
-
-        <!-- Add Button -->
-        <div class="flex gap-2">
-            <a href="{{ route('admin.cpt.wordpress-migration') }}" 
-            class="flex items-center justify-center rounded-xl bg-purple-500 px-6 py-3 text-sm font-bold text-white hover:bg-purple-600 transition-all shadow-lg shadow-purple-500/20">
-                <span class="material-symbols-outlined mr-2">cloud_download</span>
-                <span>Import from WP</span>
-            </a>
-            <a href="{{ route('admin.cpt.create') }}" 
-            class="flex items-center justify-center rounded-xl bg-[#2563EB] px-6 py-3 text-sm font-bold text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20">
-                <span>Add Post Type</span>
-            </a>
-        </div>
     </div>
 
     <!-- Table -->
-    <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] overflow-hidden relative">
-        <div class="overflow-x-auto no-scrollbar">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-50/50 dark:bg-[#0B0B0B]/20 border-b border-gray-100 dark:border-[#272B30]">
-                        <th class="px-8 py-5 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">
-                            <button wire:click="sortBy('plural_label')" class="flex items-center gap-1 hover:text-[#2563EB] transition-colors">
-                                Post Type
-                                @if($sortField === 'plural_label')
-                                    <span class="material-symbols-outlined text-base">{{ $sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
-                                @else
-                                    <span class="material-symbols-outlined text-base opacity-30">unfold_more</span>
-                                @endif
-                            </button>
-                        </th>
-                        <th class="px-4 py-5 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">
-                            <button wire:click="sortBy('slug')" class="flex items-center gap-1 hover:text-[#2563EB] transition-colors">
-                                Slug
-                                @if($sortField === 'slug')
-                                    <span class="material-symbols-outlined text-base">{{ $sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
-                                @else
-                                    <span class="material-symbols-outlined text-base opacity-30">unfold_more</span>
-                                @endif
-                            </button>
-                        </th>
-                        <th class="px-4 py-5 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">Fields</th>
-                        <th class="px-4 py-5 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest">Status</th>
-                        <th class="px-8 py-5 text-[11px] font-bold text-[#6F767E] uppercase tracking-widest text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50 dark:divide-[#272B30]/30">
-                    @forelse($postTypes as $cpt)
-                        <tr class="hover:bg-gray-50 dark:hover:bg-[#272B30]/30 transition-colors">
-                            <td class="px-8 py-5">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                                        <span class="material-symbols-outlined text-white text-[20px]">{{ $cpt->icon }}</span>
-                                    </div>
-                                    <div>
-                                        <div class="font-semibold text-[#111827] dark:text-[#FCFCFC]">{{ $cpt->plural_label }}</div>
-                                        <div class="text-xs text-[#6F767E]">ID : {{ $cpt->name }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-4 py-5">
-                                <code class="px-2.5 py-1 bg-gray-100 dark:bg-[#272B30] text-[#2563EB] rounded-lg text-xs font-mono">{{ $cpt->slug }}</code>
-                            </td>
-                            <td class="px-4 py-5">
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 dark:bg-[#272B30] text-[#6F767E] dark:text-[#FCFCFC] rounded-lg text-xs font-bold uppercase tracking-wider">
-                                    <span class="material-symbols-outlined text-sm">list</span>
-                                    {{ $cpt->metaFields->count() }} fields
-                                </span>
-                            </td>
-                            <td class="px-4 py-5">
-                                <button 
-                                    wire:click="toggleStatus({{ $cpt->id }})"
-                                    class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all {{ $cpt->is_active ? 'bg-[#3F8C5826] text-[#83BF6E]' : 'bg-gray-100 dark:bg-[#272B30] text-[#6F767E]' }}"
-                                >
-                                    <span class="material-symbols-outlined text-sm">{{ $cpt->is_active ? 'check_circle' : 'cancel' }}</span>
-                                    {{ $cpt->is_active ? 'Active' : 'Inactive' }}
-                                </button>
-                            </td>
-                            <td class="px-8 py-5 text-right">
-                                <div class="flex items-center justify-end gap-1">
-                                    <a 
-                                        href="{{ route('admin.cpt.entries.index', $cpt->slug) }}"
-                                        class="h-9 w-9 rounded-xl text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 flex items-center justify-center transition-colors"
-                                        data-tooltip="View Entries"
-                                    >
-                                        <span class="material-symbols-outlined text-[20px]">folder_open</span>
-                                    </a>
-                                    <a 
-                                        href="{{ route('admin.cpt.edit', $cpt->id) }}"
-                                        class="h-9 w-9 rounded-xl text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 flex items-center justify-center transition-colors"
-                                        data-tooltip="Edit"
-                                    >
-                                        <span class="material-symbols-outlined text-[20px]">edit</span>
-                                    </a>
-                                    <button 
-                                        wire:click="confirmDelete({{ $cpt->id }})"
-                                        class="h-9 w-9 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
-                                        data-tooltip="Delete"
-                                    >
-                                        <span class="material-symbols-outlined text-[20px]">delete</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="px-8 py-16 text-center">
-                                <div class="flex flex-col items-center">
-                                    <div class="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-[#272B30] flex items-center justify-center mb-4">
-                                        <span class="material-symbols-outlined text-3xl text-gray-400">layers</span>
-                                    </div>
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">No post types yet</h3>
-                                    <p class="text-gray-500 dark:text-gray-400 mb-4">Create your first custom post type to get started</p>
-                                    <a href="{{ route('admin.cpt.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-[#2563EB] hover:bg-blue-600 text-white font-medium rounded-xl transition-all">
-                                        <span class="material-symbols-outlined text-lg">add</span>
-                                        <span>Create Post Type</span>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+    <x-admin.ui.table>
+        <x-slot:thead>
+            <x-admin.ui.table-header sortBy="plural_label" :field="$sortField" :direction="$sortDirection" class="px-8">
+                Post Type
+            </x-admin.ui.table-header>
+            <x-admin.ui.table-header sortBy="slug" :field="$sortField" :direction="$sortDirection" class="px-4">
+                Slug
+            </x-admin.ui.table-header>
+            <x-admin.ui.table-header class="px-4">Fields</x-admin.ui.table-header>
+            <x-admin.ui.table-header class="px-4">Status</x-admin.ui.table-header>
+            <x-admin.ui.table-header align="right" class="px-8">Actions</x-admin.ui.table-header>
+        </x-slot:thead>
+
+        @forelse($postTypes as $cpt)
+            <x-admin.ui.table-row wire:key="cpt-{{ $cpt->id }}">
+                <x-admin.ui.table-cell class="px-8">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                            <span class="material-symbols-outlined text-white text-[20px]">{{ $cpt->icon }}</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-[#111827] dark:text-[#FCFCFC]">{{ $cpt->plural_label }}</div>
+                            <div class="text-xs text-[#6F767E]">ID : {{ $cpt->name }}</div>
+                        </div>
+                    </div>
+                </x-admin.ui.table-cell>
+                <x-admin.ui.table-cell class="px-4">
+                    <code class="px-2.5 py-1 bg-gray-100 dark:bg-[#272B30] text-[#2563EB] rounded-lg text-xs font-mono">{{ $cpt->slug }}</code>
+                </x-admin.ui.table-cell>
+                <x-admin.ui.table-cell class="px-4">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 dark:bg-[#272B30] text-[#6F767E] dark:text-[#FCFCFC] rounded-lg text-xs font-bold uppercase tracking-wider">
+                        <span class="material-symbols-outlined text-sm">list</span>
+                        {{ $cpt->metaFields->count() }} fields
+                    </span>
+                </x-admin.ui.table-cell>
+                <x-admin.ui.table-cell class="px-4">
+                    <button 
+                        wire:click="toggleStatus({{ $cpt->id }})"
+                        class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all {{ $cpt->is_active ? 'bg-[#3F8C5826] text-[#83BF6E]' : 'bg-gray-100 dark:bg-[#272B30] text-[#6F767E]' }}"
+                    >
+                        <span class="material-symbols-outlined text-sm">{{ $cpt->is_active ? 'check_circle' : 'cancel' }}</span>
+                        {{ $cpt->is_active ? 'Active' : 'Inactive' }}
+                    </button>
+                </x-admin.ui.table-cell>
+                <x-admin.ui.table-cell align="right" class="px-8">
+                    <div class="flex items-center justify-end gap-1">
+                        <a 
+                            href="{{ route('admin.cpt.entries.index', $cpt->slug) }}"
+                            class="h-9 w-9 rounded-xl text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 flex items-center justify-center transition-colors"
+                            data-tooltip="View Entries"
+                        >
+                            <span class="material-symbols-outlined text-[20px]">folder_open</span>
+                        </a>
+                        <a 
+                            href="{{ route('admin.cpt.edit', $cpt->id) }}"
+                            class="h-9 w-9 rounded-xl text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 flex items-center justify-center transition-colors"
+                            data-tooltip="Edit"
+                        >
+                            <span class="material-symbols-outlined text-[20px]">edit</span>
+                        </a>
+                        <button 
+                            wire:click="confirmDelete({{ $cpt->id }})"
+                            class="h-9 w-9 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
+                            data-tooltip="Delete"
+                        >
+                            <span class="material-symbols-outlined text-[20px]">delete</span>
+                        </button>
+                    </div>
+                </x-admin.ui.table-cell>
+            </x-admin.ui.table-row>
+        @empty
+            <x-admin.ui.table-row>
+                <x-admin.ui.table-cell colspan="5" class="px-8 py-16 text-center">
+                    <div class="flex flex-col items-center">
+                        <div class="w-16 h-16 rounded-2xl bg-gray-100 dark:bg-[#272B30] flex items-center justify-center mb-4">
+                            <span class="material-symbols-outlined text-3xl text-gray-400">layers</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">No post types yet</h3>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">Create your first custom post type to get started</p>
+                        <x-admin.ui.button href="{{ route('admin.cpt.create') }}" variant="primary">
+                            <span class="material-symbols-outlined text-lg mr-1">add</span>
+                            <span>Create Post Type</span>
+                        </x-admin.ui.button>
+                    </div>
+                </x-admin.ui.table-cell>
+            </x-admin.ui.table-row>
+        @endforelse
+    </x-admin.ui.table>
         
         <!-- Pagination -->
         @if($postTypes->hasPages())
@@ -211,7 +204,6 @@
             </div>
         </div>
         @endif
-    </div>
 
     <!-- Delete Confirmation Modal -->
     <div 
