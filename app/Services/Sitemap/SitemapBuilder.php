@@ -28,8 +28,8 @@ class SitemapBuilder
             ];
         }
 
-        // 2. Posts plugin sitemap (if plugin is active)
-        if ($this->isPostsPluginActive()) {
+        // 2. Posts plugin sitemap (if plugin is active and indexing enabled)
+        if ($this->isPostsPluginActive() && setting('seo_content_type_posts_index_enabled', true)) {
             $postModel = $this->getPostModelClass();
             $lastPostMod = $postModel::where('status', 'published')->max('updated_at');
             $sitemaps[] = [
@@ -39,9 +39,12 @@ class SitemapBuilder
             ];
         }
 
-        // 3. Custom Post Types sitemaps
+        // 3. Custom Post Types sitemaps (respect index_enabled)
         $cpts = CustomPostType::where('is_active', true)->get();
         foreach ($cpts as $cpt) {
+            if (! setting("seo_content_type_{$cpt->slug}_index_enabled", true)) {
+                continue;
+            }
             $lastCptMod = CptEntry::where('post_type_id', $cpt->id)->where('status', 'published')->max('updated_at');
             $sitemaps[] = [
                 'loc' => url("/{$cpt->slug}-sitemap.xml"),
@@ -85,7 +88,7 @@ class SitemapBuilder
 
     public function getPostUrls(): array
     {
-        if (! $this->isPostsPluginActive()) {
+        if (! $this->isPostsPluginActive() || ! setting('seo_content_type_posts_index_enabled', true)) {
             return [];
         }
 
@@ -127,6 +130,10 @@ class SitemapBuilder
             return [];
         }
 
+        if (! setting("seo_content_type_{$cpt->slug}_index_enabled", true)) {
+            return [];
+        }
+
         $urls = [];
         // Archive url
         $urls[] = [
@@ -161,6 +168,12 @@ class SitemapBuilder
         $terms = TaxonomyTerm::with('taxonomy')->get();
         foreach ($terms as $term) {
             if ($term->taxonomy instanceof CustomTaxonomy) {
+                // Respect SEO taxonomy indexing setting
+                $taxSlug = $term->taxonomy->slug;
+                if (! setting("seo_taxonomy_{$taxSlug}_index_enabled", true)) {
+                    continue;
+                }
+
                 $urls[] = [
                     'loc' => url('/'.$term->taxonomy->slug.'/'.$term->slug),
                     'lastmod' => $term->updated_at ? $term->updated_at->toAtomString() : null,
