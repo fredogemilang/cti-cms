@@ -21,6 +21,7 @@ use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SchemaAggregatorController;
+use App\Http\Controllers\SchemaManifestController;
 use App\Http\Controllers\SitemapController;
 use App\Livewire\Admin\Redirects\RedirectTable;
 use App\Livewire\Admin\Seo\SeoBulkEditor;
@@ -42,7 +43,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
 Route::get('/llms.txt', [LlmsTxtController::class, 'index'])->name('llms-txt');
-Route::get('/schema.json', SchemaAggregatorController::class)->name('schema-json');
+Route::get('/schema-manifest.json', SchemaManifestController::class)->name('schema-manifest');
+Route::get('/schema.json', [SchemaAggregatorController::class, 'index'])->name('schema-json');
+Route::get('/schema/{type}', [SchemaAggregatorController::class, 'showCollection'])->name('schema-collection');
 Route::get('/indexnow-{key}.txt', [IndexNowController::class, 'showKey'])->name('indexnow.key');
 
 // Public Form Submission

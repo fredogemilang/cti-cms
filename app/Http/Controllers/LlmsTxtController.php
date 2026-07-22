@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CustomPostType;
 use App\Models\Page;
+use App\Services\Ai\AiResourceRegistry;
 use Illuminate\Http\Response;
 
 /**
@@ -16,7 +17,7 @@ use Illuminate\Http\Response;
  */
 class LlmsTxtController extends Controller
 {
-    public function index(): Response
+    public function index(AiResourceRegistry $aiResourceRegistry): Response
     {
         if (! setting('seo_llms_enabled', true)) {
             abort(404);
@@ -43,7 +44,18 @@ class LlmsTxtController extends Controller
         $lines[] = '## About';
         $lines[] = "- Organization: {$orgName}";
         $lines[] = "- Website: {$siteUrl}";
-        $lines[] = "- Schema Graph: {$siteUrl}/schema.json";
+
+        // Dynamic AI Resources
+        $aiResources = $aiResourceRegistry->getResources();
+        if (! empty($aiResources)) {
+            $lines[] = '';
+            $lines[] = '## AI Resources & Data Endpoints';
+            foreach ($aiResources as $res) {
+                $desc = $res['description'] ? " ({$res['description']})" : '';
+                $lines[] = "- {$res['label']}: {$res['url']}{$desc}";
+            }
+        }
+
         if ($desc = setting('seo_org_description')) {
             $lines[] = "- Description: {$desc}";
         }
@@ -59,64 +71,28 @@ class LlmsTxtController extends Controller
             ->take(20)
             ->get(['title', 'slug']);
         foreach ($pages as $page) {
-            $url = $page->slug === 'home' ? $siteUrl : url("/{$page->slug}");
+            $url = url('/'.$page->slug);
             $lines[] = "- [{$page->title}]({$url})";
         }
         $lines[] = '';
 
-        // Content types (CPTs)
-        $cpts = CustomPostType::where('is_active', true)->get(['plural_label', 'slug', 'has_archive']);
-        if ($cpts->isNotEmpty()) {
-            $lines[] = '## Content Types';
-            foreach ($cpts as $cpt) {
-                $archiveUrl = $cpt->has_archive ? url("/{$cpt->slug}/") : null;
-                $line = "- {$cpt->plural_label}";
-                if ($archiveUrl) {
-                    $line .= ": [{$archiveUrl}]({$archiveUrl})";
-                }
-                $lines[] = $line;
-            }
+        // Custom Post Types
+        $cpts = CustomPostType::where('is_active', true)->get();
+        foreach ($cpts as $cpt) {
+            $lines[] = "## {$cpt->name}";
+            $lines[] = '- Archive: '.url('/'.$cpt->slug);
             $lines[] = '';
         }
 
-        // Publishing principles (E-E-A-T signals)
-        $principles = array_filter([
-            'Publishing Principles' => $this->resolvePolicyUrl((int) setting('seo_policy_publishing_principles', 0)),
-            'Ownership & Funding' => $this->resolvePolicyUrl((int) setting('seo_policy_ownership_funding', 0)),
-            'Corrections Policy' => $this->resolvePolicyUrl((int) setting('seo_policy_corrections', 0)),
-            'Ethics Policy' => $this->resolvePolicyUrl((int) setting('seo_policy_ethics', 0)),
-            'Diversity Policy' => $this->resolvePolicyUrl((int) setting('seo_policy_diversity', 0)),
+        // Optional Markdown Files section
+        $lines[] = '## Optional';
+        $lines[] = '- Sitemap: '.url('/sitemap.xml');
+        $lines[] = '- Robots: '.url('/robots.txt');
+
+        $content = implode("\n", $lines);
+
+        return response($content, 200, [
+            'Content-Type' => 'text/plain; charset=utf-8',
         ]);
-        if (! empty($principles)) {
-            $lines[] = '## Editorial Policies';
-            foreach ($principles as $label => $url) {
-                $lines[] = "- [{$label}]({$url})";
-            }
-            $lines[] = '';
-        }
-
-        // Sitemap & Technical
-        if (setting('seo_sitemap_enabled', true)) {
-            $lines[] = '## Technical';
-            $lines[] = '- Sitemap: '.url('/sitemap.xml');
-            $lines[] = '- Robots: '.url('/robots.txt');
-            $lines[] = '';
-        }
-
-        return response(implode("\n", $lines), 200, [
-            'Content-Type' => 'text/plain; charset=UTF-8',
-            'Cache-Control' => 'public, max-age=3600',
-        ]);
-    }
-
-    protected function resolvePolicyUrl(int $pageId): ?string
-    {
-        if ($pageId <= 0) {
-            return null;
-        }
-
-        $page = Page::find($pageId);
-
-        return $page ? $page->getUrl() : null;
     }
 }
