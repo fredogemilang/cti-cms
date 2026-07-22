@@ -10,6 +10,7 @@ use App\Models\Page;
 use App\Models\Setting;
 use App\Models\TaxonomyTerm;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class SitemapBuilder
@@ -165,6 +166,8 @@ class SitemapBuilder
     public function getTaxonomyUrls(): array
     {
         $urls = [];
+
+        // 1. Custom Taxonomy Terms (from CPT system)
         $terms = TaxonomyTerm::with('taxonomy')->get();
         foreach ($terms as $term) {
             if ($term->taxonomy instanceof CustomTaxonomy) {
@@ -180,6 +183,36 @@ class SitemapBuilder
                     'changefreq' => 'monthly',
                     'priority' => 0.4,
                     'type' => 'Taxonomy',
+                ];
+            }
+        }
+
+        // 2. Posts plugin Categories (if plugin is active and indexing enabled)
+        if ($this->isPostsPluginActive() && setting('seo_taxonomy_categories_index_enabled', true)) {
+            $archiveSlug = Setting::get('archive_slug', 'blog');
+            $categories = DB::table('categories')->select('slug', 'updated_at')->get();
+            foreach ($categories as $category) {
+                $urls[] = [
+                    'loc' => url('/'.$archiveSlug.'/category/'.$category->slug),
+                    'lastmod' => $category->updated_at ? Carbon::parse($category->updated_at)->toAtomString() : null,
+                    'changefreq' => 'weekly',
+                    'priority' => 0.4,
+                    'type' => 'Category',
+                ];
+            }
+        }
+
+        // 3. Posts plugin Tags (if plugin is active and indexing enabled)
+        if ($this->isPostsPluginActive() && setting('seo_taxonomy_tags_index_enabled', true)) {
+            $archiveSlug ??= Setting::get('archive_slug', 'blog');
+            $tags = DB::table('tags')->select('slug', 'updated_at')->get();
+            foreach ($tags as $tag) {
+                $urls[] = [
+                    'loc' => url('/'.$archiveSlug.'/tag/'.$tag->slug),
+                    'lastmod' => $tag->updated_at ? Carbon::parse($tag->updated_at)->toAtomString() : null,
+                    'changefreq' => 'weekly',
+                    'priority' => 0.3,
+                    'type' => 'Tag',
                 ];
             }
         }
