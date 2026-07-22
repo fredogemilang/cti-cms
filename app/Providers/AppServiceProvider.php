@@ -10,6 +10,7 @@ use App\Services\GoogleIndexingService;
 use App\Services\IndexNowService;
 use App\Services\MediaUsageService;
 use App\Services\PageTemplateService;
+use App\Services\SchemaAggregatorService;
 use App\Services\SettingsRegistry;
 use App\Services\TaxonomyRegistry;
 use Illuminate\Support\ServiceProvider;
@@ -33,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(BreadcrumbService::class);
         $this->app->singleton(IndexNowService::class);
         $this->app->singleton(GoogleIndexingService::class);
+        $this->app->singleton(SchemaAggregatorService::class);
         $this->app->singleton(ActivityLogger::class);
         $this->app->singleton(MediaUsageService::class);
         $this->app->singleton(PageTemplateService::class);
@@ -46,11 +48,13 @@ class AppServiceProvider extends ServiceProvider
         Page::saved(function (Page $page) {
             app(IndexNowService::class)->pingEntity($page);
             app(GoogleIndexingService::class)->pingEntity($page, 'URL_UPDATED');
+            app(SchemaAggregatorService::class)->clearCache();
         });
 
         Page::deleted(function (Page $page) {
             app(IndexNowService::class)->pingEntity($page);
             app(GoogleIndexingService::class)->pingEntity($page, 'URL_DELETED');
+            app(SchemaAggregatorService::class)->clearCache();
         });
     }
 }

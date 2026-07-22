@@ -43,6 +43,7 @@ class LlmsTxtController extends Controller
         $lines[] = '## About';
         $lines[] = "- Organization: {$orgName}";
         $lines[] = "- Website: {$siteUrl}";
+        $lines[] = "- Schema Graph: {$siteUrl}/schema.json";
         if ($desc = setting('seo_org_description')) {
             $lines[] = "- Description: {$desc}";
         }
