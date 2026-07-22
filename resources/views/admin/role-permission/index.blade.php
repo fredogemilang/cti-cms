@@ -356,7 +356,7 @@
 </div>
 
 <!-- Toast Notification -->
-<div class="fixed bottom-8 right-8 z-[60] flex items-center gap-3 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-xl px-4 py-3 shadow-2xl translate-y-20 opacity-0 pointer-events-none transition-all duration-300"
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-3 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-xl px-4 py-3 shadow-2xl translate-y-20 opacity-0 pointer-events-none transition-all duration-300"
     id="toast-notification">
     <div class="h-8 w-8 rounded-full bg-emerald-500/10 flex items-center justify-center" id="toast-icon">
         <span class="material-symbols-outlined text-emerald-500 text-xl">check_circle</span>

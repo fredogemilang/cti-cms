@@ -356,16 +356,16 @@
             }
         }"
         @notify.window="handleNotify($event)"
-        class="fixed bottom-5 right-5 z-[90] flex flex-col gap-3 pointer-events-none"
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] flex flex-col items-center gap-3 pointer-events-none"
     >
         <template x-for="notification in notifications" :key="notification.id">
             <div 
                 x-transition:enter="transition ease-[cubic-bezier(0.16,1,0.3,1)] duration-500 transform"
-                x-transition:enter-start="translate-x-full opacity-0 scale-95"
-                x-transition:enter-end="translate-x-0 opacity-100 scale-100"
+                x-transition:enter-start="translate-y-6 opacity-0 scale-95"
+                x-transition:enter-end="translate-y-0 opacity-100 scale-100"
                 x-transition:leave="transition ease-[cubic-bezier(0.16,1,0.3,1)] duration-300 transform"
-                x-transition:leave-start="translate-x-0 opacity-100 scale-100"
-                x-transition:leave-end="translate-x-full opacity-0 scale-95"
+                x-transition:leave-start="translate-y-0 opacity-100 scale-100"
+                x-transition:leave-end="translate-y-6 opacity-0 scale-95"
                 class="flex items-center gap-3 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-xl px-4 py-3 shadow-2xl min-w-[300px] pointer-events-auto"
             >
                 <!-- Icon -->
