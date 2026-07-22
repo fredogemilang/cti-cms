@@ -20,15 +20,22 @@ class MediaService
         $path = config('media.path').'/'.$filename;
 
         // Store the file
-        Storage::disk(config('media.disk'))->put($path, file_get_contents($file->getRealPath()));
+        $disk = Storage::disk(config('media.disk'));
+        $disk->put($path, file_get_contents($file->getRealPath()));
 
         // Get file information
         $mimeType = $file->getMimeType();
-        $size = $file->getSize();
         $extension = $file->getClientOriginalExtension();
 
-        // Get image dimensions if it's an image
-        $dimensions = $this->isImage($mimeType) ? $this->getImageDimensions($file->getRealPath()) : null;
+        // Optimize original image if enabled
+        if ($this->isImage($mimeType)) {
+            $this->optimizeOriginal($path, $mimeType);
+        }
+
+        // Get updated size and dimensions after optimization
+        $fullPath = $disk->path($path);
+        $size = file_exists($fullPath) ? filesize($fullPath) : $file->getSize();
+        $dimensions = $this->isImage($mimeType) ? $this->getImageDimensions($fullPath) : null;
 
         // Create media record
         $media = Media::create([
@@ -40,7 +47,7 @@ class MediaService
             'path' => $path,
             'width' => $dimensions['width'] ?? null,
             'height' => $dimensions['height'] ?? null,
-            'alt_text' => $metadata['alt_text'] ?? null,
+            'alt_text' => ! empty($metadata['alt_text']) ? $metadata['alt_text'] : $file->getClientOriginalName(),
             'title' => $metadata['title'] ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
             'description' => $metadata['description'] ?? null,
             'uploaded_by' => auth()->id(),
@@ -215,5 +222,79 @@ class MediaService
         }
 
         return $count;
+    }
+
+    /**
+     * Optimize original image file (quality compression & optional max dimension resizing).
+     */
+    public function optimizeOriginal(string $path, string $mimeType): bool
+    {
+        if (! (bool) setting('img_optimize_original', true)) {
+            return false;
+        }
+
+        if (! in_array($mimeType, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            return false;
+        }
+
+        try {
+            $disk = Storage::disk(config('media.disk'));
+            $fullPath = $disk->path($path);
+
+            if (! file_exists($fullPath)) {
+                return false;
+            }
+
+            $source = match ($mimeType) {
+                'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($fullPath),
+                default => @imagecreatefrompng($fullPath),
+            };
+
+            if (! $source) {
+                return false;
+            }
+
+            $srcW = imagesx($source);
+            $srcH = imagesy($source);
+
+            $maxDim = (int) setting('img_max_dimension', 2560);
+            $needsResize = $maxDim > 0 && ($srcW > $maxDim || $srcH > $maxDim);
+
+            if ($needsResize) {
+                if ($srcW >= $srcH) {
+                    $targetW = $maxDim;
+                    $targetH = (int) round($srcH * ($maxDim / $srcW));
+                } else {
+                    $targetH = $maxDim;
+                    $targetW = (int) round($srcW * ($maxDim / $srcH));
+                }
+
+                $canvas = imagecreatetruecolor($targetW, $targetH);
+                if ($mimeType === 'image/png') {
+                    imagealphablending($canvas, false);
+                    imagesavealpha($canvas, true);
+                    $transparent = imagecolorallocatealpha($canvas, 0, 0, 0, 127);
+                    imagefilledrectangle($canvas, 0, 0, $targetW, $targetH, $transparent);
+                }
+                imagecopyresampled($canvas, $source, 0, 0, 0, 0, $targetW, $targetH, $srcW, $srcH);
+                imagedestroy($source);
+                $source = $canvas;
+            }
+
+            $jpgQ = (int) setting('img_jpg_quality', 85);
+            match ($mimeType) {
+                'image/jpeg', 'image/jpg' => imagejpeg($source, $fullPath, $jpgQ),
+                default => imagepng($source, $fullPath, 6),
+            };
+
+            imagedestroy($source);
+            clearstatcache(true, $fullPath);
+
+            return true;
+        } catch (\Exception $e) {
+            \Log::error('Original image optimization failed: '.$e->getMessage());
+
+            return false;
+        }
     }
 }

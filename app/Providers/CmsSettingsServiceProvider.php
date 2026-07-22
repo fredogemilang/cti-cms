@@ -397,6 +397,16 @@ class CmsSettingsServiceProvider extends ServiceProvider
                     'rules' => ['boolean'],
                     'help' => 'New uploads get a WebP companion saved alongside the original.'],
 
+                ['key' => 'img_optimize_original', 'label' => 'Compress Original File on Upload', 'type' => 'boolean', 'section' => 'Conversion', 'order' => 15,
+                    'default' => true,
+                    'rules' => ['boolean'],
+                    'help' => 'Automatically compresses original JPG/PNG file quality and resizes oversized dimensions upon upload.'],
+
+                ['key' => 'img_max_dimension', 'label' => 'Max Original Dimension (px)', 'type' => 'number', 'section' => 'Conversion', 'order' => 16,
+                    'default' => 2560,
+                    'rules' => ['required', 'integer', 'min:0', 'max:10000'],
+                    'help' => 'Downscales oversized original images to this maximum width/height (0 for no limit).'],
+
                 ['key' => 'img_jpg_quality', 'label' => 'JPEG Quality (%)', 'type' => 'number', 'section' => 'Conversion', 'order' => 20,
                     'default' => 85,
                     'rules' => ['required', 'integer', 'min:50', 'max:100']],

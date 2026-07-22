@@ -43,6 +43,23 @@ class Media extends Model
         'focal_y' => 'float',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (Media $media) {
+            if (empty($media->alt_text) && ! empty($media->original_filename)) {
+                $media->alt_text = $media->original_filename;
+            }
+        });
+    }
+
+    /**
+     * Get alt_text attribute with fallback to original_filename if empty.
+     */
+    public function getAltTextAttribute($value): ?string
+    {
+        return ! empty($value) ? $value : $this->original_filename;
+    }
+
     /**
      * Get the user who uploaded this media.
      */

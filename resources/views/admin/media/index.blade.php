@@ -2,24 +2,24 @@
 
 @section('title', 'Media Library')
 @section('page-title', 'Media Library')
+@section('page-subtitle', 'Manage your media files')
+
+@section('page-actions')
+    @can('media.upload')
+    <x-admin.ui.button 
+        type="button"
+        onclick="Livewire.dispatch('open-upload-modal')"
+        variant="primary"
+        class="h-12 px-6 rounded-2xl font-bold text-sm shadow-lg shadow-blue-500/20"
+    >
+        <span class="material-symbols-outlined text-lg mr-2">add</span>
+        Upload Media
+    </x-admin.ui.button>
+    @endcan
+@endsection
 
 @section('content')
 <div class="space-y-6">
-    {{-- Header with Upload Button --}}
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-[#111827] dark:text-[#FCFCFC]">Media Library</h1>
-            <p class="text-sm text-[#6F767E] mt-1">Manage your media files</p>
-        </div>
-        @can('media.upload')
-        <button 
-            onclick="Livewire.dispatch('open-upload-modal')"
-            class="flex items-center gap-2 px-6 py-3 bg-[#2563EB] text-white rounded-xl font-semibold hover:bg-[#1D4ED8] transition-all shadow-sm">
-            <span class="material-symbols-outlined text-xl">add</span>
-            <span>Upload Media</span>
-        </button>
-        @endcan
-    </div>
 
     {{-- Flash Messages --}}
     @if (session('success'))
