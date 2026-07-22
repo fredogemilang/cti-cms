@@ -31,11 +31,16 @@
 <body class="login-body text-[#111827] dark:text-[#FCFCFC] transition-colors duration-200 antialiased min-h-screen flex items-center justify-center p-4">
     <!-- Theme Toggle -->
     <div class="fixed top-8 right-8" x-data="{ 
-        darkMode: document.documentElement.classList.contains('dark'),
+        darkMode: localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : document.documentElement.classList.contains('dark'),
         toggle() {
             this.darkMode = !this.darkMode;
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+            if (this.darkMode) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
         }
     }">
         <button 

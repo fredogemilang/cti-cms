@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Initialize theme before page renders to prevent flash & retain user selection -->
+    <script>
+        (function() {
+            function applyTheme() {
+                const theme = localStorage.getItem('theme');
+                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+            applyTheme();
+            document.addEventListener('livewire:navigated', applyTheme);
+        })();
+    </script>
     <title>@yield('title', 'Dashboard') - {{ setting('site_name', config('app.name', 'CMS')) }} Admin</title>
     @if(setting('site_favicon'))
         <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
@@ -238,10 +253,20 @@
                         <span class="material-symbols-outlined text-3xl" x-text="sidebarCollapsed ? 'chevron_right' : 'chevron_left'"></span>
                     </button>
 
-                    <!-- Global Search -->
-                    <livewire:admin.header.global-search />
+                    <!-- Global Search or Page Title -->
+                    @hasSection('page-title')
+                        <div>
+                            <h1 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">@yield('page-title')</h1>
+                            @hasSection('page-subtitle')
+                                <p class="text-xs text-[#6F767E] mt-0.5">@yield('page-subtitle')</p>
+                            @endif
+                        </div>
+                    @else
+                        <livewire:admin.header.global-search />
+                    @endif
                 </div>
-                <div class="flex items-center gap-4 md:gap-6">
+
+                <div class="flex items-center gap-4">
                     @hasSection('header-actions')
                         @yield('header-actions')
                     @endif
@@ -250,15 +275,21 @@
                         <!-- Theme Toggle -->
                         <button 
                             x-data="{ 
-                                darkMode: document.documentElement.classList.contains('dark'),
+                                darkMode: localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : document.documentElement.classList.contains('dark'),
                                 toggle() {
                                     this.darkMode = !this.darkMode;
-                                    document.documentElement.classList.toggle('dark');
-                                    localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+                                    if (this.darkMode) {
+                                        document.documentElement.classList.add('dark');
+                                        localStorage.setItem('theme', 'dark');
+                                    } else {
+                                        document.documentElement.classList.remove('dark');
+                                        localStorage.setItem('theme', 'light');
+                                    }
                                 }
                             }"
                             @click="toggle()"
-                            class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#FCFCFC] transition-colors focus:outline-none">
+                            class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#FCFCFC] transition-colors focus:outline-none"
+                            title="Toggle theme">
                             <span class="material-symbols-outlined text-[24px]" x-show="!darkMode" x-cloak>dark_mode</span>
                             <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
                         </button>
