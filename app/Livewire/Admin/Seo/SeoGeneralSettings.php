@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Admin\Seo;
 
+use App\Models\CustomPostType;
 use App\Models\Page;
 use App\Models\Setting;
 use App\Services\ContentTypeRegistry;
 use App\Services\TaxonomyRegistry;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -472,6 +474,20 @@ class SeoGeneralSettings extends Component
         Setting::set('seo_transparency_policy_url', $this->transparencyPolicyUrl, 'seo', 'url');
 
         Setting::set('seo_robots_extra', $this->robotsExtra, 'seo', 'code');
+
+        // Flush sitemap cache so index_enabled changes take effect immediately
+        Cache::forget('sitemap.xml_index_v2');
+        foreach (['page', 'post', 'taxonomy', 'all'] as $type) {
+            Cache::forget("sitemap_type_{$type}_v2");
+        }
+        // Also flush CPT-specific sitemap caches
+        try {
+            foreach (CustomPostType::where('is_active', true)->pluck('slug') as $cptSlug) {
+                Cache::forget("sitemap_type_{$cptSlug}_v2");
+            }
+        } catch (\Throwable) {
+            // Silence any DB errors during migration
+        }
 
         $this->dispatch('notify', [
             'type' => 'success',
