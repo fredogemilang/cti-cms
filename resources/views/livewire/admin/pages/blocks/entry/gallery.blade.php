@@ -1,6 +1,7 @@
 {{-- Gallery Block Entry --}}
 @php
-    $images = json_decode($block['value'] ?? '[]', true) ?? [];
+    $value = $block['value'] ?? null;
+    $images = is_array($value) ? $value : (is_string($value) ? (json_decode($value, true) ?? []) : []);
     $columns = $block['options']['columns'] ?? 3;
 @endphp
 <div class="space-y-3">

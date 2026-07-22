@@ -1,6 +1,7 @@
 {{-- Checkbox Block Entry --}}
 @php
-    $selectedValues = json_decode($block['value'] ?? '[]', true) ?? [];
+    $value = $block['value'] ?? null;
+    $selectedValues = is_array($value) ? $value : (is_string($value) ? (json_decode($value, true) ?? []) : []);
 @endphp
 <div class="space-y-2">
     <label class="text-[10px] font-bold text-[#6F767E] uppercase tracking-wider">Select Options</label>

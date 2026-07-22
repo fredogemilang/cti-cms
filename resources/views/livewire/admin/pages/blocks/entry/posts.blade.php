@@ -1,6 +1,7 @@
 {{-- Posts Block Entry --}}
 @php
-    $selectedPosts = json_decode($block['value'] ?? '[]', true) ?? [];
+    $value = $block['value'] ?? null;
+    $selectedPosts = is_array($value) ? $value : (is_string($value) ? (json_decode($value, true) ?? []) : []);
     $postType = $block['options']['post_type'] ?? '';
 @endphp
 <div class="space-y-3">
