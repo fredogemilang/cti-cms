@@ -165,13 +165,13 @@
                     <div class="h-full flex flex-col">
                         {{-- Search & Filters --}}
                         <div class="flex gap-4 mb-4">
-                            <div class="flex-1 relative">
-                                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#6F767E]">search</span>
+                            <div class="flex-1 relative group">
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] group-focus-within:text-[#2563EB] transition-colors text-lg">search</span>
                                 <input 
                                     type="text" 
                                     wire:model.live.debounce.300ms="search"
                                     placeholder="Search media..." 
-                                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#0B0B0B] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="w-full h-10 pl-11 pr-4 rounded-xl border-none bg-white dark:bg-[#1A1A1A] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all placeholder:text-[#6F767E]">
                             </div>
                             <select 
                                 wire:model.live="filterType"

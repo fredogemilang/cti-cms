@@ -5,10 +5,10 @@
         <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
             {{-- Search --}}
             <div class="flex-1 w-full sm:max-w-sm">
-                <div class="relative">
-                    <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6F767E] text-lg">search</span>
+                <div class="relative group">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] group-focus-within:text-[#2563EB] transition-colors text-lg">search</span>
                     <input type="text" wire:model.live.debounce.300ms="search" placeholder="Search media..."
-                        class="w-full h-10 pl-10 pr-4 rounded-xl border border-gray-200 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder:text-[#6F767E]">
+                        class="w-full h-10 pl-11 pr-4 rounded-xl border-none bg-white dark:bg-[#1A1A1A] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all placeholder:text-[#6F767E]">
                 </div>
             </div>
 
