@@ -157,6 +157,23 @@ class TaxonomyForm extends Component
         return redirect()->route('admin.taxonomies.index');
     }
 
+    public function delete()
+    {
+        if (! $this->isEdit || ! $this->taxonomyId) {
+            return;
+        }
+
+        $taxonomy = CustomTaxonomy::findOrFail($this->taxonomyId);
+        $taxonomy->delete();
+
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => "Taxonomy '{$this->pluralLabel}' deleted successfully.",
+        ]);
+
+        return redirect()->route('admin.taxonomies.index');
+    }
+
     public function render()
     {
         $availablePostTypes = CustomPostType::active()->get();

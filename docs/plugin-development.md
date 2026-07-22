@@ -334,7 +334,7 @@ All admin views **must** extend `layouts.admin`:
 | `title` | Browser tab title |
 | `page-title` | Header text |
 | `content` | Main content area |
-| `hide-header` | Set `true` for create/edit pages |
+| `hide-title` | Set `true` for full-width editor create/edit pages |
 
 ### Admin Index Page & UI Standards
 
@@ -356,6 +356,30 @@ All admin list/index pages (both core and plugin views) **must** follow these 5 
 
 5. **Action Buttons & Tooltips (`data-tooltip`)**:
    All table column action buttons **must** specify `data-tooltip="..."` (e.g. `data-tooltip="Edit"`, `data-tooltip="Delete"`) and use consistent hover styling (`emerald` for view/manage, `blue` for edit, `red` for delete).
+
+### Admin Create/Edit Views (Editor Standard Layout)
+
+All admin create and edit pages (Pages, Forms, CPT, Taxonomies, Posts) **must** follow this standard 2-panel layout structure:
+
+1. **Blade Sections & Layout Header**:
+   - Use `@section('hide-title', true)` (do NOT use `hide-header`) so the Top Navbar Admin Global (Search, theme toggle, notifications, avatar) remains intact.
+
+2. **Root Container & Context Bar**:
+   - The root element **must** use `<div class="flex flex-col h-full bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC]">`.
+   - Top element is a fixed Context Bar (`px-6 py-4 md:px-10 border-b border-gray-200 dark:border-[#272B30] bg-white/50 dark:bg-[#0B0B0B]/50 shrink-0`) containing a back button (`<-`), page title, and status badges.
+
+3. **2-Panel Flex Layout Structure**:
+   - Parent: `<div class="flex-1 flex overflow-hidden">`
+   - **Left Panel (Main Editor)**: `<div class="flex-1 overflow-y-auto p-6 md:p-10 no-scrollbar">` containing `<div class="max-w-4xl mx-auto space-y-8">`.
+   - **Right Panel (Sidebar)**: `<aside class="w-[360px] bg-[#F4F5F6] dark:bg-[#0B0B0B] border-l border-gray-200 dark:border-[#272B30] overflow-y-auto no-scrollbar hidden lg:block shrink-0">` with inner wrapper `<div class="p-6 space-y-6">`.
+   - *Crucial*: Ensure the Left Panel `<div>` is properly closed before starting `<aside>`.
+
+4. **Sidebar Card `ACTIONS` (Top Card)**:
+   - First card in the right sidebar **must** be an **Actions Card**: `<div class="rounded-2xl bg-white dark:bg-[#1A1A1A] p-5 border border-gray-200 dark:border-[#272B30]">` with a `rocket_launch` header icon.
+   - Primary action button uses *Gradient Primary* styling (`bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/20`).
+
+5. **Toggle Switches**:
+   - Toggle switch controls **must** be wrapped in `<label class="relative inline-flex items-center cursor-pointer">` to ensure the `after:absolute` toggle circle positions correctly within the track.
 
 ### Frontend Views
 

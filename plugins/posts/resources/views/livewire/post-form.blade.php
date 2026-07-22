@@ -1,60 +1,39 @@
-<div class="flex flex-col h-full overflow-hidden">
-    <header class="sticky top-0 z-30 flex flex-col gap-6 md:flex-row md:items-center md:justify-between px-6 py-6 md:px-10 md:pt-8 md:pb-6 bg-[#F4F5F6]/95 dark:bg-[#0B0B0B]/95 backdrop-blur-sm">
-        <div class="flex items-center gap-4">
-            <a class="h-10 w-10 flex items-center justify-center rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-all"
-                href="{{ route('admin.posts.index') }}" wire:navigate>
-                <span class="material-symbols-outlined text-xl">arrow_back</span>
-            </a>
-            <div>
-                <h1 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $postId ? 'Edit Post' : 'Add New Post' }}</h1>
-                <div class="flex items-center gap-2 text-xs text-[#6F767E] mt-0.5">
-                    <span class="w-2 h-2 rounded-full {{ $status === 'published' ? 'bg-green-500' : 'bg-gray-400' }} inline-block"></span>
-                    <span>{{ ucfirst($status) }}</span>
-                </div>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <button
-                onclick="const d=document.documentElement;const isDark=d.classList.contains('dark');isDark?d.classList.remove('dark'):d.classList.add('dark');localStorage.setItem('theme',isDark?'light':'dark');this.querySelector('.icon-dark').style.display=isDark?'inline':'none';this.querySelector('.icon-light').style.display=isDark?'none':'inline';"
-                class="flex h-10 w-10 items-center justify-center rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-colors"
-                title="Toggle dark mode">
-                <span class="material-symbols-outlined text-xl icon-dark" style="display:none">light_mode</span>
-                <span class="material-symbols-outlined text-xl icon-light">dark_mode</span>
-                <script>
-                    (function(btn){
-                        if(document.documentElement.classList.contains('dark')){
-                            btn.querySelector('.icon-dark').style.display='inline';
-                            btn.querySelector('.icon-light').style.display='none';
-                        }
-                    })(document.currentScript?.parentElement||document.querySelector('[title="Toggle dark mode"]'));
-                </script>
-            </button>
-            <div class="h-8 w-px bg-gray-200 dark:bg-[#272B30]"></div>
-            <div class="flex items-center gap-3">
-                <button wire:click="save('draft')" wire:loading.attr="disabled"
-                    class="px-4 py-2 rounded-lg text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:white transition-all flex items-center gap-2">
-                    <span wire:loading wire:target="save('draft')" class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
-                    <span>Save Draft</span>
-                </button>
-                @if($slug)
-                <a href="{{ route('posts.show', $slug) }}" target="_blank"
-                    class="px-4 py-2 rounded-lg text-sm font-semibold text-[#111827] dark:text-white bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] hover:border-[#6F767E] transition-all flex items-center justify-center">
-                    Preview
-                </a>
+<div class="flex flex-col h-full bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] transition-colors duration-200 antialiased font-sans relative overflow-hidden">
+    {{-- Context Bar --}}
+    <div class="flex items-center gap-3 px-6 py-4 md:px-10 border-b border-gray-200 dark:border-[#272B30] bg-white/50 dark:bg-[#0B0B0B]/50 shrink-0">
+        <a class="h-9 w-9 flex items-center justify-center rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-all shrink-0"
+            href="{{ route('admin.posts.index') }}" wire:navigate>
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+        </a>
+        <div class="flex items-center gap-3 min-w-0 flex-1">
+            <h1 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] truncate">
+                {{ $postId ? 'Edit Post' : 'Add New Post' }}
+            </h1>
+            <div class="flex items-center gap-2 text-xs text-[#6F767E] shrink-0">
+                @if($status === 'published')
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Published
+                    </span>
+                @elseif($status === 'draft')
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-yellow-100 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 text-[10px] font-bold uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+                        Draft
+                    </span>
+                @elseif($status === 'scheduled')
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                        Scheduled
+                    </span>
                 @else
-                <button disabled
-                    class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 bg-gray-100 border border-gray-200 cursor-not-allowed">
-                    Preview
-                </button>
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-500/10 text-gray-600 dark:text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-gray-500"></span>
+                        {{ ucfirst($status) }}
+                    </span>
                 @endif
-                <button wire:click="save('published')" wire:loading.attr="disabled"
-                    class="px-6 py-2 rounded-lg text-sm font-bold text-white bg-[#2563EB] hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2">
-                    <span wire:loading wire:target="save('published')" class="material-symbols-outlined animate-spin text-lg">progress_activity</span>
-                    <span>{{ $status === 'published' ? 'Update' : 'Publish' }}</span>
-                </button>
             </div>
         </div>
-    </header>
+    </div>
 
     <div class="flex-1 flex overflow-hidden">
         <!-- Main Content -->
@@ -129,10 +108,10 @@
                     <div wire:ignore x-data="tiptapEditor('content')" 
                          @tiptap-undo.window="undo()" 
                          @tiptap-redo.window="redo()"
-                         id="post-content-editor" class="min-h-[500px] rounded-3xl border border-gray-200 dark:border-[#272B30]/30 bg-white dark:bg-[#1A1A1A] flex flex-col overflow-hidden">
+                         id="post-content-editor" class="h-[600px] min-h-[500px] rounded-3xl border border-gray-200 dark:border-[#272B30]/30 bg-white dark:bg-[#1A1A1A] flex flex-col overflow-hidden shadow-sm">
 
                         <!-- Toolbar -->
-                        <div class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-[#272B30] overflow-x-auto flex-wrap">
+                        <div class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-[#272B30] overflow-x-auto flex-wrap shrink-0 bg-white dark:bg-[#1A1A1A] rounded-t-3xl">
                             <!-- Text Formatting -->
                             <div class="flex items-center gap-0.5">
                                 <button type="button" @click="toggleBold()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('bold') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Bold">
@@ -382,8 +361,60 @@
             </div>
     
             <!-- Sidebar -->
-            <aside class="w-[320px] bg-[#F4F5F6] dark:bg-[#0B0B0B] border-l border-gray-200 dark:border-[#272B30] overflow-y-auto no-scrollbar hidden lg:block">
+            <aside class="w-[360px] bg-[#F4F5F6] dark:bg-[#0B0B0B] border-l border-gray-200 dark:border-[#272B30] overflow-y-auto no-scrollbar hidden lg:block shrink-0">
                 <div class="p-6 space-y-6">
+                    <!-- Actions Card -->
+                    <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] p-5 border border-gray-200 dark:border-[#272B30] shadow-sm dark:shadow-none">
+                        <div class="flex items-center gap-2 mb-4 text-[#6F767E]">
+                            <span class="material-symbols-outlined text-lg">rocket_launch</span>
+                            <span class="text-xs font-bold uppercase tracking-widest">Actions</span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <button 
+                                type="button"
+                                wire:click="save('published')" 
+                                wire:loading.attr="disabled"
+                                class="w-full px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                            >
+                                <span wire:loading.remove wire:target="save('published')" class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">save</span>
+                                    <span>{{ $status === 'published' ? 'Update' : 'Publish' }}</span>
+                                </span>
+                                <span wire:loading wire:target="save('published')">Saving...</span>
+                            </button>
+
+                            <button 
+                                type="button"
+                                wire:click="save('draft')" 
+                                wire:loading.attr="disabled"
+                                class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-100 dark:bg-[#272B30]/60 hover:bg-gray-200 dark:hover:bg-[#272B30] transition-all flex items-center justify-center gap-2"
+                            >
+                                <span wire:loading.remove wire:target="save('draft')">Save Draft</span>
+                                <span wire:loading wire:target="save('draft')">Saving Draft...</span>
+                            </button>
+
+                            @if($slug)
+                                <a href="{{ route('posts.show', $slug) }}" target="_blank"
+                                    class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-[#111827] dark:text-white bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] hover:border-[#6F767E] transition-all flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">open_in_new</span>
+                                    Preview
+                                </a>
+                            @endif
+
+                            @if($postId)
+                                <button 
+                                    type="button"
+                                    wire:click="delete"
+                                    wire:confirm="Are you sure you want to move this post to trash?"
+                                    class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2"
+                                >
+                                    <span class="material-symbols-outlined text-lg">delete</span>
+                                    Move to Trash
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+
                     <!-- Word Document Import Card -->
                     <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none">
                         <div class="flex items-center gap-2 mb-4 text-[#6F767E]">

@@ -147,10 +147,10 @@
             <div wire:ignore x-data="tiptapEditor('meta.{{ $field->name }}')" 
                  @tiptap-undo.window="undo()" 
                  @tiptap-redo.window="redo()"
-                 id="field-editor-{{ $field->name }}" class="min-h-[300px] rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#272B30] flex flex-col overflow-hidden">
+                 id="field-editor-{{ $field->name }}" class="h-[400px] min-h-[300px] rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-[#272B30] flex flex-col overflow-hidden shadow-sm">
 
                 <!-- Toolbar -->
-                <div class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-gray-700 overflow-x-auto flex-wrap bg-white dark:bg-[#1A1A1A]">
+                <div class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-[#272B30] overflow-x-auto flex-wrap shrink-0 bg-white dark:bg-[#1A1A1A] rounded-t-xl">
                     <!-- Text Formatting -->
                     <div class="flex items-center gap-0.5">
                         <button type="button" @click="toggleBold()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('bold') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Bold">

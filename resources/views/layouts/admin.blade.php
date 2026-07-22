@@ -222,7 +222,7 @@
 
         <!-- Main Content -->
         <main 
-            class="flex-1 overflow-y-auto bg-transparent scroll-smooth relative no-scrollbar"
+            class="flex-1 flex flex-col min-h-0 @if(View::hasSection('hide-title') || View::hasSection('hide-header')) overflow-hidden @else overflow-y-auto @endif bg-transparent scroll-smooth relative no-scrollbar"
             x-data="{ scrolled: false }"
             @scroll="scrolled = $el.scrollTop > 20">
             
@@ -230,7 +230,7 @@
             <!-- Header -->
             <header 
                 :class="{ 'bg-white/80 dark:bg-[#0B0B0B]/80 backdrop-blur-md border-b border-gray-200/50 dark:border-[#272B30]/50 shadow-sm': scrolled, 'bg-transparent border-b border-transparent': !scrolled }"
-                class="sticky top-0 z-30 flex items-center justify-between px-6 py-4 md:px-10 md:py-5 transition-all duration-300">
+                class="sticky top-0 z-30 flex items-center justify-between px-6 py-4 md:px-10 md:py-5 transition-all duration-300 shrink-0">
                 <div class="flex items-center gap-4 flex-1 max-w-xl">
                     <button 
                         @click="toggleSidebar()"
@@ -306,7 +306,7 @@
             @endif
 
             <!-- Page Content -->
-            <div class="@hasSection('hide-header') h-full @elseif(View::hasSection('hide-title') && !View::hasSection('page-title')) h-full @else px-6 pb-6 md:px-10 md:pb-10 @endif">
+            <div class="flex-1 flex flex-col min-h-0 @hasSection('hide-header') h-full @elseif(View::hasSection('hide-title') && !View::hasSection('page-title')) h-full @else px-6 pb-6 md:px-10 md:pb-10 @endif">
                 <!-- Page Title & Subtitle Section -->
                 @sectionMissing('hide-title')
                 @hasSection('page-title')
