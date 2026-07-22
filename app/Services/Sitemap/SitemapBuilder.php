@@ -7,14 +7,15 @@ use App\Models\CptEntry;
 use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
 use App\Models\Page;
+use App\Models\Setting;
 use App\Models\TaxonomyTerm;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 
 class SitemapBuilder
 {
     public function getIndexSitemaps(): array
     {
-        $baseUrl = config('app.url', 'http://localhost');
         $sitemaps = [];
 
         // 1. Pages sitemap
@@ -27,7 +28,18 @@ class SitemapBuilder
             ];
         }
 
-        // 2. Custom Post Types sitemaps
+        // 2. Posts plugin sitemap (if plugin is active)
+        if ($this->isPostsPluginActive()) {
+            $postModel = $this->getPostModelClass();
+            $lastPostMod = $postModel::where('status', 'published')->max('updated_at');
+            $sitemaps[] = [
+                'loc' => url('/post-sitemap.xml'),
+                'lastmod' => $lastPostMod ? Carbon::parse($lastPostMod)->toAtomString() : now()->toAtomString(),
+                'type' => 'Posts',
+            ];
+        }
+
+        // 3. Custom Post Types sitemaps
         $cpts = CustomPostType::where('is_active', true)->get();
         foreach ($cpts as $cpt) {
             $lastCptMod = CptEntry::where('post_type_id', $cpt->id)->where('status', 'published')->max('updated_at');
@@ -38,7 +50,7 @@ class SitemapBuilder
             ];
         }
 
-        // 3. Taxonomies sitemap
+        // 4. Taxonomies sitemap
         $lastTaxMod = TaxonomyTerm::max('updated_at');
         if ($lastTaxMod) {
             $sitemaps[] = [
@@ -65,6 +77,43 @@ class SitemapBuilder
                 'changefreq' => 'weekly',
                 'priority' => $page->slug === 'home' ? 1.0 : 0.8,
                 'type' => 'Page',
+            ];
+        }
+
+        return $urls;
+    }
+
+    public function getPostUrls(): array
+    {
+        if (! $this->isPostsPluginActive()) {
+            return [];
+        }
+
+        $postModel = $this->getPostModelClass();
+        $archiveSlug = Setting::get('archive_slug', 'blog');
+
+        $urls = [];
+
+        // Archive page
+        $urls[] = [
+            'loc' => url('/'.$archiveSlug),
+            'lastmod' => now()->toAtomString(),
+            'changefreq' => 'daily',
+            'priority' => 0.8,
+            'type' => 'Post Archive',
+        ];
+
+        $posts = $postModel::where('status', 'published')
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        foreach ($posts as $post) {
+            $urls[] = [
+                'loc' => url('/'.$archiveSlug.'/'.$post->slug),
+                'lastmod' => $post->updated_at ? $post->updated_at->toAtomString() : null,
+                'changefreq' => 'weekly',
+                'priority' => 0.6,
+                'type' => 'Post',
             ];
         }
 
@@ -129,6 +178,7 @@ class SitemapBuilder
     {
         $urls = array_merge(
             $this->getPageUrls(),
+            $this->getPostUrls(),
             $this->getTaxonomyUrls()
         );
 
@@ -145,5 +195,31 @@ class SitemapBuilder
         }
 
         return $urls;
+    }
+
+    /**
+     * Check if the Posts plugin is installed and active.
+     */
+    protected function isPostsPluginActive(): bool
+    {
+        if (! class_exists('Plugins\\Posts\\Models\\Post')) {
+            return false;
+        }
+
+        try {
+            return Schema::hasTable('posts');
+        } catch (\Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * Get the Post model class string.
+     *
+     * @return class-string
+     */
+    protected function getPostModelClass(): string
+    {
+        return 'Plugins\\Posts\\Models\\Post';
     }
 }
