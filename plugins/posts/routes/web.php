@@ -76,7 +76,7 @@ Route::middleware(['web'])->group(function () {
 
         $view = "{$themeSlug}::posts.index";
         if (! view()->exists($view)) {
-            $view = view()->exists('iccom::posts.index') ? 'iccom::posts.index' : 'posts::index';
+            $view = view()->exists('iccom::posts.index') ? 'iccom::posts.index' : 'posts::blog-index';
         }
 
         return view($view, compact('featuredPosts'));
@@ -95,7 +95,7 @@ Route::middleware(['web'])->group(function () {
 
         $view = "{$themeSlug}::posts.index";
         if (! view()->exists($view)) {
-            $view = view()->exists('iccom::posts.index') ? 'iccom::posts.index' : 'posts::index';
+            $view = view()->exists('iccom::posts.index') ? 'iccom::posts.index' : 'posts::blog-index';
         }
 
         return view($view, compact('featuredPosts', 'category'));
