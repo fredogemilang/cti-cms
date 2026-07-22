@@ -31,8 +31,8 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <!-- Search box -->
         <div class="flex flex-wrap items-center gap-3">
-            <div class="relative w-full md:w-[320px]">
-                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] z-10">search</span>
+            <div class="relative group w-full md:w-[320px]">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#6F767E] group-focus-within:text-[#2563EB] transition-colors z-10">search</span>
                 <x-admin.ui.input
                     name="search"
                     type="text"

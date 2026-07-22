@@ -17,7 +17,7 @@
         name="{{ $name }}" 
         id="{{ $name }}" 
         {{ $required ? 'required' : '' }}
-        {{ $attributes->merge(['class' => 'w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#0B0B0B] text-gray-900 dark:text-[#FCFCFC] focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900/30 transition ' . ($errors->has($name) ? 'border-red-500 dark:border-red-500' : '')]) }}
+        {{ $attributes->merge(['class' => 'w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-gray-900 dark:text-[#FCFCFC] focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900/30 transition ' . ($errors->has($name) ? 'border-red-500 dark:border-red-500' : '')]) }}
     />
     
     @error($name)
