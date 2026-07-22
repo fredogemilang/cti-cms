@@ -491,6 +491,6 @@
 
     {{-- Media Picker Modal --}}
     @if($showMediaPicker)
-        <livewire:admin.media-picker :field="$mediaPickerField" />
+        <livewire:admin.media-picker :field="$mediaPickerField" :show-modal="true" :key="'page-media-picker-'.$mediaPickerField" />
     @endif
 </div>

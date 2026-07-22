@@ -764,6 +764,13 @@ class PageForm extends Component
         $this->mediaPickerField = null;
     }
 
+    #[On('media-picker-closed')]
+    public function onMediaPickerClosed()
+    {
+        $this->showMediaPicker = false;
+        $this->mediaPickerField = null;
+    }
+
     public function clearFeaturedImage()
     {
         $this->featuredImage = null;

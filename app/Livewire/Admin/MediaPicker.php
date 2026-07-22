@@ -46,8 +46,20 @@ class MediaPicker extends Component
 
     public bool $uploading = false;
 
-    public function mount(string $field, ?string $value = null, string $label = 'Select Media', bool $multiple = false, string $accept = 'image/*', bool $shouldClearAfterSelection = false, bool $compact = false)
-    {
+    protected $listeners = [
+        'open-media-picker' => 'handleOpenMediaPicker',
+    ];
+
+    public function mount(
+        string $field,
+        ?string $value = null,
+        string $label = 'Select Media',
+        bool $multiple = false,
+        string $accept = 'image/*',
+        bool $shouldClearAfterSelection = false,
+        bool $compact = false,
+        bool $showModal = false
+    ) {
         $this->field = $field;
         $this->value = $value;
         $this->label = $label;
@@ -55,6 +67,7 @@ class MediaPicker extends Component
         $this->accept = $accept;
         $this->shouldClearAfterSelection = $shouldClearAfterSelection;
         $this->compact = $compact;
+        $this->showModal = $showModal;
 
         // Load existing media if value is set (check both path and webp_path)
         if ($this->value) {
@@ -75,6 +88,13 @@ class MediaPicker extends Component
         }
     }
 
+    public function handleOpenMediaPicker($field = null)
+    {
+        if (! $field || $field === $this->field) {
+            $this->openModal();
+        }
+    }
+
     public function openModal()
     {
         $this->showModal = true;
@@ -86,6 +106,7 @@ class MediaPicker extends Component
     {
         $this->showModal = false;
         $this->reset(['uploadFile', 'uploading']);
+        $this->dispatch('media-picker-closed');
     }
 
     public function selectMedia(int $mediaId)
