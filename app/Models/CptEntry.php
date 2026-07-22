@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Illuminate\Support\Str;
 
 class CptEntry extends Model
 {
-    use HasTranslations, SoftDeletes;
+    use HasSeoMeta, HasTranslations, SoftDeletes;
 
     protected $table = 'cpt_entries';
 

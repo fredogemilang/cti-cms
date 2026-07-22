@@ -58,17 +58,58 @@ class SchemaBuilder
 
     protected function article(Model $entity, ?SeoMeta $meta): array
     {
-        return array_filter([
+        $schema = array_filter([
             'headline' => $meta?->title ?: ($entity->title ?? null),
             'description' => $meta?->description ?? ($entity->excerpt ?? null),
             'datePublished' => optional($entity->published_at ?? $entity->created_at)?->toAtomString(),
             'dateModified' => optional($entity->updated_at)?->toAtomString(),
-            'author' => $entity->author?->name ? [
-                '@type' => 'Person',
-                'name' => $entity->author->name,
-            ] : null,
+            'author' => $this->buildAuthorSchema($entity),
             'image' => $this->imageUrl($entity, $meta),
         ]);
+
+        // GEO: Abstract — AI-friendly summary for citation
+        if ($meta?->ai_summary) {
+            $schema['abstract'] = $meta->ai_summary;
+        }
+
+        // GEO: Speakable — mark headline + description as speakable for voice AI
+        $schema['speakable'] = [
+            '@type' => 'SpeakableSpecification',
+            'cssSelector' => ['h1', '.entry-content', '[data-speakable]'],
+        ];
+
+        return $schema;
+    }
+
+    /**
+     * Build enriched author schema with E-E-A-T signals.
+     * Falls back to simple Person if author has no extended profile.
+     */
+    protected function buildAuthorSchema(Model $entity): ?array
+    {
+        $author = $entity->author ?? null;
+        if (! $author?->name) {
+            return null;
+        }
+
+        $schema = [
+            '@type' => 'Person',
+            'name' => $author->name,
+        ];
+
+        // E-E-A-T enrichment (when User model has these fields)
+        if (! empty($author->job_title)) {
+            $schema['jobTitle'] = $author->job_title;
+        }
+        if (! empty($author->bio)) {
+            $schema['description'] = $author->bio;
+        }
+        if (! empty($author->website_url)) {
+            $schema['url'] = $author->website_url;
+            $schema['sameAs'] = [$author->website_url];
+        }
+
+        return $schema;
     }
 
     protected function event(Model $entity, ?SeoMeta $meta): array
@@ -85,11 +126,18 @@ class SchemaBuilder
 
     protected function webPage(Model $entity, ?SeoMeta $meta): array
     {
-        return array_filter([
+        $schema = array_filter([
             'name' => $meta?->title ?: ($entity->title ?? null),
             'description' => $meta?->description ?? null,
             'url' => method_exists($entity, 'getUrl') ? $entity->getUrl() : null,
         ]);
+
+        // GEO: Abstract — AI-friendly summary for citation
+        if ($meta?->ai_summary) {
+            $schema['abstract'] = $meta->ai_summary;
+        }
+
+        return $schema;
     }
 
     protected function faqPage(array $custom): array

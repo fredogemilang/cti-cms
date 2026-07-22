@@ -301,61 +301,13 @@
                                 placeholder="Write a short excerpt..."></textarea>
                         </div>
 
-                        <!-- SEO Section -->
-                        <div x-data="{ activeTab: 'meta' }" class="mt-6 bg-white dark:bg-[#1A1A1A] rounded-3xl border border-gray-200 dark:border-[#272B30] overflow-hidden">
-                            <div class="px-6 py-4 border-b border-gray-200 dark:border-[#272B30] flex items-center justify-between">
-                                <h3 class="text-sm font-bold text-[#6F767E] uppercase tracking-widest">SEO Settings</h3>
-                                
-                                <!-- Tabs -->
-                                <div class="flex bg-gray-100 dark:bg-[#272B30] rounded-lg p-1">
-                                    <button type="button" 
-                                            @click="activeTab = 'meta'" 
-                                            :class="{ 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm': activeTab === 'meta', 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white': activeTab !== 'meta' }" 
-                                            class="px-4 py-1.5 rounded-md text-xs font-bold transition-all">
-                                        Meta Data
-                                    </button>
-                                    <button type="button" 
-                                            @click="activeTab = 'og'" 
-                                            :class="{ 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm': activeTab === 'og', 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white': activeTab !== 'og' }" 
-                                            class="px-4 py-1.5 rounded-md text-xs font-bold transition-all">
-                                        Open Graph
-                                    </button>
-                                </div>
-                            </div>
-    
-                            <div class="p-6">
-                                <!-- Meta Data Tab -->
-                                <div x-show="activeTab === 'meta'" class="space-y-6">
-                                    <div>
-                                        <label class="form-label">Meta Title</label>
-                                        <input type="text" wire:model="meta_title" class="form-input-field" placeholder="SEO Title (defaults to post title)">
-                                        <p class="mt-2 text-xs text-[#6F767E]">Recommended length: 50-60 characters</p>
-                                    </div>
-                                    <div>
-                                        <label class="form-label">Meta Description</label>
-                                        <textarea wire:model="meta_description" rows="3" class="form-input-field" placeholder="SEO Description (defaults to excerpt)"></textarea>
-                                        <p class="mt-2 text-xs text-[#6F767E]">Recommended length: 150-160 characters</p>
-                                    </div>
-                                </div>
-    
-                                <!-- Open Graph Tab -->
-                                <div x-show="activeTab === 'og'" class="space-y-6" x-cloak>
-                                    <div>
-                                        <label class="form-label">OG Title</label>
-                                        <input type="text" wire:model="og_title" class="form-input-field" placeholder="Social Media Title">
-                                    </div>
-                                    <div>
-                                        <label class="form-label">OG Description</label>
-                                        <textarea wire:model="og_description" rows="3" class="form-input-field" placeholder="Social Media Description"></textarea>
-                                    </div>
-                                    <div>
-                                        <label class="form-label">OG Image URL</label>
-                                        <input type="text" wire:model="og_image" class="form-input-field" placeholder="https://example.com/image.jpg">
-                                        <p class="mt-2 text-xs text-[#6F767E]">Leave empty to use featured image</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- SEO Settings (Centralized Component) -->
+                        <livewire:admin.seo.seo-meta-box
+                            seoable-type="Plugins\Posts\Models\Post"
+                            :seoable-id="$postId"
+                            :locale="$editingLocale"
+                            :key="'post-seo-meta-box-'.($postId ?? 'new')"
+                        />
                     </div>
                 </div>
             </div>

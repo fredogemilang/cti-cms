@@ -297,66 +297,13 @@
                 @endif
 
                 @if($postType->publicly_queryable)
-                {{-- SEO Settings --}}
-                <div x-data="{ activeTab: 'meta' }" class="bg-white dark:bg-[#1A1A1A] rounded-3xl border border-gray-200 dark:border-[#272B30] overflow-hidden">
-                    {{-- Header with title left + tabs right --}}
-                    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-[#272B30]">
-                        <h3 class="text-xs font-bold text-[#6F767E] uppercase tracking-widest">SEO Settings</h3>
-                        <div class="flex items-center bg-[#F4F5F6] dark:bg-[#0B0B0B] rounded-lg p-0.5">
-                            <button type="button" @click="activeTab = 'meta'"
-                                :class="activeTab === 'meta' ? 'bg-white dark:bg-[#272B30] text-[#111827] dark:text-[#FCFCFC] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]'"
-                                class="px-4 py-1.5 rounded-md text-xs font-bold transition-all">
-                                Meta Data
-                            </button>
-                            <button type="button" @click="activeTab = 'og'"
-                                :class="activeTab === 'og' ? 'bg-white dark:bg-[#272B30] text-[#111827] dark:text-[#FCFCFC] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]'"
-                                class="px-4 py-1.5 rounded-md text-xs font-bold transition-all">
-                                Open Graph
-                            </button>
-                        </div>
-                    </div>
-
-                    {{-- Meta Data Tab --}}
-                    <div x-show="activeTab === 'meta'" class="p-6 space-y-5">
-                        <div class="space-y-2">
-                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">Meta Title</label>
-                            <input wire:model="metaTitle" type="text"
-                                class="w-full h-11 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] px-4"
-                                placeholder="{{ $postType->singular_label }} Title for Search Engines" />
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">Meta Description</label>
-                            <textarea wire:model="metaDescription" rows="3"
-                                class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] p-4 resize-y"
-                                placeholder="Brief description for search engine results"></textarea>
-                        </div>
-                    </div>
-
-                    {{-- Open Graph Tab --}}
-                    <div x-show="activeTab === 'og'" style="display: none;" class="p-6 space-y-5">
-                        <div class="space-y-2">
-                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">OG Title</label>
-                            <input wire:model="ogTitle" type="text"
-                                class="w-full h-11 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] px-4"
-                                placeholder="Social Media Title" />
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">OG Description</label>
-                            <textarea wire:model="ogDescription" rows="3"
-                                class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] p-4 resize-y"
-                                placeholder="Social Media Description"></textarea>
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider block mb-2">OG Image</label>
-                            <livewire:admin.media-picker 
-                                field="og_image" 
-                                :value="$ogImage"
-                                label="Select OG Image"
-                            />
-                            <p class="text-[11px] text-[#6F767E] mt-1">Leave empty to use featured image</p>
-                        </div>
-                    </div>
-                </div>
+                {{-- SEO Settings (Centralized Component) --}}
+                <livewire:admin.seo.seo-meta-box
+                    seoable-type="App\Models\CptEntry"
+                    :seoable-id="$entryId"
+                    :locale="$editingLocale"
+                    :key="'seo-entry-' . ($entryId ?? 'new')"
+                />
                 @endif
             </div>
         </div>

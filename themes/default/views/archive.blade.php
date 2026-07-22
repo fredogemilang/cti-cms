@@ -2,10 +2,6 @@
 
 @section('title', $postType->plural_label . ' — ' . setting('site_name', config('app.name')))
 
-@push('meta')
-    <meta name="description" content="{{ $postType->description ?? 'Browse all ' . strtolower($postType->plural_label) }}">
-@endpush
-
 @section('content')
     {{-- Archive Header --}}
     <section class="page-header">

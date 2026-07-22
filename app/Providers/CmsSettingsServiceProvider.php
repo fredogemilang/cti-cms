@@ -255,6 +255,94 @@ class CmsSettingsServiceProvider extends ServiceProvider
                 ['key' => 'seo_org_logo', 'label' => 'Organization Logo URL', 'type' => 'text', 'section' => 'Schema.org', 'order' => 130,
                     'default' => '',
                     'rules' => ['nullable', 'string', 'max:500']],
+
+                // --- Organization Enrichment (Yoast-inspired) ---
+                ['key' => 'seo_org_description', 'label' => 'Organization Description', 'type' => 'textarea', 'section' => 'Schema.org', 'order' => 140,
+                    'default' => '',
+                    'rules' => ['nullable', 'string', 'max:500'],
+                    'help' => 'Short description of your organization. Used in JSON-LD Organization schema.'],
+
+                ['key' => 'seo_org_email', 'label' => 'Contact Email', 'type' => 'text', 'section' => 'Schema.org', 'order' => 150,
+                    'default' => '',
+                    'rules' => ['nullable', 'email', 'max:200'],
+                    'help' => 'Public contact email for the organization.'],
+
+                ['key' => 'seo_org_phone', 'label' => 'Contact Telephone', 'type' => 'text', 'section' => 'Schema.org', 'order' => 160,
+                    'default' => '',
+                    'rules' => ['nullable', 'string', 'max:30'],
+                    'help' => 'Include country code, e.g. +62-21-1234567.'],
+
+                ['key' => 'seo_org_legal_name', 'label' => 'Legal Name', 'type' => 'text', 'section' => 'Schema.org', 'order' => 170,
+                    'default' => '',
+                    'rules' => ['nullable', 'string', 'max:200'],
+                    'help' => 'Official legal name if different from Organization Name.'],
+
+                ['key' => 'seo_org_founding_date', 'label' => 'Founding Date', 'type' => 'text', 'section' => 'Schema.org', 'order' => 180,
+                    'default' => '',
+                    'rules' => ['nullable', 'string', 'max:10'],
+                    'help' => 'Format: YYYY or YYYY-MM-DD.'],
+
+                ['key' => 'seo_org_employees', 'label' => 'Number of Employees', 'type' => 'text', 'section' => 'Schema.org', 'order' => 190,
+                    'default' => '',
+                    'rules' => ['nullable', 'string', 'max:20'],
+                    'help' => 'Single number or range, e.g. "50" or "50-100". Rendered as QuantitativeValue.'],
+
+                ['key' => 'seo_org_vat_id', 'label' => 'VAT ID', 'type' => 'text', 'section' => 'Schema.org', 'order' => 200,
+                    'default' => '',
+                    'rules' => ['nullable', 'string', 'max:50']],
+
+                ['key' => 'seo_org_tax_id', 'label' => 'Tax ID (NPWP)', 'type' => 'text', 'section' => 'Schema.org', 'order' => 210,
+                    'default' => '',
+                    'rules' => ['nullable', 'string', 'max:50']],
+
+                ['key' => 'seo_org_duns', 'label' => 'DUNS Number', 'type' => 'text', 'section' => 'Schema.org', 'order' => 220,
+                    'default' => '',
+                    'rules' => ['nullable', 'string', 'max:20'],
+                    'help' => 'Dun & Bradstreet identifier. Helps AI identify your entity.'],
+
+                ['key' => 'seo_org_naics', 'label' => 'NAICS Code', 'type' => 'text', 'section' => 'Schema.org', 'order' => 230,
+                    'default' => '',
+                    'rules' => ['nullable', 'string', 'max:10'],
+                    'help' => 'North American Industry Classification. Helps AI classify your business.'],
+
+                // --- Publishing Principles (GEO / E-E-A-T) ---
+                ['key' => 'seo_publishing_principles_url', 'label' => 'Publishing Principles URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 300,
+                    'default' => '',
+                    'rules' => ['nullable', 'url', 'max:500'],
+                    'help' => 'Link to your editorial guidelines page. Critical for GEO E-E-A-T signals.'],
+
+                ['key' => 'seo_corrections_policy_url', 'label' => 'Corrections Policy URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 310,
+                    'default' => '',
+                    'rules' => ['nullable', 'url', 'max:500'],
+                    'help' => 'Link to your corrections/updates policy page.'],
+
+                ['key' => 'seo_ethics_policy_url', 'label' => 'Ethics Policy URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 320,
+                    'default' => '',
+                    'rules' => ['nullable', 'url', 'max:500']],
+
+                ['key' => 'seo_diversity_policy_url', 'label' => 'Diversity Policy URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 330,
+                    'default' => '',
+                    'rules' => ['nullable', 'url', 'max:500']],
+
+                ['key' => 'seo_ownership_funding_url', 'label' => 'Ownership & Funding Info URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 340,
+                    'default' => '',
+                    'rules' => ['nullable', 'url', 'max:500'],
+                    'help' => 'Transparency page about who owns/funds this site.'],
+
+                ['key' => 'seo_actionable_feedback_url', 'label' => 'Actionable Feedback Policy URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 350,
+                    'default' => '',
+                    'rules' => ['nullable', 'url', 'max:500']],
+
+                // --- GEO / AI ---
+                ['key' => 'seo_llms_txt_enabled', 'label' => 'Enable /llms.txt', 'type' => 'boolean', 'section' => 'GEO / AI', 'order' => 400,
+                    'default' => true,
+                    'rules' => ['boolean'],
+                    'help' => 'Serve /llms.txt to help AI crawlers understand your site structure.'],
+
+                ['key' => 'seo_ai_site_summary', 'label' => 'Site AI Summary', 'type' => 'textarea', 'section' => 'GEO / AI', 'order' => 410,
+                    'default' => '',
+                    'rules' => ['nullable', 'string', 'max:500'],
+                    'help' => 'Brief summary of your site for AI search engines. Used in /llms.txt and homepage schema.'],
             ],
         ]);
     }

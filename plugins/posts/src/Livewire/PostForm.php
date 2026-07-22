@@ -23,6 +23,7 @@ class PostForm extends Component
         if ($field === 'featured_image') {
             $this->featured_image = $mediaPath;
         }
+        // seo_og_image is handled by SeoMetaBox component
     }
 
     #[On('media-removed')]
@@ -57,16 +58,6 @@ class PostForm extends Component
     public $featured_image = null;
 
     public $is_featured = false;
-
-    public $meta_title = '';
-
-    public $meta_description = '';
-
-    public $og_title = '';
-
-    public $og_description = '';
-
-    public $og_image = '';
 
     public $author_id;
 
@@ -112,15 +103,6 @@ class PostForm extends Component
             $this->featured_image = $this->post->featured_image;
             $this->is_featured = $this->post->is_featured;
 
-            // Meta Data
-            $this->meta_title = $this->post->meta['meta_title'] ?? '';
-            $this->meta_description = $this->post->meta['meta_description'] ?? '';
-
-            // Open Graph
-            $this->og_title = $this->post->meta['og_title'] ?? '';
-            $this->og_description = $this->post->meta['og_description'] ?? '';
-            $this->og_image = $this->post->meta['og_image'] ?? '';
-
             $this->selectedCategories = $this->post->categories->pluck('id')->toArray();
             $this->tags = $this->post->tags->pluck('name')->implode(', ');
 
@@ -155,11 +137,6 @@ class PostForm extends Component
                 'slug' => $fields['slug'] ?? '',
                 'excerpt' => $fields['excerpt'] ?? '',
                 'content' => $fields['content'] ?? '',
-                'meta_title' => $meta['meta_title'] ?? '',
-                'meta_description' => $meta['meta_description'] ?? '',
-                'og_title' => $meta['og_title'] ?? '',
-                'og_description' => $meta['og_description'] ?? '',
-                'og_image' => $meta['og_image'] ?? null,
             ];
         }
     }
@@ -182,11 +159,9 @@ class PostForm extends Component
         $this->slug = $next['slug'] ?? '';
         $this->excerpt = $next['excerpt'] ?? '';
         $this->content = $next['content'] ?? '';
-        $this->meta_title = $next['meta_title'] ?? '';
-        $this->meta_description = $next['meta_description'] ?? '';
-        $this->og_title = $next['og_title'] ?? '';
-        $this->og_description = $next['og_description'] ?? '';
-        $this->og_image = $next['og_image'] ?? null;
+
+        // Notify SeoMetaBox to switch locale
+        $this->dispatch('seo-locale-switched', locale: $newLocale);
 
         $this->editingLocale = $newLocale;
         $this->resetErrorBag();
@@ -199,11 +174,6 @@ class PostForm extends Component
             'slug' => $this->slug,
             'excerpt' => $this->excerpt,
             'content' => $this->content,
-            'meta_title' => $this->meta_title,
-            'meta_description' => $this->meta_description,
-            'og_title' => $this->og_title,
-            'og_description' => $this->og_description,
-            'og_image' => $this->og_image,
         ];
     }
 
@@ -324,13 +294,6 @@ class PostForm extends Component
             'published_at' => $this->status === 'published' && ! $this->published_at ? now() : $this->published_at,
             'featured_image' => $imagePath,
             'is_featured' => $this->is_featured,
-            'meta' => [
-                'meta_title' => $defaultSnap['meta_title'] ?? $this->meta_title,
-                'meta_description' => $defaultSnap['meta_description'] ?? $this->meta_description,
-                'og_title' => $defaultSnap['og_title'] ?? $this->og_title,
-                'og_description' => $defaultSnap['og_description'] ?? $this->og_description,
-                'og_image' => $defaultSnap['og_image'] ?? $this->og_image,
-            ],
         ];
 
         // Build translations JSON from non-default locale snapshots
@@ -346,14 +309,7 @@ class PostForm extends Component
                     break;
                 }
             }
-            $metaPopulated = false;
-            foreach (['meta_title', 'meta_description', 'og_title', 'og_description', 'og_image'] as $f) {
-                if (! empty($snap[$f] ?? '')) {
-                    $metaPopulated = true;
-                    break;
-                }
-            }
-            if (! $isPopulated && ! $metaPopulated) {
+            if (! $isPopulated) {
                 continue;
             }
             $translations[$locale] = [
@@ -361,19 +317,6 @@ class PostForm extends Component
                 'slug' => ($snap['slug'] ?? '') ?: null,
                 'excerpt' => ($snap['excerpt'] ?? '') ?: null,
                 'content' => ($snap['content'] ?? '') ?: null,
-                'meta' => ! empty(array_filter([
-                    'meta_title' => ($snap['meta_title'] ?? '') ?: null,
-                    'meta_description' => ($snap['meta_description'] ?? '') ?: null,
-                    'og_title' => ($snap['og_title'] ?? '') ?: null,
-                    'og_description' => ($snap['og_description'] ?? '') ?: null,
-                    'og_image' => ($snap['og_image'] ?? '') ?: null,
-                ])) ? array_filter([
-                    'meta_title' => ($snap['meta_title'] ?? '') ?: null,
-                    'meta_description' => ($snap['meta_description'] ?? '') ?: null,
-                    'og_title' => ($snap['og_title'] ?? '') ?: null,
-                    'og_description' => ($snap['og_description'] ?? '') ?: null,
-                    'og_image' => ($snap['og_image'] ?? '') ?: null,
-                ]) : null,
             ];
         }
         $data['translations'] = $translations ?: null;
@@ -388,6 +331,9 @@ class PostForm extends Component
             $this->postId = $post->id;
             $this->post = $post;
         }
+
+        // Notify SeoMetaBox to save/attach
+        $this->dispatch('seo-attach', id: $post->id);
 
         // Sync Categories
         if (empty($this->selectedCategories)) {

@@ -2,15 +2,6 @@
 
 @section('title', $entry->title . ' — ' . setting('site_name', config('app.name')))
 
-@push('meta')
-    <meta name="description" content="{{ Str::limit(strip_tags($entry->excerpt ?? $entry->content ?? ''), 160) }}">
-    <meta property="og:title" content="{{ $entry->title }}">
-    <meta property="og:description" content="{{ Str::limit(strip_tags($entry->excerpt ?? $entry->content ?? ''), 160) }}">
-    @if($entry->featured_image)
-        <meta property="og:image" content="{{ asset('storage/' . $entry->featured_image) }}">
-    @endif
-@endpush
-
 @section('content')
     {{-- Entry Header --}}
     <section class="page-header">

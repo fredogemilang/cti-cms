@@ -39,17 +39,6 @@ class PageForm extends Component
 
     public ?string $featuredImage = null;
 
-    // SEO fields
-    public string $metaTitle = '';
-
-    public string $metaDescription = '';
-
-    public string $ogTitle = '';
-
-    public string $ogDescription = '';
-
-    public ?string $ogImage = null;
-
     // Blocks (array of block data)
     public array $blocks = [];
 
@@ -61,8 +50,6 @@ class PageForm extends Component
     public ?string $mediaPickerField = null;
 
     public ?int $editingBlockIndex = null;
-
-    public bool $showSeoSettings = false;
 
     // Autosave
     public bool $hasUnsavedChanges = false;
@@ -94,7 +81,7 @@ class PageForm extends Component
 
     /** Translatable form fields (the form keys, not the DB columns). */
     protected array $translatableFormFields = [
-        'title', 'slug', 'metaTitle', 'metaDescription', 'ogTitle', 'ogDescription', 'ogImage',
+        'title', 'slug',
     ];
 
     protected function rules(): array
@@ -158,14 +145,6 @@ class PageForm extends Component
         $this->template = $this->page->template;
         $this->featuredImage = $this->page->featured_image;
 
-        // SEO
-        $seo = $this->page->seo ?? [];
-        $this->metaTitle = $seo['meta_title'] ?? '';
-        $this->metaDescription = $seo['meta_description'] ?? '';
-        $this->ogTitle = $seo['og_title'] ?? '';
-        $this->ogDescription = $seo['og_description'] ?? '';
-        $this->ogImage = $seo['og_image'] ?? null;
-
         // Load blocks
         $this->blocks = $this->page->blocks->map(function ($block) {
             $value = $block->value;
@@ -206,11 +185,6 @@ class PageForm extends Component
             $this->localizedSnapshots[$locale] = [
                 'title' => $fields['title'] ?? '',
                 'slug' => $fields['slug'] ?? '',
-                'metaTitle' => $seo['meta_title'] ?? '',
-                'metaDescription' => $seo['meta_description'] ?? '',
-                'ogTitle' => $seo['og_title'] ?? '',
-                'ogDescription' => $seo['og_description'] ?? '',
-                'ogImage' => $seo['og_image'] ?? null,
             ];
         }
 
@@ -271,13 +245,11 @@ class PageForm extends Component
         $next = $this->localizedSnapshots[$newLocale] ?? [];
         $this->title = $next['title'] ?? '';
         $this->slug = $next['slug'] ?? '';
-        $this->metaTitle = $next['metaTitle'] ?? '';
-        $this->metaDescription = $next['metaDescription'] ?? '';
-        $this->ogTitle = $next['ogTitle'] ?? '';
-        $this->ogDescription = $next['ogDescription'] ?? '';
-        $this->ogImage = $next['ogImage'] ?? null;
 
-        // 4. Apply NEW locale's block values into $blocks (atomic blocks unchanged)
+        // 4. Notify SeoMetaBox to switch locale
+        $this->dispatch('seo-locale-switched', locale: $newLocale);
+
+        // 5. Apply NEW locale's block values into $blocks (atomic blocks unchanged)
         $this->applyBlocksFromLocale($newLocale);
 
         $this->editingLocale = $newLocale;
@@ -330,11 +302,6 @@ class PageForm extends Component
         return [
             'title' => $this->title,
             'slug' => $this->slug,
-            'metaTitle' => $this->metaTitle,
-            'metaDescription' => $this->metaDescription,
-            'ogTitle' => $this->ogTitle,
-            'ogDescription' => $this->ogDescription,
-            'ogImage' => $this->ogImage,
         ];
     }
 
@@ -735,8 +702,6 @@ class PageForm extends Component
     {
         if ($this->mediaPickerField === 'featured_image') {
             $this->featuredImage = $mediaPath;
-        } elseif ($this->mediaPickerField === 'og_image') {
-            $this->ogImage = $mediaPath;
         } elseif (str_starts_with($this->mediaPickerField, 'block_')) {
             $blockIndex = (int) str_replace('block_', '', $this->mediaPickerField);
             if (isset($this->blocks[$blockIndex])) {
@@ -777,12 +742,6 @@ class PageForm extends Component
         $this->hasUnsavedChanges = true;
     }
 
-    public function clearOgImage()
-    {
-        $this->ogImage = null;
-        $this->hasUnsavedChanges = true;
-    }
-
     // === SAVE OPERATIONS ===
 
     public function save()
@@ -816,13 +775,6 @@ class PageForm extends Component
             'author_id' => $this->isEdit ? $this->page->author_id : auth()->id(),
             'template' => $this->template,
             'featured_image' => $this->featuredImage,
-            'seo' => array_filter([
-                'meta_title' => ($defaultSnap['metaTitle'] ?? '') ?: null,
-                'meta_description' => ($defaultSnap['metaDescription'] ?? '') ?: null,
-                'og_title' => ($defaultSnap['ogTitle'] ?? '') ?: null,
-                'og_description' => ($defaultSnap['ogDescription'] ?? '') ?: null,
-                'og_image' => $defaultSnap['ogImage'] ?? null,
-            ]),
         ];
 
         // Build translations JSON from snapshots for non-default locales
@@ -831,17 +783,9 @@ class PageForm extends Component
             if ($locale === $defaultLocale) {
                 continue;
             }
-            $seo = array_filter([
-                'meta_title' => ($snap['metaTitle'] ?? '') ?: null,
-                'meta_description' => ($snap['metaDescription'] ?? '') ?: null,
-                'og_title' => ($snap['ogTitle'] ?? '') ?: null,
-                'og_description' => ($snap['ogDescription'] ?? '') ?: null,
-                'og_image' => $snap['ogImage'] ?? null,
-            ]);
             $localeFields = array_filter([
                 'title' => ($snap['title'] ?? '') ?: null,
                 'slug' => ($snap['slug'] ?? '') ?: null,
-                'seo' => ! empty($seo) ? $seo : null,
             ], fn ($v) => $v !== null);
             if (! empty($localeFields)) {
                 $translations[$locale] = $localeFields;
@@ -865,6 +809,9 @@ class PageForm extends Component
 
         $this->hasUnsavedChanges = false;
         $this->lastSavedAt = now()->format('g:i A');
+
+        // Notify SeoMetaBox to save/attach (for new pages, it now has the ID)
+        $this->dispatch('seo-attach', id: $this->page->id);
 
         $this->dispatch('notify', type: 'success', message: 'Page saved successfully!');
     }
@@ -1013,13 +960,6 @@ class PageForm extends Component
         }
 
         $this->save();
-    }
-
-    // === SEO TOGGLE ===
-
-    public function toggleSeoSettings()
-    {
-        $this->showSeoSettings = ! $this->showSeoSettings;
     }
 
     public function render()

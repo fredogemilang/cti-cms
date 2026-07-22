@@ -7,6 +7,7 @@ use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\CompressResponse;
 use App\Http\Middleware\EnforceTwoFactor;
 use App\Http\Middleware\HandleRedirects;
+use App\Http\Middleware\InjectSeoTags;
 use App\Http\Middleware\OptimizeHtml;
 use App\Http\Middleware\PageCache;
 use App\Http\Middleware\SecurityHeaders;
@@ -40,6 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Set app locale from query → session → cookie → setting.
         $middleware->web(append: [
             SetLocale::class,
+            InjectSeoTags::class,
             PageCache::class,
             OptimizeHtml::class,
             CompressResponse::class,

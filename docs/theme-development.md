@@ -511,7 +511,137 @@ These are shared with all theme views via `View::share()`:
 
 ---
 
+## SEO & GEO (Generative Engine Optimization)
+
+### Automatic SEO Injection
+
+The CMS **automatically injects SEO tags** into every public HTML response via the `InjectSeoTags` middleware. This means:
+
+> **Theme developers do NOT need to manually add SEO meta tags.** The CMS handles it.
+
+The middleware inserts the following just before `</head>`:
+- `<meta name="description">` — from per-page or global default
+- `<meta name="robots">` — from per-page setting
+- `<link rel="canonical">` — from per-page setting or current URL
+- Open Graph tags (`og:title`, `og:description`, `og:image`, etc.)
+- Twitter Card tags
+- Google/Bing verification meta tags
+- JSON-LD schema (per-page Article/WebPage/Event + site-wide Organization)
+- Publishing Principles schema (E-E-A-T signals for AI engines)
+
+### What Themes Get for Free
+
+| Feature | How It Works | Theme Action Required |
+|---------|-------------|----------------------|
+| Meta description | Injected from SEO meta box | ❌ None |
+| Open Graph + Twitter | Auto-generated from per-page or global | ❌ None |
+| JSON-LD per page | Built from entity + schema_type | ❌ None |
+| Organization schema | Built from Admin → Settings → SEO | ❌ None |
+| Publishing Principles | Injected in Organization schema | ❌ None |
+| Google/Bing verification | Auto-injected | ❌ None |
+| Speakable markup | Auto-added to Article types | ✅ Optional enhancement |
+| AI Summary (`abstract`) | From per-page "GEO / AI" section | ❌ None |
+| `/llms.txt` | Auto-generated controller | ❌ None |
+| `/sitemap.xml` | Auto-generated controller | ❌ None |
+| `/robots.txt` | Auto-generated controller | ❌ None |
+
+### Optional: Enhancing SEO from Theme Views
+
+While automatic SEO covers everything, theme developers can optionally:
+
+#### 1. Add Speakable Markup
+
+Mark key content sections that AI assistants should quote:
+
+```blade
+<article>
+    <h1>{{ $entry->title }}</h1>
+    <div class="entry-content" data-speakable>
+        {!! $entry->content !!}
+    </div>
+</article>
+```
+
+The `data-speakable` attribute and `.entry-content` class are pre-configured in the schema's `SpeakableSpecification`. Theme developers can add the attribute to any important content block.
+
+#### 2. Remove Duplicate Meta Tags
+
+If your theme was previously adding manual meta tags via `@push('meta')`, you should **remove them** to avoid duplicates:
+
+```blade
+{{-- ❌ OLD WAY: Remove this from your theme views --}}
+@push('meta')
+    <meta name="description" content="...">
+    <meta property="og:title" content="...">
+@endpush
+
+{{-- ✅ NEW WAY: Nothing needed. The CMS handles it automatically. --}}
+```
+
+#### 3. Custom Page Title
+
+The `<title>` tag is NOT managed by the middleware (it's set via `@section('title')`). Themes should continue to set page titles:
+
+```blade
+@section('title', $page->getMetaTitle())
+```
+
+### Layout Template (Minimal SEO-Compatible)
+
+A minimal `layouts/app.blade.php` that works perfectly with auto-injected SEO:
+
+```blade
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@yield('title', setting('site_name', config('app.name')))</title>
+
+    {{-- Favicon --}}
+    @if(setting('site_favicon'))
+        <link rel="icon" href="{{ asset('storage/' . setting('site_favicon')) }}">
+    @endif
+
+    {{-- Theme CSS --}}
+    <link rel="stylesheet" href="{{ asset('themes/starter/assets/css/theme.css') }}">
+
+    @livewireStyles
+    @stack('styles')
+
+    {{-- SEO/GEO tags are auto-injected here by InjectSeoTags middleware --}}
+</head>
+<body>
+    @include($activeTheme->slug . '::partials.header')
+
+    <main>
+        @yield('content')
+    </main>
+
+    @include($activeTheme->slug . '::partials.footer')
+
+    @livewireScripts
+    @stack('scripts')
+</body>
+</html>
+```
+
+### GEO Features Available via Admin
+
+Theme developers should know these GEO features exist so they can guide content creators:
+
+| Feature | Location | Purpose |
+|---------|----------|---------|
+| AI Summary | SEO meta box → GEO / AI | Key takeaway for AI citation |
+| Cornerstone Content | SEO meta box → GEO / AI | Flag important pages |
+| Publishing Principles | Settings → SEO → Publishing Principles | E-E-A-T trust signals |
+| Organization Enrichment | Settings → SEO → Schema.org | Entity recognition by AI |
+| Site AI Summary | Settings → SEO → GEO / AI | Homepage/llms.txt description |
+| LLMS.txt | Settings → SEO → GEO / AI | AI crawler site map |
+
+---
+
 **Reference:** See `themes/default/` for a complete working theme.
 
-**Last Updated:** 2026-07-21
-**Version:** 3.0
+**Last Updated:** 2026-07-22
+**Version:** 4.0

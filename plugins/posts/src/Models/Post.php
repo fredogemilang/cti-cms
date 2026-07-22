@@ -3,6 +3,7 @@
 namespace Plugins\Posts\Models;
 
 use App\Traits\FindsByLocalizedSlug;
+use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Support\Str;
 
 class Post extends Model
 {
-    use FindsByLocalizedSlug, HasTranslations, SoftDeletes;
+    use FindsByLocalizedSlug, HasSeoMeta, HasTranslations, SoftDeletes;
 
     protected static function baseLocalizedSlugQuery(): Builder
     {
