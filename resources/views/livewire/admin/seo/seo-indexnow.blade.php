@@ -40,6 +40,25 @@
     @if($activeTab === 'indexnow')
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 space-y-6">
+                {{-- Partner Explanation Banner --}}
+                <div class="p-4 rounded-2xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 flex items-start gap-3.5">
+                    <div class="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+                        <span class="material-symbols-outlined text-lg">info</span>
+                    </div>
+                    <div class="text-xs space-y-1.5">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="font-bold text-[#111827] dark:text-[#FCFCFC]">Mitra Mesin Pencari IndexNow:</span>
+                            <span class="px-2 py-0.5 rounded-md font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-[10px]">Microsoft Bing</span>
+                            <span class="px-2 py-0.5 rounded-md font-bold bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 text-[10px]">Yandex</span>
+                            <span class="px-2 py-0.5 rounded-md font-bold bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 text-[10px]">Seznam.cz</span>
+                            <span class="px-2 py-0.5 rounded-md font-bold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-[10px]">Naver</span>
+                        </div>
+                        <p class="text-[#6F767E] dark:text-[#9A9FA5] leading-relaxed">
+                            <strong>Catatan Penting:</strong> Protokol IndexNow <strong>TIDAK mencakup Google Search</strong>. Satu kali pings IndexNow akan otomatis disebarkan ke Bing, Yandex, Seznam, dan Naver. Untuk mengirim instant indexing khusus ke <strong>Google Search</strong>, silakan gunakan tab <strong>Google Indexing API</strong>.
+                        </p>
+                    </div>
+                </div>
+
                 <div class="bg-white dark:bg-[#1A1A1A] rounded-3xl p-6 space-y-6 shadow-sm">
                     <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
                         <h3 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">IndexNow Configuration</h3>
@@ -51,7 +70,7 @@
                     <div class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] flex items-center justify-between">
                         <div>
                             <h4 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Enable IndexNow Protocol</h4>
-                            <p class="text-xs text-[#6F767E] mt-0.5">Allows sending instant change notifications to IndexNow search engine partners.</p>
+                            <p class="text-xs text-[#6F767E] mt-0.5">Allows sending instant change notifications to IndexNow search engine partners (Bing, Yandex, Seznam, Naver).</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" wire:model="indexNowEnabled" class="sr-only peer">
@@ -62,7 +81,7 @@
                     <div class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] flex items-center justify-between">
                         <div>
                             <h4 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Automatic Submit on Publish & Update</h4>
-                            <p class="text-xs text-[#6F767E] mt-0.5">Automatically trigger pings whenever Pages, Posts, or CPT entries are published, updated, or deleted.</p>
+                            <p class="text-xs text-[#6F767E] mt-0.5">Automatically trigger pings to Bing & IndexNow partners whenever Pages, Posts, or CPT entries are updated or deleted.</p>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" wire:model="indexNowAutoPing" class="sr-only peer">
@@ -244,9 +263,9 @@
                     <h3 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Submission Activity Logs</h3>
 
                     <div class="flex items-center gap-2">
-                        <button type="button" wire:click="exportLogsCsv" class="px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 text-xs font-bold transition-colors inline-flex items-center gap-1.5">
+                        <button type="button" wire:click="exportLogsExcel" class="px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 text-xs font-bold transition-colors inline-flex items-center gap-1.5">
                             <span class="material-symbols-outlined text-base">download</span>
-                            Export CSV
+                            Export Excel
                         </button>
                         <button type="button" wire:click="resetFilters" class="px-3 py-2 rounded-xl bg-gray-100 dark:bg-[#272B30] hover:bg-gray-200 text-xs font-semibold transition-colors">
                             Reset Filters

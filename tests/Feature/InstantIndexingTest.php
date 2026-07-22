@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\Admin\Seo\SeoIndexNow;
+use App\Models\IndexingLog;
 use App\Models\Page;
 use App\Models\Role;
 use App\Models\Setting;
@@ -10,6 +12,7 @@ use App\Services\GoogleIndexingService;
 use App\Services\IndexNowService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class InstantIndexingTest extends TestCase
@@ -106,5 +109,21 @@ class InstantIndexingTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSeeLivewire('admin.seo.seo-index-now');
+    }
+
+    public function test_excel_export_returns_download_response(): void
+    {
+        IndexingLog::create([
+            'protocol' => 'google',
+            'url' => 'https://example.com/excel-test',
+            'status_code' => 200,
+            'response' => 'OK',
+            'request_time' => now(),
+        ]);
+
+        $component = Livewire::test(SeoIndexNow::class);
+        $response = $component->call('exportLogsExcel');
+
+        $response->assertFileDownloaded('cti-indexing-logs-'.now()->format('Y-m-d').'.xls');
     }
 }

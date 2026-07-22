@@ -186,7 +186,7 @@ class SeoIndexNow extends Component
         ]);
     }
 
-    public function exportLogsCsv()
+    public function exportLogsExcel()
     {
         $query = IndexingLog::query()->orderBy('request_time', 'desc');
 
@@ -206,34 +206,34 @@ class SeoIndexNow extends Component
         }
 
         $logs = $query->get();
-        $filename = 'cti-indexing-logs-'.now()->format('Y-m-d').'.csv';
+        $filename = 'cti-indexing-logs-'.now()->format('Y-m-d').'.xls';
 
         return response()->streamDownload(function () use ($logs) {
-            $handle = fopen('php://output', 'w');
-            if (! $handle) {
-                return;
-            }
-            // UTF-8 BOM
-            fwrite($handle, chr(0xEF).chr(0xBB).chr(0xBF));
-
-            fputcsv($handle, ['ID', 'Protocol', 'URL', 'Status Code', 'Status', 'Response', 'Request Time', 'Entity Type', 'Entity ID']);
+            echo '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">';
+            echo '<head><meta charset="utf-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Indexing Logs</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head>';
+            echo '<body><table border="1">';
+            echo '<tr style="background-color: #2563eb; color: #ffffff; font-weight: bold;">';
+            echo '<th>ID</th><th>Protocol</th><th>URL</th><th>Status Code</th><th>Status</th><th>Response Details</th><th>Request Time</th><th>Entity Type</th><th>Entity ID</th>';
+            echo '</tr>';
 
             foreach ($logs as $log) {
-                fputcsv($handle, [
-                    $log->id,
-                    strtoupper($log->protocol),
-                    $log->url,
-                    $log->status_code,
-                    $log->status_code === 200 ? 'Success' : 'Error',
-                    $log->response,
-                    optional($log->request_time)->toIso8601String() ?? '',
-                    $log->entity_type ?? '',
-                    $log->entity_id ?? '',
-                ]);
+                $statusText = ($log->status_code === 200 || $log->status_code === 202) ? 'Success' : 'Error';
+                $time = optional($log->request_time)->toIso8601String() ?? '';
+                echo '<tr>';
+                echo '<td>'.htmlspecialchars((string) $log->id).'</td>';
+                echo '<td>'.htmlspecialchars(strtoupper($log->protocol)).'</td>';
+                echo '<td>'.htmlspecialchars($log->url).'</td>';
+                echo '<td>'.htmlspecialchars((string) $log->status_code).'</td>';
+                echo '<td>'.htmlspecialchars($statusText).'</td>';
+                echo '<td>'.htmlspecialchars((string) $log->response).'</td>';
+                echo '<td>'.htmlspecialchars($time).'</td>';
+                echo '<td>'.htmlspecialchars((string) ($log->entity_type ?? '')).'</td>';
+                echo '<td>'.htmlspecialchars((string) ($log->entity_id ?? '')).'</td>';
+                echo '</tr>';
             }
 
-            fclose($handle);
-        }, $filename, ['Content-Type' => 'text/csv; charset=utf-8']);
+            echo '</table></body></html>';
+        }, $filename, ['Content-Type' => 'application/vnd.ms-excel; charset=utf-8']);
     }
 
     public function resetFilters(): void
