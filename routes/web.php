@@ -23,6 +23,7 @@ use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SchemaAggregatorController;
 use App\Http\Controllers\SchemaManifestController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SitemapStyleController;
 use App\Livewire\Admin\Redirects\RedirectTable;
 use App\Livewire\Admin\Seo\SeoBulkEditor;
 use App\Livewire\Admin\Seo\SeoGeneralSettings;
@@ -41,6 +42,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Public SEO & GEO
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sitemap_index.xml', [SitemapController::class, 'index'])->name('sitemap.index');
+Route::get('/main-sitemap.xsl', SitemapStyleController::class)->name('sitemap.style');
+Route::get('/{type}-sitemap.xml', [SitemapController::class, 'showType'])->name('sitemap.type');
 Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
 Route::get('/llms.txt', [LlmsTxtController::class, 'index'])->name('llms-txt');
 Route::get('/schema-manifest.json', SchemaManifestController::class)->name('schema-manifest');
