@@ -19,7 +19,7 @@
             document.addEventListener('livewire:navigated', applyTheme);
         })();
     </script>
-    <title>@yield('title', 'Dashboard') - {{ setting('site_name', config('app.name', 'CMS')) }} Admin</title>
+    <title>@yield('title', 'Dashboard') {{ setting('seo_title_separator', '-') }} {{ setting('site_name', config('app.name', 'CMS')) }} Admin</title>
     @if(setting('site_favicon'))
         <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
     @endif
@@ -253,17 +253,8 @@
                         <span class="material-symbols-outlined text-3xl" x-text="sidebarCollapsed ? 'chevron_right' : 'chevron_left'"></span>
                     </button>
 
-                    <!-- Global Search or Page Title -->
-                    @hasSection('page-title')
-                        <div>
-                            <h1 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">@yield('page-title')</h1>
-                            @hasSection('page-subtitle')
-                                <p class="text-xs text-[#6F767E] mt-0.5">@yield('page-subtitle')</p>
-                            @endif
-                        </div>
-                    @else
-                        <livewire:admin.header.global-search />
-                    @endif
+                    <!-- Global Search -->
+                    <livewire:admin.header.global-search />
                 </div>
 
                 <div class="flex items-center gap-4">
@@ -361,6 +352,7 @@
                 @endif
                 @endif
 
+                {{ $slot ?? '' }}
                 @yield('content')
             </div>
         </main>

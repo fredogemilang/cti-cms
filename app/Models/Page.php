@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\SeoRenderer;
 use App\Services\ThemeLoader;
 use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
@@ -283,7 +284,9 @@ class Page extends Model
 
     public function getMetaTitle(): string
     {
-        return $this->seo['meta_title'] ?? $this->title;
+        $resolved = app(SeoRenderer::class)->resolve($this);
+
+        return $resolved['title'];
     }
 
     public function getMetaDescription(): ?string

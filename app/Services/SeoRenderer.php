@@ -19,40 +19,90 @@ class SeoRenderer
     {
         $meta = $entity ? $this->resolveSeoMeta($entity) : null;
 
-        $siteName = setting('site_name', config('app.name'));
-        $tagline = setting('site_tagline', '');
-        $titleTemplate = setting('seo_title_pattern', '{page} | {site}');
+        $siteName = (string) setting('site_name', config('app.name'));
+        $tagline = (string) setting('site_tagline', '');
+        $titleSeparator = (string) setting('seo_title_separator', '-');
+
+        $entityClass = $entity ? class_basename($entity) : '';
+        $ctSlug = $this->getContentTypeSlug($entity);
+        $taxSlug = $this->getTaxonomySlug($entity);
+
+        // Title pattern resolution priority: per-content-type setting → legacy post/page pattern → global pattern
+        $defaultPattern = null;
+        if ($ctSlug && setting("seo_content_type_{$ctSlug}_title_pattern")) {
+            $defaultPattern = (string) setting("seo_content_type_{$ctSlug}_title_pattern");
+        } elseif ($taxSlug && setting("seo_taxonomy_{$taxSlug}_title_pattern")) {
+            $defaultPattern = (string) setting("seo_taxonomy_{$taxSlug}_title_pattern");
+        }
+
+        if (! $defaultPattern) {
+            $defaultPattern = match ($entityClass) {
+                'Post' => setting('seo_post_title_pattern', '{title} {sep} {site}'),
+                'Page' => setting('seo_page_title_pattern', '{title} {sep} {site}'),
+                default => setting('seo_title_pattern', '{page} {sep} {site}'),
+            };
+        }
+
+        $titleTemplate = (string) $defaultPattern;
 
         $rawTitle = $overrides['title']
             ?? $meta?->title
-            ?? ($entity->title ?? $siteName);
+            ?? ($entity->title ?? $entity->name ?? $siteName);
+
+        $termName = $entity->name ?? $rawTitle;
+        $termDescription = $entity->description ?? '';
 
         $title = strtr($titleTemplate, [
             '{page}' => $rawTitle,
+            '{title}' => $rawTitle,
+            '{term}' => $termName,
             '{site}' => $siteName,
             '{tagline}' => $tagline,
+            '{sep}' => $titleSeparator,
+            '{description}' => $termDescription,
         ]);
 
-        // Description fallback chain: seo_meta → entity excerpt → auto-snippet from content → site default
+        // Description fallback chain: override → seo_meta → auto-snippet → content-type pattern → site default
+        $typePatternDesc = null;
+        if ($ctSlug && setting("seo_content_type_{$ctSlug}_description_pattern")) {
+            $typePatternDesc = (string) setting("seo_content_type_{$ctSlug}_description_pattern");
+        } elseif ($taxSlug && setting("seo_taxonomy_{$taxSlug}_description_pattern")) {
+            $typePatternDesc = (string) setting("seo_taxonomy_{$taxSlug}_description_pattern");
+        }
+
         $description = $overrides['description']
             ?? $meta?->description
             ?? $this->autoDescription($entity)
+            ?? $typePatternDesc
             ?? setting('seo_default_description');
 
         $canonical = $overrides['canonical']
             ?? $meta?->canonical_url
             ?? ($entity && method_exists($entity, 'getUrl') ? $entity->getUrl() : request()->fullUrl());
 
-        $robots = $meta?->robots ?? 'index,follow';
+        // Robots Indexing Check (Content Type toggle / Taxonomy toggle / Global toggle)
+        $isIndexed = true;
+        if ($ctSlug) {
+            $isIndexed = (bool) setting("seo_content_type_{$ctSlug}_index_enabled", true);
+        } elseif ($taxSlug) {
+            $isIndexed = (bool) setting("seo_taxonomy_{$taxSlug}_index_enabled", true);
+        }
+
+        $robots = $meta?->robots ?? ($isIndexed ? 'index,follow' : 'noindex,follow');
         if (! setting('seo_allow_indexing', true)) {
             $robots = 'noindex,nofollow';
         }
 
-        // OG Image fallback: seo_meta og_image → entity featured_image → site default
+        // OG Image fallback chain: seo_meta og_image → entity featured_image → content-type social image → taxonomy social image → site default
+        $ctSocialImage = $ctSlug ? (string) setting("seo_content_type_{$ctSlug}_social_image") : null;
+        $taxSocialImage = $taxSlug ? (string) setting("seo_taxonomy_{$taxSlug}_social_image") : null;
         $featuredImage = $entity && isset($entity->featured_image) ? (string) $entity->featured_image : null;
         $metaOgPath = $meta?->ogImage && isset($meta->ogImage->path) ? (string) $meta->ogImage->path : null;
+
         $ogImage = $metaOgPath
             ?? $featuredImage
+            ?? ($ctSocialImage !== '' ? $ctSocialImage : null)
+            ?? ($taxSocialImage !== '' ? $taxSocialImage : null)
             ?? setting('seo_default_og_image');
 
         $og = [
@@ -82,6 +132,63 @@ class SeoRenderer
             'twitter' => $twitter,
             'schema' => $schema,
         ];
+    }
+
+    /**
+     * Resolve slug for a Content Type model (pages, posts, cpt).
+     */
+    protected function getContentTypeSlug(?Model $entity): ?string
+    {
+        if (! $entity) {
+            return null;
+        }
+
+        $class = class_basename($entity);
+
+        if ($class === 'Page') {
+            return 'pages';
+        }
+
+        if ($class === 'Post') {
+            return 'posts';
+        }
+
+        if ($class === 'CptEntry') {
+            return isset($entity->postType) && isset($entity->postType->slug)
+                ? (string) $entity->postType->slug
+                : null;
+        }
+
+        return strtolower($class).'s';
+    }
+
+    /**
+     * Resolve slug for a Taxonomy model.
+     */
+    protected function getTaxonomySlug(?Model $entity): ?string
+    {
+        if (! $entity) {
+            return null;
+        }
+
+        $class = class_basename($entity);
+
+        if ($class === 'TaxonomyTerm' || $class === 'Category' || $class === 'Tag') {
+            if (isset($entity->taxonomy) && is_object($entity->taxonomy) && isset($entity->taxonomy->slug)) {
+                return (string) $entity->taxonomy->slug;
+            }
+            if (isset($entity->taxonomy_slug)) {
+                return (string) $entity->taxonomy_slug;
+            }
+
+            return match ($class) {
+                'Category' => 'categories',
+                'Tag' => 'tags',
+                default => strtolower($class).'s',
+            };
+        }
+
+        return null;
     }
 
     /**

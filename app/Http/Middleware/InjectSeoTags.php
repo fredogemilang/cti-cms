@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Page;
+use App\Services\BreadcrumbService;
 use App\Services\SchemaBuilder;
 use App\Services\SeoRenderer;
 use Closure;
@@ -54,9 +56,15 @@ class InjectSeoTags
 
         // Extract the entity from the view response (if available)
         $entity = $this->resolveEntity($response);
+        $seo = $this->seoRenderer->resolve($entity);
+
+        // Replace existing <title> tag with the resolved SEO title (pattern + separator)
+        if (preg_match('/<title\b[^>]*>(.*?)<\/title>/is', $content)) {
+            $content = (string) preg_replace('/<title\b[^>]*>(.*?)<\/title>/is', '<title>'.e($seo['title']).'</title>', $content);
+        }
 
         // Build SEO tags
-        $seoHtml = $this->buildSeoHtml($entity);
+        $seoHtml = $this->buildSeoHtml($seo, $entity);
 
         // Inject just before </head>, after any existing @stack('meta') content
         $content = str_replace('</head>', $seoHtml."\n</head>", $content);
@@ -93,9 +101,8 @@ class InjectSeoTags
     /**
      * Build the full SEO/GEO HTML string to inject.
      */
-    protected function buildSeoHtml(?Model $entity): string
+    protected function buildSeoHtml(array $seo, ?Model $entity = null): string
     {
-        $seo = $this->seoRenderer->resolve($entity);
         $lines = [];
 
         $lines[] = '<!-- CMS SEO/GEO: auto-injected -->';
@@ -116,46 +123,98 @@ class InjectSeoTags
         }
 
         // Open Graph
-        $lines[] = '<meta property="og:type" content="'.e($seo['og']['type']).'">';
-        $lines[] = '<meta property="og:title" content="'.e($seo['og']['title']).'">';
-        if ($seo['og']['description']) {
-            $lines[] = '<meta property="og:description" content="'.e($seo['og']['description']).'">';
-        }
-        if ($seo['og']['image']) {
-            $lines[] = '<meta property="og:image" content="'.e($seo['og']['image']).'">';
-        }
-        if ($seo['og']['url']) {
-            $lines[] = '<meta property="og:url" content="'.e($seo['og']['url']).'">';
-        }
-        $lines[] = '<meta property="og:site_name" content="'.e($seo['og']['site_name']).'">';
+        if (setting('seo_opengraph_enabled', true)) {
+            $lines[] = '<meta property="og:type" content="'.e($seo['og']['type']).'">';
+            $lines[] = '<meta property="og:title" content="'.e($seo['og']['title']).'">';
+            if ($seo['og']['description']) {
+                $lines[] = '<meta property="og:description" content="'.e($seo['og']['description']).'">';
+            }
+            if ($seo['og']['image']) {
+                $lines[] = '<meta property="og:image" content="'.e($seo['og']['image']).'">';
+            }
+            if ($seo['og']['url']) {
+                $lines[] = '<meta property="og:url" content="'.e($seo['og']['url']).'">';
+            }
+            $lines[] = '<meta property="og:site_name" content="'.e($seo['og']['site_name']).'">';
 
-        // Twitter Card
-        $lines[] = '<meta name="twitter:card" content="'.e($seo['twitter']['card']).'">';
-        $lines[] = '<meta name="twitter:title" content="'.e($seo['twitter']['title']).'">';
-        if ($seo['twitter']['description']) {
-            $lines[] = '<meta name="twitter:description" content="'.e($seo['twitter']['description']).'">';
-        }
-        if ($seo['twitter']['image']) {
-            $lines[] = '<meta name="twitter:image" content="'.e($seo['twitter']['image']).'">';
+            // Twitter Card
+            $lines[] = '<meta name="twitter:card" content="'.e($seo['twitter']['card']).'">';
+            $lines[] = '<meta name="twitter:title" content="'.e($seo['twitter']['title']).'">';
+            if ($seo['twitter']['description']) {
+                $lines[] = '<meta name="twitter:description" content="'.e($seo['twitter']['description']).'">';
+            }
+            if ($seo['twitter']['image']) {
+                $lines[] = '<meta name="twitter:image" content="'.e($seo['twitter']['image']).'">';
+            }
+            if ($twHandle = setting('seo_twitter_handle')) {
+                $lines[] = '<meta name="twitter:site" content="'.e($twHandle).'">';
+            }
         }
 
-        // Google / Bing verification (site-wide)
+        // Site Connections / Webmaster verification (site-wide)
         if ($gsc = setting('seo_google_verification')) {
             $lines[] = '<meta name="google-site-verification" content="'.e($gsc).'">';
         }
         if ($bing = setting('seo_bing_verification')) {
             $lines[] = '<meta name="msvalidate.01" content="'.e($bing).'">';
         }
-
-        // JSON-LD Schema (per-entity)
-        if (! empty($seo['schema'])) {
-            $lines[] = '<script type="application/ld+json">'.json_encode($seo['schema'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</script>';
+        if ($baidu = setting('seo_baidu_verification')) {
+            $lines[] = '<meta name="baidu-site-verification" content="'.e($baidu).'">';
+        }
+        if ($pinterest = setting('seo_pinterest_verification')) {
+            $lines[] = '<meta name="p:domain_verify" content="'.e($pinterest).'">';
+        }
+        if ($yandex = setting('seo_yandex_verification')) {
+            $lines[] = '<meta name="yandex-verification" content="'.e($yandex).'">';
+        }
+        if ($ahrefs = setting('seo_ahrefs_verification')) {
+            $lines[] = '<meta name="ahrefs-site-verification" content="'.e($ahrefs).'">';
+        }
+        // Google Site Kit Tracking Snippets (GA4, GTM, Ads)
+        if (setting('gsk_enabled', true)) {
+            if ($ga4Id = setting('gsk_ga4_tag_id')) {
+                $lines[] = '<!-- Google Analytics (gtag.js) -->';
+                $lines[] = '<script async src="https://www.googletagmanager.com/gtag/js?id='.e($ga4Id).'"></script>';
+                $lines[] = '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","'.e($ga4Id).'");</script>';
+            }
+            if ($gtmId = setting('gsk_gtm_id')) {
+                $lines[] = '<!-- Google Tag Manager -->';
+                $lines[] = '<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src="https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);})(window,document,"script","dataLayer","'.e($gtmId).'");</script>';
+            }
+            if ($adsId = setting('gsk_ads_id')) {
+                $lines[] = '<!-- Google Ads -->';
+                $lines[] = '<script async src="https://www.googletagmanager.com/gtag/js?id='.e($adsId).'"></script>';
+                $lines[] = '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","'.e($adsId).'");</script>';
+            }
         }
 
-        // JSON-LD Organization schema (site-wide, always present)
-        $orgSchema = $this->buildOrganizationSchema();
-        if ($orgSchema) {
-            $lines[] = '<script type="application/ld+json">'.json_encode($orgSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</script>';
+        // JSON-LD Schema (site-wide toggle)
+        if (setting('seo_schema_enabled', true)) {
+            // Per-entity schema
+            if (! empty($seo['schema'])) {
+                $lines[] = '<script type="application/ld+json">'.json_encode($seo['schema'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</script>';
+            }
+
+            // WebSite schema
+            $websiteSchema = $this->buildWebSiteSchema();
+            if ($websiteSchema) {
+                $lines[] = '<script type="application/ld+json">'.json_encode($websiteSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</script>';
+            }
+
+            // Organization schema
+            $orgSchema = $this->buildOrganizationSchema();
+            if ($orgSchema) {
+                $lines[] = '<script type="application/ld+json">'.json_encode($orgSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</script>';
+            }
+
+            // BreadcrumbList schema (auto-injected for Google Rich Snippets)
+            if (setting('seo_breadcrumbs_enabled', true)) {
+                /** @var BreadcrumbService $bcService */
+                $bcService = app(BreadcrumbService::class);
+                $bcItems = $bcService->getItems($entity);
+                $bcSchema = $this->schemaBuilder->breadcrumbList($bcItems);
+                $lines[] = '<script type="application/ld+json">'.json_encode($bcSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</script>';
+            }
         }
 
         $lines[] = '<!-- /CMS SEO/GEO -->';
@@ -164,20 +223,57 @@ class InjectSeoTags
     }
 
     /**
+     * Build the WebSite JSON-LD schema with alternateName & Sitelinks Search Box.
+     */
+    protected function buildWebSiteSchema(): ?array
+    {
+        $siteName = (string) setting('site_name', config('app.name'));
+        $altName = (string) setting('seo_site_alternate_name', '');
+
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            '@id' => url('/#website'),
+            'url' => url('/'),
+            'name' => $siteName,
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'target' => [
+                    '@type' => 'EntryPoint',
+                    'urlTemplate' => url('/search?q={search_term_string}'),
+                ],
+                'query-input' => 'required name=search_term_string',
+            ],
+        ];
+
+        if ($altName !== '') {
+            $schema['alternateName'] = $altName;
+        }
+
+        return $schema;
+    }
+
+    /**
      * Build the enriched Organization JSON-LD schema with
      * Yoast-inspired fields + Publishing Principles for GEO.
      */
     protected function buildOrganizationSchema(): ?array
     {
-        $siteName = setting('site_name', config('app.name'));
-        $orgName = setting('seo_org_name', '') ?: $siteName;
+        $siteName = (string) setting('site_name', config('app.name'));
+        $altName = (string) setting('seo_site_alternate_name', '');
+
+        $orgType = (string) setting('seo_org_type', 'Organization');
+        $orgName = (string) setting('seo_org_name', '') ?: $siteName;
+        $orgAltName = (string) setting('seo_org_alternate_name', '') ?: $altName;
+
+        $logo = setting('seo_org_logo') ? url((string) setting('seo_org_logo')) : (setting('site_logo') ? url((string) setting('site_logo')) : (setting('seo_default_og_image') ? url((string) setting('seo_default_og_image')) : null));
 
         $schema = array_filter([
             '@context' => 'https://schema.org',
-            '@type' => 'Organization',
+            '@type' => $orgType,
             'name' => $orgName,
             'url' => url('/'),
-            'logo' => setting('seo_org_logo') ? url(setting('seo_org_logo')) : null,
+            'logo' => $logo,
 
             // Enriched fields (Yoast-inspired)
             'description' => setting('seo_org_description') ?: null,
@@ -193,22 +289,29 @@ class InjectSeoTags
             // Social profiles
             'sameAs' => array_values(array_filter([
                 setting('seo_facebook_url') ?: null,
-                ($tw = setting('seo_twitter_handle')) ? "https://twitter.com/{$tw}" : null,
+                ($tw = setting('seo_twitter_handle')) ? (str_starts_with((string) $tw, 'http') ? $tw : "https://x.com/{$tw}") : null,
+                setting('seo_linkedin_url') ?: null,
+                setting('seo_instagram_url') ?: null,
+                setting('seo_youtube_url') ?: null,
+                setting('seo_wikipedia_url') ?: null,
             ])),
 
-            // Publishing Principles (GEO/E-E-A-T — Yoast Premium pattern)
-            'publishingPrinciples' => setting('seo_publishing_principles_url') ?: null,
-            'correctionsPolicy' => setting('seo_corrections_policy_url') ?: null,
-            'ethicsPolicy' => setting('seo_ethics_policy_url') ?: null,
-            'diversityPolicy' => setting('seo_diversity_policy_url') ?: null,
-            'ownershipFundingInfo' => setting('seo_ownership_funding_url') ?: null,
-            'actionableFeedbackPolicy' => setting('seo_actionable_feedback_url') ?: null,
+            // Publishing Principles (GEO/E-E-A-T)
+            'publishingPrinciples' => $this->resolvePolicyUrl((int) setting('seo_policy_publishing_principles')),
+            'correctionsPolicy' => $this->resolvePolicyUrl((int) setting('seo_policy_corrections')),
+            'ethicsPolicy' => $this->resolvePolicyUrl((int) setting('seo_policy_ethics')),
+            'diversityPolicy' => $this->resolvePolicyUrl((int) setting('seo_policy_diversity')),
+            'ownershipFundingInfo' => $this->resolvePolicyUrl((int) setting('seo_policy_ownership_funding')),
         ], fn ($v) => $v !== null && $v !== '' && $v !== []);
+
+        if ($orgAltName !== '') {
+            $schema['alternateName'] = $orgAltName;
+        }
 
         // numberOfEmployees as QuantitativeValue (Yoast pattern)
         $employees = setting('seo_org_employees');
         if ($employees) {
-            $range = explode('-', $employees);
+            $range = explode('-', (string) $employees);
             $schema['numberOfEmployees'] = ['@type' => 'QuantitativeValue'];
             if (count($range) === 2) {
                 $schema['numberOfEmployees']['minValue'] = trim($range[0]);
@@ -219,5 +322,16 @@ class InjectSeoTags
         }
 
         return $schema;
+    }
+
+    protected function resolvePolicyUrl(int $pageId): ?string
+    {
+        if ($pageId <= 0) {
+            return null;
+        }
+
+        $page = Page::find($pageId);
+
+        return $page ? $page->getUrl() : null;
     }
 }

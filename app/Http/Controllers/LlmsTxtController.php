@@ -18,14 +18,14 @@ class LlmsTxtController extends Controller
 {
     public function index(): Response
     {
-        if (! setting('seo_llms_txt_enabled', true)) {
+        if (! setting('seo_llms_enabled', true)) {
             abort(404);
         }
 
-        $siteName = setting('site_name', config('app.name', 'Website'));
+        $siteName = (string) setting('site_name', config('app.name', 'Website'));
         $siteUrl = url('/');
-        $summary = setting('seo_ai_site_summary', '');
-        $orgName = setting('seo_org_name', '') ?: $siteName;
+        $summary = (string) setting('seo_ai_summary', '');
+        $orgName = (string) setting('seo_org_name', '') ?: $siteName;
 
         $lines = [];
 
@@ -34,7 +34,7 @@ class LlmsTxtController extends Controller
         $lines[] = '';
 
         // Summary
-        if ($summary) {
+        if ($summary !== '') {
             $lines[] = "> {$summary}";
             $lines[] = '';
         }
@@ -78,11 +78,13 @@ class LlmsTxtController extends Controller
             $lines[] = '';
         }
 
-        // Publishing principles
+        // Publishing principles (E-E-A-T signals)
         $principles = array_filter([
-            'Publishing Principles' => setting('seo_publishing_principles_url'),
-            'Corrections Policy' => setting('seo_corrections_policy_url'),
-            'Ethics Policy' => setting('seo_ethics_policy_url'),
+            'Publishing Principles' => $this->resolvePolicyUrl((int) setting('seo_policy_publishing_principles', 0)),
+            'Ownership & Funding' => $this->resolvePolicyUrl((int) setting('seo_policy_ownership_funding', 0)),
+            'Corrections Policy' => $this->resolvePolicyUrl((int) setting('seo_policy_corrections', 0)),
+            'Ethics Policy' => $this->resolvePolicyUrl((int) setting('seo_policy_ethics', 0)),
+            'Diversity Policy' => $this->resolvePolicyUrl((int) setting('seo_policy_diversity', 0)),
         ]);
         if (! empty($principles)) {
             $lines[] = '## Editorial Policies';
@@ -92,7 +94,7 @@ class LlmsTxtController extends Controller
             $lines[] = '';
         }
 
-        // Sitemap
+        // Sitemap & Technical
         if (setting('seo_sitemap_enabled', true)) {
             $lines[] = '## Technical';
             $lines[] = '- Sitemap: '.url('/sitemap.xml');
@@ -104,5 +106,16 @@ class LlmsTxtController extends Controller
             'Content-Type' => 'text/plain; charset=UTF-8',
             'Cache-Control' => 'public, max-age=3600',
         ]);
+    }
+
+    protected function resolvePolicyUrl(int $pageId): ?string
+    {
+        if ($pageId <= 0) {
+            return null;
+        }
+
+        $page = Page::find($pageId);
+
+        return $page ? $page->getUrl() : null;
     }
 }

@@ -21,16 +21,18 @@ class SitemapController extends Controller
         $xml = Cache::remember('sitemap.xml', now()->addHour(), function () {
             $urls = [];
 
-            // Pages
-            foreach (Page::where('status', 'published')->orderBy('updated_at', 'desc')->get() as $page) {
-                $alternates = $this->buildAlternates($page);
-                $urls[] = [
-                    'loc' => $page->slug === 'home' ? url('/') : url('/'.$page->slug),
-                    'lastmod' => $page->updated_at,
-                    'changefreq' => 'weekly',
-                    'priority' => $page->slug === 'home' ? 1.0 : 0.8,
-                    'alternates' => $alternates,
-                ];
+            // Pages (Check if pages content-type indexing is enabled)
+            if (setting('seo_content_type_pages_index_enabled', true)) {
+                foreach (Page::where('status', 'published')->orderBy('updated_at', 'desc')->get() as $page) {
+                    $alternates = $this->buildAlternates($page);
+                    $urls[] = [
+                        'loc' => $page->slug === 'home' ? url('/') : url('/'.$page->slug),
+                        'lastmod' => $page->updated_at,
+                        'changefreq' => 'weekly',
+                        'priority' => $page->slug === 'home' ? 1.0 : 0.8,
+                        'alternates' => $alternates,
+                    ];
+                }
             }
 
             // CPT Archive & Entries
@@ -126,6 +128,11 @@ class SitemapController extends Controller
         $cpts = CustomPostType::withArchive()->get();
 
         foreach ($cpts as $cpt) {
+            // Check if CPT indexing is enabled in SEO Settings
+            if (! setting("seo_content_type_{$cpt->slug}_index_enabled", true)) {
+                continue;
+            }
+
             // CPT Archive page
             $urls[] = [
                 'loc' => $cpt->getArchiveUrl(),
@@ -158,6 +165,11 @@ class SitemapController extends Controller
         $taxonomies = CustomTaxonomy::active()->get();
 
         foreach ($taxonomies as $taxonomy) {
+            // Check if taxonomy indexing is enabled in SEO Settings
+            if (! setting("seo_taxonomy_{$taxonomy->slug}_index_enabled", true)) {
+                continue;
+            }
+
             $terms = TaxonomyTerm::where('taxonomy_id', $taxonomy->id)->get();
             foreach ($terms as $term) {
                 $urls[] = [

@@ -3,9 +3,12 @@
 namespace App\Providers;
 
 use App\Services\ActivityLogger;
+use App\Services\BreadcrumbService;
+use App\Services\ContentTypeRegistry;
 use App\Services\MediaUsageService;
 use App\Services\PageTemplateService;
 use App\Services\SettingsRegistry;
+use App\Services\TaxonomyRegistry;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -22,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(SettingsRegistry::class);
+        $this->app->singleton(ContentTypeRegistry::class);
+        $this->app->singleton(TaxonomyRegistry::class);
+        $this->app->singleton(BreadcrumbService::class);
         $this->app->singleton(ActivityLogger::class);
         $this->app->singleton(MediaUsageService::class);
         $this->app->singleton(PageTemplateService::class);

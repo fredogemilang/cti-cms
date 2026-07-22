@@ -20,6 +20,10 @@ use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SitemapController;
+use App\Livewire\Admin\Redirects\RedirectTable;
+use App\Livewire\Admin\Seo\SeoBulkEditor;
+use App\Livewire\Admin\Seo\SeoGeneralSettings;
+use App\Livewire\Admin\Seo\SeoOverview;
 use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
 use App\Services\SettingsRegistry;
@@ -298,12 +302,28 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
         })->name('webhooks.index');
     });
 
+    // Dedicated SEO Management Suite (Yoast-style)
+    Route::prefix('seo')->name('seo.')->middleware('permission:settings.view')->group(function () {
+        Route::get('/', SeoOverview::class)->name('index');
+        Route::get('/settings', SeoGeneralSettings::class)->name('settings');
+        Route::get('/redirects', RedirectTable::class)->name('redirects');
+        Route::get('/bulk-editor', SeoBulkEditor::class)->name('bulk-editor');
+        Route::get('/tools', fn () => redirect()->route('admin.seo.bulk-editor'))->name('tools');
+    });
+
     // Settings (generic, group-based)
     Route::prefix('settings')->name('settings.')->middleware('permission:settings.view')->group(function () {
         Route::get('/', function () {
             return redirect()->route('admin.settings.show', 'general');
         })->name('index');
         Route::get('/{group}', function (string $group) {
+            if ($group === 'seo') {
+                return redirect()->route('admin.seo.settings');
+            }
+            if ($group === 'redirect') {
+                return redirect()->route('admin.seo.redirects');
+            }
+
             abort_unless(app(SettingsRegistry::class)->hasGroup($group), 404);
 
             return view('admin.settings.show', ['group' => $group]);

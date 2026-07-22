@@ -26,9 +26,7 @@ class CmsSettingsServiceProvider extends ServiceProvider
         $this->registerGeneralSettings($registry);
         $this->registerContentSettings($registry);
         $this->registerAuthSettings($registry);
-        $this->registerSeoSettings($registry);
         $this->registerBrevoSettings($registry);
-        $this->registerRedirectSettings($registry);
         $this->registerLanguageSettings($registry);
         $this->registerCacheSettings($registry);
         $this->registerCdnSettings($registry);
@@ -178,175 +176,6 @@ class CmsSettingsServiceProvider extends ServiceProvider
         ]);
     }
 
-    protected function registerSeoSettings(SettingsRegistry $registry): void
-    {
-        $registry->registerGroup('seo', [
-            'label' => 'SEO',
-            'icon' => 'travel_explore',
-            'order' => 20,
-            'description' => 'Defaults for meta tags, indexing, social previews, and verification.',
-            'fields' => [
-                ['key' => 'seo_title_pattern', 'label' => 'Title Pattern', 'type' => 'text', 'section' => 'Defaults', 'order' => 10,
-                    'default' => '{page} | {site}',
-                    'rules' => ['required', 'string', 'max:200'],
-                    'help' => 'Tokens: {page}, {site}, {tagline}. Used when a page has no SEO title override.'],
-
-                ['key' => 'seo_default_description', 'label' => 'Default Meta Description', 'type' => 'textarea', 'section' => 'Defaults', 'order' => 20,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:300'],
-                    'help' => 'Used when a page does not provide its own description. Keep under 160 chars.'],
-
-                ['key' => 'seo_default_og_image', 'label' => 'Default OG Image URL', 'type' => 'text', 'section' => 'Defaults', 'order' => 30,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:500'],
-                    'help' => 'Absolute or relative URL. Recommended size: 1200x630.'],
-
-                ['key' => 'seo_allow_indexing', 'label' => 'Allow Search Engines to Index', 'type' => 'boolean', 'section' => 'Indexing', 'order' => 40,
-                    'default' => true,
-                    'rules' => ['boolean'],
-                    'help' => 'Turn off on staging. Adds <meta name="robots" content="noindex,nofollow"> and a strict robots.txt.'],
-
-                ['key' => 'seo_sitemap_enabled', 'label' => 'Enable /sitemap.xml', 'type' => 'boolean', 'section' => 'Indexing', 'order' => 50,
-                    'default' => true,
-                    'rules' => ['boolean']],
-
-                ['key' => 'seo_robots_extra', 'label' => 'Extra robots.txt Lines', 'type' => 'code', 'section' => 'Indexing', 'order' => 60,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:4000'],
-                    'help' => 'Appended verbatim to robots.txt. One directive per line (e.g. `Disallow: /private`).'],
-
-                ['key' => 'seo_indexnow_key', 'label' => 'IndexNow Key', 'type' => 'text', 'section' => 'Indexing', 'order' => 65,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:128', 'regex:/^[A-Za-z0-9_-]*$/'],
-                    'help' => 'Optional. When set, the CMS pings Bing/Yandex/Seznam via IndexNow on publish. Generate at https://www.indexnow.org/.'],
-
-                ['key' => 'seo_twitter_handle', 'label' => 'Twitter Handle', 'type' => 'text', 'section' => 'Social', 'order' => 70,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:50', 'regex:/^@?[A-Za-z0-9_]{1,15}$/'],
-                    'help' => 'Without the @ — used for twitter:site card attribution.'],
-
-                ['key' => 'seo_facebook_url', 'label' => 'Facebook Page URL', 'type' => 'text', 'section' => 'Social', 'order' => 80,
-                    'default' => '',
-                    'rules' => ['nullable', 'url']],
-
-                ['key' => 'seo_default_locale', 'label' => 'Default OG Locale', 'type' => 'select', 'section' => 'Social', 'order' => 90,
-                    'default' => 'en_US',
-                    'options' => [
-                        'en_US' => 'English (en_US)',
-                        'en_GB' => 'English UK (en_GB)',
-                        'id_ID' => 'Indonesian (id_ID)',
-                    ],
-                    'rules' => ['required', 'string']],
-
-                ['key' => 'seo_google_verification', 'label' => 'Google Site Verification', 'type' => 'text', 'section' => 'Verification', 'order' => 100,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:200'],
-                    'help' => 'The content value from Search Console TXT/meta verification.'],
-
-                ['key' => 'seo_bing_verification', 'label' => 'Bing Webmaster Verification', 'type' => 'text', 'section' => 'Verification', 'order' => 110,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:200']],
-
-                ['key' => 'seo_org_name', 'label' => 'Organization Name', 'type' => 'text', 'section' => 'Schema.org', 'order' => 120,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:200'],
-                    'help' => 'Falls back to Site Name. Used in JSON-LD Organization schema.'],
-
-                ['key' => 'seo_org_logo', 'label' => 'Organization Logo URL', 'type' => 'text', 'section' => 'Schema.org', 'order' => 130,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:500']],
-
-                // --- Organization Enrichment (Yoast-inspired) ---
-                ['key' => 'seo_org_description', 'label' => 'Organization Description', 'type' => 'textarea', 'section' => 'Schema.org', 'order' => 140,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:500'],
-                    'help' => 'Short description of your organization. Used in JSON-LD Organization schema.'],
-
-                ['key' => 'seo_org_email', 'label' => 'Contact Email', 'type' => 'text', 'section' => 'Schema.org', 'order' => 150,
-                    'default' => '',
-                    'rules' => ['nullable', 'email', 'max:200'],
-                    'help' => 'Public contact email for the organization.'],
-
-                ['key' => 'seo_org_phone', 'label' => 'Contact Telephone', 'type' => 'text', 'section' => 'Schema.org', 'order' => 160,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:30'],
-                    'help' => 'Include country code, e.g. +62-21-1234567.'],
-
-                ['key' => 'seo_org_legal_name', 'label' => 'Legal Name', 'type' => 'text', 'section' => 'Schema.org', 'order' => 170,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:200'],
-                    'help' => 'Official legal name if different from Organization Name.'],
-
-                ['key' => 'seo_org_founding_date', 'label' => 'Founding Date', 'type' => 'text', 'section' => 'Schema.org', 'order' => 180,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:10'],
-                    'help' => 'Format: YYYY or YYYY-MM-DD.'],
-
-                ['key' => 'seo_org_employees', 'label' => 'Number of Employees', 'type' => 'text', 'section' => 'Schema.org', 'order' => 190,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:20'],
-                    'help' => 'Single number or range, e.g. "50" or "50-100". Rendered as QuantitativeValue.'],
-
-                ['key' => 'seo_org_vat_id', 'label' => 'VAT ID', 'type' => 'text', 'section' => 'Schema.org', 'order' => 200,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:50']],
-
-                ['key' => 'seo_org_tax_id', 'label' => 'Tax ID (NPWP)', 'type' => 'text', 'section' => 'Schema.org', 'order' => 210,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:50']],
-
-                ['key' => 'seo_org_duns', 'label' => 'DUNS Number', 'type' => 'text', 'section' => 'Schema.org', 'order' => 220,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:20'],
-                    'help' => 'Dun & Bradstreet identifier. Helps AI identify your entity.'],
-
-                ['key' => 'seo_org_naics', 'label' => 'NAICS Code', 'type' => 'text', 'section' => 'Schema.org', 'order' => 230,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:10'],
-                    'help' => 'North American Industry Classification. Helps AI classify your business.'],
-
-                // --- Publishing Principles (GEO / E-E-A-T) ---
-                ['key' => 'seo_publishing_principles_url', 'label' => 'Publishing Principles URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 300,
-                    'default' => '',
-                    'rules' => ['nullable', 'url', 'max:500'],
-                    'help' => 'Link to your editorial guidelines page. Critical for GEO E-E-A-T signals.'],
-
-                ['key' => 'seo_corrections_policy_url', 'label' => 'Corrections Policy URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 310,
-                    'default' => '',
-                    'rules' => ['nullable', 'url', 'max:500'],
-                    'help' => 'Link to your corrections/updates policy page.'],
-
-                ['key' => 'seo_ethics_policy_url', 'label' => 'Ethics Policy URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 320,
-                    'default' => '',
-                    'rules' => ['nullable', 'url', 'max:500']],
-
-                ['key' => 'seo_diversity_policy_url', 'label' => 'Diversity Policy URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 330,
-                    'default' => '',
-                    'rules' => ['nullable', 'url', 'max:500']],
-
-                ['key' => 'seo_ownership_funding_url', 'label' => 'Ownership & Funding Info URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 340,
-                    'default' => '',
-                    'rules' => ['nullable', 'url', 'max:500'],
-                    'help' => 'Transparency page about who owns/funds this site.'],
-
-                ['key' => 'seo_actionable_feedback_url', 'label' => 'Actionable Feedback Policy URL', 'type' => 'text', 'section' => 'Publishing Principles', 'order' => 350,
-                    'default' => '',
-                    'rules' => ['nullable', 'url', 'max:500']],
-
-                // --- GEO / AI ---
-                ['key' => 'seo_llms_txt_enabled', 'label' => 'Enable /llms.txt', 'type' => 'boolean', 'section' => 'GEO / AI', 'order' => 400,
-                    'default' => true,
-                    'rules' => ['boolean'],
-                    'help' => 'Serve /llms.txt to help AI crawlers understand your site structure.'],
-
-                ['key' => 'seo_ai_site_summary', 'label' => 'Site AI Summary', 'type' => 'textarea', 'section' => 'GEO / AI', 'order' => 410,
-                    'default' => '',
-                    'rules' => ['nullable', 'string', 'max:500'],
-                    'help' => 'Brief summary of your site for AI search engines. Used in /llms.txt and homepage schema.'],
-            ],
-        ]);
-    }
-
     protected function registerBrevoSettings(SettingsRegistry $registry): void
     {
         $registry->registerGroup('brevo', [
@@ -377,17 +206,6 @@ class CmsSettingsServiceProvider extends ServiceProvider
             'actions' => [
                 ['label' => 'Send test email to me', 'handler' => BrevoTestEmailAction::class, 'icon' => 'send', 'color' => 'blue'],
             ],
-        ]);
-    }
-
-    protected function registerRedirectSettings(SettingsRegistry $registry): void
-    {
-        $registry->registerGroup('redirect', [
-            'label' => 'Redirect',
-            'icon' => 'trending_flat',
-            'order' => 30,
-            'description' => 'Redirect old URLs to new ones. Supports exact paths or regex patterns with capture groups.',
-            'component' => 'admin.redirects.redirect-table',
         ]);
     }
 

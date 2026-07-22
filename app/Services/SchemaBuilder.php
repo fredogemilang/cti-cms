@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Page;
 use App\Models\SeoMeta;
 use Illuminate\Database\Eloquent\Model;
 
@@ -49,11 +50,66 @@ class SchemaBuilder
 
     public function organization(?SeoMeta $meta = null): array
     {
-        return array_filter([
-            'name' => setting('site_name', config('app.name')),
+        $siteName = (string) setting('site_name', config('app.name'));
+        $altName = (string) setting('seo_site_alternate_name', '');
+
+        $orgType = (string) setting('seo_org_type', 'Organization');
+        $orgName = (string) setting('seo_org_name', '') ?: $siteName;
+        $orgAltName = (string) setting('seo_org_alternate_name', '') ?: $altName;
+
+        $logo = setting('seo_org_logo') ? url((string) setting('seo_org_logo')) : (setting('site_logo') ? url((string) setting('site_logo')) : (setting('seo_default_og_image') ? url((string) setting('seo_default_og_image')) : null));
+
+        $schema = [
+            '@type' => $orgType,
+            'name' => $orgName,
             'url' => url('/'),
-            'logo' => setting('site_logo') ? url(setting('site_logo')) : null,
-        ]);
+            'logo' => $logo,
+            'description' => setting('seo_org_description') ?: null,
+            'email' => setting('seo_org_email') ?: null,
+            'telephone' => setting('seo_org_phone') ?: null,
+            'legalName' => setting('seo_org_legal_name') ?: null,
+            'sameAs' => array_values(array_filter([
+                setting('seo_facebook_url') ?: null,
+                ($tw = setting('seo_twitter_handle')) ? (str_starts_with((string) $tw, 'http') ? $tw : "https://x.com/{$tw}") : null,
+                setting('seo_linkedin_url') ?: null,
+                setting('seo_instagram_url') ?: null,
+                setting('seo_youtube_url') ?: null,
+                setting('seo_wikipedia_url') ?: null,
+            ])),
+        ];
+
+        if ($orgAltName !== '') {
+            $schema['alternateName'] = $orgAltName;
+        }
+
+        if ($pub = $this->getPageUrl((int) setting('seo_policy_publishing_principles'))) {
+            $schema['publishingPrinciples'] = $pub;
+        }
+        if ($own = $this->getPageUrl((int) setting('seo_policy_ownership_funding'))) {
+            $schema['ownershipFundingInfo'] = $own;
+        }
+        if ($corr = $this->getPageUrl((int) setting('seo_policy_corrections'))) {
+            $schema['correctionsPolicy'] = $corr;
+        }
+        if ($eth = $this->getPageUrl((int) setting('seo_policy_ethics'))) {
+            $schema['ethicsPolicy'] = $eth;
+        }
+        if ($div = $this->getPageUrl((int) setting('seo_policy_diversity'))) {
+            $schema['diversityPolicy'] = $div;
+        }
+
+        return array_filter($schema, fn ($v) => $v !== null && $v !== '' && $v !== []);
+    }
+
+    protected function getPageUrl(int $pageId): ?string
+    {
+        if ($pageId <= 0) {
+            return null;
+        }
+
+        $page = Page::find($pageId);
+
+        return $page ? $page->getUrl() : null;
     }
 
     protected function article(Model $entity, ?SeoMeta $meta): array

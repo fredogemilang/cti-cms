@@ -537,6 +537,7 @@ The middleware inserts the following just before `</head>`:
 | Open Graph + Twitter | Auto-generated from per-page or global | ❌ None |
 | JSON-LD per page | Built from entity + schema_type | ❌ None |
 | Organization schema | Built from Admin → Settings → SEO | ❌ None |
+| BreadcrumbList schema | Built from BreadcrumbService | ❌ None (Auto-injected in `<head>`) |
 | Publishing Principles | Injected in Organization schema | ❌ None |
 | Google/Bing verification | Auto-injected | ❌ None |
 | Speakable markup | Auto-added to Article types | ✅ Optional enhancement |
@@ -544,6 +545,22 @@ The middleware inserts the following just before `</head>`:
 | `/llms.txt` | Auto-generated controller | ❌ None |
 | `/sitemap.xml` | Auto-generated controller | ❌ None |
 | `/robots.txt` | Auto-generated controller | ❌ None |
+
+### Rendering Breadcrumbs in Themes
+
+Themes can render responsive, SEO-optimized breadcrumbs configured in **SEO Settings → Breadcrumbs** using the `<x-seo-breadcrumbs />` Blade component:
+
+```blade
+<div class="container mx-auto px-4 py-3">
+    {{-- Default breadcrumbs (auto-detects entity from page/post view data) --}}
+    <x-seo-breadcrumbs />
+
+    {{-- Pass specific entity model explicitly --}}
+    <x-seo-breadcrumbs :entity="$post" />
+</div>
+```
+
+The component automatically inherits all separator choices, homepage anchor text, path prefixes, and bold styles configured by admins in **Admin → SEO Settings → Breadcrumbs**. In addition, the `<head>` of the page automatically receives the JSON-LD `BreadcrumbList` schema for Google Rich Snippets without any extra code.
 
 ### Optional: Enhancing SEO from Theme Views
 

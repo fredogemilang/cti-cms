@@ -28,12 +28,14 @@
                 Social
             </button>
 
-            <button type="button" wire:click="$set('activeTab', 'schema')" role="tab"
-                    class="flex items-center gap-2 px-4 py-3 text-xs font-bold transition border-b-2
-                           {{ $activeTab === 'schema' ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400' : 'text-[#6F767E] dark:text-[#9A9A9A] border-transparent hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-                Schema
-            </button>
+            @if($this->canAccessAdvanced())
+                <button type="button" wire:click="$set('activeTab', 'schema')" role="tab"
+                        class="flex items-center gap-2 px-4 py-3 text-xs font-bold transition border-b-2
+                               {{ $activeTab === 'schema' ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400' : 'text-[#6F767E] dark:text-[#9A9A9A] border-transparent hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                    Schema
+                </button>
+            @endif
 
             <button type="button" wire:click="$set('activeTab', 'geo')" role="tab"
                     class="flex items-center gap-2 px-4 py-3 text-xs font-bold transition border-b-2

@@ -1,4 +1,9 @@
-<div>
+<div class="space-y-6">
+    {{-- Page Header --}}
+    <div>
+        <h1 class="text-3xl font-bold tracking-tight text-[#111827] dark:text-[#FCFCFC]">Redirects Manager</h1>
+        <p class="text-sm font-normal text-[#6F767E] dark:text-[#9A9FA5] mt-1">Manage 301/302 URL redirects and regex rewrite rules</p>
+    </div>
     {{-- Toolbar --}}
     <div class="flex flex-col sm:flex-row gap-3 mb-6 items-center">
         <div class="relative flex-1 w-full">

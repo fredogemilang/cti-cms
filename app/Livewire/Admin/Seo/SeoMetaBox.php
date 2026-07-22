@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Seo;
 
 use App\Models\Media;
 use App\Models\SeoMeta;
+use App\Models\User;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -239,6 +240,23 @@ class SeoMetaBox extends Component
     {
         $this->og_image_id = null;
         $this->ogImageUrl = null;
+    }
+
+    public function canAccessAdvanced(): bool
+    {
+        $restricted = (bool) setting('seo_restrict_advanced_settings', true);
+        if (! $restricted) {
+            return true;
+        }
+
+        /** @var User|null $user */
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        return $user->hasRole('admin') || $user->hasRole('editor');
     }
 
     public function render()

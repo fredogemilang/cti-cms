@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\RenderAdminMenu;
+use App\Services\ContentTypeRegistry;
 use App\Services\SettingsRegistry;
+use App\Services\TaxonomyRegistry;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
@@ -81,6 +83,8 @@ abstract class CmsPluginServiceProvider extends ServiceProvider
         $this->autoRegisterLivewire();
         $this->bootMenuItems();
         $this->bootSettings();
+        $this->bootContentTypes();
+        $this->bootTaxonomies();
         $this->bootScheduledTasks();
     }
 
@@ -233,6 +237,48 @@ abstract class CmsPluginServiceProvider extends ServiceProvider
     protected function registerSettings(SettingsRegistry $registry): void
     {
         // Override in plugin
+    }
+
+    /**
+     * Register custom content types for SEO Settings & CMS features.
+     * Override in plugin to register custom post/content types.
+     */
+    protected function registerContentTypes(ContentTypeRegistry $registry): void
+    {
+        // Override in plugin
+    }
+
+    /**
+     * Boot content types for this plugin.
+     */
+    private function bootContentTypes(): void
+    {
+        if ($this->app->bound(ContentTypeRegistry::class)) {
+            /** @var ContentTypeRegistry $registry */
+            $registry = $this->app->make(ContentTypeRegistry::class);
+            $this->registerContentTypes($registry);
+        }
+    }
+
+    /**
+     * Register custom taxonomies for SEO Settings & CMS features.
+     * Override in plugin to register custom taxonomies (e.g. categories, tags, product_cat).
+     */
+    protected function registerTaxonomies(TaxonomyRegistry $registry): void
+    {
+        // Override in plugin
+    }
+
+    /**
+     * Boot taxonomies for this plugin.
+     */
+    private function bootTaxonomies(): void
+    {
+        if ($this->app->bound(TaxonomyRegistry::class)) {
+            /** @var TaxonomyRegistry $registry */
+            $registry = $this->app->make(TaxonomyRegistry::class);
+            $this->registerTaxonomies($registry);
+        }
     }
 
     /**

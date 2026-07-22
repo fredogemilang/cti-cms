@@ -133,6 +133,30 @@ class ContactFormServiceProvider extends CmsPluginServiceProvider
             ],
         ]);
     }
+
+    protected function registerContentTypes(\App\Services\ContentTypeRegistry $registry): void
+    {
+        $registry->register('products', [
+            'slug'                  => 'products',
+            'label'                 => 'Products',
+            'singular'              => 'Product',
+            'icon'                  => 'shopping_bag',
+            'default_title_pattern' => '{title} {sep} {site}',
+            'default_schema_type'   => 'Product',
+        ]);
+    }
+
+    protected function registerTaxonomies(\App\Services\TaxonomyRegistry $registry): void
+    {
+        $registry->register('product_cat', [
+            'slug'                  => 'product_cat',
+            'label'                 => 'Product Categories',
+            'singular'              => 'Product Category',
+            'icon'                  => 'folder_open',
+            'default_title_pattern' => '{term} Archives {sep} {site}',
+            'default_schema_type'   => 'CollectionPage',
+        ]);
+    }
 }
 ```
 
