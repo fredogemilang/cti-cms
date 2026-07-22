@@ -94,7 +94,7 @@ class SitemapBuilder
         }
 
         $postModel = $this->getPostModelClass();
-        $archiveSlug = Setting::get('archive_slug', 'blog');
+        $archiveSlug = (string) Setting::get('permalink_post_base', Setting::get('archive_slug', 'blog'));
 
         $urls = [];
 
@@ -189,11 +189,12 @@ class SitemapBuilder
 
         // 2. Posts plugin Categories (if plugin is active and indexing enabled)
         if ($this->isPostsPluginActive() && setting('seo_taxonomy_categories_index_enabled', true)) {
-            $archiveSlug = Setting::get('archive_slug', 'blog');
+            $archiveSlug = (string) Setting::get('permalink_post_base', Setting::get('archive_slug', 'blog'));
+            $categoryBase = (string) Setting::get('permalink_category_base', 'category');
             $categories = DB::table('categories')->select('slug', 'updated_at')->get();
             foreach ($categories as $category) {
                 $urls[] = [
-                    'loc' => url('/'.$archiveSlug.'/category/'.$category->slug),
+                    'loc' => url('/'.$archiveSlug.'/'.$categoryBase.'/'.$category->slug),
                     'lastmod' => $category->updated_at ? Carbon::parse($category->updated_at)->toAtomString() : null,
                     'changefreq' => 'weekly',
                     'priority' => 0.4,
@@ -204,11 +205,12 @@ class SitemapBuilder
 
         // 3. Posts plugin Tags (if plugin is active and indexing enabled)
         if ($this->isPostsPluginActive() && setting('seo_taxonomy_tags_index_enabled', true)) {
-            $archiveSlug ??= Setting::get('archive_slug', 'blog');
+            $archiveSlug ??= (string) Setting::get('permalink_post_base', Setting::get('archive_slug', 'blog'));
+            $tagBase = (string) Setting::get('permalink_tag_base', 'tag');
             $tags = DB::table('tags')->select('slug', 'updated_at')->get();
             foreach ($tags as $tag) {
                 $urls[] = [
-                    'loc' => url('/'.$archiveSlug.'/tag/'.$tag->slug),
+                    'loc' => url('/'.$archiveSlug.'/'.$tagBase.'/'.$tag->slug),
                     'lastmod' => $tag->updated_at ? Carbon::parse($tag->updated_at)->toAtomString() : null,
                     'changefreq' => 'weekly',
                     'priority' => 0.3,

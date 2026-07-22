@@ -56,6 +56,12 @@ Route::middleware(['web'])->group(function () {
     if (Schema::hasTable('posts_settings')) {
         $archiveSlug = Setting::get('archive_slug', 'blog');
     }
+    // Permalink settings override (from core settings table)
+    if (Schema::hasTable('settings')) {
+        $archiveSlug = \App\Models\Setting::get('permalink_post_base', $archiveSlug);
+        $categoryBase = \App\Models\Setting::get('permalink_category_base', 'category');
+    }
+    $categoryBase ??= 'category';
 
     // Blog Index
     Route::get("/{$archiveSlug}", function () {
@@ -77,7 +83,7 @@ Route::middleware(['web'])->group(function () {
     })->name('posts.index');
 
     // Category Index
-    Route::get("/{$archiveSlug}/category/{category}", function ($category) {
+    Route::get("/{$archiveSlug}/{$categoryBase}/{category}", function ($category) {
         $featuredPosts = Post::where('status', 'published')
             ->where('is_featured', true)
             ->latest()

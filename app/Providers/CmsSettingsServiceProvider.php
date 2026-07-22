@@ -24,6 +24,7 @@ class CmsSettingsServiceProvider extends ServiceProvider
         $registry = $this->app->make(SettingsRegistry::class);
 
         $this->registerGeneralSettings($registry);
+        $this->registerPermalinkSettings($registry);
         $this->registerContentSettings($registry);
         $this->registerAuthSettings($registry);
         $this->registerBrevoSettings($registry);
@@ -391,6 +392,19 @@ class CmsSettingsServiceProvider extends ServiceProvider
                     'default' => 60,
                     'rules' => ['required', 'integer', 'min:1', 'max:6000']],
             ],
+        ]);
+    }
+
+    protected function registerPermalinkSettings(SettingsRegistry $registry): void
+    {
+        $registry->registerGroup('permalinks', [
+            'label' => 'Permalinks',
+            'icon' => 'link',
+            'order' => 15,
+            'description' => 'Customize the URL structure for posts, categories, tags, and custom post types.',
+            'permission' => 'settings.view',
+            'component' => 'admin.settings.permalink-settings',
+            'fields' => [],
         ]);
     }
 }
