@@ -6,6 +6,7 @@ use App\Models\Page;
 use App\Services\ActivityLogger;
 use App\Services\BreadcrumbService;
 use App\Services\ContentTypeRegistry;
+use App\Services\GoogleIndexingService;
 use App\Services\IndexNowService;
 use App\Services\MediaUsageService;
 use App\Services\PageTemplateService;
@@ -31,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(TaxonomyRegistry::class);
         $this->app->singleton(BreadcrumbService::class);
         $this->app->singleton(IndexNowService::class);
+        $this->app->singleton(GoogleIndexingService::class);
         $this->app->singleton(ActivityLogger::class);
         $this->app->singleton(MediaUsageService::class);
         $this->app->singleton(PageTemplateService::class);
@@ -43,10 +45,12 @@ class AppServiceProvider extends ServiceProvider
     {
         Page::saved(function (Page $page) {
             app(IndexNowService::class)->pingEntity($page);
+            app(GoogleIndexingService::class)->pingEntity($page, 'URL_UPDATED');
         });
 
         Page::deleted(function (Page $page) {
             app(IndexNowService::class)->pingEntity($page);
+            app(GoogleIndexingService::class)->pingEntity($page, 'URL_DELETED');
         });
     }
 }

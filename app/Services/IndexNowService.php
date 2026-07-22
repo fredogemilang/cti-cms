@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\IndexingLog;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -11,21 +12,15 @@ class IndexNowService
 {
     public const API_ENDPOINT = 'https://api.indexnow.org/indexnow';
 
-    public function isEnabled(): bool
-    {
-        return (bool) setting('seo_indexnow_enabled', true);
-    }
-
-    public function isAutoPingEnabled(): bool
-    {
-        return $this->isEnabled() && (bool) setting('seo_indexnow_auto_ping', true);
-    }
-
+    /**
+     * Get or generate IndexNow API key.
+     */
     public function getKey(): string
     {
-        $key = (string) setting('seo_indexnow_key', '');
-        if ($key === '') {
-            $key = $this->generateKey();
+        /** @var string|null $key */
+        $key = setting('seo_indexnow_key');
+        if (empty($key)) {
+            return $this->generateKey();
         }
 
         return $key;
@@ -48,8 +43,9 @@ class IndexNowService
      * Submit an array of full URLs to the IndexNow API.
      *
      * @param  array<string>  $urls
+     * @param  mixed|null  $model
      */
-    public function submitUrls(array $urls): bool
+    public function submitUrls(array $urls, $model = null): bool
     {
         $urls = array_values(array_filter(array_unique(array_map('trim', $urls))));
         if (empty($urls)) {
@@ -73,49 +69,80 @@ class IndexNowService
                 ])
                 ->post(self::API_ENDPOINT, $payload);
 
-            $success = in_array($response->status(), [200, 202], true);
+            $status = $response->status();
+            $responseBody = $response->body();
+            $success = in_array($status, [200, 202], true);
 
             if ($success) {
                 Setting::set('seo_indexnow_last_ping_at', now()->toIso8601String(), 'seo', 'text');
             }
 
+            // Record activity log for each submitted URL
+            foreach ($urls as $url) {
+                IndexingLog::create([
+                    'protocol' => 'indexnow',
+                    'url' => $url,
+                    'status_code' => $status,
+                    'response' => $responseBody,
+                    'request_time' => now(),
+                    'entity_type' => $model ? get_class($model) : null,
+                    'entity_id' => $model && isset($model->id) ? (int) $model->id : null,
+                ]);
+            }
+
             return $success;
         } catch (\Throwable $e) {
-            report($e);
+            foreach ($urls as $url) {
+                IndexingLog::create([
+                    'protocol' => 'indexnow',
+                    'url' => $url,
+                    'status_code' => 0,
+                    'response' => $e->getMessage(),
+                    'request_time' => now(),
+                    'entity_type' => $model ? get_class($model) : null,
+                    'entity_id' => $model && isset($model->id) ? (int) $model->id : null,
+                ]);
+            }
 
             return false;
         }
     }
 
     /**
-     * Ping IndexNow for a single entity (Page, Post, CptEntry).
+     * Auto ping IndexNow for an entity (Page, Post, CPT entry).
+     *
+     * @param  mixed  $entity
      */
-    public function pingEntity(mixed $entity): bool
+    public function pingEntity($entity): bool
     {
-        if (! $this->isAutoPingEnabled()) {
+        $enabled = (bool) setting('seo_indexnow_enabled', true);
+        $autoPing = (bool) setting('seo_indexnow_auto_ping', true);
+
+        if (! $enabled || ! $autoPing) {
             return false;
         }
 
-        $slug = $entity->slug ?? null;
-        if (! $slug) {
+        $url = null;
+        if (method_exists($entity, 'getPublicUrl')) {
+            $url = $entity->getPublicUrl();
+        } elseif (isset($entity->slug)) {
+            $url = url('/'.$entity->slug);
+        }
+
+        if (! $url) {
             return false;
         }
 
-        // Only ping for published items if status attribute exists
-        if (isset($entity->status) && $entity->status !== 'published') {
-            return false;
-        }
-
-        $url = url('/'.$slug);
-
-        // Rate limiting cache check (avoid pinging same URL within 60 seconds)
         $cacheKey = 'indexnow_ping_'.md5($url);
         if (Cache::has($cacheKey)) {
-            return false;
+            return true;
         }
 
-        Cache::put($cacheKey, true, 60);
+        $success = $this->submitUrls([$url], $entity);
+        if ($success) {
+            Cache::put($cacheKey, true, 60);
+        }
 
-        return $this->submitUrls([$url]);
+        return $success;
     }
 }

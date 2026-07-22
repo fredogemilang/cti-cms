@@ -469,6 +469,9 @@
                 <a wire:navigate href="{{ route('admin.seo.settings') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     General Settings
                 </a>
+                <a wire:navigate href="{{ route('admin.seo.indexnow') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
+                    IndexNow Manager
+                </a>
                 <a wire:navigate href="{{ route('admin.seo.redirects') }}" @click="flyoutOpen = false" class="flex items-center px-3 py-2 rounded-xl text-sm font-semibold text-gray-200 hover:text-white hover:bg-white/10 transition-colors whitespace-nowrap">
                     Redirects Manager
                 </a>
@@ -489,6 +492,12 @@
                     <div class="submenu-item-connector"></div>
                     <a wire:navigate class="flex items-center rounded-xl px-4 py-2.5 transition-all duration-200 relative z-10 {{ request()->routeIs('admin.seo.settings') ? 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC] font-semibold' : 'text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none' }}" href="{{ route('admin.seo.settings') }}">
                         <span class="text-[14px] font-medium">General Settings</span>
+                    </a>
+                </li>
+                <li class="relative pl-6 py-1">
+                    <div class="submenu-item-connector"></div>
+                    <a wire:navigate class="flex items-center rounded-xl px-4 py-2.5 transition-all duration-200 relative z-10 {{ request()->routeIs('admin.seo.indexnow') ? 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC] font-semibold' : 'text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none' }}" href="{{ route('admin.seo.indexnow') }}">
+                        <span class="text-[14px] font-medium">IndexNow Manager</span>
                     </a>
                 </li>
                 <li class="relative pl-6 py-1">

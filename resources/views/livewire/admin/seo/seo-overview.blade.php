@@ -125,7 +125,7 @@
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between gap-2 flex-wrap">
                             <h4 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">IndexNow Instant Indexing</h4>
-                            <a wire:navigate href="{{ route('admin.seo.settings', ['tab' => 'indexnow']) }}" class="text-xs font-bold text-blue-600 hover:underline inline-flex items-center gap-1">
+                            <a wire:navigate href="{{ route('admin.seo.indexnow') }}" class="text-xs font-bold text-blue-600 hover:underline inline-flex items-center gap-1">
                                 Configure <span class="material-symbols-outlined text-xs">chevron_right</span>
                             </a>
                         </div>
@@ -153,6 +153,19 @@
                         </div>
                     </div>
                     <span class="material-symbols-outlined text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all text-xl">chevron_right</span>
+                </a>
+
+                <a wire:navigate href="{{ route('admin.seo.indexnow') }}" class="flex items-center justify-between p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] hover:bg-sky-50/80 dark:hover:bg-sky-900/20 transition-all group">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
+                            <span class="material-symbols-outlined text-xl">bolt</span>
+                        </div>
+                        <div>
+                            <span class="font-bold text-sm text-[#111827] dark:text-[#FCFCFC] block">IndexNow Manager</span>
+                            <span class="text-[11px] text-[#6F767E] block">Instant real-time search indexing</span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-gray-400 group-hover:text-sky-600 group-hover:translate-x-1 transition-all text-xl">chevron_right</span>
                 </a>
 
                 <a wire:navigate href="{{ route('admin.seo.redirects') }}" class="flex items-center justify-between p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] hover:bg-emerald-50/80 dark:hover:bg-emerald-900/20 transition-all group">

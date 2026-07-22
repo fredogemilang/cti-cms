@@ -24,6 +24,7 @@ use App\Http\Controllers\SitemapController;
 use App\Livewire\Admin\Redirects\RedirectTable;
 use App\Livewire\Admin\Seo\SeoBulkEditor;
 use App\Livewire\Admin\Seo\SeoGeneralSettings;
+use App\Livewire\Admin\Seo\SeoIndexNow;
 use App\Livewire\Admin\Seo\SeoOverview;
 use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
@@ -308,6 +309,7 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
     Route::prefix('seo')->name('seo.')->middleware('permission:settings.view')->group(function () {
         Route::get('/', SeoOverview::class)->name('index');
         Route::get('/settings', SeoGeneralSettings::class)->name('settings');
+        Route::get('/indexnow', SeoIndexNow::class)->name('indexnow');
         Route::get('/redirects', RedirectTable::class)->name('redirects');
         Route::get('/bulk-editor', SeoBulkEditor::class)->name('bulk-editor');
         Route::get('/tools', fn () => redirect()->route('admin.seo.bulk-editor'))->name('tools');
