@@ -116,6 +116,24 @@
                         </p>
                     </div>
                 </div>
+
+                {{-- Status Item 4 --}}
+                <div class="flex items-start gap-4 p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B]">
+                    <div class="p-2.5 rounded-xl shrink-0 bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-400">
+                        <span class="material-symbols-outlined text-xl">bolt</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <h4 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">IndexNow Instant Indexing</h4>
+                            <a wire:navigate href="{{ route('admin.seo.settings', ['tab' => 'indexnow']) }}" class="text-xs font-bold text-blue-600 hover:underline inline-flex items-center gap-1">
+                                Configure <span class="material-symbols-outlined text-xs">chevron_right</span>
+                            </a>
+                        </div>
+                        <p class="text-xs text-[#6F767E] mt-1">
+                            Real-time push notifications sent to Bing & Yandex on content publish, update, and deletion.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
 

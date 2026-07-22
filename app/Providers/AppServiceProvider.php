@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Page;
 use App\Services\ActivityLogger;
 use App\Services\BreadcrumbService;
 use App\Services\ContentTypeRegistry;
+use App\Services\IndexNowService;
 use App\Services\MediaUsageService;
 use App\Services\PageTemplateService;
 use App\Services\SettingsRegistry;
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(ContentTypeRegistry::class);
         $this->app->singleton(TaxonomyRegistry::class);
         $this->app->singleton(BreadcrumbService::class);
+        $this->app->singleton(IndexNowService::class);
         $this->app->singleton(ActivityLogger::class);
         $this->app->singleton(MediaUsageService::class);
         $this->app->singleton(PageTemplateService::class);
@@ -38,6 +41,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Page::saved(function (Page $page) {
+            app(IndexNowService::class)->pingEntity($page);
+        });
+
+        Page::deleted(function (Page $page) {
+            app(IndexNowService::class)->pingEntity($page);
+        });
     }
 }

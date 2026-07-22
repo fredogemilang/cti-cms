@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Seo;
 use App\Models\Page;
 use App\Models\Setting;
 use App\Services\ContentTypeRegistry;
+use App\Services\IndexNowService;
 use App\Services\TaxonomyRegistry;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -149,6 +150,12 @@ class SeoGeneralSettings extends Component
 
     public string $indexNowKey = '';
 
+    public bool $indexNowEnabled = true;
+
+    public bool $indexNowAutoPing = true;
+
+    public string $manualUrlsInput = '';
+
     // Media Picker Modal State
     public bool $showMediaPicker = false;
 
@@ -156,7 +163,7 @@ class SeoGeneralSettings extends Component
 
     protected $listeners = ['media-picker-selected' => 'onMediaSelected'];
 
-    public function mount(): void
+    public function mount(IndexNowService $indexNowService): void
     {
         $this->allowIndexing = (bool) setting('seo_allow_indexing', true);
         $this->sitemapEnabled = (bool) setting('seo_sitemap_enabled', true);
@@ -268,7 +275,9 @@ class SeoGeneralSettings extends Component
         $this->transparencyPolicyUrl = (string) setting('seo_transparency_policy_url', '');
 
         $this->robotsExtra = (string) setting('seo_robots_extra', '');
-        $this->indexNowKey = (string) setting('seo_indexnow_key', '');
+        $this->indexNowKey = $indexNowService->getKey();
+        $this->indexNowEnabled = (bool) setting('seo_indexnow_enabled', true);
+        $this->indexNowAutoPing = (bool) setting('seo_indexnow_auto_ping', true);
     }
 
     public function setSection(string $section): void
@@ -284,6 +293,39 @@ class SeoGeneralSettings extends Component
     public function selectBreadcrumbSeparator(string $sep): void
     {
         $this->breadcrumbSeparator = $sep;
+    }
+
+    public function regenerateIndexNowKey(IndexNowService $indexNowService): void
+    {
+        $this->indexNowKey = $indexNowService->generateKey();
+
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'IndexNow API Key regenerated successfully!',
+        ]);
+    }
+
+    public function submitManualUrls(IndexNowService $indexNowService): void
+    {
+        $urls = preg_split('/\r\n|\r|\n/', $this->manualUrlsInput);
+        if (! $urls) {
+            return;
+        }
+
+        $success = $indexNowService->submitUrls($urls);
+
+        if ($success) {
+            $this->manualUrlsInput = '';
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'URLs submitted to IndexNow API successfully!',
+            ]);
+        } else {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Failed to submit URLs to IndexNow API. Please check URL formats or try again later.',
+            ]);
+        }
     }
 
     public function insertSnippetVariable(string $slug, string $field, string $variable): void
@@ -476,6 +518,8 @@ class SeoGeneralSettings extends Component
 
         Setting::set('seo_robots_extra', $this->robotsExtra, 'seo', 'code');
         Setting::set('seo_indexnow_key', $this->indexNowKey, 'seo', 'text');
+        Setting::set('seo_indexnow_enabled', $this->indexNowEnabled, 'seo', 'boolean');
+        Setting::set('seo_indexnow_auto_ping', $this->indexNowAutoPing, 'seo', 'boolean');
 
         $this->dispatch('notify', [
             'type' => 'success',

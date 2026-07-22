@@ -157,6 +157,12 @@
                             <button type="button" wire:click="setSection('robots-txt')" class="w-full text-left py-2 px-3 rounded-xl transition-colors {{ $activeSection === 'robots-txt' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold' : 'text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50' }}">
                                 Robots.txt directives
                             </button>
+                            <button type="button" wire:click="setSection('indexnow')" class="w-full text-left py-2 px-3 rounded-xl transition-colors flex items-center justify-between {{ $activeSection === 'indexnow' ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-bold' : 'text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50' }}">
+                                <span>IndexNow Protocol</span>
+                                @if($indexNowEnabled)
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500" title="Active"></span>
+                                @endif
+                            </button>
                         </div>
                     </div>
                 </nav>
@@ -956,6 +962,89 @@
 
                         <div class="space-y-1.5">
                             <textarea wire:model="robotsExtra" rows="10" placeholder="Disallow: /private/&#10;Crawl-delay: 10" class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs font-mono text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 p-4 resize-y"></textarea>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Section 9: IndexNow Protocol --}}
+                @if($activeSection === 'indexnow')
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">IndexNow Instant Indexing Protocol</h2>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">Bing / Yandex</span>
+                            </div>
+                            <p class="text-xs text-[#6F767E] mt-1">Automatically notify search engines the moment content is published, updated, or deleted.</p>
+                        </div>
+
+                        <div class="space-y-6">
+                            {{-- Feature Toggles --}}
+                            <div class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Enable IndexNow Protocol</h4>
+                                    <p class="text-xs text-[#6F767E] mt-0.5">Allows sending instant change notifications to IndexNow search engine partners.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" wire:model="indexNowEnabled" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+
+                            <div class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Automatic Submit on Publish & Update</h4>
+                                    <p class="text-xs text-[#6F767E] mt-0.5">Automatically trigger pings whenever Pages, Posts, or CPT entries are published or updated.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" wire:model="indexNowAutoPing" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+
+                            {{-- API Key Management --}}
+                            <div class="p-6 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] space-y-4">
+                                <div>
+                                    <h4 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">IndexNow API Key & Verification Endpoint</h4>
+                                    <p class="text-xs text-[#6F767E] mt-0.5">Search engines verify domain ownership by fetching your key verification file.</p>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <label class="text-xs font-bold text-[#6F767E] uppercase tracking-wider block">API Key</label>
+                                    <div class="flex items-center gap-3">
+                                        <input type="text" value="{{ $indexNowKey }}" readonly class="flex-1 h-10 rounded-xl bg-white dark:bg-[#1A1A1A] border-none text-xs font-mono font-bold text-[#111827] dark:text-[#FCFCFC] px-4 ring-1 ring-gray-200 dark:ring-[#272B30]">
+                                        <button type="button" wire:click="regenerateIndexNowKey" class="px-4 py-2 rounded-xl bg-gray-200 dark:bg-[#272B30] hover:bg-gray-300 dark:hover:bg-[#32383E] text-xs font-bold transition-colors">
+                                            Regenerate Key
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="pt-2 flex items-center justify-between text-xs">
+                                    <span class="text-[#6F767E]">Verification File:</span>
+                                    <a href="{{ url('/indexnow-' . $indexNowKey . '.txt') }}" target="_blank" class="text-blue-600 hover:underline font-bold inline-flex items-center gap-1">
+                                        View Verification File (/indexnow-{{ substr($indexNowKey, 0, 8) }}....txt)
+                                        <span class="material-symbols-outlined text-xs">open_in_new</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {{-- Manual URL Batch Submission --}}
+                            <div class="p-6 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] space-y-4">
+                                <div>
+                                    <h4 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Manual URL Submission</h4>
+                                    <p class="text-xs text-[#6F767E] mt-0.5">Paste full URLs below (one per line) to immediately submit them to IndexNow API.</p>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <textarea wire:model="manualUrlsInput" rows="5" placeholder="https://example.com/page-1&#10;https://example.com/page-2" class="w-full rounded-2xl bg-white dark:bg-[#1A1A1A] border-none p-4 text-xs font-mono text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-blue-500"></textarea>
+                                </div>
+
+                                <div class="flex justify-end">
+                                    <button type="button" wire:click="submitManualUrls" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-colors inline-flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-base">send</span>
+                                        Submit URLs Now
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 @endif

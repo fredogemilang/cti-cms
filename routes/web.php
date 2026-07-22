@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\FormSubmissionController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\IndexNowController;
 use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RobotsController;
@@ -39,6 +40,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
 Route::get('/llms.txt', [LlmsTxtController::class, 'index'])->name('llms-txt');
+Route::get('/indexnow-{key}.txt', [IndexNowController::class, 'showKey'])->name('indexnow.key');
 
 // Public Form Submission
 Route::prefix('forms')->name('forms.')->group(function () {
