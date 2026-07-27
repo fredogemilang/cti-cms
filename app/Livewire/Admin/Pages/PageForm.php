@@ -131,9 +131,14 @@ class PageForm extends Component
 
     protected function loadPage()
     {
-        $this->page = Page::with(['blocks' => function ($q) {
+        $this->page = Page::findOrFail($this->pageId);
+
+        // Auto-sync missing template blocks defined in theme.json onto existing page
+        $this->templateService->seedBlocks($this->page);
+
+        $this->page->load(['blocks' => function ($q) {
             $q->whereNull('parent_block_id')->orderBy('order');
-        }])->findOrFail($this->pageId);
+        }]);
 
         // Populate form fields
         $this->title = $this->page->title;

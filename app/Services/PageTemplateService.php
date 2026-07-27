@@ -36,12 +36,17 @@ class PageTemplateService
                 continue; // already exists, skip
             }
 
+            $defaultValue = $blockDef['default'] ?? $this->defaultForType($blockDef['type']);
+            if (is_array($defaultValue)) {
+                $defaultValue = json_encode($defaultValue);
+            }
+
             PageBlock::create([
                 'page_id' => $page->id,
                 'name' => $blockDef['name'],
                 'type' => $blockDef['type'],
                 'label' => $blockDef['label'] ?? ucfirst(str_replace('_', ' ', $blockDef['name'])),
-                'value' => $blockDef['default'] ?? $this->defaultForType($blockDef['type']),
+                'value' => $defaultValue,
                 'options' => $blockDef['options'] ?? [],
                 'order' => $order,
                 'is_active' => true,

@@ -89,12 +89,16 @@ class Theme extends Model
      */
     public function loadConfig(): ?array
     {
-        return Cache::remember("theme.{$this->slug}.config", 3600, function () {
-            $path = $this->path.'/theme.json';
-            if (! file_exists($path)) {
-                return null;
-            }
+        $path = $this->path.'/theme.json';
+        if (! file_exists($path)) {
+            return null;
+        }
 
+        if (config('app.debug')) {
+            return json_decode(file_get_contents($path), true);
+        }
+
+        return Cache::remember("theme.{$this->slug}.config", 3600, function () use ($path) {
             return json_decode(file_get_contents($path), true);
         });
     }
