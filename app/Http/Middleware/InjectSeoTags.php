@@ -54,12 +54,12 @@ class InjectSeoTags
             return $response;
         }
 
-        // Extract the entity from the view response (if available)
-        $entity = $this->resolveEntity($response);
+        // Extract the entity from the view response (if available) or request route/path
+        $entity = $this->resolveEntity($response, $request);
         $seo = $this->seoRenderer->resolve($entity);
 
-        // Replace existing <title> tag with the resolved SEO title (pattern + separator)
-        if (preg_match('/<title\b[^>]*>(.*?)<\/title>/is', $content)) {
+        // Replace existing <title> tag only if entity was resolved or if existing <title> is generic
+        if ($entity && preg_match('/<title\b[^>]*>(.*?)<\/title>/is', $content)) {
             $content = (string) preg_replace('/<title\b[^>]*>(.*?)<\/title>/is', '<title>'.e($seo['title']).'</title>', $content);
         }
 
@@ -76,23 +76,41 @@ class InjectSeoTags
 
     /**
      * Try to extract the primary entity (Page, CptEntry, etc.)
-     * from the response's view data, so we can resolve per-page SEO.
+     * from the response's view data or current request route/path.
      */
-    protected function resolveEntity(Response $response): ?Model
+    protected function resolveEntity(Response $response, Request $request): ?Model
     {
         $original = $response->getOriginalContent();
 
-        if (! $original || ! method_exists($original, 'getData')) {
-            return null;
+        if (is_object($original) && method_exists($original, 'getData')) {
+            $data = $original->getData();
+            foreach (['page', 'entry', 'post', 'event'] as $key) {
+                if (isset($data[$key]) && $data[$key] instanceof Model) {
+                    return $data[$key];
+                }
+            }
         }
 
-        $data = $original->getData();
-
-        // Priority: $page > $entry > $post > $event
-        foreach (['page', 'entry', 'post', 'event'] as $key) {
-            if (isset($data[$key]) && $data[$key] instanceof Model) {
-                return $data[$key];
+        // Fallback 1: Route parameters
+        $route = $request->route();
+        if ($route) {
+            foreach (['page', 'entry', 'post', 'event'] as $param) {
+                $val = $route->parameter($param);
+                if ($val instanceof Model) {
+                    return $val;
+                }
             }
+        }
+
+        // Fallback 2: Homepage
+        $path = trim($request->path(), '/');
+        if ($path === '' || $path === '/') {
+            return Page::where('slug', 'home')->first();
+        }
+
+        // Fallback 3: Single page path
+        if ($path && ! str_contains($path, '/')) {
+            return Page::findByLocalizedSlug($path);
         }
 
         return null;

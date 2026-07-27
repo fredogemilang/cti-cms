@@ -68,23 +68,52 @@ class MediaPicker extends Component
         $this->shouldClearAfterSelection = $shouldClearAfterSelection;
         $this->compact = $compact;
         $this->showModal = $showModal;
+        $this->loadMediaFromValue();
+    }
 
-        // Load existing media if value is set (check both path and webp_path)
-        if ($this->value) {
-            $media = Media::where('path', $this->value)
-                ->orWhere('webp_path', $this->value)
-                ->first();
-            if ($media) {
-                $this->selectedMediaId = $media->id;
-                $this->selectedMedia = [
-                    'id' => $media->id,
-                    'path' => $media->path,
-                    'webp_path' => $media->webp_path,
-                    'url' => $media->url,
-                    'webp_url' => $media->webp_url,
-                    'original_filename' => $media->original_filename,
-                ];
-            }
+    public function updatedValue(): void
+    {
+        $this->loadMediaFromValue();
+    }
+
+    public function loadMediaFromValue(): void
+    {
+        if (! $this->value) {
+            $this->selectedMedia = null;
+            $this->selectedMediaId = null;
+
+            return;
+        }
+
+        $media = Media::where('path', $this->value)
+            ->orWhere('webp_path', $this->value)
+            ->first();
+
+        if ($media) {
+            $this->selectedMediaId = $media->id;
+            $this->selectedMedia = [
+                'id' => $media->id,
+                'path' => $media->path,
+                'webp_path' => $media->webp_path,
+                'url' => $media->url,
+                'webp_url' => $media->webp_url,
+                'original_filename' => $media->original_filename,
+            ];
+        } else {
+            // Fallback for custom asset path or external URL
+            $url = str_starts_with($this->value, 'http') || str_starts_with($this->value, 'themes/') || str_starts_with($this->value, 'assets/')
+                ? asset($this->value)
+                : asset('storage/'.$this->value);
+
+            $this->selectedMediaId = null;
+            $this->selectedMedia = [
+                'id' => null,
+                'path' => $this->value,
+                'webp_path' => null,
+                'url' => $url,
+                'webp_url' => null,
+                'original_filename' => basename($this->value),
+            ];
         }
     }
 

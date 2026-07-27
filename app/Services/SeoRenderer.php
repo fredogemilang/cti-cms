@@ -47,20 +47,25 @@ class SeoRenderer
 
         $rawTitle = $overrides['title']
             ?? $meta?->title
+            ?? ($entity && method_exists($entity, 'getTranslation') ? $entity->getTranslation('title') : null)
             ?? ($entity->title ?? $entity->name ?? $siteName);
 
         $termName = $entity->name ?? $rawTitle;
         $termDescription = $entity->description ?? '';
 
-        $title = strtr($titleTemplate, [
-            '{page}' => $rawTitle,
-            '{title}' => $rawTitle,
-            '{term}' => $termName,
-            '{site}' => $siteName,
-            '{tagline}' => $tagline,
-            '{sep}' => $titleSeparator,
-            '{description}' => $termDescription,
-        ]);
+        if (strtolower(trim((string) $rawTitle)) === strtolower(trim((string) $siteName))) {
+            $title = $siteName.($tagline ? " {$titleSeparator} {$tagline}" : '');
+        } else {
+            $title = strtr($titleTemplate, [
+                '{page}' => $rawTitle,
+                '{title}' => $rawTitle,
+                '{term}' => $termName,
+                '{site}' => $siteName,
+                '{tagline}' => $tagline,
+                '{sep}' => $titleSeparator,
+                '{description}' => $termDescription,
+            ]);
+        }
 
         // Description fallback chain: override → seo_meta → auto-snippet → content-type pattern → site default
         $typePatternDesc = null;

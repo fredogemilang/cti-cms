@@ -83,18 +83,59 @@ class PageAdminController extends Controller
             'published_at' => 'nullable|date',
             'translations' => 'nullable|array',
             'menu_order' => 'nullable|integer',
+            'blocks' => 'nullable|array',
         ]);
 
         if (isset($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['slug']);
         }
 
-        $page->update($validated);
+        $page->update(collect($validated)->except('blocks')->toArray());
+
+        if ($request->has('blocks') && is_array($request->blocks)) {
+            foreach ($request->blocks as $index => $blockData) {
+                if (empty($blockData['name'])) {
+                    continue;
+                }
+                $existingBlock = PageBlock::where('page_id', $page->id)
+                    ->where('name', $blockData['name'])
+                    ->first();
+
+                $value = $blockData['value'] ?? null;
+                if (is_array($value)) {
+                    $value = json_encode($value);
+                }
+
+                $type = $blockData['type'] ?? ($existingBlock->type ?? 'text');
+                if ($type === 'image') {
+                    $type = 'media';
+                }
+
+                if ($existingBlock) {
+                    $existingBlock->update([
+                        'type' => $type,
+                        'value' => $value,
+                        'order' => $blockData['order'] ?? $existingBlock->order ?? $index,
+                        'is_active' => $blockData['is_active'] ?? $existingBlock->is_active ?? true,
+                    ]);
+                } else {
+                    PageBlock::create([
+                        'page_id' => $page->id,
+                        'name' => $blockData['name'],
+                        'type' => $type,
+                        'label' => $blockData['label'] ?? Str::title(str_replace('_', ' ', $blockData['name'])),
+                        'value' => $value,
+                        'order' => $blockData['order'] ?? $index,
+                        'is_active' => $blockData['is_active'] ?? true,
+                    ]);
+                }
+            }
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Page updated successfully.',
-            'data' => $page,
+            'data' => $page->fresh(['blocks']),
         ]);
     }
 
