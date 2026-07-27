@@ -736,7 +736,119 @@ Theme developers should know these GEO features exist so they can guide content 
 
 ---
 
-**Reference:** See `themes/default/` for a complete working theme.
+## CPT vs. Repeater Field Selection Architecture
 
-**Last Updated:** 2026-07-22
-**Version:** 4.0
+When designing a theme, populating pages via API, or writing prompts for AI agents, you must evaluate whether repeatable content should be stored as a **Custom Post Type (CPT)** or as a **Repeater Block Field** in `theme.json`.
+
+### 🎯 Decision Rule: When to Use CPT vs. Repeater
+
+```
+                         Does content need standalone URLs,
+                       individual detail pages, or sitewide queries?
+                                      /          \
+                                    YES          NO
+                                    /              \
+                        [Use Custom Post Type]    Is it repeatable content
+                                                  specific to ONE page layout
+                                                  (e.g., Cards, Features, FAQs)?
+                                                               |
+                                                              YES
+                                                               |
+                                                    [Use Repeater Field]
+```
+
+#### 1. Custom Post Type (CPT) — Sitewide / Entity Driven
+Use a CPT when:
+- Content items are global entities reused across multiple pages or archives (e.g., *Products, Case Studies, Team Members, Job Vacancies, Testimonials*).
+- Each item requires its own dedicated detail URL (e.g., `/products/cloud-security`, `/careers/devops-engineer`).
+- Content requires multi-taxonomy filtering, searching, or pagination.
+
+#### 2. Repeater Field (`theme.json`) — Page-Specific / Section Driven
+Use a Repeater Field when:
+- Content items are **repeatable UI elements bound to a single page template** (e.g., *Area of Expertise cards on Homepage*, *FAQ accordions on About page*, *Pricing Tiers on Landing page*, *Feature highlights*).
+- Columns or cards might expand or change order in the future, but items do **NOT** need standalone detail URLs or sitewide archive pages.
+- Non-technical admins need a simple drag-and-drop / add-remove interface in the Page Block Builder to manage columns without creating a full CPT entry.
+
+---
+
+### 🛠️ How to Implement Repeater Fields
+
+#### 1. Define Repeater Schema in `theme.json`
+Inside your page template blocks in `theme.json`, define the repeater with its child fields (`text`, `textarea`, `media`, `wysiwyg`, `switcher`, `color`, `number`):
+
+```json
+"page_templates": {
+    "home": {
+        "label": "Homepage",
+        "blocks": [
+            {
+                "name": "expertise_list",
+                "type": "repeater",
+                "label": "Area of Expertise Cards",
+                "children": [
+                    {"name": "image", "type": "media", "label": "Card Image"},
+                    {"name": "title", "type": "text", "label": "Card Title"},
+                    {"name": "description", "type": "textarea", "label": "Card Description"}
+                ],
+                "default": [
+                    {
+                        "image": "themes/cdt/assets/security.webp",
+                        "title": "Security",
+                        "description": "Preventative approach against cyber threats..."
+                    },
+                    {
+                        "image": "themes/cdt/assets/clouds.webp",
+                        "title": "Cloud",
+                        "description": "Reap the benefits of cloud-native development..."
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
+
+#### 2. Render Repeater Data in Blade View (`pages/home.blade.php`)
+Repeater data is stored as a JSON array string or array. Always safely parse and provide fallback default data:
+
+```blade
+@php
+    $expertiseItems = $page?->block('expertise_list');
+    if (is_string($expertiseItems)) {
+        $expertiseItems = json_decode($expertiseItems, true);
+    }
+    if (empty($expertiseItems) || !is_array($expertiseItems)) {
+        $expertiseItems = [
+            [
+                'image' => 'themes/cdt/assets/security.webp',
+                'title' => 'Security',
+                'description' => 'Default security description...'
+            ]
+        ];
+    }
+@endphp
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    @foreach($expertiseItems as $item)
+        @php
+            $img = $item['image'] ?? '';
+            $imgUrl = $img ? (str_starts_with($img, 'http') || str_starts_with($img, 'themes/') || str_starts_with($img, 'assets/') ? asset($img) : asset('storage/' . $img)) : '';
+        @endphp
+        <div class="card p-6 bg-white rounded-2xl">
+            @if($imgUrl)
+                <img src="{{ $imgUrl }}" alt="{{ $item['title'] ?? '' }}" class="w-full h-40 object-cover rounded-xl mb-4">
+            @endif
+            <h3 class="font-bold text-xl mb-2">{{ $item['title'] ?? '' }}</h3>
+            <p class="text-zinc-500 text-sm leading-relaxed">{{ $item['description'] ?? '' }}</p>
+        </div>
+    @endforeach
+</div>
+```
+
+---
+
+**Reference:** See `themes/default/` and `themes/cdt/` for complete working themes.
+
+**Last Updated:** 2026-07-27
+**Version:** 4.1
+
