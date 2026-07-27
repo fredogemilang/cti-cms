@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V1;
 
+use App\Services\SeoRenderer;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CptEntryResource extends JsonResource
@@ -16,6 +17,8 @@ class CptEntryResource extends JsonResource
             'published_at' => $this->published_at?->toAtomString(),
             'updated_at' => $this->updated_at?->toAtomString(),
             'meta' => $this->meta_values ?? null,
+            'url' => method_exists($this->resource, 'getUrl') ? $this->getUrl() : null,
+            'seo' => app(SeoRenderer::class)->resolve($this->resource),
             'post_type' => $this->whenLoaded('postType', fn () => [
                 'id' => $this->postType->id,
                 'slug' => $this->postType->slug,

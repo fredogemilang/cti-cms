@@ -7,6 +7,7 @@ Build plugins to extend the CMS with custom functionality. Plugins are self-cont
 - [Plugin Structure](#plugin-structure)
 - [Service Provider](#service-provider)
 - [Route Configuration](#route-configuration)
+- [API Route Development & Headless Standards](#api-route-development--headless-standards)
 - [Permission System](#permission-system)
 - [Menu Registration](#menu-registration)
 - [Settings Registration](#settings-registration)
@@ -223,6 +224,46 @@ Route::prefix(config('admin.path', 'admin'))
 ```
 
 > **Why?** The frontend catch-all route `/{slug}` is in the `web` middleware group. Routes without `'web'` have lower priority, causing 302 redirects.
+
+---
+
+## API Route Development & Headless Standards
+
+Every plugin **MUST** provide REST API endpoints in `routes/api.php` for both **Public Content (Read-Only)** and **Admin Management (Headless CRUD)** so that the plugin is 100% Headless-compatible.
+
+### 1. File Location & Auto-Discovery
+Place your API routes in `plugins/{slug}/routes/api.php`.
+`CmsPluginServiceProvider` will automatically detect and load `routes/api.php` whenever the plugin is **active** (`is_active = true`).
+When the plugin is deactivated from the Admin Panel, these API routes are automatically disabled (returning `404 Not Found`).
+
+### 2. Route Structure & Middleware Guidelines
+All plugin API routes should be grouped under `/api/v1` and use standard `api.cors` and `api.auth` (for admin mutations):
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Route;
+use Plugins\ContactForm\Http\Controllers\Api\ContactFormPublicController;
+use Plugins\ContactForm\Http\Controllers\Api\ContactFormAdminController;
+
+Route::middleware('api.cors')->prefix('api/v1')->group(function () {
+    // 🌐 Public API Endpoints
+    Route::post('/contact-form/submit', [ContactFormPublicController::class, 'submit'])
+        ->middleware('throttle:30,1');
+
+    // 🔒 Admin Headless Management API Endpoints
+    Route::prefix('admin/contact-form')->group(function () {
+        Route::get('/submissions', [ContactFormAdminController::class, 'index']);
+        Route::get('/submissions/{id}', [ContactFormAdminController::class, 'show']);
+        Route::delete('/submissions/{id}', [ContactFormAdminController::class, 'destroy']);
+    });
+});
+```
+
+### 3. Controller Location Convention
+Place API controllers in `plugins/{slug}/src/Http/Controllers/Api/`:
+- `PublicController.php` for read-only endpoints or public submission handling.
+- `AdminController.php` for admin management CRUD operations.
 
 ---
 

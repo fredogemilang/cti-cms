@@ -10,8 +10,15 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Check URL path prefix (e.g. /id/... or /en/...)
+        $firstSegment = $request->segment(1);
+        if ($firstSegment && static::isAllowed($firstSegment)) {
+            session(['locale' => $firstSegment]);
+            cookie()->queue('locale', $firstSegment, 60 * 24 * 365);
+            app()->setLocale($firstSegment);
+        }
         // Handle ?locale=xx switch — persist to cookie and clean URL
-        if ($request->has('locale')) {
+        elseif ($request->has('locale')) {
             $candidate = $request->query('locale');
             if (static::isAllowed($candidate)) {
                 cookie()->queue('locale', $candidate, 60 * 24 * 365);

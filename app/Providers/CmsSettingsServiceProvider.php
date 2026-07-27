@@ -237,6 +237,21 @@ class CmsSettingsServiceProvider extends ServiceProvider
                     'default' => false,
                     'rules' => ['boolean'],
                     'help' => 'Renders a dropdown on public pages (theme must include the <x-locale-switcher /> component).'],
+
+                ['key' => 'locale_url_structure', 'label' => 'Localized URL Structure', 'type' => 'select', 'section' => 'Routing', 'order' => 50,
+                    'default' => 'prefix',
+                    'options' => [
+                        'prefix' => 'Locale Prefix (e.g. /en/about-us vs /id/about-us)',
+                        'slug_only' => 'Direct Localized Slug (e.g. /about-us vs /tentang-kami)',
+                        'suffix' => 'Locale Suffix (e.g. /about-us vs /about-us/id)',
+                    ],
+                    'rules' => ['required', 'string', 'in:prefix,slug_only,suffix'],
+                    'help' => 'Determines how localized URLs are generated and resolved.'],
+
+                ['key' => 'locale_prefix_hide_default', 'label' => 'Hide Prefix for Default Language', 'type' => 'boolean', 'section' => 'Routing', 'order' => 60,
+                    'default' => true,
+                    'rules' => ['boolean'],
+                    'help' => 'When enabled and using Prefix structure, the default language (e.g. `en`) omits the prefix (`/about-us`), while other languages include it (`/id/tentang-kami`).'],
             ],
         ]);
     }

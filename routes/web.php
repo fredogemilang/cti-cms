@@ -40,6 +40,18 @@ $adminPath = config('admin.path', 'admin');
 // Public homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Public Language Switcher
+Route::get('/lang/{locale}', function (string $locale) {
+    $available = array_filter(array_map('trim', explode(',', (string) setting('available_locales', 'id,en'))));
+    if (in_array($locale, $available, true)) {
+        session(['locale' => $locale]);
+        cookie()->queue('locale', $locale, 60 * 24 * 365);
+        app()->setLocale($locale);
+    }
+
+    return redirect()->back();
+})->name('locale.switch');
+
 // Public SEO & GEO
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/sitemap_index.xml', [SitemapController::class, 'index'])->name('sitemap.index');
