@@ -52,7 +52,7 @@ class MediaAdminController extends Controller
                 'data' => [
                     'id' => $media->id,
                     'filename' => $media->original_filename,
-                    'path' => $media->file_path,
+                    'path' => $media->path,
                     'url' => $media->url,
                     'webp_url' => $media->webp_url,
                     'size' => $media->human_readable_size,

@@ -14,7 +14,7 @@ class ActivityLogAdminController extends Controller
     public function index(Request $request)
     {
         $perPage = min(100, max(1, (int) $request->query('per_page', 20)));
-        $q = Activity::with('causer');
+        $q = Activity::with('user');
 
         if ($logName = $request->query('log_name')) {
             $q->where('log_name', $logName);

@@ -123,8 +123,8 @@ class ThemeManager
             $filename = $zip->getNameIndex($i);
             $content = $zip->getFromIndex($i);
 
-            // Only check text files (PHP, JS, JSON)
-            if (! preg_match('/\.(php|js|json)$/i', $filename)) {
+            // Only check PHP server-side execution files (.php, .phtml, .blade.php)
+            if (! preg_match('/\.p(hp|html)$/i', $filename)) {
                 continue;
             }
 

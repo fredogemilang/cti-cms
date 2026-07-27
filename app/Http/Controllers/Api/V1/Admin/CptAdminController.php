@@ -15,7 +15,7 @@ class CptAdminController extends Controller
      */
     public function index()
     {
-        $cpts = CustomPostType::with('fields')->orderBy('name')->get();
+        $cpts = CustomPostType::with('metaFields')->orderBy('name')->get();
 
         return response()->json([
             'success' => true,
@@ -57,7 +57,7 @@ class CptAdminController extends Controller
      */
     public function show(int $id)
     {
-        $cpt = CustomPostType::with('fields')->findOrFail($id);
+        $cpt = CustomPostType::with('metaFields')->findOrFail($id);
 
         return response()->json([
             'success' => true,

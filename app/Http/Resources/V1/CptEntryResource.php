@@ -17,7 +17,7 @@ class CptEntryResource extends JsonResource
             'published_at' => $this->published_at?->toAtomString(),
             'updated_at' => $this->updated_at?->toAtomString(),
             'meta' => $this->meta_values ?? null,
-            'url' => method_exists($this->resource, 'getUrl') ? $this->getUrl() : null,
+            'url' => method_exists($this->resource, 'getUrl') ? $this->resource->getUrl() : null,
             'seo' => app(SeoRenderer::class)->resolve($this->resource),
             'post_type' => $this->whenLoaded('postType', fn () => [
                 'id' => $this->postType->id,
