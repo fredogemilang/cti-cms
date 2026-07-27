@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 
@@ -137,8 +138,8 @@ class CustomTaxonomy extends Model
     /**
      * Get the terms for this taxonomy.
      */
-    public function terms()
+    public function terms(): HasMany
     {
-        return TaxonomyTerm::where('taxonomy_id', $this->id)->orderBy('order');
+        return $this->hasMany(TaxonomyTerm::class, 'taxonomy_id')->orderBy('order');
     }
 }
