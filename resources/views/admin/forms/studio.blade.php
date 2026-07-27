@@ -1,6 +1,8 @@
 @extends('layouts.admin')
 
 @section('title', 'Form Studio - ' . $form->name)
+@section('hide-header', true)
+@section('hide-title', true)
 
 @section('content')
 @php
@@ -35,7 +37,7 @@
     }
 @endphp
 
-<div class="h-[calc(100vh-80px)] flex flex-col -m-6 md:-m-10 bg-[#F4F5F6] dark:bg-[#0B0B0B]"
+<div class="h-full flex flex-col w-full bg-[#F4F5F6] dark:bg-[#0B0B0B]"
     x-data="{
         activeTab: '{{ $activeTab ?? 'fields' }}',
         name: {{ json_encode($form->name) }},
