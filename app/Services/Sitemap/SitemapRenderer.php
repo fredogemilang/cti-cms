@@ -32,7 +32,7 @@ class SitemapRenderer
         $xslUrl = url('/main-sitemap.xsl');
         $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n";
         $xml .= '<?xml-stylesheet type="text/xsl" href="'.htmlspecialchars($xslUrl, ENT_XML1, 'UTF-8').'"?>'."\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'."\n";
 
         foreach ($urls as $u) {
             $xml .= "  <url>\n";
@@ -48,6 +48,13 @@ class SitemapRenderer
             }
             if (isset($u['priority'])) {
                 $xml .= '    <priority>'.number_format((float) $u['priority'], 1, '.', '')."</priority>\n";
+            }
+            if (! empty($u['images']) && is_array($u['images'])) {
+                foreach ($u['images'] as $imgUrl) {
+                    $xml .= "    <image:image>\n";
+                    $xml .= '      <image:loc>'.htmlspecialchars($imgUrl, ENT_XML1, 'UTF-8')."</image:loc>\n";
+                    $xml .= "    </image:image>\n";
+                }
             }
             $xml .= "  </url>\n";
         }

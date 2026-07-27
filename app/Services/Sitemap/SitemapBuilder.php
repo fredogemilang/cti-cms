@@ -74,13 +74,17 @@ class SitemapBuilder
             return $urls;
         }
 
-        foreach (Page::where('status', 'published')->orderBy('updated_at', 'desc')->get() as $page) {
+        foreach (Page::with('allBlocks')->where('status', 'published')->orderBy('updated_at', 'desc')->get() as $page) {
+            $blockValues = $page->allBlocks->pluck('value')->filter()->toArray();
+            $images = $this->extractImages($page->featured_image ?? null, $blockValues);
+
             $urls[] = [
                 'loc' => $page->slug === 'home' ? url('/') : url('/'.$page->slug),
                 'lastmod' => $page->updated_at ? $page->updated_at->toAtomString() : null,
                 'changefreq' => 'weekly',
                 'priority' => $page->slug === 'home' ? 1.0 : 0.8,
                 'type' => 'Page',
+                'images' => $images,
             ];
         }
 
@@ -105,6 +109,7 @@ class SitemapBuilder
             'changefreq' => 'daily',
             'priority' => 0.8,
             'type' => 'Post Archive',
+            'images' => [],
         ];
 
         $posts = $postModel::where('status', 'published')
@@ -112,12 +117,15 @@ class SitemapBuilder
             ->get();
 
         foreach ($posts as $post) {
+            $images = $this->extractImages($post->featured_image ?? null, $post->content ?? null);
+
             $urls[] = [
                 'loc' => url('/'.$archiveSlug.'/'.$post->slug),
                 'lastmod' => $post->updated_at ? $post->updated_at->toAtomString() : null,
                 'changefreq' => 'weekly',
                 'priority' => 0.6,
                 'type' => 'Post',
+                'images' => $images,
             ];
         }
 
@@ -143,6 +151,7 @@ class SitemapBuilder
             'changefreq' => 'daily',
             'priority' => 0.8,
             'type' => $cpt->name.' Archive',
+            'images' => [],
         ];
 
         $entries = CptEntry::where('post_type_id', $cpt->id)
@@ -151,12 +160,15 @@ class SitemapBuilder
             ->get();
 
         foreach ($entries as $entry) {
+            $images = $this->extractImages($entry->featured_image ?? null, $entry->content ?? null);
+
             $urls[] = [
                 'loc' => url('/'.$cpt->slug.'/'.$entry->slug),
                 'lastmod' => $entry->updated_at ? $entry->updated_at->toAtomString() : null,
                 'changefreq' => 'weekly',
                 'priority' => 0.6,
                 'type' => $cpt->name,
+                'images' => $images,
             ];
         }
 
@@ -269,5 +281,73 @@ class SitemapBuilder
     protected function getPostModelClass(): string
     {
         return 'Plugins\\Posts\\Models\\Post';
+    }
+
+    /**
+     * Extract unique absolute image URLs from featured_image field, blocks, or content.
+     */
+    protected function extractImages(?string $featuredImage = null, mixed $content = null): array
+    {
+        $images = [];
+
+        if (! empty($featuredImage)) {
+            if ($formatted = $this->formatImageUrl($featuredImage)) {
+                $images[] = $formatted;
+            }
+        }
+
+        if (is_string($content) && ! empty($content)) {
+            $this->extractImagesFromHtml($content, $images);
+        } elseif (is_iterable($content)) {
+            foreach ($content as $item) {
+                if (is_string($item)) {
+                    $this->extractImagesFromHtml($item, $images);
+                } elseif (is_object($item) || is_array($item)) {
+                    $this->extractImagesFromHtml(json_encode($item), $images);
+                }
+            }
+        }
+
+        return array_values(array_unique(array_filter($images)));
+    }
+
+    protected function extractImagesFromHtml(string $html, array &$images): void
+    {
+        if (preg_match_all('/<img[^>]+src=["\']([^"\']+)["\']/i', $html, $matches)) {
+            foreach ($matches[1] as $src) {
+                if ($formatted = $this->formatImageUrl($src)) {
+                    $images[] = $formatted;
+                }
+            }
+        }
+
+        if (preg_match_all('/https?:\/\/[^\s"\']+\.(?:png|jpg|jpeg|gif|webp|svg)/i', $html, $urlMatches)) {
+            foreach ($urlMatches[0] as $url) {
+                if ($formatted = $this->formatImageUrl($url)) {
+                    $images[] = $formatted;
+                }
+            }
+        }
+    }
+
+    protected function formatImageUrl(?string $url): ?string
+    {
+        if (empty($url)) {
+            return null;
+        }
+
+        if (str_starts_with($url, 'data:')) {
+            return null;
+        }
+
+        if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+            return $url;
+        }
+
+        if (str_starts_with($url, '/')) {
+            return url($url);
+        }
+
+        return url('/'.$url);
     }
 }
