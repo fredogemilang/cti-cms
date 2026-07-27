@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 
 @section('title', 'Form Studio - ' . $form->name)
-@section('hide-header', true)
 @section('hide-title', true)
 
 @section('content')
