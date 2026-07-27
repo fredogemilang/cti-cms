@@ -424,8 +424,12 @@
 
                         <select name="theme_slot" x-model="themeSlot" class="w-full h-11 bg-white dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-sm font-bold rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]">
                             <option value="">-- Unassigned (Manual Shortcode Only) --</option>
-                            @foreach($placeholders as $slotKey => $slotLabel)
-                                <option value="{{ $slotKey }}" {{ $assignedSlot === $slotKey ? 'selected' : '' }}>
+                            @foreach($placeholders as $key => $placeholder)
+                                @php
+                                    $slotKey = is_array($placeholder) ? ($placeholder['key'] ?? $key) : $key;
+                                    $slotLabel = is_array($placeholder) ? ($placeholder['label'] ?? $slotKey) : $placeholder;
+                                @endphp
+                                <option value="{{ $slotKey }}" {{ (string)$assignedSlot === (string)$slotKey ? 'selected' : '' }}>
                                     {{ $slotLabel }} (slot: {{ $slotKey }})
                                 </option>
                             @endforeach
