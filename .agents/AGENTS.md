@@ -56,11 +56,10 @@ When populating media/image fields via API, seeders, theme defaults, or renderin
 
 ## CPT & Repeater Fields Standardization Rules
 
-1. **Canonical Key `repeater_fields`**:
-   - Official key in `options` JSON column for repeater subfields MUST be **`repeater_fields`**.
-   - `MetaField` model automatically converts legacy ACF `"sub_fields"` keys into `"repeater_fields"`.
+1. **Canonical Key `repeater_fields` Only**:
+   - Official key in `options` JSON column for repeater subfields MUST strictly be **`repeater_fields`**.
 2. **Strict Repeater Options Key Validation**:
-   - API endpoints and model observers will **reject any unrecognized repeater option keys (e.g., `anak_fields`, `items`) with HTTP 422**.
+   - API endpoints and model observers will **reject any unrecognized or legacy repeater option keys (e.g., `sub_fields`, `anak_fields`, `items`) with HTTP 422**.
 3. **CPT MetaBoxes & Field Grouping**:
    - All CPT MetaFields default to `field_group = 'general'`.
    - `CptForm` automatically creates and ensures a `'general'` MetaBox exists when loading or saving CPT schemas.

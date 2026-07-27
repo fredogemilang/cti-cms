@@ -186,7 +186,7 @@ class EntryForm extends Component
                     $fieldRules[] = 'numeric';
                     break;
                 case 'repeater':
-                    $subFields = $field->options['repeater_fields'] ?? $field->options['sub_fields'] ?? [];
+                    $subFields = $field->options['repeater_fields'] ?? [];
                     if (! empty($subFields)) {
                         foreach ($subFields as $subField) {
                             $subFieldId = $subField['name'] ?? $subField['id'] ?? Str::snake($subField['label'] ?? '');
@@ -258,7 +258,7 @@ class EntryForm extends Component
     {
         // Find the field definition
         $field = $this->postType->metaFields->where('name', $fieldName)->first();
-        $subFields = $field?->options['repeater_fields'] ?? $field?->options['sub_fields'] ?? [];
+        $subFields = $field?->options['repeater_fields'] ?? [];
 
         if ($field && $field->type === 'repeater' && ! empty($subFields)) {
             $newRow = [];

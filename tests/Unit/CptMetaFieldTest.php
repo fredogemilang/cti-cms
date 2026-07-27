@@ -12,7 +12,7 @@ class CptMetaFieldTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_legacy_sub_fields_is_auto_converted_to_repeater_fields()
+    public function test_valid_repeater_fields_is_accepted()
     {
         $cpt = CustomPostType::create([
             'name' => 'test_cpt',
@@ -29,17 +29,16 @@ class CptMetaFieldTest extends TestCase
             'label' => 'Test Repeater',
             'type' => 'repeater',
             'options' => [
-                'sub_fields' => [
+                'repeater_fields' => [
                     ['name' => 'sub1', 'label' => 'Sub 1', 'type' => 'text'],
                 ],
             ],
         ]);
 
         $this->assertArrayHasKey('repeater_fields', $field->fresh()->options);
-        $this->assertArrayNotHasKey('sub_fields', $field->fresh()->options);
     }
 
-    public function test_invalid_repeater_keys_are_rejected()
+    public function test_legacy_sub_fields_and_invalid_keys_are_rejected()
     {
         $this->expectException(ValidationException::class);
 
@@ -58,7 +57,7 @@ class CptMetaFieldTest extends TestCase
             'label' => 'Bad Repeater',
             'type' => 'repeater',
             'options' => [
-                'anak_fields' => [
+                'sub_fields' => [
                     ['name' => 'sub1', 'label' => 'Sub 1', 'type' => 'text'],
                 ],
             ],

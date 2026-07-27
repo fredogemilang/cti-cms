@@ -299,7 +299,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="space-y-3">
-                                                            @foreach($field['options']['repeater_fields'] ?? $field['options']['sub_fields'] ?? [] as $subFieldIndex => $subField)
+                                                            @foreach($field['options']['repeater_fields'] ?? [] as $subFieldIndex => $subField)
                                                                 <div class="bg-gray-100 dark:bg-[#272B30]/40 rounded-lg p-3 border border-gray-200 dark:border-[#272B30] relative group">
                                                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                                                                         <div class="space-y-1">
@@ -418,7 +418,7 @@
                                                                     </button>
                                                                 </div>
                                                             @endforeach
-                                                            @if(empty($field['options']['repeater_fields'] ?? $field['options']['sub_fields'] ?? []))
+                                                            @if(empty($field['options']['repeater_fields'] ?? []))
                                                                 <div class="text-center py-4 text-[#6F767E] text-xs italic">
                                                                     No repeater fields added yet.
                                                                 </div>

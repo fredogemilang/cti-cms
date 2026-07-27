@@ -127,9 +127,8 @@ php artisan queue:listen     # for development (included in `composer run dev`)
 ## Known Bugs & Watch-Outs (Fixed & Standardized)
 
 ### Repeater Fields: Canonical `repeater_fields` Key
-- **Official Standard**: The official key for repeater sub-fields in the `options` JSON column is **`repeater_fields`**.
-- **API Auto-Conversion**: `MetaField` model (`boot() -> static::saving`) automatically intercepts and converts legacy ACF `"sub_fields"` keys into `"repeater_fields"`.
-- **Strict Validation**: Unsupported or arbitrary repeater option keys (e.g. `anak_fields`, `items`) will be **rejected with HTTP 422 Unprocessable Entity**.
+- **Official Standard**: The official key for repeater sub-fields in the `options` JSON column is strictly **`repeater_fields`**.
+- **Strict Validation & Clean Rejection**: All legacy keys (such as `sub_fields`) or unsupported keys (such as `anak_fields`, `items`) are **strictly rejected with HTTP 422 Unprocessable Entity**.
 
 ### Repeater Key Binding: `name` vs `id`
 API data uses `name` as the key for repeater sub-fields. Always use: `$subField['name'] ?? $subField['id'] ?? Str::snake(...)`.

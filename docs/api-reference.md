@@ -79,7 +79,7 @@ All admin routes are prefixed with `/api/v1/admin/`.
 - `GET|PUT|DELETE /api/v1/admin/cpt/{id}` — Manage CPT schema
 - `GET /api/v1/admin/cpt/{id}/fields` — List MetaFields for a CPT
 - `POST /api/v1/admin/cpt/{id}/fields` — Create MetaField (`name`, `label`, `type`, `is_required`, `options`)
-  > **Repeater Fields Payload Note**: Repeater sub-fields MUST be provided under `"options": {"repeater_fields": [...]}`. Legacy `"sub_fields"` will be auto-converted to `"repeater_fields"`. Unrecognized keys (e.g., `"anak_fields"`) are strictly rejected with HTTP 422 Unprocessable Entity.
+  > **Repeater Fields Payload Note**: Repeater sub-fields MUST strictly be provided under `"options": {"repeater_fields": [...]}`. Legacy `"sub_fields"` or any non-standard key (e.g. `"anak_fields"`) are strictly rejected with HTTP 422 Unprocessable Entity.
 - `PUT|DELETE /api/v1/admin/cpt/{id}/fields/{fieldId}` — Manage MetaField
 
 ### 2. CPT Entries & Relationships

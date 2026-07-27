@@ -44,13 +44,7 @@ class MetaField extends Model
         static::saving(function ($metaField) {
             $options = $metaField->options;
             if (is_array($options)) {
-                // Auto-convert legacy ACF 'sub_fields' key to official 'repeater_fields'
-                if (isset($options['sub_fields'])) {
-                    $options['repeater_fields'] = $options['repeater_fields'] ?? $options['sub_fields'];
-                    unset($options['sub_fields']);
-                }
-
-                // If field type is repeater, reject unsupported/unknown repeater keys (e.g. anak_fields, items, etc)
+                // If field type is repeater, strictly require 'repeater_fields' and reject any other key (e.g. sub_fields, anak_fields, etc)
                 if ($metaField->type === 'repeater') {
                     $validKeys = ['repeater_fields', 'conditional_logic', 'options_list', 'min', 'max', 'button_label'];
                     foreach (array_keys($options) as $key) {
@@ -61,8 +55,6 @@ class MetaField extends Model
                         }
                     }
                 }
-
-                $metaField->options = $options;
             }
         });
     }

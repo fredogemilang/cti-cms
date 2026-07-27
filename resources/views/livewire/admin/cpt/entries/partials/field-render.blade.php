@@ -356,7 +356,7 @@
                             </button>
 
                             <div class="grid gap-4 md:grid-cols-2">
-                                @php $subFields = !empty($field->options['sub_fields']) ? $field->options['sub_fields'] : ($field->options['repeater_fields'] ?? []); @endphp
+                                @php $subFields = $field->options['repeater_fields'] ?? []; @endphp
                                 @foreach($subFields as $subField)
                                     @php
                                         $subFieldId = $subField['name'] ?? $subField['id'] ?? \Illuminate\Support\Str::snake($subField['label'] ?? 'field_' . $loop->index);
