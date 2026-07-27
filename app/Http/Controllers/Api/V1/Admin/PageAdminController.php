@@ -111,23 +111,24 @@ class PageAdminController extends Controller
                     $type = 'media';
                 }
 
+                $blockPayload = [
+                    'type' => $type,
+                    'value' => $value,
+                    'order' => $blockData['order'] ?? $existingBlock->order ?? $index,
+                    'is_active' => $blockData['is_active'] ?? $existingBlock->is_active ?? true,
+                ];
+
+                if (isset($blockData['translations']) && is_array($blockData['translations'])) {
+                    $blockPayload['translations'] = $blockData['translations'];
+                }
+
                 if ($existingBlock) {
-                    $existingBlock->update([
-                        'type' => $type,
-                        'value' => $value,
-                        'order' => $blockData['order'] ?? $existingBlock->order ?? $index,
-                        'is_active' => $blockData['is_active'] ?? $existingBlock->is_active ?? true,
-                    ]);
+                    $existingBlock->update($blockPayload);
                 } else {
-                    PageBlock::create([
-                        'page_id' => $page->id,
-                        'name' => $blockData['name'],
-                        'type' => $type,
-                        'label' => $blockData['label'] ?? Str::title(str_replace('_', ' ', $blockData['name'])),
-                        'value' => $value,
-                        'order' => $blockData['order'] ?? $index,
-                        'is_active' => $blockData['is_active'] ?? true,
-                    ]);
+                    $blockPayload['page_id'] = $page->id;
+                    $blockPayload['name'] = $blockData['name'];
+                    $blockPayload['label'] = $blockData['label'] ?? Str::title(str_replace('_', ' ', $blockData['name']));
+                    PageBlock::create($blockPayload);
                 }
             }
         }
