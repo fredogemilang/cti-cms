@@ -289,50 +289,58 @@
         <!-- Left Column -->
         <div class="lg:w-1/4 shrink-0 overflow-hidden">
           <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            Why<br>
-            <span class="font-bold text-dark italic">{{ $page?->block('why_cdt_title') ?? 'CDT?' }}</span>
+            {!! $page?->block('why_cdt_title_prefix') ?? 'Why' !!}<br>
+            <span class="font-bold text-dark italic">{!! $page?->block('why_cdt_title_main') ?? ($page?->block('why_cdt_title') ?? 'CDT?') !!}</span>
           </h2>
           <div class="h-1 bg-primary mt-4" data-gsap="line-grow"></div>
         </div>
         
+        @php
+          $whyCdtItems = $page?->block('why_cdt_list');
+          if (is_string($whyCdtItems)) {
+              $whyCdtItems = json_decode($whyCdtItems, true);
+          }
+          if (empty($whyCdtItems) || !is_array($whyCdtItems)) {
+              $whyCdtItems = [
+                  [
+                      'title' => $page?->block('why_cdt_box_1_title') ?? 'NUMBER ONE IT SERVICE DELIVERY',
+                      'description' => $page?->block('why_cdt_box_1_desc') ?? "Guarantee the best quality of IT service delivery with every stage delivery involves many IT experts' role and ensure that service-level agreement (SLA) is applied.",
+                      'image' => 'themes/cdt/assets/photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg'
+                  ],
+                  [
+                      'title' => $page?->block('why_cdt_box_2_title') ?? 'EXCELLENT CUSTOMER SERVICES',
+                      'description' => $page?->block('why_cdt_box_2_desc') ?? "24/7 customer response center, and many other convenient services were given fulfill customer requirement in today's digital era.",
+                      'image' => 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w800-D1mgrB8h.jpg'
+                  ],
+                  [
+                      'title' => $page?->block('why_cdt_box_3_title') ?? 'YEARS OF EXPERIENCE EXPERTS',
+                      'description' => $page?->block('why_cdt_box_3_desc') ?? "With years of experience and numerous of project portfolios, professional IT experts will measure and manage risk to ensure accuracy in implementing solutions into customer's IT environment.",
+                      'image' => 'themes/cdt/assets/photo-1552664730-d307ca884978-w800-DNfMnljE.jpg'
+                  ]
+              ];
+          }
+        @endphp
+
         <!-- Right Column -->
         <div class="lg:w-3/4">
           <div class="grid grid-cols-1 md:grid-cols-3">
-            <!-- Box 1 -->
-            <div class="relative h-[320px] group overflow-hidden" data-gsap="curtain-reveal" data-gsap-delay="0">
-              <img src="{{ asset('themes/cdt/assets/photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg') }}" class="absolute inset-0 w-full h-full object-cover grayscale group-hover:scale-105 group-hover:blur-[3px] transition-all duration-700">
-              <div class="absolute inset-0 bg-[#4F5B53]/85 group-hover:bg-[#dc2626]/90 transition-colors duration-500 mix-blend-multiply"></div>
-              <div class="absolute inset-0 p-10 flex flex-col justify-start items-center text-center text-white z-10">
-                <h3 class="font-bold text-lg mb-4 uppercase tracking-wider leading-snug">{!! $page?->block('why_cdt_box_1_title') ?? 'NUMBER ONE IT SERVICE<br>DELIVERY' !!}</h3>
-                <p class="text-sm text-white/90 leading-relaxed max-w-[90%]">
-                  {{ $page?->block('why_cdt_box_1_desc') ?? 'Guarantee the best quality of IT service delivery with every stage delivery involves many IT experts\' role and ensure that service-level agreement (SLA) is applied.' }}
-                </p>
+            @foreach($whyCdtItems as $index => $item)
+              @php
+                $bgImg = $item['image'] ?? '';
+                $bgImgUrl = $bgImg ? (str_starts_with($bgImg, 'http') || str_starts_with($bgImg, 'themes/') || str_starts_with($bgImg, 'assets/') ? asset($bgImg) : asset('storage/' . $bgImg)) : asset('themes/cdt/assets/photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg');
+                $delay = $index * 0.2;
+              @endphp
+              <div class="relative h-[320px] group overflow-hidden" data-gsap="curtain-reveal" data-gsap-delay="{{ $delay }}">
+                <img src="{{ $bgImgUrl }}" class="absolute inset-0 w-full h-full object-cover grayscale group-hover:scale-105 group-hover:blur-[3px] transition-all duration-700">
+                <div class="absolute inset-0 bg-[#4F5B53]/85 group-hover:bg-[#dc2626]/90 transition-colors duration-500 mix-blend-multiply"></div>
+                <div class="absolute inset-0 p-10 flex flex-col justify-start items-center text-center text-white z-10">
+                  <h3 class="font-bold text-lg mb-4 uppercase tracking-wider leading-snug">{!! $item['title'] ?? '' !!}</h3>
+                  <p class="text-sm text-white/90 leading-relaxed max-w-[90%]">
+                    {{ $item['description'] ?? '' }}
+                  </p>
+                </div>
               </div>
-            </div>
-            
-            <!-- Box 2 -->
-            <div class="relative h-[320px] group overflow-hidden" data-gsap="curtain-reveal" data-gsap-delay="0.2">
-              <img src="{{ asset('themes/cdt/assets/photo-1522071820081-009f0129c71c-w800-D1mgrB8h.jpg') }}" class="absolute inset-0 w-full h-full object-cover grayscale group-hover:scale-105 group-hover:blur-[3px] transition-all duration-700">
-              <div class="absolute inset-0 bg-[#4F5B53]/85 group-hover:bg-[#dc2626]/90 transition-colors duration-500 mix-blend-multiply"></div>
-              <div class="absolute inset-0 p-10 flex flex-col justify-start items-center text-center text-white z-10">
-                <h3 class="font-bold text-lg mb-4 uppercase tracking-wider leading-snug">{!! $page?->block('why_cdt_box_2_title') ?? 'EXCELLENT CUSTOMER<br>SERVICES' !!}</h3>
-                <p class="text-sm text-white/90 leading-relaxed max-w-[90%]">
-                  {{ $page?->block('why_cdt_box_2_desc') ?? '24/7 customer response center, and many other convenient services were given fulfill customer requirement in today\'s digital era.' }}
-                </p>
-              </div>
-            </div>
-            
-            <!-- Box 3 -->
-            <div class="relative h-[320px] group overflow-hidden" data-gsap="curtain-reveal" data-gsap-delay="0.4">
-              <img src="{{ asset('themes/cdt/assets/photo-1552664730-d307ca884978-w800-DNfMnljE.jpg') }}" class="absolute inset-0 w-full h-full object-cover grayscale group-hover:scale-105 group-hover:blur-[3px] transition-all duration-700">
-              <div class="absolute inset-0 bg-[#4F5B53]/85 group-hover:bg-[#dc2626]/90 transition-colors duration-500 mix-blend-multiply"></div>
-              <div class="absolute inset-0 p-10 flex flex-col justify-start items-center text-center text-white z-10">
-                <h3 class="font-bold text-lg mb-4 uppercase tracking-wider leading-snug">{!! $page?->block('why_cdt_box_3_title') ?? 'YEARS OF EXPERIENCE<br>EXPERTS' !!}</h3>
-                <p class="text-sm text-white/90 leading-relaxed max-w-[90%]">
-                  {{ $page?->block('why_cdt_box_3_desc') ?? 'With years of experience and numerous of project portfolios, professional IT experts will measure and manage risk to ensure accuracy in implementing solutions into customer\'s IT environment.' }}
-                </p>
-              </div>
-            </div>
+            @endforeach
           </div>
         </div>
       </div>
