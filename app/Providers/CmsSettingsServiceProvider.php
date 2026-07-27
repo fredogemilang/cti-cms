@@ -34,6 +34,18 @@ class CmsSettingsServiceProvider extends ServiceProvider
         $this->registerImageOptSettings($registry);
         $this->registerPageOptSettings($registry);
         $this->registerApiSettings($registry);
+        $this->registerIconSettings($registry);
+    }
+
+    protected function registerIconSettings(SettingsRegistry $registry): void
+    {
+        $registry->registerGroup('icons', [
+            'label' => 'Icon Libraries',
+            'icon' => 'category',
+            'order' => 45,
+            'description' => 'Manage active icon sets and upload custom SVG icon packs.',
+            'component' => 'admin.icon-libraries-settings',
+        ]);
     }
 
     protected function registerGeneralSettings(SettingsRegistry $registry): void
