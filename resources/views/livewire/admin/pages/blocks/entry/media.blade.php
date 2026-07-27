@@ -5,9 +5,7 @@
     @if($block['value'])
         <div class="relative group">
             @php
-                $mediaUrl = (Str::startsWith($block['value'], ['http://', 'https://', 'themes/', 'assets/']))
-                    ? asset($block['value'])
-                    : asset('storage/' . $block['value']);
+                $mediaUrl = resolve_block_asset($block['value']);
             @endphp
             @if(Str::startsWith($block['value'], ['image/', 'data:image']) || preg_match('/\.(jpg|jpeg|png|gif|webp|svg)$/i', $block['value']))
                 <img src="{{ $mediaUrl }}" alt="Media"

@@ -274,7 +274,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         @foreach($this->meta[$field->name] as $index => $path)
                             <div class="relative aspect-square rounded-xl overflow-hidden group border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
-                                <img src="{{ \Illuminate\Support\Str::startsWith($path, 'http') ? $path : asset('storage/' . $path) }}" class="w-full h-full object-cover">
+                                <img src="{{ resolve_block_asset($path) }}" class="w-full h-full object-cover">
                                 
                                 <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                     <button 

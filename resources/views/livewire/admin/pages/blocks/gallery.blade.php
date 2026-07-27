@@ -13,7 +13,7 @@
     <div class="grid grid-cols-3 gap-2">
         @foreach($images as $imageIndex => $image)
             <div class="relative group aspect-square" wire:key="gallery-image-{{ $index }}-{{ $imageIndex }}">
-                <img src="{{ asset('storage/' . $image) }}" alt="Gallery Image"
+                <img src="{{ resolve_block_asset($image) }}" alt="Gallery Image"
                     class="w-full h-full object-cover rounded-lg border border-gray-200 dark:border-[#272B30]" />
                 <button type="button"
                     wire:click="$set('blocks.{{ $index }}.value', JSON.stringify({{ json_encode($images) }}.filter((_, i) => i !== {{ $imageIndex }})))"

@@ -74,7 +74,7 @@
                             @case('media')
                                 @if($fieldValue)
                                     <div class="relative group/media w-fit">
-                                        <img src="{{ asset('storage/' . $fieldValue) }}" alt="Media"
+                                        <img src="{{ resolve_block_asset($fieldValue) }}" alt="Media"
                                             class="h-32 w-auto max-w-full object-contain rounded-lg border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A]" />
                                         <button wire:click="$set('{{ $modelPath }}', '')" type="button"
                                             class="absolute top-1 right-1 h-6 w-6 rounded-full bg-red-500 text-white opacity-0 group-hover/media:opacity-100 transition-opacity flex items-center justify-center shadow-sm">

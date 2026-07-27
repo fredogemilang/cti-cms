@@ -20,7 +20,7 @@
         <div class="grid grid-cols-{{ $columns }} gap-3">
             @foreach($images as $imageIndex => $image)
                 <div class="relative group aspect-square" wire:key="gallery-image-{{ $index }}-{{ $imageIndex }}">
-                    <img src="{{ asset('storage/' . $image) }}" alt="Gallery image"
+                    <img src="{{ resolve_block_asset($image) }}" alt="Gallery image"
                         class="w-full h-full object-cover rounded-lg border border-gray-200 dark:border-[#272B30]" />
                     <button wire:click="removeGalleryImage({{ $index }}, {{ $imageIndex }})" type="button"
                         class="absolute top-1 right-1 h-6 w-6 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
