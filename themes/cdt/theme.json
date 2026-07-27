@@ -1,0 +1,141 @@
+{
+    "name": "CDT Theme",
+    "slug": "cdt",
+    "version": "1.0.0",
+    "description": "Central Data Technology corporate theme featuring clean design, CPT relationships, dynamic mega menu, and form builder integration.",
+    "author": "CDT Team",
+    "supports": [
+        "pages",
+        "posts",
+        "menus"
+    ],
+    "form_placeholders": [
+        {
+            "key": "contact_form",
+            "label": "Contact Form",
+            "description": "Form displayed on the main contact page."
+        },
+        {
+            "key": "job_application_form",
+            "label": "Job Application Form",
+            "description": "Form displayed on single job vacancy detail pages."
+        },
+        {
+            "key": "gated_content_form",
+            "label": "Resource / Datasheet Download Form",
+            "description": "Form displayed on sub-product and sub-solution datasheet pages."
+        }
+    ],
+    "page_templates": {
+        "default": {
+            "label": "Default Page",
+            "description": "Standard page with dynamic block builder content",
+            "blocks": []
+        },
+        "home": {
+            "label": "Homepage",
+            "description": "Main corporate landing page",
+            "blocks": [
+                {"name": "hero_prefix", "type": "text", "label": "Hero Sub-Headline / Prefix (Smaller Light Text)", "default": "Speed Up Your"},
+                {"name": "hero_title", "type": "text", "label": "Hero Main Headline (Large Bold Text)", "default": "Transformation Journey"},
+                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "Accelerate IT transformation journey with our end-to-end expertise, from strategy to execution across cloud, security, and observability."},
+                {"name": "hero_image", "type": "media", "label": "Hero Background Image", "default": "themes/cdt/assets/banner_hero-DHYDqbF8.jpg"},
+                {"name": "expertise_title_prefix", "type": "text", "label": "Area of Expertise Title Prefix", "default": "Area Of"},
+                {"name": "expertise_title_main", "type": "text", "label": "Area of Expertise Title Main", "default": "Expertise"},
+                {
+                    "name": "expertise_list",
+                    "type": "repeater",
+                    "label": "Area of Expertise Cards",
+                    "children": [
+                        {"name": "image", "type": "media", "label": "Card Image"},
+                        {"name": "title", "type": "text", "label": "Card Title"},
+                        {"name": "description", "type": "textarea", "label": "Card Description"}
+                    ],
+                    "default": [
+                        {
+                            "image": "themes/cdt/assets/security-DrNRARC-.webp",
+                            "title": "Security",
+                            "description": "In the modern environment, it's essential for businesses to work together to ensure applications are secure. CDT's security solutions allow you to take a preventative approach against cyber threats by helping you keep tabs on potential weak spots, reduce impact in the event of an attack, and build a more powerful defense to keep your most critical assets secure. Additionally, you can tailor our security solutions to fit your specific requirements."
+                        },
+                        {
+                            "image": "themes/cdt/assets/clouds.png-Doka7eSJ.webp",
+                            "title": "Cloud",
+                            "description": "Cloud technology opens the door to new innovations, promoting emerging markets like cloud-native development. CDT is a cloud expert with certified teams, so we see this as an opportunity to help businesses reap the benefits of the cloud by providing a variety of cloud-based solutions. Our competence has also earned the reputation of AWS Advanced Consulting Partner of the year 2022, AWS Security Expert, AWS Migration consultant, AWS Infrastructure provider, AWS Analytics, and AWS DevOps specialty."
+                        },
+                        {
+                            "image": "themes/cdt/assets/analytics.png-Bdc2CvaB.webp",
+                            "title": "Observability",
+                            "description": "Observability in IT refers to the practice of monitoring and analyzing system and application performance in real-time. It provides insight into the behavior and health of software systems, helping organizations detect and resolve issues quickly and effectively. CDT can help using observability in business and can ensure yours IT systems are performing optimally, identify and resolve problems before they impact customers, and improve overall reliability and customer satisfaction."
+                        }
+                    ]
+                }
+            ]
+        },
+        "about": {
+            "label": "About Us",
+            "description": "Company profile, vision mission, and core values",
+            "blocks": []
+        },
+        "management": {
+            "label": "Management",
+            "description": "Leadership team & board profile page",
+            "blocks": []
+        },
+        "careers": {
+            "label": "Careers Overview",
+            "description": "Life at CDT, perks, culture, and career opportunities",
+            "blocks": []
+        },
+        "contact": {
+            "label": "Contact Us",
+            "description": "Office locations, map, and contact form slot",
+            "blocks": []
+        }
+    },
+    "seed_pages": [
+        {
+            "title": "Home",
+            "slug": "home",
+            "template": "home",
+            "status": "published",
+            "menu_order": 0
+        },
+        {
+            "title": "About Us",
+            "slug": "about",
+            "template": "about",
+            "status": "published",
+            "menu_order": 1
+        },
+        {
+            "title": "Management",
+            "slug": "management",
+            "template": "management",
+            "status": "published",
+            "menu_order": 2
+        },
+        {
+            "title": "Careers",
+            "slug": "careers",
+            "template": "careers",
+            "status": "published",
+            "menu_order": 3
+        },
+        {
+            "title": "Contact Us",
+            "slug": "contact",
+            "template": "contact",
+            "status": "published",
+            "menu_order": 4
+        }
+    ],
+    "archive_settings": {
+        "per_page": 12,
+        "layout": "grid",
+        "show_sidebar": true,
+        "show_excerpt": true,
+        "show_author": false,
+        "show_date": true,
+        "excerpt_length": 150
+    }
+}
