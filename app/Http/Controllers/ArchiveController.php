@@ -72,6 +72,40 @@ class ArchiveController extends Controller
     }
 
     /**
+     * Nested CPT entry — GET /{cpt-slug}/{parentSlug}/{entrySlug}
+     */
+    public function nestedSingle(string $cptSlug, string $parentSlug, string $entrySlug)
+    {
+        $postType = CustomPostType::where('slug', $cptSlug)
+            ->where('is_active', true)
+            ->where('publicly_queryable', true)
+            ->firstOrFail();
+
+        $entry = CptEntry::findByLocalizedSlug($postType, $entrySlug);
+        if (! $entry) {
+            $entry = CptEntry::where('slug', $entrySlug)->where('status', 'published')->first();
+        }
+        abort_if(! $entry, 404);
+
+        $entry->load(['author', 'postType', 'terms.taxonomy']);
+
+        $taxonomies = $postType->taxonomies();
+        $previousEntry = $entry->getPreviousEntry();
+        $nextEntry = $entry->getNextEntry();
+
+        $viewName = $this->resolveSingleView($postType->slug);
+
+        return view($viewName, [
+            'postType' => $postType,
+            'entry' => $entry,
+            'seo' => $entry->seo ?? [],
+            'taxonomies' => $taxonomies,
+            'previousEntry' => $previousEntry,
+            'nextEntry' => $nextEntry,
+        ]);
+    }
+
+    /**
      * Taxonomy term archive — GET /{taxonomy-slug}/{term-slug}
      */
     public function termArchive(string $taxonomySlug, string $termSlug)

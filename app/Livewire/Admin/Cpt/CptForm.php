@@ -624,6 +624,7 @@ class CptForm extends Component
         return view('livewire.admin.cpt.cpt-form', [
             'availableSupports' => CustomPostType::$availableSupports,
             'availableTaxonomies' => CustomTaxonomy::active()->get(),
+            'availableCpts' => CustomPostType::where('is_active', true)->get(),
             'fieldTypes' => MetaField::$fieldTypes,
         ]);
     }

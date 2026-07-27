@@ -25,16 +25,14 @@ class CptFormTest extends TestCase
         config(['admin.path' => 'admin']);
     }
 
-    /** @test */
-    public function it_renders_correctly()
+    public function test_it_renders_correctly()
     {
         Livewire::test(CptForm::class)
             ->assertStatus(200)
             ->assertSee('Add New Custom Post Type');
     }
 
-    /** @test */
-    public function it_can_create_a_new_cpt()
+    public function test_it_can_create_a_new_cpt()
     {
         Livewire::test(CptForm::class)
             ->set('name', 'test_post')
@@ -50,22 +48,23 @@ class CptFormTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function it_can_add_meta_fields()
+    public function test_it_can_add_meta_fields()
     {
         Livewire::test(CptForm::class)
             ->set('name', 'test_post')
             ->set('singularLabel', 'Test Post')
             ->set('pluralLabel', 'Test Posts')
             ->set('slug', 'test-posts')
-            ->set('newField', [
-                'name' => 'price',
-                'label' => 'Price',
-                'type' => 'text',
-                'description' => 'Product price',
-                'is_required' => true,
+            ->set('metaFields', [
+                [
+                    'name' => 'price',
+                    'label' => 'Price',
+                    'type' => 'text',
+                    'description' => 'Product price',
+                    'is_required' => true,
+                    'order' => 0,
+                ],
             ])
-            ->call('saveField')
             ->call('save');
 
         $cpt = CustomPostType::where('slug', 'test-posts')->first();

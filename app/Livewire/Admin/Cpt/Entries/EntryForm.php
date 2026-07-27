@@ -3,8 +3,10 @@
 namespace App\Livewire\Admin\Cpt\Entries;
 
 use App\Models\CptEntry;
+use App\Models\CptEntryRelationship;
 use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
+use App\Models\MetaField;
 use App\Models\TaxonomyTerm;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -52,6 +54,93 @@ class EntryForm extends Component
 
     // UI State
     public bool $showMediaPicker = false;
+
+    // Relationship Modal Picker UI State
+    public bool $showRelationshipModal = false;
+
+    public ?int $activeRelationshipFieldId = null;
+
+    public string $relationshipSearch = '';
+
+    public array $tempSelectedRelationshipIds = [];
+
+    public function openRelationshipModal(int $fieldId)
+    {
+        /** @var MetaField|null $field */
+        $field = $this->postType->metaFields->where('id', $fieldId)->first();
+        if (! $field) {
+            return;
+        }
+
+        $this->activeRelationshipFieldId = $fieldId;
+        $this->relationshipSearch = '';
+        $val = $this->meta[$field->name] ?? [];
+        $this->tempSelectedRelationshipIds = is_array($val)
+            ? array_values(array_map('intval', array_filter($val, fn ($v) => $v !== '')))
+            : array_filter([(int) $val]);
+        $this->showRelationshipModal = true;
+    }
+
+    public function closeRelationshipModal()
+    {
+        $this->showRelationshipModal = false;
+        $this->activeRelationshipFieldId = null;
+        $this->relationshipSearch = '';
+        $this->tempSelectedRelationshipIds = [];
+    }
+
+    public function toggleRelationshipTempSelection(int $entryId)
+    {
+        /** @var MetaField|null $field */
+        $field = $this->postType->metaFields->where('id', $this->activeRelationshipFieldId)->first();
+        if (! $field) {
+            return;
+        }
+
+        $cardinality = $field->options['cardinality'] ?? 'many_to_many';
+        if ($cardinality === 'one_to_many') {
+            $this->tempSelectedRelationshipIds = [$entryId];
+        } else {
+            if (in_array($entryId, $this->tempSelectedRelationshipIds, true)) {
+                $this->tempSelectedRelationshipIds = array_values(
+                    array_filter($this->tempSelectedRelationshipIds, fn ($id) => $id !== $entryId)
+                );
+            } else {
+                $this->tempSelectedRelationshipIds[] = $entryId;
+            }
+        }
+    }
+
+    public function confirmRelationshipSelection()
+    {
+        /** @var MetaField|null $field */
+        $field = $this->postType->metaFields->where('id', $this->activeRelationshipFieldId)->first();
+        if ($field) {
+            $cardinality = $field->options['cardinality'] ?? 'many_to_many';
+            if ($cardinality === 'one_to_many') {
+                $this->meta[$field->name] = ! empty($this->tempSelectedRelationshipIds) ? (string) $this->tempSelectedRelationshipIds[0] : '';
+            } else {
+                $this->meta[$field->name] = array_map('strval', $this->tempSelectedRelationshipIds);
+            }
+        }
+
+        $this->closeRelationshipModal();
+    }
+
+    public function removeRelationshipItem(string $fieldName, int $entryId)
+    {
+        if (isset($this->meta[$fieldName])) {
+            if (is_array($this->meta[$fieldName])) {
+                $this->meta[$fieldName] = array_values(
+                    array_filter($this->meta[$fieldName], fn ($id) => (int) $id !== $entryId)
+                );
+            } else {
+                if ((int) $this->meta[$fieldName] === $entryId) {
+                    $this->meta[$fieldName] = '';
+                }
+            }
+        }
+    }
 
     // === Translations state ===
     public string $editingLocale = '';
@@ -274,6 +363,25 @@ class EntryForm extends Component
             $this->selectedTerms[$term->taxonomy_id][] = $term->id;
         }
 
+        // Load relationship values from pivot table
+        $rels = CptEntryRelationship::where('parent_entry_id', $entry->id)
+            ->orderBy('order')
+            ->get();
+        foreach ($rels as $rel) {
+            $metaField = MetaField::find($rel->meta_field_id);
+            if ($metaField) {
+                $cardinality = $metaField->options['cardinality'] ?? 'many_to_many';
+                if ($cardinality === 'one_to_many') {
+                    $this->meta[$metaField->name] = (string) $rel->child_entry_id;
+                } else {
+                    if (! isset($this->meta[$metaField->name]) || ! is_array($this->meta[$metaField->name])) {
+                        $this->meta[$metaField->name] = [];
+                    }
+                    $this->meta[$metaField->name][] = (string) $rel->child_entry_id;
+                }
+            }
+        }
+
         // Hydrate per-locale snapshots from the translations JSON column.
         $translations = $entry->translations ?? [];
         foreach ($translations as $locale => $fields) {
@@ -461,6 +569,31 @@ class EntryForm extends Component
         }
         $entry->terms()->sync($allTerms);
 
+        // Sync Relationship fields into cpt_entry_relationships table
+        foreach ($this->postType->metaFields as $field) {
+            /** @var MetaField $field */
+            if ($field->type === 'relationship') {
+                CptEntryRelationship::where('parent_entry_id', $entry->id)
+                    ->where('meta_field_id', $field->id)
+                    ->delete();
+
+                $val = $this->meta[$field->name] ?? null;
+                if (! empty($val)) {
+                    $childIds = is_array($val) ? $val : [$val];
+                    foreach (array_values($childIds) as $order => $childId) {
+                        if ($childId) {
+                            CptEntryRelationship::create([
+                                'parent_entry_id' => $entry->id,
+                                'child_entry_id' => (int) $childId,
+                                'meta_field_id' => $field->id,
+                                'order' => $order,
+                            ]);
+                        }
+                    }
+                }
+            }
+        }
+
         // Notify SeoMetaBox to save/attach
         $this->dispatch('seo-attach', id: $entry->id);
 
@@ -607,8 +740,26 @@ class EntryForm extends Component
         $groupedFields = [];
 
         foreach ($this->postType->metaFields as $field) {
+            /** @var MetaField $field */
             $group = $field->field_group ?: 'default';
             $groupedFields[$group][] = $field;
+        }
+
+        $targetEntriesByField = [];
+        foreach ($this->postType->metaFields as $field) {
+            /** @var MetaField $field */
+            if ($field->type === 'relationship') {
+                $targetCptId = $field->options['target_post_type_id'] ?? null;
+                if ($targetCptId) {
+                    $targetEntriesByField[$field->id] = CptEntry::where('post_type_id', $targetCptId)
+                        ->where('status', 'published')
+                        ->where('id', '!=', $this->entryId ?? 0)
+                        ->orderBy('title')
+                        ->get(['id', 'title', 'slug']);
+                } else {
+                    $targetEntriesByField[$field->id] = collect();
+                }
+            }
         }
 
         return view('livewire.admin.cpt.entries.entry-form', [
@@ -617,6 +768,7 @@ class EntryForm extends Component
             'possibleParents' => $possibleParents,
             'metaBoxes' => $metaBoxes,
             'groupedFields' => $groupedFields,
+            'targetEntriesByField' => $targetEntriesByField,
         ]);
     }
 

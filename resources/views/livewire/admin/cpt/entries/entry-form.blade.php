@@ -523,8 +523,91 @@
         </aside>
     </div>
     
-    {{-- TipTap Media Picker Modal (If used by CPT logic, otherwise this might just exist but be unused if not wired up) --}}
+    {{-- TipTap Media Picker Modal --}}
     @if(in_array('thumbnail', $postType->supports ?? []))
     <livewire:admin.tiptap-media-picker />
+    @endif
+
+    {{-- Relationship Picker Modal --}}
+    @if($showRelationshipModal)
+        @php
+            $activeField = $postType->metaFields->where('id', $activeRelationshipFieldId)->first();
+            $candidates = $targetEntriesByField[$activeRelationshipFieldId] ?? collect();
+            if(!empty($relationshipSearch)) {
+                $candidates = $candidates->filter(fn($item) => 
+                    str_contains(strtolower($item->title), strtolower($relationshipSearch)) || 
+                    str_contains(strtolower($item->slug), strtolower($relationshipSearch))
+                );
+            }
+            $cardinality = $activeField->options['cardinality'] ?? 'many_to_many';
+        @endphp
+        <div class="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-6">
+                <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-[#272B30]">
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900 dark:text-white">
+                            Select {{ $activeField->label ?? 'Related Entries' }}
+                        </h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                            {{ $cardinality === 'one_to_many' ? 'Select 1 entry (Single)' : 'Select multiple entries (Multi-Check)' }}
+                        </p>
+                    </div>
+                    <button type="button" wire:click="closeRelationshipModal" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-xl">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                {{-- Search Box --}}
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
+                    <input 
+                        type="text" 
+                        wire:model.live.debounce.300ms="relationshipSearch" 
+                        placeholder="Search entries by title or slug..." 
+                        class="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] rounded-xl text-xs text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+
+                {{-- Candidates List --}}
+                <div class="max-h-64 overflow-y-auto space-y-2 pr-1">
+                    @forelse($candidates as $cand)
+                        @php
+                            $isSelected = in_array($cand->id, $tempSelectedRelationshipIds, true);
+                        @endphp
+                        <div 
+                            wire:click="toggleRelationshipTempSelection({{ $cand->id }})"
+                            class="flex items-center justify-between p-3 rounded-2xl border transition-all cursor-pointer {{ $isSelected ? 'bg-blue-50/50 dark:bg-blue-900/20 border-blue-500' : 'bg-gray-50/50 dark:bg-[#0B0B0B]/50 border-gray-200 dark:border-[#272B30] hover:border-gray-300 dark:hover:border-gray-700' }}"
+                        >
+                            <div class="flex items-center gap-3">
+                                <input 
+                                    type="{{ $cardinality === 'one_to_many' ? 'radio' : 'checkbox' }}" 
+                                    @checked($isSelected)
+                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                >
+                                <div>
+                                    <h4 class="text-xs font-bold text-gray-900 dark:text-white">{{ $cand->title }}</h4>
+                                    <p class="text-[10px] text-gray-400">/{{ $cand->slug }}</p>
+                                </div>
+                            </div>
+                            @if($isSelected)
+                                <span class="material-symbols-outlined text-blue-500 text-sm">check_circle</span>
+                            @endif
+                        </div>
+                    @empty
+                        <div class="text-center py-8 text-xs text-gray-400 italic">No entries found matching search query.</div>
+                    @endforelse
+                </div>
+
+                {{-- Action Buttons --}}
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-[#272B30]">
+                    <button type="button" wire:click="closeRelationshipModal" class="px-4 py-2 rounded-xl text-xs font-semibold text-gray-500 hover:text-gray-700 dark:hover:text-white">
+                        Cancel
+                    </button>
+                    <button type="button" wire:click="confirmRelationshipSelection" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-500/20">
+                        Confirm Selection ({{ count($tempSelectedRelationshipIds) }})
+                    </button>
+                </div>
+            </div>
+        </div>
     @endif
 </div>

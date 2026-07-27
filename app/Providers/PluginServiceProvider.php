@@ -92,6 +92,13 @@ class PluginServiceProvider extends ServiceProvider
             // CPT single entries: /{cpt-slug}/{entry-slug} (requires publicly_queryable)
             if (! empty($singleSlugs)) {
                 $singlePattern = implode('|', array_map('preg_quote', $singleSlugs));
+
+                Route::get('/{cptSlug}/{parentSlug}/{entrySlug}', [ArchiveController::class, 'nestedSingle'])
+                    ->where('cptSlug', $singlePattern)
+                    ->where('parentSlug', '[a-zA-Z0-9\\-]+')
+                    ->where('entrySlug', '[a-zA-Z0-9\\-]+')
+                    ->name('cpt.entry.nested.show');
+
                 Route::get('/{cptSlug}/{entrySlug}', [ArchiveController::class, 'single'])
                     ->where('cptSlug', $singlePattern)
                     ->where('entrySlug', '[a-zA-Z0-9\\-]+')

@@ -152,6 +152,57 @@ class CptEntry extends Model
     }
 
     /**
+     * Get related child entries for a given meta field (Relationship)
+     */
+    public function relatedEntries($metaField = null): BelongsToMany
+    {
+        $query = $this->belongsToMany(
+            CptEntry::class,
+            'cpt_entry_relationships',
+            'parent_entry_id',
+            'child_entry_id'
+        )
+            ->withPivot('order')
+            ->orderBy('cpt_entry_relationships.order');
+
+        if ($metaField !== null) {
+            $fieldId = is_numeric($metaField)
+                ? $metaField
+                : MetaField::where('name', $metaField)
+                    ->where('fieldable_type', CustomPostType::class)
+                    ->where('fieldable_id', $this->post_type_id)
+                    ->value('id');
+            $query->wherePivot('meta_field_id', $fieldId);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Get parent entries that relate to this entry via a given meta field
+     */
+    public function parentRelatedEntries($metaField = null): BelongsToMany
+    {
+        $query = $this->belongsToMany(
+            CptEntry::class,
+            'cpt_entry_relationships',
+            'child_entry_id',
+            'parent_entry_id'
+        )
+            ->withPivot('order')
+            ->orderBy('cpt_entry_relationships.order');
+
+        if ($metaField !== null) {
+            $fieldId = is_numeric($metaField)
+                ? $metaField
+                : MetaField::where('name', $metaField)->value('id');
+            $query->wherePivot('meta_field_id', $fieldId);
+        }
+
+        return $query;
+    }
+
+    /**
      * Scope for published entries
      */
     public function scopePublished($query)
@@ -217,6 +268,18 @@ class CptEntry extends Model
             ? $this->postType->slug
             : (string) CustomPostType::where('id', $this->post_type_id)->value('slug');
 
+        /** @var CptEntry|null $parentRelated */
+        $parentRelated = $this->parentRelatedEntries()->first();
+        if ($parentRelated && $parentRelated->post_type_id !== $this->post_type_id) {
+            return url('/'.$cptSlug.'/'.$parentRelated->slug.'/'.$this->slug);
+        }
+
+        /** @var CptEntry|null $hierarchicalParent */
+        $hierarchicalParent = $this->parent;
+        if ($hierarchicalParent) {
+            return url('/'.$cptSlug.'/'.$hierarchicalParent->slug.'/'.$this->slug);
+        }
+
         return url('/'.$cptSlug.'/'.$this->slug);
     }
 
@@ -242,5 +305,49 @@ class CptEntry extends Model
             ->where('published_at', '>', $this->published_at)
             ->orderBy('published_at')
             ->first();
+    }
+
+    /**
+     * Generate Schema.org JSON-LD structured data including relationship variants/related items
+     */
+    public function getSchemaJsonLd(): array
+    {
+        $url = $this->getUrl();
+
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Thing',
+            'name' => $this->title,
+            'description' => $this->getResolvedSeoDescription() ?? $this->excerpt,
+            'url' => $url,
+        ];
+
+        if ($this->featured_image) {
+            $schema['image'] = asset('storage/'.$this->featured_image);
+        }
+
+        $relationshipFields = MetaField::where('fieldable_type', CustomPostType::class)
+            ->where('fieldable_id', $this->post_type_id)
+            ->where('type', 'relationship')
+            ->get();
+
+        $relatedItems = [];
+        foreach ($relationshipFields as $field) {
+            $children = $this->relatedEntries($field->id)->where('status', 'published')->get();
+            foreach ($children as $child) {
+                /** @var CptEntry $child */
+                $relatedItems[] = [
+                    '@type' => 'Thing',
+                    'name' => $child->title,
+                    'url' => $child->getUrl(),
+                ];
+            }
+        }
+
+        if (! empty($relatedItems)) {
+            $schema['isRelatedTo'] = $relatedItems;
+        }
+
+        return $schema;
     }
 }

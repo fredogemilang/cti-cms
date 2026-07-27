@@ -292,6 +292,42 @@
             </div>
             @break
 
+        @case('relationship')
+            @php
+                $cardinality = $field->options['cardinality'] ?? 'many_to_many';
+                $candidates = $targetEntriesByField[$field->id] ?? collect();
+                $rawValue = $this->meta[$field->name] ?? [];
+                $selectedIds = is_array($rawValue) ? array_map('intval', array_filter($rawValue, fn($v) => $v !== '')) : array_values(array_filter([(int) $rawValue]));
+                $selectedEntries = $candidates->whereIn('id', $selectedIds);
+            @endphp
+            <div class="space-y-3">
+                @if($selectedEntries->isNotEmpty())
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($selectedEntries as $selItem)
+                            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50 text-xs font-semibold">
+                                <span class="material-symbols-outlined text-sm">link</span>
+                                <span>{{ $selItem->title }}</span>
+                                <button type="button" wire:click="removeRelationshipItem('{{ $field->name }}', {{ $selItem->id }})" class="hover:text-red-500 transition-colors ml-1">
+                                    <span class="material-symbols-outlined text-xs">close</span>
+                                </button>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-xs text-gray-400 italic">No related entries selected yet.</div>
+                @endif
+
+                <button 
+                    type="button"
+                    wire:click="openRelationshipModal({{ $field->id }})"
+                    class="px-4 py-2 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-200 transition-all flex items-center gap-2"
+                >
+                    <span class="material-symbols-outlined text-sm text-blue-500">add_link</span>
+                    <span>Select {{ $field->label }}</span>
+                </button>
+            </div>
+            @break
+
         @case('repeater')
             <div class="space-y-4">
                 {{-- Repeater Rows --}}

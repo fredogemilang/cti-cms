@@ -259,6 +259,31 @@
                                                     </div>
                                                 @endif
 
+                                                {{-- Relationship Settings --}}
+                                                @if($field['type'] === 'relationship')
+                                                    <div class="mt-4 p-4 bg-gray-50 dark:bg-[#0B0B0B]/30 rounded-xl border border-gray-200 dark:border-[#272B30] space-y-4">
+                                                        <h4 class="text-xs font-bold uppercase tracking-wider text-[#6F767E]">Relationship Configuration</h4>
+                                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            <div class="space-y-1">
+                                                                <label class="text-[10px] font-bold uppercase tracking-wider text-[#6F767E]">Target Post Type</label>
+                                                                <select wire:model="metaFields.{{ $fieldIndex }}.options.target_post_type_id" class="w-full rounded-lg border-none bg-white dark:bg-[#272B30] py-1.5 px-3 text-xs text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-600">
+                                                                    <option value="">Select Target Post Type</option>
+                                                                    @foreach($availableCpts as $targetCpt)
+                                                                        <option value="{{ $targetCpt->id }}">{{ $targetCpt->singular_label }} ({{ $targetCpt->name }})</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="space-y-1">
+                                                                <label class="text-[10px] font-bold uppercase tracking-wider text-[#6F767E]">Cardinality</label>
+                                                                <select wire:model="metaFields.{{ $fieldIndex }}.options.cardinality" class="w-full rounded-lg border-none bg-white dark:bg-[#272B30] py-1.5 px-3 text-xs text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-600">
+                                                                    <option value="many_to_many">Many to Many (Multiple Selection)</option>
+                                                                    <option value="one_to_many">One to Many (Single Selection)</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+
                                                 {{-- Repeater Fields --}}
                                                 @if($field['type'] === 'repeater')
                                                     <div class="mt-4 p-4 bg-gray-50 dark:bg-[#0B0B0B]/30 rounded-xl border border-gray-200 dark:border-[#272B30]">

@@ -122,6 +122,11 @@ class MetaField extends Model
             'icon' => 'palette',
             'description' => 'Color picker',
         ],
+        'relationship' => [
+            'label' => 'Relationship',
+            'icon' => 'alt_route',
+            'description' => 'Relate entries from another or same Custom Post Type',
+        ],
     ];
 
     /**

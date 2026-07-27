@@ -348,6 +348,84 @@ You can create a taxonomy-specific view at `taxonomy-{taxonomy-slug}.blade.php`.
 | **Single Entry** | `{theme}::single-{cpt}` → `{theme}::single-entry` → `single-{cpt}` → `single-entry` |
 | **Taxonomy Term** | `{theme}::taxonomy-{tax}` → `{theme}::archive` → `taxonomy-{tax}` → `archive` |
 
+---
+
+## CPT Relationships & Sub-CPTs (Product & Sub-Product / Variants)
+
+When working with related Custom Post Types (e.g. `Product` → `Sub Product` / Variants, `Course` → `Lessons`, `Project` → `Client`), themes can easily retrieve and render related entries, breadcrumbs, and Schema.org structured data.
+
+### 1. Retrieving Related Entries in Blade
+
+To display related child entries (e.g. Sub-Products under a Main Product):
+
+```blade
+{{-- In single-product.blade.php --}}
+@php
+    // Fetch related sub-products using MetaField name or ID
+    $subProducts = $entry->relatedEntries('sub_products')->published()->get();
+@endphp
+
+@if($subProducts->isNotEmpty())
+    <div class="sub-products-grid">
+        <h3>Product Variants / Sub-Products</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            @foreach($subProducts as $sub)
+                <div class="product-card border rounded-xl p-4">
+                    @if($sub->featured_image)
+                        <img src="{{ asset('storage/' . $sub->featured_image) }}" alt="{{ $sub->title }}">
+                    @endif
+                    <h4><a href="{{ $sub->getUrl() }}">{{ $sub->title }}</a></h4>
+                    <p>{{ Str::limit(strip_tags($sub->excerpt), 100) }}</p>
+                    <a href="{{ $sub->getUrl() }}" class="btn-detail">View Variant Specs &rarr;</a>
+                </div>
+            @endforeach
+        </div>
+    </div>
+@endif
+```
+
+### 2. Retrieving Parent Entry from a Sub-Product
+
+To display the parent link or breadcrumb from a child Sub-Product page:
+
+```blade
+{{-- In single-sub_product.blade.php --}}
+@php
+    // Get primary parent product entry
+    $parentProduct = $entry->parentRelatedEntries('sub_products')->first();
+@endphp
+
+@if($parentProduct)
+    <nav class="breadcrumb text-sm mb-4">
+        <a href="{{ url('/') }}">Home</a> &gt; 
+        <a href="{{ url('/' . $postType->slug) }}">{{ $postType->plural_label }}</a> &gt; 
+        <a href="{{ $parentProduct->getUrl() }}">{{ $parentProduct->title }}</a> &gt; 
+        <span>{{ $entry->title }}</span>
+    </nav>
+@endif
+```
+
+### 3. SEO Friendly Nested URLs
+
+When a Sub-Product has a related parent entry, `$entry->getUrl()` automatically resolves to a nested URL structure for optimal SEO:
+
+```
+/{cpt-slug}/{parent-entry-slug}/{sub-product-slug}
+```
+**Example:** `/sub-products/iphone-15-pro/iphone-15-pro-256gb-natural-titanium`
+
+### 4. Schema.org Structured Data (JSON-LD)
+
+To render Google-ready Schema.org JSON-LD including related items (`isRelatedTo`):
+
+```blade
+@push('head')
+<script type="application/ld+json">
+{!! json_encode($entry->getSchemaJsonLd(), JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+@endpush
+```
+
 ### Archive Settings (`theme.json`)
 
 Configure archive behavior in `theme.json`:
