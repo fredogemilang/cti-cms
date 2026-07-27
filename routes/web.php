@@ -271,6 +271,12 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
         Route::delete('/{form}', [FormController::class, 'destroy'])
             ->name('destroy')
             ->middleware('permission:forms.delete');
+        Route::get('/{form}/notifications', [FormController::class, 'notifications'])
+            ->name('notifications')
+            ->middleware('permission:forms.edit');
+        Route::post('/{form}/notifications', [FormController::class, 'updateNotifications'])
+            ->name('notifications.update')
+            ->middleware('permission:forms.edit');
         Route::get('/{form}/entries', [FormController::class, 'entries'])
             ->name('entries');
         Route::get('/{form}/export', [FormController::class, 'exportEntries'])

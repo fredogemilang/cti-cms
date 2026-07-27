@@ -19,6 +19,13 @@
             </a>
 
             <div class="flex items-center gap-3">
+                {{-- Sub-navigation Tabs --}}
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('admin.forms.edit', $form) }}" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all">Form Builder</a>
+                    <a href="{{ route('admin.forms.notifications', $form) }}" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all">Email Notifications</a>
+                    <a href="{{ route('admin.forms.entries', $form) }}" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white shadow-sm">Entries ({{ $form->entries()->count() }})</a>
+                </div>
+
                 {{-- Export Dropdown --}}
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" @click.outside="open = false" 

@@ -11,16 +11,25 @@
             href="{{ route('admin.forms.index') }}">
             <span class="material-symbols-outlined text-lg">arrow_back</span>
         </a>
-        <div class="flex items-center gap-3 min-w-0 flex-1">
-            <h1 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] truncate">
-                Edit Form - {{ $form->name }}
-            </h1>
-            <div class="flex items-center gap-2 text-xs text-[#6F767E] shrink-0" x-cloak>
-                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider"
-                    :class="isActive == '1' || isActive == true ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : 'bg-gray-100 dark:bg-gray-500/10 text-gray-600 dark:text-gray-400'">
-                    <span class="w-1.5 h-1.5 rounded-full" :class="isActive == '1' || isActive == true ? 'bg-emerald-500' : 'bg-gray-500'"></span>
-                    <span x-text="isActive == '1' || isActive == true ? 'Active' : 'Inactive'"></span>
-                </span>
+        <div class="flex items-center gap-3 min-w-0 flex-1 justify-between">
+            <div class="flex items-center gap-3">
+                <h1 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] truncate">
+                    Edit Form - {{ $form->name }}
+                </h1>
+                <div class="flex items-center gap-2 text-xs text-[#6F767E] shrink-0" x-cloak>
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider"
+                        :class="isActive == '1' || isActive == true ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : 'bg-gray-100 dark:bg-gray-500/10 text-gray-600 dark:text-gray-400'">
+                        <span class="w-1.5 h-1.5 rounded-full" :class="isActive == '1' || isActive == true ? 'bg-emerald-500' : 'bg-gray-500'"></span>
+                        <span x-text="isActive == '1' || isActive == true ? 'Active' : 'Inactive'"></span>
+                    </span>
+                </div>
+            </div>
+
+            {{-- Sub-navigation Tabs --}}
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="{{ route('admin.forms.edit', $form) }}" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white shadow-sm">Form Builder</a>
+                <a href="{{ route('admin.forms.notifications', $form) }}" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all">Email Notifications</a>
+                <a href="{{ route('admin.forms.entries', $form) }}" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all">Entries ({{ $form->entries()->count() }})</a>
             </div>
         </div>
     </div>
@@ -98,53 +107,6 @@
 
                                 <div class="space-y-4">
                                     <div class="flex items-start gap-4">
-                                        {{-- Field Type Icon --}}
-                                        <div class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#272B30] flex items-center justify-center shrink-0">
-                                            <span class="material-symbols-outlined text-[#6F767E]" x-text="getFieldIcon(field.type)"></span>
-                                        </div>
-                                        
-                                        <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1">Label</label>
-                                                <input x-model="field.label" type="text" 
-                                                    x-on:input="field.field_id = $event.target.value.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '')"
-                                                    class="w-full bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-semibold rounded-lg focus:ring-2 focus:ring-primary px-3 py-2 text-[#111827] dark:text-[#FCFCFC]" 
-                                                    placeholder="Enter Field Label" required>
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1">Field ID</label>
-                                                <input x-model="field.field_id" type="text" 
-                                                    class="w-full bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-lg focus:ring-2 focus:ring-primary px-3 py-2 text-[#111827] dark:text-[#FCFCFC]" 
-                                                    placeholder="unique_id" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    {{-- Expanded Settings --}}
-                                    <div class="pl-[56px] space-y-4">
-                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                            <div>
-                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1">Placeholder</label>
-                                                <input x-model="field.placeholder" type="text" 
-                                                    class="w-full bg-transparent border border-gray-200 dark:border-[#272B30] text-sm rounded-lg focus:ring-2 focus:ring-primary px-3 py-2 text-[#111827] dark:text-[#FCFCFC]">
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1">Help Text</label>
-                                                <input x-model="field.help_text" type="text" 
-                                                    class="w-full bg-transparent border border-gray-200 dark:border-[#272B30] text-sm rounded-lg focus:ring-2 focus:ring-primary px-3 py-2 text-[#111827] dark:text-[#FCFCFC]">
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1">Width</label>
-                                                <select x-model="field.column_width" 
-                                                    class="w-full bg-transparent border border-gray-200 dark:border-[#272B30] text-sm rounded-lg focus:ring-2 focus:ring-primary px-3 py-2 text-[#111827] dark:text-[#FCFCFC]">
-                                                    <option value="full">Full Width</option>
-                                                    <option value="half">Half (1/2)</option>
-                                                    <option value="third">Third (1/3)</option>
-                                                    <option value="quarter">Quarter (1/4)</option>
-                                                </select>
-                                            </div>
-                                        </div>
 
                                         {{-- Options for select/radio/checkbox --}}
                                         <div x-show="['select', 'radio', 'checkbox'].includes(field.type)" class="bg-[#F4F5F6] dark:bg-[#0B0B0B] rounded-xl p-4">
@@ -445,37 +407,15 @@
                             </div>
                         </div>
                     </div>
-                    
-                    {{-- Notifications Tab --}}
-                    <div x-show="settingsTab === 'notifications'" class="space-y-4">
-                        <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B]">
-                            <input type="checkbox" x-model="notifications.enabled" class="rounded border-gray-300 text-primary focus:ring-primary">
-                            <div>
-                                <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">Email Notifications</span>
-                                <p class="text-xs text-[#6F767E]">Send email on form submission</p>
+                    {{-- Link to Dedicated Email Notifications Page --}}
+                    <div class="pt-4 border-t border-gray-200 dark:border-[#272B30]">
+                        <a href="{{ route('admin.forms.notifications', $form) }}" class="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/20 text-primary hover:bg-primary/10 transition-all">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-lg">mail</span>
+                                <span class="text-xs font-bold">Email Notifications Page</span>
                             </div>
-                        </label>
-                        
-                        <div x-show="notifications.enabled" class="space-y-4">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Admin Email</label>
-                                <input x-model="notifications.admin_email" type="email"
-                                    class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                                    placeholder="admin@example.com">
-                            </div>
-                            
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Email Subject</label>
-                                <input x-model="notifications.subject" type="text"
-                                    class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                                    placeholder="New Form Submission">
-                            </div>
-                            
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" x-model="notifications.send_to_user" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <span class="text-sm text-[#111827] dark:text-[#FCFCFC]">Send confirmation to user</span>
-                            </label>
-                        </div>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
                     </div>
                     
                     {{-- Confirmations Tab --}}

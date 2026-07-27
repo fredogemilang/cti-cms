@@ -16,16 +16,21 @@ class FormNotificationService
     {
         $notifications = $form->notifications ?? [];
 
-        if (empty($notifications['enabled'])) {
+        $notifyAdmin = ! empty($notifications['notify_admin']) || (! isset($notifications['notify_admin']) && ! empty($notifications['enabled']));
+        $sendToUser = ! empty($notifications['send_to_user']);
+
+        if (! $notifyAdmin && ! $sendToUser) {
             return;
         }
 
         try {
-            // Send admin notification
-            $this->sendAdminNotification($form, $entry, $notifications);
+            // Send admin notification if enabled
+            if ($notifyAdmin) {
+                $this->sendAdminNotification($form, $entry, $notifications);
+            }
 
             // Send user confirmation if enabled
-            if (! empty($notifications['send_to_user'])) {
+            if ($sendToUser) {
                 $this->sendUserConfirmation($form, $entry, $notifications);
             }
         } catch (\Exception $e) {
@@ -75,11 +80,10 @@ class FormNotificationService
             return;
         }
 
-        $subject = "Thank you for your submission - {$form->name}";
-        $confirmations = $form->confirmations ?? [];
-        $message = $confirmations['message'] ?? 'Thank you for your submission. We will get back to you soon.';
+        $subject = $notifications['user_subject'] ?? "Thank you for your submission - {$form->name}";
+        $customBody = $notifications['user_email_body'] ?? null;
 
-        $html = $this->buildUserConfirmationHtml($form, $message, $data);
+        $html = $this->buildUserConfirmationHtml($form, $customBody, $data);
 
         Mail::html($html, function ($mail) use ($userEmail, $subject) {
             $mail->to($userEmail)
@@ -196,11 +200,54 @@ class FormNotificationService
     /**
      * Build HTML for user confirmation email.
      */
-    protected function buildUserConfirmationHtml(Form $form, string $message, array $data): string
+    protected function buildUserConfirmationHtml(Form $form, ?string $customBody, array $data): string
     {
-        // Find user's name if available
-        $userName = $this->findUserName($data);
-        $greeting = $userName ? "Dear {$userName}," : 'Hello,';
+        $userName = $this->findUserName($data) ?? 'Valued Customer';
+        $userEmail = $this->findUserEmailFromData($form, $data) ?? '';
+        $companyName = is_string($data['company_name'] ?? null) ? $data['company_name'] : (is_string($data['company'] ?? null) ? $data['company'] : '');
+
+        if (! empty($customBody)) {
+            $parsedContent = strtr($customBody, [
+                '{name}' => e($userName),
+                '{email}' => e($userEmail),
+                '{corporate_email}' => e($userEmail),
+                '{company_name}' => e($companyName),
+                '{company}' => e($companyName),
+                '{form_name}' => e($form->name),
+            ]);
+
+            return '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+                    .container { max-width: 600px; margin: 20px auto; padding: 0; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: #ffffff; }
+                    .header { background: #b82d25; color: white; padding: 24px 30px; text-align: center; }
+                    .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
+                    .content { padding: 30px; background: #ffffff; color: #111827; font-size: 15px; }
+                    .footer { background: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>'.e($form->name).'</h1>
+                    </div>
+                    <div class="content">
+                        '.$parsedContent.'
+                    </div>
+                    <div class="footer">
+                        <p>This email was sent because you submitted a request on Central Data Technology.</p>
+                    </div>
+                </div>
+            </body>
+            </html>';
+        }
+
+        $greeting = "Dear {$userName},";
+        $message = 'Thank you for your submission. We will get back to you soon.';
 
         $html = '
         <!DOCTYPE html>

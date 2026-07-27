@@ -426,4 +426,44 @@ class FormController extends Controller
         return redirect()->route('admin.forms.assignments')
             ->with('success', 'Form assignments saved successfully.');
     }
+
+    /**
+     * Display form notification settings page.
+     */
+    public function notifications($id)
+    {
+        $form = Form::with('fields')->findOrFail($id);
+
+        return view('admin.forms.notifications', compact('form'));
+    }
+
+    /**
+     * Update form notification settings.
+     */
+    public function updateNotifications(Request $request, $id)
+    {
+        $form = Form::findOrFail($id);
+
+        $validated = $request->validate([
+            'notifications' => 'required|array',
+            'notifications.notify_admin' => 'nullable|boolean',
+            'notifications.admin_email' => 'nullable|string',
+            'notifications.subject' => 'nullable|string',
+            'notifications.send_to_user' => 'nullable|boolean',
+            'notifications.user_subject' => 'nullable|string',
+            'notifications.user_email_body' => 'nullable|string',
+        ]);
+
+        $notifications = $validated['notifications'];
+        $notifications['notify_admin'] = (bool) ($notifications['notify_admin'] ?? false);
+        $notifications['send_to_user'] = (bool) ($notifications['send_to_user'] ?? false);
+        $notifications['enabled'] = $notifications['notify_admin'] || $notifications['send_to_user'];
+
+        $form->update([
+            'notifications' => $notifications,
+        ]);
+
+        return redirect()->route('admin.forms.notifications', $form->id)
+            ->with('success', 'Notification settings saved successfully!');
+    }
 }
