@@ -191,8 +191,7 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             @foreach($expertiseItems as $item)
               @php
-                $itemImg = $item['image'] ?? '';
-                $itemImgUrl = $itemImg ? (str_starts_with($itemImg, 'http') || str_starts_with($itemImg, 'themes/') || str_starts_with($itemImg, 'assets/') ? asset($itemImg) : asset('storage/' . $itemImg)) : '';
+                $itemImgUrl = resolve_block_asset($item['image'] ?? '');
               @endphp
               <div class="expertise-card bg-white shadow-sm border border-zinc-100 overflow-hidden hover:shadow-md transition-shadow rounded-2xl flex flex-col">
                 @if($itemImgUrl)
@@ -326,8 +325,10 @@
           <div class="grid grid-cols-1 md:grid-cols-3">
             @foreach($whyCdtItems as $index => $item)
               @php
-                $bgImg = $item['image'] ?? '';
-                $bgImgUrl = $bgImg ? (str_starts_with($bgImg, 'http') || str_starts_with($bgImg, 'themes/') || str_starts_with($bgImg, 'assets/') ? asset($bgImg) : asset('storage/' . $bgImg)) : asset('themes/cdt/assets/photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg');
+                $bgImgUrl = resolve_block_asset($item['image'] ?? '');
+                if (!$bgImgUrl) {
+                    $bgImgUrl = resolve_block_asset('photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg');
+                }
                 $delay = $index * 0.2;
               @endphp
               <div class="relative h-[320px] group overflow-hidden" data-gsap="curtain-reveal" data-gsap-delay="{{ $delay }}">

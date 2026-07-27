@@ -237,3 +237,43 @@ if (! function_exists('render_theme_form')) {
         return $html;
     }
 }
+
+if (! function_exists('resolve_block_asset')) {
+    /**
+     * Resolve a block image or media asset path to a valid public URL.
+     */
+    function resolve_block_asset(?string $path): string
+    {
+        if (empty($path)) {
+            return '';
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        $cleanPath = ltrim($path, '/');
+
+        if (str_starts_with($cleanPath, 'themes/')) {
+            return asset($cleanPath);
+        }
+
+        if (str_starts_with($cleanPath, 'storage/')) {
+            return asset($cleanPath);
+        }
+
+        $activeThemeSlug = active_theme()?->slug ?? 'cdt';
+
+        if (str_starts_with($cleanPath, 'assets/')) {
+            return asset("themes/{$activeThemeSlug}/{$cleanPath}");
+        }
+
+        // Check if file exists in active theme assets
+        $themeAssetRel = "themes/{$activeThemeSlug}/assets/{$cleanPath}";
+        if (file_exists(public_path($themeAssetRel)) || file_exists(base_path($themeAssetRel))) {
+            return asset($themeAssetRel);
+        }
+
+        return asset('storage/'.$cleanPath);
+    }
+}
