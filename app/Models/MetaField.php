@@ -34,6 +34,23 @@ class MetaField extends Model
     ];
 
     /**
+     * Boot method to normalize repeater fields key in options JSON column.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($metaField) {
+            $options = $metaField->options;
+            if (is_array($options) && isset($options['sub_fields'])) {
+                $options['repeater_fields'] = $options['repeater_fields'] ?? $options['sub_fields'];
+                unset($options['sub_fields']);
+                $metaField->options = $options;
+            }
+        });
+    }
+
+    /**
      * Available field types
      */
     public static array $fieldTypes = [

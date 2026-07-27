@@ -186,8 +186,9 @@ class EntryForm extends Component
                     $fieldRules[] = 'numeric';
                     break;
                 case 'repeater':
-                    if ((! empty($field->options['sub_fields']) || ! empty($field->options['repeater_fields']))) {
-                        foreach ($field->options['sub_fields'] ?? $field->options['repeater_fields'] as $subField) {
+                    $subFields = $field->options['repeater_fields'] ?? $field->options['sub_fields'] ?? [];
+                    if (! empty($subFields)) {
+                        foreach ($subFields as $subField) {
                             $subFieldId = $subField['name'] ?? $subField['id'] ?? Str::snake($subField['label'] ?? '');
                             if (! empty($subFieldId) && ! empty($subField['is_required'])) {
                                 $rules['meta.'.$field->name.'.*.'.$subFieldId] = 'required';
@@ -257,10 +258,11 @@ class EntryForm extends Component
     {
         // Find the field definition
         $field = $this->postType->metaFields->where('name', $fieldName)->first();
+        $subFields = $field?->options['repeater_fields'] ?? $field?->options['sub_fields'] ?? [];
 
-        if ($field && $field->type === 'repeater' && (! empty($field->options['sub_fields']) || ! empty($field->options['repeater_fields']))) {
+        if ($field && $field->type === 'repeater' && ! empty($subFields)) {
             $newRow = [];
-            foreach ($field->options['sub_fields'] ?? $field->options['repeater_fields'] as $subField) {
+            foreach ($subFields as $subField) {
                 // Initialize based on sub-field type
                 $rowKey = $subField['name'] ?? $subField['id'] ?? Str::snake($subField['label'] ?? 'field_'.$loop->index);
 

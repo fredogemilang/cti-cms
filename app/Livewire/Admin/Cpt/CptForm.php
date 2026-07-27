@@ -174,9 +174,8 @@ class CptForm extends Component
             ], $field->options ?? []);
 
             if ($field->type === 'repeater') {
-                $subFields = $options['repeater_fields'] ?? $options['sub_fields'] ?? [];
-                $options['repeater_fields'] = $subFields;
-                $options['sub_fields'] = $subFields;
+                $options['repeater_fields'] = $options['repeater_fields'] ?? $options['sub_fields'] ?? [];
+                unset($options['sub_fields']);
             }
 
             return [
@@ -570,9 +569,8 @@ class CptForm extends Component
         foreach ($this->metaFields as $fieldData) {
             $options = $fieldData['options'] ?? null;
             if ($fieldData['type'] === 'repeater' && is_array($options)) {
-                $subFields = $options['repeater_fields'] ?? $options['sub_fields'] ?? [];
-                $options['repeater_fields'] = $subFields;
-                $options['sub_fields'] = $subFields;
+                $options['repeater_fields'] = $options['repeater_fields'] ?? $options['sub_fields'] ?? [];
+                unset($options['sub_fields']);
             }
 
             if (isset($fieldData['id'])) {
