@@ -150,6 +150,20 @@ class CptForm extends Component
         $this->publiclyQueryable = $cpt->publicly_queryable;
         $this->supports = $cpt->supports ?? [];
 
+        $this->taxonomies = $cpt->taxonomies()->pluck('slug')->toArray();
+        $this->metaBoxes = $cpt->settings['meta_boxes'] ?? [];
+
+        $hasUngroupedFields = $cpt->metaFields->contains(fn ($f) => empty($f->field_group));
+        $hasGeneralBox = collect($this->metaBoxes)->contains(fn ($b) => ($b['id'] ?? '') === 'general');
+
+        if (empty($this->metaBoxes) || ($hasUngroupedFields && ! $hasGeneralBox)) {
+            array_unshift($this->metaBoxes, [
+                'id' => 'general',
+                'title' => 'General Fields',
+                'context' => 'normal',
+            ]);
+        }
+
         $this->metaFields = $cpt->metaFields->map(function ($field) {
             return [
                 'id' => $field->id,
@@ -165,13 +179,10 @@ class CptForm extends Component
                         'rules' => [],
                     ],
                 ], $field->options ?? []),
-                'field_group' => $field->field_group ?? '',
+                'field_group' => ! empty($field->field_group) ? $field->field_group : 'general',
                 'order' => $field->order,
             ];
         })->toArray();
-
-        $this->taxonomies = $cpt->taxonomies()->pluck('slug')->toArray();
-        $this->metaBoxes = $cpt->settings['meta_boxes'] ?? [];
 
         // Initialize open metaboxes
         foreach ($this->metaBoxes as $box) {
@@ -553,6 +564,7 @@ class CptForm extends Component
                 // Update existing field
                 $field = MetaField::find($fieldData['id']);
                 if ($field) {
+                    $fieldGroup = ! empty($fieldData['field_group']) ? $fieldData['field_group'] : 'general';
                     $field->update([
                         'name' => $fieldData['name'],
                         'label' => $fieldData['label'],
@@ -560,13 +572,14 @@ class CptForm extends Component
                         'description' => $fieldData['description'] ?? null,
                         'is_required' => $fieldData['is_required'] ?? false,
                         'options' => $fieldData['options'] ?? null,
-                        'field_group' => $fieldData['field_group'] ?? null,
+                        'field_group' => $fieldGroup,
                         'order' => $fieldData['order'] ?? 0,
                     ]);
                     $existingIds[] = $field->id;
                 }
             } else {
                 // Create new field
+                $fieldGroup = ! empty($fieldData['field_group']) ? $fieldData['field_group'] : 'general';
                 $field = $cpt->metaFields()->create([
                     'name' => $fieldData['name'],
                     'label' => $fieldData['label'],
@@ -574,7 +587,7 @@ class CptForm extends Component
                     'description' => $fieldData['description'] ?? null,
                     'is_required' => $fieldData['is_required'] ?? false,
                     'options' => $fieldData['options'] ?? null,
-                    'field_group' => $fieldData['field_group'] ?? null,
+                    'field_group' => $fieldGroup,
                     'order' => $fieldData['order'] ?? 0,
                 ]);
                 $existingIds[] = $field->id;
