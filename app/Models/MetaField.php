@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Validation\ValidationException;
 
 class MetaField extends Model
 {
@@ -42,9 +43,25 @@ class MetaField extends Model
 
         static::saving(function ($metaField) {
             $options = $metaField->options;
-            if (is_array($options) && isset($options['sub_fields'])) {
-                $options['repeater_fields'] = $options['repeater_fields'] ?? $options['sub_fields'];
-                unset($options['sub_fields']);
+            if (is_array($options)) {
+                // Auto-convert legacy ACF 'sub_fields' key to official 'repeater_fields'
+                if (isset($options['sub_fields'])) {
+                    $options['repeater_fields'] = $options['repeater_fields'] ?? $options['sub_fields'];
+                    unset($options['sub_fields']);
+                }
+
+                // If field type is repeater, reject unsupported/unknown repeater keys (e.g. anak_fields, items, etc)
+                if ($metaField->type === 'repeater') {
+                    $validKeys = ['repeater_fields', 'conditional_logic', 'options_list', 'min', 'max', 'button_label'];
+                    foreach (array_keys($options) as $key) {
+                        if (! in_array($key, $validKeys)) {
+                            throw ValidationException::withMessages([
+                                'options' => ["Invalid repeater options key '{$key}'. Repeater sub-fields must be defined under 'repeater_fields'."],
+                            ]);
+                        }
+                    }
+                }
+
                 $metaField->options = $options;
             }
         });
