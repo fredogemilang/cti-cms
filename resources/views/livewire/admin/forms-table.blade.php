@@ -162,7 +162,7 @@
                         @endcan
                     @else
                         @can('forms.view')
-                        <a href="{{ route('admin.forms.entries', $form) }}"
+                        <a href="{{ route('admin.forms.studio', [$form, 'entries']) }}"
                             class="w-9 h-9 p-2 rounded-xl text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 flex items-center justify-center transition-colors"
                             data-tooltip="View Submissions">
                             <span class="material-symbols-outlined text-[20px]">list_alt</span>
@@ -170,10 +170,10 @@
                         @endcan
                         
                         @can('forms.edit')
-                        <a href="{{ route('admin.forms.edit', $form) }}" wire:navigate
+                        <a href="{{ route('admin.forms.studio', [$form, 'fields']) }}"
                             class="w-9 h-9 p-2 rounded-xl text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/20 flex items-center justify-center transition-colors"
-                            data-tooltip="Edit Form">
-                            <span class="material-symbols-outlined text-[20px]">edit</span>
+                            data-tooltip="Open Form Studio">
+                            <span class="material-symbols-outlined text-[20px]">tune</span>
                         </a>
                         @endcan
                         

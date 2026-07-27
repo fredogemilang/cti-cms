@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Form;
 use App\Models\FormEntry;
 use App\Models\Setting;
+use App\Services\FormNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -117,9 +118,7 @@ class FormController extends Controller
      */
     public function edit(Form $form)
     {
-        $form->load('fields');
-
-        return view('admin.forms.edit', compact('form'));
+        return redirect()->route('admin.forms.studio', [$form->id, 'fields']);
     }
 
     /**
@@ -428,13 +427,159 @@ class FormController extends Controller
     }
 
     /**
+     * Display Form Studio Workspace (Unified UI/UX).
+     */
+    public function studio($id, $tab = 'fields')
+    {
+        $form = Form::with(['fields', 'entries' => function ($q) {
+            $q->latest();
+        }])->findOrFail($id);
+
+        $theme = active_theme();
+        $placeholders = [];
+        $currentAssignments = [];
+
+        if ($theme) {
+            $config = $theme->loadConfig();
+            $placeholders = $config['form_placeholders'] ?? [];
+            $currentAssignments = Setting::get("theme_{$theme->slug}_form_assignments", []);
+        }
+
+        $activeTab = in_array($tab, ['fields', 'settings', 'emails', 'entries']) ? $tab : 'fields';
+
+        return view('admin.forms.studio', compact('form', 'activeTab', 'placeholders', 'currentAssignments', 'theme'));
+    }
+
+    /**
+     * Save Unified Form Studio changes.
+     */
+    public function saveStudio(Request $request, $id)
+    {
+        $form = Form::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:forms,slug,'.$form->id,
+            'description' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+            'submit_button_text' => 'nullable|string',
+            'fields' => 'nullable|array',
+            'notifications' => 'nullable|array',
+            'confirmations' => 'nullable|array',
+            'spam_protection' => 'nullable|array',
+            'theme_slot' => 'nullable|string',
+        ]);
+
+        $notifications = $validated['notifications'] ?? $form->notifications ?? [];
+        $notifications['notify_admin'] = (bool) ($notifications['notify_admin'] ?? false);
+        $notifications['send_to_user'] = (bool) ($notifications['send_to_user'] ?? false);
+        $notifications['enabled'] = $notifications['notify_admin'] || $notifications['send_to_user'];
+
+        $form->update([
+            'name' => $validated['name'],
+            'slug' => $validated['slug'] ?: Str::slug($validated['name']),
+            'description' => $validated['description'] ?? null,
+            'is_active' => (bool) ($validated['is_active'] ?? true),
+            'submit_button_text' => $validated['submit_button_text'] ?? 'Submit',
+            'notifications' => $notifications,
+            'confirmations' => $validated['confirmations'] ?? $form->confirmations ?? [],
+            'spam_protection' => $validated['spam_protection'] ?? $form->spam_protection ?? [],
+        ]);
+
+        // Save fields if provided
+        if (isset($validated['fields'])) {
+            $form->fields()->delete();
+            foreach ($validated['fields'] as $index => $fieldData) {
+                $form->fields()->create([
+                    'label' => $fieldData['label'],
+                    'field_id' => $fieldData['field_id'],
+                    'type' => $fieldData['type'],
+                    'options' => $fieldData['options'] ?? null,
+                    'validation' => $fieldData['validation'] ?? null,
+                    'order' => $index,
+                    'is_required' => ! empty($fieldData['is_required']),
+                    'placeholder' => $fieldData['placeholder'] ?? null,
+                    'help_text' => $fieldData['help_text'] ?? null,
+                    'default_value' => $fieldData['default_value'] ?? null,
+                    'column_width' => $fieldData['column_width'] ?? 'full',
+                    'advanced_settings' => $fieldData['advanced_settings'] ?? null,
+                    'conditional_logic' => $fieldData['conditional_logic'] ?? null,
+                ]);
+            }
+        }
+
+        // Save theme slot assignment if specified
+        $theme = active_theme();
+        if ($theme && ! empty($request->theme_slot)) {
+            $currentAssignments = Setting::get("theme_{$theme->slug}_form_assignments", []);
+            $currentAssignments[$request->theme_slot] = $form->id;
+            Setting::set("theme_{$theme->slug}_form_assignments", $currentAssignments, 'theme', 'array');
+        }
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Form saved successfully!',
+                'redirect_url' => route('admin.forms.studio', [$form->id, $request->input('tab', 'fields')]),
+            ]);
+        }
+
+        return redirect()->route('admin.forms.studio', [$form->id, $request->input('tab', 'fields')])
+            ->with('success', 'Form saved successfully!');
+    }
+
+    /**
+     * Send test email notification to currently logged in admin.
+     */
+    public function sendTestEmail(Request $request, $id)
+    {
+        $form = Form::with('fields')->findOrFail($id);
+        $targetEmail = $request->input('test_email', auth()->user()->email ?? config('mail.from.address'));
+        $emailType = $request->input('email_type', 'admin'); // 'admin' or 'user'
+
+        $mockEntry = new FormEntry([
+            'id' => 999,
+            'form_id' => $form->id,
+            'data' => [
+                'name' => auth()->user()->name ?? 'Test Admin',
+                'corporate_email' => $targetEmail,
+                'email' => $targetEmail,
+                'company_name' => 'Central Data Technology Test',
+                'company' => 'Central Data Technology Test',
+                'phone_number' => '+62 812-3456-7890',
+            ],
+            'ip_address' => '127.0.0.1',
+            'created_at' => now(),
+        ]);
+
+        $service = app(FormNotificationService::class);
+
+        try {
+            $notifications = $form->notifications ?? [];
+            if ($emailType === 'user') {
+                $service->sendNotifications($form, $mockEntry);
+            } else {
+                $service->sendNotifications($form, $mockEntry);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Test email ({$emailType}) dispatched successfully to {$targetEmail}!",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send test email: '.$e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
      * Display form notification settings page.
      */
     public function notifications($id)
     {
-        $form = Form::with('fields')->findOrFail($id);
-
-        return view('admin.forms.notifications', compact('form'));
+        return redirect()->route('admin.forms.studio', [$id, 'emails']);
     }
 
     /**
@@ -442,29 +587,6 @@ class FormController extends Controller
      */
     public function updateNotifications(Request $request, $id)
     {
-        $form = Form::findOrFail($id);
-
-        $validated = $request->validate([
-            'notifications' => 'required|array',
-            'notifications.notify_admin' => 'nullable|boolean',
-            'notifications.admin_email' => 'nullable|string',
-            'notifications.subject' => 'nullable|string',
-            'notifications.admin_email_body' => 'nullable|string',
-            'notifications.send_to_user' => 'nullable|boolean',
-            'notifications.user_subject' => 'nullable|string',
-            'notifications.user_email_body' => 'nullable|string',
-        ]);
-
-        $notifications = $validated['notifications'];
-        $notifications['notify_admin'] = (bool) ($notifications['notify_admin'] ?? false);
-        $notifications['send_to_user'] = (bool) ($notifications['send_to_user'] ?? false);
-        $notifications['enabled'] = $notifications['notify_admin'] || $notifications['send_to_user'];
-
-        $form->update([
-            'notifications' => $notifications,
-        ]);
-
-        return redirect()->route('admin.forms.notifications', $form->id)
-            ->with('success', 'Notification settings saved successfully!');
+        return $this->saveStudio($request, $id);
     }
 }

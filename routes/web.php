@@ -271,6 +271,15 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
         Route::delete('/{form}', [FormController::class, 'destroy'])
             ->name('destroy')
             ->middleware('permission:forms.delete');
+        Route::get('/{form}/studio/{tab?}', [FormController::class, 'studio'])
+            ->name('studio')
+            ->middleware('permission:forms.edit');
+        Route::post('/{form}/studio', [FormController::class, 'saveStudio'])
+            ->name('studio.save')
+            ->middleware('permission:forms.edit');
+        Route::post('/{form}/test-email', [FormController::class, 'sendTestEmail'])
+            ->name('test-email')
+            ->middleware('permission:forms.edit');
         Route::get('/{form}/notifications', [FormController::class, 'notifications'])
             ->name('notifications')
             ->middleware('permission:forms.edit');
