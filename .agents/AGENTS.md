@@ -52,3 +52,19 @@ When populating media/image fields via API, seeders, theme defaults, or renderin
 3. **ALWAYS run `php artisan theme:publish --all` when adding theme assets**:
    - Theme assets in `themes/{slug}/assets/` must be published to `public/themes/{slug}/assets/` so web servers can serve them statically.
 
+---
+
+## CPT & Repeater Fields Standardization Rules
+
+1. **Canonical Key `repeater_fields`**:
+   - Official key in `options` JSON column for repeater subfields MUST be **`repeater_fields`**.
+   - `MetaField` model automatically converts legacy ACF `"sub_fields"` keys into `"repeater_fields"`.
+2. **Strict Repeater Options Key Validation**:
+   - API endpoints and model observers will **reject any unrecognized repeater option keys (e.g., `anak_fields`, `items`) with HTTP 422**.
+3. **CPT MetaBoxes & Field Grouping**:
+   - All CPT MetaFields default to `field_group = 'general'`.
+   - `CptForm` automatically creates and ensures a `'general'` MetaBox exists when loading or saving CPT schemas.
+4. **Icon Field Type & Lucide Icons**:
+   - Field type `'icon'` is registered across CPT MetaFields and Page Blocks.
+   - Use `<x-icon name="lucide:shield" class="w-5 h-5 text-blue-500" />` or `render_icon($name, $class)` to render icons.
+   - 2,007 official Lucide SVG icons are bundled in `resources/icons/lucide.json`. Manage custom packs at `/ctrlpanel/settings/icons`.

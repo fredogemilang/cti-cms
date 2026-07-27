@@ -124,16 +124,27 @@ php artisan queue:work       # for production (under Supervisor)
 php artisan queue:listen     # for development (included in `composer run dev`)
 ```
 
-## Known Bugs & Watch-Outs
+## Known Bugs & Watch-Outs (Fixed & Standardized)
 
-### Repeater Fields: `sub_fields` vs `repeater_fields`
-When creating MetaFields via API, sub-fields are stored under `options.sub_fields`. But some Blade renderers and Livewire components read from `options.repeater_fields`. Always use fallback: `$field->options['sub_fields'] ?? $field->options['repeater_fields']`.
+### Repeater Fields: Canonical `repeater_fields` Key
+- **Official Standard**: The official key for repeater sub-fields in the `options` JSON column is **`repeater_fields`**.
+- **API Auto-Conversion**: `MetaField` model (`boot() -> static::saving`) automatically intercepts and converts legacy ACF `"sub_fields"` keys into `"repeater_fields"`.
+- **Strict Validation**: Unsupported or arbitrary repeater option keys (e.g. `anak_fields`, `items`) will be **rejected with HTTP 422 Unprocessable Entity**.
 
 ### Repeater Key Binding: `name` vs `id`
-API data uses `name` as the key for repeater sub-fields. But old code used `$subField['id']` or `snake(label)`. Always use: `$subField['name'] ?? $subField['id'] ?? snake(...)`.
+API data uses `name` as the key for repeater sub-fields. Always use: `$subField['name'] ?? $subField['id'] ?? Str::snake(...)`.
+
+### CPT MetaBoxes & Field Groups
+All CPT MetaFields default to `field_group = 'general'`. `CptForm` automatically creates and ensures a `'general'` MetaBox exists when loading or saving CPT schemas.
 
 ### Media Upload: `uploaded_by` Column
 `MediaService::upload()` hardcodes `auth()->id()` which can be null for API token auth. Fixed to fallback: `$metadata['uploaded_by'] ?? auth()->id() ?? 1`.
+
+### Icon Library System
+- **Lucide Icons**: 2,007 official Lucide SVG icons loaded via `resources/icons/lucide.json`.
+- **Field Type**: `'icon'` registered in `MetaField::$fieldTypes` and `PageBlock::$blockTypes`.
+- **Rendering**: `<x-icon name="lucide:shield" class="w-5 h-5 text-blue-500" />` or `render_icon($name, $class)` helper.
+- **Admin Settings**: Icon libraries managed at `/ctrlpanel/settings/icons` (`IconLibrariesSettings.php`).
 
 ## Plugins: Reference Implementations
 
