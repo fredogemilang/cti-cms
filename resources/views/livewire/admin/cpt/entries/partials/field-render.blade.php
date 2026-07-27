@@ -259,6 +259,17 @@
             </div>
             @break
 
+        @case('icon')
+            <div>
+                <livewire:admin.icon-picker 
+                    :field="'meta.' . $field->name"
+                    :value="$this->meta[$field->name] ?? null"
+                    :label="$field->label"
+                    :compact="true"
+                />
+            </div>
+            @break
+
         @case('gallery')
             <div class="space-y-4">
                 {{-- Helper to add items --}}
@@ -345,10 +356,10 @@
                             </button>
 
                             <div class="grid gap-4 md:grid-cols-2">
-                                @foreach($field->options['repeater_fields'] ?? [] as $subField)
+                                @php $subFields = !empty($field->options['sub_fields']) ? $field->options['sub_fields'] : ($field->options['repeater_fields'] ?? []); @endphp
+                                @foreach($subFields as $subField)
                                     @php
-                                        // Fallback ID generation matches EntryForm
-                                        $subFieldId = $subField['id'] ?? \Illuminate\Support\Str::snake($subField['label'] ?? 'field_' . $loop->index);
+                                        $subFieldId = $subField['name'] ?? $subField['id'] ?? \Illuminate\Support\Str::snake($subField['label'] ?? 'field_' . $loop->index);
                                     @endphp
                                     <div>
                                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
@@ -402,6 +413,14 @@
                                                 rows="2"
                                                 class="w-full px-3 py-2 bg-white dark:bg-[#0B0B0B] border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                                             ></textarea>
+                                        @elseif($subField['type'] === 'icon')
+                                            <livewire:admin.icon-picker 
+                                                :field="'meta.' . $field->name . '.' . $index . '.' . $subFieldId"
+                                                :value="$this->meta[$field->name][$index][$subFieldId] ?? null"
+                                                :label="$subField['label'] ?? 'Icon'"
+                                                :compact="true"
+                                                :key="'icon-' . $field->name . '-' . $index . '-' . $subFieldId"
+                                            />
                                         @endif
                                     </div>
                                 @endforeach

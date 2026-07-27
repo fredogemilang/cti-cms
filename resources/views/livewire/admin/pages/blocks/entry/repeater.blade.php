@@ -71,6 +71,15 @@
                                         placeholder="#000000" />
                                 </div>
                                 @break
+                            @case('icon')
+                                <livewire:admin.icon-picker 
+                                    :field="$modelPath"
+                                    :value="$fieldValue"
+                                    :label="$fieldLabel"
+                                    :compact="true"
+                                    :key="'page-icon-' . $index . '-' . $rowIndex . '-' . $fieldName"
+                                />
+                                @break
                             @case('media')
                                 @if($fieldValue)
                                     <div class="relative group/media w-fit">

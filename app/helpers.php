@@ -4,6 +4,7 @@ use App\Models\Form;
 use App\Models\Setting;
 use App\Models\Theme;
 use App\Services\ActivityLogger;
+use App\Services\IconLibraryService;
 use App\Services\ThemeLoader;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
@@ -275,5 +276,15 @@ if (! function_exists('resolve_block_asset')) {
         }
 
         return asset('storage/'.$cleanPath);
+    }
+}
+
+if (! function_exists('render_icon')) {
+    /**
+     * Render SVG icon markup for a given icon key (e.g., 'lucide:shield' or 'shield').
+     */
+    function render_icon(?string $iconKey, string $class = 'w-5 h-5'): string
+    {
+        return app(IconLibraryService::class)->renderSvg($iconKey, $class);
     }
 }

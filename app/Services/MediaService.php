@@ -50,7 +50,7 @@ class MediaService
             'alt_text' => ! empty($metadata['alt_text']) ? $metadata['alt_text'] : $file->getClientOriginalName(),
             'title' => $metadata['title'] ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
             'description' => $metadata['description'] ?? null,
-            'uploaded_by' => auth()->id(),
+            'uploaded_by' => $metadata['uploaded_by'] ?? auth()->id() ?? 1,
         ]);
 
         // Convert to WebP if it's an image and conversion is enabled

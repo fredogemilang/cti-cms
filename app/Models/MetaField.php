@@ -127,6 +127,11 @@ class MetaField extends Model
             'icon' => 'alt_route',
             'description' => 'Relate entries from another or same Custom Post Type',
         ],
+        'icon' => [
+            'label' => 'Icon Picker',
+            'icon' => 'category',
+            'description' => 'Select an icon from active libraries (Lucide Icons, Custom)',
+        ],
     ];
 
     /**

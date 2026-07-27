@@ -43,7 +43,10 @@ class MediaAdminController extends Controller
         try {
             $media = $this->mediaService->upload(
                 $request->file('file'),
-                $request->only(['alt_text', 'title', 'description'])
+                array_merge(
+                    $request->only(['alt_text', 'title', 'description']),
+                    ['uploaded_by' => $request->user()?->id ?? 1]
+                )
             );
 
             return response()->json([

@@ -124,6 +124,17 @@ php artisan queue:work       # for production (under Supervisor)
 php artisan queue:listen     # for development (included in `composer run dev`)
 ```
 
+## Known Bugs & Watch-Outs
+
+### Repeater Fields: `sub_fields` vs `repeater_fields`
+When creating MetaFields via API, sub-fields are stored under `options.sub_fields`. But some Blade renderers and Livewire components read from `options.repeater_fields`. Always use fallback: `$field->options['sub_fields'] ?? $field->options['repeater_fields']`.
+
+### Repeater Key Binding: `name` vs `id`
+API data uses `name` as the key for repeater sub-fields. But old code used `$subField['id']` or `snake(label)`. Always use: `$subField['name'] ?? $subField['id'] ?? snake(...)`.
+
+### Media Upload: `uploaded_by` Column
+`MediaService::upload()` hardcodes `auth()->id()` which can be null for API token auth. Fixed to fallback: `$metadata['uploaded_by'] ?? auth()->id() ?? 1`.
+
 ## Plugins: Reference Implementations
 
 - **Posts** (`plugins/posts`) — complete example with Livewire CRUD, categories, tags, slug generation, permissions
