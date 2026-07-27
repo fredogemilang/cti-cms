@@ -20,9 +20,9 @@
     @stack('meta')
 
     {{-- Fonts --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 
     {{-- Theme CSS --}}
     <link rel="stylesheet" href="{{ asset('themes/default/assets/css/theme.css') }}">
@@ -52,7 +52,7 @@
         if(!nav)return;
         window.addEventListener('scroll',function(){
             var top=window.pageYOffset||document.documentElement.scrollTop;
-            nav.classList.toggle('scrolled',top>40);
+            nav.classList.toggle('scrolled',top>20);
             nav.classList.toggle('nav-hidden',top>last&&top>120);
             last=top<=0?0:top;
         },{passive:true});
