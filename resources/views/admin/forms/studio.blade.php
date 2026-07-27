@@ -27,13 +27,14 @@
     // Current assigned theme slot
     $assignedSlot = '';
     if (!empty($currentAssignments)) {
-        foreach ($currentAssignments as $slot => $formId) {
+        foreach ($currentAssignments as $slotKeyName => $formId) {
             if ($formId == $form->id) {
-                $assignedSlot = $slot;
+                $assignedSlot = $slotKeyName;
                 break;
             }
         }
     }
+    unset($slot);
 @endphp
 
 <div class="h-full flex flex-col w-full bg-[#F4F5F6] dark:bg-[#0B0B0B]"
