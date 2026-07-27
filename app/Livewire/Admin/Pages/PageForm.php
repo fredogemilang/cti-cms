@@ -150,8 +150,12 @@ class PageForm extends Component
         $this->template = $this->page->template;
         $this->featuredImage = $this->page->featured_image;
 
+        // Load template schema map to resolve repeater field definitions
+        $templateSchema = $this->templateService->getTemplateSchema($this->template);
+        $schemaMap = collect($templateSchema)->keyBy('name');
+
         // Load blocks
-        $this->blocks = $this->page->blocks->map(function ($block) {
+        $this->blocks = $this->page->blocks->map(function ($block) use ($schemaMap) {
             $value = $block->value;
             // Decode JSON for specific types
             if (in_array($block->type, ['checkbox', 'gallery', 'posts', 'repeater'])) {
@@ -159,6 +163,12 @@ class PageForm extends Component
                 if ($block->type === 'repeater' && ! is_array($value)) {
                     $value = [];
                 }
+            }
+
+            $children = $this->loadChildBlocks($block->id);
+            if (empty($children) && $block->type === 'repeater') {
+                $schemaDef = $schemaMap->get($block->name);
+                $children = $schemaDef['children'] ?? ($block->options['children'] ?? []);
             }
 
             return [
@@ -171,7 +181,7 @@ class PageForm extends Component
                 'order' => $block->order,
                 'is_active' => $block->is_active,
                 'is_configured' => true, // Existing blocks are already configured
-                'children' => $this->loadChildBlocks($block->id),
+                'children' => $children,
             ];
         })->toArray();
 

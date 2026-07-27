@@ -41,13 +41,18 @@ class PageTemplateService
                 $defaultValue = json_encode($defaultValue);
             }
 
+            $options = $blockDef['options'] ?? [];
+            if (isset($blockDef['children'])) {
+                $options['children'] = $blockDef['children'];
+            }
+
             PageBlock::create([
                 'page_id' => $page->id,
                 'name' => $blockDef['name'],
                 'type' => $blockDef['type'],
                 'label' => $blockDef['label'] ?? ucfirst(str_replace('_', ' ', $blockDef['name'])),
                 'value' => $defaultValue,
-                'options' => $blockDef['options'] ?? [],
+                'options' => $options,
                 'order' => $order,
                 'is_active' => true,
             ]);

@@ -25,7 +25,10 @@
 
             {{-- Fields Loop (Schema) --}}
             <div class="space-y-4">
-                @foreach($block['children'] ?? [] as $childIndex => $child)
+                @php
+                    $children = !empty($block['children']) ? $block['children'] : ($block['options']['children'] ?? []);
+                @endphp
+                @foreach($children as $childIndex => $child)
                     <div class="space-y-1" wire:key="repeater-field-{{ $index }}-{{ $rowIndex }}-{{ $childIndex }}">
                         <label class="text-[10px] font-bold text-[#6F767E] uppercase">
                             {{ $child['label'] ?? $child['name'] ?? 'Field' }}
