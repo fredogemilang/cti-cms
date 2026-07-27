@@ -165,6 +165,20 @@ class CptForm extends Component
         }
 
         $this->metaFields = $cpt->metaFields->map(function ($field) {
+            $options = array_replace_recursive([
+                'conditional_logic' => [
+                    'enabled' => false,
+                    'relation' => 'all',
+                    'rules' => [],
+                ],
+            ], $field->options ?? []);
+
+            if ($field->type === 'repeater') {
+                $subFields = $options['repeater_fields'] ?? $options['sub_fields'] ?? [];
+                $options['repeater_fields'] = $subFields;
+                $options['sub_fields'] = $subFields;
+            }
+
             return [
                 'id' => $field->id,
                 'name' => $field->name,
@@ -172,13 +186,7 @@ class CptForm extends Component
                 'type' => $field->type,
                 'description' => $field->description ?? '',
                 'is_required' => $field->is_required,
-                'options' => array_replace_recursive([
-                    'conditional_logic' => [
-                        'enabled' => false,
-                        'relation' => 'all',
-                        'rules' => [],
-                    ],
-                ], $field->options ?? []),
+                'options' => $options,
                 'field_group' => ! empty($field->field_group) ? $field->field_group : 'general',
                 'order' => $field->order,
             ];
@@ -560,6 +568,13 @@ class CptForm extends Component
         $existingIds = [];
 
         foreach ($this->metaFields as $fieldData) {
+            $options = $fieldData['options'] ?? null;
+            if ($fieldData['type'] === 'repeater' && is_array($options)) {
+                $subFields = $options['repeater_fields'] ?? $options['sub_fields'] ?? [];
+                $options['repeater_fields'] = $subFields;
+                $options['sub_fields'] = $subFields;
+            }
+
             if (isset($fieldData['id'])) {
                 // Update existing field
                 $field = MetaField::find($fieldData['id']);
@@ -571,7 +586,7 @@ class CptForm extends Component
                         'type' => $fieldData['type'],
                         'description' => $fieldData['description'] ?? null,
                         'is_required' => $fieldData['is_required'] ?? false,
-                        'options' => $fieldData['options'] ?? null,
+                        'options' => $options,
                         'field_group' => $fieldGroup,
                         'order' => $fieldData['order'] ?? 0,
                     ]);
@@ -586,7 +601,7 @@ class CptForm extends Component
                     'type' => $fieldData['type'],
                     'description' => $fieldData['description'] ?? null,
                     'is_required' => $fieldData['is_required'] ?? false,
-                    'options' => $fieldData['options'] ?? null,
+                    'options' => $options,
                     'field_group' => $fieldGroup,
                     'order' => $fieldData['order'] ?? 0,
                 ]);
