@@ -449,6 +449,7 @@ class FormController extends Controller
             'notifications.notify_admin' => 'nullable|boolean',
             'notifications.admin_email' => 'nullable|string',
             'notifications.subject' => 'nullable|string',
+            'notifications.admin_email_body' => 'nullable|string',
             'notifications.send_to_user' => 'nullable|boolean',
             'notifications.user_subject' => 'nullable|string',
             'notifications.user_email_body' => 'nullable|string',

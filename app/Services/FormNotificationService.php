@@ -120,10 +120,73 @@ class FormNotificationService
     /**
      * Build HTML for admin notification email.
      */
-    protected function buildAdminEmailHtml(Form $form, FormEntry $entry, array $data): string
+    protected function buildAdminEmailHtml(Form $form, FormEntry $entry, array $data, ?string $customBody = null): string
     {
         $formUrl = route('admin.forms.entries', $form->id);
-        $timestamp = $entry->created_at->format('F j, Y \a\t g:i A');
+        $timestamp = $entry->created_at ? $entry->created_at->format('F j, Y \a\t g:i A') : date('F j, Y \a\t g:i A');
+        $userName = $this->findUserName($data) ?? 'Visitor';
+        $userEmail = $this->findUserEmailFromData($form, $data) ?? '';
+
+        // Build submission table HTML for placeholder or default template
+        $tableHtml = '<div class="fields-wrapper" style="margin-top: 15px; margin-bottom: 15px;">';
+        foreach ($form->fields as $field) {
+            if (in_array($field->type, ['section', 'divider', 'html'])) {
+                continue;
+            }
+            $val = $data[$field->field_id] ?? '';
+            if (is_array($val)) {
+                $val = implode(', ', array_filter($val));
+            }
+            $valStr = empty($val) ? '<em style="color: #9ca3af;">Not provided</em>' : e($val);
+
+            $tableHtml .= '
+            <div style="margin-bottom: 12px; padding: 12px; background: #ffffff; border-radius: 6px; border-left: 4px solid #b82d25; border: 1px solid #e5e7eb;">
+                <div style="font-weight: 600; color: #374151; font-size: 12px; text-transform: uppercase; margin-bottom: 4px;">'.e($field->label).'</div>
+                <div style="color: #111827; font-size: 14px;">'.$valStr.'</div>
+            </div>';
+        }
+        $tableHtml .= '</div>';
+
+        if (! empty($customBody)) {
+            $parsedContent = strtr($customBody, [
+                '{name}' => e($userName),
+                '{email}' => e($userEmail),
+                '{corporate_email}' => e($userEmail),
+                '{form_name}' => e($form->name),
+                '{submission_table}' => $tableHtml,
+                '{admin_url}' => $formUrl,
+                '{submission_date}' => $timestamp,
+            ]);
+
+            return '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+                    .container { max-width: 600px; margin: 20px auto; padding: 0; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: #ffffff; }
+                    .header { background: #111827; color: white; padding: 24px 30px; }
+                    .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
+                    .content { padding: 30px; background: #f9fafb; color: #111827; font-size: 15px; }
+                    .footer { background: #f3f4f6; padding: 16px; text-align: center; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>📬 New Submission: '.e($form->name).'</h1>
+                    </div>
+                    <div class="content">
+                        '.$parsedContent.'
+                    </div>
+                    <div class="footer">
+                        <p>Automated Admin Notification — Central Data Technology CMS</p>
+                    </div>
+                </div>
+            </body>
+            </html>';
+        }
 
         $html = '
         <!DOCTYPE html>
@@ -150,35 +213,7 @@ class FormNotificationService
                     <h1>📬 New Submission</h1>
                     <p style="margin: 5px 0 0; opacity: 0.9;">'.e($form->name).'</p>
                 </div>
-                <div class="content">';
-
-        foreach ($form->fields as $field) {
-            // Skip layout fields
-            if (in_array($field->type, ['section', 'divider', 'html'])) {
-                continue;
-            }
-
-            $value = $data[$field->field_id] ?? '';
-
-            // Format array values
-            if (is_array($value)) {
-                $value = implode(', ', array_filter($value));
-            }
-
-            if (empty($value)) {
-                $value = '<em style="color: #9ca3af;">Not provided</em>';
-            } else {
-                $value = e($value);
-            }
-
-            $html .= '
-                    <div class="field">
-                        <div class="field-label">'.e($field->label).'</div>
-                        <div class="field-value">'.$value.'</div>
-                    </div>';
-        }
-
-        $html .= '
+                <div class="content">'.$tableHtml.'
                     <div class="meta">
                         <p>📅 Submitted: '.$timestamp.'</p>
                         <p>🌐 IP Address: '.($entry->ip_address ?? 'Unknown').'</p>

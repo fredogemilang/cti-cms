@@ -15,7 +15,8 @@
     $notifyAdmin = $notifications['notify_admin'] ?? ($notifications['enabled'] ?? true);
     $adminEmail = $notifications['admin_email'] ?? config('mail.from.address');
     $adminSubject = $notifications['subject'] ?? "New Form Submission: {$form->name}";
-    
+    $adminEmailBody = $notifications['admin_email_body'] ?? "<p>A new submission has been received for <strong>{form_name}</strong>.</p>{submission_table}<p style=\"margin-top: 20px;\"><a href=\"{admin_url}\" style=\"display: inline-block; background-color: #111827; color: #ffffff; padding: 10px 22px; text-decoration: none; border-radius: 8px; font-weight: bold; text-transform: uppercase; font-size: 12px;\">View Entries in Admin</a></p>";
+
     $sendToUser = $notifications['send_to_user'] ?? false;
     $userSubject = $notifications['user_subject'] ?? "Thank you for your submission - {$form->name}";
     $userEmailBody = $notifications['user_email_body'] ?? "<p>Hi {name},</p><p>Thank you for submitting <strong>{form_name}</strong>. We have received your details and will get back to you shortly.</p><p><a href=\"https://cdt.devs/themes/cdt/assets/banner_hero-DHYDqbF8.jpg\" style=\"display: inline-block; background-color: #b82d25; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 9999px; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;\">Download Digital Solution Guide</a></p><p>Best regards,<br>Central Data Technology Team</p>";
@@ -23,24 +24,35 @@
 
 <div class="space-y-6" x-data="{
     notifyAdmin: {{ json_encode((bool)$notifyAdmin) }},
+    adminBody: {{ json_encode($adminEmailBody) }},
     sendToUser: {{ json_encode((bool)$sendToUser) }},
     userBody: {{ json_encode($userEmailBody) }},
-    insertPlaceholder(ph) {
-        if (window.emailEditor) {
-            window.emailEditor.focus();
-            const range = window.emailEditor.getSelection();
+    insertAdminPlaceholder(ph) {
+        if (window.adminEmailEditor) {
+            window.adminEmailEditor.focus();
+            const range = window.adminEmailEditor.getSelection();
             const index = range ? range.index : 0;
-            window.emailEditor.insertText(index, ph);
+            window.adminEmailEditor.insertText(index, ph);
+        } else {
+            this.adminBody += ph;
+        }
+    },
+    insertUserPlaceholder(ph) {
+        if (window.userEmailEditor) {
+            window.userEmailEditor.focus();
+            const range = window.userEmailEditor.getSelection();
+            const index = range ? range.index : 0;
+            window.userEmailEditor.insertText(index, ph);
         } else {
             this.userBody += ph;
         }
     },
     insertDownloadBtn(url, text) {
         const btnHtml = `<p style='margin-top: 15px; margin-bottom: 15px;'><a href='${url}' style='display: inline-block; background-color: #b82d25; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 9999px; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;'>${text}</a></p>`;
-        if (window.emailEditor) {
-            const range = window.emailEditor.getSelection();
+        if (window.userEmailEditor) {
+            const range = window.userEmailEditor.getSelection();
             const index = range ? range.index : 0;
-            window.emailEditor.clipboard.dangerouslyPasteHTML(index, btnHtml);
+            window.userEmailEditor.clipboard.dangerouslyPasteHTML(index, btnHtml);
         } else {
             this.userBody += btnHtml;
         }
@@ -91,20 +103,42 @@
                 </label>
             </div>
 
-            <div x-show="notifyAdmin" x-collapse class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Admin Recipient Email</label>
-                    <input type="email" name="notifications[admin_email]" value="{{ $adminEmail }}"
-                        class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary px-4 text-[#111827] dark:text-[#FCFCFC]"
-                        placeholder="admin@centraldatatech.com">
-                    <p class="text-xs text-[#6F767E]">Defaults to site admin email if left empty.</p>
+            <div x-show="notifyAdmin" x-collapse class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Admin Recipient Email</label>
+                        <input type="email" name="notifications[admin_email]" value="{{ $adminEmail }}"
+                            class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary px-4 text-[#111827] dark:text-[#FCFCFC]"
+                            placeholder="admin@centraldatatech.com">
+                        <p class="text-xs text-[#6F767E]">Defaults to site admin email if left empty.</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Email Subject</label>
+                        <input type="text" name="notifications[subject]" value="{{ $adminSubject }}"
+                            class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary px-4 text-[#111827] dark:text-[#FCFCFC]"
+                            placeholder="New Form Submission: {{ $form->name }}">
+                    </div>
                 </div>
 
-                <div class="space-y-2">
-                    <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Email Subject</label>
-                    <input type="text" name="notifications[subject]" value="{{ $adminSubject }}"
-                        class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary px-4 text-[#111827] dark:text-[#FCFCFC]"
-                        placeholder="New Form Submission: {{ $form->name }}">
+                {{-- Admin WYSIWYG Editor --}}
+                <div class="space-y-3">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Admin Email Content (WYSIWYG HTML)</label>
+                        
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-xs font-semibold text-[#6F767E]">Insert Placeholders:</span>
+                            <button type="button" @click="insertAdminPlaceholder('{submission_table}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{submission_table}</button>
+                            <button type="button" @click="insertAdminPlaceholder('{admin_url}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{admin_url}</button>
+                            <button type="button" @click="insertAdminPlaceholder('{name}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{name}</button>
+                            <button type="button" @click="insertAdminPlaceholder('{email}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{email}</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <input type="hidden" name="notifications[admin_email_body]" x-model="adminBody" id="admin_email_body_input">
+                        <div id="quill-admin-editor" class="bg-white dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] rounded-2xl border border-gray-200 dark:border-[#272B30] min-h-[200px]"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -140,10 +174,10 @@
                         
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="text-xs font-semibold text-[#6F767E]">Insert Placeholders:</span>
-                            <button type="button" @click="insertPlaceholder('{name}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{name}</button>
-                            <button type="button" @click="insertPlaceholder('{corporate_email}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{email}</button>
-                            <button type="button" @click="insertPlaceholder('{company_name}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{company}</button>
-                            <button type="button" @click="insertPlaceholder('{form_name}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{form_name}</button>
+                            <button type="button" @click="insertUserPlaceholder('{name}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{name}</button>
+                            <button type="button" @click="insertUserPlaceholder('{corporate_email}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{email}</button>
+                            <button type="button" @click="insertUserPlaceholder('{company_name}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{company}</button>
+                            <button type="button" @click="insertUserPlaceholder('{form_name}')" class="px-2.5 py-1 rounded-lg text-xs font-mono bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] border border-gray-200 dark:border-[#272B30] hover:border-primary transition-all">{form_name}</button>
                         </div>
                     </div>
 
@@ -172,7 +206,7 @@
                     {{-- Quill WYSIWYG Editor Container --}}
                     <div class="space-y-2">
                         <input type="hidden" name="notifications[user_email_body]" x-model="userBody" id="user_email_body_input">
-                        <div id="quill-email-editor" class="bg-white dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] rounded-2xl border border-gray-200 dark:border-[#272B30] min-h-[250px]"></div>
+                        <div id="quill-user-editor" class="bg-white dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] rounded-2xl border border-gray-200 dark:border-[#272B30] min-h-[250px]"></div>
                     </div>
                 </div>
             </div>
@@ -221,30 +255,40 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const editorEl = document.getElementById('quill-email-editor');
-            const hiddenInput = document.getElementById('user_email_body_input');
+            const quillOptions = {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link', 'clean']
+                    ]
+                }
+            };
 
-            if (editorEl) {
-                window.emailEditor = new Quill('#quill-email-editor', {
-                    theme: 'snow',
-                    modules: {
-                        toolbar: [
-                            [{ 'header': [1, 2, 3, false] }],
-                            ['bold', 'italic', 'underline', 'strike'],
-                            [{ 'color': [] }, { 'background': [] }],
-                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                            ['link', 'clean']
-                        ]
-                    }
+            // Admin Editor
+            const adminEl = document.getElementById('quill-admin-editor');
+            const adminInput = document.getElementById('admin_email_body_input');
+            if (adminEl && adminInput) {
+                window.adminEmailEditor = new Quill('#quill-admin-editor', quillOptions);
+                window.adminEmailEditor.clipboard.dangerouslyPasteHTML(adminInput.value);
+                window.adminEmailEditor.on('text-change', function() {
+                    adminInput.value = window.adminEmailEditor.root.innerHTML;
+                    adminInput.dispatchEvent(new Event('input'));
                 });
+            }
 
-                // Load initial HTML into Quill
-                window.emailEditor.clipboard.dangerouslyPasteHTML(hiddenInput.value);
-
-                // Update hidden input on change
-                window.emailEditor.on('text-change', function() {
-                    hiddenInput.value = window.emailEditor.root.innerHTML;
-                    hiddenInput.dispatchEvent(new Event('input'));
+            // User Editor
+            const userEl = document.getElementById('quill-user-editor');
+            const userInput = document.getElementById('user_email_body_input');
+            if (userEl && userInput) {
+                window.userEmailEditor = new Quill('#quill-user-editor', quillOptions);
+                window.userEmailEditor.clipboard.dangerouslyPasteHTML(userInput.value);
+                window.userEmailEditor.on('text-change', function() {
+                    userInput.value = window.userEmailEditor.root.innerHTML;
+                    userInput.dispatchEvent(new Event('input'));
                 });
             }
         });
