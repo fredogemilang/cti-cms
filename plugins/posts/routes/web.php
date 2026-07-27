@@ -58,8 +58,8 @@ Route::middleware(['web'])->group(function () {
     }
     // Permalink settings override (from core settings table)
     if (Schema::hasTable('settings')) {
-        $archiveSlug = \App\Models\Setting::get('permalink_post_base', $archiveSlug);
-        $categoryBase = \App\Models\Setting::get('permalink_category_base', 'category');
+        $archiveSlug = App\Models\Setting::get('permalink_post_base', $archiveSlug);
+        $categoryBase = App\Models\Setting::get('permalink_category_base', 'category');
     }
     $categoryBase ??= 'category';
 
