@@ -16,3 +16,39 @@ When scaffolding custom content, building themes, or designing API integration s
    - Non-technical admins need a simple add/remove/reorder interface in the Page Block Builder to manage columns without creating separate CPT entries.
 
 For full implementation patterns, see [docs/theme-development.md](file:///c:/laragon/www/cdt/backend/docs/theme-development.md#cpt-vs-repeater-field-selection-architecture).
+
+---
+
+## Media Assets & Image URL Handling Rules (DOs and DONTs)
+
+When populating media/image fields via API, seeders, theme defaults, or rendering image blocks in Blade templates and Admin Livewire components:
+
+### 🚫 DONTs (Common Pitfalls & Anti-Patterns)
+1. **NEVER hardcode `asset('storage/' . $value)` in Blade views or Admin components**:
+   - ❌ Incorrect: `<img src="{{ asset('storage/' . $image) }}">`
+   - **Why**: If `$image` is a theme asset (e.g. `themes/cdt/assets/security.webp`), hardcoding `'storage/'` prepends storage and creates broken URLs like `/storage/themes/cdt/assets/security.webp` which fail with **403 Forbidden** errors.
+2. **NEVER store full domain URLs in database blocks via API/seeders**:
+   - ❌ Incorrect: `"image": "http://cdt.devs/storage/uploads/photo.jpg"`
+   - **Why**: Hardcoded domain names break across environments (Local `cdt.devs` vs Staging vs Production).
+3. **NEVER manually manipulate theme config cache in production**:
+   - ❌ Incorrect: Assuming `theme.json` edits take effect immediately without clearing cache.
+   - **Why**: Theme config is cached for 1 hour (`3600s`). Use `php artisan cache:clear` or ensure `app.debug = true` during development.
+
+---
+
+### ✅ DOs (Mandatory Standard Practices)
+1. **ALWAYS use `resolve_block_asset($path)` helper**:
+   - ✅ Correct (Frontend): `<img src="{{ resolve_block_asset($item['image'] ?? '') }}">`
+   - ✅ Correct (Admin Editor): `<img src="{{ resolve_block_asset($fieldValue) }}">`
+   - **How `resolve_block_asset()` handles all asset types**:
+     - Full URL (`http://...` / `https://...`) $\rightarrow$ Returns URL unchanged.
+     - Starts with `themes/` $\rightarrow$ `asset($cleanPath)`
+     - Starts with `storage/` $\rightarrow$ `asset($cleanPath)`
+     - Filename in active theme assets (e.g., `security.webp`) $\rightarrow$ `asset("themes/{theme}/assets/{path}")`
+     - Storage uploads (e.g., `uploads/2026/07/photo.jpg`) $\rightarrow$ `asset("storage/{path}")`
+2. **ALWAYS store clean, relative paths in `theme.json` and API payloads**:
+   - For Theme Default Assets: `"image": "themes/cdt/assets/photo.jpg"` or `"photo.jpg"`
+   - For User Uploaded Media: `"image": "uploads/2026/07/photo.jpg"` or `"media/1/photo.jpg"`
+3. **ALWAYS run `php artisan theme:publish --all` when adding theme assets**:
+   - Theme assets in `themes/{slug}/assets/` must be published to `public/themes/{slug}/assets/` so web servers can serve them statically.
+
