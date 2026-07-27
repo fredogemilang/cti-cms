@@ -21,7 +21,7 @@
             @click="if (sidebarCollapsed) { flyoutOpen = !flyoutOpen; } else { open = !open; $dispatch('submenu-toggle'); }"
             class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden"
             :class="{ 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]': sidebarCollapsed && flyoutOpen }">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                 <span class="material-symbols-outlined shrink-0">article</span>
                 <span class="font-semibold text-[15px] sidebar-text">Pages</span>
             </div>
@@ -87,7 +87,7 @@
             @click="if (sidebarCollapsed) { flyoutOpen = !flyoutOpen; } else { open = !open; $dispatch('submenu-toggle'); }"
             class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden"
             :class="{ 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]': sidebarCollapsed && flyoutOpen }">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                 <span class="material-symbols-outlined shrink-0">{{ $cpt->icon ?? 'article' }}</span>
                 <span class="font-semibold text-[15px] sidebar-text">{{ $cpt->plural_label }}</span>
             </div>
@@ -161,7 +161,7 @@
             @click="if (sidebarCollapsed) { flyoutOpen = !flyoutOpen; } else { open = !open; }"
             class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden"
             :class="{ 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]': sidebarCollapsed && flyoutOpen }">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                 <span class="material-symbols-outlined shrink-0">perm_media</span>
                 <span class="font-semibold text-[15px] sidebar-text">Media</span>
             </div>
@@ -223,7 +223,7 @@
             @click="if (sidebarCollapsed) { flyoutOpen = !flyoutOpen; } else { open = !open; }"
             class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden"
             :class="{ 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]': sidebarCollapsed && flyoutOpen }">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                 <span class="material-symbols-outlined shrink-0">description</span>
                 <span class="font-semibold text-[15px] sidebar-text">Forms</span>
             </div>
@@ -310,7 +310,7 @@
                     @click="if (sidebarCollapsed) { flyoutOpen = !flyoutOpen; } else { open = !open; }"
                     class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden"
                     :class="{ 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]': sidebarCollapsed && flyoutOpen }">
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                         <span class="material-symbols-outlined shrink-0">{{ $pluginMenu['icon'] ?? 'extension' }}</span>
                         <span class="font-semibold text-[15px] sidebar-text">{{ $pluginMenu['title'] }}</span>
                     </div>
@@ -382,7 +382,7 @@
             @click="if (sidebarCollapsed) { flyoutOpen = !flyoutOpen; } else { open = !open; }"
             class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden"
             :class="{ 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]': sidebarCollapsed && flyoutOpen }">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                 <span class="material-symbols-outlined shrink-0">layers</span>
                 <span class="font-semibold text-[15px] sidebar-text">CPT</span>
             </div>
@@ -439,7 +439,7 @@
             @click="if (sidebarCollapsed) { flyoutOpen = !flyoutOpen; } else { open = !open; }"
             class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden"
             :class="{ 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]': sidebarCollapsed && flyoutOpen }">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                 <span class="material-symbols-outlined shrink-0">travel_explore</span>
                 <span class="font-semibold text-[15px] sidebar-text">SEO & GEO</span>
             </div>
@@ -523,7 +523,7 @@
             @click="if (sidebarCollapsed) { flyoutOpen = !flyoutOpen; } else { open = !open; }"
             class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden"
             :class="{ 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]': sidebarCollapsed && flyoutOpen }">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                 <span class="material-symbols-outlined shrink-0">group</span>
                 <span class="font-semibold text-[15px] sidebar-text">User</span>
             </div>
@@ -652,7 +652,7 @@
             @click="if (sidebarCollapsed) { flyoutOpen = !flyoutOpen; } else { open = !open; }"
             class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden"
             :class="{ 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]': sidebarCollapsed && flyoutOpen }">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                 <span class="material-symbols-outlined shrink-0">palette</span>
                 <span class="font-semibold text-[15px] sidebar-text">Appearance</span>
             </div>
@@ -704,7 +704,7 @@
             @click="if (sidebarCollapsed) { flyoutOpen = !flyoutOpen; } else { open = !open; }"
             class="w-full group flex items-center justify-between rounded-xl px-4 py-3 text-[#6F767E] hover:text-[#111827] hover:bg-white hover:shadow-sm dark:hover:text-[#FCFCFC] dark:hover:bg-[#272B30] dark:hover:shadow-none transition-all duration-200 cursor-pointer focus:outline-none nav-item overflow-hidden"
             :class="{ 'bg-blue-100 text-[#2563EB] dark:bg-[#272B30] dark:text-[#FCFCFC]': sidebarCollapsed && flyoutOpen }">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 min-w-0 flex-1 overflow-hidden">
                 <span class="material-symbols-outlined shrink-0">settings</span>
                 <span class="font-semibold text-[15px] sidebar-text">Settings</span>
             </div>

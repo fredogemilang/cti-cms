@@ -79,6 +79,7 @@
             transition: opacity 0.2s ease-in-out, width 0.2s ease-in-out, margin 0.2s ease-in-out;
             white-space: nowrap;
             overflow: hidden;
+            text-overflow: ellipsis;
         }
         aside.collapsed {
             width: 96px !important;
