@@ -29,6 +29,16 @@ class PageTemplateService
     {
         $seeded = [];
         $schema = $this->getTemplateSchema($page->template);
+        $schemaBlockNames = collect($schema)->pluck('name')->toArray();
+
+        // 1. Delete orphaned blocks no longer defined in template schema
+        if (! empty($schemaBlockNames)) {
+            PageBlock::where('page_id', $page->id)
+                ->whereNull('parent_block_id')
+                ->whereNotIn('name', $schemaBlockNames)
+                ->delete();
+        }
+
         $existingNames = $page->allBlocks()->pluck('name')->toArray();
 
         foreach ($schema as $order => $blockDef) {

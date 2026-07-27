@@ -303,18 +303,18 @@
           if (empty($whyCdtItems) || !is_array($whyCdtItems)) {
               $whyCdtItems = [
                   [
-                      'title' => $page?->block('why_cdt_box_1_title') ?? 'NUMBER ONE IT SERVICE DELIVERY',
-                      'description' => $page?->block('why_cdt_box_1_desc') ?? "Guarantee the best quality of IT service delivery with every stage delivery involves many IT experts' role and ensure that service-level agreement (SLA) is applied.",
+                      'title' => 'NUMBER ONE IT SERVICE DELIVERY',
+                      'description' => "Guarantee the best quality of IT service delivery with every stage delivery involves many IT experts' role and ensure that service-level agreement (SLA) is applied.",
                       'image' => 'themes/cdt/assets/photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg'
                   ],
                   [
-                      'title' => $page?->block('why_cdt_box_2_title') ?? 'EXCELLENT CUSTOMER SERVICES',
-                      'description' => $page?->block('why_cdt_box_2_desc') ?? "24/7 customer response center, and many other convenient services were given fulfill customer requirement in today's digital era.",
+                      'title' => 'EXCELLENT CUSTOMER SERVICES',
+                      'description' => "24/7 customer response center, and many other convenient services were given fulfill customer requirement in today's digital era.",
                       'image' => 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w800-D1mgrB8h.jpg'
                   ],
                   [
-                      'title' => $page?->block('why_cdt_box_3_title') ?? 'YEARS OF EXPERIENCE EXPERTS',
-                      'description' => $page?->block('why_cdt_box_3_desc') ?? "With years of experience and numerous of project portfolios, professional IT experts will measure and manage risk to ensure accuracy in implementing solutions into customer's IT environment.",
+                      'title' => 'YEARS OF EXPERIENCE EXPERTS',
+                      'description' => "With years of experience and numerous of project portfolios, professional IT experts will measure and manage risk to ensure accuracy in implementing solutions into customer's IT environment.",
                       'image' => 'themes/cdt/assets/photo-1552664730-d307ca884978-w800-DNfMnljE.jpg'
                   ]
               ];
