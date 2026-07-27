@@ -32,9 +32,9 @@ class ThemeManager
             throw new Exception('The PHP Zip extension is not enabled. Please enable it in your php.ini configuration.');
         }
 
-        // Validate file size (10MB max)
-        if (filesize($zipPath) > 10 * 1024 * 1024) {
-            throw new Exception('Theme file is too large. Maximum size is 10MB.');
+        // Validate file size (100MB max)
+        if (filesize($zipPath) > 100 * 1024 * 1024) {
+            throw new Exception('Theme file is too large. Maximum size is 100MB.');
         }
 
         $zip = new ZipArchive;

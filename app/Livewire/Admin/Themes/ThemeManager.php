@@ -111,7 +111,7 @@ class ThemeManager extends Component
     public function uploadTheme()
     {
         $this->validate([
-            'themeZip' => 'required|file|mimes:zip|max:10240', // 10MB
+            'themeZip' => 'required|file|mimes:zip|max:102400', // 100MB
         ]);
 
         try {

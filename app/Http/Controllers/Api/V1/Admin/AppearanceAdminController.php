@@ -51,4 +51,30 @@ class AppearanceAdminController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Upload and install a new theme zip (up to 100MB)
+     */
+    public function upload(Request $request)
+    {
+        $request->validate([
+            'theme_zip' => 'required|file|mimes:zip|max:102400', // 100MB
+        ]);
+
+        try {
+            $path = $request->file('theme_zip')->getRealPath();
+            $theme = $this->themeManager->install($path);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Theme '{$theme->name}' installed successfully.",
+                'data' => $theme,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to install theme: '.$e->getMessage(),
+            ], 500);
+        }
+    }
 }

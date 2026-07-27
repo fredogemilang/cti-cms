@@ -170,6 +170,7 @@ Route::middleware('api.cors')->prefix('v1')->group(function () {
 
         // Appearance & Themes API
         Route::get('/themes', [AppearanceAdminController::class, 'index']);
+        Route::post('/themes/upload', [AppearanceAdminController::class, 'upload']);
         Route::post('/themes/{slug}/activate', [AppearanceAdminController::class, 'activate']);
     });
 
