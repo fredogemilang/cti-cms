@@ -10,8 +10,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string|null $excerpt
+ * @property string|null $content
+ * @property string|null $featured_image
+ * @property string $status
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $published_at
+ */
 class Post extends Model
 {
     use FindsByLocalizedSlug, HasSeoMeta, HasTranslations, SoftDeletes;

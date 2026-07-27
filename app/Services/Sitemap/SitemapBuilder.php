@@ -12,6 +12,7 @@ use App\Models\TaxonomyTerm;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Plugins\Posts\Models\Post;
 
 class SitemapBuilder
 {
@@ -117,6 +118,7 @@ class SitemapBuilder
             ->get();
 
         foreach ($posts as $post) {
+            /** @var Post $post */
             $images = $this->extractImages($post->featured_image ?? null, $post->content ?? null);
 
             $urls[] = [
@@ -276,11 +278,11 @@ class SitemapBuilder
     /**
      * Get the Post model class string.
      *
-     * @return class-string
+     * @return class-string<Post>
      */
     protected function getPostModelClass(): string
     {
-        return 'Plugins\\Posts\\Models\\Post';
+        return Post::class;
     }
 
     /**
