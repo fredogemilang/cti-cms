@@ -36,6 +36,8 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
+            "Plugins\\GoogleSiteKit\\": "plugins/google-site-kit/src/",
+            "Plugins\\Posts\\": "plugins/posts/src/",
             "Plugins\\": "plugins/"
         },
         "files": [
