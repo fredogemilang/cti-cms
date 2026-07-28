@@ -121,25 +121,24 @@ class AdminMenuBuilder
             ->orderBy('order')
             ->with('children')
             ->get()
-            ->map(function ($m) {
+            ->map(function (MenuItem $m) {
                 return [
                     'key' => 'core:'.$m->id,
                     'id' => $m->id,
                     'title' => $m->title,
                     'route' => $m->route,
-                    'url' => $m->url,
                     'icon' => $m->icon,
                     'permission' => $m->permission,
                     'is_active' => $m->is_active,
                     'source' => 'core',
                     'source_label' => 'Core System',
                     'children' => $m->children->map(fn ($c) => [
-                        'id' => $c->id,
-                        'title' => $c->title,
-                        'route' => $c->route,
-                        'icon' => $c->icon,
-                        'permission' => $c->permission,
-                        'is_active' => $c->is_active,
+                        'id' => $c->getAttribute('id'),
+                        'title' => $c->getAttribute('title'),
+                        'route' => $c->getAttribute('route'),
+                        'icon' => $c->getAttribute('icon'),
+                        'permission' => $c->getAttribute('permission'),
+                        'is_active' => $c->getAttribute('is_active'),
                     ])->toArray(),
                 ];
             })->toArray();
