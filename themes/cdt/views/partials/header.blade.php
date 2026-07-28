@@ -71,7 +71,7 @@
               <div class="w-1/3 bg-gradient-to-bl from-primary to-zinc-900 p-8 text-white relative overflow-hidden flex flex-col">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
                 <div>
-                  <h3 class="text-xl font-bold mb-4 relative z-10 leading-tight">Technology Alliance</h3>
+                  <p class="text-xl font-bold mb-4 relative z-10 leading-tight">Technology Alliance</p>
                   <p class="text-sm text-white/80 leading-relaxed relative z-10 normal-case font-normal tracking-normal">
                     Explore our comprehensive ecosystem of global technology partners designed to empower your business transformation.
                   </p>
