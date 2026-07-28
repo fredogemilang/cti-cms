@@ -12,7 +12,21 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 flex-wrap">
+                {{-- Quick Orphan Filter Button --}}
+                @php $orphanCount = count($this->getOrphanIds()); @endphp
+                <button wire:click="$set('filterUsage', '{{ $filterUsage === 'orphan' ? '' : 'orphan' }}')" type="button"
+                    class="h-10 px-3.5 rounded-xl border text-sm font-semibold flex items-center gap-1.5 transition-all cursor-pointer
+                        {{ $filterUsage === 'orphan' 
+                            ? 'border-amber-500 bg-amber-500/10 text-amber-600 dark:text-amber-400 ring-2 ring-amber-500/20' 
+                            : 'border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-amber-600 hover:border-amber-400 dark:hover:border-amber-500/50' }}"
+                    title="Filter media files that are not referenced anywhere in content or settings">
+                    <span class="material-symbols-outlined text-lg">no_sim</span>
+                    Orphans
+                    <span class="ml-0.5 px-2 py-0.5 rounded-full text-xs font-bold {{ $filterUsage === 'orphan' ? 'bg-amber-500 text-white' : 'bg-gray-100 dark:bg-[#272B30] text-[#6F767E]' }}">
+                        {{ $orphanCount }}
+                    </span>
+                </button>
+
                 {{-- Type filter --}}
                 <select wire:model.live="filterType"
                     class="h-10 px-3 rounded-xl border border-gray-200 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer">
@@ -114,8 +128,8 @@
             $someOnPage   = $pageSelected > 0 && !$allOnPage;
         @endphp
 
-        {{-- Header: select-all-on-page checkbox + total count --}}
-        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-[#272B30] flex items-center justify-between">
+        {{-- Header: select-all-on-page checkbox + total count + select all orphans option --}}
+        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-[#272B30] flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
                 <button
                     type="button"
@@ -140,10 +154,31 @@
 
                 <span class="text-xs text-[#6F767E]">·</span>
 
+                <button
+                    type="button"
+                    wire:click="selectAll"
+                    class="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
+                    title="Select all {{ $media->total() }} matching items"
+                >
+                    Select all {{ $media->total() }} matching
+                </button>
+
+                <span class="text-xs text-[#6F767E]">·</span>
+
                 <span class="text-xs text-[#6F767E]">
                     {{ $media->total() }} total
                 </span>
             </div>
+
+            @if($filterUsage === 'orphan' && $media->total() > 0)
+                <div class="flex items-center gap-2">
+                    <button wire:click="selectAll" type="button"
+                        class="px-3.5 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 rounded-xl text-xs font-bold hover:bg-amber-500/20 transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                        <span class="material-symbols-outlined text-base">checklist</span>
+                        Select All {{ $media->total() }} Orphans for Bulk Delete
+                    </button>
+                </div>
+            @endif
         </div>
 
         {{-- Bulk Actions Bar --}}

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Media;
 use App\Models\User;
+use App\Services\MediaService;
 use App\Services\MediaUsageService;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -253,14 +254,18 @@ class MediaLibrary extends Component
 
         $count = 0;
         $mediaIds = $this->mediaToDelete ? [$this->mediaToDelete] : $this->selectedMedia;
+        $mediaService = app(MediaService::class);
 
         foreach ($mediaIds as $id) {
             $media = Media::find($id);
             if ($media) {
-                $media->delete();
+                $mediaService->delete($media);
                 $count++;
             }
         }
+
+        // Clear usage cache so orphan counts update immediately
+        app(MediaUsageService::class)->clearCache();
 
         $this->selectedMedia = [];
         $this->showDeleteModal = false;
