@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CustomPostType;
 use App\Models\MenuItem;
 use App\Models\Permission;
+use App\Services\AdminMenuBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -20,7 +22,13 @@ class MenuController extends Controller
             ->ordered()
             ->get();
 
-        return view('admin.menus.index', compact('menus'));
+        $cpts = CustomPostType::active()->inMenu()->get();
+
+        $builder = app(AdminMenuBuilder::class);
+        $allItems = $builder->build();
+        $pluginMenus = collect($allItems)->filter(fn ($item) => str_starts_with($item['source'] ?? '', 'plugin:'));
+
+        return view('admin.menus.index', compact('menus', 'cpts', 'pluginMenus'));
     }
 
     /**

@@ -2,10 +2,10 @@
 
 @section('title', 'Menu Management')
 @section('page-title', 'Menu Management')
-@section('page-subtitle', 'Manage sidebar navigation structure')
+@section('page-subtitle', 'Manage sidebar navigation structure across Core, CPT, and Active Plugins')
 
 @section('content')
-<div class="space-y-6">
+<div class="space-y-8">
 
     <!-- Success Message -->
     @if(session('success'))
@@ -17,14 +17,27 @@
     <x-admin.ui.alert type="danger">{{ session('error') }}</x-admin.ui.alert>
     @endif
 
-    <!-- Menu Items -->
+    <!-- 1. Core System Menus -->
     <x-admin.ui.card padding="p-6">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-gray-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-[#FCFCFC]">Core System Navigation</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Database static menu entries for main admin navigation</p>
+                </div>
+            </div>
+            <span class="px-3 py-1 text-xs font-bold bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 rounded-full">{{ $menus->count() }} Items</span>
+        </div>
+
         <div class="space-y-3" id="menu-list">
             @forelse($menus as $menu)
             <div class="bg-white/50 dark:bg-[#1A1A1A]/50 rounded-2xl border border-gray-200 dark:border-[#272B30] overflow-hidden">
                 <!-- Parent Menu -->
                 <div class="flex items-center p-4 hover:bg-white dark:hover:bg-[#1A1A1A]/80 transition">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mr-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mr-4 shrink-0">
                         @if($menu->icon)
                             <i class="{{ $menu->icon }} text-white"></i>
                         @else
@@ -36,7 +49,7 @@
                     
                     <div class="flex-1">
                         <div class="flex items-center gap-2">
-                            <h3 class="font-bold text-gray-900 dark:text-[#FCFCFC]">{{ $menu->title }}</h3>
+                            <h4 class="font-bold text-gray-900 dark:text-[#FCFCFC]">{{ $menu->title }}</h4>
                             @if(!$menu->is_active)
                             <span class="px-2 py-0.5 text-xs font-bold bg-gray-100 dark:bg-[#272B30] text-gray-600 dark:text-gray-400 rounded-full">Inactive</span>
                             @endif
@@ -44,7 +57,7 @@
                             <span class="px-2 py-0.5 text-xs font-bold bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400 rounded-full">{{ $menu->permission }}</span>
                             @endif
                         </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                             @if($menu->route)
                                 Route: {{ $menu->route }}
                             @else
@@ -96,7 +109,7 @@
                 <div class="bg-gray-50/50 dark:bg-[#1A1A1A]/30 border-t border-gray-200 dark:border-[#272B30]">
                     @foreach($menu->children as $child)
                     <div class="flex items-center p-4 pl-16 hover:bg-white/50 dark:hover:bg-[#1A1A1A]/50 transition border-b border-gray-100 dark:border-[#272B30]/50 last:border-0">
-                        <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center mr-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center mr-3 shrink-0">
                             @if($child->icon)
                                 <i class="{{ $child->icon }} text-white text-sm"></i>
                             @else
@@ -108,7 +121,7 @@
                         
                         <div class="flex-1">
                             <div class="flex items-center gap-2">
-                                <h4 class="font-medium text-gray-900 dark:text-[#FCFCFC]">{{ $child->title }}</h4>
+                                <h5 class="font-medium text-gray-900 dark:text-[#FCFCFC] text-sm">{{ $child->title }}</h5>
                                 @if(!$child->is_active)
                                 <span class="px-2 py-0.5 text-xs font-bold bg-gray-100 dark:bg-[#272B30] text-gray-600 dark:text-gray-400 rounded-full">Inactive</span>
                                 @endif
@@ -116,7 +129,7 @@
                                 <span class="px-2 py-0.5 text-xs font-bold bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400 rounded-full">{{ $child->permission }}</span>
                                 @endif
                             </div>
-                            <p class="text-xs text-gray-600 dark:text-gray-400">
+                            <p class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
                                 @if($child->route)
                                     Route: {{ $child->route }}
                                 @else
@@ -163,14 +176,97 @@
                 @endif
             </div>
             @empty
-            <div class="p-12 text-center">
-                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-                <p class="text-gray-500 font-medium">No menu items found</p>
-            </div>
+            <div class="p-8 text-center text-gray-500">No core menu items found.</div>
             @endforelse
         </div>
     </x-admin.ui.card>
+
+    <!-- 2. Content & Custom Post Types (CPT) -->
+    <x-admin.ui.card padding="p-6">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-gray-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-[#FCFCFC]">Content & Custom Post Types (CPT)</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Dynamically registered post types rendering in sidebar under CONTENT section</p>
+                </div>
+            </div>
+            <span class="px-3 py-1 text-xs font-bold bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 rounded-full">{{ $cpts->count() }} CPTs</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @forelse($cpts as $cpt)
+            <div class="bg-white/50 dark:bg-[#1A1A1A]/50 rounded-2xl border border-gray-200 dark:border-[#272B30] p-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold shrink-0">
+                        <span class="material-symbols-outlined text-lg">{{ $cpt->icon ?? 'article' }}</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-900 dark:text-[#FCFCFC] text-sm">{{ $cpt->plural_label }}</h4>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Slug: <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">{{ $cpt->slug }}</code></p>
+                    </div>
+                </div>
+                <a href="{{ route('admin.cpt.entries.index', $cpt->slug) }}" wire:navigate class="px-3 py-1.5 text-xs font-bold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 rounded-xl hover:bg-emerald-100 transition-colors">
+                    Manage Entries →
+                </a>
+            </div>
+            @empty
+            <div class="p-8 text-center text-gray-500 col-span-2">No active Custom Post Types found.</div>
+            @endforelse
+        </div>
+    </x-admin.ui.card>
+
+    <!-- 3. Active Plugins Navigation -->
+    <x-admin.ui.card padding="p-6">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-gray-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a2 2 0 002 2h1a2 2 0 110 4h-1a2 2 0 00-2 2v1a2 2 0 11-4 0v-1a2 2 0 00-2-2H7a2 2 0 110-4h1a2 2 0 002-2V4z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-[#FCFCFC]">Active Plugins Navigation</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Dynamically injected plugin menu items via RenderAdminMenu event hook</p>
+                </div>
+            </div>
+            <span class="px-3 py-1 text-xs font-bold bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 rounded-full">{{ $pluginMenus->count() }} Plugins</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @forelse($pluginMenus as $pMenu)
+            <div class="bg-white/50 dark:bg-[#1A1A1A]/50 rounded-2xl border border-gray-200 dark:border-[#272B30] p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold shrink-0">
+                            <span class="material-symbols-outlined text-lg">{{ $pMenu['icon'] ?? 'extension' }}</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 dark:text-[#FCFCFC] text-sm">{{ $pMenu['title'] }}</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Source: <code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[11px]">{{ $pMenu['source'] }}</code></p>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 text-xs font-bold bg-purple-100 dark:bg-purple-950/30 text-purple-700 dark:text-purple-400 rounded-full">Active Hook</span>
+                </div>
+
+                @if(!empty($pMenu['children']))
+                <div class="mt-2 pt-2 border-t border-gray-100 dark:border-gray-800 space-y-1">
+                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Sub-Items:</div>
+                    <div class="flex flex-wrap gap-1.5">
+                        @foreach($pMenu['children'] as $child)
+                        <span class="px-2.5 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg">
+                            {{ $child['title'] }}
+                        </span>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+            </div>
+            @empty
+            <div class="p-8 text-center text-gray-500 col-span-2">No active plugin menu items found.</div>
+            @endforelse
+        </div>
+    </x-admin.ui.card>
+
 </div>
 @endsection
