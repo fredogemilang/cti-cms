@@ -400,7 +400,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
 			identifier: property.notFound
-			count: 4
+			count: 5
 			path: app/Livewire/Admin/Cpt/Entries/EntryForm.php
 
 		-
@@ -472,7 +472,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
-			count: 1
+			count: 2
 			path: app/Livewire/Admin/Pages/PageForm.php
 
 		-
@@ -484,7 +484,7 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
 			identifier: property.notFound
-			count: 3
+			count: 4
 			path: app/Livewire/Admin/Pages/PageForm.php
 
 		-

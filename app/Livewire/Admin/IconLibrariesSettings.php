@@ -41,7 +41,7 @@ class IconLibrariesSettings extends Component
 
         $content = json_decode(File::get($this->uploadFile->getRealPath()), true);
 
-        if (! is_array($content) || (empty($content['icons']) && ! is_array($content))) {
+        if (! is_array($content) || empty($content)) {
             $this->addError('uploadFile', 'Invalid icon pack JSON format. Must contain an array of icons.');
 
             return;

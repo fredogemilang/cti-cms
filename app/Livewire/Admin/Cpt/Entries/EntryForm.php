@@ -258,7 +258,8 @@ class EntryForm extends Component
     {
         // Find the field definition
         $field = $this->postType->metaFields->where('name', $fieldName)->first();
-        $subFields = $field?->options['repeater_fields'] ?? [];
+        $options = is_array($field?->getAttribute('options')) ? $field->getAttribute('options') : [];
+        $subFields = $options['repeater_fields'] ?? [];
 
         if ($field && $field->type === 'repeater' && ! empty($subFields)) {
             $newRow = [];

@@ -132,21 +132,37 @@ class AdminMenuBuilder
             'core:10' => 'SYSTEM',
         ];
 
+        $customOrder = Setting::get('admin_sidebar_custom_order', []);
+        $dynamicSectionMap = [];
+
+        if (! empty($customOrder) && is_array($customOrder)) {
+            $currSec = 'MAIN';
+            foreach ($customOrder as $entry) {
+                if (str_starts_with($entry, 'SECTION:')) {
+                    $currSec = str_replace('SECTION:', '', $entry);
+                } else {
+                    $dynamicSectionMap[$entry] = $currSec;
+                }
+            }
+        }
+
+        $activeSectionMap = ! empty($dynamicSectionMap) ? $dynamicSectionMap : $defaultSectionMap;
+
         // 1. Core menu items
         $coreItems = MenuItem::whereNull('parent_id')
             ->orderBy('order')
             ->with('children')
             ->get()
-            ->map(function (MenuItem $m) use ($defaultSectionMap) {
+            ->map(function (MenuItem $m) use ($activeSectionMap) {
                 $key = 'core:'.$m->id;
-                $section = $defaultSectionMap[$key] ?? ($m->id == 1 ? 'MAIN' : 'SYSTEM');
+                $section = $activeSectionMap[$key] ?? ($m->id == 1 ? 'MAIN' : 'SYSTEM');
 
                 return [
                     'key' => $key,
                     'id' => $m->id,
                     'title' => $m->title,
                     'route' => $m->route,
-                    'icon' => $m->icon,
+                    'icon' => $m->icon === 'users' ? 'group' : $m->icon,
                     'permission' => $m->permission,
                     'is_active' => $m->is_active,
                     'source' => 'core',
@@ -164,7 +180,7 @@ class AdminMenuBuilder
             })->toArray();
 
         // 2. CPT menu items
-        $cptItems = CustomPostType::active()->inMenu()->get()->map(function ($cpt) use ($defaultSectionMap) {
+        $cptItems = CustomPostType::active()->inMenu()->get()->map(function ($cpt) use ($activeSectionMap) {
             $taxonomies = $cpt->taxonomies();
             $children = [
                 ['title' => 'All '.$cpt->plural_label, 'route' => 'admin.cpt.entries.index', 'params' => ['postTypeSlug' => $cpt->slug]],
@@ -180,7 +196,7 @@ class AdminMenuBuilder
             }
 
             $key = 'cpt:'.$cpt->slug;
-            $section = $defaultSectionMap[$key] ?? 'CONTENT';
+            $section = $activeSectionMap[$key] ?? 'CONTENT';
 
             return [
                 'key' => $key,
@@ -199,9 +215,9 @@ class AdminMenuBuilder
         $eventItems = $this->build();
         $pluginItems = collect($eventItems)
             ->filter(fn ($item) => str_starts_with($item['source'] ?? '', 'plugin:'))
-            ->map(function ($p) use ($defaultSectionMap) {
+            ->map(function ($p) use ($activeSectionMap) {
                 $key = $p['source'];
-                $section = $defaultSectionMap[$key] ?? 'PLUGINS';
+                $section = $activeSectionMap[$key] ?? 'PLUGINS';
 
                 $p['key'] = $key;
                 $p['source_label'] = 'Plugin: '.str_replace('plugin:', '', $p['source']);
@@ -241,7 +257,8 @@ class AdminMenuBuilder
             ];
             $orderMap = array_flip($defaultOrderKeys);
         } else {
-            $orderMap = array_flip(array_values($customOrder));
+            $itemKeysOnly = array_values(array_filter($customOrder, fn ($k) => ! str_starts_with($k, 'SECTION:')));
+            $orderMap = array_flip($itemKeysOnly);
         }
 
         usort($items, function ($a, $b) use ($orderMap) {

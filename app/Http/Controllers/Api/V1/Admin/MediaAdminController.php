@@ -45,7 +45,7 @@ class MediaAdminController extends Controller
                 $request->file('file'),
                 array_merge(
                     $request->only(['alt_text', 'title', 'description']),
-                    ['uploaded_by' => $request->user()?->id ?? 1]
+                    ['uploaded_by' => $request->user() ? $request->user()->id : 1]
                 )
             );
 

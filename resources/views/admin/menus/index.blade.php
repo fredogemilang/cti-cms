@@ -15,7 +15,7 @@
             </div>
             <div>
                 <h3 class="font-bold text-gray-900 dark:text-[#FCFCFC] text-base">Sidebar Order Customizer</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Drag any item up or down to reorder the sidebar. Your custom layout applies live across the panel.</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Drag items up or down across sections. Your custom layout applies live across the entire admin panel.</p>
             </div>
         </div>
 
@@ -65,7 +65,11 @@
 
     <!-- Unified Menu Sortable Container -->
     <x-admin.ui.card padding="p-6">
-        <div class="space-y-3" id="sortable-menu-list">
+        <div class="space-y-4" id="sortable-menu-list">
+            @php
+                $currentSection = null;
+            @endphp
+
             @forelse($menus as $index => $item)
             @php
                 $isCore = ($item['source'] ?? 'core') === 'core';
@@ -73,12 +77,24 @@
                 $isPlugin = str_starts_with($item['source'] ?? '', 'plugin:');
                 $section = $item['section'] ?? ($isCpt ? 'CONTENT' : ($isPlugin ? 'PLUGINS' : 'SYSTEM'));
             @endphp
-            
+
+            <!-- Section Header Banner (if section changes) -->
+            @if($section !== $currentSection)
+                @php $currentSection = $section; @endphp
+                <div class="section-header pt-4 pb-2 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2 select-none" data-section="{{ $section }}">
+                    <span class="w-2 h-2 rounded-full {{ $section === 'MAIN' ? 'bg-amber-500' : ($section === 'CONTENT' ? 'bg-emerald-500' : ($section === 'PLUGINS' ? 'bg-purple-500' : 'bg-blue-500')) }}"></span>
+                    <span class="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">
+                        {{ $section }}
+                    </span>
+                </div>
+            @endif
+
+            <!-- Item Card -->
             <div 
                 data-key="{{ $item['key'] ?? $item['source'] }}"
                 class="sortable-item group bg-white/70 dark:bg-[#1A1A1A]/80 rounded-2xl border border-gray-200 dark:border-[#272B30] p-4 transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-md cursor-grab active:cursor-grabbing flex flex-col md:flex-row md:items-center justify-between gap-4">
                 
-                <!-- Left: Drag Handle, Position, Icon, Title, Section & Source Badges -->
+                <!-- Left: Drag Handle, Position, Icon, Title, and Badges -->
                 <div class="flex items-center gap-4 flex-1 min-w-0">
                     <!-- Drag Handle -->
                     <div class="text-gray-400 dark:text-gray-600 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors shrink-0">
@@ -86,7 +102,7 @@
                     </div>
 
                     <!-- Position Number Badge -->
-                    <span class="pos-badge text-xs font-mono font-bold px-2 py-1 rounded-lg bg-gray-100 dark:bg-[#272B30] text-gray-500 dark:text-gray-400 shrink-0">
+                    <span class="pos-badge text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-[#272B30] text-gray-500 dark:text-gray-400 shrink-0">
                         #{{ $index + 1 }}
                     </span>
 
@@ -109,30 +125,11 @@
                         </div>
                     @endif
 
-                    <!-- Title & Badges -->
+                    <!-- Title & Source Badge -->
                     <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2 flex-wrap">
                             <h4 class="font-bold text-gray-900 dark:text-[#FCFCFC] text-base truncate">{{ $item['title'] }}</h4>
                             
-                            <!-- Sidebar Section Badge -->
-                            @if($section === 'MAIN')
-                                <span class="px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-full">
-                                    SECTION: {{ $section }}
-                                </span>
-                            @elseif($section === 'CONTENT')
-                                <span class="px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full">
-                                    SECTION: {{ $section }}
-                                </span>
-                            @elseif($section === 'PLUGINS')
-                                <span class="px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 rounded-full">
-                                    SECTION: {{ $section }}
-                                </span>
-                            @else
-                                <span class="px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-full">
-                                    SECTION: {{ $section }}
-                                </span>
-                            @endif
-
                             <!-- Source Badge -->
                             @if($isCpt)
                                 <span class="px-2.5 py-0.5 text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full">
@@ -189,7 +186,6 @@ function menuManager() {
             if (el) {
                 new Sortable(el, {
                     animation: 150,
-                    handle: '.sortable-item',
                     ghostClass: 'opacity-40',
                     onEnd: () => {
                         this.updatePositions();
@@ -210,11 +206,16 @@ function menuManager() {
         },
 
         getOrderedKeys() {
-            const items = document.querySelectorAll('#sortable-menu-list .sortable-item');
+            const children = document.querySelectorAll('#sortable-menu-list > *');
             const keys = [];
-            items.forEach(item => {
-                const key = item.getAttribute('data-key');
-                if (key) keys.push(key);
+            children.forEach(el => {
+                if (el.classList.contains('section-header')) {
+                    const sec = el.getAttribute('data-section');
+                    if (sec) keys.push('SECTION:' + sec);
+                } else if (el.classList.contains('sortable-item')) {
+                    const key = el.getAttribute('data-key');
+                    if (key) keys.push(key);
+                }
             });
             return keys;
         },

@@ -266,7 +266,8 @@ if (! function_exists('resolve_block_asset')) {
             return asset($cleanPath);
         }
 
-        $activeThemeSlug = active_theme()?->slug ?? 'cdt';
+        $theme = active_theme();
+        $activeThemeSlug = $theme ? $theme->slug : 'cdt';
 
         if (str_starts_with($cleanPath, 'assets/')) {
             return asset("themes/{$activeThemeSlug}/{$cleanPath}");

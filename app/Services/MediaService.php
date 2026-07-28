@@ -249,8 +249,7 @@ class MediaService
                 'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($fullPath),
                 'image/png' => @imagecreatefrompng($fullPath),
                 'image/gif' => @imagecreatefromgif($fullPath),
-                'image/webp' => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($fullPath) : null,
-                default => null,
+                default => @imagecreatefromwebp($fullPath),
             };
 
             if (! $source) {

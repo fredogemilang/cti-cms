@@ -156,9 +156,8 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
 
     // Menus Management
     Route::middleware('permission:menus.view')->group(function () {
-        Route::resource('menus', MenuController::class)->except(['create', 'store']);
-        Route::post('menus/reorder', [MenuController::class, 'reorder'])
-            ->name('menus.reorder');
+        Route::get('menus', [MenuController::class, 'index'])->name('menus.index');
+        Route::post('menus/reorder', [MenuController::class, 'reorder'])->name('menus.reorder');
     });
 
     // Media Management
