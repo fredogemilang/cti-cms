@@ -128,8 +128,8 @@ class FormField extends Model
         $widthClass = $this->getWidthClass();
         $html = "<div class=\"form-group mb-3 {$widthClass}\">";
 
-        // Most fields need a label (except hidden)
-        if ($this->type !== 'hidden') {
+        // Most fields need a label (except hidden, gdpr, terms)
+        if (! in_array($this->type, ['hidden', 'gdpr', 'terms'])) {
             $html .= "<label for=\"{$this->field_id}\" class=\"form-label\">";
             $html .= e($this->label);
             if ($this->is_required) {
@@ -515,7 +515,10 @@ class FormField extends Model
             ? ($this->advanced_settings['consent_text'] ?? $this->advanced_settings['privacy_content'] ?? 'I consent to having my data processed.')
             : ($this->advanced_settings['terms_text'] ?? 'I agree to the Terms & Conditions.');
 
-        $html = '<div class="form-check d-flex align-items-start gap-2.5 my-2">';
+        $asterisk = $this->is_required ? '<span class="text-danger font-bold me-1 mt-0.5">*</span>' : '';
+
+        $html = '<div class="form-check d-flex align-items-start gap-2 my-2">';
+        $html .= $asterisk;
         $html .= "<input type=\"checkbox\" name=\"{$this->field_id}\" id=\"{$this->field_id}\" value=\"1\" class=\"form-check-input mt-1 shrink-0\" {$required}>";
         $html .= "<div class=\"form-check-label text-sm leading-relaxed text-zinc-600 dark:text-zinc-300\" for=\"{$this->field_id}\">{$text}</div>";
         $html .= '</div>';
