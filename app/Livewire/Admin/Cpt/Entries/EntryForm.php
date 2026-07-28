@@ -793,6 +793,21 @@ class EntryForm extends Component
             }
         }
 
+        $entryModel = ($this->isEdit && $this->entryId) ? CptEntry::find($this->entryId) : null;
+        if (! $entryModel) {
+            $entryModel = new CptEntry([
+                'post_type_id' => $this->postType->id,
+                'slug' => $this->slug ?: 'example-slug',
+            ]);
+            $entryModel->setRelation('postType', $this->postType);
+        }
+
+        $previewUrl = $entryModel->getUrl();
+        $fullPath = parse_url($previewUrl, PHP_URL_PATH) ?? '/'.$this->postType->slug.'/'.$this->slug;
+        $trimmedPath = rtrim($fullPath, '/');
+        $lastSlashPos = strrpos($trimmedPath, '/');
+        $permalinkPrefix = ($lastSlashPos !== false) ? substr($trimmedPath, 0, $lastSlashPos + 1) : '/'.$this->postType->slug.'/';
+
         return view('livewire.admin.cpt.entries.entry-form', [
             'taxonomies' => $taxonomies,
             'taxonomyTerms' => $taxonomyTerms,
@@ -800,6 +815,8 @@ class EntryForm extends Component
             'metaBoxes' => $metaBoxes,
             'groupedFields' => $groupedFields,
             'targetEntriesByField' => $targetEntriesByField,
+            'previewUrl' => $previewUrl,
+            'permalinkPrefix' => $permalinkPrefix,
         ]);
     }
 

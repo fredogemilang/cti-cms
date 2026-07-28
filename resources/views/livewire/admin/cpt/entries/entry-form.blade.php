@@ -106,7 +106,7 @@
                     @if($slug)
                     <div class="flex items-center gap-2 text-xs font-bold text-[#6F767E] uppercase tracking-wider pl-1">
                         <span>PERMALINK:</span>
-                        <span class="text-[#6F767E] lowercase font-normal">/{{ $postType->slug }}/</span>
+                        <span class="text-[#6F767E] lowercase font-normal">{{ $permalinkPrefix }}</span>
                         <div x-data="{ editing: false }" class="relative flex items-center gap-2">
                             <span x-show="!editing" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30]">{{ $slug }}</span>
                             <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[100px]" x-cloak>
@@ -350,7 +350,7 @@
                             <span wire:loading wire:target="saveAsDraft">Saving...</span>
                         </button>
                         @if($isEdit && $slug)
-                        <a href="{{ url($postType->slug . '/' . $slug) }}" target="_blank"
+                        <a href="{{ $previewUrl }}" target="_blank"
                             class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all flex items-center justify-center gap-2">
                             <span class="material-symbols-outlined text-lg">visibility</span>
                             Preview
