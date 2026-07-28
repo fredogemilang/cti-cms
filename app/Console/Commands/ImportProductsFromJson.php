@@ -55,15 +55,18 @@ class ImportProductsFromJson extends Command
         $products = json_decode(File::get($productsPath), true);
         $vendorFilter = $this->option('vendor');
 
-        // Get products CPT
-        $productsCpt = CustomPostType::where('slug', 'products')->first();
+        // Get CPTs
+        $productsCpt = CustomPostType::where('slug', 'technology-alliance')->orWhere('slug', 'products')->first();
         if (! $productsCpt) {
-            $this->error('Products CPT not found. Run CdtThemeSeeder first.');
+            $this->error('Technology Alliance CPT not found. Run CdtThemeSeeder first.');
 
             return self::FAILURE;
         }
 
-        $this->info("Products CPT ID: {$productsCpt->id}");
+        $techProductsCpt = CustomPostType::where('slug', 'tech-products')->first() ?: $productsCpt;
+
+        $this->info("Technology Alliance CPT ID: {$productsCpt->id}");
+        $this->info("Tech Products CPT ID: {$techProductsCpt->id}");
         $this->info("Data source: {$productsPath}");
         if ($this->option('dry-run')) {
             $this->warn('DRY RUN — no changes will be saved.');
@@ -88,7 +91,7 @@ class ImportProductsFromJson extends Command
                 $subProducts = json_decode(File::get($subPath), true);
                 foreach ($subProducts as $sub) {
                     $totalSubs++;
-                    $this->importSubProduct($sub, $product, $productsCpt, $basePath);
+                    $this->importSubProduct($sub, $product, $techProductsCpt, $productsCpt, $basePath);
                 }
             }
         }
@@ -120,6 +123,32 @@ class ImportProductsFromJson extends Command
         // Translations
         $translations = $this->buildTranslations($data, $slug, $basePath);
 
+        $existingMeta = [];
+        $existingEntry = CptEntry::where('post_type_id', $cpt->id)->where('slug', $slug)->first();
+        if ($existingEntry && is_array($existingEntry->meta)) {
+            $existingMeta = $existingEntry->meta;
+        }
+
+        $meta = array_merge($existingMeta, [
+            'hero' => $data['hero'] ?? [],
+            'features' => $data['features'] ?? ($existingMeta['features'] ?? []),
+            'solutions' => $data['solutions'] ?? [],
+            'solutions_featured' => $data['solutions']['featured'] ?? ($existingMeta['solutions_featured'] ?? []),
+            'solutions_other' => $data['solutions']['other'] ?? ($existingMeta['solutions_other'] ?? []),
+            'solutions_description' => $data['solutions']['description'] ?? ($existingMeta['solutions_description'] ?? ''),
+            'banner' => $data['banner'] ?? [],
+            'banner_badge' => $data['banner']['badge'] ?? ($existingMeta['banner_badge'] ?? ''),
+            'banner_headline' => $data['banner']['headline'] ?? ($existingMeta['banner_headline'] ?? ''),
+            'banner_description' => $data['banner']['description'] ?? ($existingMeta['banner_description'] ?? ''),
+            'banner_cta' => $data['banner']['cta'] ?? ($existingMeta['banner_cta'] ?? ''),
+            'banner_logo' => $data['banner']['logo'] ?? ($existingMeta['banner_logo'] ?? $logo),
+            'videos' => $data['videos'] ?? ($existingMeta['videos'] ?? []),
+            'related_articles' => $data['relatedArticles'] ?? ($existingMeta['related_articles'] ?? []),
+            'badges' => $data['hero']['badges'] ?? ($existingMeta['badges'] ?? []),
+            'badge_images' => $data['hero']['badgeImages'] ?? ($existingMeta['badge_images'] ?? []),
+            'logo' => $logo,
+        ]);
+
         $attributes = [
             'post_type_id' => $cpt->id,
             'title' => $title,
@@ -128,15 +157,7 @@ class ImportProductsFromJson extends Command
             'status' => 'published',
             'author_id' => 1,
             'published_at' => now(),
-            'meta' => [
-                'hero' => $data['hero'] ?? [],
-                'features' => $data['features'] ?? [],
-                'solutions' => $data['solutions'] ?? [],
-                'banner' => $data['banner'] ?? [],
-                'videos' => $data['videos'] ?? [],
-                'related_articles' => $data['relatedArticles'] ?? [],
-                'logo' => $logo,
-            ],
+            'meta' => $meta,
             'translations' => $translations,
         ];
 
@@ -156,7 +177,7 @@ class ImportProductsFromJson extends Command
 
     // ── Sub-Product ─────────────────────────────────────────────────
 
-    private function importSubProduct(array $data, array $parent, CustomPostType $cpt, string $basePath): void
+    private function importSubProduct(array $data, array $parent, CustomPostType $subCpt, CustomPostType $parentCpt, string $basePath): void
     {
         $slug = $data['slug'];
         $title = $data['displayName'] ?? $data['hero']['title'];
@@ -195,7 +216,7 @@ class ImportProductsFromJson extends Command
         $subSlug = $parentSlug.'-'.$slug;
 
         $attributes = [
-            'post_type_id' => $cpt->id,
+            'post_type_id' => $subCpt->id,
             'title' => $title,
             'content' => $contentHtml,
             'excerpt' => strip_tags($desc),
@@ -220,32 +241,32 @@ class ImportProductsFromJson extends Command
         }
 
         $entry = CptEntry::updateOrCreate(
-            ['post_type_id' => $cpt->id, 'slug' => $subSlug],
+            ['post_type_id' => $subCpt->id, 'slug' => $subSlug],
             $attributes
         );
 
         // Link sub-product to parent via relationship (meta field 'product_id')
-        $parentEntry = CptEntry::where('post_type_id', $cpt->id)
+        $parentEntry = CptEntry::where('post_type_id', $parentCpt->id)
             ->where('slug', $parentSlug)
             ->first();
 
         if ($parentEntry) {
-            // Ensure product_id meta field exists
+            // Ensure product_id meta field exists on subCpt
             $metaField = MetaField::firstOrCreate(
                 [
                     'name' => 'product_id',
                     'fieldable_type' => CustomPostType::class,
-                    'fieldable_id' => $cpt->id,
+                    'fieldable_id' => $subCpt->id,
                 ],
                 [
-                    'label' => 'Related Product',
+                    'label' => 'Parent Product',
                     'type' => 'relationship',
                     'is_active' => true,
                 ]
             );
 
-            $parentEntry->relatedEntries('product_id')->syncWithoutDetaching([
-                $entry->id => ['order' => 0, 'meta_field_id' => $metaField->id],
+            $entry->relatedEntries('product_id')->syncWithoutDetaching([
+                $parentEntry->id => ['order' => 0, 'meta_field_id' => $metaField->id],
             ]);
         }
 
