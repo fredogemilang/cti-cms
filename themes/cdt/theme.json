@@ -24,6 +24,11 @@
             "key": "gated_content_form",
             "label": "Resource / Datasheet Download Form",
             "description": "Form displayed on sub-product and sub-solution datasheet pages."
+        },
+        {
+            "key": "alliance_form",
+            "label": "Technology Alliance & Product Form",
+            "description": "Form displayed on technology alliance and product detail pages."
         }
     ],
     "page_templates": {
