@@ -422,6 +422,10 @@
                                                 :key="'icon-' . $field->name . '-' . $index . '-' . $subFieldId"
                                             />
                                         @endif
+
+                                        @error('meta.' . $field->name . '.' . $index . '.' . $subFieldId)
+                                            <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 @endforeach
                             </div>

@@ -353,10 +353,39 @@ class EntryForm extends Component
         $this->parentId = $entry->parent_id;
         $this->menuOrder = $entry->menu_order;
 
-        // Load meta values
+        // Load meta values and normalize repeater subfield keys
         if ($entry->meta) {
             foreach ($entry->meta as $key => $value) {
-                $this->meta[$key] = $value;
+                $metaField = $this->postType->metaFields->where('name', $key)->first();
+                if ($metaField && $metaField->type === 'repeater' && is_array($value)) {
+                    $subFields = $metaField->options['repeater_fields'] ?? [];
+                    $normalizedRows = [];
+                    foreach ($value as $row) {
+                        if (! is_array($row)) {
+                            $normalizedRows[] = $row;
+
+                            continue;
+                        }
+                        $normalizedRow = $row;
+                        foreach ($subFields as $loopIdx => $subField) {
+                            $targetKey = $subField['name'] ?? $subField['id'] ?? Str::snake($subField['label'] ?? 'field_'.$loopIdx);
+                            $camelKey = Str::camel($targetKey);
+                            $snakeKey = Str::snake($targetKey);
+
+                            if (! isset($normalizedRow[$targetKey])) {
+                                if (isset($normalizedRow[$camelKey])) {
+                                    $normalizedRow[$targetKey] = $normalizedRow[$camelKey];
+                                } elseif (isset($normalizedRow[$snakeKey])) {
+                                    $normalizedRow[$targetKey] = $normalizedRow[$snakeKey];
+                                }
+                            }
+                        }
+                        $normalizedRows[] = $normalizedRow;
+                    }
+                    $this->meta[$key] = $normalizedRows;
+                } else {
+                    $this->meta[$key] = $value;
+                }
             }
         }
 

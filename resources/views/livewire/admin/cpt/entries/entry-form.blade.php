@@ -78,6 +78,21 @@
                     </div>
                 @endif
 
+                {{-- Global Validation Errors Alert --}}
+                @if ($errors->any())
+                    <div class="rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 p-5 shadow-sm">
+                        <div class="flex items-center gap-2 text-red-800 dark:text-red-300 font-bold mb-2 text-sm">
+                            <span class="material-symbols-outlined text-lg">error</span>
+                            <span>Validation errors occurred:</span>
+                        </div>
+                        <ul class="list-disc list-inside text-xs text-red-700 dark:text-red-400 space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <!-- Title & Permalink -->
                 <div class="space-y-4">
                     <input wire:model.blur="title"
