@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\CustomPostType;
 use App\Models\MenuItem;
 use App\Models\Permission;
+use App\Models\Setting;
 use App\Services\AdminMenuBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -17,18 +17,10 @@ class MenuController extends Controller
      */
     public function index()
     {
-        $menus = MenuItem::with(['children', 'parent'])
-            ->whereNull('parent_id')
-            ->ordered()
-            ->get();
-
-        $cpts = CustomPostType::active()->inMenu()->get();
-
         $builder = app(AdminMenuBuilder::class);
-        $allItems = $builder->build();
-        $pluginMenus = collect($allItems)->filter(fn ($item) => str_starts_with($item['source'] ?? '', 'plugin:'));
+        $menus = $builder->getUnifiedMenuList();
 
-        return view('admin.menus.index', compact('menus', 'cpts', 'pluginMenus'));
+        return view('admin.menus.index', compact('menus'));
     }
 
     /**
@@ -101,16 +93,24 @@ class MenuController extends Controller
      */
     public function reorder(Request $request)
     {
-        $validated = $request->validate([
-            'items' => ['required', 'array'],
-            'items.*.id' => ['required', 'exists:menu_items,id'],
-            'items.*.order' => ['required', 'integer', 'min:0'],
-        ]);
+        if ($request->boolean('reset')) {
+            Setting::set('admin_sidebar_custom_order', []);
 
-        foreach ($validated['items'] as $item) {
-            MenuItem::where('id', $item['id'])->update(['order' => $item['order']]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Menu layout reset to system default.',
+            ]);
         }
 
-        return response()->json(['message' => 'Menu items reordered successfully.']);
+        $validated = $request->validate([
+            'order' => ['required', 'array'],
+        ]);
+
+        Setting::set('admin_sidebar_custom_order', array_values($validated['order']));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Menu layout order updated successfully.',
+        ]);
     }
 }
