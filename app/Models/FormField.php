@@ -515,19 +515,9 @@ class FormField extends Model
             ? ($this->advanced_settings['consent_text'] ?? $this->advanced_settings['privacy_content'] ?? 'I consent to having my data processed.')
             : ($this->advanced_settings['terms_text'] ?? 'I agree to the Terms & Conditions.');
 
-        if ($this->is_required) {
-            $asterisk = '<span class="text-danger font-bold me-1">*</span>';
-            $trimmed = trim($text);
-            if (preg_match('/^<p[^>]*>/i', $trimmed)) {
-                $text = preg_replace('/^<p([^>]*)>/i', '<p$1>'.$asterisk, $trimmed);
-            } else {
-                $text = $asterisk.$text;
-            }
-        }
-
         $html = '<div class="form-check d-flex align-items-start gap-2.5 my-2">';
         $html .= "<input type=\"checkbox\" name=\"{$this->field_id}\" id=\"{$this->field_id}\" value=\"1\" class=\"form-check-input mt-1 shrink-0\" {$required}>";
-        $html .= "<div class=\"form-check-label text-sm leading-relaxed text-zinc-600 dark:text-zinc-300\" for=\"{$this->field_id}\">{$text}</div>";
+        $html .= "<label class=\"form-check-label text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 cursor-pointer\" for=\"{$this->field_id}\">{$text}</label>";
         $html .= '</div>';
 
         return $html;
