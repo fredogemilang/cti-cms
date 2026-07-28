@@ -24,39 +24,6 @@ class MenuController extends Controller
     }
 
     /**
-     * Show the form for creating a new menu item.
-     */
-    public function create()
-    {
-        $parentMenus = MenuItem::whereNull('parent_id')->ordered()->get();
-        $permissions = Permission::all();
-
-        return view('admin.menus.create', compact('parentMenus', 'permissions'));
-    }
-
-    /**
-     * Store a newly created menu item in storage.
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'parent_id' => ['nullable', 'exists:menu_items,id'],
-            'title' => ['required', 'string', 'max:255'],
-            'icon' => ['nullable', 'string', 'max:255'],
-            'route' => ['nullable', 'string', 'max:255'],
-            'permission' => ['nullable', 'string', 'max:255'],
-            'order' => ['required', 'integer', 'min:0'],
-            'is_active' => ['boolean'],
-        ]);
-
-        MenuItem::create($validated);
-
-        return redirect()
-            ->route('admin.menus.index')
-            ->with('success', 'Menu item created successfully.');
-    }
-
-    /**
      * Display the specified menu item.
      */
     public function show(MenuItem $menu)

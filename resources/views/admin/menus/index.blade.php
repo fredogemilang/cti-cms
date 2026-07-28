@@ -12,14 +12,6 @@
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-[#FCFCFC]">Navigation Menus</h2>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Manage sidebar navigation structure</p>
             </div>
-            @can('menus.create')
-            <a href="{{ route('admin.menus.create') }}" wire:navigate class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                </svg>
-                Add Menu Item
-            </a>
-            @endcan
         </div>
     </x-admin.ui.card>
 
