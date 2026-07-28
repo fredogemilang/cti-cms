@@ -55,6 +55,11 @@ class ArchiveController extends Controller
 
         $entry->load(['author', 'postType', 'terms.taxonomy']);
 
+        $redirectUrl = apply_filters('cpt_entry.url_redirect', null, $entry);
+        if ($redirectUrl) {
+            return redirect($redirectUrl, 301);
+        }
+
         $taxonomies = $postType->taxonomies();
         $previousEntry = $entry->getPreviousEntry();
         $nextEntry = $entry->getNextEntry();
@@ -88,6 +93,11 @@ class ArchiveController extends Controller
         abort_if(! $entry, 404);
 
         $entry->load(['author', 'postType', 'terms.taxonomy']);
+
+        $redirectUrl = apply_filters('cpt_entry.url_redirect', null, $entry);
+        if ($redirectUrl) {
+            return redirect($redirectUrl, 301);
+        }
 
         $taxonomies = $postType->taxonomies();
         $previousEntry = $entry->getPreviousEntry();
