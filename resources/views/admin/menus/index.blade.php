@@ -2,18 +2,10 @@
 
 @section('title', 'Menu Management')
 @section('page-title', 'Menu Management')
+@section('page-subtitle', 'Manage sidebar navigation structure')
 
 @section('content')
 <div class="space-y-6">
-    <!-- Header with Actions -->
-    <x-admin.ui.card padding="p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-[#FCFCFC]">Navigation Menus</h2>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Manage sidebar navigation structure</p>
-            </div>
-        </div>
-    </x-admin.ui.card>
 
     <!-- Success Message -->
     @if(session('success'))
