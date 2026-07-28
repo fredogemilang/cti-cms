@@ -277,66 +277,9 @@ class ImportProductsFromJson extends Command
 
     private function renderProductContent(array $data): string
     {
-        $features = $data['features'] ?? [];
-        $solutions = $data['solutions'] ?? [];
         $desc = $data['hero']['description'] ?? '';
-        $title = $data['displayName'] ?? $data['hero']['title'];
 
-        $html = '<div class="space-y-12">';
-
-        // Description
-        if ($desc) {
-            $html .= '<div class="prose max-w-none"><p class="text-lg text-zinc-700">'.e($desc).'</p></div>';
-        }
-
-        // Why section
-        if ($features) {
-            $html .= "<section><h2 class=\"text-2xl font-bold mb-6\">Why {$title}?</h2><div class=\"grid grid-cols-1 md:grid-cols-3 gap-6\">";
-            foreach ($features as $f) {
-                $icon = $this->svgIcon($f['icon'] ?? 'shield');
-                $html .= '<div class="bg-zinc-50 p-6 rounded-2xl border border-zinc-200">';
-                $html .= "<div class=\"w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-4\"><svg class=\"w-6 h-6\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"{$icon}\"/></svg></div>";
-                $html .= '<h3 class="font-bold text-zinc-900 mb-2">'.e($f['title']).'</h3>';
-                $html .= '<p class="text-sm text-zinc-600">'.e($f['description']).'</p>';
-                $html .= '</div>';
-            }
-            $html .= '</div></section>';
-        }
-
-        // Solutions
-        $featured = $solutions['featured'] ?? [];
-        $other = $solutions['other'] ?? [];
-        if ($featured || $other) {
-            $html .= "<section><h2 class=\"text-2xl font-bold mb-6\">{$title} Solutions</h2>";
-            if ($featured) {
-                $html .= '<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">';
-                foreach ($featured as $f) {
-                    $icon = $this->svgIcon($f['icon'] ?? 'shield');
-                    $link = $f['link'] ?? '#';
-                    $html .= "<a href=\"{$link}\" class=\"bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm hover:shadow-md transition-shadow\">";
-                    $html .= "<div class=\"w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-3\"><svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"{$icon}\"/></svg></div>";
-                    $html .= '<h4 class="font-bold text-zinc-900">'.e($f['title']).'</h4>';
-                    $html .= '<p class="text-sm text-zinc-600 mt-1">'.e($f['description'] ?? '').'</p>';
-                    $html .= '</a>';
-                }
-                $html .= '</div>';
-            }
-            if ($other) {
-                $html .= '<div class="space-y-4">';
-                foreach ($other as $o) {
-                    $html .= '<div class="bg-zinc-50 p-6 rounded-2xl border border-zinc-200">';
-                    $html .= '<h4 class="font-bold text-zinc-900">'.e($o['title']).'</h4>';
-                    $html .= '<p class="text-sm text-zinc-600 mt-1">'.e($o['description'] ?? '').'</p>';
-                    $html .= '</div>';
-                }
-                $html .= '</div>';
-            }
-            $html .= '</section>';
-        }
-
-        $html .= '</div>';
-
-        return $html;
+        return $desc ? '<p class="text-zinc-600 text-base md:text-lg leading-relaxed mb-12 max-w-3xl">'.e($desc).'</p>' : '';
     }
 
     private function buildTranslations(array $data, string $slug, string $basePath): array
