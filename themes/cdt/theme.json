@@ -9,6 +9,15 @@
         "posts",
         "menus"
     ],
+    "custom_field_types": [
+        {
+            "type": "vendor_solutions",
+            "label": "Vendor Solutions",
+            "icon": "category",
+            "category": "dynamic",
+            "description": "Dropdown otomatis terisi dari sub-products vendor yang sedang ditampilkan. Jika vendor tidak punya sub-products, fallback ke opsi default (Cloud Services, Consulting, Other)."
+        }
+    ],
     "form_placeholders": [
         {
             "key": "contact_form",

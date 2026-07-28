@@ -65,7 +65,16 @@
         userBody: {{ json_encode($userEmailBody) }},
 
         // Builder State
-        fields: {{ json_encode($form->fields ? $form->fields->toArray() : []) }},
+        fields: {{ json_encode(array_map(function($f) {
+            $adv = $f['advanced_settings'] ?? [];
+            if (is_string($adv)) {
+                $adv = json_decode($adv, true) ?? [];
+            }
+            $f['consent_text'] = $f['consent_text'] ?? ($adv['consent_text'] ?? ($adv['privacy_content'] ?? ''));
+            $f['terms_text'] = $f['terms_text'] ?? ($adv['terms_text'] ?? '');
+            $f['html_content'] = $f['html_content'] ?? ($adv['html_content'] ?? '');
+            return $f;
+        }, $form->fields ? $form->fields->toArray() : [])) }},
         selectedFieldIndex: null,
         showFieldModal: false,
         settingsSubTab: 'general',
@@ -105,18 +114,25 @@
         // Builder actions
         addField(type) {
             const fieldId = 'field_' + Math.random().toString(36).substr(2, 6);
-            const label = type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ');
-            
+            const labelMap = { gdpr: 'Privacy Consent', terms: 'Terms & Conditions', vendor_solutions: 'Solution Needed' };
+            const label = labelMap[type] || (type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' '));
+
+            const defaultConsent = 'I consent to having my personal data processed and agree to the Privacy Policy.';
+            const defaultTerms = 'I agree to the Terms and Conditions.';
+
             this.fields.push({
                 field_id: fieldId,
                 type: type,
                 label: label,
-                is_required: false,
+                is_required: (type === 'gdpr' || type === 'terms') ? true : false,
                 column_width: 'full',
                 placeholder: '',
                 help_text: '',
                 options_text: ['select', 'radio', 'checkbox'].includes(type) ? 'Option 1|value_1\nOption 2|value_2' : '',
-                conditional_logic: { enabled: false, conditions: [] }
+                conditional_logic: { enabled: false, conditions: [] },
+                advanced_settings: {},
+                consent_text: type === 'gdpr' ? defaultConsent : '',
+                terms_text: type === 'terms' ? defaultTerms : '',
             });
             this.selectedFieldIndex = this.fields.length - 1;
             this.showFieldModal = false;
@@ -293,6 +309,9 @@
                                 <input type="hidden" :name="`fields[${index}][placeholder]`" x-model="field.placeholder">
                                 <input type="hidden" :name="`fields[${index}][help_text]`" x-model="field.help_text">
                                 <input type="hidden" :name="`fields[${index}][options]`" x-model="field.options_text">
+                                <input type="hidden" :name="`fields[${index}][consent_text]`" x-model="field.consent_text">
+                                <input type="hidden" :name="`fields[${index}][terms_text]`" x-model="field.terms_text">
+                                <input type="hidden" :name="`fields[${index}][html_content]`" x-model="field.html_content">
                             </div>
                         </template>
                     </div>
@@ -351,6 +370,26 @@
                                 <input type="checkbox" x-model="fields[selectedFieldIndex].is_required" class="rounded border-gray-300 text-primary focus:ring-primary">
                                 <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Required Field</span>
                             </label>
+
+                            {{-- GDPR consent text --}}
+                            <template x-if="fields[selectedFieldIndex].type === 'gdpr'">
+                                <div class="space-y-1 pt-2">
+                                    <label class="block text-xs font-bold text-[#6F767E]">Consent Text <span class="font-normal text-[#6F767E]/50">(HTML links supported)</span></label>
+                                    <textarea x-model="fields[selectedFieldIndex].consent_text" rows="3"
+                                        class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs p-3 text-[#111827] dark:text-[#FCFCFC] resize-none"
+                                        placeholder="I consent to having my personal data processed..."></textarea>
+                                </div>
+                            </template>
+
+                            {{-- Terms text --}}
+                            <template x-if="fields[selectedFieldIndex].type === 'terms'">
+                                <div class="space-y-1 pt-2">
+                                    <label class="block text-xs font-bold text-[#6F767E]">Terms Text <span class="font-normal text-[#6F767E]/50">(HTML links supported)</span></label>
+                                    <textarea x-model="fields[selectedFieldIndex].terms_text" rows="3"
+                                        class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs p-3 text-[#111827] dark:text-[#FCFCFC] resize-none"
+                                        placeholder="I agree to the Terms and Conditions."></textarea>
+                                </div>
+                            </template>
 
                             <template x-if="['select', 'radio', 'checkbox'].includes(fields[selectedFieldIndex].type)">
                                 <div class="space-y-1 pt-2">
@@ -679,36 +718,29 @@
                 </button>
             </div>
 
+            @php
+                $quickTypes = ['text','email','textarea','select','tel','checkbox','gdpr'];
+                $allFieldTypes = get_form_field_types();
+                $customTypes = array_filter($allFieldTypes, fn($ft) => !empty($ft['theme_custom']));
+            @endphp
+
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <button type="button" @click="addField('text')" class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] hover:bg-primary/10 hover:border-primary border border-transparent transition-all text-left flex flex-col items-center gap-2">
-                    <span class="material-symbols-outlined text-primary text-2xl">short_text</span>
-                    <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Short Text</span>
-                </button>
+                @foreach($quickTypes as $qt)
+                    @if(isset($allFieldTypes[$qt]))
+                    <button type="button" @click="addField('{{ $qt }}')" class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] hover:bg-primary/10 hover:border-primary border border-transparent transition-all text-left flex flex-col items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-2xl">{{ $allFieldTypes[$qt]['icon'] }}</span>
+                        <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $allFieldTypes[$qt]['label'] }}</span>
+                    </button>
+                    @endif
+                @endforeach
 
-                <button type="button" @click="addField('email')" class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] hover:bg-primary/10 hover:border-primary border border-transparent transition-all text-left flex flex-col items-center gap-2">
-                    <span class="material-symbols-outlined text-primary text-2xl">mail</span>
-                    <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Email Address</span>
-                </button>
-
-                <button type="button" @click="addField('textarea')" class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] hover:bg-primary/10 hover:border-primary border border-transparent transition-all text-left flex flex-col items-center gap-2">
-                    <span class="material-symbols-outlined text-primary text-2xl">notes</span>
-                    <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Textarea</span>
-                </button>
-
-                <button type="button" @click="addField('select')" class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] hover:bg-primary/10 hover:border-primary border border-transparent transition-all text-left flex flex-col items-center gap-2">
-                    <span class="material-symbols-outlined text-primary text-2xl">arrow_drop_down_circle</span>
-                    <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Dropdown</span>
-                </button>
-
-                <button type="button" @click="addField('phone')" class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] hover:bg-primary/10 hover:border-primary border border-transparent transition-all text-left flex flex-col items-center gap-2">
-                    <span class="material-symbols-outlined text-primary text-2xl">call</span>
-                    <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Phone Number</span>
-                </button>
-
-                <button type="button" @click="addField('checkbox')" class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] hover:bg-primary/10 hover:border-primary border border-transparent transition-all text-left flex flex-col items-center gap-2">
-                    <span class="material-symbols-outlined text-primary text-2xl">check_box</span>
-                    <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Checkboxes</span>
-                </button>
+                @foreach($customTypes as $typeKey => $ct)
+                    <button type="button" @click="addField('{{ $typeKey }}')" class="p-4 rounded-2xl bg-primary/5 dark:bg-primary/10 hover:bg-primary/15 border-2 border-dashed border-primary/30 hover:border-primary transition-all text-left flex flex-col items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-2xl">{{ $ct['icon'] }}</span>
+                        <span class="text-xs font-bold text-primary">{{ $ct['label'] }}</span>
+                        <span class="text-[9px] text-primary/60 leading-tight text-center">{{ $ct['category'] ?? 'theme' }}</span>
+                    </button>
+                @endforeach
             </div>
         </div>
     </div>

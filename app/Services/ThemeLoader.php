@@ -33,10 +33,40 @@ class ThemeLoader
             // Share theme data with all views
             $this->shareThemeData($this->activeTheme);
 
+            // Register theme custom field types for form builder
+            $this->registerCustomFieldTypes($this->activeTheme);
+
         } catch (\Exception $e) {
             // Log error but don't crash the app if something goes wrong with theme loading
             Log::error('Failed to load theme: '.$e->getMessage());
         }
+    }
+
+    /**
+     * Register custom form field types defined in the active theme's theme.json.
+     * These types appear in the form studio "Add Field" modal and are removed
+     * when the theme is deactivated (WordPress functions.php pattern).
+     */
+    protected function registerCustomFieldTypes(Theme $theme): void
+    {
+        $themeJsonPath = base_path("themes/{$theme->slug}/theme.json");
+
+        if (! file_exists($themeJsonPath)) {
+            return;
+        }
+
+        $config = json_decode(file_get_contents($themeJsonPath), true);
+
+        if (! $config || empty($config['custom_field_types'])) {
+            return;
+        }
+
+        // Register into the app container so FormField can merge them
+        app()->instance('theme_custom_field_types', $config['custom_field_types']);
+
+        Log::info("Theme custom field types registered: {$theme->slug}", [
+            'types' => array_column($config['custom_field_types'], 'type'),
+        ]);
     }
 
     /**

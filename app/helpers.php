@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Form;
+use App\Models\FormField;
 use App\Models\Setting;
 use App\Models\Theme;
 use App\Services\ActivityLogger;
@@ -276,6 +277,17 @@ if (! function_exists('resolve_block_asset')) {
         }
 
         return asset('storage/'.$cleanPath);
+    }
+}
+
+if (! function_exists('get_form_field_types')) {
+    /**
+     * Get all available form field types including theme-registered custom types.
+     * Returns the merged array of built-in + theme custom field types.
+     */
+    function get_form_field_types(): array
+    {
+        return FormField::getAvailableFieldTypes();
     }
 }
 

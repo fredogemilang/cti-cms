@@ -83,7 +83,7 @@ class FormController extends Controller
                     'help_text' => $fieldData['help_text'] ?? null,
                     'default_value' => $fieldData['default_value'] ?? null,
                     'column_width' => $fieldData['column_width'] ?? 'full',
-                    'advanced_settings' => $fieldData['advanced_settings'] ?? null,
+                    'advanced_settings' => $this->prepareAdvancedSettings($fieldData),
                     'conditional_logic' => $fieldData['conditional_logic'] ?? null,
                 ]);
             }
@@ -171,7 +171,7 @@ class FormController extends Controller
                     'help_text' => $fieldData['help_text'] ?? null,
                     'default_value' => $fieldData['default_value'] ?? null,
                     'column_width' => $fieldData['column_width'] ?? 'full',
-                    'advanced_settings' => $fieldData['advanced_settings'] ?? null,
+                    'advanced_settings' => $this->prepareAdvancedSettings($fieldData),
                     'conditional_logic' => $fieldData['conditional_logic'] ?? null,
                 ]);
             }
@@ -502,7 +502,7 @@ class FormController extends Controller
                     'help_text' => $fieldData['help_text'] ?? null,
                     'default_value' => $fieldData['default_value'] ?? null,
                     'column_width' => $fieldData['column_width'] ?? 'full',
-                    'advanced_settings' => $fieldData['advanced_settings'] ?? null,
+                    'advanced_settings' => $this->prepareAdvancedSettings($fieldData),
                     'conditional_logic' => $fieldData['conditional_logic'] ?? null,
                 ]);
             }
@@ -588,5 +588,31 @@ class FormController extends Controller
     public function updateNotifications(Request $request, $id)
     {
         return $this->saveStudio($request, $id);
+    }
+
+    /**
+     * Prepare advanced settings array from field data.
+     */
+    private function prepareAdvancedSettings(array $fieldData): ?array
+    {
+        $advanced = $fieldData['advanced_settings'] ?? [];
+        if (is_string($advanced)) {
+            $advanced = json_decode($advanced, true) ?? [];
+        }
+
+        if (! empty($fieldData['consent_text'])) {
+            $advanced['consent_text'] = $fieldData['consent_text'];
+        }
+        if (! empty($fieldData['privacy_content'])) {
+            $advanced['consent_text'] = $fieldData['privacy_content'];
+        }
+        if (! empty($fieldData['terms_text'])) {
+            $advanced['terms_text'] = $fieldData['terms_text'];
+        }
+        if (! empty($fieldData['html_content'])) {
+            $advanced['html_content'] = $fieldData['html_content'];
+        }
+
+        return ! empty($advanced) ? $advanced : null;
     }
 }

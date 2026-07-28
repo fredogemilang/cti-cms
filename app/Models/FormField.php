@@ -39,6 +39,32 @@ class FormField extends Model
     ];
 
     /**
+     * Get all available field types — built-in merged with theme custom types.
+     * Theme custom types are only available when the theme that defines them is active.
+     */
+    public static function getAvailableFieldTypes(): array
+    {
+        $builtIn = self::FIELD_TYPES;
+
+        $custom = app()->bound('theme_custom_field_types')
+            ? app('theme_custom_field_types')
+            : [];
+
+        $merged = $builtIn;
+        foreach ($custom as $ct) {
+            $type = $ct['type'];
+            $merged[$type] = [
+                'label' => $ct['label'],
+                'icon' => $ct['icon'] ?? 'extension',
+                'category' => $ct['category'] ?? 'custom',
+                'theme_custom' => true,
+            ];
+        }
+
+        return $merged;
+    }
+
+    /**
      * All available field types with their metadata.
      */
     public const FIELD_TYPES = [
@@ -486,12 +512,12 @@ class FormField extends Model
     {
         $required = $this->is_required ? 'required' : '';
         $text = $this->type === 'gdpr'
-            ? ($this->advanced_settings['consent_text'] ?? 'I consent to having my data processed.')
+            ? ($this->advanced_settings['consent_text'] ?? $this->advanced_settings['privacy_content'] ?? 'I consent to having my data processed.')
             : ($this->advanced_settings['terms_text'] ?? 'I agree to the Terms & Conditions.');
 
-        $html = '<div class="form-check">';
-        $html .= "<input type=\"checkbox\" name=\"{$this->field_id}\" id=\"{$this->field_id}\" value=\"1\" class=\"form-check-input\" {$required}>";
-        $html .= "<label class=\"form-check-label\" for=\"{$this->field_id}\">{$text}</label>";
+        $html = '<div class="form-check d-flex align-items-start gap-2.5 my-2">';
+        $html .= "<input type=\"checkbox\" name=\"{$this->field_id}\" id=\"{$this->field_id}\" value=\"1\" class=\"form-check-input mt-1 shrink-0\" {$required}>";
+        $html .= "<div class=\"form-check-label text-sm leading-relaxed text-zinc-600 dark:text-zinc-300\" for=\"{$this->field_id}\">{$text}</div>";
         $html .= '</div>';
 
         return $html;
