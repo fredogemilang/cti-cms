@@ -6,6 +6,7 @@ use App\Events\RenderAdminMenu;
 use App\Models\CustomPostType;
 use App\Models\MenuItem;
 use App\Models\Plugin;
+use App\Models\Setting;
 
 /**
  * Service for building the admin sidebar menu.
@@ -116,14 +117,32 @@ class AdminMenuBuilder
      */
     public function getUnifiedMenuList(): array
     {
+        $defaultSectionMap = [
+            'core:1' => 'MAIN',
+            'core:2' => 'CONTENT',
+            'cpt:technology-alliance' => 'CONTENT',
+            'cpt:solutions' => 'CONTENT',
+            'cpt:customer-success' => 'CONTENT',
+            'cpt:client-says' => 'CONTENT',
+            'cpt:tech-products' => 'CONTENT',
+            'plugin:google-site-kit' => 'PLUGINS',
+            'plugin:posts' => 'PLUGINS',
+            'core:5' => 'SYSTEM',
+            'core:9' => 'SYSTEM',
+            'core:10' => 'SYSTEM',
+        ];
+
         // 1. Core menu items
         $coreItems = MenuItem::whereNull('parent_id')
             ->orderBy('order')
             ->with('children')
             ->get()
-            ->map(function (MenuItem $m) {
+            ->map(function (MenuItem $m) use ($defaultSectionMap) {
+                $key = 'core:'.$m->id;
+                $section = $defaultSectionMap[$key] ?? ($m->id == 1 ? 'MAIN' : 'SYSTEM');
+
                 return [
-                    'key' => 'core:'.$m->id,
+                    'key' => $key,
                     'id' => $m->id,
                     'title' => $m->title,
                     'route' => $m->route,
@@ -132,6 +151,7 @@ class AdminMenuBuilder
                     'is_active' => $m->is_active,
                     'source' => 'core',
                     'source_label' => 'Core System',
+                    'section' => $section,
                     'children' => $m->children->map(fn ($c) => [
                         'id' => $c->getAttribute('id'),
                         'title' => $c->getAttribute('title'),
@@ -144,7 +164,7 @@ class AdminMenuBuilder
             })->toArray();
 
         // 2. CPT menu items
-        $cptItems = CustomPostType::active()->inMenu()->get()->map(function ($cpt) {
+        $cptItems = CustomPostType::active()->inMenu()->get()->map(function ($cpt) use ($defaultSectionMap) {
             $taxonomies = $cpt->taxonomies();
             $children = [
                 ['title' => 'All '.$cpt->plural_label, 'route' => 'admin.cpt.entries.index', 'params' => ['postTypeSlug' => $cpt->slug]],
@@ -159,13 +179,17 @@ class AdminMenuBuilder
                 ];
             }
 
+            $key = 'cpt:'.$cpt->slug;
+            $section = $defaultSectionMap[$key] ?? 'CONTENT';
+
             return [
-                'key' => 'cpt:'.$cpt->slug,
+                'key' => $key,
                 'title' => $cpt->plural_label,
                 'slug' => $cpt->slug,
                 'icon' => $cpt->icon ?? 'article',
                 'source' => 'cpt',
                 'source_label' => 'Content (CPT)',
+                'section' => $section,
                 'is_active' => true,
                 'children' => $children,
             ];
@@ -175,9 +199,13 @@ class AdminMenuBuilder
         $eventItems = $this->build();
         $pluginItems = collect($eventItems)
             ->filter(fn ($item) => str_starts_with($item['source'] ?? '', 'plugin:'))
-            ->map(function ($p) {
-                $p['key'] = $p['source'];
+            ->map(function ($p) use ($defaultSectionMap) {
+                $key = $p['source'];
+                $section = $defaultSectionMap[$key] ?? 'PLUGINS';
+
+                $p['key'] = $key;
                 $p['source_label'] = 'Plugin: '.str_replace('plugin:', '', $p['source']);
+                $p['section'] = $section;
 
                 return $p;
             })
@@ -190,16 +218,31 @@ class AdminMenuBuilder
     }
 
     /**
-     * Sort menu items according to user custom order stored in settings.
+     * Sort menu items according to user custom order stored in settings or default sidebar sequence.
      */
     public function sortItemsByCustomOrder(array $items): array
     {
-        $customOrder = setting('admin_sidebar_custom_order', []);
-        if (empty($customOrder) || ! is_array($customOrder)) {
-            return $items;
-        }
+        $customOrder = Setting::get('admin_sidebar_custom_order', []);
 
-        $orderMap = array_flip(array_values($customOrder));
+        if (empty($customOrder) || ! is_array($customOrder)) {
+            $defaultOrderKeys = [
+                'core:1', // Dashboard (MAIN)
+                'core:2', // Pages (CONTENT)
+                'cpt:technology-alliance',
+                'cpt:solutions',
+                'cpt:customer-success',
+                'cpt:client-says',
+                'cpt:tech-products',
+                'plugin:google-site-kit', // PLUGINS
+                'plugin:posts',
+                'core:5', // User Management (SYSTEM)
+                'core:9', // Menu Management
+                'core:10', // Appearance
+            ];
+            $orderMap = array_flip($defaultOrderKeys);
+        } else {
+            $orderMap = array_flip(array_values($customOrder));
+        }
 
         usort($items, function ($a, $b) use ($orderMap) {
             $keyA = $a['key'] ?? $a['source'] ?? '';
