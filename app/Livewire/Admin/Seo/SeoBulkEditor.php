@@ -89,7 +89,7 @@ class SeoBulkEditor extends Component
                 }
             }
             $items = $pages;
-        } elseif ($this->filterType === 'post' && class_exists(Post::class)) {
+        } elseif ($this->filterType === 'post' && class_exists(Post::class) && Schema::hasTable('posts')) {
             $query = Post::query();
             if ($this->search) {
                 $query->where('title', 'like', '%'.$this->search.'%');

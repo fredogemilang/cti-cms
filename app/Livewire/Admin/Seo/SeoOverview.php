@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Seo;
 use App\Models\CptEntry;
 use App\Models\Page;
 use App\Models\SeoMeta;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
 use Plugins\Posts\Models\Post;
 
@@ -29,7 +30,7 @@ class SeoOverview extends Component
     public function mount(): void
     {
         $this->totalPages = Page::count();
-        $this->totalPosts = class_exists(Post::class) ? Post::count() : 0;
+        $this->totalPosts = (class_exists(Post::class) && Schema::hasTable('posts')) ? Post::count() : 0;
         $this->totalCptEntries = CptEntry::count();
         $this->configuredSeoCount = SeoMeta::where(function ($q) {
             $q->whereNotNull('title')->orWhereNotNull('description');
