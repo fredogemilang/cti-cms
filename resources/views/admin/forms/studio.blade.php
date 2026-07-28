@@ -38,6 +38,7 @@
 @endphp
 
 <div class="h-full flex flex-col w-full bg-[#F4F5F6] dark:bg-[#0B0B0B]"
+    x-init="initSortable()"
     x-data="{
         activeTab: '{{ $activeTab ?? 'fields' }}',
         name: {{ json_encode($form->name) }},
@@ -136,11 +137,55 @@
             });
             this.selectedFieldIndex = this.fields.length - 1;
             this.showFieldModal = false;
+            this.initSortable();
         },
         removeField(index) {
             this.fields.splice(index, 1);
             if (this.selectedFieldIndex === index) this.selectedFieldIndex = null;
             else if (this.selectedFieldIndex > index) this.selectedFieldIndex--;
+            this.initSortable();
+        },
+        moveFieldUp(index) {
+            if (index > 0) {
+                const item = this.fields.splice(index, 1)[0];
+                this.fields.splice(index - 1, 0, item);
+                this.selectedFieldIndex = index - 1;
+                this.initSortable();
+            }
+        },
+        moveFieldDown(index) {
+            if (index < this.fields.length - 1) {
+                const item = this.fields.splice(index, 1)[0];
+                this.fields.splice(index + 1, 0, item);
+                this.selectedFieldIndex = index + 1;
+                this.initSortable();
+            }
+        },
+        initSortable() {
+            this.$nextTick(() => {
+                const container = document.getElementById('sortable-fields-list');
+                if (container && typeof Sortable !== 'undefined') {
+                    if (container._sortable) {
+                        container._sortable.destroy();
+                    }
+                    container._sortable = Sortable.create(container, {
+                        handle: '.drag-handle',
+                        animation: 200,
+                        ghostClass: 'opacity-30',
+                        chosenClass: 'bg-primary/5',
+                        dragClass: 'shadow-2xl',
+                        onEnd: (evt) => {
+                            const oldIndex = evt.oldIndex;
+                            const newIndex = evt.newIndex;
+                            if (oldIndex !== undefined && newIndex !== undefined && oldIndex !== newIndex) {
+                                const moved = this.fields.splice(oldIndex, 1)[0];
+                                this.fields.splice(newIndex, 0, moved);
+                                this.selectedFieldIndex = newIndex;
+                            }
+                        }
+                    });
+                }
+            });
         },
         getFieldIcon(type) {
             const icons = {
@@ -267,7 +312,7 @@
                         <span class="text-xs font-bold text-[#6F767E]" x-text="fields.length + ' fields'"></span>
                     </div>
 
-                    <div class="builder-dropzone min-h-[450px] rounded-3xl p-6 md:p-8 flex flex-col gap-4 border border-gray-200 dark:border-[#272B30]/40 relative bg-white/50 dark:bg-[#1A1A1A]/30">
+                    <div id="sortable-fields-list" class="builder-dropzone min-h-[450px] rounded-3xl p-6 md:p-8 flex flex-col gap-4 border border-gray-200 dark:border-[#272B30]/40 relative bg-white/50 dark:bg-[#1A1A1A]/30">
                         <template x-if="fields.length === 0">
                             <div class="text-center py-16 text-[#6F767E]">
                                 <span class="material-symbols-outlined text-6xl mb-4 block opacity-30">add_task</span>
@@ -283,6 +328,9 @@
                                 
                                 <div class="flex items-start justify-between gap-4">
                                     <div class="flex items-center gap-3">
+                                        <div class="drag-handle cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-primary rounded-lg hover:bg-gray-100 dark:hover:bg-[#0B0B0B] transition-colors" title="Drag to reorder">
+                                            <span class="material-symbols-outlined text-xl block">drag_indicator</span>
+                                        </div>
                                         <div class="h-9 w-9 rounded-xl bg-gray-100 dark:bg-[#0B0B0B] text-primary flex items-center justify-center shrink-0">
                                             <span class="material-symbols-outlined text-lg" x-text="getFieldIcon(field.type)"></span>
                                         </div>
@@ -292,10 +340,16 @@
                                         </div>
                                     </div>
 
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-1.5">
+                                        <button type="button" @click.stop="moveFieldUp(index)" :disabled="index === 0" :class="index === 0 ? 'opacity-20 cursor-not-allowed' : 'hover:text-primary hover:bg-gray-100 dark:hover:bg-[#0B0B0B]'" class="p-1 text-gray-400 rounded-lg transition-colors" title="Move field up">
+                                            <span class="material-symbols-outlined text-lg block">arrow_upward</span>
+                                        </button>
+                                        <button type="button" @click.stop="moveFieldDown(index)" :disabled="index === fields.length - 1" :class="index === fields.length - 1 ? 'opacity-20 cursor-not-allowed' : 'hover:text-primary hover:bg-gray-100 dark:hover:bg-[#0B0B0B]'" class="p-1 text-gray-400 rounded-lg transition-colors" title="Move field down">
+                                            <span class="material-symbols-outlined text-lg block">arrow_downward</span>
+                                        </button>
                                         <span x-show="field.is_required" class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-600 dark:bg-red-500/10 dark:text-red-400">Required</span>
-                                        <button type="button" @click.stop="removeField(index)" class="p-1 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10">
-                                            <span class="material-symbols-outlined text-lg">delete</span>
+                                        <button type="button" @click.stop="removeField(index)" class="p-1 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10" title="Delete field">
+                                            <span class="material-symbols-outlined text-lg block">delete</span>
                                         </button>
                                     </div>
                                 </div>
@@ -776,6 +830,7 @@
 @endpush
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

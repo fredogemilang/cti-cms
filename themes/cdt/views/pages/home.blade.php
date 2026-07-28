@@ -497,76 +497,16 @@
       <h4 class="text-sm font-bold mb-2 text-white">Get In Touch</h4>
       <h2 class="text-3xl font-light mb-12">Have some <span class="font-bold">Question?</span></h2>
       
-      <form class="space-y-4 max-w-4xl mx-auto text-left" data-gsap="fade-up" data-gsap-delay="0.2"
-        x-data="{ submitting: false, successMsg: '' }"
-        @submit.prevent="
-          submitting = true;
-          fetch('{{ route('forms.submit.ajax', 'get-in-touch') }}', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-TOKEN': '{{ csrf_token() }}',
-              'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-              name: $el.name.value,
-              company_name: $el.company_name.value,
-              job_title: $el.job_title.value,
-              phone_number: $el.phone_number.value,
-              corporate_email: $el.corporate_email.value,
-              solution_needed: $el.solution_needed.value,
-              message: $el.message.value
-            })
-          })
-          .then(res => res.json())
-          .then(data => {
-            submitting = false;
-            if (data.success) {
-              successMsg = data.message || 'Thank you for contacting us! Message sent successfully.';
-              setTimeout(() => { successMsg = ''; $el.reset(); }, 4000);
-            } else {
-              alert(data.message || 'Submission failed. Please try again.');
-            }
-          })
-          .catch(err => { submitting = false; alert('Submission error. Please try again.'); });
-        ">
-        <template x-if="successMsg">
-          <div class="p-4 bg-emerald-600 text-white font-semibold rounded-lg text-center mb-4" x-text="successMsg"></div>
-        </template>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input type="text" name="name" class="w-full bg-white text-zinc-900 border-none px-4 py-3 rounded-md text-sm focus:ring-2 focus:ring-white/50 focus:outline-none" placeholder="Name" required>
-          <input type="text" name="company_name" class="w-full bg-white text-zinc-900 border-none px-4 py-3 rounded-md text-sm focus:ring-2 focus:ring-white/50 focus:outline-none" placeholder="Company Name" required>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input type="text" name="job_title" class="w-full bg-white text-zinc-900 border-none px-4 py-3 rounded-md text-sm focus:ring-2 focus:ring-white/50 focus:outline-none" placeholder="Job Title" required>
-          <input type="tel" name="phone_number" class="w-full bg-white text-zinc-900 border-none px-4 py-3 rounded-md text-sm focus:ring-2 focus:ring-white/50 focus:outline-none" placeholder="Phone Number" required>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input type="email" name="corporate_email" class="w-full bg-white text-zinc-900 border-none px-4 py-3 rounded-md text-sm focus:ring-2 focus:ring-white/50 focus:outline-none" placeholder="Corporate Email" required>
-          <select name="solution_needed" class="w-full bg-white text-zinc-900 border-none px-4 py-3 rounded-md text-sm focus:ring-2 focus:ring-white/50 focus:outline-none appearance-none" required>
-            <option value="" disabled selected>Solution Needed</option>
-            <option value="cloud">Cloud</option>
-            <option value="security">Security</option>
-            <option value="observability">Observability</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <textarea name="message" rows="4" class="w-full bg-white text-zinc-900 border-none px-4 py-3 rounded-md text-sm focus:ring-2 focus:ring-white/50 focus:outline-none resize-none" placeholder="Message" required></textarea>
-        
-        <div class="pt-4 pb-6 space-y-4">
-          <div class="flex items-start gap-3">
-            <input type="checkbox" required class="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary">
-            <label class="text-sm font-medium">By ticking this box, I agree that my personal information will be given to Central Data Technology (CDT)</label>
-          </div>
-        </div>
-        
-        <div class="flex flex-col items-center">
-          <button type="submit" :disabled="submitting" class="bg-white text-[#b82d25] px-12 py-3 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-zinc-100 transition shadow-md disabled:opacity-50">
-            <span x-show="!submitting">SEND</span>
-            <span x-show="submitting">SENDING...</span>
-          </button>
-        </div>
-      </form>
+      @php
+        $t = active_theme();
+        $contactFormId = setting("theme_{$t->slug}_form_assignments", [])['contact_form'] ?? null;
+        $contactForm = $contactFormId ? \App\Models\Form::where('id', $contactFormId)->where('is_active', true)->with('fields')->first() : null;
+      @endphp
+      @if($contactForm)
+        @include('cdt::partials.tailwind-form', ['form' => $contactForm, 'variant' => 'dark'])
+      @else
+        <p class="text-white/60 text-sm text-center">Contact form is being configured.</p>
+      @endif
     </div>
   </section>
 @endsection
