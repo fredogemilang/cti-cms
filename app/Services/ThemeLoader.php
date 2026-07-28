@@ -36,6 +36,9 @@ class ThemeLoader
             // Register theme custom field types for form builder
             $this->registerCustomFieldTypes($this->activeTheme);
 
+            // Boot theme service provider (if exists)
+            $this->bootThemeServiceProvider($this->activeTheme);
+
         } catch (\Exception $e) {
             // Log error but don't crash the app if something goes wrong with theme loading
             Log::error('Failed to load theme: '.$e->getMessage());
@@ -157,5 +160,45 @@ class ThemeLoader
         }
 
         return "themes/{$this->activeTheme->slug}/assets/{$path}";
+    }
+
+    /**
+     * Boot the active theme's service provider if it exists.
+     * Convention: themes/{slug}/{StudlySlug}ThemeServiceProvider.php
+     */
+    protected function bootThemeServiceProvider(Theme $theme): void
+    {
+        $slug = $theme->slug;
+        $studly = str_replace(' ', '', ucwords(str_replace('-', ' ', $slug)));
+        $file = base_path("themes/{$slug}/{$studly}ThemeServiceProvider.php");
+
+        if (! file_exists($file)) {
+            return;
+        }
+
+        require_once $file;
+
+        // Try studly case first, then exact slug case
+        $class = "Themes\\{$studly}\\{$studly}ThemeServiceProvider";
+        if (! class_exists($class)) {
+            $class = "Themes\\{$slug}\\{$studly}ThemeServiceProvider";
+        }
+        if (! class_exists($class)) {
+            Log::warning("Theme service provider class not found for: {$slug}");
+
+            return;
+        }
+
+        $provider = new $class(app());
+
+        if (method_exists($provider, 'register')) {
+            $provider->register();
+        }
+
+        if (method_exists($provider, 'boot')) {
+            app()->call([$provider, 'boot']);
+        }
+
+        Log::info("Theme service provider booted: {$class}");
     }
 }

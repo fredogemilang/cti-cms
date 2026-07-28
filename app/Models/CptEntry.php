@@ -260,27 +260,41 @@ class CptEntry extends Model
     }
 
     /**
-     * Get the public frontend URL for this entry.
+     * Get the public frontend URL for this entry, respecting the current locale.
+     * Uses translated slugs so /products/what-is-cdt and /products/apa-itu-cdt
+     * both resolve to the same entry while keeping the locale in the URL.
      */
-    public function getUrl(): string
+    public function getUrl(?string $locale = null): string
     {
+        $locale ??= app()->getLocale();
+
         $cptSlug = $this->relationLoaded('postType') && $this->postType instanceof CustomPostType
             ? $this->postType->slug
             : (string) CustomPostType::where('id', $this->post_type_id)->value('slug');
 
+        $entrySlug = $this->getTranslation('slug', $locale, fallback: true) ?? $this->slug;
+
         /** @var CptEntry|null $parentRelated */
         $parentRelated = $this->parentRelatedEntries()->first();
         if ($parentRelated && $parentRelated->post_type_id !== $this->post_type_id) {
-            return url('/'.$cptSlug.'/'.$parentRelated->slug.'/'.$this->slug);
+            $parentSlug = $parentRelated->getTranslation('slug', $locale, fallback: true) ?? $parentRelated->slug;
+            // Use parent's CPT slug so sub-products appear under the parent's URL namespace
+            $parentCptSlug = CustomPostType::where('id', $parentRelated->post_type_id)->value('slug') ?? $cptSlug;
+
+            return url('/'.$parentCptSlug.'/'.$parentSlug.'/'.$entrySlug);
         }
 
         /** @var CptEntry|null $hierarchicalParent */
         $hierarchicalParent = $this->parent;
         if ($hierarchicalParent) {
-            return url('/'.$cptSlug.'/'.$hierarchicalParent->slug.'/'.$this->slug);
+            $parentSlug = $hierarchicalParent->getTranslation('slug', $locale, fallback: true) ?? $hierarchicalParent->slug;
+
+            return url('/'.$cptSlug.'/'.$parentSlug.'/'.$entrySlug);
         }
 
-        return url('/'.$cptSlug.'/'.$this->slug);
+        $url = url('/'.$cptSlug.'/'.$entrySlug);
+
+        return apply_filters('cpt_entry.url', $url, $this, $locale);
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\CptEntry;
 use App\Models\Form;
 use App\Models\FormField;
 use App\Models\Setting;
@@ -7,6 +8,7 @@ use App\Models\Theme;
 use App\Services\ActivityLogger;
 use App\Services\IconLibraryService;
 use App\Services\ThemeLoader;
+use App\Support\Filter;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Vite;
@@ -298,5 +300,28 @@ if (! function_exists('render_icon')) {
     function render_icon(?string $iconKey, string $class = 'w-5 h-5'): string
     {
         return app(IconLibraryService::class)->renderSvg($iconKey, $class);
+    }
+}
+
+if (! function_exists('apply_filters')) {
+    function apply_filters(string $tag, mixed $value, ...$args): mixed
+    {
+        return Filter::apply($tag, $value, ...$args);
+    }
+}
+
+if (! function_exists('add_filter')) {
+    function add_filter(string $tag, callable $callback, int $priority = 10): void
+    {
+        Filter::add($tag, $callback, $priority);
+    }
+}
+
+if (! function_exists('resolve_frontend_entry')) {
+    function resolve_frontend_entry(string $path, ?string $locale = null): ?CptEntry
+    {
+        $locale ??= app()->getLocale();
+
+        return apply_filters('frontend.resolve_entry', null, $path, $locale);
     }
 }

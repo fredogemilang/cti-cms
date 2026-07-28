@@ -40,6 +40,7 @@ class CptAdminController extends Controller
             'show_in_rest' => 'nullable|boolean',
             'has_archive' => 'nullable|boolean',
             'supports' => 'nullable|array',
+            'settings' => 'nullable|array',
         ]);
 
         $validated['slug'] = ! empty($validated['slug']) ? Str::slug($validated['slug']) : Str::slug($validated['name']);
@@ -81,6 +82,7 @@ class CptAdminController extends Controller
             'description' => 'nullable|string',
             'is_hierarchical' => 'nullable|boolean',
             'supports' => 'nullable|array',
+            'settings' => 'nullable|array',
         ]);
 
         $cpt->update($validated);
@@ -138,6 +140,7 @@ class CptAdminController extends Controller
             'is_required' => 'nullable|boolean',
             'options' => 'nullable|array',
             'order' => 'nullable|integer',
+            'field_group' => 'nullable|string|max:255',
         ]);
 
         $validated['fieldable_type'] = CustomPostType::class;
@@ -170,6 +173,8 @@ class CptAdminController extends Controller
             'is_required' => 'nullable|boolean',
             'options' => 'nullable|array',
             'order' => 'nullable|integer',
+            'field_group' => 'nullable|string|max:255',
+            'advanced_settings' => 'nullable|array',
         ]);
 
         $field->update($validated);

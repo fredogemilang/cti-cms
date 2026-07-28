@@ -118,7 +118,7 @@ class MediaService
             // Preserve transparency for PNG
             if ($mimeType === 'image/png') {
                 imagepalettetotruecolor($image);
-                imagealphablending($image, true);
+                imagealphablending($image, false); // MUST be false to preserve alpha
                 imagesavealpha($image, true);
             }
 
@@ -233,7 +233,7 @@ class MediaService
             return false;
         }
 
-        if (! in_array($mimeType, ['image/jpeg', 'image/jpg', 'image/png'])) {
+        if (! in_array($mimeType, ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'])) {
             return false;
         }
 
@@ -247,11 +247,21 @@ class MediaService
 
             $source = match ($mimeType) {
                 'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($fullPath),
-                default => @imagecreatefrompng($fullPath),
+                'image/png' => @imagecreatefrompng($fullPath),
+                'image/gif' => @imagecreatefromgif($fullPath),
+                'image/webp' => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($fullPath) : null,
+                default => null,
             };
 
             if (! $source) {
                 return false;
+            }
+
+            // Preserve transparency for PNG, GIF, WebP
+            if (in_array($mimeType, ['image/png', 'image/gif', 'image/webp'])) {
+                imagepalettetotruecolor($source);
+                imagealphablending($source, false);
+                imagesavealpha($source, true);
             }
 
             $srcW = imagesx($source);
@@ -270,7 +280,7 @@ class MediaService
                 }
 
                 $canvas = imagecreatetruecolor($targetW, $targetH);
-                if ($mimeType === 'image/png') {
+                if (in_array($mimeType, ['image/png', 'image/gif', 'image/webp'])) {
                     imagealphablending($canvas, false);
                     imagesavealpha($canvas, true);
                     $transparent = imagecolorallocatealpha($canvas, 0, 0, 0, 127);
@@ -282,8 +292,12 @@ class MediaService
             }
 
             $jpgQ = (int) setting('img_jpg_quality', 85);
+            $webpQ = (int) setting('img_webp_quality', 80);
+
             match ($mimeType) {
                 'image/jpeg', 'image/jpg' => imagejpeg($source, $fullPath, $jpgQ),
+                'image/webp' => imagewebp($source, $fullPath, $webpQ),
+                'image/gif' => imagegif($source, $fullPath),
                 default => imagepng($source, $fullPath, 6),
             };
 

@@ -6,7 +6,10 @@
   <!-- From index.html: full width background image, red gradient overlay on the left -->
   <section class="hero-section relative h-screen flex items-center overflow-hidden" x-data="{ catalogueOpen: false }"
     x-on:keydown.escape.window="catalogueOpen = false"
-    x-effect="document.body.style.overflow = catalogueOpen ? 'hidden' : ''">
+    x-effect="
+      document.documentElement.style.overflow = catalogueOpen ? 'hidden' : '';
+      document.body.style.overflow = catalogueOpen ? 'hidden' : '';
+    ">
     <!-- Background Image -->
     <div class="absolute inset-0">
       @php
@@ -89,59 +92,14 @@
             Please fill out the form below to be able to download our Digital Solution Guide
           </h3>
   
-          <form class="space-y-3 sm:space-y-4 max-w-md mx-auto"
-            x-data="{ submitting: false, successMsg: '' }"
-            @submit.prevent="
-              submitting = true;
-              fetch('{{ route('forms.submit.ajax', 'digital-solution-guide') }}', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                  'Accept': 'application/json'
-                },
-                body: JSON.stringify({
-                  name: $el.name.value,
-                  job_title: $el.job_title.value,
-                  corporate_email: $el.corporate_email.value,
-                  company_name: $el.company_name.value,
-                  phone_number: $el.phone_number.value
-                })
-              })
-              .then(res => res.json())
-              .then(data => {
-                submitting = false;
-                if (data.success) {
-                  successMsg = data.message || 'Thank you for submitting! Download will start shortly.';
-                  setTimeout(() => { catalogueOpen = false; successMsg = ''; $el.reset(); }, 2500);
-                } else {
-                  alert(data.message || 'Submission failed. Please try again.');
-                }
-              })
-              .catch(err => { submitting = false; alert('Submission error. Please try again.'); });
-            ">
-            <template x-if="successMsg">
-              <div class="p-3 bg-emerald-600 text-white text-xs font-semibold rounded-lg text-center" x-text="successMsg"></div>
-            </template>
-            <input type="text" name="name" required placeholder="Name"
-              class="w-full bg-white text-zinc-900 placeholder-zinc-400 border-none px-5 py-3 rounded-full text-sm focus:ring-2 focus:ring-white/60 focus:outline-none" />
-            <input type="text" name="job_title" required placeholder="Job Title"
-              class="w-full bg-white text-zinc-900 placeholder-zinc-400 border-none px-5 py-3 rounded-full text-sm focus:ring-2 focus:ring-white/60 focus:outline-none" />
-            <input type="email" name="corporate_email" required placeholder="Corporate Email"
-              class="w-full bg-white text-zinc-900 placeholder-zinc-400 border-none px-5 py-3 rounded-full text-sm focus:ring-2 focus:ring-white/60 focus:outline-none" />
-            <input type="text" name="company_name" required placeholder="Company Name"
-              class="w-full bg-white text-zinc-900 placeholder-zinc-400 border-none px-5 py-3 rounded-full text-sm focus:ring-2 focus:ring-white/60 focus:outline-none" />
-            <input type="tel" name="phone_number" required placeholder="Phone Number"
-              class="w-full bg-white text-zinc-900 placeholder-zinc-400 border-none px-5 py-3 rounded-full text-sm focus:ring-2 focus:ring-white/60 focus:outline-none" />
-  
-            <div class="flex justify-center pt-3">
-              <button type="submit" :disabled="submitting"
-                class="bg-white text-primary px-10 py-3 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-zinc-100 transition shadow-md disabled:opacity-50">
-                <span x-show="!submitting">Download</span>
-                <span x-show="submitting">Submitting...</span>
-              </button>
-            </div>
-          </form>
+          @php
+            $guideForm = \App\Models\Form::where('slug', 'digital-solution-guide')->where('is_active', true)->with('fields')->first();
+          @endphp
+          @if($guideForm)
+            @include('cdt::partials.tailwind-form', ['form' => $guideForm, 'variant' => 'dark'])
+          @else
+            <p class="text-white/60 text-sm text-center">Download form is being configured.</p>
+          @endif
         </div>
       </div>
     </div>

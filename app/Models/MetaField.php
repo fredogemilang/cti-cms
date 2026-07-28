@@ -23,6 +23,7 @@ class MetaField extends Model
         'field_group',
         'conditional_logic',
         'is_active',
+        'advanced_settings',
     ];
 
     protected $casts = [

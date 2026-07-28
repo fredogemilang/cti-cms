@@ -98,7 +98,20 @@ class GenerateImageVariants implements ShouldQueue
             // double-encoding when the source is already WebP).
             if ($emitWebp && $encoder !== 'webp') {
                 $webpRel = "{$dir}/{$base}-{$label}.webp";
-                imagewebp($thumb, $disk->path($webpRel), $webpQ);
+                // Preserve alpha channel for PNG sources: fill with transparent,
+                // then re-copy the source so the WebP encoder sees alpha data.
+                if ($encoder === 'png') {
+                    $wThumb = imagecreatetruecolor($targetW, $targetH);
+                    imagealphablending($wThumb, false);
+                    imagesavealpha($wThumb, true);
+                    $transparent = imagecolorallocatealpha($wThumb, 0, 0, 0, 127);
+                    imagefilledrectangle($wThumb, 0, 0, $targetW, $targetH, $transparent);
+                    imagecopyresampled($wThumb, $source, 0, 0, 0, 0, $targetW, $targetH, $srcW, $srcH);
+                    imagewebp($wThumb, $disk->path($webpRel), $webpQ);
+                    imagedestroy($wThumb);
+                } else {
+                    imagewebp($thumb, $disk->path($webpRel), $webpQ);
+                }
                 $variant['webp'] = $webpRel;
             }
 
@@ -124,11 +137,20 @@ class GenerateImageVariants implements ShouldQueue
 
     protected function createImageFrom(string $path, string $mime)
     {
-        return match ($mime) {
+        $img = match ($mime) {
             'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($path),
             'image/png' => @imagecreatefrompng($path),
+            'image/gif' => @imagecreatefromgif($path),
             'image/webp' => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($path) : null,
             default => null,
         };
+
+        if ($img && in_array($mime, ['image/png', 'image/gif', 'image/webp'])) {
+            imagepalettetotruecolor($img);
+            imagealphablending($img, false);
+            imagesavealpha($img, true);
+        }
+
+        return $img;
     }
 }

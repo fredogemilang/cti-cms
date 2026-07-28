@@ -50,8 +50,24 @@ class WordPressCptMigration extends Component
 
     public $previewPosts = [];
 
+    // Polylang / Bilingual State
+    public $isPolylang = false;
+
+    public $polylangLanguages = []; // e.g. ['en' => 19, 'id' => 17]
+
+    public $defaultImportLocale = 'en'; // Which language goes to primary columns
+
+    // Post Selection State (Step 3)
+    public $selectedLanguages = []; // e.g. ['en', 'id'] — which languages to import
+
+    public $selectedPostIds = []; // Individual post IDs to import
+
+    public $selectAllPosts = true; // Select all by default
+
+    public $fetchAllDone = false;
+
     // Import State
-    public $step = 1; // 1: Input URL, 2: Select CPT, 3: Field Mapping, 4: Results
+    public $step = 1; // 1: Input URL, 2: Select CPT, 3: Preview & Select, 4: Field Mapping, 5: Results
 
     public $isLoading = false;
 
@@ -156,7 +172,7 @@ class WordPressCptMigration extends Component
 
             // Fetch sample posts to discover fields
             $response = Http::timeout(30)->get($this->wpUrl.'/wp-json/wp/v2/'.$restBase, [
-                'per_page' => 1,
+                'per_page' => 10,
                 '_embed' => true,
             ]);
 
@@ -166,7 +182,11 @@ class WordPressCptMigration extends Component
 
             $posts = $response->json();
             $this->totalPosts = (int) $response->header('X-WP-Total', count($posts));
-            $this->totalPages = (int) $response->header('X-WP-TotalPages', 1);
+            // Recalculate totalPages using our perPage for efficient API calls
+            $this->totalPages = (int) ceil($this->totalPosts / $this->perPage);
+
+            // Detect Polylang: check if posts have 'lang' field across multiple samples
+            $this->detectPolylang($posts);
 
             // Discover available fields from sample post
             $this->wpCptFields = [];
@@ -178,6 +198,8 @@ class WordPressCptMigration extends Component
             // Initialize default field mappings
             $this->initializeFieldMappings();
 
+            // Fetch all posts for preview selection
+            $this->fetchAllPostsForPreview($restBase);
             $this->step = 3;
 
         } catch (\Exception $e) {
@@ -185,6 +207,89 @@ class WordPressCptMigration extends Component
         }
 
         $this->isLoading = false;
+    }
+
+    public function fetchAllPostsForPreview(string $restBase): void
+    {
+        $this->fetchAllDone = false;
+        $this->previewPosts = [];
+
+        // Fetch all posts across all pages
+        for ($page = 1; $page <= $this->totalPages; $page++) {
+            $response = Http::timeout(60)->get($this->wpUrl.'/wp-json/wp/v2/'.$restBase, [
+                'per_page' => $this->perPage,
+                'page' => $page,
+                '_embed' => true,
+            ]);
+
+            if ($response->failed()) {
+                continue;
+            }
+
+            foreach ($response->json() as $post) {
+                $this->previewPosts[] = [
+                    'id' => $post['id'],
+                    'title' => html_entity_decode(strip_tags($post['title']['rendered'] ?? ''), ENT_QUOTES, 'UTF-8'),
+                    'slug' => $post['slug'] ?? '',
+                    'lang' => $post['lang'] ?? null,
+                    'featured_media' => $post['featured_media'] ?? null,
+                    'has_image' => ! empty($post['_embedded']['wp:featuredmedia'][0]['source_url']) || ! empty($post['featured_media']),
+                ];
+            }
+        }
+
+        // Auto-select all languages if Polylang detected
+        if ($this->isPolylang) {
+            $this->selectedLanguages = array_keys($this->polylangLanguages);
+        }
+
+        $this->selectAllPosts = true;
+        $this->selectedPostIds = array_column($this->previewPosts, 'id');
+        $this->fetchAllDone = true;
+    }
+
+    public function toggleLanguage($lang): void
+    {
+        if (in_array($lang, $this->selectedLanguages)) {
+            $this->selectedLanguages = array_values(array_diff($this->selectedLanguages, [$lang]));
+        } else {
+            $this->selectedLanguages[] = $lang;
+        }
+        $this->updateSelectedPostIds();
+    }
+
+    public function toggleAllPosts(): void
+    {
+        $this->selectAllPosts = ! $this->selectAllPosts;
+        if ($this->selectAllPosts) {
+            $this->selectedPostIds = array_column($this->previewPosts, 'id');
+        } else {
+            $this->selectedPostIds = [];
+        }
+        $this->updateSelectedPostIds();
+    }
+
+    public function togglePost($postId): void
+    {
+        if (in_array($postId, $this->selectedPostIds)) {
+            $this->selectedPostIds = array_values(array_diff($this->selectedPostIds, [$postId]));
+        } else {
+            $this->selectedPostIds[] = $postId;
+        }
+        $this->selectAllPosts = count($this->selectedPostIds) === count($this->previewPosts);
+    }
+
+    protected function updateSelectedPostIds(): void
+    {
+        if (! $this->isPolylang || empty($this->selectedLanguages)) {
+            // No language filter — select all or none
+            return;
+        }
+
+        $this->selectedPostIds = collect($this->previewPosts)
+            ->filter(fn ($p) => in_array($p['lang'], $this->selectedLanguages))
+            ->pluck('id')
+            ->toArray();
     }
 
     protected function discoverFields($samplePost, $prefix = '')
@@ -271,6 +376,29 @@ class WordPressCptMigration extends Component
         $this->fieldMappings[$cmsField] = $wpField;
     }
 
+    protected function detectPolylang(array $samplePosts): void
+    {
+        $this->isPolylang = false;
+        $this->polylangLanguages = [];
+
+        // Check if posts have a 'lang' field (Polylang adds this to REST response)
+        foreach ($samplePosts as $post) {
+            if (! empty($post['lang'])) {
+                $lang = $post['lang'];
+                $this->polylangLanguages[$lang] = ($this->polylangLanguages[$lang] ?? 0) + 1;
+            }
+        }
+
+        if (count($this->polylangLanguages) > 1) {
+            $this->isPolylang = true;
+            // Default import locale: use CMS default or first language found
+            $defaultLocale = CptEntry::defaultLocale();
+            $this->defaultImportLocale = isset($this->polylangLanguages[$defaultLocale])
+                ? $defaultLocale
+                : array_key_first($this->polylangLanguages);
+        }
+    }
+
     public function importAllPosts()
     {
         $this->isLoading = true;
@@ -280,6 +408,7 @@ class WordPressCptMigration extends Component
             'success' => 0,
             'failed' => 0,
             'skipped' => 0,
+            'translated' => 0,
             'skipped_posts' => [],
             'errors' => [],
         ];
@@ -289,59 +418,18 @@ class WordPressCptMigration extends Component
                 throw new \Exception('Please select a target CMS post type.');
             }
 
+            if (empty($this->selectedPostIds)) {
+                throw new \Exception('Please select at least one post to import.');
+            }
+
             // Get the rest_base for the selected CPT
             $selectedCpt = collect($this->availableCpts)->firstWhere('slug', $this->selectedWpCpt);
             $restBase = $selectedCpt['rest_base'] ?? $this->selectedWpCpt;
 
-            // Process page by page
-            for ($page = 1; $page <= $this->totalPages; $page++) {
-                $this->currentPageImporting = $page;
-
-                // Fetch posts for current page
-                $response = Http::timeout(60)->get($this->wpUrl.'/wp-json/wp/v2/'.$restBase, [
-                    'per_page' => $this->perPage,
-                    'page' => $page,
-                    '_embed' => true,
-                ]);
-
-                if ($response->failed()) {
-                    Log::warning('Failed to fetch page '.$page);
-
-                    continue;
-                }
-
-                $posts = $response->json();
-
-                // Import each post in this page
-                foreach ($posts as $wpPost) {
-                    try {
-                        $result = $this->importSinglePost($wpPost);
-
-                        if ($result === 'success') {
-                            $this->importResults['success']++;
-                        } elseif ($result === 'skipped') {
-                            $this->importResults['skipped']++;
-                            $this->importResults['skipped_posts'][] = [
-                                'title' => $this->getWpFieldValue($wpPost, 'title.rendered') ?? 'Unknown',
-                                'slug' => $wpPost['slug'] ?? '',
-                                'reason' => 'Slug already exists',
-                            ];
-                        }
-                    } catch (\Exception $e) {
-                        $this->importResults['failed']++;
-                        $this->importResults['errors'][] = [
-                            'title' => $this->getWpFieldValue($wpPost, 'title.rendered') ?? 'Unknown',
-                            'error' => $e->getMessage(),
-                        ];
-                        Log::error('WordPress CPT import failed', [
-                            'title' => $this->getWpFieldValue($wpPost, 'title.rendered') ?? 'Unknown',
-                            'error' => $e->getMessage(),
-                        ]);
-                    }
-                }
-
-                // Update progress
-                $this->importProgress = round(($page / $this->totalPages) * 100);
+            if ($this->isPolylang) {
+                $this->importPolylangPosts($restBase);
+            } else {
+                $this->importMonolingualPosts($restBase);
             }
 
         } catch (\Exception $e) {
@@ -349,8 +437,165 @@ class WordPressCptMigration extends Component
             Log::error('WordPress CPT import failed', ['error' => $e->getMessage()]);
         }
 
-        $this->step = 4;
+        $this->step = 5;
         $this->isLoading = false;
+    }
+
+    protected function importMonolingualPosts(string $restBase): void
+    {
+        $selectedIds = array_flip($this->selectedPostIds);
+
+        for ($page = 1; $page <= $this->totalPages; $page++) {
+            $this->currentPageImporting = $page;
+
+            $response = Http::timeout(60)->get($this->wpUrl.'/wp-json/wp/v2/'.$restBase, [
+                'per_page' => $this->perPage,
+                'page' => $page,
+                '_embed' => true,
+            ]);
+
+            if ($response->failed()) {
+                continue;
+            }
+
+            foreach ($response->json() as $wpPost) {
+                if (! isset($selectedIds[$wpPost['id']])) {
+                    continue; // Not selected by user
+                }
+                $this->importOrSkip($wpPost);
+            }
+
+            $this->importProgress = round(($page / $this->totalPages) * 100);
+        }
+    }
+
+    protected function importPolylangPosts(string $restBase): void
+    {
+        $selectedIds = array_flip($this->selectedPostIds);
+
+        // Fetch ALL posts (filtered by selected IDs) to pair them by language
+        $allPosts = [];
+        for ($page = 1; $page <= $this->totalPages; $page++) {
+            $response = Http::timeout(60)->get($this->wpUrl.'/wp-json/wp/v2/'.$restBase, [
+                'per_page' => $this->perPage,
+                'page' => $page,
+                '_embed' => true,
+            ]);
+            if (! $response->failed()) {
+                foreach ($response->json() as $post) {
+                    if (isset($selectedIds[$post['id']])) {
+                        $allPosts[] = $post;
+                    }
+                }
+            }
+            $this->importProgress = round(($page / $this->totalPages) * 50); // 0–50%: fetching
+        }
+
+        // Group posts: keyed by slug (or title) → collect language variants
+        $groups = [];
+        foreach ($allPosts as $post) {
+            $key = $post['slug'] ?? Str::slug($post['title']['rendered'] ?? '');
+            if (! isset($groups[$key])) {
+                $groups[$key] = [];
+            }
+            $groups[$key][] = $post;
+        }
+
+        $this->currentPageImporting = 0;
+        $total = count($groups);
+        $done = 0;
+
+        foreach ($groups as $slugKey => $variants) {
+            $done++;
+            $this->currentPageImporting = $done;
+
+            // Find the default-locale post first
+            $defaultPost = null;
+            $otherPosts = [];
+            foreach ($variants as $post) {
+                if (($post['lang'] ?? '') === $this->defaultImportLocale) {
+                    $defaultPost = $post;
+                } else {
+                    $otherPosts[] = $post;
+                }
+            }
+            // If no default-locale post found, use first available
+            if (! $defaultPost) {
+                $defaultPost = array_shift($variants);
+                $otherPosts = $variants;
+            }
+
+            // Import the default post as primary entry
+            $result = $this->importOrSkip($defaultPost);
+            if ($result === 'success' && ! empty($otherPosts)) {
+                // Fetch the newly created entry by slug
+                $entry = CptEntry::where('slug', $defaultPost['slug'] ?? Str::slug($defaultPost['title']['rendered'] ?? ''))
+                    ->where('post_type_id', $this->selectedCmsCpt)
+                    ->first();
+
+                if ($entry) {
+                    // Add translations for other languages
+                    foreach ($otherPosts as $otherPost) {
+                        $otherLang = $otherPost['lang'] ?? 'other';
+                        $transTitle = html_entity_decode(strip_tags($this->getWpFieldValue($otherPost, 'title.rendered') ?? ''), ENT_QUOTES, 'UTF-8');
+                        $transSlug = $otherPost['slug'] ?? Str::slug($transTitle);
+                        $transContent = $this->getWpFieldValue($otherPost, 'content.rendered') ?? '';
+
+                        // Append locale to slug to avoid conflicts
+                        $transSlug = $this->localizeSlug($transSlug, $otherLang);
+
+                        $entry->setTranslation('title', $otherLang, $transTitle);
+                        $entry->setTranslation('slug', $otherLang, $transSlug);
+                        $entry->setTranslation('content', $otherLang, $transContent);
+                        $entry->save();
+
+                        $this->importResults['translated']++;
+                    }
+                }
+            }
+
+            $this->importProgress = 50 + round(($done / $total) * 50); // 50–100%: processing
+        }
+    }
+
+    /**
+     * Append locale to slug to ensure uniqueness across translations.
+     */
+    protected function localizeSlug(string $slug, string $locale): string
+    {
+        if (str_ends_with($slug, '-'.$locale)) {
+            return $slug;
+        }
+
+        return $slug.'-'.$locale;
+    }
+
+    protected function importOrSkip(array $wpPost): string
+    {
+        try {
+            $result = $this->importSinglePost($wpPost);
+
+            if ($result === 'success') {
+                $this->importResults['success']++;
+            } elseif ($result === 'skipped') {
+                $this->importResults['skipped']++;
+                $this->importResults['skipped_posts'][] = [
+                    'title' => $this->getWpFieldValue($wpPost, 'title.rendered') ?? 'Unknown',
+                    'slug' => $wpPost['slug'] ?? '',
+                    'reason' => 'Slug already exists',
+                ];
+            }
+
+            return $result;
+        } catch (\Exception $e) {
+            $this->importResults['failed']++;
+            $this->importResults['errors'][] = [
+                'title' => $this->getWpFieldValue($wpPost, 'title.rendered') ?? 'Unknown',
+                'error' => $e->getMessage(),
+            ];
+
+            return 'failed';
+        }
     }
 
     protected function importSinglePost($wpPost)
@@ -638,6 +883,12 @@ class WordPressCptMigration extends Component
         $this->totalPosts = 0;
         $this->totalPages = 0;
         $this->previewPosts = [];
+        $this->selectedLanguages = [];
+        $this->selectedPostIds = [];
+        $this->selectAllPosts = true;
+        $this->fetchAllDone = false;
+        $this->isPolylang = false;
+        $this->polylangLanguages = [];
         $this->importProgress = 0;
         $this->currentPageImporting = 0;
         $this->importResults = [];
@@ -647,8 +898,19 @@ class WordPressCptMigration extends Component
     public function goBack()
     {
         if ($this->step > 1) {
-            $this->step--;
+            if ($this->step === 3) {
+                $this->step = 2;
+                $this->previewPosts = [];
+                $this->fetchAllDone = false;
+            } else {
+                $this->step--;
+            }
         }
+    }
+
+    public function continueToFieldMapping()
+    {
+        $this->step = 4;
     }
 
     public function render()
