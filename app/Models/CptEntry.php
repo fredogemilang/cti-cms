@@ -281,7 +281,9 @@ class CptEntry extends Model
             // Use parent's CPT slug so sub-products appear under the parent's URL namespace
             $parentCptSlug = CustomPostType::where('id', $parentRelated->post_type_id)->value('slug') ?? $cptSlug;
 
-            return url('/'.$parentCptSlug.'/'.$parentSlug.'/'.$entrySlug);
+            $url = url('/'.$parentCptSlug.'/'.$parentSlug.'/'.$entrySlug);
+
+            return apply_filters('cpt_entry.url', $url, $this, $locale);
         }
 
         /** @var CptEntry|null $hierarchicalParent */
@@ -289,7 +291,9 @@ class CptEntry extends Model
         if ($hierarchicalParent) {
             $parentSlug = $hierarchicalParent->getTranslation('slug', $locale, fallback: true) ?? $hierarchicalParent->slug;
 
-            return url('/'.$cptSlug.'/'.$parentSlug.'/'.$entrySlug);
+            $url = url('/'.$cptSlug.'/'.$parentSlug.'/'.$entrySlug);
+
+            return apply_filters('cpt_entry.url', $url, $this, $locale);
         }
 
         $url = url('/'.$cptSlug.'/'.$entrySlug);

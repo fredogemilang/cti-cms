@@ -251,22 +251,23 @@ class ImportProductsFromJson extends Command
             ->first();
 
         if ($parentEntry) {
-            // Ensure product_id meta field exists on subCpt
+            // Ensure product_id meta field exists on parentCpt
             $metaField = MetaField::firstOrCreate(
                 [
                     'name' => 'product_id',
                     'fieldable_type' => CustomPostType::class,
-                    'fieldable_id' => $subCpt->id,
+                    'fieldable_id' => $parentCpt->id,
                 ],
                 [
-                    'label' => 'Parent Product',
+                    'label' => 'Sub Products',
                     'type' => 'relationship',
                     'is_active' => true,
                 ]
             );
 
-            $entry->relatedEntries('product_id')->syncWithoutDetaching([
-                $parentEntry->id => ['order' => 0, 'meta_field_id' => $metaField->id],
+            // Parent vendor is parent_entry_id, sub-product is child_entry_id
+            $parentEntry->relatedEntries('product_id')->syncWithoutDetaching([
+                $entry->id => ['order' => 0, 'meta_field_id' => $metaField->id],
             ]);
         }
 
