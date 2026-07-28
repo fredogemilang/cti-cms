@@ -12,6 +12,7 @@
                 </div>
             </div>
 
+            <div class="flex items-center gap-2 flex-wrap">
                 {{-- Quick Orphan Filter Button --}}
                 @php $orphanCount = count($this->getOrphanIds()); @endphp
                 <button wire:click="$set('filterUsage', '{{ $filterUsage === 'orphan' ? '' : 'orphan' }}')" type="button"
