@@ -4,20 +4,20 @@
 
 @section('content')
 @php
-    $meta = $entry->meta ?? [];
-    $features = $meta['features'] ?? [];
-    $solutionsFeatured = $meta['solutions_featured'] ?? [];
-    $solutionsOther = $meta['solutions_other'] ?? [];
+    $features = $entry->getMeta('features', []);
+    $solutionsFeatured = $entry->getMeta('solutions_featured', []);
+    $solutionsOther = $entry->getMeta('solutions_other', []);
+    $solutionsDescription = $entry->getMeta('solutions_description', '');
     $banner = [
-        'badge' => $meta['banner_badge'] ?? '',
-        'headline' => $meta['banner_headline'] ?? '',
-        'description' => $meta['banner_description'] ?? '',
-        'cta' => $meta['banner_cta'] ?? '',
+        'badge' => $entry->getMeta('banner_badge', ''),
+        'headline' => $entry->getMeta('banner_headline', ''),
+        'description' => $entry->getMeta('banner_description', ''),
+        'cta' => $entry->getMeta('banner_cta', ''),
     ];
-    $videos = $meta['videos'] ?? [];
-    $articles = $meta['related_articles'] ?? [];
-    $badges = $meta['badges'] ?? [];
-    $badgeImages = $meta['hero_badge_images'] ?? [];
+    $videos = $entry->getMeta('videos', []);
+    $articles = $entry->getMeta('related_articles', []);
+    $badges = $entry->getMeta('badges', []);
+    $badgeImages = $entry->getMeta('hero_badge_images', []);
 @endphp
 
 <!-- Hero -->
@@ -45,17 +45,23 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
       <div class="lg:col-span-8 flex flex-col">
         <div class="mb-6">
-          <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-zinc-900 mb-3" data-gsap="fade-up">{{ $entry->title }}</h1>
+          <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-zinc-900 mb-4" data-gsap="fade-up">{{ $entry->title }}</h1>
+
+          @if(!empty($badges) && is_array($badges))
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            @foreach($badges as $badge)
+              @php
+                $badgeText = is_array($badge) ? ($badge['text'] ?? $badge['title'] ?? '') : (string)$badge;
+              @endphp
+              @if(!empty(trim($badgeText)))
+                <span class="inline-flex items-center justify-center text-xs font-bold bg-red-100 text-primary px-3 py-1.5 rounded-full whitespace-nowrap">{{ trim($badgeText) }}</span>
+              @endif
+            @endforeach
+          </div>
+          @endif
+
           <div class="w-16 h-1.5 bg-primary rounded-full" data-gsap="line-grow"></div>
         </div>
-
-        @if($badges)
-        <div class="flex flex-wrap items-center gap-2 mb-6">
-          @foreach($badges as $badge)
-          <span class="text-[11px] font-bold bg-red-100 text-primary px-3 py-1 rounded-full">{{ is_array($badge) ? ($badge['text'] ?? '') : $badge }}</span>
-          @endforeach
-        </div>
-        @endif
 
         @if($badgeImages)
         <div class="flex flex-wrap items-center gap-4 mb-8" data-gsap="fade-up" data-gsap-delay="0.08">
@@ -68,8 +74,8 @@
         </div>
         @endif
 
-        @if($entry->content)
-        <div data-gsap="fade-up" data-gsap-delay="0.1" class="prose max-w-none text-zinc-600 text-base md:text-lg leading-relaxed mb-12 max-w-3xl">{!! $entry->content !!}</div>
+        @if($entry->getTranslation('content'))
+        <div data-gsap="fade-up" data-gsap-delay="0.1" class="prose max-w-none text-zinc-600 text-base md:text-lg leading-relaxed mb-12 max-w-3xl">{!! $entry->getTranslation('content') !!}</div>
         @endif
 
         @if($features)
@@ -143,19 +149,41 @@
         <div class="sticky top-32">
           <h2 data-gsap="fade-up" class="text-4xl font-light text-zinc-500 leading-tight">{{ $entry->title }}<br><span class="font-bold text-dark">Solutions</span></h2>
           <div class="h-1 bg-primary mt-4 w-16" data-gsap="line-grow"></div>
-          <p data-gsap="fade-up" data-gsap-delay="0.1" class="text-lg text-zinc-600 leading-relaxed mt-8">{{ $meta['solutions_description'] ?? '' }}</p>
+          <p data-gsap="fade-up" data-gsap-delay="0.1" class="text-lg text-zinc-600 leading-relaxed mt-8">{{ $solutionsDescription }}</p>
           <a href="#explore" class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition-colors shadow-sm mt-8">
             Consult with Expert <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </a>
         </div>
       </div>
       <div class="lg:w-2/3 flex flex-col gap-12 pb-16">
-        @if($solutionsFeatured)
+        @php
+          $relProducts = $entry->relatedEntries('product_id')->get();
+        @endphp
+
+        @if($relProducts->isNotEmpty())
+        <div class="flex flex-col gap-6">
+          <div class="text-xs font-bold text-primary uppercase tracking-wider">Featured Solutions</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            @foreach($relProducts as $rel)
+            <a data-gsap="fade-up" data-gsap-delay="{{ $loop->index * 0.1 }}" href="{{ $rel->getUrl() }}" class="group bg-white hover:bg-red-50/30 rounded-3xl p-8 border border-zinc-200/80 shadow-sm hover:shadow-xl hover:border-primary/50 transition-all flex flex-col justify-between">
+              <div>
+                <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+                  {!! render_icon($rel->getMeta('icon', 'shield-check'), 'w-7 h-7') !!}
+                </div>
+                <h3 class="text-xl font-bold text-zinc-900 mb-3 group-hover:text-primary transition-colors">{{ $rel->getTranslation('title') }}</h3>
+                <p class="text-zinc-600 text-base leading-relaxed mb-6">{{ strip_tags($rel->getMeta('hero_description') ?? $rel->getMeta('description') ?? $rel->excerpt ?? $rel->getTranslation('content')) }}</p>
+              </div>
+              <span class="inline-flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider">Explore More <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></span>
+            </a>
+            @endforeach
+          </div>
+        </div>
+        @elseif($solutionsFeatured)
         <div class="flex flex-col gap-6">
           <div class="text-xs font-bold text-primary uppercase tracking-wider">Featured Solutions</div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             @foreach($solutionsFeatured as $f)
-            <a data-gsap="fade-up" data-gsap-delay="{{ $loop->index * 0.1 }}" href="{{ $f['link'] ?? '#' }}" class="group bg-white hover:bg-red-50/30 rounded-3xl p-8 border border-zinc-200/80 shadow-sm hover:shadow-xl hover:border-primary/50 transition-all flex flex-col justify-between">
+            <a data-gsap="fade-up" data-gsap-delay="{{ $loop->index * 0.1 }}" href="{{ resolve_solution_url($f['link'] ?? '#', $entry->slug) }}" class="group bg-white hover:bg-red-50/30 rounded-3xl p-8 border border-zinc-200/80 shadow-sm hover:shadow-xl hover:border-primary/50 transition-all flex flex-col justify-between">
               <div>
                 <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
                   {!! render_icon($f['icon'] ?? 'shield', 'w-7 h-7') !!}

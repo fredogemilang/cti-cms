@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\CptEntry;
 use App\Models\CustomPostType;
+use App\Models\Media;
 use App\Models\MetaField;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -203,28 +204,39 @@ class ImportProductsFromJson extends Command
             $benefitsHtml .= "</div>\n";
         }
 
-        $contentHtml = '<div class="space-y-8">';
-        if ($aboutParas) {
-            $contentHtml .= "<section><h2 class=\"text-2xl font-bold mb-4\">About {$title}</h2>{$aboutHtml}</section>";
-        }
-        if ($benefits) {
-            $contentHtml .= "<section><h2 class=\"text-2xl font-bold mb-4\">Benefits</h2><div class=\"grid grid-cols-1 md:grid-cols-2 gap-4\">{$benefitsHtml}</div></section>";
-        }
-        $contentHtml .= '</div>';
+        $contentHtml = $desc;
 
-        // Sub-product slugs use unique names; ensure they're prefixed to avoid collisions
-        $subSlug = $parentSlug.'-'.$slug;
+        // Sub-product slugs: avoid duplicating vendor prefix if already present
+        if (str_starts_with($slug, $parentSlug.'-')) {
+            $subSlug = $slug;
+        } else {
+            $subSlug = $parentSlug.'-'.$slug;
+        }
 
         $attributes = [
             'post_type_id' => $subCpt->id,
             'title' => $title,
             'content' => $contentHtml,
             'excerpt' => strip_tags($desc),
+            'featured_image' => $parent['featured_image'] ?? '',
             'status' => 'published',
             'author_id' => 1,
             'published_at' => now(),
             'meta' => [
                 'parent_vendor' => $parentSlug,
+                'hero_badge' => $data['hero']['badge'] ?? '',
+                'hero_title' => $data['hero']['title'] ?? $title,
+                'hero_cta' => $data['hero']['cta'] ?? '',
+                'about_title' => $data['about']['title'] ?? '',
+                'about_content' => $aboutHtml,
+                'about_cta' => $data['about']['cta'] ?? '',
+                'about_image' => $this->resolveMediaField($data['about']['image'] ?? ''),
+                'benefits_title' => $data['benefits']['title'] ?? '',
+                'benefits_cards' => $data['benefits']['cards'] ?? [],
+                'banner_headline' => $data['banner']['headline'] ?? '',
+                'banner_description' => $data['banner']['description'] ?? '',
+                'banner_cta' => $data['banner']['cta'] ?? '',
+                'banner_logo' => $this->resolveMediaField($data['banner']['logo'] ?? ''),
                 'hero' => $data['hero'] ?? [],
                 'about' => $data['about'] ?? [],
                 'benefits' => $data['benefits'] ?? [],
@@ -251,19 +263,20 @@ class ImportProductsFromJson extends Command
             ->first();
 
         if ($parentEntry) {
-            // Ensure product_id meta field exists on parentCpt
-            $metaField = MetaField::firstOrCreate(
-                [
-                    'name' => 'product_id',
-                    'fieldable_type' => CustomPostType::class,
-                    'fieldable_id' => $parentCpt->id,
-                ],
-                [
-                    'label' => 'Sub Products',
-                    'type' => 'relationship',
-                    'is_active' => true,
-                ]
-            );
+            $metaField = MetaField::where('name', 'product_id')
+                ->where('fieldable_id', $parentCpt->id)
+                ->first() ?: MetaField::firstOrCreate(
+                    [
+                        'name' => 'product_id',
+                        'fieldable_type' => CustomPostType::class,
+                        'fieldable_id' => $parentCpt->id,
+                    ],
+                    [
+                        'label' => 'Featured Solutions',
+                        'type' => 'relationship',
+                        'is_active' => true,
+                    ]
+                );
 
             // Parent vendor is parent_entry_id, sub-product is child_entry_id
             $parentEntry->relatedEntries('product_id')->syncWithoutDetaching([
@@ -312,5 +325,81 @@ class ImportProductsFromJson extends Command
     private function svgIcon(string $name): string
     {
         return $this->icons[$name] ?? $this->icons['shield'];
+    }
+
+    private function resolveMediaField(?string $rawPath): string
+    {
+        if (empty($rawPath) || str_starts_with($rawPath, 'http')) {
+            return $rawPath ?? '';
+        }
+
+        $basename = basename($rawPath);
+        $cleanName = (string) preg_replace('/-\d+-[a-zA-Z0-9]+\.([a-z]+)$/i', '.$1', $basename);
+
+        $candidates = [
+            storage_path('app/public/media/'.$basename),
+            storage_path('app/public/media/'.$cleanName),
+            base_path('../static-files-only/cdt-gemini/assets/images/products/'.$cleanName),
+            base_path('../static-files-only/cdt-gemini/assets/images/'.$cleanName),
+            base_path('../static-files-only/cdt-gemini/assets/'.$cleanName),
+        ];
+
+        $sourceFile = null;
+        foreach ($candidates as $cand) {
+            if (File::exists($cand)) {
+                $sourceFile = $cand;
+                break;
+            }
+        }
+
+        if (! $sourceFile) {
+            $mediaFiles = File::exists(storage_path('app/public/media')) ? File::files(storage_path('app/public/media')) : [];
+            $cleanBase = pathinfo($cleanName, PATHINFO_FILENAME);
+            foreach ($mediaFiles as $mf) {
+                if ($cleanBase && str_contains(strtolower($mf->getFilename()), strtolower($cleanBase))) {
+                    $sourceFile = $mf->getRealPath();
+                    break;
+                }
+            }
+        }
+
+        if (! $sourceFile) {
+            return (string) preg_replace('/^\/?storage\//i', '', ltrim($rawPath, '/'));
+        }
+
+        $finalName = basename($sourceFile);
+        $targetRelPath = 'media/'.$finalName;
+        $targetAbsPath = storage_path('app/public/'.$targetRelPath);
+
+        if (! File::exists($targetAbsPath)) {
+            File::ensureDirectoryExists(dirname($targetAbsPath));
+            File::copy($sourceFile, $targetAbsPath);
+        }
+
+        $ext = pathinfo($finalName, PATHINFO_EXTENSION);
+        $mimeType = match (strtolower($ext)) {
+            'jpg', 'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            'webp' => 'image/webp',
+            'gif' => 'image/gif',
+            'svg' => 'image/svg+xml',
+            default => 'application/octet-stream',
+        };
+
+        $media = Media::where('path', $targetRelPath)->first();
+        if (! $media) {
+            $size = File::size($targetAbsPath);
+            Media::create([
+                'filename' => $finalName,
+                'original_filename' => $finalName,
+                'mime_type' => $mimeType,
+                'file_extension' => $ext,
+                'size' => $size,
+                'path' => $targetRelPath,
+                'uploaded_by' => 1,
+            ]);
+        }
+
+        return $targetRelPath;
     }
 }

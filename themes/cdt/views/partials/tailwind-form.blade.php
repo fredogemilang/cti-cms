@@ -137,36 +137,49 @@
                             ['label' => 'Other', 'value' => 'Other'],
                         ];
 
-                        if ($field->type === 'vendor_solutions') {
-                            if (isset($entry)) {
-                                // On vendor pages, populate from sub-products
-                                $subProducts = $entry->relatedEntries('product_id')->published()->get();
-                                if ($subProducts->isNotEmpty()) {
-                                    $selectOptions = $subProducts->map(fn($s) => ['label' => $s->title, 'value' => $s->title])->toArray();
-                                } else {
-                                    // Anchor-only vendor
-                                    $selectOptions = array_merge(
-                                        [['label' => $entry->title, 'value' => $entry->title]],
-                                        $defaultOptions
-                                    );
+                        $selectedVal = null;
+                        $isSolutionField = ($field->type === 'vendor_solutions' || str_contains(strtolower($field->label), 'solution') || str_contains(strtolower($field->field_id), 'solution'));
+
+                        if ($isSolutionField && isset($entry)) {
+                            // Check if $entry is a sub-product with parent vendor or parent entry
+                            $parentVendorSlug = $entry->getMeta('parent_vendor');
+                            $parentVendor = $entry->parentRelatedEntries()->first() 
+                                ?? ($parentVendorSlug ? \App\Models\CptEntry::where('slug', $parentVendorSlug)->first() : null);
+
+                            if ($parentVendor) {
+                                // Sub-product page — fetch all sibling sub-products under the parent vendor
+                                $subProducts = $parentVendor->relatedEntries('product_id')->published()->get();
+                                if ($subProducts->isEmpty() && $parentVendor->slug) {
+                                    $subProducts = \App\Models\CptEntry::published()
+                                        ->whereHas('postType', fn($q) => $q->where('slug', 'tech-products'))
+                                        ->where('meta->parent_vendor', $parentVendor->slug)
+                                        ->get();
                                 }
+                                $selectedVal = $entry->title;
                             } else {
-                                // No vendor context — use field options (if meaningful) or defaults
-                                $hasRealOptions = false;
-                                if (!empty($field->options)) {
-                                    foreach ($field->options as $opt) {
-                                        if (!empty($opt['value']) || !empty($opt['label'])) {
-                                            $hasRealOptions = true;
-                                            break;
-                                        }
-                                    }
+                                // Parent vendor page — fetch all sub-products under this vendor
+                                $subProducts = $entry->relatedEntries('product_id')->published()->get();
+                                if ($subProducts->isEmpty() && $entry->slug) {
+                                    $subProducts = \App\Models\CptEntry::published()
+                                        ->whereHas('postType', fn($q) => $q->where('slug', 'tech-products'))
+                                        ->where('meta->parent_vendor', $entry->slug)
+                                        ->get();
                                 }
-                                $selectOptions = $hasRealOptions ? $field->options : $defaultOptions;
+                            }
+
+                            if (isset($subProducts) && $subProducts->isNotEmpty()) {
+                                $selectOptions = $subProducts->map(fn($s) => ['label' => $s->title, 'value' => $s->title])->toArray();
+                            } else {
+                                $targetEntry = $parentVendor ?? $entry;
+                                $selectOptions = array_merge(
+                                    [['label' => $targetEntry->title, 'value' => $targetEntry->title]],
+                                    $defaultOptions
+                                );
                             }
                         } else {
-                            $selectOptions = !empty($field->options) ? $field->options : [];
+                            $selectOptions = !empty($field->options) ? $field->options : $defaultOptions;
                         }
-                        // Fallback: if somehow still empty, use defaults
+
                         if (empty($selectOptions)) {
                             $selectOptions = $defaultOptions;
                         }
@@ -178,10 +191,13 @@
                                 :class="errors['{{ $field->field_id }}'] ? '{{ $errorBorderClass }}' : '{{ $defaultBorder }}'"
                                 @change="delete errors['{{ $field->field_id }}']">
                             @if($field->placeholder)
-                              <option value="" disabled selected>{{ $field->placeholder }}</option>
+                              <option value="" disabled {{ empty($selectedVal) ? 'selected' : '' }}>{{ $field->placeholder }}</option>
                             @endif
                             @foreach($selectOptions as $opt)
-                              <option value="{{ $opt['value'] }}">{{ $opt['label'] }}</option>
+                              @php
+                                $isSelected = !empty($selectedVal) && strtolower(trim((string)$selectedVal)) === strtolower(trim((string)$opt['value']));
+                              @endphp
+                              <option value="{{ $opt['value'] }}" {{ $isSelected ? 'selected' : '' }}>{{ $opt['label'] }}</option>
                             @endforeach
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none text-zinc-400">

@@ -414,6 +414,15 @@ class EntryForm extends Component
             }
         }
 
+        // Load reverse relationship (where current entry is child_entry_id)
+        $childRels = CptEntryRelationship::where('child_entry_id', $entry->id)->get();
+        foreach ($childRels as $cRel) {
+            $parentVendorField = $this->postType->metaFields->where('name', 'parent_vendor_id')->first();
+            if ($parentVendorField) {
+                $this->meta['parent_vendor_id'] = (string) $cRel->parent_entry_id;
+            }
+        }
+
         // Hydrate per-locale snapshots from the translations JSON column.
         $translations = $entry->translations ?? [];
         foreach ($translations as $locale => $fields) {
@@ -529,6 +538,33 @@ class EntryForm extends Component
         $this->featuredImage = null;
     }
 
+    #[On('icon-selected')]
+    public function handleIconSelected(string $field, ?string $value): void
+    {
+        if (str_starts_with($field, 'meta.')) {
+            $path = substr($field, 5);
+            data_set($this->meta, $path, $value);
+        }
+    }
+
+    #[On('set-value')]
+    public function handleSetValue(string $path, mixed $value): void
+    {
+        if (str_starts_with($path, 'meta.')) {
+            $cleanPath = substr($path, 5);
+            data_set($this->meta, $cleanPath, $value);
+        }
+    }
+
+    #[On('media-selected')]
+    public function handleMediaSelected(string $field, mixed $mediaPath, mixed $mediaUrl = null): void
+    {
+        if (str_starts_with($field, 'meta.')) {
+            $cleanPath = substr($field, 5);
+            data_set($this->meta, $cleanPath, $mediaPath);
+        }
+    }
+
     public function save()
     {
         // Mirror current form into the active locale's snapshot before validating
@@ -605,19 +641,53 @@ class EntryForm extends Component
         foreach ($this->postType->metaFields as $field) {
             /** @var MetaField $field */
             if ($field->type === 'relationship') {
-                CptEntryRelationship::where('parent_entry_id', $entry->id)
-                    ->where('meta_field_id', $field->id)
-                    ->delete();
+                if ($field->name === 'parent_vendor_id') {
+                    $parentMetaFieldId = MetaField::where('name', 'product_id')
+                        ->where('options->target_cpt', 'tech-products')
+                        ->value('id') ?? 43;
 
-                $val = $this->meta[$field->name] ?? null;
-                if (! empty($val)) {
-                    $childIds = is_array($val) ? $val : [$val];
-                    foreach (array_values($childIds) as $order => $childId) {
-                        if ($childId) {
+                    CptEntryRelationship::where('child_entry_id', $entry->id)
+                        ->where('meta_field_id', $parentMetaFieldId)
+                        ->delete();
+
+                    $parentVendorId = $this->meta['parent_vendor_id'] ?? null;
+                    if (! empty($parentVendorId)) {
+                        $parentEntryId = (int) (is_array($parentVendorId) ? ($parentVendorId[0] ?? 0) : $parentVendorId);
+                        if ($parentEntryId > 0) {
                             CptEntryRelationship::create([
+                                'parent_entry_id' => $parentEntryId,
+                                'child_entry_id' => $entry->id,
+                                'meta_field_id' => $parentMetaFieldId,
+                                'order' => 0,
+                            ]);
+
+                            $parentEntry = CptEntry::find($parentEntryId);
+                            if ($parentEntry) {
+                                $metaData = $this->meta;
+                                $metaData['parent_vendor'] = $parentEntry->slug;
+                                $entry->meta = $metaData;
+                                if (empty($entry->featured_image) && ! empty($parentEntry->featured_image)) {
+                                    $entry->featured_image = $parentEntry->featured_image;
+                                }
+                                $entry->save();
+                            }
+                        }
+                    }
+                } else {
+                    CptEntryRelationship::where('parent_entry_id', $entry->id)
+                        ->where('meta_field_id', $field->id)
+                        ->delete();
+
+                    $val = $this->meta[$field->name] ?? null;
+                    if (! empty($val)) {
+                        $childIds = is_array($val) ? $val : [$val];
+                        $uniqueChildIds = array_values(array_unique(array_filter($childIds)));
+                        foreach ($uniqueChildIds as $order => $childId) {
+                            CptEntryRelationship::updateOrCreate([
                                 'parent_entry_id' => $entry->id,
                                 'child_entry_id' => (int) $childId,
                                 'meta_field_id' => $field->id,
+                            ], [
                                 'order' => $order,
                             ]);
                         }
@@ -782,6 +852,10 @@ class EntryForm extends Component
             /** @var MetaField $field */
             if ($field->type === 'relationship') {
                 $targetCptId = $field->options['target_post_type_id'] ?? null;
+                if (! $targetCptId && ! empty($field->options['target_cpt'])) {
+                    $targetCpt = CustomPostType::where('slug', $field->options['target_cpt'])->first();
+                    $targetCptId = $targetCpt?->id;
+                }
                 if ($targetCptId) {
                     $targetEntriesByField[$field->id] = CptEntry::where('post_type_id', $targetCptId)
                         ->where('status', 'published')

@@ -85,12 +85,30 @@ trait HasTranslations
         return isset($this->translations[$locale][$field]) && $this->translations[$locale][$field] !== '';
     }
 
+    /** Check if this row has any non-empty translated field for a given locale. */
+    public function hasTranslationForLocale(string $locale): bool
+    {
+        if ($this->isDefaultLocale($locale)) {
+            return true;
+        }
+
+        /** @var array<string, mixed>|null $translations */
+        $translations = $this->getAttribute('_translations');
+        if (! is_array($translations) || empty($translations[$locale])) {
+            return false;
+        }
+
+        return collect((array) $translations[$locale])
+            ->filter(fn ($v) => ! empty($v))
+            ->isNotEmpty();
+    }
+
     /** Get all locales that have at least one translated field on this row. */
     public function translatedLocales(): array
     {
         $locales = [static::defaultLocale()];
         foreach (array_keys($this->translations ?? []) as $l) {
-            if (! in_array($l, $locales, true)) {
+            if ($this->hasTranslationForLocale($l) && ! in_array($l, $locales, true)) {
                 $locales[] = $l;
             }
         }

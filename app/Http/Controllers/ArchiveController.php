@@ -103,7 +103,8 @@ class ArchiveController extends Controller
         $previousEntry = $entry->getPreviousEntry();
         $nextEntry = $entry->getNextEntry();
 
-        $viewName = $this->resolveSingleView($postType->slug);
+        $postTypeSlug = $postType->slug;
+        $viewName = $this->resolveSingleView($postTypeSlug, true);
 
         return view($viewName, [
             'postType' => $postType,
@@ -189,7 +190,7 @@ class ArchiveController extends Controller
      *
      * Priority: {theme}::single-{cpt} → {theme}::single-entry → single-{cpt} → single-entry
      */
-    protected function resolveSingleView(string $cptSlug): string
+    protected function resolveSingleView(string $cptSlug, bool $isNested = false): string
     {
         $theme = app(ThemeLoader::class)->getActiveTheme();
         $ns = $theme?->slug;
@@ -197,10 +198,16 @@ class ArchiveController extends Controller
         $candidates = [];
 
         if ($ns) {
+            if ($isNested) {
+                $candidates[] = "{$ns}::single-sub-{$cptSlug}";
+            }
             $candidates[] = "{$ns}::single-{$cptSlug}";
             $candidates[] = "{$ns}::single-entry";
         }
 
+        if ($isNested) {
+            $candidates[] = "single-sub-{$cptSlug}";
+        }
         $candidates[] = "single-{$cptSlug}";
         $candidates[] = 'single-entry';
 

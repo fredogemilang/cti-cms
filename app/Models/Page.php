@@ -235,9 +235,15 @@ class Page extends Model
         return $path;
     }
 
-    public function getUrl(): string
+    public function getUrl(?string $locale = null): string
     {
-        return url($this->getFullPath());
+        $locale ??= app()->getLocale();
+        $defaultLocale = static::defaultLocale();
+        $prefix = ($locale !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix')
+            ? '/'.$locale
+            : '';
+
+        return url($prefix.'/'.$this->getFullPath());
     }
 
     /**
@@ -277,9 +283,14 @@ class Page extends Model
      */
     public function localizedUrl(string $locale): string
     {
-        $slug = $this->getTranslation('slug', $locale);
+        $defaultLocale = static::defaultLocale();
+        $prefix = ($locale !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix')
+            ? '/'.$locale
+            : '';
 
-        return url('/'.ltrim($slug, '/'));
+        $slug = $this->getTranslation('slug', $locale) ?? $this->slug;
+
+        return url($prefix.'/'.ltrim($slug, '/'));
     }
 
     public function getMetaTitle(): string
