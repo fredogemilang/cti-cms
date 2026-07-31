@@ -42,8 +42,13 @@ $adminPath = config('admin.path', 'admin');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Localized homepage (e.g. /id)
-$allLocales = array_filter(array_map('trim', explode(',', (string) setting('available_locales', 'id,en'))));
-$defaultLocale = setting('default_locale', config('app.locale', 'en'));
+try {
+    $allLocales = array_filter(array_map('trim', explode(',', (string) setting('available_locales', 'id,en'))));
+    $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+} catch (Throwable $e) {
+    $allLocales = ['id', 'en'];
+    $defaultLocale = 'en';
+}
 $nonDefaultLocales = array_values(array_filter($allLocales, fn ($l) => $l !== $defaultLocale));
 
 if (! empty($nonDefaultLocales)) {

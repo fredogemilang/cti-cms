@@ -59,21 +59,26 @@ class Setting extends Model
             return static::$memo[$key];
         }
 
-        $value = Cache::rememberForever(static::cacheKey($key), function () use ($key, $default) {
-            // Tolerate missing table (fresh install before migrate) — return default.
-            try {
-                $row = static::query()->where('key', $key)->first();
-            } catch (\Throwable $e) {
-                return ['__missing' => true, 'default' => $default];
-            }
-            if (! $row) {
-                return ['__missing' => true, 'default' => $default];
-            }
-            $cast = static::castFromStorage($row->value, $row->type);
+        try {
+            $value = Cache::rememberForever(static::cacheKey($key), function () use ($key, $default) {
+                // Tolerate missing table (fresh install before migrate) — return default.
+                try {
+                    $row = static::query()->where('key', $key)->first();
+                } catch (\Throwable $e) {
+                    return ['__missing' => true, 'default' => $default];
+                }
+                if (! $row) {
+                    return ['__missing' => true, 'default' => $default];
+                }
+                $cast = static::castFromStorage($row->value, $row->type);
 
-            // Decrypt at the cache boundary so subsequent reads stay fast.
-            return ['value' => static::decryptIfNeeded($key, $cast)];
-        });
+                // Decrypt at the cache boundary so subsequent reads stay fast.
+                return ['value' => static::decryptIfNeeded($key, $cast)];
+            });
+        } catch (\Throwable $e) {
+            // Database file or cache store not ready (e.g. composer package:discover before migrate)
+            return $default;
+        }
 
         $resolved = ($value['__missing'] ?? false) ? $default : $value['value'];
         static::$memo[$key] = $resolved;
