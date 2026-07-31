@@ -46,12 +46,42 @@ class PluginServiceProvider extends ServiceProvider
 
                 $this->registerCptRoutes($adminPath);
 
+                $localePattern = $this->nonDefaultLocalesPattern();
+
+                if ($localePattern !== 'nothing-to-match') {
+                    // Localized Catch-all: Pages (e.g. /id/about-us)
+                    Route::get('/{locale}/{slug}', [PageController::class, 'show'])
+                        ->where('locale', $localePattern)
+                        ->where('slug', '(?!'.preg_quote($adminPath, '/').')[a-zA-Z0-9\\-]+')
+                        ->name('locale.pages.show');
+                }
+
                 // Catch-all: Pages (must be LAST)
                 Route::get('/{slug}', [PageController::class, 'show'])
                     ->where('slug', '(?!'.preg_quote($adminPath, '/').')[a-zA-Z0-9\\-]+')
                     ->name('pages.show');
             });
         });
+    }
+
+    /**
+     * Build a regex pattern of non-default locales (e.g. 'id') for route constraints.
+     */
+    protected function nonDefaultLocalesPattern(): string
+    {
+        if (! Schema::hasTable('settings')) {
+            return 'nothing-to-match';
+        }
+
+        $all = available_locales();
+        $default = setting('default_locale', config('app.locale', 'en'));
+        $nonDefault = array_values(array_filter($all, fn ($l) => $l !== $default));
+
+        if (empty($nonDefault)) {
+            return 'nothing-to-match';
+        }
+
+        return implode('|', array_map('preg_quote', $nonDefault));
     }
 
     /**
@@ -80,9 +110,20 @@ class PluginServiceProvider extends ServiceProvider
                 return;
             }
 
+            $localePattern = $this->nonDefaultLocalesPattern();
+
             // Taxonomy term archives: /{taxonomy-slug}/{term-slug}
             if (! empty($taxonomySlugs)) {
                 $taxPattern = implode('|', array_map('preg_quote', $taxonomySlugs));
+
+                if ($localePattern !== 'nothing-to-match') {
+                    Route::get('/{locale}/{taxonomySlug}/{termSlug}', [ArchiveController::class, 'termArchive'])
+                        ->where('locale', $localePattern)
+                        ->where('taxonomySlug', $taxPattern)
+                        ->where('termSlug', '[a-zA-Z0-9\\-]+')
+                        ->name('locale.taxonomy.term.archive');
+                }
+
                 Route::get('/{taxonomySlug}/{termSlug}', [ArchiveController::class, 'termArchive'])
                     ->where('taxonomySlug', $taxPattern)
                     ->where('termSlug', '[a-zA-Z0-9\\-]+')
@@ -92,6 +133,21 @@ class PluginServiceProvider extends ServiceProvider
             // CPT single entries: /{cpt-slug}/{entry-slug} (requires publicly_queryable)
             if (! empty($singleSlugs)) {
                 $singlePattern = implode('|', array_map('preg_quote', $singleSlugs));
+
+                if ($localePattern !== 'nothing-to-match') {
+                    Route::get('/{locale}/{cptSlug}/{parentSlug}/{entrySlug}', [ArchiveController::class, 'nestedSingle'])
+                        ->where('locale', $localePattern)
+                        ->where('cptSlug', $singlePattern)
+                        ->where('parentSlug', '[a-zA-Z0-9\\-]+')
+                        ->where('entrySlug', '[a-zA-Z0-9\\-]+')
+                        ->name('locale.cpt.entry.nested.show');
+
+                    Route::get('/{locale}/{cptSlug}/{entrySlug}', [ArchiveController::class, 'single'])
+                        ->where('locale', $localePattern)
+                        ->where('cptSlug', $singlePattern)
+                        ->where('entrySlug', '[a-zA-Z0-9\\-]+')
+                        ->name('locale.cpt.entry.show');
+                }
 
                 Route::get('/{cptSlug}/{parentSlug}/{entrySlug}', [ArchiveController::class, 'nestedSingle'])
                     ->where('cptSlug', $singlePattern)
@@ -108,6 +164,14 @@ class PluginServiceProvider extends ServiceProvider
             // CPT archive listings: /{cpt-slug} (requires has_archive)
             if (! empty($archiveSlugs)) {
                 $archivePattern = implode('|', array_map('preg_quote', $archiveSlugs));
+
+                if ($localePattern !== 'nothing-to-match') {
+                    Route::get('/{locale}/{cptSlug}', [ArchiveController::class, 'archive'])
+                        ->where('locale', $localePattern)
+                        ->where('cptSlug', $archivePattern)
+                        ->name('locale.cpt.archive');
+                }
+
                 Route::get('/{cptSlug}', [ArchiveController::class, 'archive'])
                     ->where('cptSlug', $archivePattern)
                     ->name('cpt.archive');

@@ -34,4 +34,15 @@ class IconTest extends TestCase
         $this->assertStringContainsString('class="w-6 h-6"', $svg);
         $this->assertStringContainsString('</svg>', $svg);
     }
+
+    public function test_search_icons_returns_rendered_svg_elements()
+    {
+        $service = new IconLibraryService;
+        $results = $service->searchIcons('chart');
+
+        $this->assertNotEmpty($results);
+        $firstSvg = $results[0]['svg'];
+        $this->assertStringContainsString('<svg', $firstSvg);
+        $this->assertStringContainsString('</svg>', $firstSvg);
+    }
 }

@@ -22,6 +22,8 @@ class IconPicker extends Component
 
     public string $selectedLibrary = 'all';
 
+    public int $perPage = 80;
+
     protected $listeners = [
         'open-icon-picker' => 'handleOpenIconPicker',
     ];
@@ -38,21 +40,39 @@ class IconPicker extends Component
         $this->compact = $compact;
     }
 
+    public function updatedSearch(): void
+    {
+        $this->perPage = 80;
+    }
+
+    public function updatedSelectedLibrary(): void
+    {
+        $this->perPage = 80;
+    }
+
     public function handleOpenIconPicker(string $field): void
     {
         if ($this->field === $field) {
+            $this->perPage = 80;
             $this->showModal = true;
         }
     }
 
     public function openModal(): void
     {
+        $this->perPage = 80;
         $this->showModal = true;
     }
 
     public function closeModal(): void
     {
         $this->showModal = false;
+        $this->perPage = 80;
+    }
+
+    public function loadMore(): void
+    {
+        $this->perPage += 80;
     }
 
     public function selectIcon(string $iconKey): void
@@ -82,11 +102,15 @@ class IconPicker extends Component
     {
         $iconService = app(IconLibraryService::class);
         $libraries = $iconService->getLibraries();
-        $icons = $this->showModal ? $iconService->searchIcons($this->search, $this->selectedLibrary) : [];
+        $allIcons = $this->showModal ? $iconService->searchIcons($this->search, $this->selectedLibrary) : [];
+        $totalIcons = count($allIcons);
+        $icons = array_slice($allIcons, 0, $this->perPage);
 
         return view('livewire.admin.icon-picker', [
             'libraries' => $libraries,
             'icons' => $icons,
+            'totalIcons' => $totalIcons,
+            'hasMore' => $this->perPage < $totalIcons,
         ]);
     }
 }

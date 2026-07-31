@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\RenderAdminMenu;
+use App\Services\AdminMenuBuilder;
 use App\Services\ContentTypeRegistry;
 use App\Services\SettingsRegistry;
 use App\Services\TaxonomyRegistry;
@@ -224,6 +225,30 @@ abstract class CmsPluginServiceProvider extends ServiceProvider
     /**
      * Register admin menu items.
      * Override to add entries to the admin sidebar.
+     *
+     * Items are rendered generically by the sidebar component. Use this contract:
+     *
+     *   $event->addMenuItem([
+     *       'title'      => 'My Plugin',                     // Display name
+     *       'route'      => 'admin.myplugin',                // Named route (for active state)
+     *       'url'        => route('admin.myplugin.index'),    // Direct URL
+     *       'icon'       => 'extension',                     // Material Symbols icon name
+     *       'permission' => 'myplugin.view',                 // Required permission (null = all users)
+     *       'is_active'  => true,                            // Visibility toggle
+     *       'source'     => 'plugin:my-plugin',              // MUST be 'plugin:{slug}' for auto-discovery
+     *       'children'   => [                                // Sub-menu items (optional)
+     *           [
+     *               'title'      => 'All Items',
+     *               'route'      => 'admin.myplugin.index',
+     *               'url'        => route('admin.myplugin.index'),
+     *               'permission' => 'myplugin.view',         // Per-child permission (null = inherit)
+     *           ],
+     *       ],
+     *   ]);
+     *
+     * Items automatically appear in both the sidebar AND Menu Customizer.
+     *
+     * @see AdminMenuBuilder::getUnifiedMenuList()
      */
     protected function registerMenuItems(RenderAdminMenu $event): void
     {

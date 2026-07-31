@@ -413,6 +413,14 @@
                                                 rows="2"
                                                 class="w-full px-3 py-2 bg-white dark:bg-[#0B0B0B] border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                                             ></textarea>
+                                        @elseif($subField['type'] === 'media' || $subField['type'] === 'image')
+                                            <livewire:admin.media-picker 
+                                                :field="'meta.' . $field->name . '.' . $index . '.' . $subFieldId"
+                                                :value="$this->meta[$field->name][$index][$subFieldId] ?? null"
+                                                :label="$subField['label'] ?? 'Media'"
+                                                :compact="true"
+                                                :key="'media-' . $field->name . '-' . $index . '-' . $subFieldId"
+                                            />
                                         @elseif($subField['type'] === 'icon')
                                             <livewire:admin.icon-picker 
                                                 :field="'meta.' . $field->name . '.' . $index . '.' . $subFieldId"

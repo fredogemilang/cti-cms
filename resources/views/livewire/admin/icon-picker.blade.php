@@ -64,7 +64,17 @@
                 </div>
 
                 <!-- Icon Grid Content -->
-                <div class="p-4 overflow-y-auto flex-1 max-h-[50vh]">
+                <div 
+                    x-data="{
+                        checkScroll() {
+                            if ($el.scrollTop + $el.clientHeight >= $el.scrollHeight - 100) {
+                                $wire.loadMore();
+                            }
+                        }
+                    }"
+                    x-on:scroll.debounce.150ms="checkScroll()"
+                    class="p-4 overflow-y-auto flex-1 max-h-[50vh]"
+                >
                     @if(count($icons) > 0)
                         <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3">
                             @foreach($icons as $iconItem)
@@ -83,6 +93,19 @@
                                 </button>
                             @endforeach
                         </div>
+
+                        @if($hasMore)
+                            <div class="mt-4 flex flex-col items-center justify-center py-2">
+                                <button 
+                                    type="button" 
+                                    wire:click="loadMore"
+                                    class="px-4 py-1.5 text-xs font-semibold bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/60 border border-blue-200 dark:border-blue-800 rounded-xl transition-all flex items-center gap-2"
+                                >
+                                    <span wire:loading wire:target="loadMore" class="animate-spin text-xs">🌀</span>
+                                    <span>Load More Icons ({{ count($icons) }} of {{ $totalIcons }})</span>
+                                </button>
+                            </div>
+                        @endif
                     @else
                         <div class="py-12 flex flex-col items-center justify-center text-center">
                             <span class="material-symbols-outlined text-4xl text-gray-300 dark:text-gray-600 mb-2">search_off</span>
@@ -93,7 +116,7 @@
 
                 <!-- Modal Footer -->
                 <div class="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#111827] flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                    <span>Showing {{ count($icons) }} icons</span>
+                    <span>Showing {{ count($icons) }} of {{ $totalIcons }} icons</span>
                     <button type="button" wire:click="closeModal" class="px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-xl font-semibold text-gray-800 dark:text-white transition-all">
                         Cancel
                     </button>
