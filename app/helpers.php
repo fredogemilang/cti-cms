@@ -1,9 +1,12 @@
 <?php
 
 use App\Models\CptEntry;
+use App\Models\CustomPostType;
 use App\Models\Form;
 use App\Models\FormField;
+use App\Models\Page;
 use App\Models\Setting;
+use App\Models\StringTranslation;
 use App\Models\Theme;
 use App\Services\ActivityLogger;
 use App\Services\IconLibraryService;
@@ -263,6 +266,13 @@ if (! function_exists('resolve_block_asset')) {
         }
 
         if (str_starts_with($cleanPath, 'storage/')) {
+            if (! file_exists(public_path($cleanPath))) {
+                $unhashed = preg_replace('/-\d+-[a-zA-Z0-9]+\.([a-zA-Z0-9]+)$/', '.$1', $cleanPath);
+                if (file_exists(public_path($unhashed))) {
+                    return asset($unhashed);
+                }
+            }
+
             return asset($cleanPath);
         }
 
@@ -277,6 +287,13 @@ if (! function_exists('resolve_block_asset')) {
         $themeAssetRel = "themes/{$activeThemeSlug}/assets/{$cleanPath}";
         if (file_exists(public_path($themeAssetRel)) || file_exists(base_path($themeAssetRel))) {
             return asset($themeAssetRel);
+        }
+
+        if (! file_exists(public_path('storage/'.$cleanPath))) {
+            $unhashed = preg_replace('/-\d+-[a-zA-Z0-9]+\.([a-zA-Z0-9]+)$/', '.$1', $cleanPath);
+            if (file_exists(public_path('storage/'.$unhashed))) {
+                return asset('storage/'.$unhashed);
+            }
         }
 
         return asset('storage/'.$cleanPath);
@@ -324,5 +341,169 @@ if (! function_exists('resolve_frontend_entry')) {
         $locale ??= app()->getLocale();
 
         return apply_filters('frontend.resolve_entry', null, $path, $locale);
+    }
+}
+
+if (! function_exists('resolve_solution_url')) {
+    /**
+     * Resolve solution link (converting legacy .html or static paths to CPT tech-product entry permalinks).
+     */
+    function resolve_solution_url(?string $link, string $vendorSlug = ''): string
+    {
+        if (empty($link) || $link === '#') {
+            return '#';
+        }
+
+        // Clean html extension and leading slashes
+        $clean = (string) preg_replace('/\.html$/i', '', ltrim($link, '/'));
+
+        // Strip prefix like sub-akamai- or sub-aws- if present
+        if (preg_match('/^sub-[^-\/]+-(.+)$/', $clean, $matches)) {
+            $candidateSlug = $matches[1];
+        } else {
+            $candidateSlug = $clean;
+        }
+
+        // Try finding tech-product by slug
+        $techProductType = CustomPostType::where('slug', 'tech-products')->first();
+        if ($techProductType) {
+            $entry = CptEntry::where('post_type_id', $techProductType->id)
+                ->where(function ($q) use ($candidateSlug, $clean) {
+                    $q->where('slug', $candidateSlug)
+                        ->orWhere('slug', $clean)
+                        ->orWhere('slug', 'like', '%'.$candidateSlug.'%');
+                })
+                ->first();
+
+            if ($entry) {
+                return $entry->getUrl();
+            }
+        }
+
+        return url('/'.$clean);
+    }
+}
+
+if (! function_exists('current_page_localized_url')) {
+    /**
+     * Get the URL for the current request/entry/page in a specific target locale.
+     */
+    function current_page_localized_url(string $targetLocale): string
+    {
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+        $urlStructure = setting('locale_url_structure', 'prefix');
+        $hideDefault = (bool) setting('locale_prefix_hide_default', true);
+
+        // 1. If viewing a CPT Entry (passed via view data or request attributes)
+        $entry = request()->attributes->get('cpt_entry')
+            ?? view()->shared('entry')
+            ?? null;
+
+        if ($entry instanceof CptEntry) {
+            return $entry->getUrl($targetLocale);
+        }
+
+        // 2. If viewing a Page
+        $page = view()->shared('page') ?? null;
+        if ($page instanceof Page) {
+            return $page->getUrl($targetLocale);
+        }
+
+        // 3. Fallback: Parse request path
+        $path = ltrim(request()->path(), '/');
+
+        // Strip current non-default locale prefix if present at start of path
+        $available = available_locales();
+        $nonDefault = array_values(array_filter($available, fn ($l) => $l !== $defaultLocale));
+        foreach ($nonDefault as $l) {
+            if ($path === $l) {
+                $path = '';
+                break;
+            }
+            if (str_starts_with($path, $l.'/')) {
+                $path = substr($path, strlen($l) + 1);
+                break;
+            }
+        }
+
+        // Home page
+        if ($path === '') {
+            if ($targetLocale === $defaultLocale && $hideDefault) {
+                return url('/');
+            }
+
+            return url('/'.$targetLocale);
+        }
+
+        // Prefix structure
+        if ($urlStructure === 'prefix') {
+            if ($targetLocale === $defaultLocale && $hideDefault) {
+                return url('/'.$path);
+            }
+
+            return url('/'.$targetLocale.'/'.$path);
+        }
+
+        return url('/'.$path);
+    }
+}
+
+if (! function_exists('is_locale_available_for_current_page')) {
+    /**
+     * Check if a given locale is available/translated for the current page or entry.
+     */
+    function is_locale_available_for_current_page(string $locale): bool
+    {
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+
+        // Default locale is always available
+        if ($locale === $defaultLocale) {
+            return true;
+        }
+
+        // Check if locale is in available_locales setting
+        if (! in_array($locale, available_locales(), true)) {
+            return false;
+        }
+
+        // 1. If viewing a CPT Entry
+        $entry = request()->attributes->get('cpt_entry')
+            ?? view()->shared('entry')
+            ?? null;
+
+        if ($entry instanceof CptEntry) {
+            return $entry->hasTranslationForLocale($locale);
+        }
+
+        // 2. If viewing a Page
+        $page = view()->shared('page') ?? null;
+        if ($page instanceof Page) {
+            return $page->hasTranslationForLocale($locale);
+        }
+
+        // 3. For general routes (homepage, blog index, static routes)
+        return true;
+    }
+}
+
+if (! function_exists('t')) {
+    /**
+     * Translate a UI string key using the central StringTranslation system.
+     */
+    function t(string $key, ?string $default = null, array $replace = []): string
+    {
+        $locale = app()->getLocale();
+        $dictionary = StringTranslation::getDictionary($locale);
+        $translation = $dictionary[$key] ?? null;
+
+        if (empty($translation)) {
+            $translation = $default ?? $key;
+        }
+
+        foreach ($replace as $placeholder => $value) {
+            $translation = str_replace(':'.$placeholder, (string) $value, $translation);
+        }
+
+        return $translation;
     }
 }

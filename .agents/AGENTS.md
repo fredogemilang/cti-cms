@@ -66,4 +66,60 @@ When populating media/image fields via API, seeders, theme defaults, or renderin
 4. **Icon Field Type & Lucide Icons**:
    - Field type `'icon'` is registered across CPT MetaFields and Page Blocks.
    - Use `<x-icon name="lucide:shield" class="w-5 h-5 text-blue-500" />` or `render_icon($name, $class)` to render icons.
-   - 2,007 official Lucide SVG icons are bundled in `resources/icons/lucide.json`. Manage custom packs at `/ctrlpanel/settings/icons`.
+   5. **Universal Strict CPT MetaField Naming Compliance**:
+   - Applies to **ALL CPTs** (`tech-products`, `technology-alliance`, `posts`, `pages`, etc.).
+   - Applies to **ALL Languages / Locales** (`en`, `id`, `es`, etc.).
+   - Applies to **ALL Import/Input Methods** (CLI Artisan Importers, REST API HTTP Requests, Seeders, Admin Forms).
+   - Data stored in `meta` or `meta['_translations'][<locale>]` **MUST STRICTLY MATCH FLAT CPT METAFIEILD KEYS** in database `meta_fields` table (e.g. `hero_title`, `about_content`, `banner_headline`). Raw nested JSON keys (e.g. `hero.title`, `about.paragraphs`) must be converted before storing.
+
+---
+
+## Scratch Script Debugging & Testing Pattern (Mandatory Practice)
+
+When performing complex database updates, schema inspections, data migrations, or API route testing:
+
+1. **ALWAYS use temporary scratch scripts in `scratch/` directory**:
+   - Create single-file PHP scripts under `backend/scratch/` (e.g. `scratch/inspect_metafield.php`, `scratch/test_route.php`).
+   - Bootstrap Laravel cleanly at the top of the scratch script:
+     ```php
+     <?php
+     require 'vendor/autoload.php';
+     $app = require_once 'bootstrap/app.php';
+     $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+     $kernel->bootstrap();
+     ```
+2. **Why Scratch Scripts are Superior**:
+   - Avoids shell escaping errors (PowerShell / CMD quote escaping issues).
+   - Allows executing multi-line Eloquent queries, inspecting relationships, and verifying DB state safely.
+   - Provides instant, clear, un-truncated diagnostic output.
+3. **Clean Up Requirement**:
+   - Always delete temporary scripts from `scratch/` directory after testing is completed.
+
+---
+
+## Crawl4AI Integration & Crawled Data Management
+
+1. **Server Endpoint & Authorization**:
+   - Crawl4AI REST API Server: `https://crawl.altia.dev/`
+   - Authorization Header: `Authorization: Bearer crawl4ai-9a7f3b2c1d5e8f4a6b0c3d7e2f1a5b8c`
+2. **Crawled Content Storage Directory**:
+   - Target directory for storing extracted web content/Markdown: `backend/crawled_data/`
+3. **Git Ignore Compliance**:
+   - Directory `/crawled_data/` is strictly added to `.gitignore` to prevent committing raw or external crawled artifacts to repository version control.
+
+---
+
+## Centralized String Translation Registry Standards (Themes & Plugins)
+
+1. **Mandatory Universal Helper (`t()`)**:
+   - All Themes and Plugins **MUST** use the universal `t('group.key', 'Default Value', ['param' => $value])` helper function for UI labels, buttons, headers, and static phrases.
+   - Do **NOT** write hardcoded `if (app()->getLocale() === 'id')` conditionals in Blade views.
+2. **Semantic Dot-Notation Keys**:
+   - Canonical keys MUST follow semantic dot-notation: `t('common.save')`, `t('header.contact_us')`, `t('akamai.hero.title')`.
+   - The first segment is assigned as `group` (e.g. `common`, `header`, `akamai`), and remaining segments are assigned as `key` (e.g. `save`, `contact_us`, `hero.title`).
+3. **No Isolated Translation Tables**:
+   - Plugins and Themes are strictly prohibited from creating isolated translation database tables or custom translation files. All string translations MUST use the central `string_translation_keys`, `string_translations`, and `string_translation_sources` schema.
+4. **Non-Destructive Auto-Discovery**:
+   - The Admin String Translation Manager provides a `Scan Website Strings` action that automatically discovers `t()` calls across `themes/`, `plugins/`, and `resources/views/`. Scanner runs are non-destructive and preserve existing manual translations.
+5. **Fallback Chain & Resolution**:
+   - Translation resolution automatically executes: `Requested Locale` $\rightarrow$ `Fallback Locale` $\rightarrow$ `default_value` $\rightarrow$ `key`.

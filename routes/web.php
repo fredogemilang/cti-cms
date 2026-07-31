@@ -29,6 +29,7 @@ use App\Livewire\Admin\Seo\SeoBulkEditor;
 use App\Livewire\Admin\Seo\SeoGeneralSettings;
 use App\Livewire\Admin\Seo\SeoIndexNow;
 use App\Livewire\Admin\Seo\SeoOverview;
+use App\Livewire\Admin\StringTranslationManager;
 use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
 use App\Services\SettingsRegistry;
@@ -40,13 +41,27 @@ $adminPath = config('admin.path', 'admin');
 // Public homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Localized homepage (e.g. /id)
+$allLocales = array_filter(array_map('trim', explode(',', (string) setting('available_locales', 'id,en'))));
+$defaultLocale = setting('default_locale', config('app.locale', 'en'));
+$nonDefaultLocales = array_values(array_filter($allLocales, fn ($l) => $l !== $defaultLocale));
+
+if (! empty($nonDefaultLocales)) {
+    $localePattern = implode('|', array_map('preg_quote', $nonDefaultLocales));
+    Route::get('/{locale}', [HomeController::class, 'index'])
+        ->where('locale', $localePattern)
+        ->name('locale.home');
+}
+
 // Public Language Switcher
 Route::get('/lang/{locale}', function (string $locale) {
-    $available = array_filter(array_map('trim', explode(',', (string) setting('available_locales', 'id,en'))));
+    $available = available_locales();
     if (in_array($locale, $available, true)) {
         session(['locale' => $locale]);
         cookie()->queue('locale', $locale, 60 * 24 * 365);
         app()->setLocale($locale);
+
+        return redirect(current_page_localized_url($locale));
     }
 
     return redirect()->back();
@@ -354,6 +369,7 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
 
     // Settings (generic, group-based)
     Route::prefix('settings')->name('settings.')->middleware('permission:settings.view')->group(function () {
+        Route::get('/string-translations', StringTranslationManager::class)->name('string-translations');
         Route::get('/', function () {
             return redirect()->route('admin.settings.show', 'general');
         })->name('index');

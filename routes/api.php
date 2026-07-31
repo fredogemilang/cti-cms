@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\TranslationApiController;
 use App\Http\Controllers\Api\V1\Admin\ActivityLogAdminController;
 use App\Http\Controllers\Api\V1\Admin\AppearanceAdminController;
 use App\Http\Controllers\Api\V1\Admin\CptAdminController;
@@ -29,6 +30,9 @@ use App\Http\Controllers\Api\V1\TaxonomyPublicController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('api.cors')->prefix('v1')->group(function () {
+    // String Translations Public API Dictionary
+    Route::get('/translations/{locale}', [TranslationApiController::class, 'index']);
+
     // Auth
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/logout', [AuthController::class, 'logout'])->middleware('api.auth');
