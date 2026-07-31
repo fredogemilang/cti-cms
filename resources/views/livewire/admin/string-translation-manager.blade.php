@@ -2,7 +2,10 @@
     <!-- Flash Message -->
     @if (session()->has('message'))
     <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 text-emerald-800 dark:text-emerald-300 rounded-2xl text-sm flex items-center justify-between shadow-sm">
-        <span class="font-medium">{{ session('message') }}</span>
+        <span class="font-medium flex items-center gap-2">
+            <span class="material-symbols-outlined text-base text-emerald-600 dark:text-emerald-400">check_circle</span>
+            {{ session('message') }}
+        </span>
         <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-200">&times;</button>
     </div>
     @endif
@@ -17,7 +20,7 @@
         <div class="bg-white dark:bg-[#1A1A1A] p-5 rounded-2xl border {{ $isTarget ? 'border-[#2563EB] ring-2 ring-[#2563EB]/20' : 'border-gray-200 dark:border-[#272B30]' }} shadow-sm">
             <div class="flex items-center justify-between mb-3">
                 <span class="font-bold text-[#111827] dark:text-[#FCFCFC] uppercase text-sm flex items-center gap-2">
-                    @if($loc === 'en') 🇬🇧 @elseif($loc === 'id') 🇮🇩 @else 🌐 @endif
+                    <span class="material-symbols-outlined text-lg text-[#2563EB]">language</span>
                     {{ strtoupper($loc) }}
                 </span>
                 <span class="text-xs font-bold px-2.5 py-1 rounded-lg {{ $locStat['percentage'] === 100 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300' }}">
@@ -49,12 +52,14 @@
             <button
                 wire:click="$set('statusFilter', 'missing')"
                 class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $statusFilter === 'missing' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                ⚠️ Missing
+                <span class="material-symbols-outlined text-base text-amber-500">warning</span>
+                Missing
             </button>
             <button
                 wire:click="$set('statusFilter', 'completed')"
                 class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $statusFilter === 'completed' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                ✅ Completed
+                <span class="material-symbols-outlined text-base text-emerald-500">check_circle</span>
+                Completed
             </button>
         </div>
 
@@ -161,7 +166,13 @@
                     @if($tk->sources->count() > 0)
                         @php $firstSource = $tk->sources->first(); @endphp
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono bg-gray-100 dark:bg-[#272B30] text-[#6F767E] max-w-[200px] truncate">
-                            @if($firstSource->source_type === 'theme') 🎨 @elseif($firstSource->source_type === 'plugin') 🧩 @else ⚙️ @endif
+                            @if($firstSource->source_type === 'theme')
+                                <span class="material-symbols-outlined text-xs text-purple-500">palette</span>
+                            @elseif($firstSource->source_type === 'plugin')
+                                <span class="material-symbols-outlined text-xs text-blue-500">extension</span>
+                            @else
+                                <span class="material-symbols-outlined text-xs text-gray-500">settings</span>
+                            @endif
                             {{ $firstSource->source_file }}
                         </span>
                     @else
