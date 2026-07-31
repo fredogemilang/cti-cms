@@ -29,7 +29,6 @@ use App\Livewire\Admin\Seo\SeoBulkEditor;
 use App\Livewire\Admin\Seo\SeoGeneralSettings;
 use App\Livewire\Admin\Seo\SeoIndexNow;
 use App\Livewire\Admin\Seo\SeoOverview;
-use App\Livewire\Admin\StringTranslationManager;
 use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
 use App\Services\SettingsRegistry;
@@ -374,7 +373,6 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
 
     // Settings (generic, group-based)
     Route::prefix('settings')->name('settings.')->middleware('permission:settings.view')->group(function () {
-        Route::get('/string-translations', StringTranslationManager::class)->name('string-translations');
         Route::get('/', function () {
             return redirect()->route('admin.settings.show', 'general');
         })->name('index');
