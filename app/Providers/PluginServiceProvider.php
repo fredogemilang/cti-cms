@@ -69,19 +69,23 @@ class PluginServiceProvider extends ServiceProvider
      */
     protected function nonDefaultLocalesPattern(): string
     {
-        if (! Schema::hasTable('settings')) {
+        try {
+            if (! Schema::hasTable('settings')) {
+                return 'nothing-to-match';
+            }
+
+            $all = available_locales();
+            $default = setting('default_locale', config('app.locale', 'en'));
+            $nonDefault = array_values(array_filter($all, fn ($l) => $l !== $default));
+
+            if (empty($nonDefault)) {
+                return 'nothing-to-match';
+            }
+
+            return implode('|', array_map('preg_quote', $nonDefault));
+        } catch (\Throwable $e) {
             return 'nothing-to-match';
         }
-
-        $all = available_locales();
-        $default = setting('default_locale', config('app.locale', 'en'));
-        $nonDefault = array_values(array_filter($all, fn ($l) => $l !== $default));
-
-        if (empty($nonDefault)) {
-            return 'nothing-to-match';
-        }
-
-        return implode('|', array_map('preg_quote', $nonDefault));
     }
 
     /**
