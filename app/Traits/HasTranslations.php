@@ -93,7 +93,7 @@ trait HasTranslations
         }
 
         /** @var array<string, mixed>|null $translations */
-        $translations = $this->getAttribute('_translations');
+        $translations = $this->getAttribute('translations') ?? $this->getAttribute('_translations');
         if (! is_array($translations) || empty($translations[$locale])) {
             return false;
         }
