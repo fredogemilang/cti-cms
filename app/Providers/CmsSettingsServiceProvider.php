@@ -29,6 +29,7 @@ class CmsSettingsServiceProvider extends ServiceProvider
         $this->registerAuthSettings($registry);
         $this->registerBrevoSettings($registry);
         $this->registerLanguageSettings($registry);
+        $this->registerStringTranslationSettings($registry);
         $this->registerCacheSettings($registry);
         $this->registerCdnSettings($registry);
         $this->registerImageOptSettings($registry);
@@ -265,6 +266,17 @@ class CmsSettingsServiceProvider extends ServiceProvider
                     'rules' => ['boolean'],
                     'help' => 'When enabled and using Prefix structure, the default language (e.g. `en`) omits the prefix (`/about-us`), while other languages include it (`/id/tentang-kami`).'],
             ],
+        ]);
+    }
+
+    protected function registerStringTranslationSettings(SettingsRegistry $registry): void
+    {
+        $registry->registerGroup('string-translations', [
+            'label' => 'String Translations',
+            'icon' => 'translate',
+            'order' => 42,
+            'description' => 'Manage UI string keys, buttons, and localized translations across Themes, Plugins, and Core.',
+            'component' => 'admin.string-translation-manager',
         ]);
     }
 
