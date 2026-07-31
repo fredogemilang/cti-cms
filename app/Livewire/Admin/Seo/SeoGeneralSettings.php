@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Services\ContentTypeRegistry;
 use App\Services\TaxonomyRegistry;
 use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -47,6 +48,10 @@ class SeoGeneralSettings extends Component
     public string $titlePattern = '{page} {sep} {site}';
 
     public string $defaultDescription = '';
+
+    public string $siteLogo = '';
+
+    public string $siteFavicon = '';
 
     public string $defaultOgImage = '';
 
@@ -173,6 +178,8 @@ class SeoGeneralSettings extends Component
         $this->titleSeparator = (string) setting('seo_title_separator', '-');
         $this->titlePattern = (string) setting('seo_title_pattern', '{page} {sep} {site}');
         $this->defaultDescription = (string) setting('seo_default_description', '');
+        $this->siteLogo = (string) setting('site_logo', '');
+        $this->siteFavicon = (string) setting('site_favicon', '');
         $this->defaultOgImage = (string) setting('seo_default_og_image', '');
 
         $this->restrictAdvancedSettings = (bool) setting('seo_restrict_advanced_settings', true);
@@ -304,27 +311,56 @@ class SeoGeneralSettings extends Component
     public function openMediaPicker(?string $targetType = null): void
     {
         $this->mediaTargetType = $targetType;
-        $this->dispatch('open-media-picker', ['targetField' => $targetType ?? 'defaultOgImage']);
+        $this->showMediaPicker = true;
     }
 
-    public function onMediaSelected(array $payload): void
+    #[On('media-selected')]
+    public function onMediaSelected($field = null, $mediaId = null, $mediaPath = null, $mediaUrl = null): void
     {
-        if (isset($payload['url'])) {
-            if ($this->mediaTargetType && str_starts_with($this->mediaTargetType, 'content_type_')) {
+        $url = $mediaUrl ?: $mediaPath;
+        if (! $url && is_array($field) && isset($field['url'])) {
+            $url = $field['url'];
+        }
+
+        if ($url) {
+            if ($this->mediaTargetType === 'siteLogo') {
+                $this->siteLogo = $url;
+            } elseif ($this->mediaTargetType === 'siteFavicon') {
+                $this->siteFavicon = $url;
+            } elseif ($this->mediaTargetType && str_starts_with($this->mediaTargetType, 'content_type_')) {
                 $slug = str_replace('content_type_', '', $this->mediaTargetType);
                 if (isset($this->contentTypeSettings[$slug])) {
-                    $this->contentTypeSettings[$slug]['social_image'] = $payload['url'];
+                    $this->contentTypeSettings[$slug]['social_image'] = $url;
                 }
             } elseif ($this->mediaTargetType && str_starts_with($this->mediaTargetType, 'taxonomy_')) {
                 $slug = str_replace('taxonomy_', '', $this->mediaTargetType);
                 if (isset($this->taxonomySettings[$slug])) {
-                    $this->taxonomySettings[$slug]['social_image'] = $payload['url'];
+                    $this->taxonomySettings[$slug]['social_image'] = $url;
                 }
             } else {
-                $this->defaultOgImage = $payload['url'];
+                $this->defaultOgImage = $url;
             }
         }
+
+        $this->showMediaPicker = false;
         $this->mediaTargetType = null;
+    }
+
+    #[On('close-media-picker')]
+    public function closeMediaPicker(): void
+    {
+        $this->showMediaPicker = false;
+        $this->mediaTargetType = null;
+    }
+
+    public function removeSiteLogo(): void
+    {
+        $this->siteLogo = '';
+    }
+
+    public function removeSiteFavicon(): void
+    {
+        $this->siteFavicon = '';
     }
 
     public function removeOgImage(): void
@@ -385,6 +421,8 @@ class SeoGeneralSettings extends Component
         Setting::set('site_name', $this->siteName, 'general', 'text');
         Setting::set('seo_site_alternate_name', $this->siteAlternateName, 'seo', 'text');
         Setting::set('site_tagline', $this->siteTagline, 'general', 'text');
+        Setting::set('site_logo', $this->siteLogo, 'general', 'media');
+        Setting::set('site_favicon', $this->siteFavicon, 'general', 'media');
         Setting::set('seo_title_separator', $this->titleSeparator, 'seo', 'text');
         Setting::set('seo_title_pattern', $this->titlePattern, 'seo', 'text');
         Setting::set('seo_default_description', $this->defaultDescription, 'seo', 'textarea');

@@ -31,3 +31,5 @@ Thumbs.db
 /.playwright-mcp
 /public/assets
 /crawled_data/
+
+testsprite_tests\tmp\config.json

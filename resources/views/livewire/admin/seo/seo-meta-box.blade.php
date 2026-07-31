@@ -58,13 +58,13 @@
                 <span class="text-[11px] font-bold text-[#6F767E] dark:text-[#9A9A9A] uppercase tracking-wider">Search Engine Preview</span>
                 <div class="rounded-2xl border border-gray-200 dark:border-[#272B30] p-5 bg-[#F9FAFB] dark:bg-[#0B0B0B] space-y-1.5">
                     <div class="text-[18px] leading-snug text-[#1a0dab] dark:text-[#8ab4f8] font-medium truncate">
-                        {{ $title ?: 'Page Title Here' }}
+                        {{ $title ?: $this->fallbackTitle }}
                     </div>
                     <div class="text-[13px] text-[#006621] dark:text-[#81c995] truncate font-mono">
-                        {{ $canonical_url ?: url('/') }}
+                        {{ $canonical_url ?: $this->fallbackUrl }}
                     </div>
                     <div class="text-[13px] text-[#4d5156] dark:text-[#bdc1c6] line-clamp-2 leading-relaxed">
-                        {{ $description ?: 'Add a meta description to control how this page appears in search results…' }}
+                        {{ $description ?: $this->fallbackDescription }}
                     </div>
                 </div>
             </div>
@@ -87,7 +87,7 @@
                 <label class="text-[11px] font-bold text-[#6F767E] dark:text-[#9A9A9A] uppercase tracking-wider block">SEO Title</label>
                 <input type="text" wire:model.live.debounce.300ms="title" maxlength="70"
                        class="w-full h-11 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 px-4 placeholder:text-gray-400 dark:placeholder:text-gray-600 transition-all"
-                       placeholder="Auto-generated from page title">
+                       placeholder="{{ $this->fallbackTitle !== 'Page Title Here' ? $this->fallbackTitle : 'Auto-generated from page title' }}">
                 {{-- Modern progress bar --}}
                 <div class="space-y-1 pt-1">
                     <div class="h-1.5 rounded-full bg-gray-200 dark:bg-[#272B30] overflow-hidden">
@@ -111,7 +111,7 @@
                 <label class="text-[11px] font-bold text-[#6F767E] dark:text-[#9A9A9A] uppercase tracking-wider block">Meta Description</label>
                 <textarea wire:model.live.debounce.300ms="description" maxlength="160" rows="3"
                           class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 p-4 placeholder:text-gray-400 dark:placeholder:text-gray-600 resize-y transition-all"
-                          placeholder="Auto-generated from excerpt or content if left empty"></textarea>
+                          placeholder="{{ $this->fallbackDescription !== 'Add a meta description to control how this page appears in search results…' ? $this->fallbackDescription : 'Auto-generated from excerpt or content if left empty' }}"></textarea>
                 {{-- Modern progress bar --}}
                 <div class="space-y-1">
                     <div class="h-1.5 rounded-full bg-gray-200 dark:bg-[#272B30] overflow-hidden">

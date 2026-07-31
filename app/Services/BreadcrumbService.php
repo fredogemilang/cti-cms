@@ -40,10 +40,22 @@ class BreadcrumbService
         } elseif ($entity instanceof CptEntry) {
             /** @var CustomPostType|null $postType */
             $postType = $entity->postType;
-            if ($postType) {
+
+            // Only add Archive level if CPT has archive enabled
+            if ($postType && $postType->has_archive) {
                 $items[] = [
                     'name' => (string) ($postType->plural_label ?: ucfirst((string) $postType->name)),
                     'url' => $postType->getArchiveUrl(),
+                ];
+            }
+
+            // Include parent entry if this is a sub-entry / hierarchical child
+            /** @var CptEntry|null $parent */
+            $parent = $entity->parentRelatedEntries()->first() ?: $entity->parent;
+            if ($parent) {
+                $items[] = [
+                    'name' => (string) ($parent->title ?? 'Parent'),
+                    'url' => $parent->getUrl(),
                 ];
             }
 

@@ -21,7 +21,7 @@
     </script>
     <title>@yield('title', 'Dashboard') {{ setting('seo_title_separator', '-') }} {{ setting('site_name', config('app.name', 'CMS')) }} Admin</title>
     @if(setting('site_favicon'))
-        <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
+        <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
     @endif
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">

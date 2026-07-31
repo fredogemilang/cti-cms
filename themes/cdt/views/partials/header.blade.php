@@ -9,6 +9,10 @@
         ->orderBy('title')
         ->limit(12)
         ->get();
+
+    // Site logo setting fallback
+    $siteLogoSetting = setting('site_logo');
+    $siteLogoUrl = $siteLogoSetting ? resolve_block_asset($siteLogoSetting) : asset('themes/cdt/assets/cropped-logo-cdt-D0j3NVKg.png');
 @endphp
 
 <!-- Mobile Top Header Bar -->
@@ -16,7 +20,7 @@
   <div class="flex items-center justify-between px-4 py-3">
     <!-- Logo -->
     <a href="{{ url('/') }}" class="flex-shrink-0">
-      <img src="{{ asset('themes/cdt/assets/cropped-logo-cdt-D0j3NVKg.png') }}" alt="{{ setting('site_name', 'Central Data Technology') }}" class="h-12 w-auto">
+      <img src="{{ $siteLogoUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }}" class="h-12 w-auto object-contain">
     </a>
     <!-- Language Switcher -->
     @if(is_locale_available_for_current_page('id'))
@@ -73,7 +77,7 @@
     <nav class="flex items-center justify-between h-20">
       <!-- Logo -->
       <a href="{{ url('/') }}" class="flex-shrink-0">
-        <img src="{{ asset('themes/cdt/assets/cropped-logo-cdt-D0j3NVKg.png') }}" alt="{{ setting('site_name', 'Central Data Technology') }}" class="h-16 w-auto">
+        <img src="{{ $siteLogoUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }}" class="h-16 w-auto object-contain">
       </a>
 
       <!-- Desktop Menu -->

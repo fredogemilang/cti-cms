@@ -106,6 +106,11 @@ class IconPicker extends Component
         $totalIcons = count($allIcons);
         $icons = array_slice($allIcons, 0, $this->perPage);
 
+        foreach ($icons as &$icon) {
+            $icon['svg'] = $iconService->renderSvg($icon['key'], 'w-6 h-6');
+        }
+        unset($icon);
+
         return view('livewire.admin.icon-picker', [
             'libraries' => $libraries,
             'icons' => $icons,

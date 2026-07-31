@@ -233,11 +233,32 @@ class CptEntry extends Model
     public function getMeta(string $key, $default = null)
     {
         $locale = app()->getLocale();
-        if ($locale !== 'en' && isset($this->meta['_translations'][$locale][$key]) && $this->meta['_translations'][$locale][$key] !== '') {
-            return $this->meta['_translations'][$locale][$key];
+        $defaultLocale = static::defaultLocale();
+        $meta = parent::getAttribute('meta') ?? [];
+
+        if ($locale !== $defaultLocale && isset($meta['_translations'][$locale][$key]) && $meta['_translations'][$locale][$key] !== '') {
+            $translatedVal = $meta['_translations'][$locale][$key];
+            $defaultVal = $meta[$key] ?? null;
+
+            // If both default and translation are arrays (e.g., benefits_cards, features, solutions_other)
+            if (is_array($translatedVal) && is_array($defaultVal)) {
+                foreach ($translatedVal as $idx => &$item) {
+                    if (is_array($item) && isset($defaultVal[$idx]) && is_array($defaultVal[$idx])) {
+                        // Always inherit fresh icon/image/logo/media from default locale (EN)
+                        foreach (['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'] as $mediaKey) {
+                            if (isset($defaultVal[$idx][$mediaKey])) {
+                                $item[$mediaKey] = $defaultVal[$idx][$mediaKey];
+                            }
+                        }
+                    }
+                }
+                unset($item);
+            }
+
+            return $translatedVal;
         }
 
-        return $this->meta[$key] ?? $default;
+        return $meta[$key] ?? $default;
     }
 
     /**

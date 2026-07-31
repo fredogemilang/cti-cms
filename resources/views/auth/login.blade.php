@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CMS Login - Welcome Back</title>
     @if(setting('site_favicon'))
-        <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
+        <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
     @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">

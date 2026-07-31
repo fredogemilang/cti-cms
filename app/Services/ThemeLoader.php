@@ -66,10 +66,6 @@ class ThemeLoader
 
         // Register into the app container so FormField can merge them
         app()->instance('theme_custom_field_types', $config['custom_field_types']);
-
-        Log::info("Theme custom field types registered: {$theme->slug}", [
-            'types' => array_column($config['custom_field_types'], 'type'),
-        ]);
     }
 
     /**
@@ -100,8 +96,6 @@ class ThemeLoader
         // Register namespace matching the active theme's slug
         // so @extends('{slug}::layouts.app') resolves dynamically
         View::addNamespace($theme->slug, $themePath);
-
-        Log::info("Theme views registered: {$themePath}");
     }
 
     /**
@@ -198,7 +192,5 @@ class ThemeLoader
         if (method_exists($provider, 'boot')) {
             app()->call([$provider, 'boot']);
         }
-
-        Log::info("Theme service provider booted: {$class}");
     }
 }

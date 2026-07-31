@@ -64,12 +64,18 @@
       <div class="absolute bottom-[-10%] -left-48 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(227,6,19,0.10)_0%,rgba(227,6,19,0)_70%)] rounded-full blur-3xl"></div>
     </div>
   
+    @php
+      $techAllianceCpt = \App\Models\CustomPostType::where('slug', 'technology-alliance')->first();
+      $hasAllianceArchive = $techAllianceCpt && $techAllianceCpt->has_archive;
+    @endphp
     <div class="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 w-full">
       <!-- Breadcrumbs -->
       <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-10" aria-label="Breadcrumb">
-        <a href="{{ url('/') }}" class="hover:text-primary transition-colors">Home</a>
-        <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        <a href="{{ url('/technology-alliance') }}" class="hover:text-primary transition-colors">Technology Alliance</a>
+        <a href="{{ url('/') }}" class="hover:text-primary transition-colors">{{ t('common.home', 'Home') }}</a>
+        @if($hasAllianceArchive)
+          <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <a href="{{ url('/technology-alliance') }}" class="hover:text-primary transition-colors">{{ t('common.technology_alliance', 'Technology Alliance') }}</a>
+        @endif
         @if($parentProduct)
           <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           <a href="{{ $parentProduct->getUrl() }}" class="hover:text-primary transition-colors">{{ $parentProduct->title }}</a>
@@ -92,7 +98,7 @@
   
         <div class="overflow-hidden mb-12 max-w-3xl">
           <p class="text-lg md:text-xl text-zinc-600 font-light leading-relaxed">
-            {{ $entry->getMeta('hero_description') ?: ($entry->content ? strip_tags($entry->content) : $entry->excerpt) }}
+            {{ $entry->content ? strip_tags($entry->content) : $entry->excerpt }}
           </p>
         </div>
   
@@ -107,6 +113,39 @@
   </section>
 
   <!-- Section 2: Sub-Product Promo Banner -->
+  @php
+      $bannerHeadline = trim((string) ($entry->getMeta('banner_headline') ?: ($entry->getMeta('banner')['headline'] ?? '')));
+      $bannerDescription = trim((string) ($entry->getMeta('banner_description') ?: ($entry->getMeta('banner')['description'] ?? '')));
+      $bannerCta = trim((string) ($entry->getMeta('banner_cta') ?: ($entry->getMeta('banner')['cta'] ?? '')));
+
+      $rawBannerLogo = $entry->getMeta('banner_logo') ?: $entry->getMeta('banner_image');
+      if (! $rawBannerLogo && is_array($entry->getMeta('banner'))) {
+          $rawBannerLogo = $entry->getMeta('banner')['logo'] ?? $entry->getMeta('banner')['image'] ?? null;
+      }
+      
+      // Only fallback to featured_image if explicit banner headline/description is provided
+      $hasExplicitBannerLogo = !empty($rawBannerLogo);
+      if (! $rawBannerLogo && ($bannerHeadline || $bannerDescription)) {
+          $rawBannerLogo = $entry->featured_image ?: ($parentProduct?->featured_image ?: '');
+      }
+
+      $bannerLogo = null;
+      if ($rawBannerLogo) {
+          if (str_starts_with($rawBannerLogo, 'http://') || str_starts_with($rawBannerLogo, 'https://')) {
+              $bannerLogo = $rawBannerLogo;
+          } else {
+              $cleanRel = ltrim(str_replace('/storage/', '', $rawBannerLogo), '/');
+              $unhashedRel = preg_replace('/-\d+-[a-zA-Z0-9]+\.([a-zA-Z0-9]+)$/', '.$1', $cleanRel);
+              if (file_exists(public_path('storage/'.$cleanRel)) || file_exists(public_path('storage/'.$unhashedRel)) || file_exists(public_path($rawBannerLogo))) {
+                  $bannerLogo = $rawBannerLogo;
+              }
+          }
+      }
+
+      $hasBannerContent = !empty($bannerHeadline) || !empty($bannerDescription) || !empty($bannerCta) || $hasExplicitBannerLogo;
+  @endphp
+
+  @if($hasBannerContent)
   <section id="banner" class="py-10 md:py-14 bg-gradient-to-r from-red-800 via-primary to-red-700 relative overflow-hidden z-20 shadow-inner">
     <div class="absolute inset-0 pointer-events-none">
       <div class="absolute top-1/2 left-0 w-64 h-64 bg-white/10 rounded-full blur-[60px] -translate-y-1/2 -translate-x-1/2"></div>
@@ -116,22 +155,6 @@
   
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
-        @php
-            $bannerLogo = $entry->getMeta('banner_logo');
-            if (! $bannerLogo && is_array($entry->getMeta('banner'))) {
-                $bannerLogo = $entry->getMeta('banner')['logo'] ?? null;
-            }
-            if ($bannerLogo && ! str_starts_with($bannerLogo, 'http://') && ! str_starts_with($bannerLogo, 'https://')) {
-                $cleanRel = ltrim(str_replace('/storage/', '', $bannerLogo), '/');
-                $unhashedRel = preg_replace('/-\d+-[a-zA-Z0-9]+\.([a-zA-Z0-9]+)$/', '.$1', $cleanRel);
-                if (! file_exists(public_path('storage/'.$cleanRel)) && ! file_exists(public_path('storage/'.$unhashedRel)) && ! file_exists(public_path($bannerLogo))) {
-                    $bannerLogo = null;
-                }
-            }
-            if (! $bannerLogo) {
-                $bannerLogo = $entry->featured_image ?: ($parentProduct?->featured_image ?: '');
-            }
-        @endphp
         @if($bannerLogo)
         <div class="flex-shrink-0">
           <div class="w-24 h-24 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center p-4 shadow-[0_10px_25px_rgba(0,0,0,0.3)] ring-4 ring-white/20 transform hover:scale-105 transition-transform duration-500">
@@ -142,20 +165,20 @@
 
         <div class="flex-1 text-center md:text-left">
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/20 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white mb-3 backdrop-blur-md">
-            <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span> Limited Time Offer
+            <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span> {{ t('product.limited_offer', 'Limited Time Offer') }}
           </div>
           <h2 class="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-2 tracking-tight">
-            {!! $entry->getMeta('banner_headline') ?: 'Start Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100">30-Day Free Trial</span>' !!}
+            {!! $bannerHeadline ?: 'Start Your <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-100">30-Day Free Trial</span>' !!}
           </h2>
           <p class="text-white/80 text-base md:text-lg font-light max-w-2xl mx-auto md:mx-0">
-            {{ $entry->getMeta('banner_description') ?: 'Get a Free Proof of Concept (POC) and Assessment for ' . $entry->title . ($parentProduct ? ' from ' . $parentProduct->title : '') . '.' }}
+            {{ $bannerDescription ?: 'Get a Free Proof of Concept (POC) and Assessment for ' . $entry->title . ($parentProduct ? ' from ' . $parentProduct->title : '') . '.' }}
           </p>
         </div>
 
         <div class="flex-shrink-0 mt-4 md:mt-0">
           <a href="#explore" class="inline-flex items-center justify-center px-8 py-4 font-bold text-primary transition-all duration-300 bg-white rounded-full hover:bg-zinc-100 hover:scale-105 shadow-[0_10px_30px_rgba(0,0,0,0.2)] group/btn relative overflow-hidden">
             <span class="relative z-10 flex items-center gap-2 text-base tracking-wide uppercase">
-              {{ $entry->getMeta('banner_cta') ?: 'Get Started Today' }}
+              {{ $bannerCta ?: 'Get Started Today' }}
               <svg class="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
             </span>
           </a>
@@ -163,6 +186,7 @@
       </div>
     </div>
   </section>
+  @endif
 
   <!-- Section 3: Sub-Product About -->
   <section class="py-24 md:py-32 bg-zinc-50 relative border-b border-zinc-100">
@@ -183,13 +207,19 @@
         @endif
 
         <div class="w-full {{ $aboutImg ? 'lg:w-1/2' : 'w-full' }} flex flex-col justify-center">
-          @php
-            $rawAboutTitle = $entry->getMeta('about_title') ?: $entry->title;
-            $cleanAboutTitle = trim(preg_replace('/^About\s+/i', '', $rawAboutTitle));
-          @endphp
-          <h2 class="text-4xl font-light text-zinc-500 leading-tight">About <br>
-            <span class="font-bold text-zinc-900">{{ $cleanAboutTitle }}</span>
-          </h2>
+        @php
+          $rawAboutTitle = $entry->getMeta('about_title') ?: $entry->title;
+          if (preg_match('/^(About|Mengenal|Tentang|What is|What Are|What Can|Apa Itu|Apa|Mengapa|Why|How)\s+(.+)$/i', trim($rawAboutTitle), $aboutMatches)) {
+              $aboutPrefix = $aboutMatches[1];
+              $aboutMainTitle = $aboutMatches[2];
+          } else {
+              $aboutPrefix = app()->getLocale() === 'id' ? 'Mengenal' : 'About';
+              $aboutMainTitle = $rawAboutTitle;
+          }
+        @endphp
+        <h2 class="text-4xl font-light text-zinc-500 leading-tight">{{ $aboutPrefix }} <br>
+          <span class="font-bold text-zinc-900">{{ $aboutMainTitle }}</span>
+        </h2>
           <div class="h-1 w-16 bg-primary mt-4 mb-8"></div>
 
           <div class="space-y-6 text-zinc-600 text-base md:text-lg font-light leading-relaxed mb-10">
@@ -216,7 +246,7 @@
         @php
           $rawBenefitsTitle = $entry->getMeta('benefits_title') ?: $entry->title;
           $cleanBenefitsTitle = trim(preg_replace('/^(Benefits\s+of|Manfaat)\s+/i', '', $rawBenefitsTitle));
-          $prefix = app()->getLocale() === 'id' ? 'Manfaat' : 'Benefits of';
+          $prefix = app()->getLocale() === 'id' ? t('product.benefits_of_id', 'Manfaat') : t('product.benefits_of_en', 'Benefits of');
         @endphp
         <h2 class="text-4xl font-light text-zinc-500 leading-tight">{{ $prefix }} <br>
           <span class="font-bold text-gray-900">{{ $cleanBenefitsTitle }}</span>
@@ -228,8 +258,14 @@
         @foreach($benefitsCards as $card)
         <div class="group bg-zinc-50 border border-zinc-200/80 p-8 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
           @if(!empty($card['icon']))
+          @php
+            $cardIcon = $card['icon'];
+            if (! str_starts_with($cardIcon, 'lucide:')) {
+                $cardIcon = 'lucide:' . $cardIcon;
+            }
+          @endphp
           <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
-            {!! render_icon($card['icon'], 'w-6 h-6 text-primary') !!}
+            <x-icon :name="$cardIcon" class="w-6 h-6 text-primary" />
           </div>
           @endif
           <h3 class="text-xl font-bold text-zinc-900 mb-3 leading-snug">{{ $card['title'] ?? '' }}</h3>
@@ -240,54 +276,53 @@
     </div>
   </section>
 
-  <!-- Section 5: Customer Success Section -->
   @php
-    $customerSuccessStories = $entry->getMeta('customer_success');
+    $customerSuccess = $entry->getMeta('customer_success');
   @endphp
-  @if(!empty($customerSuccessStories) && is_array($customerSuccessStories))
+  @if(!empty($customerSuccess) && is_array($customerSuccess))
+  <!-- Section 5: Customer Success Section -->
   <section class="py-24 md:py-32 bg-zinc-50 relative border-t border-zinc-100">
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
       <div class="mb-16">
-        <h2 class="text-4xl font-light text-zinc-500 leading-tight">Customer <br>
-          <span class="font-bold text-gray-900">Success</span>
+        <h2 class="text-4xl font-light text-zinc-500 leading-tight">{{ t('product.customer_success_prefix', 'Customer') }} <br>
+          <span class="font-bold text-gray-900">{{ t('product.customer_success_suffix', 'Success') }}</span>
         </h2>
         <div class="h-1 w-16 bg-primary mt-4"></div>
       </div>
 
       <div class="space-y-12">
-        @foreach($customerSuccessStories as $story)
+        @foreach($customerSuccess as $story)
         @php
-          $outcomes = is_array($story['outcomes'] ?? null)
-            ? $story['outcomes']
-            : array_filter(array_map('trim', explode("\n", $story['outcomes'] ?? '')));
+          $storyTitle = is_array($story) ? ($story['title'] ?? '') : ($story->title ?? '');
+          $storyDesc = is_array($story) ? ($story['description'] ?? '') : ($story->description ?? '');
+          $storyOutcomes = is_array($story) ? ($story['outcomes'] ?? '') : ($story->outcomes ?? '');
+          $storyLink = is_array($story) ? ($story['button_link'] ?? '') : ($story->button_link ?? '');
+          $storyBtnName = is_array($story) ? ($story['button_name'] ?? 'Read Story') : ($story->button_name ?? 'Read Story');
+          $storyLogo = is_array($story) ? ($story['logo'] ?? null) : ($story->logo ?? null);
+
+          $outcomesList = is_array($storyOutcomes) 
+              ? $storyOutcomes 
+              : array_filter(array_map('trim', explode("\n", (string)$storyOutcomes)));
         @endphp
         <div class="flex flex-col lg:flex-row items-center gap-10 p-10 bg-white rounded-3xl border border-zinc-200/80 hover:shadow-xl transition-shadow duration-300">
-          <div class="w-full lg:w-3/5 space-y-4">
-            @if(!empty($story['logo']))
-              @php
-                $logoUrl = resolve_block_asset($story['logo']);
-              @endphp
-              @if($logoUrl)
-                <img src="{{ $logoUrl }}" alt="{{ $story['title'] ?? 'Customer Logo' }}" class="h-20 w-auto object-contain mb-6">
-              @endif
+          <div class="w-full lg:w-3/5">
+            @if($storyLogo)
+            <img src="{{ resolve_block_asset($storyLogo) }}" alt="{{ $storyTitle }}" class="h-10 object-contain mb-6" />
             @endif
-            <h4 class="text-2xl md:text-3xl font-bold text-zinc-900 leading-tight">{{ $story['title'] ?? '' }}</h4>
-            <p class="text-zinc-600 text-base leading-relaxed">{{ $story['description'] ?? '' }}</p>
-            @if(!empty($story['button_name']) || !empty($story['button_link']))
-              <div class="pt-2">
-                <a href="{{ $story['button_link'] ?? '#' }}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-red-700 text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5">
-                  <span>{{ $story['button_name'] ?: 'Read Case Study' }}</span>
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                </a>
-              </div>
+            <h4 class="text-2xl md:text-3xl font-bold text-zinc-900 mb-4 leading-tight">{{ $storyTitle }}</h4>
+            <p class="text-zinc-600 text-base leading-relaxed mb-6">{{ $storyDesc }}</p>
+            @if($storyLink && $storyLink !== '#')
+            <a href="{{ $storyLink }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-primary font-bold hover:underline">
+              {{ $storyBtnName }} &rarr;
+            </a>
             @endif
           </div>
-          @if(!empty($outcomes))
+          @if(!empty($outcomesList))
           <div class="w-full lg:w-2/5 lg:border-l border-zinc-200 lg:pl-10">
             <ul class="space-y-4">
-              @foreach($outcomes as $outcome)
+              @foreach($outcomesList as $outcome)
               <li class="flex items-center gap-3 text-zinc-800 font-medium">
-                <svg class="w-5 h-5 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <svg class="w-5 h-5 text-zinc-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 {{ $outcome }}
               </li>
               @endforeach
@@ -315,8 +350,8 @@
         <div class="w-full lg:w-1/2 flex flex-col justify-center">
           <div class="mb-10">
             <h2 class="text-4xl font-light text-zinc-500 leading-tight">
-              Explore {{ $parentProduct ? $parentProduct->title : 'Akamai' }}<br>
-              <span class="font-bold text-zinc-900">with CDT</span>
+              {{ t('product.explore_prefix', 'Explore') }} {{ $parentProduct ? $parentProduct->title : 'Akamai' }}<br>
+              <span class="font-bold text-zinc-900">{{ t('product.with_cdt', 'with CDT') }}</span>
             </h2>
             <div class="h-1 bg-primary mt-4 w-16"></div>
           </div>
@@ -325,33 +360,33 @@
             <!-- Feature 1 -->
             <div class="flex items-start gap-5 group">
               <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <x-icon name="lucide:book-open" class="w-7 h-7 text-primary" />
               </div>
               <div>
-                <h4 class="text-lg font-bold text-zinc-900 mb-1">Advanced Action and Review</h4>
-                <p class="text-base text-zinc-500 font-light leading-relaxed">PT Central Data Technology (CDT) is a subsidiary of the CTI Group that focuses on distributing IT infrastructure solutions to customers.</p>
+                <h4 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.advanced_action_title', 'Advanced Action and Review') }}</h4>
+                <p class="text-base text-zinc-500 font-light leading-relaxed">{{ t('product.advanced_action_desc', 'PT Central Data Technology (CDT) is a subsidiary of the CTI Group that focuses on distributing IT infrastructure solutions to customers.') }}</p>
               </div>
             </div>
   
             <!-- Feature 2 -->
             <div class="flex items-start gap-5 group">
               <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <x-icon name="lucide:users" class="w-7 h-7 text-primary" />
               </div>
               <div>
-                <h4 class="text-lg font-bold text-zinc-900 mb-1">Understand IT Expert</h4>
-                <p class="text-base text-zinc-500 font-light leading-relaxed">By providing IT experts, we have secured CDT's presence in a variety of industries in Indonesia, Malaysia, and other countries in the world to overcome challenges related to digital operations.</p>
+                <h4 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.understand_it_expert_title', 'Understand IT Expert') }}</h4>
+                <p class="text-base text-zinc-500 font-light leading-relaxed">{{ t('product.understand_it_expert_desc', 'By providing IT experts, we have secured CDT\'s presence in a variety of industries in Indonesia, Malaysia, and other countries in the world to overcome challenges related to digital operations.') }}</p>
               </div>
             </div>
   
             <!-- Feature 3 -->
             <div class="flex items-start gap-5 group">
               <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                <x-icon name="lucide:award" class="w-7 h-7 text-primary" />
               </div>
               <div>
-                <h4 class="text-lg font-bold text-zinc-900 mb-1">Certified Specialist</h4>
-                <p class="text-base text-zinc-500 font-light leading-relaxed">CDT IT specialists are certified to ensure solution quality follows with strict implementation standards.</p>
+                <h4 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.certified_specialist_title', 'Certified Specialist') }}</h4>
+                <p class="text-base text-zinc-500 font-light leading-relaxed">{{ t('product.certified_specialist_desc', 'CDT IT specialists are certified to ensure solution quality follows with strict implementation standards.') }}</p>
               </div>
             </div>
           </div>
@@ -361,9 +396,9 @@
         <div class="w-full lg:w-1/2">
           <div class="bg-white rounded-3xl border border-zinc-200/60 p-8 md:p-12 shadow-sm">
             <div class="mb-8">
-              <span class="text-xs font-bold text-primary uppercase tracking-widest block mb-2">Request Consultation</span>
-              <h3 class="text-2xl font-bold text-gray-900">Manage Your Business With Us!</h3>
-              <p class="text-sm text-zinc-400 mt-1 font-light">Fill out the fields below, and our solutions team will connect with you.</p>
+              <span class="text-xs font-bold text-primary uppercase tracking-widest block mb-2">{{ t('product.request_consultation', 'Request Consultation') }}</span>
+              <h3 class="text-2xl font-bold text-gray-900">{{ t('product.manage_business_with_us', 'Manage Your Business With Us!') }}</h3>
+              <p class="text-sm text-zinc-400 mt-1 font-light">{{ t('product.fill_out_fields_desc', 'Fill out the fields below, and our solutions team will connect with you.') }}</p>
             </div>
 
             @php
@@ -377,7 +412,7 @@
               @include('cdt::partials.tailwind-form', ['form' => $formModel, 'entry' => $entry])
             @else
               <a href="{{ url('/contact') }}" class="block text-center bg-primary text-white font-bold py-4 px-6 rounded-xl text-sm uppercase tracking-wider">
-                Contact Sales
+                {{ t('product.contact_sales', 'Contact Sales') }}
               </a>
             @endif
           </div>
@@ -389,24 +424,61 @@
 
   <!-- Section 7: See More Solutions -->
   @if($siblingProducts->isNotEmpty())
+  @php
+    $siblingCount = $siblingProducts->count();
+    if ($siblingCount <= 2) {
+        $gridColsClass = 'grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto';
+        $cardPaddingClass = 'p-8 md:p-10';
+    } elseif ($siblingCount <= 4) {
+        $gridColsClass = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1400px] mx-auto';
+        $cardPaddingClass = 'p-8 md:p-10';
+    } else {
+        $gridColsClass = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-[1400px] mx-auto';
+        $cardPaddingClass = 'p-6 md:p-8';
+    }
+  @endphp
   <section class="py-24 relative overflow-hidden bg-zinc-50/50">
     <div class="absolute inset-0 bg-testimonial-image opacity-[0.5] bg-cover bg-center blur-sm pointer-events-none" style="background-image: url('{{ asset('themes/cdt/assets/bg-testimonial-CvlJnS23.webp') }}');"></div>
 
     <div class="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
       <div class="mb-16 text-center md:text-left">
-        <h2 class="text-4xl font-light text-zinc-500 leading-tight">See More <span class="font-bold text-gray-900">{{ $parentProduct ? $parentProduct->title : '' }} Solutions</span></h2>
+        @php
+          $vendorName = $parentProduct ? $parentProduct->title : '';
+          if (app()->getLocale() === 'id') {
+              $seeMorePrefix = t('product.see_more_prefix_id', 'Lihat Lebih Banyak');
+              $seeMoreMain = $vendorName ? "Solusi {$vendorName}" : t('product.solutions_suffix_id', 'Solusi');
+          } else {
+              $seeMorePrefix = t('product.see_more_prefix_en', 'See More');
+              $seeMoreMain = $vendorName ? "{$vendorName} Solutions" : t('product.solutions_suffix_en', 'Solutions');
+          }
+        @endphp
+        <h2 class="text-4xl font-light text-zinc-500 leading-tight">{{ $seeMorePrefix }} <br>
+          <span class="font-bold text-gray-900">{{ $seeMoreMain }}</span>
+        </h2>
         <div class="h-1 w-16 bg-primary mt-4"></div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="{{ $gridColsClass }}">
         @foreach($siblingProducts as $sibling)
-        <div onclick="window.location.href='{{ $sibling->getUrl() }}'" class="bg-white p-10 md:p-12 rounded-3xl border border-zinc-200/80 shadow-sm flex flex-col items-center text-center group hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
+        @php
+          $sIcon = $sibling->getMeta('icon') ?: ($sibling->getMeta('hero_icon') ?: 'lucide:layers');
+          if ($sIcon && ! str_starts_with($sIcon, 'lucide:') && ! str_contains($sIcon, '/') && ! str_contains($sIcon, '.')) {
+              $sIcon = 'lucide:' . $sIcon;
+          }
+        @endphp
+        <div onclick="window.location.href='{{ $sibling->getUrl() }}'" class="bg-white {{ $cardPaddingClass }} rounded-3xl border border-zinc-200/80 shadow-sm flex flex-col items-center text-center group hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
           <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
-            {!! render_icon($sibling->getMeta('icon', 'cloud'), 'w-7 h-7') !!}
+            @if($sIcon && (str_contains($sIcon, '/') || str_contains($sIcon, '.')))
+              <img src="{{ resolve_block_asset($sIcon) }}" alt="{{ $sibling->title }}" class="w-7 h-7 object-contain">
+            @elseif($sIcon)
+              <x-icon :name="$sIcon" class="w-7 h-7 text-primary" />
+            @else
+              <x-icon name="lucide:layers" class="w-7 h-7 text-primary" />
+            @endif
           </div>
           <h3 class="text-xl font-bold text-zinc-900 mb-3">{{ $sibling->title }}</h3>
-          <p class="text-zinc-600 text-base leading-relaxed mb-8">{{ $sibling->excerpt ?: \Illuminate\Support\Str::limit(strip_tags($sibling->content), 120) }}</p>
-          <a href="{{ $sibling->getUrl() }}" class="inline-block bg-primary hover:bg-red-700 text-white text-xs font-bold py-3 px-8 rounded-full uppercase tracking-wider transition-colors mt-auto shadow-md hover:shadow-lg transform hover:-translate-y-0.5 duration-300">Read More</a>
+          <p class="text-zinc-600 text-sm leading-relaxed mb-8">{{ $sibling->excerpt ?: ($sibling->getMeta('hero_description') ?: \Illuminate\Support\Str::limit(strip_tags($sibling->content), 120)) }}</p>
+          <a href="{{ $sibling->getUrl() }}" class="inline-block bg-primary hover:bg-red-700 text-white text-xs font-bold py-3 px-8 rounded-full uppercase tracking-wider transition-colors mt-auto shadow-md hover:shadow-lg transform hover:-translate-y-0.5 duration-300">{{ t('common.read_more', 'Read More') }}</a>
         </div>
         @endforeach
       </div>

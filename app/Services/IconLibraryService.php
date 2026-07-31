@@ -94,7 +94,7 @@ class IconLibraryService
                     'label' => $label,
                     'library' => $prefix,
                     'library_name' => $lib['name'],
-                    'svg' => $this->renderSvg($fullName, 'w-6 h-6'),
+                    'svg' => $this->renderSvg($fullName),
                 ];
             }
         }

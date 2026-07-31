@@ -72,7 +72,7 @@
                         @endforeach
                         @if($editingLocale !== $defaultLocale)
                             <span class="ml-auto text-[11px] text-[#6F767E] py-2.5">
-                                Editing translation — meta fields, taxonomy, and image are shared across locales.
+                                Editing translation for <strong>{{ $localeLabels[$editingLocale] ?? strtoupper($editingLocale) }}</strong> — title, content, excerpt, and meta fields are translated per locale.
                             </span>
                         @endif
                     </div>
@@ -254,7 +254,7 @@
 
                     {{-- Normal Context - Tabbed Layout --}}
                     @if($normalBoxes->isNotEmpty())
-                        <div x-data="{ activeTab: '{{ $normalBoxes->first()['id'] }}' }" class="bg-white dark:bg-[#1A1A1A] rounded-3xl border border-gray-200 dark:border-[#272B30] overflow-hidden">
+                        <div x-data="{ activeTab: @entangle('activeTab').live }" class="bg-white dark:bg-[#1A1A1A] rounded-3xl border border-gray-200 dark:border-[#272B30] overflow-hidden">
                             {{-- Tabs Header --}}
                             <div class="flex overflow-x-auto no-scrollbar border-b border-gray-200 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#0B0B0B]/20">
                                 @foreach($normalBoxes as $box)

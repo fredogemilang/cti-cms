@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -143,7 +144,11 @@ class EntryForm extends Component
     }
 
     // === Translations state ===
+    #[Url(as: 'lang', keep: true)]
     public string $editingLocale = '';
+
+    #[Url(as: 'tab', keep: true)]
+    public string $activeTab = '';
 
     /** Per-locale snapshots of translatable form fields: {locale: {title, slug, content, excerpt}} */
     public array $localizedSnapshots = [];
@@ -247,10 +252,15 @@ class EntryForm extends Component
             }
         }
 
+        $requestedLocale = request()->query('lang');
         if ($id) {
             $this->entryId = $id;
             $this->isEdit = true;
             $this->loadEntry();
+
+            if ($requestedLocale && in_array($requestedLocale, $this->availableLocales, true) && $requestedLocale !== CptEntry::defaultLocale()) {
+                $this->switchLocale($requestedLocale);
+            }
         }
     }
 
@@ -423,18 +433,95 @@ class EntryForm extends Component
             }
         }
 
-        // Hydrate per-locale snapshots from the translations JSON column.
+        // Hydrate per-locale snapshots from translations JSON column AND meta _translations
+        $defaultLocale = CptEntry::defaultLocale();
+        $defaultMeta = $entry->meta ?? [];
+        $metaTranslations = $defaultMeta['_translations'] ?? [];
+        unset($defaultMeta['_translations']);
+
+        $this->localizedSnapshots[$defaultLocale] = [
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'content' => $this->content,
+            'excerpt' => $this->excerpt,
+            'meta' => $defaultMeta,
+        ];
+
         $translations = $entry->translations ?? [];
-        foreach ($translations as $locale => $fields) {
-            if ($locale === CptEntry::defaultLocale()) {
+        $allLocales = array_unique(array_merge(array_keys($translations), array_keys($metaTranslations)));
+        foreach ($allLocales as $locale) {
+            if ($locale === $defaultLocale) {
                 continue;
             }
+            $fields = $translations[$locale] ?? [];
+            $mFields = $metaTranslations[$locale] ?? [];
+
             $this->localizedSnapshots[$locale] = [
                 'title' => $fields['title'] ?? '',
                 'slug' => $fields['slug'] ?? '',
                 'content' => $fields['content'] ?? '',
                 'excerpt' => $fields['excerpt'] ?? '',
+                'meta' => $mFields,
             ];
+        }
+
+        if ($this->editingLocale !== $defaultLocale) {
+            $this->meta = $this->syncMediaKeysFromDefault($defaultMeta, $this->localizedSnapshots[$this->editingLocale]['meta'] ?? []);
+        }
+
+    }
+
+    /**
+     * Overlay default locale (EN) icon, image, and media keys onto non-default locale (ID) meta.
+     */
+    protected function syncMediaKeysFromDefault(array $defaultMeta, array $targetMeta): array
+    {
+        $merged = array_merge($defaultMeta, $targetMeta);
+
+        foreach ($merged as $key => &$val) {
+            if (is_array($val) && isset($defaultMeta[$key]) && is_array($defaultMeta[$key])) {
+                foreach ($val as $idx => &$item) {
+                    if (is_array($item) && isset($defaultMeta[$key][$idx]) && is_array($defaultMeta[$key][$idx])) {
+                        foreach (['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'] as $mediaKey) {
+                            if (isset($defaultMeta[$key][$idx][$mediaKey])) {
+                                $item[$mediaKey] = $defaultMeta[$key][$idx][$mediaKey];
+                            }
+                        }
+                    }
+                }
+                unset($item);
+            }
+        }
+        unset($val);
+
+        return $merged;
+    }
+
+    /**
+     * Push any icon, image, and media keys updated in non-default locale (ID) back to the default locale (EN) snapshot.
+     */
+    protected function pushMediaKeysToDefault(array $sourceMeta, array &$defaultMeta): void
+    {
+        $mediaKeyList = ['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'];
+
+        foreach ($sourceMeta as $key => $val) {
+            // Top-level media keys
+            if (in_array($key, $mediaKeyList, true) && ! empty($val)) {
+                $defaultMeta[$key] = $val;
+            }
+
+            // Array media keys (e.g. benefits_cards, features)
+            if (is_array($val) && isset($defaultMeta[$key]) && is_array($defaultMeta[$key])) {
+                foreach ($val as $idx => $item) {
+                    if (is_array($item) && isset($defaultMeta[$key][$idx]) && is_array($defaultMeta[$key][$idx])) {
+                        foreach ($mediaKeyList as $mKey) {
+                            if (isset($item[$mKey]) && ! empty($item[$mKey])) {
+                                $defaultMeta[$key][$idx][$mKey] = $item[$mKey];
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -448,8 +535,32 @@ class EntryForm extends Component
             return;
         }
 
-        // Snapshot current form into the OLD locale's slot
-        $this->localizedSnapshots[$this->editingLocale] = $this->currentLocaleFormSnapshot();
+        $defaultLocale = CptEntry::defaultLocale();
+
+        // Snapshot current form into the OLD locale's slot.
+        if ($this->editingLocale === $defaultLocale) {
+            $this->localizedSnapshots[$defaultLocale] = $this->currentLocaleFormSnapshot();
+        } else {
+            $snapshot = $this->currentLocaleFormSnapshot();
+            $defaultMeta = &$this->localizedSnapshots[$defaultLocale]['meta'];
+
+            // Push any media/icon edits from ID tab to EN snapshot
+            $this->pushMediaKeysToDefault($snapshot['meta'], $defaultMeta);
+
+            // Extract only non-media meta keys whose values differ from default locale
+            $deltaMeta = [];
+            $mediaKeyList = ['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'];
+            foreach ($snapshot['meta'] as $key => $value) {
+                if (in_array($key, $mediaKeyList, true)) {
+                    continue;
+                }
+                if (! array_key_exists($key, $defaultMeta) || $value !== ($defaultMeta[$key] ?? null)) {
+                    $deltaMeta[$key] = $value;
+                }
+            }
+            $snapshot['meta'] = $deltaMeta;
+            $this->localizedSnapshots[$this->editingLocale] = $snapshot;
+        }
 
         // Load NEW locale's snapshot (blank if none yet)
         $next = $this->localizedSnapshots[$newLocale] ?? [];
@@ -457,6 +568,16 @@ class EntryForm extends Component
         $this->slug = $next['slug'] ?? '';
         $this->content = $next['content'] ?? '';
         $this->excerpt = $next['excerpt'] ?? '';
+
+        // Load NEW locale's meta
+        $defaultMeta = $this->localizedSnapshots[$defaultLocale]['meta'] ?? [];
+        $newLocaleMeta = $next['meta'] ?? [];
+
+        if ($newLocale === $defaultLocale) {
+            $this->meta = $defaultMeta;
+        } else {
+            $this->meta = $this->syncMediaKeysFromDefault($defaultMeta, $newLocaleMeta);
+        }
 
         // Notify SeoMetaBox to switch locale
         $this->dispatch('seo-locale-switched', locale: $newLocale);
@@ -467,11 +588,15 @@ class EntryForm extends Component
 
     protected function currentLocaleFormSnapshot(): array
     {
+        $cleanMeta = $this->meta;
+        unset($cleanMeta['_translations']);
+
         return [
             'title' => $this->title,
             'slug' => $this->slug,
             'content' => $this->content,
             'excerpt' => $this->excerpt,
+            'meta' => $cleanMeta,
         ];
     }
 
@@ -567,8 +692,32 @@ class EntryForm extends Component
 
     public function save()
     {
-        // Mirror current form into the active locale's snapshot before validating
-        $this->localizedSnapshots[$this->editingLocale] = $this->currentLocaleFormSnapshot();
+        // Mirror current form into the active locale's snapshot before validating.
+        // For non-default locales, store only the delta (same logic as switchLocale).
+        $defaultLocale = CptEntry::defaultLocale();
+        if ($this->editingLocale === $defaultLocale) {
+            $this->localizedSnapshots[$defaultLocale] = $this->currentLocaleFormSnapshot();
+        } else {
+            $snapshot = $this->currentLocaleFormSnapshot();
+            $defaultMeta = &$this->localizedSnapshots[$defaultLocale]['meta'];
+
+            // Push any media/icon edits from ID tab to EN snapshot
+            $this->pushMediaKeysToDefault($snapshot['meta'], $defaultMeta);
+
+            // Extract only non-media meta keys whose values differ from default locale
+            $deltaMeta = [];
+            $mediaKeyList = ['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'];
+            foreach ($snapshot['meta'] as $key => $value) {
+                if (in_array($key, $mediaKeyList, true)) {
+                    continue;
+                }
+                if (! array_key_exists($key, $defaultMeta) || $value !== ($defaultMeta[$key] ?? null)) {
+                    $deltaMeta[$key] = $value;
+                }
+            }
+            $snapshot['meta'] = $deltaMeta;
+            $this->localizedSnapshots[$this->editingLocale] = $snapshot;
+        }
 
         try {
             $this->validate();
@@ -580,7 +729,6 @@ class EntryForm extends Component
             throw $e;
         }
 
-        $defaultLocale = CptEntry::defaultLocale();
         $defaultSnap = $this->localizedSnapshots[$defaultLocale] ?? $this->currentLocaleFormSnapshot();
 
         // Default-locale slug uniqueness — only enforce when we have a real slug to dedupe
@@ -588,8 +736,10 @@ class EntryForm extends Component
             $defaultSnap['slug'] = $this->ensureUniqueSlug($defaultSnap['slug']);
         }
 
-        // Build translations JSON from non-default locale snapshots
+        // Build translations JSON and meta _translations JSON from non-default locale snapshots
         $translations = [];
+        $metaTranslations = [];
+
         foreach ($this->localizedSnapshots as $locale => $snap) {
             if ($locale === $defaultLocale) {
                 continue;
@@ -603,6 +753,33 @@ class EntryForm extends Component
             if (! empty($localeFields)) {
                 $translations[$locale] = $localeFields;
             }
+
+            if (! empty($snap['meta']) && is_array($snap['meta'])) {
+                $mSnap = $snap['meta'];
+                $defaultMetaSnap = $defaultSnap['meta'] ?? [];
+                foreach ($mSnap as $mKey => &$mVal) {
+                    if (is_array($mVal) && isset($defaultMetaSnap[$mKey]) && is_array($defaultMetaSnap[$mKey])) {
+                        foreach ($mVal as $idx => &$subItem) {
+                            if (is_array($subItem) && isset($defaultMetaSnap[$mKey][$idx]) && is_array($defaultMetaSnap[$mKey][$idx])) {
+                                foreach (['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'] as $mediaKey) {
+                                    if (isset($defaultMetaSnap[$mKey][$idx][$mediaKey])) {
+                                        $subItem[$mediaKey] = $defaultMetaSnap[$mKey][$idx][$mediaKey];
+                                    }
+                                }
+                            }
+                        }
+                        unset($subItem);
+                    }
+                }
+                unset($mVal);
+                $metaTranslations[$locale] = $mSnap;
+            }
+        }
+
+        $finalMeta = $defaultSnap['meta'] ?? $this->meta;
+        unset($finalMeta['_translations']);
+        if (! empty($metaTranslations)) {
+            $finalMeta['_translations'] = $metaTranslations;
         }
 
         $data = [
@@ -618,7 +795,7 @@ class EntryForm extends Component
                 : ($this->publishedAt ? Carbon::parse($this->publishedAt) : null),
             'parent_id' => $this->parentId,
             'menu_order' => $this->menuOrder,
-            'meta' => $this->meta,
+            'meta' => $finalMeta,
             'translations' => $translations ?: null,
         ];
 
@@ -663,7 +840,7 @@ class EntryForm extends Component
 
                             $parentEntry = CptEntry::find($parentEntryId);
                             if ($parentEntry) {
-                                $metaData = $this->meta;
+                                $metaData = $entry->meta ?? [];
                                 $metaData['parent_vendor'] = $parentEntry->slug;
                                 $entry->meta = $metaData;
                                 if (empty($entry->featured_image) && ! empty($parentEntry->featured_image)) {
@@ -706,16 +883,15 @@ class EntryForm extends Component
                 : "'{$this->title}' created successfully.",
         ]);
 
-        if ($this->isEdit) {
-            // If already editing, just notify and stay (or reload to be safe, but staying is faster)
-            // User requested to "move to ... edit", which implies they want to be on the edit page.
-            // If we are already there, we can just return null or redirect to self.
-            // Redirecting to self ensures the URL is correct if they came from somewhere else and keeps logic consistent.
-            return redirect()->route('admin.cpt.entries.edit', ['postTypeSlug' => $this->postType->slug, 'id' => $entry->id]);
-        }
+        $queryParams = array_filter([
+            'lang' => $this->editingLocale !== CptEntry::defaultLocale() ? $this->editingLocale : null,
+            'tab' => $this->activeTab ?: null,
+        ]);
 
-        // If creating, we MUST redirect to the edit page
-        return redirect()->route('admin.cpt.entries.edit', ['postTypeSlug' => $this->postType->slug, 'id' => $entry->id]);
+        return redirect()->route('admin.cpt.entries.edit', array_merge(
+            ['postTypeSlug' => $this->postType->slug, 'id' => $entry->id],
+            $queryParams
+        ));
     }
 
     public function saveAsDraft()
@@ -847,6 +1023,11 @@ class EntryForm extends Component
             $groupedFields[$group][] = $field;
         }
 
+        $normalBoxes = collect($metaBoxes)->filter(fn ($box) => ($box['context'] ?? 'normal') === 'normal' && isset($groupedFields[$box['id']]));
+        if (empty($this->activeTab) && $normalBoxes->isNotEmpty()) {
+            $this->activeTab = $normalBoxes->first()['id'];
+        }
+
         $targetEntriesByField = [];
         foreach ($this->postType->metaFields as $field) {
             /** @var MetaField $field */
@@ -877,7 +1058,7 @@ class EntryForm extends Component
             $entryModel->setRelation('postType', $this->postType);
         }
 
-        $previewUrl = $entryModel->getUrl();
+        $previewUrl = $entryModel->getUrl($this->editingLocale ?: null);
         $fullPath = parse_url($previewUrl, PHP_URL_PATH) ?? '/'.$this->postType->slug.'/'.$this->slug;
         $trimmedPath = rtrim($fullPath, '/');
         $lastSlashPos = strrpos($trimmedPath, '/');

@@ -19,19 +19,28 @@ namespace App\Traits;
  */
 trait HasTranslations
 {
+    public function getAttribute($key)
+    {
+        if (in_array($key, $this->translatableFields(), true)) {
+            return $this->getTranslation($key);
+        }
+
+        return parent::getAttribute($key);
+    }
+
     public function getTranslation(string $field, ?string $locale = null, bool $fallback = true): mixed
     {
         $locale ??= app()->getLocale();
 
         if ($this->isDefaultLocale($locale)) {
-            return $this->getAttribute($field);
+            return parent::getAttribute($field);
         }
 
-        $translations = $this->translations ?? [];
+        $translations = parent::getAttribute('translations') ?? [];
         $value = $translations[$locale][$field] ?? null;
 
         if ($value === null && $fallback) {
-            return $this->getAttribute($field);
+            return parent::getAttribute($field);
         }
 
         return $value;

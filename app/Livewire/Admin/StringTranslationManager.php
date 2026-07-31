@@ -47,7 +47,12 @@ class StringTranslationManager extends Component
     public function scanStrings(TranslationScannerService $scanner): void
     {
         $discovered = $scanner->scanAll();
-        session()->flash('message', 'Successfully scanned website strings! Discovered '.count($discovered).' translation items.');
+        $msg = 'Successfully scanned website strings! Discovered '.count($discovered).' translation items.';
+        session()->flash('message', $msg);
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => $msg,
+        ]);
         $this->resetPage();
     }
 
@@ -68,7 +73,12 @@ class StringTranslationManager extends Component
             ]
         );
 
-        session()->flash('message', "Saved translation for '{$translationKey->key}'.");
+        $msg = "Saved translation for '{$translationKey->key}'!";
+        session()->flash('message', $msg);
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => $msg,
+        ]);
     }
 
     public function render()

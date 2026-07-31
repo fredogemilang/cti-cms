@@ -10,6 +10,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class PageForm extends Component
@@ -64,6 +65,7 @@ class PageForm extends Component
 
     // === Translations state ===
     /** Locale currently shown in the form. */
+    #[Url(as: 'lang', keep: true)]
     public string $editingLocale = '';
 
     /** Snapshots of translatable fields per non-current locale. Default locale's data lives in the regular form props. */
@@ -119,10 +121,15 @@ class PageForm extends Component
         $this->availableLocales = available_locales();
         $this->editingLocale = Page::defaultLocale();
 
+        $requestedLocale = request()->query('lang');
         if ($id) {
             $this->pageId = $id;
             $this->isEdit = true;
             $this->loadPage();
+
+            if ($requestedLocale && in_array($requestedLocale, $this->availableLocales, true) && $requestedLocale !== Page::defaultLocale()) {
+                $this->switchLocale($requestedLocale);
+            }
         } else {
             // New page: seed blocks from default template preset
             $this->seedTemplateBlocks();
@@ -190,10 +197,16 @@ class PageForm extends Component
         // Check if this is a system page
         $this->isSystemPage = $this->page->isSystem();
 
-        // Hydrate per-locale snapshots from translations JSON for fields the form binds to.
+        // Hydrate default locale snapshot and per-locale snapshots from translations JSON for fields the form binds to.
+        $defaultLocale = Page::defaultLocale();
+        $this->localizedSnapshots[$defaultLocale] = [
+            'title' => $this->page->title ?? '',
+            'slug' => $this->page->slug ?? '',
+        ];
+
         $translations = $this->page->translations ?? [];
         foreach ($translations as $locale => $fields) {
-            if ($locale === Page::defaultLocale()) {
+            if ($locale === $defaultLocale) {
                 continue;
             }
             $seo = is_array($fields['seo'] ?? null) ? $fields['seo'] : [];
@@ -213,6 +226,13 @@ class PageForm extends Component
     {
         $blockRows = $this->page->allBlocks()->get()->keyBy('id');
         $defaultLocale = Page::defaultLocale();
+
+        // Seed default locale block values from current loaded blocks
+        foreach ($this->blocks as $bi => $block) {
+            if ($this->isTranslatableBlockType($block['type'] ?? '')) {
+                $this->localizedBlockValues[$defaultLocale][$bi]['value'] = $block['value'] ?? null;
+            }
+        }
 
         foreach ($this->blocks as $bi => $block) {
             if (empty($block['id']) || ! isset($blockRows[$block['id']])) {

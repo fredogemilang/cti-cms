@@ -5,6 +5,7 @@ namespace Plugins\Posts\Livewire;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Plugins\Posts\Models\Category;
@@ -74,6 +75,7 @@ class PostForm extends Component
 
     // === Translations state ===
     /** Locale currently shown in the form. */
+    #[Url(as: 'lang', keep: true)]
     public string $editingLocale = '';
 
     /** Snapshots of translatable fields per non-default locale. */
@@ -87,6 +89,7 @@ class PostForm extends Component
         $this->availableLocales = available_locales();
         $this->editingLocale = Post::defaultLocale();
 
+        $requestedLocale = request()->query('lang');
         if ($postId) {
             $this->postId = $postId;
             $this->post = Post::findOrFail($postId);
@@ -108,6 +111,10 @@ class PostForm extends Component
 
             // Hydrate per-locale snapshots from translations JSON
             $this->hydrateTranslations();
+
+            if ($requestedLocale && in_array($requestedLocale, $this->availableLocales, true) && $requestedLocale !== Post::defaultLocale()) {
+                $this->switchLocale($requestedLocale);
+            }
         } else {
             $this->status = 'draft';
             $this->visibility = 'public';
@@ -125,13 +132,19 @@ class PostForm extends Component
     /** Load per-locale translations into localizedSnapshots. */
     protected function hydrateTranslations(): void
     {
-        $translations = $this->post->translations ?? [];
         $defaultLocale = Post::defaultLocale();
+        $this->localizedSnapshots[$defaultLocale] = [
+            'title' => $this->post->title ?? '',
+            'slug' => $this->post->slug ?? '',
+            'excerpt' => $this->post->excerpt ?? '',
+            'content' => $this->post->content ?? '',
+        ];
+
+        $translations = $this->post->translations ?? [];
         foreach ($translations as $locale => $fields) {
             if ($locale === $defaultLocale) {
                 continue;
             }
-            $meta = is_array($fields['meta'] ?? null) ? $fields['meta'] : [];
             $this->localizedSnapshots[$locale] = [
                 'title' => $fields['title'] ?? '',
                 'slug' => $fields['slug'] ?? '',
@@ -362,14 +375,18 @@ class PostForm extends Component
             $post->tags()->detach();
         }
 
+        $queryParams = array_filter([
+            'lang' => $this->editingLocale !== Post::defaultLocale() ? $this->editingLocale : null,
+        ]);
+
         if ($isNew) {
             session()->flash('success', 'Post created successfully.');
 
-            return redirect()->route('admin.posts.edit', $post->id);
+            return redirect()->route('admin.posts.edit', array_merge(['id' => $post->id], $queryParams));
         } else {
             $this->dispatch('notify', ['type' => 'success', 'message' => 'Post updated successfully.']);
 
-            return redirect()->route('admin.posts.edit', $post->id);
+            return redirect()->route('admin.posts.edit', array_merge(['id' => $post->id], $queryParams));
         }
     }
 

@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Seo;
 use App\Models\Media;
 use App\Models\SeoMeta;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -48,6 +49,73 @@ class SeoMetaBox extends Component
     public bool $showMediaPicker = false;
 
     public ?string $ogImageUrl = null;
+
+    public function getFallbackTitleProperty(): string
+    {
+        if ($this->seoableType && $this->seoableId) {
+            $model = ($this->seoableType)::find($this->seoableId);
+            if ($model) {
+                if (method_exists($model, 'getTranslation')) {
+                    $t = $model->getTranslation('title', $this->locale, fallback: true);
+                    if (! empty($t)) {
+                        return $t;
+                    }
+                }
+                if (! empty($model->title)) {
+                    return $model->title;
+                }
+            }
+        }
+
+        return 'Page Title Here';
+    }
+
+    public function getFallbackDescriptionProperty(): string
+    {
+        if ($this->seoableType && $this->seoableId) {
+            $model = ($this->seoableType)::find($this->seoableId);
+            if ($model) {
+                $excerpt = '';
+                if (method_exists($model, 'getTranslation')) {
+                    $excerpt = $model->getTranslation('excerpt', $this->locale, fallback: true);
+                }
+                if (empty($excerpt) && ! empty($model->excerpt)) {
+                    $excerpt = $model->excerpt;
+                }
+
+                if (empty($excerpt)) {
+                    $content = '';
+                    if (method_exists($model, 'getTranslation')) {
+                        $content = $model->getTranslation('content', $this->locale, fallback: true);
+                    }
+                    if (empty($content) && ! empty($model->content)) {
+                        $content = $model->content;
+                    }
+                    if (! empty($content)) {
+                        $excerpt = Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($content))), 160);
+                    }
+                }
+
+                if (! empty($excerpt)) {
+                    return $excerpt;
+                }
+            }
+        }
+
+        return 'Add a meta description to control how this page appears in search results…';
+    }
+
+    public function getFallbackUrlProperty(): string
+    {
+        if ($this->seoableType && $this->seoableId) {
+            $model = ($this->seoableType)::find($this->seoableId);
+            if ($model && method_exists($model, 'getUrl')) {
+                return $model->getUrl($this->locale);
+            }
+        }
+
+        return url('/');
+    }
 
     public function mount(string $seoableType, ?int $seoableId = null, string $locale = ''): void
     {

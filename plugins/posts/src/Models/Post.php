@@ -103,6 +103,16 @@ class Post extends Model
             ->where('published_at', '<=', now());
     }
 
+    public function getUrl(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $defaultLocale = config('app.locale', 'en');
+        $prefix = ($locale !== $defaultLocale) ? '/'.$locale : '';
+        $slug = $this->getTranslation('slug', $locale, fallback: true) ?? $this->slug;
+
+        return url($prefix.'/blog-news/'.$slug);
+    }
+
     public function scopeDraft($query)
     {
         return $query->where('status', 'draft');

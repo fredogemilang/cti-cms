@@ -104,6 +104,16 @@
         
         {{-- Modal Content --}}
         <div 
+            x-data="{ 
+                handleModalDragOver(e) {
+                    if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')) {
+                        if ($wire.activeTab !== 'upload') {
+                            $wire.set('activeTab', 'upload');
+                        }
+                    }
+                }
+            }"
+            @dragover.prevent="handleModalDragOver($event)"
             x-show="show"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0 scale-95"
@@ -111,7 +121,7 @@
             x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 scale-100"
             x-transition:leave-end="opacity-0 scale-95"
-            class="bg-white dark:bg-[#1A1A1A] rounded-3xl max-w-5xl w-full max-h-[90vh] flex flex-col shadow-xl"
+            class="bg-white dark:bg-[#1A1A1A] rounded-3xl max-w-5xl w-full h-[650px] max-h-[90vh] flex flex-col shadow-xl"
             @click.away="$wire.closeModal()">
             
             {{-- Header --}}
@@ -159,10 +169,10 @@
             @endif
 
             {{-- Content --}}
-            <div class="flex-1 overflow-hidden p-6">
+            <div class="flex-1 overflow-hidden p-6 flex flex-col min-h-0">
                 @if($activeTab === 'library')
                     {{-- Library Tab --}}
-                    <div class="h-full flex flex-col">
+                    <div class="h-full flex-1 flex flex-col min-h-0">
                         {{-- Search & Filters --}}
                         <div class="flex gap-4 mb-4">
                             <div class="flex-1 relative group">
@@ -233,7 +243,7 @@
                     </div>
                 @else
                     {{-- Upload Tab --}}
-                    <div class="h-full flex flex-col">
+                    <div class="h-full flex-1 flex flex-col min-h-0">
                         {{-- Drag & Drop Zone --}}
                         <div 
                             x-data="{ 

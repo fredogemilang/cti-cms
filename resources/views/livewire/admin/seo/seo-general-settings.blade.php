@@ -285,6 +285,62 @@
                                     <p class="text-[11px] text-[#6F767E] mt-1">Chosen separator character: <code class="font-bold text-blue-600">{{ $titleSeparator }}</code>. Used in <code>{page} {sep} {site}</code> patterns.</p>
                                 </div>
 
+                                {{-- Site Logo --}}
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-[#6F767E] uppercase tracking-wider block">Site Logo</label>
+                                    <div class="p-6 rounded-2xl border-2 border-dashed border-gray-200 dark:border-[#272B30] bg-[#F4F5F6] dark:bg-[#0B0B0B] text-center space-y-4">
+                                        @if($siteLogo)
+                                            <div class="relative max-w-xs mx-auto group">
+                                                <img src="{{ resolve_block_asset($siteLogo) }}" alt="Site Logo Preview" class="max-h-24 mx-auto object-contain rounded-xl p-2 bg-white dark:bg-[#1A1A1A] shadow-sm">
+                                                <button type="button" wire:click="removeSiteLogo" class="absolute -top-2 -right-2 p-1.5 rounded-full bg-rose-600 text-white shadow-md hover:bg-rose-700 transition-colors">
+                                                    <span class="material-symbols-outlined text-sm">close</span>
+                                                </button>
+                                            </div>
+                                        @else
+                                            <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mx-auto flex items-center justify-center">
+                                                <span class="material-symbols-outlined text-2xl">badge</span>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-semibold text-[#111827] dark:text-[#FCFCFC]">Website header logo image</p>
+                                                <p class="text-[11px] text-[#6F767E] mt-0.5">This logo is displayed in the main navigation header and schema markup.</p>
+                                            </div>
+                                        @endif
+
+                                        <button type="button" wire:click="openMediaPicker('siteLogo')" class="px-5 py-2.5 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-xs font-bold text-[#111827] dark:text-[#FCFCFC] hover:bg-gray-50 transition-colors inline-flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-base">photo_library</span>
+                                            <span>{{ $siteLogo ? 'Change Logo' : 'Select Logo' }}</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {{-- Site Favicon --}}
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold text-[#6F767E] uppercase tracking-wider block">Favicon</label>
+                                    <div class="p-6 rounded-2xl border-2 border-dashed border-gray-200 dark:border-[#272B30] bg-[#F4F5F6] dark:bg-[#0B0B0B] text-center space-y-4">
+                                        @if($siteFavicon)
+                                            <div class="relative max-w-[120px] mx-auto group">
+                                                <img src="{{ resolve_block_asset($siteFavicon) }}" alt="Favicon Preview" class="w-12 h-12 mx-auto object-contain rounded-xl p-1 bg-white dark:bg-[#1A1A1A] shadow-sm">
+                                                <button type="button" wire:click="removeSiteFavicon" class="absolute -top-2 -right-2 p-1.5 rounded-full bg-rose-600 text-white shadow-md hover:bg-rose-700 transition-colors">
+                                                    <span class="material-symbols-outlined text-sm">close</span>
+                                                </button>
+                                            </div>
+                                        @else
+                                            <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mx-auto flex items-center justify-center">
+                                                <span class="material-symbols-outlined text-2xl">favicon</span>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-semibold text-[#111827] dark:text-[#FCFCFC]">Recommended size for favicon is 32x32px or 64x64px</p>
+                                                <p class="text-[11px] text-[#6F767E] mt-0.5">This icon appears in the browser tab and bookmark icons (.png, .ico, or .svg).</p>
+                                            </div>
+                                        @endif
+
+                                        <button type="button" wire:click="openMediaPicker('siteFavicon')" class="px-5 py-2.5 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-xs font-bold text-[#111827] dark:text-[#FCFCFC] hover:bg-gray-50 transition-colors inline-flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-base">photo_library</span>
+                                            <span>{{ $siteFavicon ? 'Change Favicon' : 'Select Favicon' }}</span>
+                                        </button>
+                                    </div>
+                                </div>
+
                                 {{-- Site Image / Default OG Image --}}
                                 <div class="space-y-2">
                                     <label class="text-xs font-bold text-[#6F767E] uppercase tracking-wider block">Site image (Default Social / OG Image)</label>
@@ -964,7 +1020,7 @@
     </form>
 
     {{-- Livewire Media Picker Component Modal Integration --}}
-    @if(class_exists(\App\Livewire\Admin\Media\MediaPicker::class))
-        <livewire:admin.media.media-picker />
+    @if($showMediaPicker)
+        <livewire:admin.media-picker field="seo_general_media" :show-modal="true" :key="'seo-general-media-picker'" />
     @endif
 </div>

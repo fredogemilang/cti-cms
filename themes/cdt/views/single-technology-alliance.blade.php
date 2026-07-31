@@ -27,10 +27,16 @@
     <div class="absolute top-[20%] -right-48 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(227,6,19,0.10)_0%,rgba(227,6,19,0)_70%)] rounded-full blur-3xl"></div>
   </div>
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
+    @php
+      $cptPostType = $entry->postType;
+      $hasCptArchive = $cptPostType && $cptPostType->has_archive;
+    @endphp
     <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-10" data-gsap="fade-in">
       <a href="{{ url('/') }}" class="hover:text-primary transition-colors">{{ t('common.home', 'Home') }}</a>
-      <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-      <a href="{{ url('/technology-alliance') }}" class="hover:text-primary transition-colors">{{ t('common.technology_alliance', 'Technology Alliance') }}</a>
+      @if($hasCptArchive)
+        <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        <a href="{{ $cptPostType->getArchiveUrl() }}" class="hover:text-primary transition-colors">{{ $cptPostType->plural_label ?: t('common.technology_alliance', 'Technology Alliance') }}</a>
+      @endif
       <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
       <span class="text-zinc-800 font-bold">{{ $entry->title }}</span>
     </nav>
@@ -171,7 +177,7 @@
                   {!! render_icon($rel->getMeta('icon', 'shield-check'), 'w-7 h-7') !!}
                 </div>
                 <h3 class="text-xl font-bold text-zinc-900 mb-3 group-hover:text-primary transition-colors">{{ $rel->getTranslation('title') }}</h3>
-                <p class="text-zinc-600 text-base leading-relaxed mb-6">{{ strip_tags($rel->getMeta('hero_description') ?? $rel->getMeta('description') ?? $rel->excerpt ?? $rel->getTranslation('content')) }}</p>
+                <p class="text-zinc-600 text-base leading-relaxed mb-6">{{ strip_tags($rel->content ?: ($rel->excerpt ?: '')) }}</p>
               </div>
               <span class="inline-flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider">{{ t('common.explore_more', 'Explore More') }} <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></span>
             </a>
@@ -318,18 +324,25 @@
         </div>
         <div class="space-y-8 mt-12">
           <div class="flex items-start gap-5" data-gsap="fade-up" data-gsap-delay="0.1">
-            <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center shrink-0"><svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></div>
+            <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center shrink-0">
+              <x-icon name="lucide:book-open" class="w-7 h-7 text-primary" />
+            </div>
             <div><h3 class="text-lg font-bold text-zinc-900">{{ t('alliance.advanced_action_title', 'Advanced Action and Review') }}</h3><p class="text-base text-zinc-500">{{ t('alliance.advanced_action_desc', 'PT Central Data Technology (CDT) is a subsidiary of the CTI Group that focuses on distributing IT infrastructure solutions to customers.') }}</p></div>
           </div>
           <div class="flex items-start gap-5" data-gsap="fade-up" data-gsap-delay="0.2">
-            <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center shrink-0"><svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+            <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center shrink-0">
+              <x-icon name="lucide:users" class="w-7 h-7 text-primary" />
+            </div>
             <div><h3 class="text-lg font-bold text-zinc-900">{{ t('alliance.understand_it_expert_title', 'Understand IT Expert') }}</h3><p class="text-base text-zinc-500">{{ t('alliance.understand_it_expert_desc', 'By providing IT experts, we have secured CDT\'s presence in a variety of industries.') }}</p></div>
           </div>
           <div class="flex items-start gap-5" data-gsap="fade-up" data-gsap-delay="0.3">
-            <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center shrink-0"><svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+            <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center shrink-0">
+              <x-icon name="lucide:award" class="w-7 h-7 text-primary" />
+            </div>
             <div><h3 class="text-lg font-bold text-zinc-900">{{ t('alliance.certified_specialist_title', 'Certified Specialist') }}</h3><p class="text-base text-zinc-500">{{ t('alliance.certified_specialist_desc', 'CDT IT specialists are certified to ensure solution quality follows with strict implementation standards.') }}</p></div>
           </div>
         </div>
+
       </div>
       <div class="w-full lg:w-1/2" data-gsap="fade-up" data-gsap-delay="0.2">
         <div class="bg-white rounded-3xl border border-zinc-200/60 p-8 md:p-12 shadow-sm">
