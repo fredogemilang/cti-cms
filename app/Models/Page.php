@@ -114,6 +114,7 @@ class Page extends Model
         return $query->where('status', 'published')
             ->where(function ($q) {
                 $q->whereNull('published_at')
+                    ->orWhere('published_at', '')
                     ->orWhere('published_at', '<=', now());
             });
     }

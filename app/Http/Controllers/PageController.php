@@ -56,12 +56,14 @@ class PageController extends Controller
         if ($themeNamespace) {
             $candidates[] = "{$themeNamespace}::pages.{$slug}";
             $candidates[] = "{$themeNamespace}::pages.template-{$template}";
+            $candidates[] = "{$themeNamespace}::pages.{$template}";
             $candidates[] = "{$themeNamespace}::pages.single";
         }
 
         // Default fallback candidates
         $candidates[] = "pages.{$slug}";
         $candidates[] = "pages.template-{$template}";
+        $candidates[] = "pages.{$template}";
         $candidates[] = 'pages.single';
         $candidates[] = 'layouts.page';
 

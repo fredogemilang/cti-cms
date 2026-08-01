@@ -93,10 +93,10 @@
           </span>
           <div class="absolute left-0 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-56 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
             <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 flex flex-col normal-case tracking-normal">
-              <a href="{{ url('/about') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+              <a href="{{ localized_url('/about-us') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
                 {{ t('nav.overview', 'Overview') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
               </a>
-              <a href="{{ url('/management') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+              <a href="{{ localized_url('/about-management') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
                 {{ t('nav.about_management', 'About Management') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
               </a>
             </div>
@@ -194,7 +194,7 @@
 
         <!-- Contact Us -->
         <li>
-          <a href="{{ url('/contact') }}" class="hover:text-primary transition duration-300">{{ t('nav.contact_us', 'Contact Us') }}</a>
+          <a href="{{ localized_url('/contact-us') }}" class="hover:text-primary transition duration-300">{{ t('nav.contact_us', 'Contact Us') }}</a>
         </li>
       </ul>
 

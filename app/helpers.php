@@ -528,6 +528,21 @@ if (! function_exists('localized_url')) {
 
         $cleanPath = trim((string) $path, '/');
 
+        if ($cleanPath !== '' && ! str_contains($cleanPath, '/')) {
+            $page = Page::where('slug', $cleanPath)
+                ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$cleanPath])
+                ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$cleanPath])
+                ->first();
+            if ($page) {
+                $targetSlug = $page->getTranslation('slug', $locale) ?? $page->slug;
+                if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
+                    return url("/{$locale}/{$targetSlug}");
+                }
+
+                return url($hideDefault || $urlStructure !== 'prefix' ? "/{$targetSlug}" : "/{$defaultLocale}/{$targetSlug}");
+            }
+        }
+
         if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
             return url($cleanPath !== '' ? "/{$locale}/{$cleanPath}" : "/{$locale}");
         }
