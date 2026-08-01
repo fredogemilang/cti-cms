@@ -4,10 +4,14 @@ namespace App\Livewire\Admin;
 
 use App\Models\Media;
 use App\Services\MediaService;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
+/**
+ * @property-read LengthAwarePaginator<Media> $media
+ */
 class MediaPicker extends Component
 {
     use WithFileUploads, WithPagination;
@@ -43,8 +47,13 @@ class MediaPicker extends Component
 
     public ?array $selectedMedia = null;
 
+    // Multiple selection state
+    public array $selectedMediaIds = [];
+
     // Upload state
     public $uploadFile = null;
+
+    public array $uploadFiles = [];
 
     public bool $uploading = false;
 
@@ -66,9 +75,9 @@ class MediaPicker extends Component
         $this->field = $field;
         $this->value = $value;
         $this->label = $label;
-        $this->multiple = $multiple;
+        $this->multiple = $multiple || str_starts_with($field, 'gallery_') || str_starts_with($field, 'gallery_add.');
         $this->accept = $accept;
-        $this->shouldClearAfterSelection = $shouldClearAfterSelection;
+        $this->shouldClearAfterSelection = $shouldClearAfterSelection || $this->multiple;
         $this->compact = $compact;
         $this->showModal = $showModal;
         $this->showTrigger = $showModal ? false : $showTrigger;
@@ -133,34 +142,89 @@ class MediaPicker extends Component
         $this->showModal = true;
         $this->activeTab = 'library';
         $this->search = '';
+        $this->selectedMediaIds = [];
+        if ($this->selectedMediaId && ! $this->multiple) {
+            $this->selectedMediaIds = [$this->selectedMediaId];
+        }
     }
 
     public function closeModal()
     {
         $this->showModal = false;
-        $this->reset(['uploadFile', 'uploading']);
+        $this->reset(['uploadFile', 'uploadFiles', 'uploading', 'selectedMediaIds']);
         $this->dispatch('media-picker-closed');
     }
 
     public function selectMedia(int $mediaId)
     {
-        $media = Media::find($mediaId);
-        if ($media) {
-            $this->selectedMediaId = $mediaId;
-            $this->selectedMedia = [
-                'id' => $media->id,
-                'path' => $media->path,
-                'webp_path' => $media->webp_path,
-                'url' => $media->url,
-                'webp_url' => $media->webp_url,
-                'original_filename' => $media->original_filename,
-            ];
+        if ($this->multiple) {
+            if (in_array($mediaId, $this->selectedMediaIds, true)) {
+                $this->selectedMediaIds = array_values(array_filter($this->selectedMediaIds, fn ($id) => $id !== $mediaId));
+            } else {
+                $this->selectedMediaIds[] = $mediaId;
+            }
+        } else {
+            $this->selectedMediaIds = [$mediaId];
+            $media = Media::find($mediaId);
+            if ($media) {
+                $this->selectedMediaId = $mediaId;
+                $this->selectedMedia = [
+                    'id' => $media->id,
+                    'path' => $media->path,
+                    'webp_path' => $media->webp_path,
+                    'url' => $media->url,
+                    'webp_url' => $media->webp_url,
+                    'original_filename' => $media->original_filename,
+                ];
+            }
+        }
+    }
+
+    public function toggleSelectAll()
+    {
+        if (! $this->multiple) {
+            return;
+        }
+
+        $currentPageIds = $this->media->getCollection()->pluck('id')->toArray();
+        $allSelectedOnPage = empty(array_diff($currentPageIds, $this->selectedMediaIds));
+
+        if ($allSelectedOnPage) {
+            // Deselect page items
+            $this->selectedMediaIds = array_values(array_diff($this->selectedMediaIds, $currentPageIds));
+        } else {
+            // Select all page items
+            $this->selectedMediaIds = array_values(array_unique(array_merge($this->selectedMediaIds, $currentPageIds)));
         }
     }
 
     public function confirmSelection()
     {
-        if ($this->selectedMedia) {
+        if ($this->multiple && ! empty($this->selectedMediaIds)) {
+            $items = Media::whereIn('id', $this->selectedMediaIds)->get();
+            $mediaPaths = [];
+
+            foreach ($items as $media) {
+                $path = $media->webp_path ?? $media->path;
+                $mediaPaths[] = $path;
+
+                // Dispatch single event per item for backwards compatibility
+                $this->dispatch('media-selected',
+                    field: $this->field,
+                    mediaId: $media->id,
+                    mediaPath: $path,
+                    mediaUrl: $media->webp_url ?? $media->url
+                );
+            }
+
+            // Dispatch bulk selection event
+            $this->dispatch('media-selected-multiple',
+                field: $this->field,
+                mediaPaths: $mediaPaths
+            );
+
+            $this->selectedMediaIds = [];
+        } elseif (! $this->multiple && $this->selectedMedia) {
             // Prioritize WebP path if available
             $mediaPath = $this->selectedMedia['webp_path'] ?? $this->selectedMedia['path'];
             $mediaUrl = $this->selectedMedia['webp_url'] ?? $this->selectedMedia['url'];
@@ -180,6 +244,7 @@ class MediaPicker extends Component
                 $this->selectedMediaId = null;
             }
         }
+
         $this->closeModal();
     }
 
@@ -187,14 +252,22 @@ class MediaPicker extends Component
     {
         $this->selectedMediaId = null;
         $this->selectedMedia = null;
+        $this->selectedMediaIds = [];
         $this->value = null;
         $this->dispatch('media-removed', field: $this->field);
     }
 
     public function uploadAndSelect()
     {
-        if (! $this->uploadFile) {
-            session()->flash('picker-error', 'Please select a file to upload.');
+        $filesToUpload = [];
+        if (! empty($this->uploadFiles)) {
+            $filesToUpload = $this->uploadFiles;
+        } elseif ($this->uploadFile) {
+            $filesToUpload = [$this->uploadFile];
+        }
+
+        if (empty($filesToUpload)) {
+            session()->flash('picker-error', 'Please select at least one file to upload.');
 
             return;
         }
@@ -206,31 +279,42 @@ class MediaPicker extends Component
         }
 
         $this->validate([
-            'uploadFile' => 'file|max:10240|mimes:jpg,jpeg,png,gif,webp,svg,pdf,doc,docx,xls,xlsx,zip,rar',
+            'uploadFiles.*' => 'file|max:10240|mimes:jpg,jpeg,png,gif,webp,svg,pdf,doc,docx,xls,xlsx,zip,rar',
+            'uploadFile' => 'nullable|file|max:10240|mimes:jpg,jpeg,png,gif,webp,svg,pdf,doc,docx,xls,xlsx,zip,rar',
         ]);
 
         $this->uploading = true;
 
         try {
             $mediaService = app(MediaService::class);
-            $media = $mediaService->upload($this->uploadFile);
+            $uploadedMediaIds = [];
+            $lastMedia = null;
 
-            // Auto-select the uploaded media
-            $this->selectedMediaId = $media->id;
-            $this->selectedMedia = [
-                'id' => $media->id,
-                'path' => $media->path,
-                'webp_path' => $media->webp_path,
-                'url' => $media->url,
-                'webp_url' => $media->webp_url,
-                'original_filename' => $media->original_filename,
-            ];
+            foreach ($filesToUpload as $file) {
+                $media = $mediaService->upload($file);
+                $uploadedMediaIds[] = $media->id;
+                $lastMedia = $media;
+            }
 
-            // Switch to library tab to show selection
+            if ($this->multiple) {
+                $this->selectedMediaIds = array_values(array_unique(array_merge($this->selectedMediaIds, $uploadedMediaIds)));
+            } elseif ($lastMedia) {
+                $this->selectedMediaId = $lastMedia->id;
+                $this->selectedMedia = [
+                    'id' => $lastMedia->id,
+                    'path' => $lastMedia->path,
+                    'webp_path' => $lastMedia->webp_path,
+                    'url' => $lastMedia->url,
+                    'webp_url' => $lastMedia->webp_url,
+                    'original_filename' => $lastMedia->original_filename,
+                ];
+            }
+
+            // Switch to library tab to show selections
             $this->activeTab = 'library';
-            $this->reset(['uploadFile', 'uploading']);
+            $this->reset(['uploadFile', 'uploadFiles', 'uploading']);
 
-            session()->flash('picker-success', 'File uploaded successfully.');
+            session()->flash('picker-success', count($filesToUpload).' file(s) uploaded successfully.');
         } catch (\Exception $e) {
             \Log::error('Media picker upload error: '.$e->getMessage());
             session()->flash('picker-error', 'Upload failed: '.$e->getMessage());
@@ -240,7 +324,7 @@ class MediaPicker extends Component
 
     public function clearUpload()
     {
-        $this->reset(['uploadFile', 'uploading']);
+        $this->reset(['uploadFile', 'uploadFiles', 'uploading']);
     }
 
     public function updatingSearch()

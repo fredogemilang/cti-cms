@@ -777,6 +777,34 @@ class PageForm extends Component
         $this->mediaPickerField = null;
     }
 
+    #[On('media-selected-multiple')]
+    public function onMediaSelectedMultiple($field, array $mediaPaths)
+    {
+        $targetField = $field ?: $this->mediaPickerField;
+        if ($targetField && str_starts_with($targetField, 'gallery_')) {
+            $blockIndex = (int) str_replace('gallery_', '', $targetField);
+            if (isset($this->blocks[$blockIndex])) {
+                $val = $this->blocks[$blockIndex]['value'] ?? [];
+                if (is_string($val)) {
+                    $val = json_decode($val, true) ?: [];
+                }
+                if (! is_array($val)) {
+                    $val = [];
+                }
+                foreach ($mediaPaths as $path) {
+                    if (! in_array($path, $val, true)) {
+                        $val[] = $path;
+                    }
+                }
+                $this->blocks[$blockIndex]['value'] = array_values($val);
+                $this->hasUnsavedChanges = true;
+            }
+        }
+
+        $this->showMediaPicker = false;
+        $this->mediaPickerField = null;
+    }
+
     public function removeGalleryImage(int $blockIndex, int $imageIndex)
     {
         if (isset($this->blocks[$blockIndex])) {

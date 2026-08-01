@@ -329,6 +329,23 @@ class EntryForm extends Component
         }
     }
 
+    #[On('media-selected-multiple')]
+    public function onMediaSelectedMultiple($field, array $mediaPaths)
+    {
+        if (str_starts_with($field, 'gallery_add.')) {
+            $fieldName = str_replace('gallery_add.', '', $field);
+            if (! isset($this->meta[$fieldName]) || ! is_array($this->meta[$fieldName])) {
+                $this->meta[$fieldName] = [];
+            }
+            foreach ($mediaPaths as $path) {
+                if (! in_array($path, $this->meta[$fieldName], true)) {
+                    $this->meta[$fieldName][] = $path;
+                }
+            }
+            $this->meta[$fieldName] = array_values($this->meta[$fieldName]);
+        }
+    }
+
     #[On('media-removed')]
     public function onMediaRemoved($field)
     {
