@@ -85,6 +85,7 @@ class FormController extends Controller
                     'column_width' => $fieldData['column_width'] ?? 'full',
                     'advanced_settings' => $this->prepareAdvancedSettings($fieldData),
                     'conditional_logic' => $fieldData['conditional_logic'] ?? null,
+                    'translations' => $this->prepareTranslations($fieldData),
                 ]);
             }
 
@@ -173,6 +174,7 @@ class FormController extends Controller
                     'column_width' => $fieldData['column_width'] ?? 'full',
                     'advanced_settings' => $this->prepareAdvancedSettings($fieldData),
                     'conditional_logic' => $fieldData['conditional_logic'] ?? null,
+                    'translations' => $this->prepareTranslations($fieldData),
                 ]);
             }
 
@@ -504,6 +506,7 @@ class FormController extends Controller
                     'column_width' => $fieldData['column_width'] ?? 'full',
                     'advanced_settings' => $this->prepareAdvancedSettings($fieldData),
                     'conditional_logic' => $fieldData['conditional_logic'] ?? null,
+                    'translations' => $this->prepareTranslations($fieldData),
                 ]);
             }
         }
@@ -614,5 +617,34 @@ class FormController extends Controller
         }
 
         return ! empty($advanced) ? $advanced : null;
+    }
+
+    /**
+     * Build translations JSON from flat form data.
+     * Expects keys like translations_id_label, translations_id_placeholder.
+     */
+    private function prepareTranslations(array $fieldData): ?array
+    {
+        $translations = [];
+
+        $idLabel = $fieldData['translations_id_label'] ?? '';
+        $idPlaceholder = $fieldData['translations_id_placeholder'] ?? '';
+        $idConsentText = $fieldData['translations_id_consent_text'] ?? '';
+
+        if (! empty($idLabel) || ! empty($idPlaceholder) || ! empty($idConsentText)) {
+            $id = [];
+            if (! empty($idLabel)) {
+                $id['label'] = $idLabel;
+            }
+            if (! empty($idPlaceholder)) {
+                $id['placeholder'] = $idPlaceholder;
+            }
+            if (! empty($idConsentText)) {
+                $id['consent_text'] = $idConsentText;
+            }
+            $translations['id'] = $id;
+        }
+
+        return ! empty($translations) ? $translations : null;
     }
 }

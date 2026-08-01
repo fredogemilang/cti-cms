@@ -88,7 +88,10 @@ class ArchiveController extends Controller
 
         $entry = CptEntry::findByLocalizedSlug($postType, $entrySlug);
         if (! $entry) {
-            $entry = CptEntry::where('slug', $entrySlug)->where('status', 'published')->first();
+            $entry = CptEntry::where('post_type_id', $postType->id)
+                ->where('slug', $entrySlug)
+                ->where('status', 'published')
+                ->first();
         }
         abort_if(! $entry, 404);
 

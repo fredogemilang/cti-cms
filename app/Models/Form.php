@@ -54,6 +54,14 @@ class Form extends Model
             if (empty($form->slug)) {
                 $form->slug = Str::slug($form->name);
             }
+
+            // Ensure unique slug (including soft-deleted records)
+            $originalSlug = $form->slug;
+            $counter = 1;
+            while (static::withTrashed()->where('slug', $form->slug)->exists()) {
+                $form->slug = $originalSlug.'-'.$counter;
+                $counter++;
+            }
         });
     }
 

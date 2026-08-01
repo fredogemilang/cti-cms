@@ -390,25 +390,25 @@
                 x-transition:leave="transition ease-[cubic-bezier(0.16,1,0.3,1)] duration-300 transform"
                 x-transition:leave-start="translate-y-0 opacity-100 scale-100"
                 x-transition:leave-end="translate-y-6 opacity-0 scale-95"
-                class="flex items-center gap-3 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-xl px-4 py-3 shadow-2xl min-w-[300px] pointer-events-auto"
+                class="flex items-center gap-3 rounded-xl px-4 py-3 shadow-2xl min-w-[300px] pointer-events-auto"
+                :class="{
+                    'bg-emerald-600 text-white': notification.type === 'success',
+                    'bg-red-600 text-white': notification.type === 'error',
+                    'bg-blue-600 text-white': notification.type === 'info'
+                }"
             >
                 <!-- Icon -->
                 <div 
-                    class="h-8 w-8 rounded-full flex items-center justify-center shrink-0"
-                    :class="{
-                        'bg-emerald-500/10 text-emerald-500': notification.type === 'success',
-                        'bg-red-500/10 text-red-500': notification.type === 'error',
-                        'bg-blue-500/10 text-blue-500': notification.type === 'info'
-                    }"
+                    class="h-8 w-8 rounded-full flex items-center justify-center shrink-0 bg-white/20"
                 >
-                    <span class="material-symbols-outlined text-xl" x-text="notification.type === 'success' ? 'check_circle' : (notification.type === 'error' ? 'error' : 'info')"></span>
+                    <span class="material-symbols-outlined text-xl text-white" x-text="notification.type === 'success' ? 'check_circle' : (notification.type === 'error' ? 'error' : 'info')"></span>
                 </div>
 
                 <!-- Message -->
-                <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]" x-text="notification.message"></span>
+                <span class="text-sm font-medium text-white" x-text="notification.message"></span>
 
                 <!-- Close Button -->
-                <button @click="remove(notification.id)" class="ml-auto text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-colors shrink-0">
+                <button @click="remove(notification.id)" class="ml-auto text-white/70 hover:text-white transition-colors shrink-0">
                     <span class="material-symbols-outlined text-lg">close</span>
                 </button>
             </div>

@@ -49,9 +49,7 @@ class SeoGeneralSettings extends Component
 
     public string $defaultDescription = '';
 
-    public string $siteLogo = '';
-
-    public string $siteFavicon = '';
+    // Note: site_logo and site_favicon are managed in General Settings (Site Identity).
 
     public string $defaultOgImage = '';
 
@@ -178,8 +176,7 @@ class SeoGeneralSettings extends Component
         $this->titleSeparator = (string) setting('seo_title_separator', '-');
         $this->titlePattern = (string) setting('seo_title_pattern', '{page} {sep} {site}');
         $this->defaultDescription = (string) setting('seo_default_description', '');
-        $this->siteLogo = (string) setting('site_logo', '');
-        $this->siteFavicon = (string) setting('site_favicon', '');
+        // site_logo and site_favicon are managed in General Settings.
         $this->defaultOgImage = (string) setting('seo_default_og_image', '');
 
         $this->restrictAdvancedSettings = (bool) setting('seo_restrict_advanced_settings', true);
@@ -323,11 +320,7 @@ class SeoGeneralSettings extends Component
         }
 
         if ($url) {
-            if ($this->mediaTargetType === 'siteLogo') {
-                $this->siteLogo = $url;
-            } elseif ($this->mediaTargetType === 'siteFavicon') {
-                $this->siteFavicon = $url;
-            } elseif ($this->mediaTargetType && str_starts_with($this->mediaTargetType, 'content_type_')) {
+            if ($this->mediaTargetType && str_starts_with($this->mediaTargetType, 'content_type_')) {
                 $slug = str_replace('content_type_', '', $this->mediaTargetType);
                 if (isset($this->contentTypeSettings[$slug])) {
                     $this->contentTypeSettings[$slug]['social_image'] = $url;
@@ -353,15 +346,7 @@ class SeoGeneralSettings extends Component
         $this->mediaTargetType = null;
     }
 
-    public function removeSiteLogo(): void
-    {
-        $this->siteLogo = '';
-    }
-
-    public function removeSiteFavicon(): void
-    {
-        $this->siteFavicon = '';
-    }
+    // removeSiteLogo and removeSiteFavicon removed — managed in General Settings.
 
     public function removeOgImage(): void
     {
@@ -421,8 +406,7 @@ class SeoGeneralSettings extends Component
         Setting::set('site_name', $this->siteName, 'general', 'text');
         Setting::set('seo_site_alternate_name', $this->siteAlternateName, 'seo', 'text');
         Setting::set('site_tagline', $this->siteTagline, 'general', 'text');
-        Setting::set('site_logo', $this->siteLogo, 'general', 'media');
-        Setting::set('site_favicon', $this->siteFavicon, 'general', 'media');
+        // site_logo and site_favicon are saved from General Settings only.
         Setting::set('seo_title_separator', $this->titleSeparator, 'seo', 'text');
         Setting::set('seo_title_pattern', $this->titlePattern, 'seo', 'text');
         Setting::set('seo_default_description', $this->defaultDescription, 'seo', 'textarea');

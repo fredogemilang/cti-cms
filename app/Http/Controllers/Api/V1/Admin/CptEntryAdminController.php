@@ -177,7 +177,11 @@ class CptEntryAdminController extends Controller
 
             // Insert new relationships
             if (is_array($childIds)) {
+                $validIds = CptEntry::whereIn('id', $childIds)->pluck('id')->toArray();
                 foreach ($childIds as $order => $childId) {
+                    if (! in_array($childId, $validIds, true)) {
+                        continue;
+                    }
                     CptEntryRelationship::create([
                         'parent_entry_id' => $entry->id,
                         'child_entry_id' => $childId,

@@ -68,7 +68,7 @@ Route::get('/lang/{locale}', function (string $locale) {
         return redirect(current_page_localized_url($locale));
     }
 
-    return redirect()->back();
+    return redirect()->back(fallback: url('/'));
 })->name('locale.switch');
 
 // Public SEO & GEO
@@ -88,8 +88,12 @@ Route::get('/indexnow-{key}.txt', [IndexNowController::class, 'showKey'])->name(
 // Public Form Submission
 Route::prefix('forms')->name('forms.')->group(function () {
     Route::get('/{slug}', [FormSubmissionController::class, 'show'])->name('show');
-    Route::post('/{slug}/submit', [FormSubmissionController::class, 'submit'])->name('submit');
-    Route::post('/{slug}/ajax', [FormSubmissionController::class, 'submitAjax'])->name('submit.ajax');
+    Route::post('/{slug}/submit', [FormSubmissionController::class, 'submit'])
+        ->name('submit')
+        ->middleware('throttle:30,1');
+    Route::post('/{slug}/ajax', [FormSubmissionController::class, 'submitAjax'])
+        ->name('submit.ajax')
+        ->middleware('throttle:30,1');
     Route::get('/{slug}/success', [FormSubmissionController::class, 'success'])->name('success');
 });
 
@@ -217,7 +221,7 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
     });
 
     // Custom Post Types Management
-    Route::prefix('cpt')->name('cpt.')->group(function () {
+    Route::prefix('cpt')->name('cpt.')->middleware('permission:cpt.view')->group(function () {
         Route::get('/', function () {
             return view('admin.cpt.index');
         })->name('index');
@@ -391,7 +395,7 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
     });
 
     // Custom Taxonomies Management
-    Route::prefix('taxonomies')->name('taxonomies.')->group(function () {
+    Route::prefix('taxonomies')->name('taxonomies.')->middleware('permission:taxonomies.view')->group(function () {
         Route::get('/', function () {
             return view('admin.taxonomies.index');
         })->name('index');

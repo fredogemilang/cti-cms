@@ -19,7 +19,8 @@ class UserAdminController extends Controller
         $q = User::with('roles');
 
         if ($search = $request->query('q')) {
-            $q->where(fn ($query) => $query->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%"));
+            $escaped = str_replace(['%', '_'], ['\%', '\_'], $search);
+            $q->where(fn ($query) => $query->where('name', 'like', "%{$escaped}%")->orWhere('email', 'like', "%{$escaped}%"));
         }
 
         $users = $q->latest()->paginate($perPage);

@@ -185,6 +185,8 @@ if (! function_exists('theme_path')) {
 if (! function_exists('render_theme_form')) {
     /**
      * Render the form assigned to the active theme's placeholder.
+     *
+     * @deprecated Use tailwind-form.blade.php partial instead. See Gotcha G2.
      */
     function render_theme_form(string $placeholder): string
     {
@@ -255,48 +257,53 @@ if (! function_exists('resolve_block_asset')) {
             return '';
         }
 
+        static $cache = [];
+        if (isset($cache[$path])) {
+            return $cache[$path];
+        }
+
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
-            return $path;
+            return $cache[$path] = $path;
         }
 
         $cleanPath = ltrim($path, '/');
 
         if (str_starts_with($cleanPath, 'themes/')) {
-            return asset($cleanPath);
+            return $cache[$path] = asset($cleanPath);
         }
 
         if (str_starts_with($cleanPath, 'storage/')) {
             if (! file_exists(public_path($cleanPath))) {
                 $unhashed = preg_replace('/-\d+-[a-zA-Z0-9]+\.([a-zA-Z0-9]+)$/', '.$1', $cleanPath);
                 if (file_exists(public_path($unhashed))) {
-                    return asset($unhashed);
+                    return $cache[$path] = asset($unhashed);
                 }
             }
 
-            return asset($cleanPath);
+            return $cache[$path] = asset($cleanPath);
         }
 
         $theme = active_theme();
-        $activeThemeSlug = $theme ? $theme->slug : 'cdt';
+        $activeThemeSlug = $theme ? $theme->slug : 'default';
 
         if (str_starts_with($cleanPath, 'assets/')) {
-            return asset("themes/{$activeThemeSlug}/{$cleanPath}");
+            return $cache[$path] = asset("themes/{$activeThemeSlug}/{$cleanPath}");
         }
 
         // Check if file exists in active theme assets
         $themeAssetRel = "themes/{$activeThemeSlug}/assets/{$cleanPath}";
         if (file_exists(public_path($themeAssetRel)) || file_exists(base_path($themeAssetRel))) {
-            return asset($themeAssetRel);
+            return $cache[$path] = asset($themeAssetRel);
         }
 
         if (! file_exists(public_path('storage/'.$cleanPath))) {
             $unhashed = preg_replace('/-\d+-[a-zA-Z0-9]+\.([a-zA-Z0-9]+)$/', '.$1', $cleanPath);
             if (file_exists(public_path('storage/'.$unhashed))) {
-                return asset('storage/'.$unhashed);
+                return $cache[$path] = asset('storage/'.$unhashed);
             }
         }
 
-        return asset('storage/'.$cleanPath);
+        return $cache[$path] = asset('storage/'.$cleanPath);
     }
 }
 
@@ -505,5 +512,30 @@ if (! function_exists('t')) {
         }
 
         return $translation;
+    }
+}
+
+if (! function_exists('localized_url')) {
+    /**
+     * Generate a localized URL for a given path in the current or specified locale.
+     */
+    function localized_url(?string $path = '/', ?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+        $hideDefault = (bool) setting('locale_prefix_hide_default', true);
+        $urlStructure = setting('locale_url_structure', 'prefix');
+
+        $cleanPath = trim((string) $path, '/');
+
+        if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
+            return url($cleanPath !== '' ? "/{$locale}/{$cleanPath}" : "/{$locale}");
+        }
+
+        if (! $hideDefault && $urlStructure === 'prefix') {
+            return url($cleanPath !== '' ? "/{$defaultLocale}/{$cleanPath}" : "/{$defaultLocale}");
+        }
+
+        return url($cleanPath !== '' ? "/{$cleanPath}" : '/');
     }
 }

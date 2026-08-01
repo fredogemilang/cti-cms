@@ -8,11 +8,26 @@ use Illuminate\Support\Facades\View;
 
 class PageController extends Controller
 {
-    public function show(string $slug)
+    public function show(?string $localeOrSlug = null, ?string $slug = null)
     {
+        $targetSlug = $slug ?? $localeOrSlug;
+        if (! $targetSlug) {
+            abort(404);
+        }
+
         // Locale-aware slug lookup — auto-switches app locale if matched on a translated slug.
-        $page = Page::findByLocalizedSlug($slug);
+        $page = Page::findByLocalizedSlug($targetSlug);
         abort_if(! $page, 404);
+
+        // Redirect homepage slug to canonical root URL to avoid duplicate content.
+        // The homepage has its own dedicated controller (HomeController) at '/'.
+        if ($page->slug === 'home') {
+            $locale = app()->getLocale();
+            $default = setting('default_locale', config('app.locale', 'en'));
+            $target = $locale !== $default ? url("/{$locale}") : url('/');
+
+            return redirect($target, 301);
+        }
 
         // Load blocks (shared across locales for now)
         $page->load(['blocks' => function ($q) {

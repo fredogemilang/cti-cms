@@ -18,12 +18,21 @@ class Setting extends Model
 
     protected static array $memo = [];
 
+    /**
+     * Flush in-memory setting memo array for long-running processes.
+     */
+    public static function flushMemo(): void
+    {
+        static::$memo = [];
+    }
+
     /** Cache of encrypted-key lookup, populated lazily from the SettingsRegistry. */
     protected static ?array $encryptedKeys = null;
 
     protected static function booted(): void
     {
         static::saved(function (self $s) {
+            static::flushMemo();
             static::forgetCache($s->key, $s->group);
 
             // Audit log: record setting changes when an authenticated user is acting
@@ -60,15 +69,15 @@ class Setting extends Model
         }
 
         try {
-            $value = Cache::rememberForever(static::cacheKey($key), function () use ($key, $default) {
-                // Tolerate missing table (fresh install before migrate) — return default.
+            $value = Cache::rememberForever(static::cacheKey($key), function () use ($key) {
+                // Tolerate missing table (fresh install before migrate) — return missing payload.
                 try {
                     $row = static::query()->where('key', $key)->first();
                 } catch (\Throwable $e) {
-                    return ['__missing' => true, 'default' => $default];
+                    return ['__missing' => true];
                 }
                 if (! $row) {
-                    return ['__missing' => true, 'default' => $default];
+                    return ['__missing' => true];
                 }
                 $cast = static::castFromStorage($row->value, $row->type);
 
@@ -80,7 +89,11 @@ class Setting extends Model
             return $default;
         }
 
-        $resolved = ($value['__missing'] ?? false) ? $default : $value['value'];
+        if ($value['__missing'] ?? false) {
+            return $default;
+        }
+
+        $resolved = $value['value'];
         static::$memo[$key] = $resolved;
 
         return $resolved;

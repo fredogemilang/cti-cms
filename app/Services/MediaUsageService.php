@@ -59,7 +59,17 @@ class MediaUsageService
                     $pathToId[$m->webp_path] = $m->id;
                 }
             }
-            $resolveByPath = fn ($v) => is_string($v) ? ($pathToId[ltrim($v, '/')] ?? $pathToId[$v] ?? null) : null;
+            $resolveByPath = function ($v) use ($pathToId) {
+                if (! is_string($v)) {
+                    return null;
+                }
+                $clean = ltrim($v, '/');
+                if (str_starts_with($clean, 'storage/')) {
+                    $clean = substr($clean, 8);
+                }
+
+                return $pathToId[$clean] ?? $pathToId[ltrim($v, '/')] ?? $pathToId[$v] ?? null;
+            };
 
             foreach (Page::select('featured_image', 'seo')->get() as $p) {
                 $bump($resolveByPath($p->featured_image));
@@ -107,24 +117,27 @@ class MediaUsageService
                     }
                 }
 
-                // Meta media fields — resolve by known schema
-                if (is_array($e->meta) && isset($mediaFieldsByCpt[$e->post_type_id])) {
-                    foreach ($mediaFieldsByCpt[$e->post_type_id] as $field => $type) {
-                        $value = $e->meta[$field] ?? null;
-                        if ($value === null || $value === '') {
-                            continue;
-                        }
+                // Meta media fields — resolve by known schema or deep recursive scan
+                if (is_array($e->meta)) {
+                    $this->scanMetaForMediaReferences($e->meta, $bump, $resolveByPath);
+                }
+            }
 
-                        if ($type === 'gallery' && is_array($value)) {
-                            foreach ($value as $v) {
-                                is_numeric($v) ? $bump($v) : $bump($resolveByPath($v));
-                            }
-                        } else {
-                            // media/image — single value (id or path)
-                            is_numeric($value) ? $bump($value) : $bump($resolveByPath($value));
-                        }
+            // Global Settings (site_logo, site_favicon, seo_default_og_image, etc.)
+            foreach (DB::table('settings')->whereNotNull('value')->pluck('value') as $val) {
+                if (is_string($val)) {
+                    $json = json_decode($val, true);
+                    if (is_array($json)) {
+                        $this->scanMetaForMediaReferences($json, $bump, $resolveByPath);
+                    } else {
+                        is_numeric($val) ? $bump($val) : $bump($resolveByPath($val));
                     }
                 }
+            }
+
+            // SeoMeta table (og_image_id)
+            foreach (DB::table('seo_meta')->whereNotNull('og_image_id')->pluck('og_image_id') as $ogId) {
+                $bump($ogId);
             }
 
             // User avatars (string path)
@@ -154,22 +167,20 @@ class MediaUsageService
         Cache::forget(self::CACHE_KEY);
     }
 
-    protected function scanMetaForMediaIds(array $meta, callable $bump): void
+    protected function scanMetaForMediaReferences(array $meta, callable $bump, callable $resolveByPath): void
     {
-        foreach ($meta as $value) {
+        foreach ($meta as $key => $value) {
             if (is_array($value)) {
-                // Possibly a gallery field (array of ids) or a repeater (nested)
-                $allInt = ! empty($value) && array_filter($value, fn ($v) => is_int($v) || (is_string($v) && ctype_digit($v))) === array_values($value);
-                if ($allInt) {
-                    foreach ($value as $id) {
-                        $bump($id);
-                    }
+                $this->scanMetaForMediaReferences($value, $bump, $resolveByPath);
+            } elseif (is_string($value) && ! empty($value)) {
+                if (is_numeric($value)) {
+                    $bump($value);
                 } else {
-                    $this->scanMetaForMediaIds($value, $bump);
+                    $bump($resolveByPath($value));
                 }
+            } elseif (is_int($value)) {
+                $bump($value);
             }
-            // Heuristic: integer scalar might be a media id — but too noisy to assume,
-            // so we don't bump on bare integers without context.
         }
     }
 }

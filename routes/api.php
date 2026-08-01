@@ -58,7 +58,7 @@ Route::middleware('api.cors')->prefix('v1')->group(function () {
         ->middleware('throttle:30,1');
 
     // Admin Headless Management CRUD API
-    Route::prefix('admin')->group(function () {
+    Route::prefix('admin')->middleware('api.auth')->group(function () {
         // CPT Schema Management
         Route::get('/cpt', [CptAdminController::class, 'index']);
         Route::post('/cpt', [CptAdminController::class, 'store']);
@@ -185,7 +185,7 @@ Route::middleware('api.cors')->prefix('v1')->group(function () {
             'info' => [
                 'title' => setting('site_name', config('app.name')).' API',
                 'version' => '1.0.0',
-                'description' => 'Public content + authenticated mutation surface.',
+                'description' => 'Public content + authenticated mutation surface. Partial specification. Full API docs at /docs/api-reference.md.',
             ],
             'servers' => [['url' => url('/api/v1')]],
             'paths' => [

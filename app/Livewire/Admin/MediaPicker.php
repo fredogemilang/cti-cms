@@ -27,6 +27,8 @@ class MediaPicker extends Component
 
     public bool $compact = false;
 
+    public bool $showTrigger = true;
+
     // Modal state
     public bool $showModal = false;
 
@@ -51,14 +53,15 @@ class MediaPicker extends Component
     ];
 
     public function mount(
-        string $field,
+        string $field = '',
         ?string $value = null,
         string $label = 'Select Media',
         bool $multiple = false,
         string $accept = 'image/*',
         bool $shouldClearAfterSelection = false,
         bool $compact = false,
-        bool $showModal = false
+        bool $showModal = false,
+        bool $showTrigger = true
     ) {
         $this->field = $field;
         $this->value = $value;
@@ -68,6 +71,7 @@ class MediaPicker extends Component
         $this->shouldClearAfterSelection = $shouldClearAfterSelection;
         $this->compact = $compact;
         $this->showModal = $showModal;
+        $this->showTrigger = $showModal ? false : $showTrigger;
         $this->loadMediaFromValue();
     }
 

@@ -20,7 +20,7 @@
     // Build field config for Alpine validator
     $fieldConfig = $form->fields->map(fn($f) => [
         'field_id' => $f->field_id,
-        'label'     => $f->label,
+        'label'     => $f->localizedLabel(),
         'type'      => $f->type,
         'is_required' => (bool) $f->is_required,
     ])->toArray();
@@ -121,7 +121,7 @@
                     <label for="{{ $field->field_id }}"
                            class="{{ $isDark ? 'block text-xs font-bold uppercase tracking-wider mb-1.5' : 'block text-xs font-bold uppercase tracking-wider mb-1 transition-colors' }}"
                            :class="errors['{{ $field->field_id }}'] ? '{{ $errorLabelClass }}' : '{{ $labelClass }}'">
-                        {{ $field->label }}
+                        {{ $field->localizedLabel() }}
                         @if($field->is_required)
                           <span class="{{ $isDark ? 'text-yellow-300' : 'text-red-500' }} ml-0.5">*</span>
                         @endif
@@ -138,7 +138,7 @@
                         ];
 
                         $selectedVal = null;
-                        $isSolutionField = ($field->type === 'vendor_solutions' || str_contains(strtolower($field->label), 'solution') || str_contains(strtolower($field->field_id), 'solution'));
+                        $isSolutionField = ($field->type === 'vendor_solutions' || str_contains(strtolower($field->getRawOriginal('label') ?? $field->label), 'solution') || str_contains(strtolower($field->field_id), 'solution'));
 
                         if ($isSolutionField && isset($entry)) {
                             // Check if $entry is a sub-product with parent vendor or parent entry
@@ -191,7 +191,7 @@
                                 :class="errors['{{ $field->field_id }}'] ? '{{ $errorBorderClass }}' : '{{ $defaultBorder }}'"
                                 @change="delete errors['{{ $field->field_id }}']">
                             @if($field->placeholder)
-                              <option value="" disabled {{ empty($selectedVal) ? 'selected' : '' }}>{{ $field->placeholder }}</option>
+                              <option value="" disabled {{ empty($selectedVal) ? 'selected' : '' }}>{{ $field->localizedPlaceholder() }}</option>
                             @endif
                             @foreach($selectOptions as $opt)
                               @php
@@ -208,16 +208,27 @@
                 @elseif($field->type === 'textarea')
                     <textarea name="{{ $field->field_id }}" id="{{ $field->field_id }}" rows="4"
                               data-required="{{ $field->is_required ? 'true' : 'false' }}"
-                              placeholder="{{ $field->placeholder }}"
+                              placeholder="{{ $field->localizedPlaceholder() }}"
                               class="{{ $isDark ? $textareaClass : $baseClass.' resize-none' }}"
                               :class="errors['{{ $field->field_id }}'] ? '{{ $errorBorderClass }}' : '{{ $defaultBorder }}'"
                               @input="delete errors['{{ $field->field_id }}']"></textarea>
 
                 @elseif($field->type === 'gdpr' || $field->type === 'terms')
                     @php
-                        $consentText = $field->type === 'gdpr'
+                        $locale = app()->getLocale();
+                        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+                        $enConsentText = $field->type === 'gdpr'
                             ? ($field->advanced_settings['consent_text'] ?? $field->advanced_settings['privacy_content'] ?? 'I consent to having my personal data processed in accordance with the Privacy Policy.')
                             : ($field->advanced_settings['terms_text'] ?? 'I agree to the Terms & Conditions.');
+
+                        // Check for translated consent text
+                        if ($locale !== $defaultLocale) {
+                            $trans = $field->getRawOriginal('translations');
+                            $trans = is_string($trans) ? json_decode($trans, true) : ($trans ?? []);
+                            $consentText = $trans[$locale]['consent_text'] ?? $enConsentText;
+                        } else {
+                            $consentText = $enConsentText;
+                        }
                     @endphp
                     <div class="flex items-start gap-3 pt-2">
                       <input type="checkbox" name="{{ $field->field_id }}" id="{{ $field->field_id }}" value="1"
@@ -238,7 +249,7 @@
                 @else
                     <input type="{{ $field->type }}" name="{{ $field->field_id }}" id="{{ $field->field_id }}"
                            data-required="{{ $field->is_required ? 'true' : 'false' }}"
-                           placeholder="{{ $field->placeholder }}"
+                           placeholder="{{ $field->localizedPlaceholder() }}"
                            class="{{ $isDark ? $inputClass : $baseClass }}"
                            :class="errors['{{ $field->field_id }}'] ? '{{ $errorBorderClass }}' : '{{ $defaultBorder }}'"
                            value="{{ old($field->field_id) }}"
@@ -321,7 +332,7 @@
     {{-- Submit --}}
     <div class="{{ $isDark ? 'flex flex-col items-center' : 'pt-6' }}">
         <button type="submit" class="{{ $btnClass }}">
-            {{ $form->submit_button_text ?? 'Send Message' }}
+            {{ t('form.submit_' . $form->slug, $form->submit_button_text ?? 'Send Message') }}
         </button>
     </div>
 </form>

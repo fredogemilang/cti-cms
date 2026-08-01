@@ -12,7 +12,7 @@ class SetLocale
     {
         // Don't modify locale for admin requests
         $adminPath = config('admin.path', 'ctrlpanel');
-        if ($request->is($adminPath) || $request->is($adminPath.'/*') || $request->is('admin') || $request->is('admin/*')) {
+        if ($request->is($adminPath) || $request->is($adminPath.'/*')) {
             return $next($request);
         }
 
@@ -67,8 +67,7 @@ class SetLocale
         if (! $candidate) {
             return false;
         }
-        $available = array_filter(array_map('trim', explode(',', (string) setting('available_locales', 'id,en'))));
 
-        return in_array($candidate, $available, true);
+        return in_array($candidate, available_locales(), true);
     }
 }

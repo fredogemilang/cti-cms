@@ -161,7 +161,7 @@ class Page extends Model
     {
         $block = $this->getBlock($name);
 
-        return $block ? $block->value : $default;
+        return $block ? $block->localizedValue() : $default;
     }
 
     /**
@@ -202,8 +202,14 @@ class Page extends Model
     {
         $ancestors = collect();
         $current = $this->parent;
+        $seen = [$this->id];
+        $maxDepth = 20;
 
-        while ($current) {
+        while ($current && $maxDepth-- > 0) {
+            if (in_array($current->id, $seen, true)) {
+                break; // Circular reference detected
+            }
+            $seen[] = $current->id;
             $ancestors->prepend($current);
             $current = $current->parent;
         }
@@ -242,6 +248,11 @@ class Page extends Model
         $prefix = ($locale !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix')
             ? '/'.$locale
             : '';
+
+        // Homepage resolves to root URL, not /home
+        if ($this->slug === 'home') {
+            return url($prefix ?: '/');
+        }
 
         return url($prefix.'/'.$this->getFullPath());
     }

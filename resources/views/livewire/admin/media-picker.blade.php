@@ -1,5 +1,5 @@
 <div>
-    {{-- Trigger Button / Preview --}}
+    @if($showTrigger)
     {{-- Trigger Button / Preview --}}
     <div class="space-y-3">
         @if($compact)
@@ -86,6 +86,7 @@
             @endif
         @endif
     </div>
+    @endif
 
     {{-- Modal --}}
     @if($showModal)
@@ -199,7 +200,7 @@
                                 @foreach($mediaItems as $item)
                                 <div 
                                     wire:click="selectMedia({{ $item->id }})"
-                                    class="aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition-all {{ $selectedMediaId === $item->id ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' : 'border-gray-200 dark:border-[#272B30] hover:border-blue-300 dark:hover:border-blue-700' }}">
+                                    class="relative aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition-all {{ $selectedMediaId === $item->id ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' : 'border-gray-200 dark:border-[#272B30] hover:border-blue-300 dark:hover:border-blue-700' }}">
                                     @if($item->isImage())
                                         <img 
                                             src="{{ $item->webp_url ?? $item->url }}" 
@@ -213,7 +214,7 @@
                                     
                                     {{-- Selection Indicator --}}
                                     @if($selectedMediaId === $item->id)
-                                    <div class="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <div class="absolute top-2 right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center z-10">
                                         <span class="material-symbols-outlined text-white text-sm">check</span>
                                     </div>
                                     @endif
@@ -351,7 +352,7 @@
                             wire:click="confirmSelection"
                             @if(!$selectedMediaId) disabled @endif
                             class="px-6 py-2.5 rounded-xl bg-[#2563EB] text-white text-sm font-semibold hover:bg-[#1D4ED8] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                            Select
+                            {{ str_starts_with($label, 'Insert') ? $label : 'Select' }}
                         </button>
                     @else
                         <button 

@@ -28,6 +28,14 @@ trait HasTranslations
         return parent::getAttribute($key);
     }
 
+    /**
+     * Get the raw attribute value from primary column, bypassing locale translation.
+     */
+    public function getRawAttribute(string $key): mixed
+    {
+        return parent::getAttribute($key);
+    }
+
     public function getTranslation(string $field, ?string $locale = null, bool $fallback = true): mixed
     {
         $locale ??= app()->getLocale();
@@ -128,7 +136,7 @@ trait HasTranslations
     /** All translatable field names for this model. */
     public function translatableFields(): array
     {
-        return $this->translatable ?? [];
+        return $this->translatable;
     }
 
     public static function defaultLocale(): string
@@ -143,7 +151,7 @@ trait HasTranslations
 
     protected function ensureFieldIsTranslatable(string $field): void
     {
-        $allowed = $this->translatable ?? [];
+        $allowed = $this->translatable;
         if (! in_array($field, $allowed, true)) {
             throw new \InvalidArgumentException(
                 "Field [{$field}] is not translatable on ".static::class.'. Add it to $translatable.'

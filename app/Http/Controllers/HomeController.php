@@ -27,10 +27,13 @@ class HomeController extends Controller
             ? "{$themeNamespace}::pages.home"
             : 'pages.home';
 
+        $page = $this->loadHomePage();
+        abort_if(! $page, 404, 'Homepage not found. Create a page with slug "home".');
+
         return view($viewName, [
-            'testimonials' => $this->latestEntries('testimonials', 6),
-            'partners' => $this->latestEntries('our-partners'),
-            'page' => $this->loadHomePage(),
+            'testimonials' => $this->latestEntries('client-says'),
+            'partners' => $this->partnerEntries(),
+            'page' => $page,
         ]);
     }
 
@@ -51,6 +54,19 @@ class HomeController extends Controller
         }
 
         return $q->get();
+    }
+
+    protected function partnerEntries()
+    {
+        $cpt = CustomPostType::where('slug', 'technology-alliance')->first();
+        if (! $cpt) {
+            return collect();
+        }
+
+        return CptEntry::where('post_type_id', $cpt->id)
+            ->where('status', 'published')
+            ->orderBy('title')
+            ->get();
     }
 
     protected function loadHomePage(): ?Page

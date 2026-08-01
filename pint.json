@@ -1,0 +1,8 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "scratch",
+        "crawled_data",
+        "storage"
+    ]
+}

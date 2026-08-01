@@ -2,12 +2,19 @@
 
 namespace App\Models;
 
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class FormField extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
+
+    /**
+     * Fields that support per-locale translations.
+     * Default locale values are stored in the primary columns.
+     */
+    protected array $translatable = ['label', 'placeholder', 'help_text'];
 
     protected $fillable = [
         'form_id',
@@ -27,6 +34,7 @@ class FormField extends Model
         'advanced_settings',
         'css_class',
         'is_hidden',
+        'translations',
     ];
 
     protected $casts = [
@@ -34,9 +42,34 @@ class FormField extends Model
         'validation' => 'array',
         'conditional_logic' => 'array',
         'advanced_settings' => 'array',
+        'translations' => 'array',
         'is_required' => 'boolean',
         'is_hidden' => 'boolean',
     ];
+
+    /**
+     * Get the localized label. Falls back to the English column value.
+     */
+    public function localizedLabel(): string
+    {
+        return $this->getTranslation('label') ?? $this->getRawOriginal('label') ?? '';
+    }
+
+    /**
+     * Get the localized placeholder. Falls back to the English column value.
+     */
+    public function localizedPlaceholder(): ?string
+    {
+        return $this->getTranslation('placeholder') ?? $this->getRawOriginal('placeholder');
+    }
+
+    /**
+     * Get the localized help text. Falls back to the English column value.
+     */
+    public function localizedHelpText(): ?string
+    {
+        return $this->getTranslation('help_text') ?? $this->getRawOriginal('help_text');
+    }
 
     /**
      * Get all available field types — built-in merged with theme custom types.

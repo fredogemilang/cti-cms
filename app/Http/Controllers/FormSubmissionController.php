@@ -50,6 +50,13 @@ class FormSubmissionController extends Controller
             case 'redirect':
                 $redirectUrl = $confirmations['redirect_url'] ?? url('/');
 
+                // Only allow internal redirects to prevent open redirect attacks
+                $parsed = parse_url($redirectUrl);
+                $isInternal = empty($parsed['host']) || $parsed['host'] === request()->getHost();
+                if (! $isInternal) {
+                    $redirectUrl = url('/');
+                }
+
                 return redirect($redirectUrl)->with('success', $successMessage);
 
             case 'success_page':

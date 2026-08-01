@@ -31,5 +31,9 @@ Thumbs.db
 /.playwright-mcp
 /public/assets
 /crawled_data/
+/qa-reports/
+/scratch/*
+!/scratch/.gitkeep
 
 testsprite_tests\tmp\config.json
+

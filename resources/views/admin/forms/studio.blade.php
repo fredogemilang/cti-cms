@@ -74,6 +74,11 @@
             $f['consent_text'] = $f['consent_text'] ?? ($adv['consent_text'] ?? ($adv['privacy_content'] ?? ''));
             $f['terms_text'] = $f['terms_text'] ?? ($adv['terms_text'] ?? '');
             $f['html_content'] = $f['html_content'] ?? ($adv['html_content'] ?? '');
+            // Flatten translations for Alpine UI
+            $trans = $f['translations'] ?? [];
+            $f['translations_id_label'] = $trans['id']['label'] ?? '';
+            $f['translations_id_placeholder'] = $trans['id']['placeholder'] ?? '';
+            $f['translations_id_consent_text'] = $trans['id']['consent_text'] ?? '';
             return $f;
         }, $form->fields ? $form->fields->toArray() : [])) }},
         selectedFieldIndex: null,
@@ -366,6 +371,9 @@
                                 <input type="hidden" :name="`fields[${index}][consent_text]`" x-model="field.consent_text">
                                 <input type="hidden" :name="`fields[${index}][terms_text]`" x-model="field.terms_text">
                                 <input type="hidden" :name="`fields[${index}][html_content]`" x-model="field.html_content">
+                                <input type="hidden" :name="`fields[${index}][translations_id_label]`" x-model="field.translations_id_label">
+                                <input type="hidden" :name="`fields[${index}][translations_id_placeholder]`" x-model="field.translations_id_placeholder">
+                                <input type="hidden" :name="`fields[${index}][translations_id_consent_text]`" x-model="field.translations_id_consent_text">
                             </div>
                         </template>
                     </div>
@@ -424,6 +432,41 @@
                                 <input type="checkbox" x-model="fields[selectedFieldIndex].is_required" class="rounded border-gray-300 text-primary focus:ring-primary">
                                 <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Required Field</span>
                             </label>
+
+                            {{-- Translations (ID) --}}
+                            <div class="pt-4 border-t border-gray-200 dark:border-[#272B30] space-y-3" x-data="{ showTranslations: false }">
+                                <button type="button" @click="showTranslations = !showTranslations"
+                                    class="flex items-center justify-between w-full text-left">
+                                    <span class="text-xs font-bold text-[#6F767E] uppercase tracking-widest flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-sm">translate</span>
+                                        Translation (ID)
+                                    </span>
+                                    <span class="material-symbols-outlined text-sm text-[#6F767E] transition-transform" :class="showTranslations && 'rotate-180'">expand_more</span>
+                                </button>
+                                <div x-show="showTranslations" x-collapse class="space-y-3">
+                                    <div>
+                                        <label class="block text-xs font-bold text-[#6F767E] mb-1">Label (ID)</label>
+                                        <input type="text" x-model="fields[selectedFieldIndex].translations_id_label"
+                                            :placeholder="fields[selectedFieldIndex].label"
+                                            class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium px-3 text-[#111827] dark:text-[#FCFCFC]">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-[#6F767E] mb-1">Placeholder (ID)</label>
+                                        <input type="text" x-model="fields[selectedFieldIndex].translations_id_placeholder"
+                                            :placeholder="fields[selectedFieldIndex].placeholder || 'Enter placeholder in Indonesian...'"
+                                            class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium px-3 text-[#111827] dark:text-[#FCFCFC]">
+                                    </div>
+                                    <template x-if="['gdpr', 'terms'].includes(fields[selectedFieldIndex].type)">
+                                        <div>
+                                            <label class="block text-xs font-bold text-[#6F767E] mb-1">Consent Text (ID) <span class="font-normal text-[#6F767E]/50">(HTML supported)</span></label>
+                                            <textarea x-model="fields[selectedFieldIndex].translations_id_consent_text" rows="3"
+                                                class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs p-3 text-[#111827] dark:text-[#FCFCFC] resize-none"
+                                                placeholder="Masukkan teks persetujuan dalam Bahasa Indonesia..."></textarea>
+                                        </div>
+                                    </template>
+                                    <p class="text-[10px] text-[#6F767E] italic">Leave empty to use the English value as fallback.</p>
+                                </div>
+                            </div>
 
                             {{-- GDPR consent text --}}
                             <template x-if="fields[selectedFieldIndex].type === 'gdpr'">

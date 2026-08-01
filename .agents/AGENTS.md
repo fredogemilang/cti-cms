@@ -1,5 +1,35 @@
 # Project Agent Guidelines
 
+> **📖 Second Brain:** Deep architecture docs, gotchas, and session logs are in `C:\Users\fredo\Documents\Obsidian Vault\altia\CTI-CMS\`. Start with `Quick Context.md` for orientation, then drill into `Arch - *.md` files as needed.
+
+## ⚠️ CRITICAL: Core vs. Theme/Plugin Boundary
+
+**This is CTI CMS** — a reusable, generic CMS core. The current deployment (`cdt.devs`) is for **CDT (Central Data Technology)**, but CTI CMS must work for ANY future client website.
+
+### Decision Rule
+Before modifying any file in `app/`, `config/`, `database/`, or `resources/views/` (core), **ASK**:
+> *"Would another website using CTI CMS also need this?"*
+
+| Answer | Where to put it |
+|--------|----------------|
+| **Yes** — generic CMS functionality (e.g., form i18n, page builder, SEO engine) | ✅ **Core** (`app/`, `database/`, etc.) |
+| **No** — CDT-specific UI, content, or behavior | ✅ **Theme** (`themes/cdt/`) or **Plugin** |
+| **Maybe** — useful to others but triggered by specific context | ✅ **Core with hook/filter** — core provides the mechanism, theme/plugin activates it |
+
+### Examples
+| Feature | Where | Why |
+|---------|-------|-----|
+| Multi-language form fields | Core | Any site could need i18n forms |
+| "Speed Up Your Transformation" hero text | Theme (PageBlock data) | CDT-specific content |
+| URL shortening `/akamai` instead of `/technology-alliance/akamai` | Theme via `Filter::add('cpt_entry.url', ...)` | CDT-specific URL strategy |
+| Toast notification colors | Core | Generic admin UI improvement |
+| Vendor-specific form select options | Theme (custom field type or Blade override) | CDT product structure |
+
+### When Unsure → Discuss First
+If a change could go either way, **discuss with the user before implementing**. Don't assume.
+
+---
+
 ## Theme & Content Architecture: CPT vs. Repeater Field Selection
 
 When scaffolding custom content, building themes, or designing API integration scripts for pages:
@@ -123,3 +153,21 @@ When performing complex database updates, schema inspections, data migrations, o
    - The Admin String Translation Manager provides a `Scan Website Strings` action that automatically discovers `t()` calls across `themes/`, `plugins/`, and `resources/views/`. Scanner runs are non-destructive and preserve existing manual translations.
 5. **Fallback Chain & Resolution**:
    - Translation resolution automatically executes: `Requested Locale` $\rightarrow$ `Fallback Locale` $\rightarrow$ `default_value` $\rightarrow$ `key`.
+
+---
+
+## 🧠 Second Brain Auto-Update Rule
+
+**Vault:** `C:\Users\fredo\Documents\Obsidian Vault\altia\CTI-CMS\`
+
+At the **end of every significant work session** (multiple files changed, new features, architecture changes), the agent MUST:
+1. Read the `update-second-brain` skill for detailed instructions
+2. Append/update the relevant vault files (Session log, Gotchas, Arch docs)
+3. Keep updates **terse and token-efficient**
+
+**Triggers:**
+- Automatically after significant work (3+ files changed or architectural decisions made)
+- When user says: "update second brain", "catat ini", "simpan knowledge"
+- When a new gotcha/pitfall is discovered
+
+**Do NOT update** for trivial changes (typo, single CSS tweak, quick Q&A).

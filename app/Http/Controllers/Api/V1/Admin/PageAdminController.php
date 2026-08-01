@@ -198,6 +198,7 @@ class PageAdminController extends Controller
         ]);
 
         $validated['page_id'] = $page->id;
+        $validated['label'] = $validated['label'] ?? Str::title(str_replace('_', ' ', $validated['name']));
         if (is_array($validated['value'] ?? null)) {
             $validated['value'] = json_encode($validated['value']);
         }

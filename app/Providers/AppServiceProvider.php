@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Page;
+use App\Models\Setting;
 use App\Services\ActivityLogger;
 use App\Services\Ai\AiResourceRegistry;
 use App\Services\BreadcrumbService;
@@ -16,6 +17,7 @@ use App\Services\Schema\Providers\PageSchemaProvider;
 use App\Services\Schema\SchemaRegistry;
 use App\Services\SettingsRegistry;
 use App\Services\TaxonomyRegistry;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -72,6 +74,11 @@ class AppServiceProvider extends ServiceProvider
             app(IndexNowService::class)->pingEntity($page);
             app(GoogleIndexingService::class)->pingEntity($page, 'URL_DELETED');
             app(SchemaRegistry::class)->clearCache();
+        });
+
+        // Flush setting memo between queued jobs
+        $this->app['events']->listen(JobProcessing::class, function () {
+            Setting::flushMemo();
         });
     }
 }

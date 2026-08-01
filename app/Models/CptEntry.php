@@ -97,6 +97,19 @@ class CptEntry extends Model
             if (empty($entry->slug)) {
                 $entry->slug = Str::slug($entry->title);
             }
+
+            // Ensure unique slug within same post type (including soft-deleted records)
+            $originalSlug = $entry->slug;
+            $counter = 1;
+            while (static::withTrashed()
+                ->where('post_type_id', $entry->post_type_id)
+                ->where('slug', $entry->slug)
+                ->exists()
+            ) {
+                $entry->slug = $originalSlug.'-'.$counter;
+                $counter++;
+            }
+
             if (empty($entry->author_id)) {
                 $entry->author_id = auth()->id();
             }
@@ -208,7 +221,10 @@ class CptEntry extends Model
     public function scopePublished($query)
     {
         return $query->where('status', 'published')
-            ->where('published_at', '<=', now());
+            ->where(function ($q) {
+                $q->whereNull('published_at')
+                    ->orWhere('published_at', '<=', now());
+            });
     }
 
     /**
@@ -371,7 +387,7 @@ class CptEntry extends Model
         ];
 
         if ($this->featured_image) {
-            $schema['image'] = asset('storage/'.$this->featured_image);
+            $schema['image'] = resolve_block_asset($this->featured_image);
         }
 
         $relationshipFields = MetaField::where('fieldable_type', CustomPostType::class)
