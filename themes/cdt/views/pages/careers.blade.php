@@ -628,5 +628,8 @@
       </div>
     </section>
 
+    <!-- Contact Form Section -->
+    @include('cdt::partials.contact-section')
+
   </main>
 @endsection
