@@ -250,7 +250,7 @@
                                     class="mt-3 text-sm font-semibold text-[#2563EB] hover:underline">
                                     Upload new media
                                 </button>
-                                @canend
+                                @endcan
                             </div>
                             @endif
                         </div>
