@@ -624,7 +624,124 @@
         "careers": {
             "label": "Careers Overview",
             "description": "Life at CDT, perks, culture, and career opportunities",
-            "blocks": []
+            "blocks": [
+                {
+                    "name": "hero_badge",
+                    "type": "text",
+                    "label": "Hero Badge Label",
+                    "default": "Join CDTroops"
+                },
+                {
+                    "name": "hero_title_prefix",
+                    "type": "text",
+                    "label": "Hero Title Prefix",
+                    "default": "Start Your Journey"
+                },
+                {
+                    "name": "hero_title_main",
+                    "type": "text",
+                    "label": "Hero Title Main",
+                    "default": "Central Data Technology"
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle Description",
+                    "default": "CDT’s business focus is to be a trusted and reliable digital partner that provides the best IT solutions for organizations and companies in transforming business. That is why we need you to make it happen."
+                },
+                {
+                    "name": "why_cdt_title_prefix",
+                    "type": "text",
+                    "label": "Why CDT Title Prefix",
+                    "default": "Why"
+                },
+                {
+                    "name": "why_cdt_title_main",
+                    "type": "text",
+                    "label": "Why CDT Title Main",
+                    "default": "CDT?"
+                },
+                {
+                    "name": "why_cdt_subtitle",
+                    "type": "textarea",
+                    "label": "Why CDT Subtitle",
+                    "default": "We provide a workplace where your ideas matter, your growth is fast-tracked, and your contributions are recognized."
+                },
+                {
+                    "name": "why_cdt_cards",
+                    "type": "repeater",
+                    "label": "Why CDT Value Cards",
+                    "children": [
+                        {
+                            "name": "number",
+                            "type": "text",
+                            "label": "Card Badge Number"
+                        },
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Value Title"
+                        },
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "label": "Value Description"
+                        }
+                    ],
+                    "default": [
+                        {
+                            "number": "01 / Grow",
+                            "title": "Grow",
+                            "description": "We strongly believe that in order for a company to be able to grow sustainably, a developing and growing team is the key. CDT believes that employees are the most valuable assets behind a company’s growth and success."
+                        },
+                        {
+                            "number": "02 / Enjoy",
+                            "title": "Enjoy",
+                            "description": "Working hard is necessary, but working smart is a must. The management always emphasize the importance of cooperative and comfortable working environment in the company."
+                        },
+                        {
+                            "number": "03 / Appreciate",
+                            "title": "Appreciate",
+                            "description": "In CDT, we believe that developing a culture of appreciation throughout the entire organization could lead to team satisfaction and productivity."
+                        }
+                    ]
+                },
+                {
+                    "name": "life_cdt_title",
+                    "type": "text",
+                    "label": "Life at CDT Title",
+                    "default": "Life at CDT"
+                },
+                {
+                    "name": "life_cdt_subtitle",
+                    "type": "textarea",
+                    "label": "Life at CDT Subtitle",
+                    "default": "See how CDTroops collaborate, recharge, and grow together in a modern, supportive, and balanced ecosystem."
+                },
+                {
+                    "name": "life_cdt_gallery",
+                    "type": "gallery",
+                    "label": "Life at CDT Culture Gallery Images"
+                },
+                {
+                    "name": "jobs_title_prefix",
+                    "type": "text",
+                    "label": "Jobs Section Title Prefix",
+                    "default": "Job"
+                },
+                {
+                    "name": "jobs_title_main",
+                    "type": "text",
+                    "label": "Jobs Section Title Main",
+                    "default": "Vacancy"
+                },
+                {
+                    "name": "jobs_subtitle",
+                    "type": "textarea",
+                    "label": "Jobs Section Subtitle",
+                    "default": "Start finding your purpose with CDT. See our latest vacancies below."
+                }
+            ]
         },
         "contact": {
             "label": "Contact Us",
