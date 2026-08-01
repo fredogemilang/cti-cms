@@ -142,7 +142,7 @@
         <!-- Title -->
         <div class="text-center mb-16 px-4" data-gsap="fade-up">
           <h2 class="text-4xl md:text-5xl font-light text-zinc-500 leading-tight mb-4">
-            {{ $page->getBlockValue('life_cdt_title', 'Life at CDT') }}
+            {{ $page->getBlockValue('life_cdt_title_prefix', 'Life at') }} <span class="font-extrabold text-dark">{{ $page->getBlockValue('life_cdt_title_main', 'CDT') }}</span>
           </h2>
           <div class="h-1 bg-primary w-24 mx-auto mb-6"></div>
           <p class="text-zinc-600 font-light max-w-2xl mx-auto leading-relaxed">

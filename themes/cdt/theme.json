@@ -707,10 +707,16 @@
                     ]
                 },
                 {
-                    "name": "life_cdt_title",
+                    "name": "life_cdt_title_prefix",
                     "type": "text",
-                    "label": "Life at CDT Title",
-                    "default": "Life at CDT"
+                    "label": "Life at CDT Title Prefix",
+                    "default": "Life at"
+                },
+                {
+                    "name": "life_cdt_title_main",
+                    "type": "text",
+                    "label": "Life at CDT Title Main",
+                    "default": "CDT"
                 },
                 {
                     "name": "life_cdt_subtitle",
