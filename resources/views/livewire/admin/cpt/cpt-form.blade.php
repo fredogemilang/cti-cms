@@ -214,7 +214,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="space-y-2">
-                                                            @foreach($field['options']['options_list'] ?? [] as $optionIndex => $option)
+                                                            @foreach(is_array($field['options']['options_list'] ?? null) ? $field['options']['options_list'] : [] as $optionIndex => $option)
                                                                 <div class="flex items-center gap-2">
                                                                     <div class="flex-1 grid grid-cols-2 gap-2">
                                                                         <input 

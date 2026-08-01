@@ -177,6 +177,23 @@ class CptForm extends Component
                 $options['repeater_fields'] = $options['repeater_fields'] ?? [];
             }
 
+            if (in_array($field->type, ['select', 'radio', 'checkbox'])) {
+                $rawList = $options['options_list'] ?? [];
+                if (is_string($rawList)) {
+                    $lines = array_filter(array_map('trim', explode("\n", $rawList)));
+                    $normalizedList = [];
+                    foreach ($lines as $line) {
+                        $normalizedList[] = [
+                            'label' => $line,
+                            'value' => strtolower(str_replace(' ', '_', $line)),
+                        ];
+                    }
+                    $options['options_list'] = $normalizedList;
+                } elseif (! is_array($rawList)) {
+                    $options['options_list'] = [];
+                }
+            }
+
             return [
                 'id' => $field->id,
                 'name' => $field->name,
