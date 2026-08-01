@@ -38,6 +38,11 @@
             "key": "alliance_form",
             "label": "Technology Alliance & Product Form",
             "description": "Form displayed on technology alliance and product detail pages."
+        },
+        {
+            "key": "newsletter_form",
+            "label": "Newsletter Subscription Form",
+            "description": "Form displayed inside the footer newsletter subscription modal."
         }
     ],
     "page_templates": {

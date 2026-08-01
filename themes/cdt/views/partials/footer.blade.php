@@ -70,7 +70,7 @@
             Keep up to date with all the latest<br>digital technology news and trends.
           </p>
 
-          <a href="#" id="footer-subscribe-link" title="Subscribe to Newsletter" aria-label="Subscribe to Newsletter" class="text-white text-sm font-bold italic underline hover:text-gray-300">Subscribe</a>
+          <a href="#" id="footer-subscribe-link" title="{{ t('newsletter.modal_title', 'Subscribe to Newsletter') }}" aria-label="{{ t('newsletter.modal_title', 'Subscribe to Newsletter') }}" class="text-white text-sm font-bold italic underline hover:text-gray-300">{{ t('newsletter.footer_link', 'Subscribe') }}</a>
         </div>
 
         <!-- Column 3: Quick Link -->
@@ -102,25 +102,35 @@
         </button>
 
         <div id="subscribe-form-container">
-          <p class="text-2xl font-bold text-zinc-900 mb-2 font-prompt">Subscribe to our Newsletter</p>
-          <p class="text-sm text-zinc-500 mb-6">Receive the latest insights and digital technology trends directly in your inbox.</p>
+          <p class="text-2xl font-bold text-zinc-900 mb-2 font-prompt">{{ t('newsletter.modal_title', 'Subscribe to our Newsletter') }}</p>
+          <p class="text-sm text-zinc-500 mb-6">{{ t('newsletter.modal_subtitle', 'Receive the latest insights and digital technology trends directly in your inbox.') }}</p>
 
-          <form id="subscribe-modal-form" class="space-y-4 text-left">
-            <div>
-              <label for="subscribe-name" class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Full Name</label>
-              <input type="text" id="subscribe-name" required placeholder="John Doe"
-                class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
-            </div>
-            <div>
-              <label for="subscribe-email" class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Email Address</label>
-              <input type="email" id="subscribe-email" required placeholder="john@example.com"
-                class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
-            </div>
-            <button type="submit"
-              class="w-full py-3 bg-gradient-to-r from-[#b82d25] to-red-600 text-white font-bold rounded-xl shadow-lg hover:shadow-red-500/20 hover:from-red-600 hover:to-red-700 transition duration-300 mt-2">
-              Subscribe Now
-            </button>
-          </form>
+          @php
+            $tTheme = active_theme();
+            $newsletterFormId = setting("theme_{$tTheme->slug}_form_assignments", [])['newsletter_form'] ?? null;
+            $newsletterForm = $newsletterFormId ? \App\Models\Form::where('id', $newsletterFormId)->where('is_active', true)->with('fields')->first() : \App\Models\Form::where('slug', 'newsletter-subscription')->where('is_active', true)->with('fields')->first();
+          @endphp
+
+          @if($newsletterForm)
+            @include('cdt::partials.tailwind-form', ['form' => $newsletterForm, 'variant' => 'light'])
+          @else
+            <form id="subscribe-modal-form" class="space-y-4 text-left">
+              <div>
+                <label for="subscribe-name" class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Full Name</label>
+                <input type="text" id="subscribe-name" required placeholder="John Doe"
+                  class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
+              </div>
+              <div>
+                <label for="subscribe-email" class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Email Address</label>
+                <input type="email" id="subscribe-email" required placeholder="john@example.com"
+                  class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
+              </div>
+              <button type="submit"
+                class="w-full py-3 bg-gradient-to-r from-[#b82d25] to-red-600 text-white font-bold rounded-xl shadow-lg hover:shadow-red-500/20 hover:from-red-600 hover:to-red-700 transition duration-300 mt-2">
+                Subscribe Now
+              </button>
+            </form>
+          @endif
         </div>
 
         <div id="subscribe-success-container" class="hidden text-center py-6">
