@@ -250,11 +250,32 @@ if (! function_exists('render_theme_form')) {
 if (! function_exists('resolve_block_asset')) {
     /**
      * Resolve a block image or media asset path to a valid public URL.
+     * Optionally request a variant ('thumb', 'sm', 'md', 'lg', 'xl').
      */
-    function resolve_block_asset(?string $path): string
+    function resolve_block_asset(?string $path, ?string $variant = null): string
     {
         if (empty($path)) {
             return '';
+        }
+
+        if ($variant) {
+            $ext = pathinfo($path, PATHINFO_EXTENSION);
+            $dir = pathinfo($path, PATHINFO_DIRNAME);
+            $filename = pathinfo($path, PATHINFO_FILENAME);
+
+            // Check variant in webp first, then original extension
+            $candidatePaths = [
+                "{$dir}/{$filename}-{$variant}.webp",
+                "{$dir}/{$filename}-{$variant}.{$ext}",
+            ];
+
+            foreach ($candidatePaths as $candidate) {
+                $cleanCand = ltrim($candidate, '/');
+                if (file_exists(public_path($cleanCand)) || file_exists(public_path('storage/'.$cleanCand))) {
+                    $path = $candidate;
+                    break;
+                }
+            }
         }
 
         static $cache = [];
