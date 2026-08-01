@@ -19,8 +19,8 @@
 <div class="lg:hidden bg-white border-b border-zinc-100">
   <div class="flex items-center justify-between px-4 py-3">
     <!-- Logo -->
-    <a href="{{ localized_url('/') }}" class="flex-shrink-0">
-      <img src="{{ $siteLogoUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }}" class="h-12 w-auto object-contain">
+    <a href="{{ localized_url('/') }}" title="Central Data Technology - Home" aria-label="Home" class="flex-shrink-0">
+      <img src="{{ $siteLogoUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }}" title="{{ setting('site_name', 'Central Data Technology') }}" class="h-12 w-auto object-contain">
     </a>
     <!-- Language Switcher -->
     @if(is_locale_available_for_current_page('id'))
@@ -28,13 +28,13 @@
       @if($currentLocale === 'en')
         <span class="text-primary border-b-2 border-primary cursor-default">EN</span>
       @else
-        <a href="{{ current_page_localized_url('en') }}" class="text-zinc-400 hover:text-zinc-800 transition-colors">EN</a>
+        <a href="{{ current_page_localized_url('en') }}" title="Switch to English" aria-label="Switch to English" class="text-zinc-400 hover:text-zinc-800 transition-colors">EN</a>
       @endif
       <span class="text-zinc-300">|</span>
       @if($currentLocale === 'id')
         <span class="text-primary border-b-2 border-primary cursor-default">ID</span>
       @else
-        <a href="{{ current_page_localized_url('id') }}" class="text-zinc-400 hover:text-zinc-800 transition-colors">ID</a>
+        <a href="{{ current_page_localized_url('id') }}" title="Beralih ke Bahasa Indonesia" aria-label="Beralih ke Bahasa Indonesia" class="text-zinc-400 hover:text-zinc-800 transition-colors">ID</a>
       @endif
     </div>
     @else
@@ -76,8 +76,8 @@
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
     <nav class="flex items-center justify-between h-20">
       <!-- Logo -->
-      <a href="{{ localized_url('/') }}" class="flex-shrink-0">
-        <img src="{{ $siteLogoUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }}" class="h-16 w-auto object-contain">
+      <a href="{{ localized_url('/') }}" title="Central Data Technology - Home" aria-label="Home" class="flex-shrink-0">
+        <img src="{{ $siteLogoUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }}" title="{{ setting('site_name', 'Central Data Technology') }}" class="h-16 w-auto object-contain">
       </a>
 
       <!-- Desktop Menu -->
@@ -93,10 +93,10 @@
           </span>
           <div class="absolute left-0 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-56 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
             <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 flex flex-col normal-case tracking-normal">
-              <a href="{{ localized_url('/about-us') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+              <a href="{{ localized_url('/about-us') }}" title="{{ t('nav.overview', 'Overview') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
                 {{ t('nav.overview', 'Overview') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
               </a>
-              <a href="{{ localized_url('/about-management') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+              <a href="{{ localized_url('/about-management') }}" title="{{ t('nav.about_management', 'About Management') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
                 {{ t('nav.about_management', 'About Management') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
               </a>
             </div>
@@ -144,7 +144,7 @@
                     @endphp
 
                     @if(!empty($validBadges))
-                      <a href="{{ $prod->getUrl() }}"
+                      <a href="{{ $prod->getUrl() }}" title="{{ $prod->title }}"
                         class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-2 px-3 -mx-3 hover:bg-gray-50 rounded-md flex flex-col justify-center items-start gap-1.5 group/link">
                         <span>{{ $prod->title }}</span>
                         <div class="flex flex-wrap items-center gap-1.5">
@@ -155,7 +155,7 @@
                         </div>
                       </a>
                     @else
-                      <a href="{{ $prod->getUrl() }}"
+                      <a href="{{ $prod->getUrl() }}" title="{{ $prod->title }}"
                         class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-2.5 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
                         <span>{{ $prod->title }}</span>
                         <span
@@ -163,7 +163,7 @@
                       </a>
                     @endif
                   @empty
-                    <a href="{{ url('/technology-alliance') }}"
+                    <a href="{{ url('/technology-alliance') }}" title="{{ t('nav.all_technology_partners', 'All Technology Partners') }}"
                       class="text-sm font-semibold text-gray-700 hover:text-primary border-b border-gray-200 py-2.5 px-3">{{ t('nav.all_technology_partners', 'All Technology Partners') }} →</a>
                   @endforelse
                 </div>
@@ -174,27 +174,27 @@
 
         <!-- Solutions -->
         <li>
-          <a href="{{ url('/solutions') }}" class="hover:text-primary transition duration-300">{{ t('nav.solutions', 'Solutions') }}</a>
+          <a href="{{ url('/solutions') }}" title="{{ t('nav.solutions', 'Solutions') }}" class="hover:text-primary transition duration-300">{{ t('nav.solutions', 'Solutions') }}</a>
         </li>
 
         <!-- Customer Success -->
         <li>
-          <a href="{{ url('/customer-success') }}" class="hover:text-primary transition duration-300">{{ t('nav.customer_success', 'Customer Success') }}</a>
+          <a href="{{ url('/customer-success') }}" title="{{ t('nav.customer_success', 'Customer Success') }}" class="hover:text-primary transition duration-300">{{ t('nav.customer_success', 'Customer Success') }}</a>
         </li>
 
         <!-- Insights / Blog -->
         <li>
-          <a href="{{ url('/blog') }}" class="hover:text-primary transition duration-300">{{ t('nav.insights', 'Insights') }}</a>
+          <a href="{{ url('/blog') }}" title="{{ t('nav.insights', 'Insights') }}" class="hover:text-primary transition duration-300">{{ t('nav.insights', 'Insights') }}</a>
         </li>
 
         <!-- Careers -->
         <li>
-          <a href="{{ url('/careers') }}" class="hover:text-primary transition duration-300">{{ t('nav.careers', 'Careers') }}</a>
+          <a href="{{ url('/careers') }}" title="{{ t('nav.careers', 'Careers') }}" class="hover:text-primary transition duration-300">{{ t('nav.careers', 'Careers') }}</a>
         </li>
 
         <!-- Contact Us -->
         <li>
-          <a href="{{ localized_url('/contact-us') }}" class="hover:text-primary transition duration-300">{{ t('nav.contact_us', 'Contact Us') }}</a>
+          <a href="{{ localized_url('/contact-us') }}" title="{{ t('nav.contact_us', 'Contact Us') }}" class="hover:text-primary transition duration-300">{{ t('nav.contact_us', 'Contact Us') }}</a>
         </li>
       </ul>
 
@@ -206,13 +206,13 @@
           @if($currentLocale === 'en')
             <span class="text-primary border-b-2 border-primary cursor-default">EN</span>
           @else
-            <a href="{{ current_page_localized_url('en') }}" class="text-zinc-400 hover:text-zinc-800 transition-colors">EN</a>
+            <a href="{{ current_page_localized_url('en') }}" title="Switch to English" aria-label="Switch to English" class="text-zinc-400 hover:text-zinc-800 transition-colors">EN</a>
           @endif
           <span class="text-zinc-300">|</span>
           @if($currentLocale === 'id')
             <span class="text-primary border-b-2 border-primary cursor-default">ID</span>
           @else
-            <a href="{{ current_page_localized_url('id') }}" class="text-zinc-400 hover:text-zinc-800 transition-colors">ID</a>
+            <a href="{{ current_page_localized_url('id') }}" title="Beralih ke Bahasa Indonesia" aria-label="Beralih ke Bahasa Indonesia" class="text-zinc-400 hover:text-zinc-800 transition-colors">ID</a>
           @endif
         </div>
         @else
