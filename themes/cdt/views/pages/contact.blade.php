@@ -64,7 +64,7 @@
                   </div>
                   <div>
                     <p class="text-sm text-zinc-600 font-light leading-relaxed">
-                      Centennial Tower 12th Floor Jl. Jend. Gatot Subroto Kav. 24-25 Jakarta, 12930. Indonesia
+                      {{ setting('seo_org_address', setting('contact_address', 'Centennial Tower 12th Floor Jl. Jend. Gatot Subroto Kav. 24-25 Jakarta, 12930. Indonesia')) }}
                     </p>
                   </div>
                 </div>
@@ -77,7 +77,7 @@
                     </svg>
                   </div>
                   <div class="text-sm text-zinc-600 font-light space-y-1">
-                    <p>Phone: {!! safe_phone(setting('contact_phone_hq', '(+62 21) 80622200')) !!}</p>
+                    <p>Phone: {!! safe_phone(setting('seo_org_phone', setting('contact_phone_hq', '(+62 21) 80622200'))) !!}</p>
                     <p>Fax: <span class="font-medium">{{ setting('contact_fax', '(+62 21) 80622211') }}</span></p>
                   </div>
                 </div>
@@ -91,7 +91,7 @@
                   </div>
                   <div>
                     <p class="text-sm text-zinc-600 font-light">
-                      Email: {!! safe_email(setting('contact_email_marketing', 'marketing@centraldatatech.com')) !!}
+                      Email: {!! safe_email(setting('seo_org_email', setting('contact_email_marketing', 'marketing@centraldatatech.com'))) !!}
                     </p>
                   </div>
                 </div>

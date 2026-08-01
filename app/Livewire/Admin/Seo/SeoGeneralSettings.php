@@ -82,6 +82,8 @@ class SeoGeneralSettings extends Component
 
     public string $orgPhone = '';
 
+    public string $orgAddress = '';
+
     public string $orgLegalName = '';
 
     // Social Profiles (Other profiles for Knowledge Graph)
@@ -188,13 +190,14 @@ class SeoGeneralSettings extends Component
         $this->diversityPolicyPageId = (int) setting('seo_policy_diversity', 0);
 
         $this->orgType = (string) setting('seo_org_type', 'Organization');
-        $this->orgName = (string) setting('seo_org_name', '');
-        $this->orgAlternateName = (string) setting('seo_org_alternate_name', '');
+        $this->orgName = (string) setting('seo_org_name', 'Central Data Technology');
+        $this->orgAlternateName = (string) setting('seo_org_alternate_name', 'CDT');
         $this->orgLogo = (string) setting('seo_org_logo', '');
         $this->orgDescription = (string) setting('seo_org_description', '');
-        $this->orgEmail = (string) setting('seo_org_email', '');
-        $this->orgPhone = (string) setting('seo_org_phone', '');
-        $this->orgLegalName = (string) setting('seo_org_legal_name', '');
+        $this->orgEmail = (string) setting('seo_org_email', (string) setting('site_email', 'marketing@centraldatatech.com'));
+        $this->orgPhone = (string) setting('seo_org_phone', (string) setting('site_phone', '(+62 21) 80622200'));
+        $this->orgAddress = (string) setting('seo_org_address', (string) setting('contact_address', 'Centennial Tower 12th Floor Jl. Jend. Gatot Subroto Kav. 24-25 Jakarta, 12930. Indonesia'));
+        $this->orgLegalName = (string) setting('seo_org_legal_name', 'PT Central Data Technology');
 
         $this->facebookUrl = (string) setting('seo_facebook_url', '');
         $this->twitterHandle = (string) setting('seo_twitter_handle', '');
@@ -401,6 +404,7 @@ class SeoGeneralSettings extends Component
             'orgLogo' => 'nullable|string|max:500',
             'orgEmail' => 'nullable|email|max:200',
             'orgPhone' => 'nullable|string|max:30',
+            'orgAddress' => 'nullable|string|max:500',
         ]);
 
         Setting::set('site_name', $this->siteName, 'general', 'text');
@@ -436,7 +440,21 @@ class SeoGeneralSettings extends Component
         Setting::set('seo_org_description', $this->orgDescription, 'seo', 'textarea');
         Setting::set('seo_org_email', $this->orgEmail, 'seo', 'email');
         Setting::set('seo_org_phone', $this->orgPhone, 'seo', 'text');
+        Setting::set('seo_org_address', $this->orgAddress, 'seo', 'textarea');
         Setting::set('seo_org_legal_name', $this->orgLegalName, 'seo', 'text');
+
+        // Sync for site-wide helpers (Footer, Contact Us, etc)
+        if (! empty($this->orgEmail)) {
+            Setting::set('site_email', $this->orgEmail, 'general', 'text');
+            Setting::set('contact_email_marketing', $this->orgEmail, 'contact', 'text');
+        }
+        if (! empty($this->orgPhone)) {
+            Setting::set('site_phone', $this->orgPhone, 'general', 'text');
+            Setting::set('contact_phone_hq', $this->orgPhone, 'contact', 'text');
+        }
+        if (! empty($this->orgAddress)) {
+            Setting::set('contact_address', $this->orgAddress, 'contact', 'textarea');
+        }
 
         Setting::set('seo_facebook_url', $this->facebookUrl, 'seo', 'text');
         Setting::set('seo_twitter_handle', $this->twitterHandle, 'seo', 'text');

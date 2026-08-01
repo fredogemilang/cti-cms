@@ -465,8 +465,13 @@
                                 </div>
 
                                 <div class="md:col-span-2 space-y-1.5">
+                                    <label class="text-xs font-bold text-[#6F767E] uppercase tracking-wider block">Organization address (Headquarter / Main Office)</label>
+                                    <textarea wire:model="orgAddress" rows="2" placeholder="Centennial Tower 12th Floor Jl. Jend. Gatot Subroto Kav. 24-25 Jakarta..." class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 p-4 resize-y"></textarea>
+                                </div>
+
+                                <div class="md:col-span-2 space-y-1.5">
                                     <label class="text-xs font-bold text-[#6F767E] uppercase tracking-wider block">Organization's legal name</label>
-                                    <input type="text" wire:model="orgLegalName" placeholder="PT Computradetech Technology International" class="w-full h-11 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 px-4">
+                                    <input type="text" wire:model="orgLegalName" placeholder="PT Central Data Technology" class="w-full h-11 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-blue-500 px-4">
                                 </div>
                             </div>
                         </div>
