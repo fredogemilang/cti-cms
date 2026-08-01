@@ -737,6 +737,19 @@ class PageForm extends Component
     {
         if ($this->mediaPickerField === 'featured_image') {
             $this->featuredImage = $mediaPath;
+        } elseif (str_starts_with($this->mediaPickerField, 'gallery_')) {
+            $blockIndex = (int) str_replace('gallery_', '', $this->mediaPickerField);
+            if (isset($this->blocks[$blockIndex])) {
+                $val = $this->blocks[$blockIndex]['value'] ?? [];
+                if (is_string($val)) {
+                    $val = json_decode($val, true) ?: [];
+                }
+                if (! is_array($val)) {
+                    $val = [];
+                }
+                $val[] = $mediaPath;
+                $this->blocks[$blockIndex]['value'] = $val;
+            }
         } elseif (str_starts_with($this->mediaPickerField, 'block_')) {
             $blockIndex = (int) str_replace('block_', '', $this->mediaPickerField);
             if (isset($this->blocks[$blockIndex])) {
@@ -762,6 +775,21 @@ class PageForm extends Component
         $this->hasUnsavedChanges = true;
         $this->showMediaPicker = false;
         $this->mediaPickerField = null;
+    }
+
+    public function removeGalleryImage(int $blockIndex, int $imageIndex)
+    {
+        if (isset($this->blocks[$blockIndex])) {
+            $val = $this->blocks[$blockIndex]['value'] ?? [];
+            if (is_string($val)) {
+                $val = json_decode($val, true) ?: [];
+            }
+            if (is_array($val) && isset($val[$imageIndex])) {
+                array_splice($val, $imageIndex, 1);
+                $this->blocks[$blockIndex]['value'] = array_values($val);
+                $this->hasUnsavedChanges = true;
+            }
+        }
     }
 
     #[On('media-picker-closed')]
