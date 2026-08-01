@@ -596,10 +596,10 @@ if (! function_exists('safe_email')) {
         $base64 = base64_encode($email);
 
         if (! $isLink) {
-            return '<span x-data="{ e: atob(\''.$base64.'\') }" x-text="e"></span>';
+            return '<span x-data="{ e: \''.$base64.'\' }" x-text="atob(e)"></span>';
         }
 
-        return '<a href="#" x-data="{ e: atob(\''.$base64.'\') }" @click.prevent="window.location.href = \'mailto:\' + e" x-text="e" class="'.e($class).'"></a>';
+        return '<a href="#" x-data="{ e: \''.$base64.'\' }" x-init="$el.href = \'mailto:\' + atob(e)" x-text="atob(e)" class="'.e($class).'"></a>';
     }
 }
 
