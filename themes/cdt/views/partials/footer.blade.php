@@ -13,7 +13,7 @@
 
         <!-- Column 1: Address -->
         <div>
-          <span class="text-white text-base font-bold mb-3 block">Address</span>
+          <span class="text-white text-base font-bold mb-3 block">{{ t('footer.address', 'Address') }}</span>
           <div class="w-8 h-0.5 bg-[#b82d25] mb-8"></div>
 
           <div class="flex gap-4 text-sm mb-6 text-white/90">
@@ -40,7 +40,7 @@
 
         <!-- Column 2: Socials -->
         <div>
-          <span class="text-white text-base font-bold mb-3 block">Follow Us On Social Media</span>
+          <span class="text-white text-base font-bold mb-3 block">{{ t('footer.follow_us', 'Follow Us On Social Media') }}</span>
           <div class="w-8 h-0.5 bg-[#b82d25] mb-8"></div>
 
           <div class="flex gap-3 mb-6">
@@ -67,7 +67,7 @@
           </div>
 
           <p class="text-[13px] text-white/90 leading-relaxed mb-4 max-w-[250px]">
-            Keep up to date with all the latest<br>digital technology news and trends.
+            {{ t('footer.social_desc', 'Keep up to date with all the latest digital technology news and trends.') }}
           </p>
 
           <a href="#" id="footer-subscribe-link" title="{{ t('newsletter.modal_title', 'Subscribe to Newsletter') }}" aria-label="{{ t('newsletter.modal_title', 'Subscribe to Newsletter') }}" class="text-white text-sm font-bold italic underline hover:text-gray-300">{{ t('newsletter.footer_link', 'Subscribe') }}</a>
@@ -75,7 +75,7 @@
 
         <!-- Column 3: Quick Link -->
         <div>
-          <span class="text-white text-base font-bold mb-3 block">Quick Link</span>
+          <span class="text-white text-base font-bold mb-3 block">{{ t('footer.quick_links', 'Quick Link') }}</span>
           <div class="w-8 h-0.5 bg-[#b82d25] mb-8"></div>
 
           <ul class="space-y-4 text-[13px] text-white/90">
@@ -88,7 +88,7 @@
       </div>
 
       <div class="mt-20 pt-6 text-center text-xs text-white/80 pb-6">
-        <p>Copyright {{ date('Y') }} &copy; All Right Reserved by {{ setting('site_name', 'Central Data Technology') }}</p>
+        <p>{{ t('footer.copyright', 'Copyright :year © All Right Reserved by :site', ['year' => date('Y'), 'site' => setting('site_name', 'Central Data Technology')]) }}</p>
       </div>
     </div>
 
