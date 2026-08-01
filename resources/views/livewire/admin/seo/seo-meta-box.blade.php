@@ -262,7 +262,7 @@
             {{-- AI Summary --}}
             <div class="space-y-2">
                 <label class="text-[11px] font-bold text-[#6F767E] dark:text-[#9A9A9A] uppercase tracking-wider block">AI Summary & Citation Abstract</label>
-                <textarea wire:model="ai_summary" rows="3" maxlength="500"
+                <textarea wire:model="ai_summary" rows="5" maxlength="500"
                           class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-purple-500 p-4 placeholder:text-gray-400 dark:placeholder:text-gray-600 resize-y transition-all"
                           placeholder="A concise, quotable summary of this content for AI search engines (Perplexity, ChatGPT Search, Google AI Overviews)…"></textarea>
                 <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed">
