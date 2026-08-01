@@ -517,42 +517,80 @@
                     "name": "hero_subtitle_small",
                     "type": "text",
                     "label": "Hero Sub-Headline / Category",
-                    "default": "Company"
+                    "default": "About Us"
                 },
                 {
                     "name": "hero_title",
                     "type": "text",
                     "label": "Hero Main Title",
-                    "default": "About Management"
+                    "default": "Management"
                 },
                 {
                     "name": "hero_bg_image",
                     "type": "media",
                     "label": "Hero Background Image",
-                    "default": "themes/cdt/assets/about-us-bg-DOuRQvF3.webp"
+                    "default": "themes/cdt/assets/banner_hero-DHYDqbF8.jpg"
                 },
                 {
-                    "name": "intro_content",
-                    "type": "wysiwyg",
-                    "label": "Page Introduction & Overview",
-                    "default": "<p>Meet the leadership team at PT Central Data Technology (CDT) guiding our strategy, corporate culture, and technology innovation across Cloud, Security, and Observability.</p>"
-                },
-                {
-                    "name": "management_title_prefix",
+                    "name": "directors_title_prefix",
                     "type": "text",
-                    "label": "Section Title Prefix",
-                    "default": "Our"
+                    "label": "Directors Section Title Prefix",
+                    "default": "Board of"
                 },
                 {
-                    "name": "management_title_main",
+                    "name": "directors_title_main",
                     "type": "text",
-                    "label": "Section Title Main",
+                    "label": "Directors Section Title Main",
+                    "default": "Directors"
+                },
+                {
+                    "name": "directors_list",
+                    "type": "repeater",
+                    "label": "Board of Directors Cards",
+                    "children": [
+                        {
+                            "name": "name",
+                            "type": "text",
+                            "label": "Director Name"
+                        },
+                        {
+                            "name": "position",
+                            "type": "text",
+                            "label": "Position / Title"
+                        },
+                        {
+                            "name": "photo",
+                            "type": "media",
+                            "label": "Director Photo"
+                        },
+                        {
+                            "name": "bio",
+                            "type": "wysiwyg",
+                            "label": "Statement & Biography"
+                        },
+                        {
+                            "name": "linkedin_url",
+                            "type": "url",
+                            "label": "LinkedIn Profile URL"
+                        }
+                    ]
+                },
+                {
+                    "name": "executive_title_prefix",
+                    "type": "text",
+                    "label": "Executive Management Title Prefix",
+                    "default": "Executive"
+                },
+                {
+                    "name": "executive_title_main",
+                    "type": "text",
+                    "label": "Executive Management Title Main",
                     "default": "Management"
                 },
                 {
                     "name": "management_list",
                     "type": "repeater",
-                    "label": "Executive Leadership Team Cards",
+                    "label": "Executive Management Cards Grid",
                     "children": [
                         {
                             "name": "name",

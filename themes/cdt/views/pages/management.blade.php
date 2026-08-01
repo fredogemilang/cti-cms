@@ -3,117 +3,106 @@
 @section('title', $page->getMetaTitle())
 
 @section('content')
-  <!-- Hero Section -->
-  <section class="relative bg-zinc-900 text-white py-24 md:py-32 overflow-hidden">
-    <!-- Background Image with Dark Overlay -->
-    <div class="absolute inset-0 z-0">
+  <!-- Hero Section matching management.html -->
+  <section class="hero-section relative min-h-[380px] md:min-h-[440px] flex items-center bg-zinc-900 text-white overflow-hidden">
+    <!-- Background Image -->
+    <div class="absolute inset-0">
       @php
-        $heroBg = $page->getBlockValue('hero_bg_image', 'themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
+        $heroBg = $page->getBlockValue('hero_bg_image', 'themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
         $heroBgUrl = resolve_block_asset($heroBg);
       @endphp
-      <img src="{{ $heroBgUrl }}" alt="{{ $page->getBlockValue('hero_title', 'About Management') }} Background" title="{{ $page->getBlockValue('hero_title', 'About Management') }}" class="w-full h-full object-cover">
-      <div class="absolute inset-0 bg-gradient-to-r from-zinc-950/90 via-zinc-900/80 to-zinc-900/40"></div>
+      <img src="{{ $heroBgUrl }}" alt="{{ $page->getBlockValue('hero_title', 'Management') }} Banner" title="{{ $page->getBlockValue('hero_title', 'Management') }}" class="hero-bg-img w-full h-full object-cover origin-center">
     </div>
 
-    <div class="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
-      <div class="max-w-3xl text-white">
+    <!-- Red Gradient Overlay -->
+    <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-transparent w-full md:w-2/3 lg:w-3/4"></div>
+
+    <div class="relative z-10 mx-auto max-w-[1400px] w-full px-4 sm:px-6 lg:px-8 py-16">
+      <div class="max-w-2xl text-white">
         <!-- Breadcrumb -->
-        <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-white/70 mb-10" aria-label="Breadcrumb" data-gsap="fade-in">
+        <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-white/80 mb-8" aria-label="Breadcrumb" data-gsap="fade-in">
           <a href="{{ localized_url('/') }}" title="Home" aria-label="Home" class="hover:text-white transition-colors">Home</a>
-          <svg class="w-3 h-3 text-white/40" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          <span class="text-white font-bold" aria-current="page">{{ $page->getBlockValue('hero_title', 'About Management') }}</span>
+          <svg class="w-3 h-3 text-white/50" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <a href="{{ localized_url('/about-us') }}" title="About Us" aria-label="About Us" class="hover:text-white transition-colors">About Us</a>
+          <svg class="w-3 h-3 text-white/50" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <span class="text-white font-bold" aria-current="page">{{ $page->getBlockValue('hero_title', 'Management') }}</span>
         </nav>
 
-        <div class="overflow-hidden mb-2">
-          <span class="block text-xl md:text-2xl font-light text-primary tracking-wide uppercase font-semibold" data-gsap="fade-up">
-            {{ $page->getBlockValue('hero_subtitle_small', 'Company') }}
-          </span>
-        </div>
         <div class="overflow-hidden">
-          <h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold leading-tight" data-gsap="fade-up" data-gsap-delay="0.1">
-            {{ $page->getBlockValue('hero_title', 'About Management') }}
+          <span class="block text-xl md:text-2xl font-light mb-2 text-white/90" data-gsap="fade-up">
+            {{ $page->getBlockValue('hero_subtitle_small', 'About Us') }}
+          </span>
+          <h1 class="text-4xl md:text-5xl lg:text-[56px] font-extrabold leading-tight tracking-tight" data-gsap="fade-up" data-gsap-delay="0.1">
+            {{ $page->getBlockValue('hero_title', 'Management') }}
           </h1>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Intro Overview Section -->
+  <!-- Section 1: Board of Directors -->
   @php
-    $introContent = $page->getBlockValue('intro_content');
-  @endphp
-  @if(!empty($introContent))
-  <section class="py-16 bg-white border-b border-zinc-100">
-    <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
-      <div class="max-w-4xl text-zinc-700 text-lg md:text-xl leading-relaxed font-light" data-gsap="fade-up">
-        {!! $introContent !!}
-      </div>
-    </div>
-  </section>
-  @endif
-
-  <!-- Executive Leadership Grid Section -->
-  @php
-    $executives = $page->getBlockValue('management_list', []);
-    if (is_string($executives)) {
-        $executives = json_decode($executives, true) ?? [];
+    $directors = $page->getBlockValue('directors_list', []);
+    if (is_string($directors)) {
+        $directors = json_decode($directors, true) ?? [];
     }
   @endphp
-  <section class="py-24 bg-zinc-50/60" id="executive-team">
+  <section class="py-24 bg-white" id="board-of-directors">
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
       
-      <!-- Section Header -->
-      <div class="flex flex-col lg:flex-row gap-8 mb-16 items-start lg:items-end justify-between">
-        <div>
-          <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            {!! $page->getBlockValue('management_title_prefix', 'Our') !!}<br>
-            <span class="font-bold text-dark">{!! $page->getBlockValue('management_title_main', 'Management') !!}</span>
-          </h2>
-          <div class="h-1 bg-primary mt-4 w-20" data-gsap="line-grow"></div>
-        </div>
-        <p class="text-zinc-500 text-base max-w-md" data-gsap="fade-up">
-          Experienced IT leaders driving strategic vision, commercial excellence, and technological innovation.
-        </p>
+      <!-- Section Title -->
+      <div class="mb-16" data-gsap="fade-up">
+        <h2 class="text-4xl md:text-5xl font-light text-zinc-500 leading-tight">
+          {!! $page->getBlockValue('directors_title_prefix', 'Board of') !!}
+        </h2>
+        <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mt-1">
+          {!! $page->getBlockValue('directors_title_main', 'Directors') !!}
+        </h2>
+        <div class="w-16 h-1.5 bg-primary mt-4" data-gsap="line-grow"></div>
       </div>
 
-      <!-- Executives Cards Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-        @foreach($executives as $index => $exec)
+      <!-- Directors Alternating List -->
+      <div class="space-y-24">
+        @foreach($directors as $index => $dir)
           @php
-            $photoPath = $exec['photo'] ?? 'themes/cdt/assets/photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg';
+            $photoPath = $dir['photo'] ?? 'themes/cdt/assets/photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg';
             $photoUrl = resolve_block_asset($photoPath);
-            $name = $exec['name'] ?? 'Executive';
-            $position = $exec['position'] ?? '';
-            $bio = $exec['bio'] ?? '';
-            $linkedin = $exec['linkedin_url'] ?? '';
-            $delay = ($index % 2) * 0.15;
+            $name = $dir['name'] ?? '';
+            $position = $dir['position'] ?? '';
+            $bio = $dir['bio'] ?? '';
+            $linkedin = $dir['linkedin_url'] ?? '';
+            $isEven = $index % 2 === 1;
           @endphp
-          <div class="bg-white rounded-3xl p-8 border border-zinc-200/80 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col justify-between group" data-gsap="fade-up" data-gsap-delay="{{ $delay }}">
-            <div>
-              <!-- Executive Header Info -->
-              <div class="flex items-start gap-6 mb-6 pb-6 border-b border-zinc-100">
-                <div class="w-24 h-24 md:w-28 md:h-28 rounded-2xl overflow-hidden shrink-0 bg-zinc-100 border border-zinc-200/60 shadow-inner">
-                  <img src="{{ $photoUrl }}" alt="{{ $name }}" title="{{ $name }}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
-                </div>
-                <div class="flex-1 min-w-0 pt-2">
-                  <div class="flex items-start justify-between gap-2">
-                    <h3 class="text-xl md:text-2xl font-bold text-zinc-900 leading-snug group-hover:text-primary transition-colors">
-                      {{ $name }}
-                    </h3>
-                    @if(!empty($linkedin) && $linkedin !== '#')
-                      <a href="{{ $linkedin }}" title="LinkedIn {{ $name }}" aria-label="LinkedIn {{ $name }}" target="_blank" rel="noopener" class="w-9 h-9 bg-zinc-100 rounded-full flex items-center justify-center text-zinc-500 hover:bg-primary hover:text-white transition-all shrink-0">
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                      </a>
-                    @endif
-                  </div>
-                  <p class="text-sm font-semibold text-primary mt-1.5 uppercase tracking-wider">
-                    {{ $position }}
-                  </p>
-                </div>
+
+          <div class="flex flex-col {{ $isEven ? 'lg:flex-row-reverse' : 'lg:flex-row' }} gap-12 lg:gap-16 items-center" data-gsap="fade-up">
+            <!-- Photo Column -->
+            <div class="w-full lg:w-[35%] shrink-0 relative group flex justify-center">
+              <!-- Decorative Dot Matrix Accent -->
+              <div class="absolute -bottom-6 {{ $isEven ? '-left-6' : '-right-6' }} w-32 h-32 bg-[radial-gradient(#ED1C24_2px,transparent_2px)] [background-size:12px_12px] opacity-70 -z-10 hidden sm:block"></div>
+              
+              <div class="relative aspect-[1025/1536] w-full max-w-[360px] rounded-2xl overflow-hidden shadow-2xl border border-zinc-100 transition-transform duration-500 group-hover:-translate-y-2">
+                <img src="{{ $photoUrl }}" alt="{{ $name }}" title="{{ $name }}" class="w-full h-full object-cover object-top">
+              </div>
+            </div>
+
+            <!-- Content Column -->
+            <div class="w-full lg:w-[65%] flex flex-col justify-center">
+              <div class="flex items-center gap-4 mb-2">
+                <h3 class="text-3xl md:text-4xl font-extrabold text-gray-900">
+                  {{ $name }}
+                </h3>
+                @if(!empty($linkedin) && $linkedin !== '#')
+                  <a href="{{ $linkedin }}" title="LinkedIn {{ $name }}" aria-label="LinkedIn {{ $name }}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-[#0A66C2] transition-colors shrink-0">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  </a>
+                @endif
               </div>
 
-              <!-- Executive Bio Text -->
-              <div class="text-zinc-600 text-sm md:text-base leading-relaxed space-y-3 font-light">
+              <p class="text-base font-bold text-primary uppercase tracking-wider mb-6">
+                {{ $position }}
+              </p>
+
+              <div class="text-zinc-600 text-base md:text-lg leading-relaxed space-y-4 font-light">
                 {!! $bio !!}
               </div>
             </div>
@@ -124,6 +113,76 @@
     </div>
   </section>
 
-  <!-- Shared Contact Section Partial -->
+  <!-- Section 2: Executive Management Grid -->
+  @php
+    $executives = $page->getBlockValue('management_list', []);
+    if (is_string($executives)) {
+        $executives = json_decode($executives, true) ?? [];
+    }
+  @endphp
+  @if(!empty($executives))
+  <section class="py-24 bg-zinc-50/60 border-t border-zinc-100" id="executive-management">
+    <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Title -->
+      <div class="mb-16" data-gsap="fade-up">
+        <h2 class="text-4xl md:text-5xl font-light text-zinc-500 leading-tight">
+          {!! $page->getBlockValue('executive_title_prefix', 'Executive') !!}
+        </h2>
+        <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mt-1">
+          {!! $page->getBlockValue('executive_title_main', 'Management') !!}
+        </h2>
+        <div class="w-16 h-1.5 bg-primary mt-4" data-gsap="line-grow"></div>
+      </div>
+
+      <!-- Grid Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        @foreach($executives as $index => $exec)
+          @php
+            $photoPath = $exec['photo'] ?? 'themes/cdt/assets/photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg';
+            $photoUrl = resolve_block_asset($photoPath);
+            $name = $exec['name'] ?? '';
+            $position = $exec['position'] ?? '';
+            $bio = $exec['bio'] ?? '';
+            $linkedin = $exec['linkedin_url'] ?? '';
+            $delay = ($index % 2) * 0.15;
+          @endphp
+
+          <div class="flex flex-col sm:flex-row gap-6 lg:gap-8 group bg-white p-6 md:p-8 rounded-3xl border border-zinc-200/80 shadow-sm hover:shadow-xl transition-all duration-500" data-gsap="fade-up" data-gsap-delay="{{ $delay }}">
+            <!-- Photo Column -->
+            <div class="w-full sm:w-[38%] shrink-0 relative aspect-[1025/1536] max-h-[320px] sm:max-h-none rounded-2xl overflow-hidden shadow-md group-hover:-translate-y-1 transition-transform duration-500">
+              <img src="{{ $photoUrl }}" alt="{{ $name }}" title="{{ $name }}" class="w-full h-full object-cover object-top">
+            </div>
+
+            <!-- Content Column -->
+            <div class="w-full sm:w-[62%] flex flex-col justify-start pt-1">
+              <div class="flex items-center justify-between gap-2 mb-1">
+                <h3 class="text-xl md:text-2xl font-extrabold text-gray-900 group-hover:text-primary transition-colors leading-snug">
+                  {{ $name }}
+                </h3>
+                @if(!empty($linkedin) && $linkedin !== '#')
+                  <a href="{{ $linkedin }}" title="LinkedIn {{ $name }}" aria-label="LinkedIn {{ $name }}" target="_blank" rel="noopener" class="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 hover:text-white hover:bg-[#0A66C2] transition-colors shrink-0">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  </a>
+                @endif
+              </div>
+
+              <p class="text-xs md:text-sm font-bold text-primary uppercase tracking-wider mb-4">
+                {{ $position }}
+              </p>
+
+              <div class="text-zinc-600 text-sm leading-relaxed font-light">
+                {!! $bio !!}
+              </div>
+            </div>
+          </div>
+        @endforeach
+      </div>
+
+    </div>
+  </section>
+  @endif
+
+  <!-- Shared Contact Partial -->
   @include('cdt::partials.contact-section')
 @endsection
