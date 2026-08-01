@@ -29,12 +29,21 @@ class PageController extends Controller
             return redirect($target, 301);
         }
 
+        // Enforce canonical localized URL redirect (e.g. /id/about-us -> /id/tentang-kami)
+        $canonicalUrl = $page->getUrl(app()->getLocale());
+        $currentUrl = request()->url();
+        if ($currentUrl !== $canonicalUrl) {
+            return redirect($canonicalUrl, 301);
+        }
+
         // Load blocks (shared across locales for now)
         $page->load(['blocks' => function ($q) {
             $q->whereNull('parent_block_id')
                 ->with('childBlocks')
                 ->orderBy('order');
         }]);
+
+        View::share('page', $page);
 
         $viewName = $this->resolveTemplate($page->template, $page->slug);
 

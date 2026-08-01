@@ -50,20 +50,62 @@
             "label": "Homepage",
             "description": "Main corporate landing page",
             "blocks": [
-                {"name": "hero_prefix", "type": "text", "label": "Hero Sub-Headline / Prefix (Smaller Light Text)", "default": "Speed Up Your"},
-                {"name": "hero_title", "type": "text", "label": "Hero Main Headline (Large Bold Text)", "default": "Transformation Journey"},
-                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "Accelerate IT transformation journey with our end-to-end expertise, from strategy to execution across cloud, security, and observability."},
-                {"name": "hero_image", "type": "media", "label": "Hero Background Image", "default": "themes/cdt/assets/banner_hero-DHYDqbF8.jpg"},
-                {"name": "expertise_title_prefix", "type": "text", "label": "Area of Expertise Title Prefix", "default": "Area Of"},
-                {"name": "expertise_title_main", "type": "text", "label": "Area of Expertise Title Main", "default": "Expertise"},
+                {
+                    "name": "hero_prefix",
+                    "type": "text",
+                    "label": "Hero Sub-Headline / Prefix (Smaller Light Text)",
+                    "default": "Speed Up Your"
+                },
+                {
+                    "name": "hero_title",
+                    "type": "text",
+                    "label": "Hero Main Headline (Large Bold Text)",
+                    "default": "Transformation Journey"
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "Accelerate IT transformation journey with our end-to-end expertise, from strategy to execution across cloud, security, and observability."
+                },
+                {
+                    "name": "hero_image",
+                    "type": "media",
+                    "label": "Hero Background Image",
+                    "default": "themes/cdt/assets/banner_hero-DHYDqbF8.jpg"
+                },
+                {
+                    "name": "expertise_title_prefix",
+                    "type": "text",
+                    "label": "Area of Expertise Title Prefix",
+                    "default": "Area Of"
+                },
+                {
+                    "name": "expertise_title_main",
+                    "type": "text",
+                    "label": "Area of Expertise Title Main",
+                    "default": "Expertise"
+                },
                 {
                     "name": "expertise_list",
                     "type": "repeater",
                     "label": "Area of Expertise Cards",
                     "children": [
-                        {"name": "image", "type": "media", "label": "Card Image"},
-                        {"name": "title", "type": "text", "label": "Card Title"},
-                        {"name": "description", "type": "textarea", "label": "Card Description"}
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Card Image"
+                        },
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Card Title"
+                        },
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "label": "Card Description"
+                        }
                     ],
                     "default": [
                         {
@@ -83,16 +125,38 @@
                         }
                     ]
                 },
-                {"name": "why_cdt_title_prefix", "type": "text", "label": "Why CDT Title Prefix", "default": "Why"},
-                {"name": "why_cdt_title_main", "type": "text", "label": "Why CDT Title Main", "default": "CDT?"},
+                {
+                    "name": "why_cdt_title_prefix",
+                    "type": "text",
+                    "label": "Why CDT Title Prefix",
+                    "default": "Why"
+                },
+                {
+                    "name": "why_cdt_title_main",
+                    "type": "text",
+                    "label": "Why CDT Title Main",
+                    "default": "CDT?"
+                },
                 {
                     "name": "why_cdt_list",
                     "type": "repeater",
                     "label": "Why CDT Feature Boxes",
                     "children": [
-                        {"name": "title", "type": "text", "label": "Box Title"},
-                        {"name": "description", "type": "textarea", "label": "Box Description"},
-                        {"name": "image", "type": "media", "label": "Box Background Image"}
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Box Title"
+                        },
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "label": "Box Description"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Box Background Image"
+                        }
                     ],
                     "default": [
                         {
@@ -117,7 +181,333 @@
         "about": {
             "label": "About Us",
             "description": "Company profile, vision mission, and core values",
-            "blocks": []
+            "blocks": [
+                {
+                    "name": "hero_subtitle_small",
+                    "type": "text",
+                    "label": "Hero Sub-Headline / Category",
+                    "default": "Company"
+                },
+                {
+                    "name": "hero_title",
+                    "type": "text",
+                    "label": "Hero Main Title",
+                    "default": "About Us"
+                },
+                {
+                    "name": "hero_bg_image",
+                    "type": "media",
+                    "label": "Hero Background Image",
+                    "default": "themes/cdt/assets/about-us-bg-DOuRQvF3.webp"
+                },
+                {
+                    "name": "intro_content",
+                    "type": "wysiwyg",
+                    "label": "Company Introduction & Overview",
+                    "default": "<p>As a part of CTI Group, PT. Central Data Technology (CDT) was established in 2011 as one of CTI\u2019s subsidiaries. With more than ten years of experience in the middle of high business demand and rapid market changes, CDT has transformed into an efficient company with future-oriented technology and continues to innovate to build an ecosystem that grows sustainability and transparently.</p><p>CDT focuses on three main solution areas in response to technological advances: Cloud, Security, and Observability. We call it the Three Waves of business growth catalyst.</p>"
+                },
+                {
+                    "name": "vision_title_prefix",
+                    "type": "text",
+                    "label": "Vision Title Prefix",
+                    "default": "Our"
+                },
+                {
+                    "name": "vision_title_main",
+                    "type": "text",
+                    "label": "Vision Title Main",
+                    "default": "Vision"
+                },
+                {
+                    "name": "vision_text",
+                    "type": "wysiwyg",
+                    "label": "Vision Statement",
+                    "default": "To be <span class=\"font-bold text-primary\">The Most Reliable</span> IT Transformation Solution Partner in Southeast Asia"
+                },
+                {
+                    "name": "mission_title_prefix",
+                    "type": "text",
+                    "label": "Mission Title Prefix",
+                    "default": "Our"
+                },
+                {
+                    "name": "mission_title_main",
+                    "type": "text",
+                    "label": "Mission Title Main",
+                    "default": "Mission"
+                },
+                {
+                    "name": "mission_list",
+                    "type": "repeater",
+                    "label": "Mission Items",
+                    "children": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Mission Highlight Keyword"
+                        },
+                        {
+                            "name": "text",
+                            "type": "wysiwyg",
+                            "label": "Mission Description"
+                        }
+                    ],
+                    "default": [
+                        {
+                            "title": "Continuous Growth",
+                            "text": "Providing Expertise to Enhance Customer's <span class=\"font-bold text-gray-900 group-hover:text-primary transition-colors duration-300\">Continuous Growth</span>"
+                        },
+                        {
+                            "title": "Intrapreneurship",
+                            "text": "Empowering Individual Development Through <span class=\"font-bold text-gray-900 group-hover:text-primary transition-colors duration-300\">Intrapreneurship</span>"
+                        }
+                    ]
+                },
+                {
+                    "name": "values_title_prefix",
+                    "type": "text",
+                    "label": "Core Values Title Prefix",
+                    "default": "Our"
+                },
+                {
+                    "name": "values_title_main",
+                    "type": "text",
+                    "label": "Core Values Title Main",
+                    "default": "Values"
+                },
+                {
+                    "name": "values_list",
+                    "type": "repeater",
+                    "label": "Core Values Cards",
+                    "children": [
+                        {
+                            "name": "number",
+                            "type": "text",
+                            "label": "Card Number (e.g. 01)"
+                        },
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Value Title"
+                        },
+                        {
+                            "name": "description",
+                            "type": "wysiwyg",
+                            "label": "Value Description"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Card Background Image"
+                        }
+                    ],
+                    "default": [
+                        {
+                            "number": "01",
+                            "title": "Integrity",
+                            "description": "CDT always ensures to provide customers the best customized products and services that will suit their IT transformation needs.",
+                            "image": "themes/cdt/assets/cdt_integrity-CJ_Wn1Pj.jpg"
+                        },
+                        {
+                            "number": "02",
+                            "title": "Humble",
+                            "description": "Providing a comprehensive approach, CDT warmly handles every customer\u2019s demand and helps them maximize their IT investment for a better future.",
+                            "image": "themes/cdt/assets/cdt_humble-DL07ndJ3.jpg"
+                        },
+                        {
+                            "number": "03",
+                            "title": "Strive for Excellence",
+                            "description": "CDT is committed to provide the best quality of product and service for every customer and ensures that strategy, planning, design, and implementation process are delivered according to customer\u2019s need.",
+                            "image": "themes/cdt/assets/cdt_strive-aIWH5kWJ.jpg"
+                        }
+                    ]
+                },
+                {
+                    "name": "awards_title_prefix",
+                    "type": "text",
+                    "label": "Awards Title Prefix",
+                    "default": "Our"
+                },
+                {
+                    "name": "awards_title_main",
+                    "type": "text",
+                    "label": "Awards Title Main",
+                    "default": "Awards & Certifications"
+                },
+                {
+                    "name": "awards_list",
+                    "type": "repeater",
+                    "label": "Awards Winner Cards",
+                    "children": [
+                        {
+                            "name": "year_badge",
+                            "type": "text",
+                            "label": "Year / Badge Label"
+                        },
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Award Title"
+                        },
+                        {
+                            "name": "subtitle",
+                            "type": "text",
+                            "label": "Award Subtitle / Category"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Award Trophy Image"
+                        }
+                    ],
+                    "default": [
+                        {
+                            "year_badge": "2026 Winner",
+                            "title": "AWS Partner Awards",
+                            "subtitle": "Consulting Partner of the Year",
+                            "image": "themes/cdt/assets/AWS-Partner-Awards-_-Consulting-Partner-of-the-Year-2026-BKvKVlUl.png"
+                        },
+                        {
+                            "year_badge": "2024 Winner",
+                            "title": "F5 Distributor",
+                            "subtitle": "Distributor of The Year",
+                            "image": "themes/cdt/assets/F5-Distributor-of-The-Year-2024-B03vXQX4.png"
+                        },
+                        {
+                            "year_badge": "2024 Winner",
+                            "title": "Hitachi Vantara",
+                            "subtitle": "Value Creation Champion",
+                            "image": "themes/cdt/assets/Hitachi-Vantara-ASEAN-Value-Creation-Champion-Distributor-of-the-Year-2024-BqETqcXW.png"
+                        }
+                    ]
+                },
+                {
+                    "name": "certifications_list",
+                    "type": "repeater",
+                    "label": "Certifications Badges",
+                    "children": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Certification Name"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Badge Image"
+                        }
+                    ],
+                    "default": [
+                        {
+                            "title": "AWS Advanced Networking",
+                            "image": "themes/cdt/assets/AWS-Advanced-Networking.png-CqnflKau.webp"
+                        },
+                        {
+                            "title": "AWS Cloud Practitioner",
+                            "image": "themes/cdt/assets/AWS-Cloud-Practitioner-Foundational.png-CKxbLjhl.webp"
+                        },
+                        {
+                            "title": "AWS Data Analytics",
+                            "image": "themes/cdt/assets/AWS-Data-Analytics.png-w73aLGVF.webp"
+                        },
+                        {
+                            "title": "AWS Database",
+                            "image": "themes/cdt/assets/AWS-Database.png-k1ub-sFJ.webp"
+                        },
+                        {
+                            "title": "AWS Developer Associate",
+                            "image": "themes/cdt/assets/AWS-Developer-Associate.png-BRL6XPPL.webp"
+                        },
+                        {
+                            "title": "AWS DevOps Engineer",
+                            "image": "themes/cdt/assets/AWS-DevOps-Engineer-Professional.png-aOMlO5b6.webp"
+                        },
+                        {
+                            "title": "AWS ML",
+                            "image": "themes/cdt/assets/AWS-ML.png-C47wFx21.webp"
+                        },
+                        {
+                            "title": "AWS SA Associate",
+                            "image": "themes/cdt/assets/AWS-SA-Associate.png-CaR14RsL.webp"
+                        },
+                        {
+                            "title": "AWS SA Professional",
+                            "image": "themes/cdt/assets/AWS-SA-Professional.png-CY9fJ7xp.webp"
+                        },
+                        {
+                            "title": "AWS SAP",
+                            "image": "themes/cdt/assets/AWS-SAP.png-CHYzIQvX.webp"
+                        }
+                    ]
+                },
+                {
+                    "name": "statements_title_prefix",
+                    "type": "text",
+                    "label": "Management Statements Title Prefix",
+                    "default": "Management"
+                },
+                {
+                    "name": "statements_title_main",
+                    "type": "text",
+                    "label": "Management Statements Title Main",
+                    "default": "Statements"
+                },
+                {
+                    "name": "statements_list",
+                    "type": "repeater",
+                    "label": "Management Statements Cards",
+                    "children": [
+                        {
+                            "name": "name",
+                            "type": "text",
+                            "label": "Executive Name"
+                        },
+                        {
+                            "name": "position",
+                            "type": "text",
+                            "label": "Position / Title"
+                        },
+                        {
+                            "name": "photo",
+                            "type": "media",
+                            "label": "Executive Photo"
+                        },
+                        {
+                            "name": "quote",
+                            "type": "wysiwyg",
+                            "label": "Featured Highlight Quote"
+                        },
+                        {
+                            "name": "content",
+                            "type": "wysiwyg",
+                            "label": "Full Statement Content"
+                        },
+                        {
+                            "name": "linkedin_url",
+                            "type": "text",
+                            "label": "LinkedIn Profile URL"
+                        }
+                    ],
+                    "default": [
+                        {
+                            "name": "Lugas Mondo Satrio",
+                            "position": "President Director",
+                            "photo": "themes/cdt/assets/Lugas_2-1025x1536.jpg-DPfoNaI3.webp",
+                            "quote": "Digitalization is a must, and transformation is a necessity, while technology is the key to survival. Technology also serves as a catalyst for encouraging sustainable growth in the face of tougher and fiercer business competition. The faster the company adopts technology, the faster the exchange of information, the wider the market reach, the better it is to provide services, and the more efficient it is to manage resources.",
+                            "content": "<p>Responding to business needs as well as technological advances, CDT focuses on three main solution areas in response to technological advances: <strong class=\"font-bold text-gray-800\">Observability, Security, and Cloud.</strong> We call it the Three Waves of Catalyst. Observability is a technology that must be owned by companies, considering that every technology requires collaboration and interconnection, thereby increasing the complexity of the people, systems, and processes involved in interactions.</p><p>Meanwhile, Security is required as an equally important component in protecting sensitive and crucial assets to prevent the company from digital theft and fraud... Lastly, we integrate Cloud technology into the solution mix to provide added value without sacrificing efficiency. With CDT, we aim to expedite your digital transformation journey for sustainable business growth.</p>",
+                            "linkedin_url": "#"
+                        },
+                        {
+                            "name": "Fenny",
+                            "position": "Director",
+                            "photo": "themes/cdt/assets/Fenny_3-1025x1536.jpg-C5J6V2NR.webp",
+                            "quote": "CDT is a company with more than ten years of experience in IT, especially in the Enterprise market. Business demands and rapid market changes make CDT transform into an efficient company with future-oriented technology and continue to innovate to build an ecosystem that grows sustainably and transparently.",
+                            "content": "<p>As a manifestation of what we had planned, CDT succeeded in building Cloud technology competence and achieved the best AWS Advanced Consulting Partner in 2022. CDT has more than 500 customers, 150 of them Cloud-based ones, both from home and abroad. It doesn\u2019t stop there; CDT is also innovating by launching a single cloud dashboard which we named <strong class=\"font-bold text-gray-800\">Nebula Cloud Console (NCC)</strong> in August 2022.</p><p>With a work culture that upholds Integrity, Humble, and Strives for Excellence, CDT continues to provide breakthroughs for its customers on their digital transformation journey. Not only experience, but CDT also has broad competencies, a reliable team of certified technicians, and an ecosystem network that can synergize to create complete and comprehensive solutions in almost all industrial sectors.</p>",
+                            "linkedin_url": "#"
+                        }
+                    ]
+                }
+            ]
         },
         "management": {
             "label": "Management",

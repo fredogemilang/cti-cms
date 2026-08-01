@@ -412,9 +412,6 @@ if (! function_exists('current_page_localized_url')) {
 
         // 2. If viewing a Page
         $page = view()->shared('page') ?? null;
-        if ($page instanceof Page) {
-            return $page->getUrl($targetLocale);
-        }
 
         // 3. Fallback: Parse request path
         $path = ltrim(request()->path(), '/');
@@ -422,15 +419,24 @@ if (! function_exists('current_page_localized_url')) {
         // Strip current non-default locale prefix if present at start of path
         $available = available_locales();
         $nonDefault = array_values(array_filter($available, fn ($l) => $l !== $defaultLocale));
+        $cleanPath = $path;
         foreach ($nonDefault as $l) {
-            if ($path === $l) {
-                $path = '';
+            if ($cleanPath === $l) {
+                $cleanPath = '';
                 break;
             }
-            if (str_starts_with($path, $l.'/')) {
-                $path = substr($path, strlen($l) + 1);
+            if (str_starts_with($cleanPath, $l.'/')) {
+                $cleanPath = substr($cleanPath, strlen($l) + 1);
                 break;
             }
+        }
+
+        if (! $page && $cleanPath !== '' && ! str_contains($cleanPath, '/')) {
+            $page = Page::findByLocalizedSlug($cleanPath);
+        }
+
+        if ($page instanceof Page) {
+            return $page->localizedUrl($targetLocale);
         }
 
         // Home page
