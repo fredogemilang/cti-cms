@@ -227,6 +227,17 @@
           $t = $j->terms->first();
           $catSlug = $t ? $t->slug : 'general';
           $catLabel = $t ? $t->name : 'General';
+
+          $rawResp = $j->getMeta('responsibilities', []);
+          $responsibilities = is_array($rawResp)
+              ? array_values(array_filter($rawResp))
+              : array_values(array_filter(explode("\n", strip_tags(str_replace(['<li>', '</li>', '<br>', '<br/>'], ["\n", '', "\n", "\n"], (string)$rawResp)))));
+
+          $rawReq = $j->getMeta('requirements', []);
+          $requirements = is_array($rawReq)
+              ? array_values(array_filter($rawReq))
+              : array_values(array_filter(explode("\n", strip_tags(str_replace(['<li>', '</li>', '<br>', '<br/>'], ["\n", '', "\n", "\n"], (string)$rawReq)))));
+
           return [
               'id' => $j->id,
               'title' => $j->title,
@@ -235,8 +246,8 @@
               'location' => $j->getMeta('location', 'DKI Jakarta'),
               'type' => $j->getMeta('employment_type', 'Full-time'),
               'shortDesc' => $j->getMeta('short_description', $j->excerpt ?? ''),
-              'responsibilities' => array_values(array_filter(explode("\n", strip_tags(str_replace(['<li>', '</li>', '<br>', '<br/>'], ["\n", '', "\n", "\n"], $j->getMeta('responsibilities', '')))))),
-              'requirements' => array_values(array_filter(explode("\n", strip_tags(str_replace(['<li>', '</li>', '<br>', '<br/>'], ["\n", '', "\n", "\n"], $j->getMeta('requirements', '')))))),
+              'responsibilities' => $responsibilities,
+              'requirements' => $requirements,
           ];
       })->toArray();
 
