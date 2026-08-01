@@ -7,7 +7,7 @@
   <section class="relative h-[400px] md:h-[500px] flex items-center pt-20 overflow-hidden bg-gray-900 text-white">
     <!-- Immersive background -->
     <div class="absolute inset-0 z-0">
-      <img src="{{ resolve_block_asset('photo-1423666639041-f56000c27a9a-w2070.jpg') }}"
+      <img src="{{ resolve_block_asset($page->getBlockValue('hero_image', 'photo-1423666639041-f56000c27a9a-w2070.jpg')) }}"
         class="w-full h-full object-cover object-center" alt="Contact Us Background">
       <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/95 to-transparent w-full lg:w-3/4"></div>
     </div>
@@ -22,7 +22,7 @@
         </nav>
 
         <div class="overflow-hidden mb-2">
-          <p class="text-lg md:text-xl font-light text-white/90" data-gsap="fade-up">{{ t('contact.hero_subtitle', 'Get in Touch') }}</p>
+          <p class="text-lg md:text-xl font-light text-white/90" data-gsap="fade-up">{{ $page->getBlockValue('hero_subtitle', 'Get in Touch') }}</p>
         </div>
         <div class="overflow-hidden mb-6">
           <h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold leading-tight" data-gsap="fade-up" data-gsap-delay="0.1">
@@ -41,10 +41,10 @@
         <!-- Left: Office & Contact Info -->
         <div class="lg:col-span-5 space-y-8" data-gsap="fade-up">
           <div>
-            <span class="text-xs font-bold text-primary uppercase tracking-widest block mb-2">{{ t('contact.office_label', 'Our Office') }}</span>
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Central Data Technology</h2>
+            <span class="text-xs font-bold text-primary uppercase tracking-widest block mb-2">{{ $page->getBlockValue('office_label', 'Our Office') }}</span>
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-6">{{ $page->getBlockValue('office_heading', 'Central Data Technology') }}</h2>
             <p class="text-zinc-600 font-light leading-relaxed max-w-md">
-              {{ t('contact.office_desc', 'CDT is ready to help your enterprise adopt modern IT infrastructures, cloud architectures, cybersecurity, and observability solutions.') }}
+              {{ $page->getBlockValue('office_desc', 'CDT is ready to help your enterprise adopt modern IT infrastructures, cloud architectures, cybersecurity, and observability solutions.') }}
             </p>
           </div>
 
@@ -52,7 +52,7 @@
           <div class="space-y-8">
             <!-- Headquarter Section -->
             <div class="border-b border-zinc-200/80 pb-6">
-              <span class="text-[10px] font-bold text-primary uppercase tracking-widest block mb-3">{{ t('contact.headquarter_label', 'Headquarter') }}</span>
+              <span class="text-[10px] font-bold text-primary uppercase tracking-widest block mb-3">{{ $page->getBlockValue('headquarter_label', 'Headquarter') }}</span>
               <div class="space-y-4">
                 <!-- Address -->
                 <div class="flex items-start gap-4">
@@ -100,7 +100,7 @@
 
             <!-- Customer Response Center Section -->
             <div>
-              <span class="text-[10px] font-bold text-primary uppercase tracking-widest block mb-3">{{ t('contact.crc_label', 'Customer Response Center') }}</span>
+              <span class="text-[10px] font-bold text-primary uppercase tracking-widest block mb-3">{{ $page->getBlockValue('crc_label', 'Customer Response Center') }}</span>
               <div class="space-y-4">
                 <!-- Hotline -->
                 <div class="flex items-start gap-4">
@@ -111,7 +111,7 @@
                   </div>
                   <div>
                     <p class="text-sm text-zinc-600 font-light">
-                      Hotline: {!! safe_phone(setting('contact_phone_crc', '(021) 30122048'), 'hover:text-primary transition-colors font-semibold') !!}
+                      Hotline: {!! safe_phone($page->getBlockValue('crc_phone', setting('contact_phone_crc', '(021) 30122048')), 'hover:text-primary transition-colors font-semibold') !!}
                     </p>
                   </div>
                 </div>
@@ -125,7 +125,7 @@
                   </div>
                   <div>
                     <p class="text-sm text-zinc-600 font-light">
-                      Email: {!! safe_email(setting('contact_email_crc', 'crc@centraldatatech.com')) !!}
+                      Email: {!! safe_email($page->getBlockValue('crc_email', setting('contact_email_crc', 'crc@centraldatatech.com'))) !!}
                     </p>
                   </div>
                 </div>
@@ -136,7 +136,7 @@
           <!-- Embed Google Maps -->
           <div class="rounded-3xl overflow-hidden border border-zinc-200 shadow-sm h-64 w-full">
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2548969209906!2d106.82087969999999!3d-6.230088800000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e2fb43fa4f%3A0x768b341c07865401!2sPT%20Central%20Data%20Technology!5e0!3m2!1sen!2sid!4v1781757203148!5m2!1sen!2sid" 
+              src="{{ $page->getBlockValue('maps_embed_url', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2548969209906!2d106.82087969999999!3d-6.230088800000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e2fb43fa4f%3A0x768b341c07865401!2sPT%20Central%20Data%20Technology!5e0!3m2!1sen!2sid!4v1781757203148!5m2!1sen!2sid') }}" 
               class="w-full h-full border-none" 
               allowfullscreen="" 
               loading="lazy" 
@@ -148,9 +148,9 @@
         <!-- Right: Modern Form Card -->
         <div class="lg:col-span-7 bg-white rounded-3xl border border-zinc-200/60 p-8 md:p-12 shadow-sm" data-gsap="fade-up" data-gsap-delay="0.1">
           <div class="mb-8">
-            <span class="text-xs font-bold text-primary uppercase tracking-widest block mb-2">{{ t('contact.form_label', 'Message Us') }}</span>
-            <h3 class="text-2xl font-bold text-gray-900">{{ t('contact.form_heading', 'Send us a request') }}</h3>
-            <p class="text-sm text-zinc-400 mt-1 font-light">{{ t('contact.form_subheading', "Fill out the form below, and we'll connect you with a solutions expert.") }}</p>
+            <span class="text-xs font-bold text-primary uppercase tracking-widest block mb-2">{{ $page->getBlockValue('form_label', 'Message Us') }}</span>
+            <h3 class="text-2xl font-bold text-gray-900">{{ $page->getBlockValue('form_heading', 'Send us a request') }}</h3>
+            <p class="text-sm text-zinc-400 mt-1 font-light">{{ $page->getBlockValue('form_subheading', "Fill out the form below, and we'll connect you with a solutions expert.") }}</p>
           </div>
 
           @php

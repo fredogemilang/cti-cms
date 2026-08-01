@@ -752,7 +752,86 @@
         "contact": {
             "label": "Contact Us",
             "description": "Office locations, map, and contact form slot",
-            "blocks": []
+            "blocks": [
+                {
+                    "name": "hero_subtitle",
+                    "type": "text",
+                    "label": "Hero Subtitle / Tagline",
+                    "default": "Get in Touch"
+                },
+                {
+                    "name": "hero_image",
+                    "type": "media",
+                    "label": "Hero Background Image",
+                    "default": "photo-1423666639041-f56000c27a9a-w2070.jpg"
+                },
+                {
+                    "name": "office_label",
+                    "type": "text",
+                    "label": "Office Section Badge Label",
+                    "default": "Our Office"
+                },
+                {
+                    "name": "office_heading",
+                    "type": "text",
+                    "label": "Office Section Main Heading",
+                    "default": "Central Data Technology"
+                },
+                {
+                    "name": "office_desc",
+                    "type": "textarea",
+                    "label": "Office Section Description",
+                    "default": "CDT is ready to help your enterprise adopt modern IT infrastructures, cloud architectures, cybersecurity, and observability solutions."
+                },
+                {
+                    "name": "headquarter_label",
+                    "type": "text",
+                    "label": "Headquarter Badge Label",
+                    "default": "Headquarter"
+                },
+                {
+                    "name": "crc_label",
+                    "type": "text",
+                    "label": "Customer Response Center (CRC) Badge Label",
+                    "default": "Customer Response Center"
+                },
+                {
+                    "name": "crc_phone",
+                    "type": "text",
+                    "label": "CRC Hotline Phone Number",
+                    "default": "(021) 30122048"
+                },
+                {
+                    "name": "crc_email",
+                    "type": "text",
+                    "label": "CRC Email Address",
+                    "default": "crc@centraldatatech.com"
+                },
+                {
+                    "name": "maps_embed_url",
+                    "type": "textarea",
+                    "label": "Google Maps Embed Iframe URL",
+                    "default": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2548969209906!2d106.82087969999999!3d-6.230088800000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3e2fb43fa4f%3A0x768b341c07865401!2sPT%20Central%20Data%20Technology!5e0!3m2!1sen!2sid!4v1781757203148!5m2!1sen!2sid"
+                },
+                {
+                    "name": "form_label",
+                    "type": "text",
+                    "label": "Form Card Small Badge Label",
+                    "default": "Message Us"
+                },
+                {
+                    "name": "form_heading",
+                    "type": "text",
+                    "label": "Form Card Main Heading",
+                    "default": "Send us a request"
+                },
+                {
+                    "name": "form_subheading",
+                    "type": "textarea",
+                    "label": "Form Card Subheading",
+                    "default": "Fill out the form below, and we'll connect you with a solutions expert."
+                }
+            ]
         }
     },
     "seed_pages": [
