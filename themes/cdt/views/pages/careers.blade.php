@@ -115,7 +115,10 @@
     </section>
 
     <!-- ═══════════════ SECTION 3: LIFE AT CDT ═══════════════ -->
-    <section id="life-at-cdt" class="py-24 bg-zinc-50 relative overflow-hidden">
+    <section id="life-at-cdt" 
+      x-data="{ previewImage: null, isPaused: false }" 
+      @keydown.escape.window="previewImage = null; isPaused = false"
+      class="py-24 bg-zinc-50 relative overflow-hidden">
       <!-- Custom CSS for marquee tracks -->
       <style>
         @keyframes marquee-left {
@@ -133,8 +136,10 @@
           animation: marquee-right 40s linear infinite;
         }
         .marquee-row:hover .animate-marquee-left,
-        .marquee-row:hover .animate-marquee-right {
-          animation-play-state: paused;
+        .marquee-row:hover .animate-marquee-right,
+        .marquee-paused .animate-marquee-left,
+        .marquee-paused .animate-marquee-right {
+          animation-play-state: paused !important;
         }
       </style>
 
@@ -178,7 +183,7 @@
         @endphp
 
         <!-- Marquee Tracks (3 Rows) -->
-        <div class="relative w-full overflow-hidden">
+        <div class="relative w-full overflow-hidden" :class="{ 'marquee-paused': isPaused || previewImage }">
           <div class="pointer-events-none absolute inset-y-0 left-0 w-24 sm:w-48 bg-gradient-to-r from-zinc-50 via-zinc-50/70 to-transparent z-10"></div>
           <div class="pointer-events-none absolute inset-y-0 right-0 w-24 sm:w-48 bg-gradient-to-l from-zinc-50 via-zinc-50/70 to-transparent z-10"></div>
 
@@ -187,9 +192,15 @@
             <div class="flex gap-6 animate-marquee-left whitespace-nowrap w-max">
               <div class="flex gap-6 shrink-0">
                 @foreach(array_merge($row1, $row1) as $img)
-                  <div class="life-card w-[320px] rounded-3xl overflow-hidden border border-zinc-200/80 bg-white shadow-sm hover:shadow-md transition-all duration-300 flex flex-col shrink-0">
-                    <div class="w-full aspect-video overflow-hidden">
-                      <img src="{{ resolve_block_asset($img) }}" alt="CDT Culture Life" class="w-full h-full object-cover">
+                  <div @click="previewImage = '{{ resolve_block_asset($img) }}'; isPaused = true" 
+                    class="life-card w-[320px] rounded-3xl overflow-hidden border border-zinc-200/80 bg-white shadow-sm hover:shadow-xl hover:scale-[1.02] cursor-pointer transition-all duration-300 flex flex-col shrink-0 group">
+                    <div class="w-full aspect-video overflow-hidden relative">
+                      <img src="{{ resolve_block_asset($img) }}" alt="CDT Culture Life" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span class="w-10 h-10 rounded-full bg-white/90 text-dark flex items-center justify-center shadow-lg">
+                          <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 @endforeach
@@ -202,9 +213,15 @@
             <div class="flex gap-6 animate-marquee-right whitespace-nowrap w-max">
               <div class="flex gap-6 shrink-0">
                 @foreach(array_merge($row2, $row2) as $img)
-                  <div class="life-card w-[320px] rounded-3xl overflow-hidden border border-zinc-200/80 bg-white shadow-sm hover:shadow-md transition-all duration-300 flex flex-col shrink-0">
-                    <div class="w-full aspect-video overflow-hidden">
-                      <img src="{{ resolve_block_asset($img) }}" alt="CDT Culture Life" class="w-full h-full object-cover">
+                  <div @click="previewImage = '{{ resolve_block_asset($img) }}'; isPaused = true" 
+                    class="life-card w-[320px] rounded-3xl overflow-hidden border border-zinc-200/80 bg-white shadow-sm hover:shadow-xl hover:scale-[1.02] cursor-pointer transition-all duration-300 flex flex-col shrink-0 group">
+                    <div class="w-full aspect-video overflow-hidden relative">
+                      <img src="{{ resolve_block_asset($img) }}" alt="CDT Culture Life" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span class="w-10 h-10 rounded-full bg-white/90 text-dark flex items-center justify-center shadow-lg">
+                          <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 @endforeach
@@ -217,9 +234,15 @@
             <div class="flex gap-6 animate-marquee-left whitespace-nowrap w-max">
               <div class="flex gap-6 shrink-0">
                 @foreach(array_merge($row3, $row3) as $img)
-                  <div class="life-card w-[320px] rounded-3xl overflow-hidden border border-zinc-200/80 bg-white shadow-sm hover:shadow-md transition-all duration-300 flex flex-col shrink-0">
-                    <div class="w-full aspect-video overflow-hidden">
-                      <img src="{{ resolve_block_asset($img) }}" alt="CDT Culture Life" class="w-full h-full object-cover">
+                  <div @click="previewImage = '{{ resolve_block_asset($img) }}'; isPaused = true" 
+                    class="life-card w-[320px] rounded-3xl overflow-hidden border border-zinc-200/80 bg-white shadow-sm hover:shadow-xl hover:scale-[1.02] cursor-pointer transition-all duration-300 flex flex-col shrink-0 group">
+                    <div class="w-full aspect-video overflow-hidden relative">
+                      <img src="{{ resolve_block_asset($img) }}" alt="CDT Culture Life" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                      <div class="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span class="w-10 h-10 rounded-full bg-white/90 text-dark flex items-center justify-center shadow-lg">
+                          <svg class="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 @endforeach
@@ -228,6 +251,40 @@
           </div>
 
         </div>
+
+        <!-- Image Preview Lightbox Modal -->
+        <template x-teleport="body">
+          <div 
+            x-show="previewImage"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click="previewImage = null; isPaused = false"
+            class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-8"
+            style="display: none;">
+            
+            <div 
+              @click.stop 
+              class="relative max-w-5xl max-h-[85vh] rounded-3xl overflow-hidden shadow-2xl bg-zinc-900 border border-white/10 flex flex-col items-center">
+              
+              <!-- Close Button -->
+              <button 
+                type="button" 
+                @click="previewImage = null; isPaused = false"
+                class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+
+              <img 
+                :src="previewImage" 
+                alt="Life at CDT Preview" 
+                class="max-w-full max-h-[80vh] object-contain rounded-2xl">
+            </div>
+          </div>
+        </template>
       </div>
     </section>
 
