@@ -68,6 +68,8 @@
                     </p>
                   </div>
                 </div>
+
+                <!-- Phone & Fax -->
                 <div class="flex items-start gap-4">
                   <div class="w-10 h-10 bg-red-50 text-primary rounded-xl flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,11 +126,6 @@
                   <div>
                     <p class="text-sm text-zinc-600 font-light">
                       Email: {!! safe_email(setting('contact_email_crc', 'crc@centraldatatech.com')) !!}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>com</a>
                     </p>
                   </div>
                 </div>
