@@ -26,7 +26,7 @@
           <span class="text-white font-bold" aria-current="page">{{ $page->getBlockValue('hero_title', 'Management') }}</span>
         </nav>
 
-        <div class="overflow-hidden mb-2"><h2 class="text-xl md:text-2xl font-light" data-gsap="fade-up">{{ $page->getBlockValue('hero_subtitle_small', 'About Us') }}</h2></div>
+        <div class="overflow-hidden mb-2"><span class="block text-xl md:text-2xl font-light" data-gsap="fade-up">{{ $page->getBlockValue('hero_subtitle_small', 'About Us') }}</span></div>
         <div class="overflow-hidden"><h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold leading-tight" data-gsap="fade-up" data-gsap-delay="0.1">
           {{ $page->getBlockValue('hero_title', 'Management') }}
         </h1></div>
@@ -55,8 +55,10 @@
       @endphp
       <div class="mb-24 md:mb-32">
         <div class="mb-16" data-gsap="fade-up">
-          <h2 class="text-4xl md:text-5xl font-light text-zinc-500 leading-tight">{!! $page->getBlockValue('directors_title_prefix', 'Board of') !!}</h2>
-          <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mt-1 mb-4">{!! $page->getBlockValue('directors_title_main', 'Directors') !!}</h2>
+          <h2 class="text-4xl md:text-5xl leading-tight mb-4">
+            <span class="font-light text-zinc-500 block">{!! $page->getBlockValue('directors_title_prefix', 'Board of') !!}</span>
+            <span class="font-extrabold text-gray-900 block mt-1">{!! $page->getBlockValue('directors_title_main', 'Directors') !!}</span>
+          </h2>
           <div class="w-16 h-1.5 bg-primary"></div>
         </div>
 
@@ -173,8 +175,10 @@
       @if(!empty($executives))
       <div class="pt-16">
         <div class="mb-16" data-gsap="fade-up">
-          <h2 class="text-4xl md:text-5xl font-light text-zinc-500 leading-tight">{!! $page->getBlockValue('executive_title_prefix', 'Executive') !!}</h2>
-          <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mt-1 mb-4">{!! $page->getBlockValue('executive_title_main', 'Management') !!}</h2>
+          <h2 class="text-4xl md:text-5xl leading-tight mb-4">
+            <span class="font-light text-zinc-500 block">{!! $page->getBlockValue('executive_title_prefix', 'Executive') !!}</span>
+            <span class="font-extrabold text-gray-900 block mt-1">{!! $page->getBlockValue('executive_title_main', 'Management') !!}</span>
+          </h2>
           <div class="w-16 h-1.5 bg-primary"></div>
         </div>
 
