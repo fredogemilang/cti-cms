@@ -581,3 +581,41 @@ if (! function_exists('localized_url')) {
         return url($cleanPath !== '' ? "/{$cleanPath}" : '/');
     }
 }
+
+if (! function_exists('safe_email')) {
+    /**
+     * Render an email address safely via JavaScript (Alpine.js / Base64) to prevent Cloudflare
+     * email obfuscation from turning mailto links into /cdn-cgi/l/email-protection (which causes 404s in Ahrefs).
+     */
+    function safe_email(?string $email, string $class = 'text-primary hover:underline font-medium', bool $isLink = true): string
+    {
+        if (empty($email)) {
+            return '';
+        }
+
+        $base64 = base64_encode($email);
+
+        if (! $isLink) {
+            return '<span x-data="{ e: atob(\''.$base64.'\') }" x-text="e"></span>';
+        }
+
+        return '<a href="#" x-data="{ e: atob(\''.$base64.'\') }" @click.prevent="window.location.href = \'mailto:\' + e" x-text="e" class="'.e($class).'"></a>';
+    }
+}
+
+if (! function_exists('safe_phone')) {
+    /**
+     * Render a phone number safely with custom CSS class and setting support.
+     */
+    function safe_phone(?string $phone, string $class = 'hover:text-primary transition-colors font-medium', ?string $tel = null): string
+    {
+        if (empty($phone)) {
+            return '';
+        }
+
+        $telNumber = $tel ?? preg_replace('/[^\d+]/', '', $phone);
+
+        return '<a href="tel:'.e($telNumber).'" class="'.e($class).'">'.e($phone).'</a>';
+    }
+}
+

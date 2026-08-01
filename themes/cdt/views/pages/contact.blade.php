@@ -68,17 +68,15 @@
                     </p>
                   </div>
                 </div>
-
-                <!-- Phone & Fax -->
                 <div class="flex items-start gap-4">
                   <div class="w-10 h-10 bg-red-50 text-primary rounded-xl flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 011.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                     </svg>
                   </div>
                   <div class="text-sm text-zinc-600 font-light space-y-1">
-                    <p>Phone: <a href="tel:+622180622200" class="hover:text-primary transition-colors font-medium">(+62 21) 80622200</a></p>
-                    <p>Fax: <span class="font-medium">(+62 21) 80622211</span></p>
+                    <p>Phone: {!! safe_phone(setting('contact_phone_hq', '(+62 21) 80622200')) !!}</p>
+                    <p>Fax: <span class="font-medium">{{ setting('contact_fax', '(+62 21) 80622211') }}</span></p>
                   </div>
                 </div>
 
@@ -91,7 +89,7 @@
                   </div>
                   <div>
                     <p class="text-sm text-zinc-600 font-light">
-                      Email: <a href="mailto:marketing@centraldatatech.com" class="text-primary hover:underline font-medium">marketing@centraldatatech.com</a>
+                      Email: {!! safe_email(setting('contact_email_marketing', 'marketing@centraldatatech.com')) !!}
                     </p>
                   </div>
                 </div>
@@ -111,7 +109,7 @@
                   </div>
                   <div>
                     <p class="text-sm text-zinc-600 font-light">
-                      Hotline: <a href="tel:+622130122048" class="hover:text-primary transition-colors font-semibold">(021) 30122048</a>
+                      Hotline: {!! safe_phone(setting('contact_phone_crc', '(021) 30122048'), 'hover:text-primary transition-colors font-semibold') !!}
                     </p>
                   </div>
                 </div>
@@ -125,7 +123,12 @@
                   </div>
                   <div>
                     <p class="text-sm text-zinc-600 font-light">
-                      Email: <a href="mailto:crc@centraldatatech.com" class="text-primary hover:underline font-medium">crc@centraldatatech.com</a>
+                      Email: {!! safe_email(setting('contact_email_crc', 'crc@centraldatatech.com')) !!}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>com</a>
                     </p>
                   </div>
                 </div>
