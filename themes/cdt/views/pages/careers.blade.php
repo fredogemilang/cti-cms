@@ -165,13 +165,19 @@
                 'themes/cdt/assets/images/life-at/13.png',
               ];
           }
-          $half = ceil(count($gallery) / 2);
-          $row1 = array_slice($gallery, 0, $half);
-          $row2 = array_slice($gallery, $half);
+          $total = count($gallery);
+          $chunkSize = max(1, (int) ceil($total / 3));
+          $chunks = array_chunk($gallery, $chunkSize);
+
+          $row1 = $chunks[0] ?? $gallery;
+          $row2 = $chunks[1] ?? $row1;
+          $row3 = $chunks[2] ?? $row1;
+
           if (empty($row2)) $row2 = $row1;
+          if (empty($row3)) $row3 = $row1;
         @endphp
 
-        <!-- Marquee Tracks -->
+        <!-- Marquee Tracks (3 Rows) -->
         <div class="relative w-full overflow-hidden">
           <div class="pointer-events-none absolute inset-y-0 left-0 w-24 sm:w-48 bg-gradient-to-r from-zinc-50 via-zinc-50/70 to-transparent z-10"></div>
           <div class="pointer-events-none absolute inset-y-0 right-0 w-24 sm:w-48 bg-gradient-to-l from-zinc-50 via-zinc-50/70 to-transparent z-10"></div>
@@ -192,10 +198,25 @@
           </div>
 
           <!-- Row 2: Marquee Right -->
-          <div class="marquee-row overflow-hidden w-full relative py-2">
+          <div class="marquee-row overflow-hidden w-full relative mb-6 py-2">
             <div class="flex gap-6 animate-marquee-right whitespace-nowrap w-max">
               <div class="flex gap-6 shrink-0">
                 @foreach(array_merge($row2, $row2) as $img)
+                  <div class="life-card w-[320px] rounded-3xl overflow-hidden border border-zinc-200/80 bg-white shadow-sm hover:shadow-md transition-all duration-300 flex flex-col shrink-0">
+                    <div class="w-full aspect-video overflow-hidden">
+                      <img src="{{ resolve_block_asset($img) }}" alt="CDT Culture Life" class="w-full h-full object-cover">
+                    </div>
+                  </div>
+                @endforeach
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Marquee Left -->
+          <div class="marquee-row overflow-hidden w-full relative py-2">
+            <div class="flex gap-6 animate-marquee-left whitespace-nowrap w-max">
+              <div class="flex gap-6 shrink-0">
+                @foreach(array_merge($row3, $row3) as $img)
                   <div class="life-card w-[320px] rounded-3xl overflow-hidden border border-zinc-200/80 bg-white shadow-sm hover:shadow-md transition-all duration-300 flex flex-col shrink-0">
                     <div class="w-full aspect-video overflow-hidden">
                       <img src="{{ resolve_block_asset($img) }}" alt="CDT Culture Life" class="w-full h-full object-cover">
