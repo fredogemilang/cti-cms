@@ -35,7 +35,7 @@
   </section>
 
   <!-- Management Section V2: Premium Editorial Layout -->
-  <section class="pt-16 pb-16 md:pt-24 md:pb-24 bg-white relative selection:bg-primary selection:text-white">
+  <section class="pt-16 pb-16 md:pt-24 md:pb-24 bg-white relative overflow-hidden selection:bg-primary selection:text-white">
 
     <!-- Subtle Background Element -->
     <div
@@ -76,9 +76,9 @@
 
             @if(!$isEven)
               <!-- Lugas Mondo Satrio (Image Left) -->
-              <div class="flex flex-col md:flex-row items-center gap-10 md:gap-16 lg:gap-24 group" data-gsap="fade-up">
-                <!-- Image (35% width) -->
-                <div class="w-full md:w-[35%] shrink-0 relative">
+              <div class="flex flex-col md:flex-row items-center gap-10 md:gap-16 lg:gap-20 group" data-gsap="fade-up">
+                <!-- Image Column -->
+                <div class="w-full relative" style="max-width: 340px; flex-shrink: 0;">
                   <div
                     class="relative w-full aspect-[1025/1536] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-700 group-hover:-translate-y-2">
                     <img src="{{ $photoUrl }}"
@@ -89,11 +89,11 @@
                   </div>
                   <!-- Decorative Dots -->
                   <div
-                    class="absolute -bottom-6 -right-6 w-24 h-24 bg-[radial-gradient(#ED1C24_2px,transparent_2px)] [background-size:10px_10px] -z-10 opacity-30 hidden lg:block">
+                    class="absolute -bottom-4 right-0 w-24 h-24 bg-[radial-gradient(#ED1C24_2px,transparent_2px)] [background-size:10px_10px] -z-10 opacity-30 hidden lg:block">
                   </div>
                 </div>
-                <!-- Text -->
-                <div class="w-full md:w-[65%] flex flex-col justify-center">
+                <!-- Text Column -->
+                <div class="w-full md:flex-1 flex flex-col justify-center">
                   <div class="mb-6">
                     <h3 class="text-3xl md:text-5xl font-bold text-gray-900 mb-2">{{ $name }}</h3>
                     <p class="text-lg md:text-xl text-primary font-medium tracking-wide uppercase">{{ $position }}</p>
@@ -117,10 +117,10 @@
               </div>
             @else
               <!-- Fenny (Image Right) -->
-              <div class="flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16 lg:gap-24 group"
+              <div class="flex flex-col md:flex-row-reverse items-center gap-10 md:gap-16 lg:gap-20 group"
                 data-gsap="fade-up">
-                <!-- Image (35% width) -->
-                <div class="w-full md:w-[35%] shrink-0 relative">
+                <!-- Image Column -->
+                <div class="w-full relative" style="max-width: 340px; flex-shrink: 0;">
                   <div
                     class="relative w-full aspect-[1025/1536] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-700 group-hover:-translate-y-2">
                     <img src="{{ $photoUrl }}"
@@ -131,11 +131,11 @@
                   </div>
                   <!-- Decorative Dots -->
                   <div
-                    class="absolute -bottom-6 -left-6 w-24 h-24 bg-[radial-gradient(#ED1C24_2px,transparent_2px)] [background-size:10px_10px] -z-10 opacity-30 hidden lg:block">
+                    class="absolute -bottom-4 left-0 w-24 h-24 bg-[radial-gradient(#ED1C24_2px,transparent_2px)] [background-size:10px_10px] -z-10 opacity-30 hidden lg:block">
                   </div>
                 </div>
-                <!-- Text -->
-                <div class="w-full md:w-[65%] flex flex-col justify-center text-left md:text-right">
+                <!-- Text Column -->
+                <div class="w-full md:flex-1 flex flex-col justify-center text-left md:text-right">
                   <div class="mb-6">
                     <h3 class="text-3xl md:text-5xl font-bold text-gray-900 mb-2">{{ $name }}</h3>
                     <p class="text-lg md:text-xl text-primary font-medium tracking-wide uppercase">{{ $position }}</p>
@@ -196,14 +196,14 @@
             @endphp
 
             <div class="flex flex-col sm:flex-row gap-6 group" data-gsap="fade-up" data-gsap-delay="{{ $delay }}">
-              <div class="w-full sm:w-[40%] shrink-0">
+              <div class="w-full" style="max-width: 220px; flex-shrink: 0;">
                 <div
                   class="w-full aspect-[1025/1536] rounded-xl overflow-hidden shadow-lg transition-transform duration-500 group-hover:-translate-y-1">
                   <img src="{{ $photoUrl }}"
                     alt="{{ $name }}" title="{{ $name }}" class="w-full h-full object-cover object-top" />
                 </div>
               </div>
-              <div class="w-full sm:w-[60%] flex flex-col pt-2">
+              <div class="w-full sm:flex-1 flex flex-col pt-2">
                 <h3 class="text-2xl font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors">{{ $name }}</h3>
                 <p class="text-sm text-primary font-bold uppercase tracking-wider mb-4">{{ $position }}</p>
                 <div class="text-gray-600 text-sm leading-relaxed space-y-3 mb-6">
