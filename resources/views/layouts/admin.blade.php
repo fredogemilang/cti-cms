@@ -218,6 +218,7 @@
     <div class="flex h-full" x-data="sidebarController()">
         <!-- Sidebar -->
         <aside 
+            wire:persist="admin-sidebar"
             :class="{ 'collapsed': sidebarCollapsed }"
             class="hidden w-[256px] flex-col bg-transparent md:flex shrink-0 border-r border-gray-200/50 dark:border-[#272B30]/50 relative transition-all duration-300"
             id="sidebar">
@@ -332,25 +333,32 @@
             <div class="flex-1 flex flex-col min-h-0 @hasSection('hide-header') h-full @elseif(View::hasSection('hide-title') && !View::hasSection('page-title')) h-full @else px-6 pb-6 md:px-10 md:pb-10 @endif">
                 <!-- Page Title & Subtitle Section -->
                 @sectionMissing('hide-title')
-                @hasSection('page-title')
-                    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8 pt-4">
-                        <div>
-                            <h1 class="text-4xl font-bold tracking-tight text-[#111827] dark:text-[#FCFCFC]">
-                                @yield('page-title')
-                            </h1>
-                            @hasSection('page-subtitle')
-                                <p class="text-base font-normal text-[#6F767E] dark:text-[#9A9FA5] mt-1">
-                                    @yield('page-subtitle')
-                                </p>
-                            @endif
-                        </div>
-                        @hasSection('page-actions')
-                            <div class="flex items-center gap-3">
-                                @yield('page-actions')
-                            </div>
+                    <div class="pt-4">
+                        @hasSection('breadcrumb')
+                            @yield('breadcrumb')
+                        @else
+                            <x-admin.breadcrumb />
                         @endif
                     </div>
-                @endif
+                    @hasSection('page-title')
+                        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8 pt-2">
+                            <div>
+                                <h1 class="text-4xl font-bold tracking-tight text-[#111827] dark:text-[#FCFCFC]">
+                                    @yield('page-title')
+                                </h1>
+                                @hasSection('page-subtitle')
+                                    <p class="text-base font-normal text-[#6F767E] dark:text-[#9A9FA5] mt-1">
+                                        @yield('page-subtitle')
+                                    </p>
+                                @endif
+                            </div>
+                            @hasSection('page-actions')
+                                <div class="flex items-center gap-3">
+                                    @yield('page-actions')
+                                </div>
+                            @endif
+                        </div>
+                    @endif
                 @endif
 
                 {{ $slot ?? '' }}

@@ -5,7 +5,17 @@
 @endphp
 
 <li class="relative"
-    x-data="{ open: {{ $isActive ? 'true' : 'false' }}, flyoutOpen: false }"
+    x-data="{ 
+        open: {{ $isActive ? 'true' : 'false' }}, 
+        flyoutOpen: false,
+        checkActive() {
+            if ($el.querySelector('.text-\[\#2563EB\]')) {
+                this.open = true;
+            }
+        }
+    }"
+    x-init="checkActive()"
+    @livewire:navigated.window="checkActive()"
     @click.away="flyoutOpen = false"
     :class="{ 'flyout-active': flyoutOpen }">
 
