@@ -232,7 +232,23 @@
             </div>
 
             <!-- Navigation -->
-            <nav class="flex-1 overflow-y-auto px-4 no-scrollbar">
+            <nav 
+                wire:persist="sidebar-nav"
+                x-data="{
+                    saveScroll(e) {
+                        sessionStorage.setItem('sidebar-scroll-top', e.target.scrollTop);
+                    },
+                    restoreScroll() {
+                        const saved = sessionStorage.getItem('sidebar-scroll-top');
+                        if (saved !== null) {
+                            $el.scrollTop = parseInt(saved, 10);
+                        }
+                    }
+                }"
+                x-init="restoreScroll()"
+                x-on:scroll.debounce.100ms="saveScroll($event)"
+                x-on:livewire:navigated.window="restoreScroll()"
+                class="flex-1 overflow-y-auto px-4 no-scrollbar">
                 @include('components.admin.sidebar-new')
             </nav>
         </aside>
