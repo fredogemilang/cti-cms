@@ -81,6 +81,15 @@ class WordPressCptMigration extends Component
 
     public $selectAllPosts = true; // Select all by default
 
+    // Taxonomy Discovery & Options
+    public $discoveredTaxonomies = [];
+
+    public $importCategories = true;
+
+    public $importTags = true;
+
+    public $autoCreateTerms = true;
+
     public $fetchAllDone = false;
 
     public $isBatchImporting = false;
@@ -236,6 +245,9 @@ class WordPressCptMigration extends Component
 
             // Detect Polylang: check if posts have 'lang' field across multiple samples
             $this->detectPolylang($posts);
+
+            // Discover taxonomies for selected CPT
+            $this->fetchDiscoveredTaxonomies();
 
             // Discover available fields from sample post
             $this->wpCptFields = [];
@@ -1242,6 +1254,8 @@ SNIPPET;
 
             $post->forceFill(['created_at' => $publishedAt])->save();
 
+            $this->attachTaxonomies($post, $wpPost);
+
             return 'success';
         }
 
@@ -1643,6 +1657,86 @@ SNIPPET;
         ];
 
         return $mimeTypes[$extension] ?? 'image/jpeg';
+    }
+
+    public function fetchDiscoveredTaxonomies(): void
+    {
+        $this->discoveredTaxonomies = [];
+
+        try {
+            $response = Http::timeout(15)->get($this->wpUrl.'/wp-json/wp/v2/taxonomies');
+            if ($response->successful()) {
+                $taxonomies = $response->json();
+                foreach ($taxonomies as $slug => $tax) {
+                    $types = $tax['types'] ?? [];
+                    if (in_array($this->selectedWpCpt, $types)) {
+                        $this->discoveredTaxonomies[] = [
+                            'slug' => $slug,
+                            'name' => $tax['name'] ?? $slug,
+                            'rest_base' => $tax['rest_base'] ?? $slug,
+                            'hierarchical' => $tax['hierarchical'] ?? false,
+                        ];
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Ignore taxonomy discovery failure
+        }
+    }
+
+    protected function attachTaxonomies($postOrEntry, array $wpPost): void
+    {
+        $embeddedTerms = $wpPost['_embedded']['wp:term'] ?? [];
+        if (empty($embeddedTerms)) {
+            return;
+        }
+
+        $categoryIds = [];
+        $tagIds = [];
+
+        foreach ($embeddedTerms as $termGroup) {
+            if (! is_array($termGroup)) {
+                continue;
+            }
+            foreach ($termGroup as $term) {
+                $taxonomy = $term['taxonomy'] ?? '';
+                $name = html_entity_decode($term['name'] ?? '', ENT_QUOTES, 'UTF-8');
+                $slug = $term['slug'] ?? Str::slug($name);
+
+                if (empty($name)) {
+                    continue;
+                }
+
+                if ($taxonomy === 'category' && $this->importCategories) {
+                    if (class_exists(Category::class)) {
+                        $cat = Category::firstOrCreate(
+                            ['slug' => $slug],
+                            ['name' => $name]
+                        );
+                        $categoryIds[] = $cat->id;
+                    }
+                } elseif ($taxonomy === 'post_tag' && $this->importTags) {
+                    if (class_exists(Tag::class)) {
+                        $tag = Tag::firstOrCreate(
+                            ['slug' => $slug],
+                            ['name' => $name]
+                        );
+                        $tagIds[] = $tag->id;
+                    }
+                }
+            }
+        }
+
+        if ($postOrEntry instanceof Post) {
+            if (! empty($categoryIds)) {
+                $postOrEntry->categories()->syncWithoutDetaching($categoryIds);
+                $this->importResults['categories'] = ($this->importResults['categories'] ?? 0) + count($categoryIds);
+            }
+            if (! empty($tagIds)) {
+                $postOrEntry->tags()->syncWithoutDetaching($tagIds);
+                $this->importResults['tags'] = ($this->importResults['tags'] ?? 0) + count($tagIds);
+            }
+        }
     }
 
     protected function ensureUniqueSlug($slug)

@@ -116,6 +116,39 @@
                         @endforeach
                     </div>
                 </div>
+
+                {{-- Taxonomy Import Options Card --}}
+                <div class="border-t border-gray-100 dark:border-[#272B30] pt-4 space-y-3">
+                    <h4 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-2">
+                        <span class="material-symbols-outlined text-purple-500 text-lg">schema</span>
+                        Taxonomy Import Options
+                    </h4>
+                    <p class="text-xs text-[#6F767E]">Choose which taxonomies should be auto-created and linked to your imported posts.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                        <label class="flex items-center gap-3 p-3.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] cursor-pointer hover:bg-gray-100 dark:hover:bg-[#151515] transition-all">
+                            <input type="checkbox" wire:model.live="importCategories" class="w-4 h-4 rounded text-[#8B5CF6] focus:ring-[#8B5CF6] border-gray-300">
+                            <div>
+                                <p class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-amber-500 text-base">folder</span>
+                                    Import Categories
+                                </p>
+                                <p class="text-xs text-[#6F767E]">Fetch WP categories and link them to imported posts</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-3.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] cursor-pointer hover:bg-gray-100 dark:hover:bg-[#151515] transition-all">
+                            <input type="checkbox" wire:model.live="importTags" class="w-4 h-4 rounded text-[#8B5CF6] focus:ring-[#8B5CF6] border-gray-300">
+                            <div>
+                                <p class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-blue-500 text-base">label</span>
+                                    Import Tags
+                                </p>
+                                <p class="text-xs text-[#6F767E]">Fetch WP tags and associate them with imported posts</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -433,7 +466,7 @@
                 @endif
 
                 {{-- Stats --}}
-                <div class="grid grid-cols-4 gap-4 w-full max-w-lg mb-8">
+                <div class="grid grid-cols-4 gap-4 w-full max-w-lg mb-4">
                     <div class="p-4 rounded-2xl bg-[#83BF6E]/10 border border-[#83BF6E]/20">
                         <p class="text-3xl font-bold text-[#83BF6E]">{{ $importResults['success'] }}</p>
                         <p class="text-sm font-medium text-[#6F767E]">Imported</p>
@@ -451,6 +484,26 @@
                         <p class="text-sm font-medium text-[#6F767E]">Failed</p>
                     </div>
                 </div>
+
+                {{-- Taxonomy Stats --}}
+                @if(!empty($importResults['categories']) || !empty($importResults['tags']))
+                <div class="grid grid-cols-2 gap-4 w-full max-w-lg mb-8">
+                    <div class="p-3.5 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-left flex items-center gap-3">
+                        <span class="material-symbols-outlined text-purple-500 text-2xl">folder</span>
+                        <div>
+                            <p class="text-xl font-bold text-purple-600 dark:text-purple-400">{{ $importResults['categories'] ?? 0 }}</p>
+                            <p class="text-xs font-medium text-[#6F767E]">Categories Linked</p>
+                        </div>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-left flex items-center gap-3">
+                        <span class="material-symbols-outlined text-indigo-500 text-2xl">label</span>
+                        <div>
+                            <p class="text-xl font-bold text-indigo-600 dark:text-indigo-400">{{ $importResults['tags'] ?? 0 }}</p>
+                            <p class="text-xs font-medium text-[#6F767E]">Tags Linked</p>
+                        </div>
+                    </div>
+                </div>
+                @endif
 
                 {{-- Skipped Posts List --}}
                 @if(!empty($importResults['skipped_posts']))

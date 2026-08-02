@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Plugins\Posts\Models\Category;
 use Plugins\Posts\Models\Post;
 use Plugins\Posts\Models\PostAuthor;
+use Plugins\Posts\Models\Tag;
 
 class ImportWordPressCptCommand extends Command
 {
@@ -219,6 +221,8 @@ class ImportWordPressCptCommand extends Command
 
                 $post->forceFill(['created_at' => $publishedAt])->save();
 
+                $this->attachTaxonomies($post, $wpPost);
+
                 return 'success';
             }
 
@@ -336,6 +340,59 @@ class ImportWordPressCptCommand extends Command
             return $path;
         } catch (\Exception $e) {
             return null;
+        }
+    }
+
+    protected function attachTaxonomies($post, array $wpPost): void
+    {
+        $embeddedTerms = $wpPost['_embedded']['wp:term'] ?? [];
+        if (empty($embeddedTerms)) {
+            return;
+        }
+
+        $categoryIds = [];
+        $tagIds = [];
+
+        foreach ($embeddedTerms as $termGroup) {
+            if (! is_array($termGroup)) {
+                continue;
+            }
+            foreach ($termGroup as $term) {
+                $taxonomy = $term['taxonomy'] ?? '';
+                $name = html_entity_decode($term['name'] ?? '', ENT_QUOTES, 'UTF-8');
+                $slug = $term['slug'] ?? Str::slug($name);
+
+                if (empty($name)) {
+                    continue;
+                }
+
+                if ($taxonomy === 'category') {
+                    if (class_exists(Category::class)) {
+                        $cat = Category::firstOrCreate(
+                            ['slug' => $slug],
+                            ['name' => $name]
+                        );
+                        $categoryIds[] = $cat->id;
+                    }
+                } elseif ($taxonomy === 'post_tag') {
+                    if (class_exists(Tag::class)) {
+                        $tag = Tag::firstOrCreate(
+                            ['slug' => $slug],
+                            ['name' => $name]
+                        );
+                        $tagIds[] = $tag->id;
+                    }
+                }
+            }
+        }
+
+        if ($post instanceof Post) {
+            if (! empty($categoryIds)) {
+                $post->categories()->syncWithoutDetaching($categoryIds);
+            }
+            if (! empty($tagIds)) {
+                $post->tags()->syncWithoutDetaching($tagIds);
+            }
         }
     }
 }
