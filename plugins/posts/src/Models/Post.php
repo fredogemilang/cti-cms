@@ -21,6 +21,7 @@ use Illuminate\Support\Str;
  * @property string|null $content
  * @property string|null $featured_image
  * @property string $status
+ * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $published_at
  */

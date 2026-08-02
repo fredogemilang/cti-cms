@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Plugins\Posts\Models\Post;
+use Plugins\Posts\Models\PostAuthor;
 
 class WordPressCptMigration extends Component
 {
@@ -98,12 +100,23 @@ class WordPressCptMigration extends Component
         // Load available CMS CPTs
         $this->cmsCpts = CustomPostType::active()->get()->map(function ($cpt) {
             return [
-                'id' => $cpt->id,
+                'id' => (string) $cpt->id,
                 'name' => $cpt->name,
                 'slug' => $cpt->slug,
                 'singular_label' => $cpt->singular_label,
             ];
         })->toArray();
+
+        // If Posts plugin is installed & active, add Posts to dropdown
+        if (class_exists(Post::class)) {
+            array_unshift($this->cmsCpts, [
+                'id' => 'plugin_post',
+                'name' => 'Posts (Blog & Articles)',
+                'slug' => 'post',
+                'singular_label' => 'Post',
+                'is_plugin' => true,
+            ]);
+        }
     }
 
     public function validateUrl()
@@ -469,7 +482,13 @@ class WordPressCptMigration extends Component
         ];
 
         // Add meta fields from selected CMS CPT
-        if ($this->selectedCmsCpt) {
+        if ($this->selectedCmsCpt === 'plugin_post') {
+            $this->cmsCptFields[] = [
+                'key' => 'is_featured',
+                'label' => 'Featured Post (Sticky)',
+                'type' => 'boolean',
+            ];
+        } elseif ($this->selectedCmsCpt) {
             $cpt = CustomPostType::find($this->selectedCmsCpt);
             if ($cpt && $cpt->metaFields) {
                 foreach ($cpt->metaFields as $metaField) {
@@ -985,10 +1004,13 @@ SNIPPET;
             // Import the default post as primary entry
             $result = $this->importOrSkip($defaultPost);
             if ($result === 'success' && ! empty($otherPosts)) {
-                // Fetch the newly created entry by slug
-                $entry = CptEntry::where('slug', $defaultPost['slug'] ?? Str::slug($defaultPost['title']['rendered'] ?? ''))
-                    ->where('post_type_id', $this->selectedCmsCpt)
-                    ->first();
+                if ($this->selectedCmsCpt === 'plugin_post') {
+                    $entry = Post::where('slug', $defaultPost['slug'] ?? Str::slug($defaultPost['title']['rendered'] ?? ''))->first();
+                } else {
+                    $entry = CptEntry::where('slug', $defaultPost['slug'] ?? Str::slug($defaultPost['title']['rendered'] ?? ''))
+                        ->where('post_type_id', $this->selectedCmsCpt)
+                        ->first();
+                }
 
                 if ($entry) {
                     // Add translations for other languages
@@ -1106,7 +1128,11 @@ SNIPPET;
         $slug = $this->getWpFieldValue($wpPost, $this->fieldMappings['slug'] ?? 'slug') ?? Str::slug($title);
 
         // Check if entry with same slug already exists
-        if (CptEntry::where('slug', $slug)->where('post_type_id', $this->selectedCmsCpt)->exists()) {
+        if ($this->selectedCmsCpt === 'plugin_post') {
+            if (Post::where('slug', $slug)->exists()) {
+                return 'skipped';
+            }
+        } elseif (CptEntry::where('slug', $slug)->where('post_type_id', $this->selectedCmsCpt)->exists()) {
             return 'skipped';
         }
 
@@ -1129,6 +1155,41 @@ SNIPPET;
         $featuredImage = null;
         if ($this->downloadFeaturedImage) {
             $featuredImage = $this->getFeaturedImage($wpPost);
+        }
+
+        // Handle Post Plugin import
+        if ($this->selectedCmsCpt === 'plugin_post') {
+            $authorId = null;
+            if (class_exists(PostAuthor::class)) {
+                $author = PostAuthor::first();
+                if (! $author && auth()->check()) {
+                    $user = auth()->user();
+                    $author = PostAuthor::create([
+                        'name' => $user->name,
+                        'slug' => Str::slug($user->name),
+                        'email' => $user->email,
+                    ]);
+                }
+                $authorId = $author?->id;
+            }
+
+            $isFeatured = (bool) ($this->getWpFieldValue($wpPost, $this->fieldMappings['is_featured'] ?? 'sticky') ?? false);
+
+            $post = Post::create([
+                'title' => $title,
+                'slug' => $slug,
+                'content' => $content,
+                'excerpt' => $excerpt,
+                'featured_image' => $featuredImage,
+                'status' => 'published',
+                'published_at' => $publishedAt,
+                'author_id' => $authorId,
+                'is_featured' => $isFeatured,
+            ]);
+
+            $post->forceFill(['created_at' => $publishedAt])->save();
+
+            return 'success';
         }
 
         // Build meta data from mapped meta fields
