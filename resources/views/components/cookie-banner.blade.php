@@ -9,6 +9,49 @@
         width: calc(100% - 48px) !important;
         z-index: 99999 !important;
     }
+    .cdt-cookie-btn-primary {
+        background-color: #F53003 !important;
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        border: 1px solid #F53003 !important;
+        box-shadow: 0 4px 14px rgba(245, 48, 3, 0.35) !important;
+        padding: 10px 18px !important;
+        border-radius: 12px !important;
+        font-size: 13px !important;
+        line-height: 1.25 !important;
+        cursor: pointer !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.2s ease !important;
+        text-decoration: none !important;
+    }
+    .cdt-cookie-btn-primary:hover {
+        background-color: #d92900 !important;
+        border-color: #d92900 !important;
+        color: #ffffff !important;
+        transform: translateY(-1px) !important;
+    }
+    .cdt-cookie-btn-secondary {
+        background-color: #f3f4f6 !important;
+        color: #1f2937 !important;
+        font-weight: 600 !important;
+        border: 1px solid #e5e7eb !important;
+        padding: 10px 18px !important;
+        border-radius: 12px !important;
+        font-size: 13px !important;
+        line-height: 1.25 !important;
+        cursor: pointer !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.2s ease !important;
+        text-decoration: none !important;
+    }
+    .cdt-cookie-btn-secondary:hover {
+        background-color: #e5e7eb !important;
+        color: #111827 !important;
+    }
     @media (max-width: 640px) {
         .cdt-cookie-banner {
             left: 16px !important;
@@ -61,10 +104,10 @@
             </p>
 
             <div class="flex items-center gap-2.5 pt-1.5">
-                <button type="button" @click="accept()" class="flex-1 px-4 py-2.5 rounded-xl bg-[#F53003] hover:bg-[#d92900] text-white text-xs font-bold transition-all shadow-md shadow-red-500/20 active:scale-95 text-center">
+                <button type="button" @click="accept()" class="cdt-cookie-btn-primary flex-1">
                     Accept All
                 </button>
-                <button type="button" @click="accept()" class="flex-1 px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/15 text-gray-800 dark:text-white text-xs font-semibold transition-all active:scale-95 text-center border border-gray-200/50 dark:border-white/5">
+                <button type="button" @click="accept()" class="cdt-cookie-btn-secondary flex-1">
                     Essential Only
                 </button>
             </div>
