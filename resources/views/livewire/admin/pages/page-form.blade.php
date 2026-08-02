@@ -371,8 +371,8 @@
                 <!-- Page Attributes Card (Template & Parent) -->
                 <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none space-y-4">
                     <div class="flex items-center gap-2 mb-2 text-[#6F767E]">
-                        <span class="material-symbols-outlined text-lg text-[#2563EB]">tune</span>
-                        <span class="text-xs font-bold uppercase tracking-widest text-gray-900 dark:text-white">Page Attributes</span>
+                        <span class="material-symbols-outlined text-lg">tune</span>
+                        <span class="text-xs font-bold uppercase tracking-widest">Page Attributes</span>
                     </div>
 
                     <!-- Template -->
@@ -401,6 +401,8 @@
                                 <option value="{{ $parentPage->id }}">{{ $parentPage->title }}</option>
                             @endforeach
                         </select>
+                    </div>
+
                     <!-- Menu Order -->
                     <div class="space-y-1.5 pt-2">
                         <label class="text-xs font-bold text-gray-700 dark:text-gray-300">Menu Order</label>
