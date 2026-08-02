@@ -1096,6 +1096,8 @@ class EntryForm extends Component
         $fullPath = parse_url($frontendUrl, PHP_URL_PATH) ?? '/'.$this->postType->slug.'/'.$this->slug;
         $trimmedPath = rtrim($fullPath, '/');
         $lastSlashPos = strrpos($trimmedPath, '/');
+        $permalinkPrefix = ($lastSlashPos !== false) ? substr($trimmedPath, 0, $lastSlashPos + 1) : '/'.$this->postType->slug.'/';
+
         $revisions = ($this->isEdit && $this->entryId)
             ? CptEntryRevision::with('user')->where('cpt_entry_id', $this->entryId)->latest()->take(20)->get()
             : collect();
