@@ -188,20 +188,10 @@
                 <!-- Unified Publishing & Actions Card (Optimized for Narrow Sidebar) -->
                 <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none space-y-5">
                     
-                    <!-- Title / Header -->
-                    <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-white/5">
-                        <div class="flex items-center gap-2 text-[#6F767E]">
-                            <span class="material-symbols-outlined text-lg text-[#2563EB]">rocket_launch</span>
-                            <span class="text-xs font-bold uppercase tracking-widest text-gray-900 dark:text-white">Publishing & Actions</span>
-                        </div>
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider
-                            {{ $status === 'published' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40' : '' }}
-                            {{ $status === 'draft' ? 'bg-gray-100 dark:bg-[#272B30] text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-[#333]' : '' }}
-                            {{ $status === 'scheduled' ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/40' : '' }}
-                            {{ $status === 'private' ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800/40' : '' }}
-                        ">
-                            {{ ucfirst($status) }}
-                        </span>
+                    <!-- Title / Header (Aligned with Featured Image card) -->
+                    <div class="flex items-center gap-2 text-[#6F767E]">
+                        <span class="material-symbols-outlined text-lg">rocket_launch</span>
+                        <span class="text-xs font-bold uppercase tracking-widest">Publishing & Actions</span>
                     </div>
 
                     <!-- Main Primary Submit / Action Button (Top Highlight) -->
@@ -284,35 +274,72 @@
                             </select>
                         </div>
 
-                        <!-- Schedule / Publish Date Input -->
-                        <div class="space-y-1.5">
-                            <div class="flex items-center justify-between">
-                                <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                        <!-- Schedule / Publish Date & Time (Formatted Text + Expandable Picker) -->
+                        <div class="space-y-2 pt-2 border-t border-gray-100 dark:border-white/5" x-data="{ editingDate: false }">
+                            <!-- Formatted Text View (No input box when inactive) -->
+                            <div class="flex items-center justify-between text-xs py-1" x-show="!editingDate && status !== 'scheduled'">
+                                <div class="flex items-center gap-2">
                                     <span class="material-symbols-outlined text-base text-gray-400">calendar_month</span>
-                                    <span>Publish Date & Time</span>
-                                </label>
-                                @if($publishedAt)
-                                <button type="button" wire:click="$set('publishedAt', null)" class="text-[11px] font-semibold text-gray-400 hover:text-red-500 transition-colors">
-                                    Reset
+                                    <span class="text-gray-600 dark:text-gray-400">Publish:</span>
+                                    <span class="font-bold text-gray-900 dark:text-white">
+                                        {{ $publishedAt ? \Carbon\Carbon::parse($publishedAt)->format('M d, Y @ H:i') : 'Immediately' }}
+                                    </span>
+                                </div>
+                                <button 
+                                    type="button" 
+                                    @click="editingDate = true" 
+                                    class="text-[11px] font-bold text-[#2563EB] hover:underline uppercase flex items-center gap-0.5 transition-colors"
+                                >
+                                    <span class="material-symbols-outlined text-xs">edit</span>
+                                    <span>Edit</span>
                                 </button>
-                                @endif
                             </div>
 
-                            <input 
-                                type="datetime-local" 
-                                wire:model.live="publishedAt"
-                                class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all"
-                            >
+                            <!-- Expandable Datetime Picker Box -->
+                            <div x-show="editingDate || status === 'scheduled'" class="p-3.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] space-y-3" x-cloak x-transition>
+                                <div class="flex items-center justify-between text-xs">
+                                    <label class="font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-sm text-blue-500">schedule</span>
+                                        <span>Select Date & Time</span>
+                                    </label>
+                                    @if($publishedAt)
+                                    <button 
+                                        type="button" 
+                                        wire:click="$set('publishedAt', null)" 
+                                        class="text-[11px] font-semibold text-gray-400 hover:text-red-500 transition-colors"
+                                    >
+                                        Immediately
+                                    </button>
+                                    @endif
+                                </div>
 
-                            <p class="text-[11px] text-gray-400 pt-0.5 leading-tight">
-                                @if($status === 'scheduled')
-                                    📅 Will be published automatically at this time.
-                                @elseif($publishedAt)
-                                    Published on {{ \Carbon\Carbon::parse($publishedAt)->format('M d, Y @ H:i') }}
-                                @else
-                                    Publishes immediately upon submission.
-                                @endif
-                            </p>
+                                <input 
+                                    type="datetime-local" 
+                                    wire:model.live="publishedAt"
+                                    class="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all shadow-sm"
+                                >
+
+                                <div class="flex items-center justify-between pt-1 border-t border-gray-200/50 dark:border-white/5">
+                                    <p class="text-[11px] text-gray-400 leading-tight">
+                                        @if($status === 'scheduled')
+                                            📅 Will publish automatically at this time.
+                                        @elseif($publishedAt)
+                                            Published on {{ \Carbon\Carbon::parse($publishedAt)->format('M d, Y @ H:i') }}
+                                        @else
+                                            Publishes immediately upon save.
+                                        @endif
+                                    </p>
+                                    @if($status !== 'scheduled')
+                                    <button 
+                                        type="button" 
+                                        @click="editingDate = false" 
+                                        class="px-3 py-1 bg-[#2563EB] hover:bg-blue-600 text-white rounded-lg text-xs font-bold transition-colors shrink-0"
+                                    >
+                                        Done
+                                    </button>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
 
                     </div>
