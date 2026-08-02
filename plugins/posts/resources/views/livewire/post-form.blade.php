@@ -315,236 +315,236 @@
             <!-- Sidebar -->
             <aside class="w-[360px] bg-[#F4F5F6] dark:bg-[#0B0B0B] border-l border-gray-200 dark:border-[#272B30] overflow-y-auto no-scrollbar hidden lg:block shrink-0">
                 <div class="p-6 space-y-6">
-                    <!-- Actions Card -->
-                    <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] p-5 border border-gray-200 dark:border-[#272B30] shadow-sm dark:shadow-none">
-                        <div class="flex items-center gap-2 mb-4 text-[#6F767E]">
+                    <!-- Unified Publishing & Actions Card (Optimized for Narrow Sidebar) -->
+                    <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none space-y-5">
+                        
+                        <!-- Title / Header (Aligned with Featured Image card) -->
+                        <div class="flex items-center gap-2 text-[#6F767E]">
                             <span class="material-symbols-outlined text-lg">rocket_launch</span>
-                            <span class="text-xs font-bold uppercase tracking-widest">Actions</span>
+                            <span class="text-xs font-bold uppercase tracking-widest">Publishing & Actions</span>
                         </div>
-                        <div class="flex flex-col gap-2">
-                            <button 
-                                type="button"
-                                wire:click="save('published')" 
-                                wire:loading.attr="disabled"
-                                class="w-full px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                            >
-                                <span wire:loading.remove wire:target="save('published')" class="flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-lg">save</span>
-                                    <span>{{ $status === 'published' ? 'Update' : 'Publish' }}</span>
-                                </span>
-                                <span wire:loading wire:target="save('published')">Saving...</span>
-                            </button>
 
+                        <!-- Main Primary Submit / Action Button (Top Highlight) -->
+                        <button 
+                            type="button"
+                            wire:click="save" 
+                            wire:loading.attr="disabled"
+                            class="w-full py-3 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            <span wire:loading.remove wire:target="save" class="flex items-center gap-2">
+                                @if($status === 'scheduled')
+                                    <span class="material-symbols-outlined text-lg">event</span>
+                                    <span>Schedule Post</span>
+                                @elseif($status === 'published')
+                                    <span class="material-symbols-outlined text-lg">published_with_changes</span>
+                                    <span>Update Post</span>
+                                @elseif($status === 'archived')
+                                    <span class="material-symbols-outlined text-lg">archive</span>
+                                    <span>Archive Post</span>
+                                @else
+                                    <span class="material-symbols-outlined text-lg">publish</span>
+                                    <span>Publish Post</span>
+                                @endif
+                            </span>
+                            <span wire:loading wire:target="save" class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-lg animate-spin">sync</span>
+                                <span>Saving...</span>
+                            </span>
+                        </button>
+
+                        <!-- Secondary Actions Row (Save Draft & Preview) -->
+                        <div class="grid grid-cols-2 gap-2">
                             <button 
-                                type="button"
-                                wire:click="save('draft')" 
+                                type="button" 
+                                wire:click="saveAsDraft" 
                                 wire:loading.attr="disabled"
-                                class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-100 dark:bg-[#272B30]/60 hover:bg-gray-200 dark:hover:bg-[#272B30] transition-all flex items-center justify-center gap-2"
+                                class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-50 dark:bg-[#0B0B0B] hover:bg-gray-100 dark:hover:bg-[#272B30] border border-gray-200 dark:border-[#272B30] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
                             >
-                                <span wire:loading.remove wire:target="save('draft')">Save Draft</span>
-                                <span wire:loading wire:target="save('draft')">Saving Draft...</span>
+                                <span wire:loading.remove wire:target="saveAsDraft" class="flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-base">save</span>
+                                    <span>Save Draft</span>
+                                </span>
+                                <span wire:loading wire:target="saveAsDraft" class="flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-base animate-spin">sync</span>
+                                    <span>Saving...</span>
+                                </span>
                             </button>
 
                             @if($slug)
-                                <a href="{{ route('posts.show', $slug) }}" target="_blank"
-                                    class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-[#111827] dark:text-white bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] hover:border-[#6F767E] transition-all flex items-center justify-center gap-2">
-                                    <span class="material-symbols-outlined text-lg">open_in_new</span>
-                                    Preview
-                                </a>
+                            <a 
+                                href="{{ route('posts.show', $slug) }}" 
+                                target="_blank"
+                                class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-50 dark:bg-[#0B0B0B] hover:bg-gray-100 dark:hover:bg-[#272B30] border border-gray-200 dark:border-[#272B30] transition-all flex items-center justify-center gap-1.5"
+                            >
+                                <span class="material-symbols-outlined text-base">visibility</span>
+                                <span>Preview</span>
+                            </a>
+                            @else
+                            <div class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-gray-400 bg-gray-50/50 dark:bg-[#0B0B0B]/50 border border-dashed border-gray-200 dark:border-[#272B30] flex items-center justify-center gap-1.5 opacity-50 cursor-not-allowed">
+                                <span class="material-symbols-outlined text-base">visibility_off</span>
+                                <span>Preview</span>
+                            </div>
                             @endif
+                        </div>
 
-                            @if($postId)
-                                <button 
-                                    type="button"
-                                    wire:click="delete"
-                                    wire:confirm="Are you sure you want to move this post to trash?"
-                                    class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2"
+                        <!-- Publishing Controls Box (Status Dropdown, Schedule Date Picker, Author, Featured Toggle) -->
+                        <div class="pt-3 border-t border-gray-100 dark:border-white/5 space-y-4">
+                            
+                            <!-- Status Selector Field -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-base text-gray-400">key</span>
+                                    <span>Status</span>
+                                </label>
+                                <select 
+                                    wire:model.live="status" 
+                                    class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all"
                                 >
-                                    <span class="material-symbols-outlined text-lg">delete</span>
-                                    Move to Trash
-                                </button>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Word Document Import Card -->
-                    <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none">
-                        <div class="flex items-center gap-2 mb-4 text-[#6F767E]">
-                            <span class="material-symbols-outlined text-lg">description</span>
-                            <span class="text-xs font-bold uppercase tracking-widest">DOCX Source</span>
-                        </div>
-                        
-                        <div class="space-y-3">
-                            <p class="text-xs text-[#6F767E]">Import post title, structure, format, and embedded images directly from a Word document (.docx).</p>
-                            
-                            <div class="relative flex items-center justify-center border-2 border-dashed border-gray-200 dark:border-[#272B30] hover:border-[#2563EB] transition-colors rounded-xl p-4 cursor-pointer">
-                                <input type="file" wire:model="docxFile" accept=".docx" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
-                                <div class="text-center space-y-1">
-                                    <span class="material-symbols-outlined text-[#6F767E] text-2xl">cloud_upload</span>
-                                    <span class="block text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Upload .docx file</span>
-                                    <span class="block text-[10px] text-[#6F767E]">Max 10MB</span>
-                                </div>
-                            </div>
-                            
-                            <div wire:loading wire:target="docxFile" class="text-xs text-[#2563EB] font-semibold animate-pulse flex items-center gap-2 mt-2">
-                                <span class="inline-block animate-spin w-3 h-3 border-2 border-[#2563EB] border-t-transparent rounded-full"></span>
-                                <span>Parsing Word document...</span>
-                            </div>
-
-                            @error('docxFile')
-                                <p class="text-xs text-red-500 font-medium mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-
-                    <!-- Publishing Info Card -->
-                    <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none" x-data="{ editingStatus: false, editingVisibility: false }">
-                        <div class="flex items-center gap-2 mb-6 text-[#6F767E]">
-                            <span class="material-symbols-outlined text-lg">tune</span>
-                            <span class="text-xs font-bold uppercase tracking-widest">Publishing Info</span>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <!-- Featured Toggle -->
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-[#6F767E]">Featured Post</span>
-                                <button type="button" 
-                                    wire:click="$toggle('is_featured')"
-                                    class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:ring-offset-2"
-                                    :class="{ 'bg-[#2563EB]': @js($is_featured), 'bg-gray-200 dark:bg-[#272B30]': !@js($is_featured) }"
-                                    role="switch" 
-                                    aria-checked="false">
-                                    <span aria-hidden="true" 
-                                        class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
-                                        :class="{ 'translate-x-5': @js($is_featured), 'translate-x-0': !@js($is_featured) }">
-                                    </span>
-                                </button>
-                            </div>
-
-                            <!-- Status -->
-                            <div class="group">
-                            <div class="flex items-center justify-between" x-show="!editingStatus">
-                                <span class="text-sm text-[#6F767E]">Status:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ ucfirst($status) }}</span>
-                                    <button @click="editingStatus = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
-                            </div>
-                            <div x-show="editingStatus" class="bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <select wire:model="status" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
                                     <option value="draft">Draft</option>
                                     <option value="published">Published</option>
                                     <option value="scheduled">Scheduled</option>
                                     <option value="archived">Archived</option>
                                 </select>
-                                <div class="flex justify-end">
-                                    <button @click="editingStatus = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
                             </div>
-                        </div>
 
-                        <!-- Visibility -->
-                        <div class="group">
-                            <div class="flex items-center justify-between" x-show="!editingVisibility">
-                                <span class="text-sm text-[#6F767E]">Visibility:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ ucfirst($visibility) }}</span>
-                                    <button @click="editingVisibility = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
-                            </div>
-                            <div x-show="editingVisibility" class="bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <select wire:model.live="visibility" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                    <option value="public">Public</option>
-                                    <option value="private">Private</option>
-                                    <option value="password">Password Protected</option>
-                                </select>
-                                
-                                <div x-show="$wire.visibility === 'password'" x-transition>
-                                    <input type="password" wire:model="password" placeholder="Enter password" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
+                            <!-- Schedule / Publish Date & Time (2-Line Layout Matching Status) -->
+                            <div class="space-y-1.5 pt-3 border-t border-gray-100 dark:border-white/5" x-data="{ editingDate: false }">
+                                <!-- Line 1: Header / Label + Edit Action -->
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-base text-gray-400">calendar_month</span>
+                                        <span>Publish Date & Time</span>
+                                    </label>
+                                    <button 
+                                        type="button" 
+                                        @click="editingDate = !editingDate" 
+                                        class="text-[11px] font-bold text-[#2563EB] hover:underline uppercase flex items-center gap-0.5 transition-colors"
+                                    >
+                                        <span class="material-symbols-outlined text-xs" x-text="editingDate ? 'close' : 'edit'">edit</span>
+                                        <span x-text="editingDate ? 'Cancel' : 'Edit'">Edit</span>
+                                    </button>
                                 </div>
 
-                                <div class="flex justify-end">
-                                    <button @click="editingVisibility = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Author -->
-                        <div class="group" x-data="{ editingAuthor: false }">
-                            <div class="flex items-center justify-between" x-show="!editingAuthor">
-                                <span class="text-sm text-[#6F767E]">Author:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $authors->find($author_id)->name ?? 'Unknown' }}</span>
-                                    <button @click="editingAuthor = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
-                            </div>
-                            <div x-show="editingAuthor" class="bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2 relative z-10 shadow-lg animate-in fade-in duration-200" x-cloak @click.away="editingAuthor = false">
-                                <div class="flex items-center justify-between gap-2 border-b border-gray-100 dark:border-[#272B30] pb-1.5 mb-1.5">
-                                    <span class="text-[10px] font-bold text-[#6F767E] uppercase">Select Author</span>
-                                    <button type="button" @click="$wire.set('addingAuthor', !$wire.get('addingAuthor'))" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Add New</button>
+                                <!-- Line 2 View Mode: Full-width Formatted Value Box -->
+                                <div x-show="!editingDate && status !== 'scheduled'" class="w-full min-h-[36px] px-3 py-2 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] flex items-center justify-between">
+                                    <span>{{ $published_at ? \Carbon\Carbon::parse($published_at)->format('M d, Y @ H:i') : 'Immediately' }}</span>
+                                    @if($published_at)
+                                    <span class="text-[10px] text-gray-400 font-normal">Custom</span>
+                                    @else
+                                    <span class="text-[10px] text-emerald-500 font-bold">Instant</span>
+                                    @endif
                                 </div>
 
-                                <div x-show="$wire.addingAuthor" class="flex gap-2 mb-2" x-transition>
+                                <!-- Line 2 Edit Mode: Expandable Datetime Picker Box -->
+                                <div x-show="editingDate || status === 'scheduled'" class="p-3.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] space-y-3 mt-1" x-cloak x-transition>
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                            <span class="material-symbols-outlined text-sm text-blue-500">schedule</span>
+                                            <span>Set Date & Time</span>
+                                        </span>
+                                        @if($published_at)
+                                        <button 
+                                            type="button" 
+                                            wire:click="$set('published_at', null)" 
+                                            class="text-[11px] font-semibold text-gray-400 hover:text-red-500 transition-colors"
+                                        >
+                                            Immediately
+                                        </button>
+                                        @endif
+                                    </div>
+
+                                    <input 
+                                        type="datetime-local" 
+                                        wire:model.live="published_at"
+                                        class="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all shadow-sm"
+                                    >
+
+                                    <div class="flex items-center justify-between pt-1 border-t border-gray-200/50 dark:border-white/5">
+                                        <p class="text-[11px] text-gray-400 leading-tight">
+                                            @if($status === 'scheduled')
+                                                📅 Will publish automatically at this time.
+                                            @elseif($published_at)
+                                                Published on {{ \Carbon\Carbon::parse($published_at)->format('M d, Y @ H:i') }}
+                                            @else
+                                                Publishes immediately upon save.
+                                            @endif
+                                        </p>
+                                        @if($status !== 'scheduled')
+                                        <button 
+                                            type="button" 
+                                            @click="editingDate = false" 
+                                            class="px-3 py-1 bg-[#2563EB] hover:bg-blue-600 text-white rounded-lg text-xs font-bold transition-colors shrink-0"
+                                        >
+                                            Done
+                                        </button>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Author Selector Field -->
+                            <div class="space-y-1.5 pt-3 border-t border-gray-100 dark:border-white/5">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-base text-gray-400">person</span>
+                                        <span>Author</span>
+                                    </label>
+                                    <button type="button" wire:click="$toggle('addingAuthor')" class="text-[11px] font-bold text-[#2563EB] hover:underline uppercase">
+                                        + New
+                                    </button>
+                                </div>
+                                @if($addingAuthor)
+                                <div class="flex gap-2 my-1" x-transition>
                                     <input type="text" wire:model="newAuthorName" 
                                         @keydown.enter.prevent="$wire.addAuthor(newAuthorName)"
-                                        class="flex-1 h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]" 
+                                        class="flex-1 h-8 px-3 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB]" 
                                         placeholder="Author name">
-                                    <button type="button" @click="$wire.addAuthor(newAuthorName)" class="px-2 h-8 rounded-md bg-[#2563EB] text-white text-xs font-bold">Add</button>
+                                    <button type="button" wire:click="addAuthor(newAuthorName)" class="px-3 h-8 rounded-xl bg-[#2563EB] text-white text-xs font-bold shrink-0">Add</button>
                                 </div>
-
-                                <select wire:model="author_id" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
+                                @endif
+                                <select wire:model="author_id" class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] transition-all">
                                     @foreach($authors as $author)
-                                    <option value="{{ $author->id }}">{{ $author->name }}</option>
+                                        <option value="{{ $author->id }}">{{ $author->name }}</option>
                                     @endforeach
                                 </select>
-                                <div class="flex justify-end">
-                                    <button @click="editingAuthor = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
                             </div>
-                        </div>
 
-                        <!-- Publish Date -->
-                        <div class="group" x-data="{ editingPublish: false }">
-                            <div class="flex items-center justify-between" x-show="!editingPublish">
-                                <span class="text-sm text-[#6F767E]">Publish:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">
-                                        {{ $published_at ? \Carbon\Carbon::parse($published_at)->format('M d, Y H:i') : 'Immediately' }}
+                            <!-- Featured Post Toggle -->
+                            <div class="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-white/5">
+                                <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-base text-amber-500">star</span>
+                                    <span>Featured Post</span>
+                                </label>
+                                <button type="button" 
+                                    wire:click="$toggle('is_featured')"
+                                    class="relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#2563EB]"
+                                    :class="{ 'bg-[#2563EB]': @js($is_featured), 'bg-gray-200 dark:bg-[#272B30]': !@js($is_featured) }"
+                                    role="switch">
+                                    <span aria-hidden="true" 
+                                        class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                                        :class="{ 'translate-x-4': @js($is_featured), 'translate-x-0': !@js($is_featured) }">
                                     </span>
-                                    <button @click="editingPublish = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
+                                </button>
                             </div>
-                            <div x-show="editingPublish" class="bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-3 mt-2" x-cloak>
-                                <div class="flex items-center gap-2">
-                                    <input type="radio" id="publish_immediately" name="publish_type" 
-                                        @click="$wire.set('published_at', null)" 
-                                        :checked="{{ $published_at ? 'false' : 'true' }}"
-                                        class="text-[#2563EB] focus:ring-[#2563EB] bg-white dark:bg-[#0B0B0B] border-gray-300 dark:border-[#272B30]">
-                                    <label for="publish_immediately" class="text-xs font-medium text-[#111827] dark:text-[#FCFCFC]">Immediately</label>
-                                </div>
-                                <div class="space-y-2">
-                                    <div class="flex items-center gap-2">
-                                        <input type="radio" id="publish_schedule" name="publish_type" 
-                                            :checked="{{ $published_at ? 'true' : 'false' }}"
-                                            class="text-[#2563EB] focus:ring-[#2563EB] bg-white dark:bg-[#0B0B0B] border-gray-300 dark:border-[#272B30]">
-                                        <label for="publish_schedule" class="text-xs font-medium text-[#111827] dark:text-[#FCFCFC]">Schedule</label>
-                                    </div>
-                                    <input wire:model="published_at" type="datetime-local" 
-                                        class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                </div>
-                                <div class="flex justify-end">
-                                    <button @click="editingPublish = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="mt-8 pt-4 border-t border-gray-100 dark:border-[#272B30] flex items-center justify-end text-end">
-                        <button wire:click="delete" wire:confirm="Are you sure you want to move this post to trash?" class="text-xs font-bold text-[#FF6A55] hover:text-[#ff4f38] transition-colors">
-                            Move to Trash
-                        </button>
+                        </div>
+
+                        <!-- Bottom Actions (Move to Trash) -->
+                        @if($postId)
+                        <div class="pt-3 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs">
+                            <button 
+                                type="button" 
+                                wire:click="delete" 
+                                wire:confirm="Are you sure you want to move this post to trash?"
+                                class="font-bold text-red-600 hover:text-red-700 dark:text-red-400 hover:underline transition-colors flex items-center gap-1"
+                            >
+                                <span class="material-symbols-outlined text-base">delete</span>
+                                <span>Move to Trash</span>
+                            </button>
+                        </div>
+                        @endif
+
                     </div>
-                </div>
 
                 <!-- Featured Image Card -->
                 <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none">

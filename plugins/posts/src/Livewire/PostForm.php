@@ -249,6 +249,11 @@ class PostForm extends Component
         return $slug;
     }
 
+    public function saveAsDraft()
+    {
+        return $this->save('draft');
+    }
+
     public function save($status = null)
     {
         // Snapshot current locale before validating/saving
