@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Models\CptEntry;
 use App\Models\CustomPostType;
 use App\Models\Media;
+use App\Services\MediaUsageService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -951,6 +952,7 @@ SNIPPET;
         if ($this->currentBatchIndex >= $this->totalBatchCount) {
             $this->isBatchImporting = false;
             $this->importProgress = 100;
+            app(MediaUsageService::class)->clearCache();
         }
     }
 

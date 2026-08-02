@@ -10,6 +10,7 @@ use App\Models\Page;
 use App\Models\PageBlock;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Plugins\Posts\Models\Post;
 
 /**
  * Scans content tables to figure out which Media rows are referenced anywhere
@@ -143,6 +144,33 @@ class MediaUsageService
             // User avatars (string path)
             foreach (DB::table('users')->whereNotNull('avatar')->pluck('avatar') as $av) {
                 $bump($resolveByPath($av));
+            }
+
+            // Post plugin posts (featured_image & content HTML img src, including translations)
+            if (class_exists(Post::class)) {
+                foreach (Post::all() as $post) {
+                    $bump($resolveByPath($post->featured_image));
+
+                    // Scan content for <img src="..."> in default locale & all translations
+                    $contentTranslations = method_exists($post, 'getTranslations')
+                        ? $post->getTranslations('content')
+                        : [$post->content];
+
+                    if (! is_array($contentTranslations)) {
+                        $contentTranslations = [$post->content];
+                    }
+
+                    foreach ($contentTranslations as $htmlContent) {
+                        if (is_string($htmlContent) && ! empty($htmlContent)) {
+                            preg_match_all('/<img[^>]+src=("|\')([^"\']+)\1/i', $htmlContent, $m);
+                            if (! empty($m[2])) {
+                                foreach ($m[2] as $src) {
+                                    $bump($resolveByPath($src));
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             return $map;

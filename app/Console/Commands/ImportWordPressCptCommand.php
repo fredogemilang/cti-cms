@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\CptEntry;
 use App\Models\Media;
+use App\Services\MediaUsageService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
@@ -136,6 +137,7 @@ class ImportWordPressCptCommand extends Command
         }
 
         $bar->finish();
+        app(MediaUsageService::class)->clearCache();
         $this->newLine(2);
         $this->info('✅ Import finished!');
         $this->table(
