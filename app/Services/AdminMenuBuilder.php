@@ -225,14 +225,14 @@ class AdminMenuBuilder
                     'route' => 'admin.cpt.entries.index',
                     'routeParams' => ['postTypeSlug' => $cpt->slug],
                     'permission' => null,
-                    'activeRoutePattern' => null,
+                    'activeRoutePattern' => 'admin.cpt.entries.index|admin.cpt.entries.edit',
                 ],
                 [
                     'title' => 'Add '.$cpt->singular_label,
                     'route' => 'admin.cpt.entries.create',
                     'routeParams' => ['postTypeSlug' => $cpt->slug],
                     'permission' => null,
-                    'activeRoutePattern' => null,
+                    'activeRoutePattern' => 'admin.cpt.entries.create',
                 ],
             ];
 
@@ -259,7 +259,7 @@ class AdminMenuBuilder
                 'source_label' => 'Content (CPT)',
                 'section' => $section,
                 'is_active' => true,
-                'activeRoutePattern' => 'admin.cpt.entries.*',
+                'activeRoutePattern' => null,
                 'children' => $children,
             ];
         })->toArray();

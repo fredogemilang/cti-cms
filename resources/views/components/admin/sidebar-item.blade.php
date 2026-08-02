@@ -73,8 +73,15 @@
                 foreach (explode('|', $childActivePattern) as $cp) {
                     $cp = trim($cp);
                     if ($cp && request()->routeIs($cp)) {
-                        $isActive = true;
-                        break 2;
+                        if ($isCpt && ! empty($childParams['postTypeSlug'])) {
+                            if (request()->route('postTypeSlug') === $childParams['postTypeSlug']) {
+                                $isActive = true;
+                                break 2;
+                            }
+                        } else {
+                            $isActive = true;
+                            break 2;
+                        }
                     }
                 }
             }
