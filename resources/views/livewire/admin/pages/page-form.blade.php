@@ -185,167 +185,198 @@
         {{-- Right Panel: Settings --}}
         <aside class="w-[320px] bg-[#F4F5F6] dark:bg-[#0B0B0B] border-l border-gray-200 dark:border-[#272B30] overflow-y-auto no-scrollbar hidden lg:block">
             <div class="p-6 space-y-6">
-                {{-- Action Buttons --}}
-                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none">
-                    <div class="flex items-center gap-2 mb-4 text-[#6F767E]">
-                        <span class="material-symbols-outlined text-lg">rocket_launch</span>
-                        <span class="text-xs font-bold uppercase tracking-widest">Actions</span>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <button wire:click="publish" wire:loading.attr="disabled"
-                            class="w-full px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50">
-                            <span wire:loading.remove wire:target="publish">
-                                <span class="material-symbols-outlined text-lg">{{ $status === 'published' ? 'published_with_changes' : 'publish' }}</span>
-                                {{ $status === 'published' ? 'Update' : 'Publish' }}
-                            </span>
-                            <span wire:loading wire:target="publish">{{ $status === 'published' ? 'Updating...' : 'Publishing...' }}</span>
-                        </button>
-                        <button wire:click="saveAsDraft" wire:loading.attr="disabled"
-                            class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-50 dark:bg-[#0B0B0B] hover:bg-gray-100 dark:hover:bg-[#272B30] border border-gray-200 dark:border-[#272B30] transition-all flex items-center justify-center gap-2 disabled:opacity-50">
-                            <span wire:loading.remove wire:target="saveAsDraft">
-                                <span class="material-symbols-outlined text-lg">save</span>
-                                Save Draft
-                            </span>
-                            <span wire:loading wire:target="saveAsDraft">Saving...</span>
-                        </button>
-                        @if($isEdit)
-                        <a href="{{ $previewUrl }}" target="_blank"
-                            class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-lg">visibility</span>
-                            Preview
-                        </a>
-                        @endif
-                    </div>
-                </div>
-
-                {{-- Page Settings Card --}}
-                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none" x-data="{ editingStatus: false, editingTemplate: false, editingParent: false }">
-                    <div class="flex items-center gap-2 mb-6 text-[#6F767E]">
-                        <span class="material-symbols-outlined text-lg">tune</span>
-                        <span class="text-xs font-bold uppercase tracking-widest">Page Settings</span>
-                    </div>
-
-                    <div class="space-y-4">
-                        {{-- Status --}}
-                        <div class="group">
-                            <div class="flex items-center justify-between" x-show="!editingStatus">
-                                <span class="text-sm text-[#6F767E]">Status:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ ucfirst($status) }}</span>
-                                    <button @click="editingStatus = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
-                            </div>
-                            <div x-show="editingStatus" class="bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <select wire:model="status" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                    <option value="draft">Draft</option>
-                                    <option value="published">Published</option>
-                                    <option value="scheduled">Scheduled</option>
-                                    <option value="private">Private</option>
-                                </select>
-                                <div class="flex justify-end">
-                                    <button @click="editingStatus = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
-                            </div>
+                <!-- Unified Publishing & Actions Card (Optimized for Narrow Sidebar) -->
+                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none space-y-5">
+                    
+                    <!-- Title / Header -->
+                    <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-white/5">
+                        <div class="flex items-center gap-2 text-[#6F767E]">
+                            <span class="material-symbols-outlined text-lg text-[#2563EB]">rocket_launch</span>
+                            <span class="text-xs font-bold uppercase tracking-widest text-gray-900 dark:text-white">Publishing & Actions</span>
                         </div>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider
+                            {{ $status === 'published' ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40' : '' }}
+                            {{ $status === 'draft' ? 'bg-gray-100 dark:bg-[#272B30] text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-[#333]' : '' }}
+                            {{ $status === 'scheduled' ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/40' : '' }}
+                            {{ $status === 'private' ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800/40' : '' }}
+                        ">
+                            {{ ucfirst($status) }}
+                        </span>
+                    </div>
 
-                        {{-- Publish Date --}}
-                        @if($status === 'scheduled' || $status === 'published')
-                        <div class="group" x-data="{ editingPublish: false }">
-                            <div class="flex items-center justify-between" x-show="!editingPublish">
-                                <span class="text-sm text-[#6F767E]">Publish:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">
-                                        {{ $publishedAt ? \Carbon\Carbon::parse($publishedAt)->format('M d, Y H:i') : 'Immediately' }}
-                                    </span>
-                                    <button @click="editingPublish = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
-                            </div>
-                            <div x-show="editingPublish" class="bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <input wire:model="publishedAt" type="datetime-local"
-                                    class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                <div class="flex justify-end">
-                                    <button @click="editingPublish = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-
-                        {{-- Template --}}
-                        <div class="group">
-                            <div class="flex items-center justify-between" x-show="!editingTemplate">
-                                <span class="text-sm text-[#6F767E]">Template:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $templates[$template] ?? ucfirst($template) }}</span>
-                                    @if($isSystemPage)
-                                        <span class="material-symbols-outlined text-[12px] text-amber-500" title="System page template is locked">lock</span>
-                                    @else
-                                        <button @click="editingTemplate = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                    @endif
-                                </div>
-                            </div>
-                            @if(!$isSystemPage)
-                            <div x-show="editingTemplate" class="bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <select wire:model="template" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                    @foreach($templates as $value => $label)
-                                        <option value="{{ $value }}">{{ $label }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="flex justify-end">
-                                    <button @click="editingTemplate = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
-                            </div>
+                    <!-- Main Primary Submit / Action Button (Top Highlight) -->
+                    <button 
+                        type="button"
+                        wire:click="publish"
+                        wire:loading.attr="disabled"
+                        class="w-full py-3 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                    >
+                        <span wire:loading.remove wire:target="publish" class="flex items-center gap-2">
+                            @if($status === 'scheduled')
+                                <span class="material-symbols-outlined text-lg">event</span>
+                                <span>Schedule Page</span>
+                            @elseif($status === 'published')
+                                <span class="material-symbols-outlined text-lg">published_with_changes</span>
+                                <span>Update Page</span>
+                            @else
+                                <span class="material-symbols-outlined text-lg">publish</span>
+                                <span>Publish Page</span>
                             @endif
-                        </div>
+                        </span>
+                        <span wire:loading wire:target="publish" class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg animate-spin">sync</span>
+                            <span>Saving...</span>
+                        </span>
+                    </button>
 
-                        {{-- Parent Page --}}
-                        <div class="group">
-                            <div class="flex items-center justify-between" x-show="!editingParent">
-                                <span class="text-sm text-[#6F767E]">Parent:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $parentId ? ($parentPages->find($parentId)->title ?? 'Unknown') : 'Top Level' }}</span>
-                                    <button @click="editingParent = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
-                            </div>
-                            <div x-show="editingParent" class="bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <select wire:model="parentId" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                    <option value="">None (Top Level)</option>
-                                    @foreach($parentPages as $parentPage)
-                                        <option value="{{ $parentPage->id }}">{{ $parentPage->title }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="flex justify-end">
-                                    <button @click="editingParent = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Secondary Actions Row (Save Draft & Preview) -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <button 
+                            type="button" 
+                            wire:click="saveAsDraft" 
+                            wire:loading.attr="disabled"
+                            class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-50 dark:bg-[#0B0B0B] hover:bg-gray-100 dark:hover:bg-[#272B30] border border-gray-200 dark:border-[#272B30] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                        >
+                            <span wire:loading.remove wire:target="saveAsDraft" class="flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-base">save</span>
+                                <span>Save Draft</span>
+                            </span>
+                            <span wire:loading wire:target="saveAsDraft" class="flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-base animate-spin">sync</span>
+                                <span>Saving...</span>
+                            </span>
+                        </button>
 
-                        {{-- Menu Order --}}
-                        <div class="group" x-data="{ editingOrder: false }">
-                            <div class="flex items-center justify-between" x-show="!editingOrder">
-                                <span class="text-sm text-[#6F767E]">Menu Order:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $menuOrder ?? 0 }}</span>
-                                    <button @click="editingOrder = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
-                            </div>
-                            <div x-show="editingOrder" class="bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <input wire:model="menuOrder" type="number" min="0"
-                                    class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                <div class="flex justify-end">
-                                    <button @click="editingOrder = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
-                            </div>
+                        @if($isEdit && $previewUrl)
+                        <a 
+                            href="{{ $previewUrl }}" 
+                            target="_blank"
+                            class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-50 dark:bg-[#0B0B0B] hover:bg-gray-100 dark:hover:bg-[#272B30] border border-gray-200 dark:border-[#272B30] transition-all flex items-center justify-center gap-1.5"
+                        >
+                            <span class="material-symbols-outlined text-base">visibility</span>
+                            <span>Preview</span>
+                        </a>
+                        @else
+                        <div class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-gray-400 bg-gray-50/50 dark:bg-[#0B0B0B]/50 border border-dashed border-gray-200 dark:border-[#272B30] flex items-center justify-center gap-1.5 opacity-50 cursor-not-allowed">
+                            <span class="material-symbols-outlined text-base">visibility_off</span>
+                            <span>Preview</span>
                         </div>
+                        @endif
                     </div>
 
-                    {{-- Delete action --}}
+                    <!-- Publishing Controls Box (Status Dropdown & Schedule Date Picker) -->
+                    <div class="pt-3 border-t border-gray-100 dark:border-white/5 space-y-4">
+                        
+                        <!-- Status Selector Field -->
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-base text-gray-400">key</span>
+                                <span>Status</span>
+                            </label>
+                            <select 
+                                wire:model.live="status" 
+                                class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all"
+                            >
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
+                                <option value="scheduled">Scheduled</option>
+                                <option value="private">Private</option>
+                            </select>
+                        </div>
+
+                        <!-- Schedule / Publish Date Input -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-base text-gray-400">calendar_month</span>
+                                    <span>Publish Date & Time</span>
+                                </label>
+                                @if($publishedAt)
+                                <button type="button" wire:click="$set('publishedAt', null)" class="text-[11px] font-semibold text-gray-400 hover:text-red-500 transition-colors">
+                                    Reset
+                                </button>
+                                @endif
+                            </div>
+
+                            <input 
+                                type="datetime-local" 
+                                wire:model.live="publishedAt"
+                                class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all"
+                            >
+
+                            <p class="text-[11px] text-gray-400 pt-0.5 leading-tight">
+                                @if($status === 'scheduled')
+                                    📅 Will be published automatically at this time.
+                                @elseif($publishedAt)
+                                    Published on {{ \Carbon\Carbon::parse($publishedAt)->format('M d, Y @ H:i') }}
+                                @else
+                                    Publishes immediately upon submission.
+                                @endif
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- Bottom Actions (Delete Page) -->
                     @if($isEdit && !$isSystemPage)
-                    <div class="mt-8 pt-4 border-t border-gray-100 dark:border-[#272B30] flex items-center justify-end">
-                        <button wire:click="delete" wire:confirm="Are you sure you want to delete this page?" class="text-xs font-bold text-[#FF6A55] hover:text-[#ff4f38] transition-colors">
-                            Move to Trash
+                    <div class="pt-3 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs">
+                        <button 
+                            type="button" 
+                            wire:click="delete" 
+                            wire:confirm="Are you sure you want to delete this page?"
+                            class="font-bold text-red-600 hover:text-red-700 dark:text-red-400 hover:underline transition-colors flex items-center gap-1"
+                        >
+                            <span class="material-symbols-outlined text-base">delete</span>
+                            <span>Delete Page</span>
                         </button>
                     </div>
                     @endif
+
+                </div>
+
+                <!-- Page Attributes Card (Template & Parent) -->
+                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none space-y-4">
+                    <div class="flex items-center gap-2 mb-2 text-[#6F767E]">
+                        <span class="material-symbols-outlined text-lg text-[#2563EB]">tune</span>
+                        <span class="text-xs font-bold uppercase tracking-widest text-gray-900 dark:text-white">Page Attributes</span>
+                    </div>
+
+                    <!-- Template -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-700 dark:text-gray-300">Template</label>
+                        @if($isSystemPage)
+                            <div class="w-full h-9 px-3 rounded-xl bg-gray-100 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-gray-500 flex items-center justify-between">
+                                <span>{{ $templates[$template] ?? ucfirst($template) }}</span>
+                                <span class="material-symbols-outlined text-sm text-amber-500" title="System page template is locked">lock</span>
+                            </div>
+                        @else
+                            <select wire:model="template" class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB]">
+                                @foreach($templates as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        @endif
+                    </div>
+
+                    <!-- Parent Page -->
+                    <div class="space-y-1.5 pt-2">
+                        <label class="text-xs font-bold text-gray-700 dark:text-gray-300">Parent Page</label>
+                        <select wire:model="parentId" class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB]">
+                            <option value="">(No Parent)</option>
+                            @foreach($parentPages as $parentPage)
+                                <option value="{{ $parentPage->id }}">{{ $parentPage->title }}</option>
+                            @endforeach
+                        </select>
+                    <!-- Menu Order -->
+                    <div class="space-y-1.5 pt-2">
+                        <label class="text-xs font-bold text-gray-700 dark:text-gray-300">Menu Order</label>
+                        <input 
+                            type="number" 
+                            wire:model="menuOrder" 
+                            min="0"
+                            class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB]"
+                        >
+                    </div>
                 </div>
 
                 {{-- Featured Image Card --}}

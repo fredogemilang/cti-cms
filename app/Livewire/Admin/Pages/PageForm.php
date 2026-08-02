@@ -1033,6 +1033,13 @@ class PageForm extends Component
         $this->save();
     }
 
+    public function updatedStatus($value)
+    {
+        if ($value === 'scheduled' && empty($this->publishedAt)) {
+            $this->publishedAt = now()->addHour()->format('Y-m-d\TH:i');
+        }
+    }
+
     public function delete()
     {
         if ($this->isSystemPage) {
