@@ -62,15 +62,46 @@ class CategoriesManager extends Component
         return $result;
     }
 
+    // Multilingual State
+    public string $activeLocale = 'en';
+
+    public array $translations = [
+        'en' => ['name' => '', 'slug' => '', 'description' => ''],
+        'id' => ['name' => '', 'slug' => '', 'description' => ''],
+    ];
+
+    public function setLocale(string $locale): void
+    {
+        $this->translations[$this->activeLocale] = [
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'description' => $this->description,
+        ];
+
+        $this->activeLocale = $locale;
+
+        $this->name = $this->translations[$locale]['name'] ?? '';
+        $this->slug = $this->translations[$locale]['slug'] ?? '';
+        $this->description = $this->translations[$locale]['description'] ?? '';
+    }
+
     public function updatedName($value)
     {
-        if (! $this->editingCategory) {
+        $this->translations[$this->activeLocale]['name'] = $value;
+        if (! $this->editingCategory && empty($this->slug)) {
             $this->slug = Str::slug($value);
+            $this->translations[$this->activeLocale]['slug'] = $this->slug;
         }
     }
 
     public function store()
     {
+        $this->translations[$this->activeLocale] = [
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'description' => $this->description,
+        ];
+
         $this->validate([
             'name' => 'required|min:2',
             'slug' => 'required|unique:categories,slug',
@@ -78,28 +109,64 @@ class CategoriesManager extends Component
             'description' => 'nullable|string',
         ]);
 
-        Category::create([
-            'name' => $this->name,
-            'slug' => $this->slug,
+        $defaultName = $this->translations['en']['name'] ?: ($this->translations['id']['name'] ?: $this->name);
+        $defaultSlug = $this->translations['en']['slug'] ?: ($this->translations['id']['slug'] ?: $this->slug);
+        $defaultDesc = $this->translations['en']['description'] ?: ($this->translations['id']['description'] ?: $this->description);
+
+        $category = Category::create([
+            'name' => $defaultName,
+            'slug' => $defaultSlug,
             'parent_id' => $this->parent_id ?: null,
-            'description' => $this->description,
+            'description' => $defaultDesc,
         ]);
 
-        $this->reset(['name', 'slug', 'parent_id', 'description']);
+        foreach (['en', 'id'] as $loc) {
+            if (! empty($this->translations[$loc]['name'])) {
+                $category->setTranslation('name', $loc, $this->translations[$loc]['name']);
+            }
+            if (! empty($this->translations[$loc]['slug'])) {
+                $category->setTranslation('slug', $loc, $this->translations[$loc]['slug']);
+            }
+            if (! empty($this->translations[$loc]['description'])) {
+                $category->setTranslation('description', $loc, $this->translations[$loc]['description']);
+            }
+        }
+        $category->save();
+
+        $this->cancelEdit();
         session()->flash('success', 'Category created successfully.');
     }
 
     public function edit($id)
     {
         $this->editingCategory = Category::find($id);
-        $this->name = $this->editingCategory->name;
-        $this->slug = $this->editingCategory->slug;
+        if (! $this->editingCategory) {
+            return;
+        }
+
         $this->parent_id = $this->editingCategory->parent_id;
-        $this->description = $this->editingCategory->description;
+
+        foreach (['en', 'id'] as $loc) {
+            $this->translations[$loc] = [
+                'name' => $this->editingCategory->getTranslation('name', $loc, false) ?? ($loc === 'en' ? $this->editingCategory->name : ''),
+                'slug' => $this->editingCategory->getTranslation('slug', $loc, false) ?? ($loc === 'en' ? $this->editingCategory->slug : ''),
+                'description' => $this->editingCategory->getTranslation('description', $loc, false) ?? ($loc === 'en' ? $this->editingCategory->description : ''),
+            ];
+        }
+
+        $this->name = $this->translations[$this->activeLocale]['name'] ?? '';
+        $this->slug = $this->translations[$this->activeLocale]['slug'] ?? '';
+        $this->description = $this->translations[$this->activeLocale]['description'] ?? '';
     }
 
     public function update()
     {
+        $this->translations[$this->activeLocale] = [
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'description' => $this->description,
+        ];
+
         $this->validate([
             'name' => 'required|min:2',
             'slug' => 'required|unique:categories,slug,'.$this->editingCategory->id,
@@ -107,12 +174,29 @@ class CategoriesManager extends Component
             'description' => 'nullable|string',
         ]);
 
+        $defaultName = $this->translations['en']['name'] ?: ($this->translations['id']['name'] ?: $this->name);
+        $defaultSlug = $this->translations['en']['slug'] ?: ($this->translations['id']['slug'] ?: $this->slug);
+        $defaultDesc = $this->translations['en']['description'] ?: ($this->translations['id']['description'] ?: $this->description);
+
         $this->editingCategory->update([
-            'name' => $this->name,
-            'slug' => $this->slug,
+            'name' => $defaultName,
+            'slug' => $defaultSlug,
             'parent_id' => $this->parent_id ?: null,
-            'description' => $this->description,
+            'description' => $defaultDesc,
         ]);
+
+        foreach (['en', 'id'] as $loc) {
+            if (! empty($this->translations[$loc]['name'])) {
+                $this->editingCategory->setTranslation('name', $loc, $this->translations[$loc]['name']);
+            }
+            if (! empty($this->translations[$loc]['slug'])) {
+                $this->editingCategory->setTranslation('slug', $loc, $this->translations[$loc]['slug']);
+            }
+            if (! empty($this->translations[$loc]['description'])) {
+                $this->editingCategory->setTranslation('description', $loc, $this->translations[$loc]['description']);
+            }
+        }
+        $this->editingCategory->save();
 
         $this->cancelEdit();
         session()->flash('success', 'Category updated successfully.');
@@ -121,7 +205,12 @@ class CategoriesManager extends Component
     public function cancelEdit()
     {
         $this->editingCategory = null;
+        $this->activeLocale = 'en';
         $this->reset(['name', 'slug', 'parent_id', 'description']);
+        $this->translations = [
+            'en' => ['name' => '', 'slug' => '', 'description' => ''],
+            'id' => ['name' => '', 'slug' => '', 'description' => ''],
+        ];
     }
 
     public function delete($id)
