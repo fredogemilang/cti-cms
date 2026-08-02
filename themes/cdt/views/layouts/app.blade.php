@@ -33,7 +33,7 @@
 
   </div>
 
-  <x-cookie-banner />
+  @include('cdt::partials.cookie-banner')
 
   @livewireScripts
   @stack('scripts')
