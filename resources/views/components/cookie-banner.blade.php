@@ -1,6 +1,25 @@
 <style>
     [x-cloak] { display: none !important; }
+    .cdt-cookie-banner {
+        position: fixed !important;
+        bottom: 24px !important;
+        right: 24px !important;
+        left: auto !important;
+        max-width: 440px !important;
+        width: calc(100% - 48px) !important;
+        z-index: 99999 !important;
+    }
+    @media (max-width: 640px) {
+        .cdt-cookie-banner {
+            left: 16px !important;
+            right: 16px !important;
+            bottom: 16px !important;
+            max-width: none !important;
+            width: auto !important;
+        }
+    }
 </style>
+
 <div x-data="{ 
         accepted: localStorage.getItem('cookie_consent') === 'accepted',
         accept() {
@@ -16,7 +35,7 @@
     x-transition:leave-start="opacity-100 transform translate-y-0 scale-100"
     x-transition:leave-end="opacity-0 transform translate-y-8 scale-95"
     x-cloak
-    class="fixed bottom-5 left-5 right-5 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md z-[99999] bg-white/95 dark:bg-[#141414]/95 backdrop-blur-xl border border-gray-200/80 dark:border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.18)] p-5 text-sm text-gray-800 dark:text-gray-200 antialiased font-sans">
+    class="cdt-cookie-banner bg-white/95 dark:bg-[#141414]/95 backdrop-blur-xl border border-gray-200/80 dark:border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.18)] p-5 text-sm text-gray-800 dark:text-gray-200 antialiased font-sans">
     
     <div class="flex items-start gap-3.5">
         {{-- Cookie Icon SVG --}}
