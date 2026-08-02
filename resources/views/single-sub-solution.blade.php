@@ -35,63 +35,58 @@
         'dynatrace' => ['name' => 'Dynatrace', 'logo' => asset('storage/media/Dynatrace_Logo_color_positive_vertical-1024x1024.png'), 'url' => localized_url('/technology-alliance/dynatrace')],
     ];
 
-    // 1. Fetch dynamic related entries from CPT Entry Pivot Relationships
+    // 1. Check MetaFields first ('related_products', 'technology_alliances', 'related_brands', 'products')
     $relatedProducts = [];
-    $relEntries = $entry->relatedEntries()->where('status', 'published')->get();
+    $metaVal = $entry->getMeta('related_products') 
+        ?? $entry->getMeta('technology_alliances') 
+        ?? $entry->getMeta('related_brands') 
+        ?? $entry->getMeta('products');
 
-    if ($relEntries->isNotEmpty()) {
-        foreach ($relEntries as $rel) {
-            $relTitle = $rel->getTranslation('title', $locale, fallback: true) ?? $rel->title;
-            $relLogo = $rel->featured_image 
-                ? asset('storage/' . $rel->featured_image) 
-                : ($rel->getMeta('logo') ? asset('storage/' . $rel->getMeta('logo')) : null);
-            $relUrl = $rel->getUrl($locale);
+    if (!empty($metaVal)) {
+        $keys = is_array($metaVal) ? $metaVal : array_filter(array_map('trim', explode(',', (string) $metaVal)));
+        $uniqueKeys = array_values(array_unique(array_filter($keys)));
 
-            $relatedProducts[] = [
-                'name' => $relTitle,
-                'logo' => $relLogo,
-                'url' => $relUrl,
-            ];
+        $fetchedEntries = \App\Models\CptEntry::whereIn('id', $uniqueKeys)
+            ->orWhereIn('slug', $uniqueKeys)
+            ->where('status', 'published')
+            ->get()
+            ->keyBy(fn($item) => (string) $item->id);
+
+        foreach ($uniqueKeys as $key) {
+            $keyStr = (string) $key;
+            $rel = $fetchedEntries->get($keyStr) ?? \App\Models\CptEntry::where('slug', $keyStr)->where('status', 'published')->first();
+
+            if ($rel) {
+                $relTitle = $rel->getTranslation('title', $locale, fallback: true) ?? $rel->title;
+                $relLogoPath = $rel->getMeta('logo') ?: $rel->featured_image;
+                $relLogo = !empty($relLogoPath) ? asset('storage/' . ltrim($relLogoPath, '/')) : null;
+                $relUrl = $rel->getUrl($locale);
+
+                $relatedProducts[] = [
+                    'name' => $relTitle,
+                    'logo' => $relLogo,
+                    'url' => $relUrl,
+                ];
+            } elseif (isset($brandLogos[$keyStr])) {
+                $relatedProducts[] = $brandLogos[$keyStr];
+            }
         }
-    }
+    } else {
+        // Fallback: check pivot table cpt_entry_relationships for meta_field_id 84
+        $relEntries = $entry->relatedEntries(84)->where('status', 'published')->get();
 
-    // 2. If no pivot entries, check MetaFields ('related_products', 'technology_alliances', 'related_brands', 'products')
-    if (empty($relatedProducts)) {
-        $metaVal = $entry->getMeta('related_products') 
-            ?? $entry->getMeta('technology_alliances') 
-            ?? $entry->getMeta('related_brands') 
-            ?? $entry->getMeta('products');
+        if ($relEntries->isNotEmpty()) {
+            foreach ($relEntries as $rel) {
+                $relTitle = $rel->getTranslation('title', $locale, fallback: true) ?? $rel->title;
+                $relLogoPath = $rel->getMeta('logo') ?: $rel->featured_image;
+                $relLogo = !empty($relLogoPath) ? asset('storage/' . ltrim($relLogoPath, '/')) : null;
+                $relUrl = $rel->getUrl($locale);
 
-        if (!empty($metaVal)) {
-            $keys = is_array($metaVal) ? $metaVal : array_filter(array_map('trim', explode(',', (string) $metaVal)));
-            
-            // Try fetching by CPT Entry IDs or slugs
-            $fetchedEntries = \App\Models\CptEntry::whereIn('id', $keys)
-                ->orWhereIn('slug', $keys)
-                ->where('status', 'published')
-                ->get();
-
-            if ($fetchedEntries->isNotEmpty()) {
-                foreach ($fetchedEntries as $rel) {
-                    $relTitle = $rel->getTranslation('title', $locale, fallback: true) ?? $rel->title;
-                    $relLogo = $rel->featured_image 
-                        ? asset('storage/' . $rel->featured_image) 
-                        : ($rel->getMeta('logo') ? asset('storage/' . $rel->getMeta('logo')) : null);
-                    $relUrl = $rel->getUrl($locale);
-
-                    $relatedProducts[] = [
-                        'name' => $relTitle,
-                        'logo' => $relLogo,
-                        'url' => $relUrl,
-                    ];
-                }
-            } else {
-                // Check if keys match known brand keys in $brandLogos dictionary
-                foreach ($keys as $key) {
-                    if (isset($brandLogos[$key])) {
-                        $relatedProducts[] = $brandLogos[$key];
-                    }
-                }
+                $relatedProducts[] = [
+                    'name' => $relTitle,
+                    'logo' => $relLogo,
+                    'url' => $relUrl,
+                ];
             }
         }
     }
@@ -163,7 +158,7 @@
         @foreach($relatedProducts as $product)
           <a href="{{ $product['url'] }}" class="bg-white px-8 py-6 rounded-2xl shadow-sm border border-zinc-100 w-48 h-28 flex items-center justify-center hover:-translate-y-1 hover:shadow-md transition-all duration-300 group">
             @if(!empty($product['logo']))
-              <x-image :src="$product['logo']" logo'] }}" alt="{{ $product['name'] }}" class="max-h-12 w-auto object-contain transition-transform group-hover:scale-105" />
+              <x-image :src="$product['logo']" alt="{{ $product['name'] }}" class="max-h-12 w-auto object-contain transition-transform group-hover:scale-105" />
             @else
               <span class="font-bold text-gray-800 text-sm group-hover:text-primary transition-colors">{{ $product['name'] }}</span>
             @endif
