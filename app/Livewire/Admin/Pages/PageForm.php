@@ -1156,12 +1156,20 @@ class PageForm extends Component
             ? PageRevision::with('user')->where('page_id', $this->page->id)->latest()->take(20)->get()
             : collect();
 
+        $frontendUrl = url($this->slug);
+        if ($this->isEdit && $this->pageId && $this->status !== 'published') {
+            $previewUrl = route('admin.pages.preview', $this->pageId);
+        } else {
+            $previewUrl = $frontendUrl;
+        }
+
         return view('livewire.admin.pages.page-form', [
             'parentPages' => $parentPages,
             'templates' => Page::getTemplates(),
             'blockTypes' => PageBlock::$blockTypes,
             'colorClasses' => PageBlock::$colorClasses,
             'revisions' => $revisions,
+            'previewUrl' => $previewUrl,
         ]);
     }
 }

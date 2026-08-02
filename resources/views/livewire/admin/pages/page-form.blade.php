@@ -209,7 +209,7 @@
                             <span wire:loading wire:target="saveAsDraft">Saving...</span>
                         </button>
                         @if($isEdit)
-                        <a href="{{ url($slug) }}" target="_blank"
+                        <a href="{{ $previewUrl }}" target="_blank"
                             class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all flex items-center justify-center gap-2">
                             <span class="material-symbols-outlined text-lg">visibility</span>
                             Preview
