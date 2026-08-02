@@ -195,10 +195,10 @@
                         <button wire:click="publish" wire:loading.attr="disabled"
                             class="w-full px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50">
                             <span wire:loading.remove wire:target="publish">
-                                <span class="material-symbols-outlined text-lg">publish</span>
-                                Publish
+                                <span class="material-symbols-outlined text-lg">{{ $status === 'published' ? 'published_with_changes' : 'publish' }}</span>
+                                {{ $status === 'published' ? 'Update' : 'Publish' }}
                             </span>
-                            <span wire:loading wire:target="publish">Publishing...</span>
+                            <span wire:loading wire:target="publish">{{ $status === 'published' ? 'Updating...' : 'Publishing...' }}</span>
                         </button>
                         <button wire:click="saveAsDraft" wire:loading.attr="disabled"
                             class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-50 dark:bg-[#0B0B0B] hover:bg-gray-100 dark:hover:bg-[#272B30] border border-gray-200 dark:border-[#272B30] transition-all flex items-center justify-center gap-2 disabled:opacity-50">
