@@ -274,34 +274,41 @@
                             </select>
                         </div>
 
-                        <!-- Schedule / Publish Date & Time (Formatted Text + Expandable Picker) -->
-                        <div class="space-y-2 pt-2 border-t border-gray-100 dark:border-white/5" x-data="{ editingDate: false }">
-                            <!-- Formatted Text View (No input box when inactive) -->
-                            <div class="flex items-center justify-between text-xs py-1" x-show="!editingDate && status !== 'scheduled'">
-                                <div class="flex items-center gap-2">
+                        <!-- Schedule / Publish Date & Time (2-Line Layout Matching Status) -->
+                        <div class="space-y-1.5 pt-3 border-t border-gray-100 dark:border-white/5" x-data="{ editingDate: false }">
+                            <!-- Line 1: Header / Label + Edit Action -->
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
                                     <span class="material-symbols-outlined text-base text-gray-400">calendar_month</span>
-                                    <span class="text-gray-600 dark:text-gray-400">Publish:</span>
-                                    <span class="font-bold text-gray-900 dark:text-white">
-                                        {{ $publishedAt ? \Carbon\Carbon::parse($publishedAt)->format('M d, Y @ H:i') : 'Immediately' }}
-                                    </span>
-                                </div>
+                                    <span>Publish Date & Time</span>
+                                </label>
                                 <button 
                                     type="button" 
-                                    @click="editingDate = true" 
+                                    @click="editingDate = !editingDate" 
                                     class="text-[11px] font-bold text-[#2563EB] hover:underline uppercase flex items-center gap-0.5 transition-colors"
                                 >
-                                    <span class="material-symbols-outlined text-xs">edit</span>
-                                    <span>Edit</span>
+                                    <span class="material-symbols-outlined text-xs" x-text="editingDate ? 'close' : 'edit'">edit</span>
+                                    <span x-text="editingDate ? 'Cancel' : 'Edit'">Edit</span>
                                 </button>
                             </div>
 
-                            <!-- Expandable Datetime Picker Box -->
-                            <div x-show="editingDate || status === 'scheduled'" class="p-3.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] space-y-3" x-cloak x-transition>
+                            <!-- Line 2 View Mode: Full-width Formatted Value Box -->
+                            <div x-show="!editingDate && status !== 'scheduled'" class="w-full min-h-[36px] px-3 py-2 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] flex items-center justify-between">
+                                <span>{{ $publishedAt ? \Carbon\Carbon::parse($publishedAt)->format('M d, Y @ H:i') : 'Immediately' }}</span>
+                                @if($publishedAt)
+                                <span class="text-[10px] text-gray-400 font-normal">Custom</span>
+                                @else
+                                <span class="text-[10px] text-emerald-500 font-bold">Instant</span>
+                                @endif
+                            </div>
+
+                            <!-- Line 2 Edit Mode: Expandable Datetime Picker Box -->
+                            <div x-show="editingDate || status === 'scheduled'" class="p-3.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] space-y-3 mt-1" x-cloak x-transition>
                                 <div class="flex items-center justify-between text-xs">
-                                    <label class="font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                    <span class="font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
                                         <span class="material-symbols-outlined text-sm text-blue-500">schedule</span>
-                                        <span>Select Date & Time</span>
-                                    </label>
+                                        <span>Set Date & Time</span>
+                                    </span>
                                     @if($publishedAt)
                                     <button 
                                         type="button" 
