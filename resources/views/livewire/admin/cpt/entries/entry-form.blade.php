@@ -534,6 +534,37 @@
                         </div>
                     @endif
                 @endforeach
+
+                <!-- Revisions History Card (Bottom Sidebar) -->
+                @if($isEdit && !empty($revisions) && $revisions->count() > 0)
+                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none" x-data="{ open: true }">
+                    <div class="flex items-center justify-between text-[#6F767E] cursor-pointer" @click="open = !open">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg text-blue-500">history</span>
+                            <span class="text-xs font-bold uppercase tracking-widest text-gray-900 dark:text-white">Revisions ({{ $revisions->count() }})</span>
+                        </div>
+                        <span class="material-symbols-outlined text-sm transition-transform" :class="{ 'rotate-180': !open }">expand_more</span>
+                    </div>
+
+                    <div x-show="open" class="mt-4 pt-4 border-t border-gray-100 dark:border-white/5 space-y-2 max-h-60 overflow-y-auto pr-1" x-cloak>
+                        @foreach($revisions as $rev)
+                        <div class="flex items-center justify-between text-xs p-2.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-100 dark:border-[#272B30]">
+                            <div class="space-y-0.5">
+                                <p class="font-bold text-gray-900 dark:text-white leading-tight">{{ $rev->user?->name ?? 'System User' }}</p>
+                                <p class="text-[10px] text-gray-500 dark:text-gray-400">{{ $rev->created_at->diffForHumans() }}</p>
+                            </div>
+                            <button type="button" 
+                                wire:click="restoreRevision({{ $rev->id }})" 
+                                wire:confirm="Are you sure you want to restore this revision? Current unsaved changes will be overwritten."
+                                class="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/20 text-[#2563EB] hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded-lg font-bold text-[11px] transition-colors"
+                                title="Restore to this version">
+                                Restore
+                            </button>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
             </div>
         </aside>
     </div>
