@@ -1065,15 +1065,35 @@ class EntryForm extends Component
                     $targetCpt = CustomPostType::where('slug', $field->options['target_cpt'])->first();
                     $targetCptId = $targetCpt?->id;
                 }
-                if ($targetCptId) {
-                    $targetEntriesByField[$field->id] = CptEntry::where('post_type_id', $targetCptId)
-                        ->where('status', 'published')
-                        ->where('id', '!=', $this->entryId ?? 0)
-                        ->orderBy('title')
-                        ->get(['id', 'title', 'slug']);
-                } else {
-                    $targetEntriesByField[$field->id] = collect();
+
+                $selectedValue = $this->meta[$field->name] ?? [];
+                $selectedRaw = is_array($selectedValue) ? $selectedValue : [$selectedValue];
+                $selectedIds = [];
+                foreach ($selectedRaw as $v) {
+                    if ($v !== '' && $v !== null) {
+                        $selectedIds[] = (int) $v;
+                    }
                 }
+                $selectedIds = array_filter($selectedIds);
+
+                $query = CptEntry::query()
+                    ->where('status', 'published')
+                    ->where('id', '!=', $this->entryId ?? 0);
+
+                if ($targetCptId) {
+                    $query->where(function ($q) use ($targetCptId, $selectedIds) {
+                        $q->where('post_type_id', $targetCptId);
+                        if (! empty($selectedIds)) {
+                            $q->orWhereIn('id', $selectedIds);
+                        }
+                    });
+                } else {
+                    if (! empty($selectedIds)) {
+                        $query->whereIn('id', $selectedIds);
+                    }
+                }
+
+                $targetEntriesByField[$field->id] = $query->orderBy('title')->get(['id', 'title', 'slug']);
             }
         }
 
