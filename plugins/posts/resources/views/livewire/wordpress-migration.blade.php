@@ -139,14 +139,52 @@
                     <div class="flex items-end">
                         <label class="flex items-center gap-2 cursor-pointer h-10">
                             <input type="checkbox" wire:model.live="fieldMappings.content_images" class="custom-checkbox" />
-                            <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">Download images in content</span>
+                            <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">Download content images to Media Library</span>
                         </label>
                     </div>
                 </div>
-                <p class="text-xs text-[#6F767E] mt-2">Downloaded images will be saved to the Media Library.</p>
             </div>
         </div>
 
+        {{-- Discovered Taxonomies & Mapping Card --}}
+        @if(count($discoveredTaxonomies) > 0)
+        <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] p-6 space-y-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Taxonomy Detector & Mapping</h3>
+                    <p class="text-xs text-[#6F767E]">Map WordPress taxonomies (categories, tags, custom taxonomies) to CMS Categories or Tags</p>
+                </div>
+                <span class="px-3 py-1 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-[#8B5CF6] text-xs font-bold">
+                    {{ count($discoveredTaxonomies) }} Taxonomies Detected
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                @foreach($discoveredTaxonomies as $slug => $tax)
+                <div class="p-4 rounded-2xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] flex flex-col gap-2.5">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-purple-500 text-lg">schema</span>
+                            <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $tax['name'] }}</span>
+                        </div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-200 dark:bg-[#272B30] text-[#6F767E] uppercase tracking-wider">{{ $slug }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 pt-1">
+                        <label class="text-xs text-[#6F767E] shrink-0 font-medium">Map to CMS:</label>
+                        <select wire:model.live="taxonomyMappings.{{ $slug }}" class="flex-1 h-9 rounded-xl border-none bg-white dark:bg-[#1A1A1A] px-3 text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#8B5CF6]">
+                            <option value="category">Category (Import as New Category if missing)</option>
+                            <option value="tag">Tag (Import as New Tag if missing)</option>
+                            <option value="skip">-- Skip Taxonomy --</option>
+                        </select>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+        
+        <p class="text-xs text-[#6F767E] mt-2">Downloaded images will be saved to the Media Library.</p>
+        
         {{-- Action Buttons --}}
         <div class="flex items-center justify-between">
             <button

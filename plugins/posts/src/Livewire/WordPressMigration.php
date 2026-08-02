@@ -80,6 +80,11 @@ class WordPressMigration extends Component
         $this->isValidUrl = true;
     }
 
+    // Discovered Taxonomies & Mapping State
+    public array $discoveredTaxonomies = [];
+
+    public array $taxonomyMappings = [];
+
     public function fetchPostsInfo()
     {
         $this->isLoading = true;
@@ -114,6 +119,9 @@ class WordPressMigration extends Component
                 ];
             })->toArray();
 
+            // Detect Taxonomies
+            $this->discoverTaxonomies($posts);
+
             if ($this->totalPosts === 0) {
                 $this->errorMessage = 'No posts found at this URL.';
             } else {
@@ -125,6 +133,72 @@ class WordPressMigration extends Component
         }
 
         $this->isLoading = false;
+    }
+
+    protected function discoverTaxonomies(array $posts): void
+    {
+        $this->discoveredTaxonomies = [];
+        $this->taxonomyMappings = [];
+
+        // 1. Try WP REST API taxonomies endpoint
+        try {
+            $baseUrl = Str::before($this->wpUrl, '/wp/v2/posts');
+            $taxResponse = Http::timeout(15)->get($baseUrl.'/wp/v2/taxonomies');
+            if ($taxResponse->successful()) {
+                $taxData = $taxResponse->json();
+                foreach ($taxData as $slug => $tax) {
+                    $name = $tax['name'] ?? $slug;
+                    $types = $tax['types'] ?? [];
+                    if (empty($types) || in_array('post', $types)) {
+                        $target = ($slug === 'category' ? 'category' : ($slug === 'post_tag' ? 'tag' : 'category'));
+                        $this->discoveredTaxonomies[$slug] = [
+                            'name' => $name,
+                            'slug' => $slug,
+                            'target' => $target,
+                        ];
+                        $this->taxonomyMappings[$slug] = $target;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Ignore API taxonomy fetch error, fallback to _embedded
+        }
+
+        // 2. Fallback / supplementary scan from _embedded wp:term in preview posts
+        foreach ($posts as $post) {
+            $termGroups = $post['_embedded']['wp:term'] ?? [];
+            foreach ($termGroups as $group) {
+                if (! is_array($group)) {
+                    continue;
+                }
+                foreach ($group as $term) {
+                    $slug = $term['taxonomy'] ?? '';
+                    if (empty($slug)) {
+                        continue;
+                    }
+                    if (! isset($this->discoveredTaxonomies[$slug])) {
+                        $name = ucfirst(str_replace(['_', '-'], ' ', $slug));
+                        $target = ($slug === 'category' ? 'category' : ($slug === 'post_tag' ? 'tag' : 'category'));
+                        $this->discoveredTaxonomies[$slug] = [
+                            'name' => $name,
+                            'slug' => $slug,
+                            'target' => $target,
+                        ];
+                        $this->taxonomyMappings[$slug] = $target;
+                    }
+                }
+            }
+        }
+
+        // Always ensure category and post_tag are present
+        if (! isset($this->discoveredTaxonomies['category'])) {
+            $this->discoveredTaxonomies['category'] = ['name' => 'Categories', 'slug' => 'category', 'target' => 'category'];
+            $this->taxonomyMappings['category'] = 'category';
+        }
+        if (! isset($this->discoveredTaxonomies['post_tag'])) {
+            $this->discoveredTaxonomies['post_tag'] = ['name' => 'Tags', 'slug' => 'post_tag', 'target' => 'tag'];
+            $this->taxonomyMappings['post_tag'] = 'tag';
+        }
     }
 
     public function importAllPosts()
@@ -261,15 +335,8 @@ class WordPressMigration extends Component
             $post->save();
         }
 
-        // Handle categories
-        if ($this->fieldMappings['categories']) {
-            $this->attachCategories($post, $wpPost);
-        }
-
-        // Handle tags
-        if ($this->fieldMappings['tags']) {
-            $this->attachTags($post, $wpPost);
-        }
+        // Handle taxonomies (categories, tags, custom taxonomies)
+        $this->attachTaxonomies($post, $wpPost);
 
         return 'success';
     }
@@ -478,92 +545,69 @@ class WordPressMigration extends Component
         return $slug;
     }
 
-    protected function attachCategories($post, $wpPost)
+    protected function attachTaxonomies($post, $wpPost)
     {
-        if (empty($wpPost['_embedded']['wp:term'][0])) {
-            return;
-        }
-
-        $wpCategories = $wpPost['_embedded']['wp:term'][0];
-
-        // Ensure it's an array before iterating
-        if (! is_array($wpCategories)) {
+        $termGroups = $wpPost['_embedded']['wp:term'] ?? [];
+        if (! is_array($termGroups) || empty($termGroups)) {
             return;
         }
 
         $categoryIds = [];
+        $tagIds = [];
 
-        foreach ($wpCategories as $wpCat) {
-            if (($wpCat['taxonomy'] ?? '') !== 'category') {
+        foreach ($termGroups as $group) {
+            if (! is_array($group)) {
                 continue;
             }
+            foreach ($group as $term) {
+                $taxonomySlug = $term['taxonomy'] ?? '';
+                $targetAction = $this->taxonomyMappings[$taxonomySlug] ?? ($taxonomySlug === 'category' ? 'category' : ($taxonomySlug === 'post_tag' ? 'tag' : 'skip'));
 
-            $catName = html_entity_decode($wpCat['name'], ENT_QUOTES, 'UTF-8');
-            $catSlug = Str::slug($catName);
+                if ($targetAction === 'skip') {
+                    continue;
+                }
 
-            $category = Category::where('slug', $catSlug)->first();
+                $termName = html_entity_decode($term['name'] ?? '', ENT_QUOTES, 'UTF-8');
+                $termSlug = $term['slug'] ?? Str::slug($termName);
 
-            if (! $category) {
-                $category = Category::whereRaw('LOWER(name) = ?', [strtolower($catName)])->first();
+                if (empty($termName)) {
+                    continue;
+                }
+
+                if ($targetAction === 'category') {
+                    $category = Category::where('slug', $termSlug)->first();
+                    if (! $category) {
+                        $category = Category::whereRaw('LOWER(name) = ?', [strtolower($termName)])->first();
+                    }
+                    if (! $category) {
+                        $category = Category::create([
+                            'name' => $termName,
+                            'slug' => $termSlug,
+                            'description' => $term['description'] ?? '',
+                        ]);
+                    }
+                    $categoryIds[] = $category->id;
+                } elseif ($targetAction === 'tag') {
+                    $tag = Tag::where('slug', $termSlug)->first();
+                    if (! $tag) {
+                        $tag = Tag::whereRaw('LOWER(name) = ?', [strtolower($termName)])->first();
+                    }
+                    if (! $tag) {
+                        $tag = Tag::create([
+                            'name' => $termName,
+                            'slug' => $termSlug,
+                        ]);
+                    }
+                    $tagIds[] = $tag->id;
+                }
             }
-
-            if (! $category) {
-                $category = Category::create([
-                    'name' => $catName,
-                    'slug' => $catSlug,
-                    'description' => $wpCat['description'] ?? '',
-                ]);
-            }
-
-            $categoryIds[] = $category->id;
         }
 
         if (! empty($categoryIds)) {
-            $post->categories()->sync($categoryIds);
+            $post->categories()->syncWithoutDetaching($categoryIds);
         }
-    }
-
-    protected function attachTags($post, $wpPost)
-    {
-        if (empty($wpPost['_embedded']['wp:term'][1])) {
-            return;
-        }
-
-        $wpTags = $wpPost['_embedded']['wp:term'][1];
-
-        // Ensure it's an array before iterating
-        if (! is_array($wpTags)) {
-            return;
-        }
-
-        $tagIds = [];
-
-        foreach ($wpTags as $wpTag) {
-            if (($wpTag['taxonomy'] ?? '') !== 'post_tag') {
-                continue;
-            }
-
-            $tagName = html_entity_decode($wpTag['name'], ENT_QUOTES, 'UTF-8');
-            $tagSlug = Str::slug($tagName);
-
-            $tag = Tag::where('slug', $tagSlug)->first();
-
-            if (! $tag) {
-                $tag = Tag::whereRaw('LOWER(name) = ?', [strtolower($tagName)])->first();
-            }
-
-            if (! $tag) {
-                $tag = Tag::create([
-                    'name' => $tagName,
-                    'slug' => $tagSlug,
-                ]);
-            }
-
-            $tagIds[] = $tag->id;
-        }
-
         if (! empty($tagIds)) {
-            $post->tags()->sync($tagIds);
+            $post->tags()->syncWithoutDetaching($tagIds);
         }
     }
 
