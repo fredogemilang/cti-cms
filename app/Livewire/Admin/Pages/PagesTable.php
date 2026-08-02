@@ -86,9 +86,9 @@ class PagesTable extends Component
     protected function buildQuery()
     {
         if ($this->status === 'trash') {
-            $query = Page::onlyTrashed()->with(['author']);
+            $query = Page::onlyTrashed()->with(['author', 'updatedBy']);
         } else {
-            $query = Page::with(['author']);
+            $query = Page::with(['author', 'updatedBy']);
 
             if ($this->status) {
                 $query->where('status', $this->status);
@@ -299,6 +299,50 @@ class PagesTable extends Component
 
             $this->dispatch('notify', type: 'success', message: 'Page duplicated!');
         }
+    }
+
+    public bool $showQuickEditModal = false;
+
+    public ?int $quickEditId = null;
+
+    public string $quickEditTitle = '';
+
+    public string $quickEditSlug = '';
+
+    public string $quickEditStatus = 'draft';
+
+    public function openQuickEdit(int $id)
+    {
+        $page = Page::findOrFail($id);
+        $this->quickEditId = $page->id;
+        $this->quickEditTitle = $page->title;
+        $this->quickEditSlug = $page->slug;
+        $this->quickEditStatus = $page->status;
+        $this->showQuickEditModal = true;
+    }
+
+    public function saveQuickEdit()
+    {
+        if (! $this->quickEditId) {
+            return;
+        }
+
+        $page = Page::findOrFail($this->quickEditId);
+        $this->validate([
+            'quickEditTitle' => 'required|string|max:255',
+            'quickEditSlug' => 'required|string|max:255|unique:pages,slug,'.$page->id,
+            'quickEditStatus' => 'required|in:draft,pending,published,scheduled,private',
+        ]);
+
+        $page->update([
+            'title' => $this->quickEditTitle,
+            'slug' => $this->quickEditSlug,
+            'status' => $this->quickEditStatus,
+            'updated_by' => auth()->id(),
+        ]);
+
+        $this->showQuickEditModal = false;
+        $this->dispatch('notify', type: 'success', message: 'Page updated via Quick Edit!');
     }
 
     public function render()

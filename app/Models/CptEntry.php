@@ -25,6 +25,7 @@ class CptEntry extends Model
         'excerpt',
         'featured_image',
         'author_id',
+        'updated_by',
         'parent_id',
         'status',
         'published_at',
@@ -32,6 +33,8 @@ class CptEntry extends Model
         'seo',
         'translations',
         'menu_order',
+        'locked_by',
+        'locked_at',
     ];
 
     protected $casts = [
@@ -40,6 +43,7 @@ class CptEntry extends Model
         'translations' => 'array',
         'published_at' => 'datetime',
         'menu_order' => 'integer',
+        'locked_at' => 'datetime',
     ];
 
     /** Fields that can carry per-locale values via the translations JSON column. */
@@ -93,6 +97,12 @@ class CptEntry extends Model
     {
         parent::boot();
 
+        static::saving(function ($entry) {
+            if (auth()->check()) {
+                $entry->updated_by = auth()->id();
+            }
+        });
+
         static::creating(function ($entry) {
             if (empty($entry->slug)) {
                 $entry->slug = Str::slug($entry->title);
@@ -130,6 +140,21 @@ class CptEntry extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function updatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function lockedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'locked_by');
+    }
+
+    public function revisions(): HasMany
+    {
+        return $this->hasMany(CptEntryRevision::class, 'cpt_entry_id')->orderBy('created_at', 'desc');
     }
 
     /**
@@ -287,9 +312,6 @@ class CptEntry extends Model
         $this->meta = $meta;
     }
 
-    /**
-     * Get status badge info for display
-     */
     public function getStatusBadgeAttribute(): array
     {
         return match ($this->status) {
@@ -299,6 +321,32 @@ class CptEntry extends Model
             'archived' => ['color' => 'amber', 'label' => 'Archived'],
             default => ['color' => 'gray', 'label' => ucfirst($this->status)],
         };
+    }
+
+    public function isLocked(): bool
+    {
+        return $this->locked_by !== null && $this->locked_at !== null && $this->locked_at->diffInMinutes(now()) < 2;
+    }
+
+    public function isLockedByOther(?int $userId): bool
+    {
+        return $this->isLocked() && $this->locked_by !== $userId;
+    }
+
+    public function lock(int $userId): void
+    {
+        $this->update([
+            'locked_by' => $userId,
+            'locked_at' => now(),
+        ]);
+    }
+
+    public function unlock(): void
+    {
+        $this->update([
+            'locked_by' => null,
+            'locked_at' => null,
+        ]);
     }
 
     /**
@@ -320,6 +368,16 @@ class CptEntry extends Model
 
         $entrySlug = $this->getTranslation('slug', $locale, fallback: true) ?? $this->slug;
 
+        /** @var CptEntry|null $hierarchicalParent */
+        $hierarchicalParent = $this->parent;
+        if ($hierarchicalParent) {
+            $parentSlug = $hierarchicalParent->getTranslation('slug', $locale, fallback: true) ?? $hierarchicalParent->slug;
+
+            $url = url($localePrefix.'/'.$cptSlug.'/'.$parentSlug.'/'.$entrySlug);
+
+            return apply_filters('cpt_entry.url', $url, $this, $locale);
+        }
+
         /** @var CptEntry|null $parentRelated */
         $parentRelated = $this->parentRelatedEntries()->first();
         if ($parentRelated && $parentRelated->post_type_id !== $this->post_type_id) {
@@ -332,26 +390,24 @@ class CptEntry extends Model
             return apply_filters('cpt_entry.url', $url, $this, $locale);
         }
 
-        /** @var CptEntry|null $hierarchicalParent */
-        $hierarchicalParent = $this->parent;
-        if ($hierarchicalParent) {
-            $parentSlug = $hierarchicalParent->getTranslation('slug', $locale, fallback: true) ?? $hierarchicalParent->slug;
-
-            $url = url($localePrefix.'/'.$cptSlug.'/'.$parentSlug.'/'.$entrySlug);
-
-            return apply_filters('cpt_entry.url', $url, $this, $locale);
-        }
-
         $url = url($localePrefix.'/'.$cptSlug.'/'.$entrySlug);
 
         return apply_filters('cpt_entry.url', $url, $this, $locale);
     }
 
     /**
-     * Get the previous published entry (by published_at) within the same CPT.
+     * Get the previous published entry (by published_at or id) within the same CPT.
      */
     public function getPreviousEntry(): ?self
     {
+        if (! $this->published_at) {
+            return static::where('post_type_id', $this->post_type_id)
+                ->where('status', 'published')
+                ->where('id', '<', $this->id)
+                ->orderByDesc('id')
+                ->first();
+        }
+
         return static::where('post_type_id', $this->post_type_id)
             ->where('status', 'published')
             ->where('published_at', '<', $this->published_at)
@@ -360,10 +416,18 @@ class CptEntry extends Model
     }
 
     /**
-     * Get the next published entry (by published_at) within the same CPT.
+     * Get the next published entry (by published_at or id) within the same CPT.
      */
     public function getNextEntry(): ?self
     {
+        if (! $this->published_at) {
+            return static::where('post_type_id', $this->post_type_id)
+                ->where('status', 'published')
+                ->where('id', '>', $this->id)
+                ->orderBy('id')
+                ->first();
+        }
+
         return static::where('post_type_id', $this->post_type_id)
             ->where('status', 'published')
             ->where('published_at', '>', $this->published_at)

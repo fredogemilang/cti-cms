@@ -49,6 +49,7 @@ class PostsServiceProvider extends CmsPluginServiceProvider
                 [
                     'title' => 'All Posts',
                     'route' => 'admin.posts.index',
+                    'activeRoutePattern' => 'admin.posts.index|admin.posts.edit|admin.posts.show',
                     'url' => route('admin.posts.index'),
                     'icon' => 'list',
                     'permission' => 'posts.view',
@@ -69,6 +70,7 @@ class PostsServiceProvider extends CmsPluginServiceProvider
                 [
                     'title' => 'Categories',
                     'route' => 'admin.posts.categories',
+                    'activeRoutePattern' => 'admin.posts.categories|admin.posts.categories.*',
                     'url' => route('admin.posts.categories'),
                     'icon' => 'category',
                     'permission' => 'categories.view',
@@ -79,6 +81,7 @@ class PostsServiceProvider extends CmsPluginServiceProvider
                 [
                     'title' => 'Tags',
                     'route' => 'admin.posts.tags',
+                    'activeRoutePattern' => 'admin.posts.tags|admin.posts.tags.*',
                     'url' => route('admin.posts.tags'),
                     'icon' => 'label',
                     'permission' => 'tags.view',
@@ -89,6 +92,7 @@ class PostsServiceProvider extends CmsPluginServiceProvider
                 [
                     'title' => 'Authors',
                     'route' => 'admin.posts.authors',
+                    'activeRoutePattern' => 'admin.posts.authors|admin.posts.authors.*',
                     'url' => route('admin.posts.authors'),
                     'icon' => 'group',
                     'permission' => 'posts.view',

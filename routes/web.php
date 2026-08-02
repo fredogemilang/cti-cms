@@ -8,12 +8,15 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PluginController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RolePermissionController;
+use App\Http\Controllers\Admin\SiteHealthController;
 use App\Http\Controllers\Admin\ThemesController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FormSubmissionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IndexNowController;
@@ -29,6 +32,7 @@ use App\Livewire\Admin\Seo\SeoBulkEditor;
 use App\Livewire\Admin\Seo\SeoGeneralSettings;
 use App\Livewire\Admin\Seo\SeoIndexNow;
 use App\Livewire\Admin\Seo\SeoOverview;
+use App\Livewire\Admin\Tools\BackupManager;
 use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
 use App\Services\SettingsRegistry;
@@ -79,6 +83,8 @@ Route::get('/{type}-sitemap.xml', [SitemapController::class, 'showType'])
     ->where('type', '[a-zA-Z0-9_\\-]+')
     ->name('sitemap.type');
 Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
+Route::get('/feed', [FeedController::class, 'index'])->name('feed');
+Route::get('/rss.xml', [FeedController::class, 'index']);
 Route::get('/llms.txt', [LlmsTxtController::class, 'index'])->name('llms-txt');
 Route::get('/schema-manifest.json', SchemaManifestController::class)->name('schema-manifest');
 Route::get('/schema.json', [SchemaAggregatorController::class, 'index'])->name('schema-json');
@@ -126,6 +132,10 @@ Route::prefix($adminPath)->group(function () {
 
 // Admin Routes
 Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->group(function () {
+    // Preview routes
+    Route::get('/pages/{id}/preview', [PageController::class, 'preview'])->name('pages.preview');
+    Route::get('/cpt-entries/{id}/preview', [ArchiveController::class, 'previewById'])->name('cpt-entries.preview');
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard')
@@ -364,6 +374,16 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
             return view('admin.webhooks.index');
         })->name('webhooks.index');
     });
+
+    // Site Health & Diagnostics
+    Route::get('/system-health', [SiteHealthController::class, 'index'])
+        ->name('site-health.index')
+        ->middleware('permission:settings.view');
+
+    // Database Backup Manager
+    Route::get('/tools/backups', BackupManager::class)
+        ->name('tools.backups')
+        ->middleware('permission:settings.view');
 
     // Dedicated SEO Management Suite (Yoast-style)
     Route::prefix('seo')->name('seo.')->middleware('permission:settings.view')->group(function () {

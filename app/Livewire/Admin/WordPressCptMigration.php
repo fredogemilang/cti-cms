@@ -57,6 +57,20 @@ class WordPressCptMigration extends Component
 
     public $defaultImportLocale = 'en'; // Which language goes to primary columns
 
+    // JetEngine Detection
+    public $hasJetEngine = false;
+
+    public $jetEngineHelperInstalled = false;
+
+    public $jetEngineFields = []; // Field definitions from JetEngine helper
+
+    public $showJetEngineSnippet = false;
+
+    // Repeater sub-field mapping
+    public $wpRepeaterSubFields = []; // ['meta.key_features_list' => ['kf_image', 'kf_title', 'kf_description']]
+
+    public $repeaterSubMappings = []; // ['meta.key_features_list' => ['cms_sub_name' => 'wp_sub_name', ...]]
+
     // Post Selection State (Step 3)
     public $selectedLanguages = []; // e.g. ['en', 'id'] — which languages to import
 
@@ -118,6 +132,14 @@ class WordPressCptMigration extends Component
         try {
             $this->validateUrl();
 
+            // Fetch WordPress REST API index to detect namespaces (JetEngine, Polylang, etc.)
+            $indexResponse = Http::timeout(30)->get($this->wpUrl.'/wp-json/');
+            if ($indexResponse->successful()) {
+                $index = $indexResponse->json();
+                $namespaces = $index['namespaces'] ?? [];
+                $this->hasJetEngine = in_array('jet-engine/v1', $namespaces) || in_array('jet-engine/v2', $namespaces);
+            }
+
             // Fetch available post types from WordPress
             $response = Http::timeout(30)->get($this->wpUrl.'/wp-json/wp/v2/types');
 
@@ -141,6 +163,11 @@ class WordPressCptMigration extends Component
                         'description' => $type['description'] ?? '',
                     ];
                 }
+            }
+
+            // If JetEngine detected, check if helper endpoint is installed
+            if ($this->hasJetEngine) {
+                $this->checkJetEngineHelper();
             }
 
             if (empty($this->availableCpts)) {
@@ -193,6 +220,14 @@ class WordPressCptMigration extends Component
             if (! empty($posts[0])) {
                 $samplePost = $posts[0];
                 $this->discoverFields($samplePost);
+            }
+
+            // If JetEngine helper is installed, fetch JetEngine meta fields for this CPT
+            if ($this->hasJetEngine && $this->jetEngineHelperInstalled) {
+                $this->fetchJetEngineFields($this->selectedWpCpt, $posts);
+            } elseif ($this->hasJetEngine && ! $this->jetEngineHelperInstalled) {
+                // Show the snippet notice so user can install it
+                $this->showJetEngineSnippet = true;
             }
 
             // Initialize default field mappings
@@ -292,9 +327,12 @@ class WordPressCptMigration extends Component
             ->toArray();
     }
 
-    protected function discoverFields($samplePost, $prefix = '')
+    protected function discoverFields($samplePost, $prefix = '', $depth = 0)
     {
-        $ignoredFields = ['_links', '_embedded', 'guid', 'type', 'link', 'template'];
+        $ignoredFields = ['_links', '_embedded', 'guid', 'type', 'link', 'template', 'class_list', '_acf_changed'];
+        $metaContexts = ['acf', 'meta', 'jet_meta'];
+        $isInsideMeta = $depth > 0;
+        $maxDepth = 4; // Prevent infinite recursion on deeply nested structures
 
         foreach ($samplePost as $key => $value) {
             if (in_array($key, $ignoredFields)) {
@@ -310,19 +348,97 @@ class WordPressCptMigration extends Component
                         'path' => $fieldPath.'.rendered',
                         'label' => ucfirst(str_replace('_', ' ', $key)).' (rendered)',
                         'sample' => Str::limit(strip_tags($value['rendered']), 50),
+                        'source' => $isInsideMeta ? 'jetengine' : 'wordpress',
                     ];
-                } elseif ($key === 'acf' || $key === 'meta') {
-                    // Recursively discover ACF/meta fields
-                    $this->discoverFields($value, $fieldPath);
+                } elseif (in_array($key, $metaContexts) || $isInsideMeta) {
+                    // Inside meta context: check if it's an associative array (object-like)
+                    $isAssoc = array_keys($value) !== range(0, count($value) - 1);
+
+                    // Check if this is a JetEngine repeater pattern: keys like 'item-0', 'item-1'...
+                    $isJetRepeater = $isAssoc && $this->isJetEngineRepeater($value);
+
+                    if ($isJetRepeater) {
+                        // Expose the whole repeater as a single mappable field
+                        $firstItem = reset($value);
+                        $subFieldNames = is_array($firstItem) ? array_keys($firstItem) : [];
+                        $subFieldPreview = implode(', ', $subFieldNames);
+                        $itemCount = count($value);
+
+                        $this->wpCptFields[] = [
+                            'path' => $fieldPath,
+                            'label' => '⚡ '.ucfirst(str_replace('_', ' ', $key)).' (repeater: '.$itemCount.' items)',
+                            'sample' => 'Sub-fields: '.$subFieldPreview,
+                            'source' => 'jetengine',
+                        ];
+
+                        // Store sub-field names for sub-field mapping UI
+                        $this->wpRepeaterSubFields[$fieldPath] = $subFieldNames;
+                    } elseif ($isAssoc && $depth < $maxDepth) {
+                        // Check if this looks like a simple value object (e.g. image: {id, url})
+                        $hasOnlyScalarValues = collect($value)->every(fn ($v) => is_scalar($v) || is_null($v));
+
+                        if ($hasOnlyScalarValues && ! in_array($key, $metaContexts)) {
+                            // Simple object — expose as JSON and also expose individual sub-fields
+                            $this->wpCptFields[] = [
+                                'path' => $fieldPath,
+                                'label' => ($isInsideMeta ? '⚡ ' : '').ucfirst(str_replace('_', ' ', $key)).' (object)',
+                                'sample' => Str::limit(json_encode($value), 50),
+                                'source' => 'jetengine',
+                            ];
+                            // Also expose individual scalar sub-fields (like url, id)
+                            foreach ($value as $subKey => $subValue) {
+                                if (is_scalar($subValue)) {
+                                    $this->wpCptFields[] = [
+                                        'path' => $fieldPath.'.'.$subKey,
+                                        'label' => ($isInsideMeta ? '⚡ ' : '').ucfirst(str_replace('_', ' ', $key)).' → '.ucfirst($subKey),
+                                        'sample' => Str::limit((string) $subValue, 50),
+                                        'source' => 'jetengine',
+                                    ];
+                                }
+                            }
+                        } else {
+                            // Container with nested objects — recurse deeper
+                            $this->discoverFields($value, $fieldPath, $depth + 1);
+                        }
+                    } else {
+                        // Sequential array or max depth — expose as JSON
+                        $this->wpCptFields[] = [
+                            'path' => $fieldPath,
+                            'label' => ($isInsideMeta ? '⚡ ' : '').ucfirst(str_replace('_', ' ', $key)).' (array)',
+                            'sample' => Str::limit(json_encode($value), 50),
+                            'source' => $isInsideMeta ? 'jetengine' : 'wordpress',
+                        ];
+                    }
                 }
             } elseif (is_scalar($value)) {
                 $this->wpCptFields[] = [
                     'path' => $fieldPath,
-                    'label' => ucfirst(str_replace('_', ' ', $key)),
+                    'label' => ($isInsideMeta ? '⚡ ' : '').ucfirst(str_replace('_', ' ', $key)),
                     'sample' => Str::limit((string) $value, 50),
+                    'source' => $isInsideMeta ? 'jetengine' : 'wordpress',
                 ];
             }
         }
+    }
+
+    /**
+     * Check if an array looks like a JetEngine repeater (keys: item-0, item-1, ...).
+     */
+    protected function isJetEngineRepeater(array $data): bool
+    {
+        $keys = array_keys($data);
+        if (count($keys) < 1) {
+            return false;
+        }
+
+        foreach ($keys as $k) {
+            if (! preg_match('/^item-\d+$/', (string) $k)) {
+                return false;
+            }
+        }
+
+        // Additionally check that at least the first item is an array (nested structure)
+        return is_array(reset($data));
     }
 
     protected function initializeFieldMappings()
@@ -357,10 +473,24 @@ class WordPressCptMigration extends Component
             $cpt = CustomPostType::find($this->selectedCmsCpt);
             if ($cpt && $cpt->metaFields) {
                 foreach ($cpt->metaFields as $metaField) {
-                    $this->cmsCptFields[] = [
+                    $fieldInfo = [
                         'key' => 'meta.'.$metaField->name,
                         'label' => $metaField->label ?? $metaField->name,
+                        'type' => $metaField->type,
                     ];
+
+                    // For repeater fields, include sub-field definitions
+                    if ($metaField->type === 'repeater' && ! empty($metaField->options['repeater_fields'])) {
+                        $fieldInfo['sub_fields'] = array_map(function ($sf) {
+                            return [
+                                'name' => $sf['name'],
+                                'label' => $sf['label'] ?? $sf['name'],
+                                'type' => $sf['type'] ?? 'text',
+                            ];
+                        }, $metaField->options['repeater_fields']);
+                    }
+
+                    $this->cmsCptFields[] = $fieldInfo;
                 }
             }
         }
@@ -374,6 +504,94 @@ class WordPressCptMigration extends Component
     public function updateFieldMapping($cmsField, $wpField)
     {
         $this->fieldMappings[$cmsField] = $wpField;
+    }
+
+    /**
+     * Generic updated hook — catches all property changes.
+     * Used to auto-initialize repeater sub-field mappings when a field mapping changes.
+     */
+    public function updated($property, $value)
+    {
+        // Only handle fieldMappings changes
+        if (! Str::startsWith($property, 'fieldMappings.')) {
+            return;
+        }
+
+        // Extract the CMS field key (e.g. 'meta.key_features_list' from 'fieldMappings.meta.key_features_list')
+        $cmsFieldKey = Str::after($property, 'fieldMappings.');
+
+        if (empty($value)) {
+            // Mapping removed — clean up sub-mappings
+            unset($this->repeaterSubMappings[$cmsFieldKey]);
+
+            return;
+        }
+
+        // Check if CMS field is a repeater
+        $cmsField = collect($this->cmsCptFields)->firstWhere('key', $cmsFieldKey);
+        if (! $cmsField || ($cmsField['type'] ?? '') !== 'repeater') {
+            return;
+        }
+
+        // Check if WP field is a discovered repeater
+        $wpSubFields = $this->wpRepeaterSubFields[$value] ?? null;
+        if (! $wpSubFields) {
+            return;
+        }
+
+        // Get CMS sub-fields
+        $cmsSubFields = $cmsField['sub_fields'] ?? [];
+        if (empty($cmsSubFields)) {
+            return;
+        }
+
+        // Auto-initialize sub-field mappings with fuzzy name matching
+        $mapping = [];
+
+        foreach ($cmsSubFields as $cmsSub) {
+            $cmsName = $cmsSub['name'];
+            $bestMatch = $this->findBestSubFieldMatch($cmsName, $wpSubFields);
+            $mapping[$cmsName] = $bestMatch ?? '';
+        }
+
+        $this->repeaterSubMappings[$cmsFieldKey] = $mapping;
+    }
+
+    /**
+     * Find the best matching WP sub-field name for a CMS sub-field name.
+     * Matches exactly first, then by normalized similarity.
+     */
+    protected function findBestSubFieldMatch(string $cmsName, array $wpFieldNames): ?string
+    {
+        // Exact match
+        if (in_array($cmsName, $wpFieldNames)) {
+            return $cmsName;
+        }
+
+        // Normalize: remove common prefixes/suffixes, lowercase, remove underscores
+        $normalize = fn ($name) => strtolower(preg_replace('/^(kf_|key_|field_|meta_|cf_)/', '', $name));
+        $cmsNorm = $normalize($cmsName);
+
+        $bestScore = 0;
+        $bestMatch = null;
+
+        foreach ($wpFieldNames as $wpName) {
+            $wpNorm = $normalize($wpName);
+
+            // Exact normalized match
+            if ($cmsNorm === $wpNorm) {
+                return $wpName;
+            }
+
+            // Similarity score
+            similar_text($cmsNorm, $wpNorm, $percent);
+            if ($percent > $bestScore && $percent >= 50) {
+                $bestScore = $percent;
+                $bestMatch = $wpName;
+            }
+        }
+
+        return $bestMatch;
     }
 
     protected function detectPolylang(array $samplePosts): void
@@ -397,6 +615,231 @@ class WordPressCptMigration extends Component
                 ? $defaultLocale
                 : array_key_first($this->polylangLanguages);
         }
+    }
+
+    /**
+     * Check if the JetEngine helper endpoint is installed on the WordPress site.
+     */
+    protected function checkJetEngineHelper(): void
+    {
+        try {
+            $response = Http::timeout(10)->get($this->wpUrl.'/wp-json/cdt-migrate/v1/jet-fields');
+            $this->jetEngineHelperInstalled = $response->successful();
+        } catch (\Exception $e) {
+            $this->jetEngineHelperInstalled = false;
+        }
+    }
+
+    /**
+     * Fetch JetEngine meta fields for a post type using the helper endpoint.
+     */
+    protected function fetchJetEngineFields(string $postType, array $samplePosts): void
+    {
+        try {
+            // First, get field definitions from the helper
+            $response = Http::timeout(15)->get($this->wpUrl.'/wp-json/cdt-migrate/v1/jet-fields', [
+                'post_type' => $postType,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $fieldDefs = $data['fields'] ?? [];
+
+                $this->jetEngineFields = $fieldDefs;
+
+                // Now fetch a sample post with JetEngine meta included
+                $metaResponse = Http::timeout(15)->get($this->wpUrl.'/wp-json/cdt-migrate/v1/jet-posts', [
+                    'post_type' => $postType,
+                    'per_page' => 1,
+                ]);
+
+                $sampleValues = [];
+                if ($metaResponse->successful()) {
+                    $jetPosts = $metaResponse->json();
+                    if (! empty($jetPosts['posts'][0]['jet_meta'])) {
+                        $sampleValues = $jetPosts['posts'][0]['jet_meta'];
+                    }
+                }
+
+                // Add JetEngine fields to the discoverable fields list
+                foreach ($fieldDefs as $field) {
+                    $fieldName = $field['name'] ?? '';
+                    if (empty($fieldName)) {
+                        continue;
+                    }
+
+                    $sampleValue = $sampleValues[$fieldName] ?? '';
+                    if (is_array($sampleValue)) {
+                        $sampleValue = json_encode($sampleValue);
+                    }
+
+                    $this->wpCptFields[] = [
+                        'path' => 'jet_meta.'.$fieldName,
+                        'label' => '⚡ '.($field['title'] ?? ucfirst(str_replace('_', ' ', $fieldName))),
+                        'sample' => Str::limit((string) $sampleValue, 50),
+                        'source' => 'jetengine',
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+            Log::warning('Failed to fetch JetEngine fields', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Refresh JetEngine fields after user installs the helper snippet.
+     */
+    public function refreshJetEngineFields(): void
+    {
+        $this->checkJetEngineHelper();
+
+        if ($this->jetEngineHelperInstalled) {
+            $this->showJetEngineSnippet = false;
+
+            // Remove existing JetEngine fields
+            $this->wpCptFields = array_values(array_filter($this->wpCptFields, function ($field) {
+                return ($field['source'] ?? 'wordpress') !== 'jetengine';
+            }));
+
+            // Fetch fresh JetEngine fields
+            $selectedCpt = collect($this->availableCpts)->firstWhere('slug', $this->selectedWpCpt);
+            $restBase = $selectedCpt['rest_base'] ?? $this->selectedWpCpt;
+
+            $response = Http::timeout(30)->get($this->wpUrl.'/wp-json/wp/v2/'.$restBase, [
+                'per_page' => 10,
+                '_embed' => true,
+            ]);
+
+            $posts = $response->successful() ? $response->json() : [];
+
+            $this->fetchJetEngineFields($this->selectedWpCpt, $posts);
+        } else {
+            $this->errorMessage = 'Helper endpoint not found. Please make sure the code snippet is installed and active on the WordPress site.';
+        }
+    }
+
+    /**
+     * Toggle JetEngine snippet visibility.
+     */
+    public function toggleJetEngineSnippet(): void
+    {
+        $this->showJetEngineSnippet = ! $this->showJetEngineSnippet;
+    }
+
+    /**
+     * Get the PHP code snippet to install on WordPress for JetEngine REST API support.
+     */
+    public static function getJetEngineHelperSnippet(): string
+    {
+        return <<<'SNIPPET'
+/**
+ * CDT Migration Helper - Exposes JetEngine meta fields via REST API.
+ * Add this as a Code Snippet in WordPress (or in functions.php).
+ * Can be safely removed after migration is complete.
+ */
+add_action('rest_api_init', function () {
+    // Endpoint: List JetEngine field definitions for a post type
+    register_rest_route('cdt-migrate/v1', '/jet-fields', [
+        'methods'  => 'GET',
+        'callback' => function (WP_REST_Request $request) {
+            $post_type = $request->get_param('post_type');
+
+            if (! class_exists('Jet_Engine') || ! jet_engine()->meta_boxes) {
+                return new WP_REST_Response(['error' => 'JetEngine not active'], 404);
+            }
+
+            $fields = [];
+
+            // Get meta boxes registered for this post type
+            $meta_boxes = jet_engine()->meta_boxes->get_registered_fields();
+
+            foreach ($meta_boxes as $meta_box) {
+                $box_post_types = $meta_box['args']['allowed_post_type'] ?? [];
+
+                if (! empty($post_type) && ! empty($box_post_types) && ! in_array($post_type, $box_post_types)) {
+                    continue;
+                }
+
+                foreach ($meta_box['meta_fields'] ?? [] as $field) {
+                    $fields[] = [
+                        'name'  => $field['name'] ?? '',
+                        'title' => $field['title'] ?? $field['name'] ?? '',
+                        'type'  => $field['type'] ?? 'text',
+                    ];
+                }
+            }
+
+            return new WP_REST_Response(['fields' => $fields, 'post_type' => $post_type], 200);
+        },
+        'permission_callback' => '__return_true',
+    ]);
+
+    // Endpoint: Get posts with their JetEngine meta values
+    register_rest_route('cdt-migrate/v1', '/jet-posts', [
+        'methods'  => 'GET',
+        'callback' => function (WP_REST_Request $request) {
+            $post_type = $request->get_param('post_type') ?: 'post';
+            $per_page  = (int) ($request->get_param('per_page') ?: 10);
+            $page      = (int) ($request->get_param('page') ?: 1);
+            $post_ids  = $request->get_param('ids'); // Optional: comma-separated IDs
+
+            if (! class_exists('Jet_Engine') || ! jet_engine()->meta_boxes) {
+                return new WP_REST_Response(['error' => 'JetEngine not active'], 404);
+            }
+
+            // Get field names for this post type
+            $field_names = [];
+            $meta_boxes = jet_engine()->meta_boxes->get_registered_fields();
+            foreach ($meta_boxes as $meta_box) {
+                $box_post_types = $meta_box['args']['allowed_post_type'] ?? [];
+                if (! empty($box_post_types) && ! in_array($post_type, $box_post_types)) {
+                    continue;
+                }
+                foreach ($meta_box['meta_fields'] ?? [] as $field) {
+                    if (! empty($field['name'])) {
+                        $field_names[] = $field['name'];
+                    }
+                }
+            }
+
+            $query_args = [
+                'post_type'      => $post_type,
+                'posts_per_page' => min($per_page, 100),
+                'paged'          => $page,
+                'post_status'    => 'publish',
+            ];
+
+            if ($post_ids) {
+                $query_args['post__in'] = array_map('intval', explode(',', $post_ids));
+                $query_args['orderby']  = 'post__in';
+            }
+
+            $query = new WP_Query($query_args);
+            $posts = [];
+
+            foreach ($query->posts as $post) {
+                $jet_meta = [];
+                foreach ($field_names as $name) {
+                    $jet_meta[$name] = get_post_meta($post->ID, $name, true);
+                }
+                $posts[] = [
+                    'id'       => $post->ID,
+                    'title'    => $post->post_title,
+                    'slug'     => $post->post_name,
+                    'jet_meta' => $jet_meta,
+                ];
+            }
+
+            return new WP_REST_Response([
+                'posts'       => $posts,
+                'total'       => $query->found_posts,
+                'total_pages' => $query->max_num_pages,
+            ], 200);
+        },
+        'permission_callback' => '__return_true',
+    ]);
+});
+SNIPPET;
     }
 
     public function importAllPosts()
@@ -458,7 +901,14 @@ class WordPressCptMigration extends Component
                 continue;
             }
 
-            foreach ($response->json() as $wpPost) {
+            $posts = $response->json();
+
+            // If JetEngine helper is available, enrich posts with JetEngine meta
+            if ($this->hasJetEngine && $this->jetEngineHelperInstalled) {
+                $posts = $this->enrichPostsWithJetMeta($posts);
+            }
+
+            foreach ($posts as $wpPost) {
                 if (! isset($selectedIds[$wpPost['id']])) {
                     continue; // Not selected by user
                 }
@@ -482,7 +932,14 @@ class WordPressCptMigration extends Component
                 '_embed' => true,
             ]);
             if (! $response->failed()) {
-                foreach ($response->json() as $post) {
+                $pagePosts = $response->json();
+
+                // Enrich with JetEngine meta if available
+                if ($this->hasJetEngine && $this->jetEngineHelperInstalled) {
+                    $pagePosts = $this->enrichPostsWithJetMeta($pagePosts);
+                }
+
+                foreach ($pagePosts as $post) {
                     if (isset($selectedIds[$post['id']])) {
                         $allPosts[] = $post;
                     }
@@ -570,6 +1027,50 @@ class WordPressCptMigration extends Component
         return $slug.'-'.$locale;
     }
 
+    /**
+     * Enrich standard WP REST API posts with JetEngine meta values from the helper endpoint.
+     */
+    protected function enrichPostsWithJetMeta(array $posts): array
+    {
+        if (empty($posts)) {
+            return $posts;
+        }
+
+        $ids = array_column($posts, 'id');
+        if (empty($ids)) {
+            return $posts;
+        }
+
+        try {
+            $response = Http::timeout(30)->get($this->wpUrl.'/wp-json/cdt-migrate/v1/jet-posts', [
+                'post_type' => $this->selectedWpCpt,
+                'ids' => implode(',', $ids),
+                'per_page' => count($ids),
+            ]);
+
+            if ($response->successful()) {
+                $jetData = $response->json();
+                $jetPostsById = [];
+
+                foreach ($jetData['posts'] ?? [] as $jetPost) {
+                    $jetPostsById[$jetPost['id']] = $jetPost['jet_meta'] ?? [];
+                }
+
+                // Merge jet_meta into each post
+                foreach ($posts as &$post) {
+                    if (isset($jetPostsById[$post['id']])) {
+                        $post['jet_meta'] = $jetPostsById[$post['id']];
+                    }
+                }
+                unset($post);
+            }
+        } catch (\Exception $e) {
+            Log::warning('Failed to enrich posts with JetEngine meta', ['error' => $e->getMessage()]);
+        }
+
+        return $posts;
+    }
+
     protected function importOrSkip(array $wpPost): string
     {
         try {
@@ -636,10 +1137,25 @@ class WordPressCptMigration extends Component
             'wp_original_url' => $wpPost['link'] ?? null,
         ];
 
+        // Load CMS CPT meta field definitions for type-aware conversion
+        $cmsMetaFieldDefs = [];
+        if ($this->selectedCmsCpt) {
+            $cpt = CustomPostType::find($this->selectedCmsCpt);
+            if ($cpt) {
+                foreach ($cpt->metaFields as $mf) {
+                    $cmsMetaFieldDefs[$mf->name] = $mf;
+                }
+            }
+        }
+
         foreach ($this->fieldMappings as $cmsField => $wpField) {
             if (Str::startsWith($cmsField, 'meta.')) {
                 $metaKey = Str::after($cmsField, 'meta.');
-                $meta[$metaKey] = $this->getWpFieldValue($wpPost, $wpField);
+                $rawValue = $this->getWpFieldValue($wpPost, $wpField);
+                $cmsFieldDef = $cmsMetaFieldDefs[$metaKey] ?? null;
+
+                // Auto-convert based on CMS field type
+                $meta[$metaKey] = $this->convertMetaValue($rawValue, $cmsFieldDef, $cmsField);
             }
         }
 
@@ -662,6 +1178,163 @@ class WordPressCptMigration extends Component
         $entry->save();
 
         return 'success';
+    }
+
+    /**
+     * Convert a WP meta value to the appropriate CMS format based on the CMS field type.
+     */
+    protected function convertMetaValue($rawValue, ?MetaField $cmsFieldDef, string $cmsFieldKey = '')
+    {
+        if ($rawValue === null) {
+            return null;
+        }
+
+        if (! $cmsFieldDef) {
+            // No CMS field definition — return raw value, but still handle JetEngine repeater format
+            if (is_array($rawValue) && $this->isJetEngineRepeater($rawValue)) {
+                return array_values(array_map(function ($item) {
+                    return is_array($item) ? $this->convertRepeaterItem($item, []) : $item;
+                }, $rawValue));
+            }
+
+            return $rawValue;
+        }
+
+        switch ($cmsFieldDef->type) {
+            case 'repeater':
+                return $this->convertJetEngineRepeaterToCmsFormat($rawValue, $cmsFieldDef, $cmsFieldKey);
+
+            case 'media':
+                return $this->convertMediaValue($rawValue);
+
+            default:
+                // For scalar types, if value is array with 'rendered' key, extract it
+                if (is_array($rawValue) && isset($rawValue['rendered'])) {
+                    return strip_tags($rawValue['rendered']);
+                }
+
+                return $rawValue;
+        }
+    }
+
+    /**
+     * Convert a JetEngine repeater ({item-0: {...}, item-1: {...}}) to CMS array format ([{...}, {...}]).
+     * Also handles sub-field media downloads, name mapping, and type conversion.
+     */
+    protected function convertJetEngineRepeaterToCmsFormat($rawValue, MetaField $cmsFieldDef, string $cmsFieldKey = ''): array
+    {
+        // Get CMS repeater sub-field definitions
+        $cmsSubFields = $cmsFieldDef->options['repeater_fields'] ?? [];
+        $cmsSubFieldTypes = [];
+        foreach ($cmsSubFields as $sf) {
+            $cmsSubFieldTypes[$sf['name']] = $sf['type'] ?? 'text';
+        }
+
+        // Get sub-field name mapping (CMS name => WP name)
+        // We need to invert it to (WP name => CMS name) for conversion
+        $subMapping = $this->repeaterSubMappings[$cmsFieldKey] ?? [];
+        $wpToCmsNameMap = [];
+        foreach ($subMapping as $cmsName => $wpName) {
+            if (! empty($wpName)) {
+                $wpToCmsNameMap[$wpName] = $cmsName;
+            }
+        }
+
+        // Convert JetEngine format to array
+        $items = [];
+        if ($this->isJetEngineRepeater($rawValue)) {
+            $items = array_values($rawValue);
+        } elseif (is_array($rawValue) && array_is_list($rawValue)) {
+            $items = $rawValue;
+        } else {
+            $items = [$rawValue];
+        }
+
+        // Convert each item
+        $result = [];
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+            $result[] = $this->convertRepeaterItem($item, $cmsSubFieldTypes, $wpToCmsNameMap);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Convert a single repeater item, handling media sub-fields and name remapping.
+     */
+    protected function convertRepeaterItem(array $item, array $cmsSubFieldTypes, array $wpToCmsNameMap = []): array
+    {
+        $converted = [];
+
+        foreach ($item as $wpSubName => $subFieldValue) {
+            // Resolve the CMS field name (use mapping if available, else keep original)
+            $cmsSubName = $wpToCmsNameMap[$wpSubName] ?? $wpSubName;
+
+            // Get the CMS type for the resolved name
+            $cmsType = $cmsSubFieldTypes[$cmsSubName] ?? null;
+
+            if ($cmsType === 'media' || $this->looksLikeMediaObject($subFieldValue)) {
+                $converted[$cmsSubName] = $this->convertMediaValue($subFieldValue);
+            } elseif (is_array($subFieldValue) && isset($subFieldValue['rendered'])) {
+                $converted[$cmsSubName] = strip_tags($subFieldValue['rendered']);
+            } else {
+                $converted[$cmsSubName] = $subFieldValue;
+            }
+        }
+
+        return $converted;
+    }
+
+    /**
+     * Convert a WP media value (URL string or {id, url} object) to a local path.
+     * Downloads the image and returns the local storage path.
+     */
+    protected function convertMediaValue($value): ?string
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        $imageUrl = null;
+
+        if (is_string($value)) {
+            // Direct URL string
+            if (filter_var($value, FILTER_VALIDATE_URL) || Str::startsWith($value, '//')) {
+                $imageUrl = $value;
+            } else {
+                return $value; // Already a local path or non-URL string
+            }
+        } elseif (is_array($value)) {
+            // JetEngine media object: {id: 123, url: "https://..."}
+            $imageUrl = $value['url'] ?? $value['source_url'] ?? null;
+        }
+
+        if (! $imageUrl) {
+            return null;
+        }
+
+        try {
+            return $this->downloadImage($imageUrl);
+        } catch (\Exception $e) {
+            Log::warning('Failed to download media during meta conversion', ['url' => $imageUrl, 'error' => $e->getMessage()]);
+
+            // Fallback: return the original URL so data isn't lost
+            return $imageUrl;
+        }
+    }
+
+    /**
+     * Check if a value looks like a WP/JetEngine media object ({id: int, url: string}).
+     */
+    protected function looksLikeMediaObject($value): bool
+    {
+        return is_array($value)
+            && isset($value['url'])
+            && is_string($value['url'])
+            && (isset($value['id']) && is_numeric($value['id']));
     }
 
     protected function getWpFieldValue($wpPost, $fieldPath)
@@ -889,6 +1562,12 @@ class WordPressCptMigration extends Component
         $this->fetchAllDone = false;
         $this->isPolylang = false;
         $this->polylangLanguages = [];
+        $this->hasJetEngine = false;
+        $this->jetEngineHelperInstalled = false;
+        $this->jetEngineFields = [];
+        $this->showJetEngineSnippet = false;
+        $this->wpRepeaterSubFields = [];
+        $this->repeaterSubMappings = [];
         $this->importProgress = 0;
         $this->currentPageImporting = 0;
         $this->importResults = [];

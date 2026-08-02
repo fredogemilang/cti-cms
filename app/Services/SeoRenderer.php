@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Media;
 use App\Models\SeoMeta;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,10 +46,23 @@ class SeoRenderer
 
         $titleTemplate = (string) $defaultPattern;
 
-        $rawTitle = $overrides['title']
-            ?? $meta?->title
-            ?? ($entity && method_exists($entity, 'getTranslation') ? $entity->getTranslation('title') : null)
-            ?? ($entity->title ?? $entity->name ?? $siteName);
+        $metaTitle = ($meta && ! empty($meta->title) && trim((string) $meta->title) !== '') ? $meta->title : null;
+        $entityTitle = null;
+        if ($entity) {
+            if (method_exists($entity, 'getTranslation')) {
+                $trans = $entity->getTranslation('title');
+                if (! empty($trans) && trim((string) $trans) !== '') {
+                    $entityTitle = $trans;
+                }
+            }
+            if (! $entityTitle && ! empty($entity->title) && trim((string) $entity->title) !== '') {
+                $entityTitle = $entity->title;
+            } elseif (! $entityTitle && ! empty($entity->name) && trim((string) $entity->name) !== '') {
+                $entityTitle = $entity->name;
+            }
+        }
+
+        $rawTitle = $overrides['title'] ?? $metaTitle ?? $entityTitle ?? $siteName;
 
         $termName = $entity->name ?? $rawTitle;
         $termDescription = $entity->description ?? '';
@@ -75,8 +89,9 @@ class SeoRenderer
             $typePatternDesc = (string) setting("seo_taxonomy_{$taxSlug}_description_pattern");
         }
 
+        $metaDesc = ($meta && ! empty($meta->description) && trim((string) $meta->description) !== '') ? $meta->description : null;
         $description = $overrides['description']
-            ?? $meta?->description
+            ?? $metaDesc
             ?? $this->autoDescription($entity)
             ?? $typePatternDesc
             ?? setting('seo_default_description');
@@ -98,22 +113,73 @@ class SeoRenderer
             $robots = 'noindex,nofollow';
         }
 
-        // OG Image fallback chain: seo_meta og_image → entity featured_image → content-type social image → taxonomy social image → site default
+        // OG Image Fallback Chain:
+        // 1. Custom OG Image uploaded for this specific page/entity in SEO settings
+        // 2. Entity Featured Image ($entity->featured_image) or Page Block Image (hero_bg_image, image, banner_image) or CPT Meta Image
+        // 3. Content-Type Social Image setting
+        // 4. Taxonomy Social Image setting
+        // 5. Site Default OG Image setting (seo_default_og_image)
+
+        $metaOgPath = null;
+        if ($meta?->ogImage && ! empty($meta->ogImage->path)) {
+            $metaOgPath = (string) $meta->ogImage->path;
+        } elseif ($meta && ! empty($meta->og_image_id)) {
+            $mediaRecord = Media::find($meta->og_image_id);
+            if ($mediaRecord && ! empty($mediaRecord->path)) {
+                $metaOgPath = (string) $mediaRecord->path;
+            }
+        }
+
+        $featuredImage = null;
+        if ($entity) {
+            if (! empty($entity->featured_image) && trim((string) $entity->featured_image) !== '') {
+                $featuredImage = (string) $entity->featured_image;
+            } elseif (method_exists($entity, 'getBlockValue')) {
+                $blockImg = $entity->getBlockValue('hero_bg_image')
+                    ?: ($entity->getBlockValue('image') ?: $entity->getBlockValue('banner_image'));
+                if (! empty($blockImg) && trim((string) $blockImg) !== '') {
+                    $featuredImage = (string) $blockImg;
+                }
+            } elseif (method_exists($entity, 'getMeta')) {
+                $metaImg = $entity->getMeta('hero_image')
+                    ?: ($entity->getMeta('banner_image') ?: ($entity->getMeta('image') ?: $entity->getMeta('banner_bg')));
+                if (! empty($metaImg) && trim((string) $metaImg) !== '') {
+                    $featuredImage = (string) $metaImg;
+                }
+            } elseif (isset($entity->meta) && is_array($entity->meta)) {
+                $mImg = $entity->meta['hero_image'] ?? ($entity->meta['banner_image'] ?? ($entity->meta['image'] ?? null));
+                if (! empty($mImg) && trim((string) $mImg) !== '') {
+                    $featuredImage = (string) $mImg;
+                }
+            }
+        }
+
         $ctSocialImage = $ctSlug ? (string) setting("seo_content_type_{$ctSlug}_social_image") : null;
         $taxSocialImage = $taxSlug ? (string) setting("seo_taxonomy_{$taxSlug}_social_image") : null;
-        $featuredImage = $entity && isset($entity->featured_image) ? (string) $entity->featured_image : null;
-        $metaOgPath = $meta?->ogImage && isset($meta->ogImage->path) ? (string) $meta->ogImage->path : null;
+        $defaultSocialImage = (string) setting('seo_default_og_image', '');
 
-        $ogImage = $metaOgPath
-            ?? $featuredImage
-            ?? ($ctSocialImage !== '' ? $ctSocialImage : null)
-            ?? ($taxSocialImage !== '' ? $taxSocialImage : null)
-            ?? setting('seo_default_og_image');
+        $rawOgImage = (! empty($metaOgPath) && trim($metaOgPath) !== '') ? $metaOgPath : null;
+        $rawOgImage ??= (! empty($featuredImage) && trim($featuredImage) !== '') ? $featuredImage : null;
+        $rawOgImage ??= (! empty($ctSocialImage) && trim($ctSocialImage) !== '') ? $ctSocialImage : null;
+        $rawOgImage ??= (! empty($taxSocialImage) && trim($taxSocialImage) !== '') ? $taxSocialImage : null;
+        $rawOgImage ??= (! empty($defaultSocialImage) && trim($defaultSocialImage) !== '') ? $defaultSocialImage : null;
+
+        $ogImageUrl = null;
+        if ($rawOgImage) {
+            if (str_starts_with($rawOgImage, 'http://') || str_starts_with($rawOgImage, 'https://')) {
+                $ogImageUrl = $rawOgImage;
+            } else {
+                $ogImageUrl = resolve_block_asset($rawOgImage);
+            }
+        }
+
+        $ogTitle = ($meta && ! empty($meta->og_title) && trim((string) $meta->og_title) !== '') ? $meta->og_title : $title;
+        $ogDescription = ($meta && ! empty($meta->og_description) && trim((string) $meta->og_description) !== '') ? $meta->og_description : $description;
 
         $og = [
-            'title' => $meta?->og_title ?: $title,
-            'description' => $meta?->og_description ?: $description,
-            'image' => $ogImage ? url($ogImage) : null,
+            'title' => $ogTitle,
+            'description' => $ogDescription,
+            'image' => $ogImageUrl,
             'type' => $this->ogType($entity),
             'url' => $canonical,
             'site_name' => $siteName,

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -25,12 +26,15 @@ class Page extends Model
         'status',
         'published_at',
         'author_id',
+        'updated_by',
         'template',
         'featured_image',
         'seo',
         'settings',
         'translations',
         'is_system',
+        'locked_by',
+        'locked_at',
     ];
 
     /** Fields that can carry per-locale values via the translations JSON column. */
@@ -45,6 +49,7 @@ class Page extends Model
             'translations' => 'array',
             'menu_order' => 'integer',
             'is_system' => 'boolean',
+            'locked_at' => 'datetime',
         ];
     }
 
@@ -82,6 +87,11 @@ class Page extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
+    public function updatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Page::class, 'parent_id');
@@ -105,6 +115,11 @@ class Page extends Model
     public function revisions(): HasMany
     {
         return $this->hasMany(PageRevision::class)->orderBy('created_at', 'desc');
+    }
+
+    public function lockedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'locked_by');
     }
 
     // === SCOPES ===
@@ -197,6 +212,32 @@ class Page extends Model
     public function isPrivate(): bool
     {
         return $this->status === 'private';
+    }
+
+    public function isLocked(): bool
+    {
+        return $this->locked_by !== null && $this->locked_at !== null && Carbon::parse($this->locked_at)->diffInMinutes(now()) < 2;
+    }
+
+    public function isLockedByOther(?int $userId): bool
+    {
+        return $this->isLocked() && $this->locked_by !== $userId;
+    }
+
+    public function lock(int $userId): void
+    {
+        $this->update([
+            'locked_by' => $userId,
+            'locked_at' => now(),
+        ]);
+    }
+
+    public function unlock(): void
+    {
+        $this->update([
+            'locked_by' => null,
+            'locked_at' => null,
+        ]);
     }
 
     public function ancestors(): Collection
@@ -321,6 +362,12 @@ class Page extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::saving(function ($page) {
+            if (auth()->check()) {
+                $page->updated_by = auth()->id();
+            }
+        });
 
         static::creating(function ($page) {
             if (empty($page->slug)) {

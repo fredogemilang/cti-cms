@@ -132,30 +132,41 @@ That's it — the sidebar and Menu Customizer automatically pick it up.
 
 ### Adding a Plugin Menu Item
 
-In your plugin's service provider:
+In your plugin's service provider (`registerMenuItems`):
 
 ```php
 protected function registerMenuItems(RenderAdminMenu $event): void
 {
     $event->addMenuItem([
-        'title'      => 'My Plugin',
-        'route'      => 'admin.myplugin',
-        'url'        => route('admin.myplugin.index'),
-        'icon'       => 'extension',
-        'permission' => 'myplugin.view',
-        'is_active'  => true,
-        'source'     => 'plugin:my-plugin',  // MUST use 'plugin:{slug}' prefix
-        'children'   => [
+        'title'              => 'My Plugin',
+        'route'              => 'admin.myplugin',
+        'activeRoutePattern' => 'admin.myplugin.*', // Ensures parent stays active for all plugin routes
+        'url'                => route('admin.myplugin.index'),
+        'icon'               => 'extension',
+        'permission'         => 'myplugin.view',
+        'is_active'          => true,
+        'source'             => 'plugin:my-plugin',  // MUST use 'plugin:{slug}' prefix
+        'children'           => [
             [
-                'title'      => 'All Items',
-                'route'      => 'admin.myplugin.index',
-                'url'        => route('admin.myplugin.index'),
-                'permission' => 'myplugin.view',
+                'title'              => 'All Items',
+                'route'              => 'admin.myplugin.index',
+                'activeRoutePattern' => 'admin.myplugin.index|admin.myplugin.edit|admin.myplugin.show', // Active on edit/show pages
+                'url'                => route('admin.myplugin.index'),
+                'permission'         => 'myplugin.view',
+            ],
+            [
+                'title'              => 'Create Item',
+                'route'              => 'admin.myplugin.create',
+                'activeRoutePattern' => 'admin.myplugin.create',
+                'url'                => route('admin.myplugin.create'),
+                'permission'         => 'myplugin.create',
             ],
         ],
     ]);
 }
 ```
+
+> **Best Practice:** Always provide an explicit `activeRoutePattern` on sub-items (e.g. `'admin.myplugin.index|admin.myplugin.edit|admin.myplugin.show'`) so that submenus remain active/highlighted when editing or viewing items.
 
 Plugin items are auto-discovered via the `RenderAdminMenu` event and appear in both the sidebar and Menu Customizer.
 

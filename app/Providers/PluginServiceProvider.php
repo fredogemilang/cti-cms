@@ -121,7 +121,7 @@ class PluginServiceProvider extends ServiceProvider
                 $taxPattern = implode('|', array_map('preg_quote', $taxonomySlugs));
 
                 if ($localePattern !== 'nothing-to-match') {
-                    Route::get('/{locale}/{taxonomySlug}/{termSlug}', [ArchiveController::class, 'termArchive'])
+                    Route::get('/{locale}/{taxonomySlug}/{termSlug}', [ArchiveController::class, 'localeTermArchive'])
                         ->where('locale', $localePattern)
                         ->where('taxonomySlug', $taxPattern)
                         ->where('termSlug', '[a-zA-Z0-9\\-]+')
@@ -139,14 +139,14 @@ class PluginServiceProvider extends ServiceProvider
                 $singlePattern = implode('|', array_map('preg_quote', $singleSlugs));
 
                 if ($localePattern !== 'nothing-to-match') {
-                    Route::get('/{locale}/{cptSlug}/{parentSlug}/{entrySlug}', [ArchiveController::class, 'nestedSingle'])
+                    Route::get('/{locale}/{cptSlug}/{parentSlug}/{entrySlug}', [ArchiveController::class, 'localeNestedSingle'])
                         ->where('locale', $localePattern)
                         ->where('cptSlug', $singlePattern)
                         ->where('parentSlug', '[a-zA-Z0-9\\-]+')
                         ->where('entrySlug', '[a-zA-Z0-9\\-]+')
                         ->name('locale.cpt.entry.nested.show');
 
-                    Route::get('/{locale}/{cptSlug}/{entrySlug}', [ArchiveController::class, 'single'])
+                    Route::get('/{locale}/{cptSlug}/{entrySlug}', [ArchiveController::class, 'localeSingle'])
                         ->where('locale', $localePattern)
                         ->where('cptSlug', $singlePattern)
                         ->where('entrySlug', '[a-zA-Z0-9\\-]+')
@@ -170,7 +170,7 @@ class PluginServiceProvider extends ServiceProvider
                 $archivePattern = implode('|', array_map('preg_quote', $archiveSlugs));
 
                 if ($localePattern !== 'nothing-to-match') {
-                    Route::get('/{locale}/{cptSlug}', [ArchiveController::class, 'archive'])
+                    Route::get('/{locale}/{cptSlug}', [ArchiveController::class, 'localeArchive'])
                         ->where('locale', $localePattern)
                         ->where('cptSlug', $archivePattern)
                         ->name('locale.cpt.archive');

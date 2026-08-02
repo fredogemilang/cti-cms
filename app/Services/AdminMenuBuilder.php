@@ -342,7 +342,7 @@ class AdminMenuBuilder
                         'route' => 'admin.pages.index',
                         'routeParams' => [],
                         'permission' => null,
-                        'activeRoutePattern' => 'admin.pages.index',
+                        'activeRoutePattern' => 'admin.pages.index|admin.pages.edit|admin.pages.show',
                     ],
                     [
                         'title' => 'Add Page',
@@ -366,7 +366,7 @@ class AdminMenuBuilder
                         'route' => 'admin.users.index',
                         'routeParams' => [],
                         'permission' => 'users.view',
-                        'activeRoutePattern' => 'admin.users.index',
+                        'activeRoutePattern' => 'admin.users.index|admin.users.edit|admin.users.show',
                     ],
                     [
                         'title' => 'Add User',
@@ -449,7 +449,7 @@ class AdminMenuBuilder
                     'route' => 'admin.media.index',
                     'routeParams' => [],
                     'permission' => null,
-                    'activeRoutePattern' => 'admin.media.index',
+                    'activeRoutePattern' => 'admin.media.index|admin.media.edit|admin.media.show',
                 ],
                 [
                     'title' => 'Add Media',
@@ -478,7 +478,7 @@ class AdminMenuBuilder
                     'route' => 'admin.forms.index',
                     'routeParams' => [],
                     'permission' => null,
-                    'activeRoutePattern' => 'admin.forms.index',
+                    'activeRoutePattern' => 'admin.forms.index|admin.forms.edit|admin.forms.builder|admin.forms.entries.*',
                 ],
                 [
                     'title' => 'Create Form',
@@ -514,7 +514,7 @@ class AdminMenuBuilder
                     'route' => 'admin.cpt.index',
                     'routeParams' => [],
                     'permission' => null,
-                    'activeRoutePattern' => 'admin.cpt.*',
+                    'activeRoutePattern' => 'admin.cpt.index|admin.cpt.create|admin.cpt.edit',
                 ],
                 [
                     'title' => 'Taxonomies',

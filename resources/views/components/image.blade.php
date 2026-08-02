@@ -1,5 +1,6 @@
 @props([
     'media' => null,
+    'src' => null,
     'size' => 'lg',
     'sizes' => '100vw',
     'alt' => null,
@@ -9,27 +10,31 @@
 
 @php
     $data = app(\App\Services\ResponsiveImageService::class)->build($media, $size, $sizes);
-    if (! $data['src']) {
+    
+    $finalSrc = $data['src'] ?: $src;
+    if (! $finalSrc) {
         return;
     }
+    
     $alt = $alt ?? $data['alt'] ?? '';
-    $objectPosition = sprintf('%.2f%% %.2f%%', $data['focal']['x'] * 100, $data['focal']['y'] * 100);
+    $objectPosition = isset($data['focal']) ? sprintf('%.2f%% %.2f%%', $data['focal']['x'] * 100, $data['focal']['y'] * 100) : '50% 50%';
 @endphp
 
 <picture {{ $attributes->only(['style']) }}>
-    @if ($data['webp_srcset'])
+    @if (!empty($data['webp_srcset']))
         <source type="image/webp" srcset="{{ $data['webp_srcset'] }}" sizes="{{ $data['sizes'] }}">
     @endif
     <img
-        src="{{ $data['src'] }}"
-        srcset="{{ $data['srcset'] }}"
-        sizes="{{ $data['sizes'] }}"
-        @if ($data['width']) width="{{ $data['width'] }}" @endif
-        @if ($data['height']) height="{{ $data['height'] }}" @endif
+        src="{{ $finalSrc }}"
+        @if (!empty($data['srcset'])) srcset="{{ $data['srcset'] }}" @endif
+        @if (!empty($data['sizes'])) sizes="{{ $data['sizes'] }}" @endif
+        @if (!empty($data['width'])) width="{{ $data['width'] }}" @endif
+        @if (!empty($data['height'])) height="{{ $data['height'] }}" @endif
         alt="{{ $alt }}"
         loading="{{ $loading }}"
         decoding="async"
         class="{{ $class }}"
-        @if ($data['placeholder']) style="background-image:url('{{ $data['placeholder'] }}');background-size:cover;background-position:{{ $objectPosition }};object-position:{{ $objectPosition }}" @endif
+        @if (!empty($data['placeholder'])) style="background-image:url('{{ $data['placeholder'] }}');background-size:cover;background-position:{{ $objectPosition }};object-position:{{ $objectPosition }}" @endif
+        {{ $attributes->except(['style']) }}
     >
 </picture>

@@ -7,6 +7,7 @@ use App\Services\CaptchaService;
 use App\Services\FormConditionalLogic;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -30,6 +31,7 @@ class Form extends Model
         'total_entries',
         'submit_button_text',
         'styling',
+        'updated_by',
     ];
 
     protected $casts = [
@@ -83,6 +85,14 @@ class Form extends Model
     public function entries(): HasMany
     {
         return $this->hasMany(FormEntry::class);
+    }
+
+    /**
+     * Get the user who last updated the form.
+     */
+    public function updatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
     /**

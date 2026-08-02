@@ -25,22 +25,10 @@ parameters:
 			path: app/Http/Controllers/Admin/DashboardController.php
 
 		-
-			message: '#^Relation ''form'' is not found in App\\Models\\FormEntry model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Http/Controllers/Admin/DashboardController.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 2
 			path: app/Http/Controllers/Admin/DashboardController.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Form\:\:\$fields\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Http/Controllers/Admin/FormController.php
 
 		-
 			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
@@ -55,23 +43,28 @@ parameters:
 			path: app/Http/Controllers/Api/V1/AuthController.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/ArchiveController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:taxonomies\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Controllers/ArchiveController.php
+
+		-
 			message: '#^Cannot call method isFuture\(\) on string\.$#'
 			identifier: method.nonObject
 			count: 1
 			path: app/Http/Controllers/Auth/AuthController.php
 
 		-
-			message: '#^Relation ''fields'' is not found in App\\Models\\Form model\.$#'
-			identifier: larastan.relationExistence
-			count: 3
-			path: app/Http/Controllers/FormSubmissionController.php
-
-
-		-
-			message: '#^Call to an undefined method DateTimeInterface\:\:toAtomString\(\)\.$#'
-			identifier: method.notFound
+			message: '#^Cannot call method format\(\) on string\.$#'
+			identifier: method.nonObject
 			count: 1
-			path: app/Http/Controllers/SitemapController.php
+			path: app/Http/Controllers/FeedController.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
@@ -224,12 +217,6 @@ parameters:
 			path: app/Http/Resources/V1/PageResource.php
 
 		-
-			message: '#^Access to an undefined property App\\Http\\Resources\\V1\\PageResource\:\:\$seo\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Http/Resources/V1/PageResource.php
-
-		-
 			message: '#^Access to an undefined property App\\Http\\Resources\\V1\\PageResource\:\:\$slug\.$#'
 			identifier: property.notFound
 			count: 1
@@ -290,12 +277,6 @@ parameters:
 			path: app/Jobs/DeliverWebhook.php
 
 		-
-			message: '#^Relation ''fields'' is not found in App\\Models\\Form model\.$#'
-			identifier: larastan.relationExistence
-			count: 1
-			path: app/Jobs/SendFormNotificationJob.php
-
-		-
 			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -350,10 +331,22 @@ parameters:
 			path: app/Livewire/Admin/Cpt/CptForm.php
 
 		-
+			message: '#^Access to an undefined property App\\Livewire\\Admin\\Cpt\\Entries\\EntriesTable\:\:\$hasHierarchy\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Admin/Cpt/Entries/EntriesTable.php
+
+		-
 			message: '#^Access to an undefined property App\\Livewire\\Admin\\Cpt\\Entries\\EntriesTable\:\:\$statusCounts\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Admin/Cpt/Entries/EntriesTable.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\CptEntry\:\:\$translations\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Admin/Cpt/Entries/EntryForm.php
 
 		-
 			message: '#^Access to an undefined property App\\Models\\TaxonomyTerm\:\:\$depth\.$#'
@@ -363,12 +356,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$default_value\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/Cpt/Entries/EntryForm.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$field_group\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Livewire/Admin/Cpt/Entries/EntryForm.php
@@ -404,7 +391,19 @@ parameters:
 			path: app/Livewire/Admin/Cpt/Entries/EntryForm.php
 
 		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: app/Livewire/Admin/Cpt/Entries/EntryForm.php
+
+		-
 			message: '#^Undefined variable\: \$loop$#'
+			identifier: variable.undefined
+			count: 1
+			path: app/Livewire/Admin/Cpt/Entries/EntryForm.php
+
+		-
+			message: '#^Undefined variable\: \$permalinkPrefix$#'
 			identifier: variable.undefined
 			count: 1
 			path: app/Livewire/Admin/Cpt/Entries/EntryForm.php
@@ -438,12 +437,6 @@ parameters:
 			identifier: booleanOr.alwaysTrue
 			count: 1
 			path: app/Livewire/Admin/Header/GlobalSearch.php
-
-		-
-			message: '#^Access to an undefined property App\\Livewire\\Admin\\MediaPicker\:\:\$media\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Livewire/Admin/MediaPicker.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$childBlocks\.$#'
@@ -500,31 +493,43 @@ parameters:
 			path: app/Livewire/Admin/Pages/PageForm.php
 
 		-
-			message: '#^Offset ''meta_description'' on array\{\}\|string on left side of \?\? does not exist\.$#'
+			message: '#^Offset ''children'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Livewire/Admin/Pages/PageForm.php
 
 		-
-			message: '#^Offset ''meta_title'' on array\{\}\|string on left side of \?\? does not exist\.$#'
+			message: '#^Offset ''is_active'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Livewire/Admin/Pages/PageForm.php
 
 		-
-			message: '#^Offset ''og_description'' on array\{\}\|string on left side of \?\? does not exist\.$#'
+			message: '#^Offset ''label'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Livewire/Admin/Pages/PageForm.php
 
 		-
-			message: '#^Offset ''og_image'' on array\{\}\|string on left side of \?\? does not exist\.$#'
+			message: '#^Offset ''name'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Livewire/Admin/Pages/PageForm.php
 
 		-
-			message: '#^Offset ''og_title'' on array\{\}\|string on left side of \?\? does not exist\.$#'
+			message: '#^Offset ''options'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Livewire/Admin/Pages/PageForm.php
+
+		-
+			message: '#^Offset ''type'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 2
+			path: app/Livewire/Admin/Pages/PageForm.php
+
+		-
+			message: '#^Offset ''value'' on \*NEVER\* on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Livewire/Admin/Pages/PageForm.php
@@ -532,6 +537,12 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
 			identifier: argument.unresolvableType
+			count: 1
+			path: app/Livewire/Admin/Pages/PageForm.php
+
+		-
+			message: '#^Right side of && is always false\.$#'
+			identifier: booleanAnd.rightAlwaysFalse
 			count: 1
 			path: app/Livewire/Admin/Pages/PageForm.php
 
@@ -586,18 +597,66 @@ parameters:
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
 			identifier: property.notFound
+			count: 3
+			path: app/Livewire/Admin/WordPressCptMigration.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
 			count: 2
+			path: app/Livewire/Admin/WordPressCptMigration.php
+
+		-
+			message: '#^Access to property \$options on an unknown class App\\Livewire\\Admin\\MetaField\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Livewire/Admin/WordPressCptMigration.php
+
+		-
+			message: '#^Access to property \$type on an unknown class App\\Livewire\\Admin\\MetaField\.$#'
+			identifier: class.notFound
+			count: 1
 			path: app/Livewire/Admin/WordPressCptMigration.php
 
 		-
 			message: '#^Method Illuminate\\Http\\Client\\Response\:\:header\(\) invoked with 2 parameters, 1 required\.$#'
 			identifier: arguments.count
-			count: 2
+			count: 1
+			path: app/Livewire/Admin/WordPressCptMigration.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: app/Livewire/Admin/WordPressCptMigration.php
+
+		-
+			message: '#^Parameter \#2 \$cmsFieldDef of method App\\Livewire\\Admin\\WordPressCptMigration\:\:convertMetaValue\(\) expects App\\Livewire\\Admin\\MetaField\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/Admin/WordPressCptMigration.php
+
+		-
+			message: '#^Parameter \$cmsFieldDef of method App\\Livewire\\Admin\\WordPressCptMigration\:\:convertJetEngineRepeaterToCmsFormat\(\) has invalid type App\\Livewire\\Admin\\MetaField\.$#'
+			identifier: class.notFound
+			count: 1
+			path: app/Livewire/Admin/WordPressCptMigration.php
+
+		-
+			message: '#^Parameter \$cmsFieldDef of method App\\Livewire\\Admin\\WordPressCptMigration\:\:convertMetaValue\(\) has invalid type App\\Livewire\\Admin\\MetaField\.$#'
+			identifier: class.notFound
+			count: 1
 			path: app/Livewire/Admin/WordPressCptMigration.php
 
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: app/Livewire/Admin/WordPressCptMigration.php
+
+		-
+			message: '#^Variable \$ids in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
 			count: 1
 			path: app/Livewire/Admin/WordPressCptMigration.php
 
@@ -632,30 +691,6 @@ parameters:
 			path: app/Models/CptEntry.php
 
 		-
-			message: '#^Property App\\Models\\CptEntry\:\:\$translatable \(array\) on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.property
-			count: 2
-			path: app/Models/CptEntry.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\Form\:\:\$fields\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Models/Form.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\FormEntry\:\:\$form\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Models/FormEntry.php
-
-		-
-			message: '#^Access to an undefined property App\\Models\\FormEntry\:\:\$user\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/FormEntry.php
-
-		-
 			message: '#^Call to function is_array\(\) with string\|null will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 1
@@ -671,18 +706,6 @@ parameters:
 			message: '#^Access to an undefined property App\\Models\\Page\:\:\$translations\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Models/Page.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$description\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/Page.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$title\.$#'
-			identifier: property.notFound
-			count: 1
 			path: app/Models/Page.php
 
 		-
@@ -704,44 +727,14 @@ parameters:
 			path: app/Models/Page.php
 
 		-
-			message: '#^Method App\\Models\\Page\:\:getOrCreateSeoMeta\(\) should return App\\Models\\SeoMeta but returns Illuminate\\Database\\Eloquent\\Model\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Models/Page.php
-
-		-
 			message: '#^Offset ''meta_description'' on string\|null on left side of \?\? does not exist\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Models/Page.php
 
 		-
-			message: '#^Offset ''meta_title'' on string\|null on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
-			count: 1
-			path: app/Models/Page.php
-
-		-
-			message: '#^Property App\\Models\\Page\:\:\$translatable \(array\) on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.property
-			count: 2
-			path: app/Models/Page.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>description" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Models/Page.php
-
-		-
 			message: '#^Cannot unset offset string on array\{\}\|string\.$#'
 			identifier: unset.offset
-			count: 1
-			path: app/Models/PageBlock.php
-
-		-
-			message: '#^Offset string on array\{\}\|string on left side of \?\? does not exist\.$#'
-			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Models/PageBlock.php
 
@@ -755,12 +748,6 @@ parameters:
 			message: '#^Offset string on string\|null on left side of \?\? does not exist\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
-			path: app/Models/PageBlock.php
-
-		-
-			message: '#^Property App\\Models\\PageBlock\:\:\$translatable \(array\) on left side of \?\? is not nullable\.$#'
-			identifier: nullCoalesce.property
-			count: 2
 			path: app/Models/PageBlock.php
 
 		-
@@ -786,6 +773,12 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: app/Models/PageRevision.php
+
+		-
+			message: '#^Unsafe call to private method App\\Models\\StringTranslation\:\:resolveFullKey\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
+			count: 3
+			path: app/Models/StringTranslation.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
@@ -848,12 +841,6 @@ parameters:
 			path: app/Services/ActivityLogger.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Form\:\:\$fields\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/FormConditionalLogic.php
-
-		-
 			message: '#^Offset ''conditions'' on non\-empty\-array on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
 			count: 1
@@ -878,12 +865,6 @@ parameters:
 			path: app/Services/FormConditionalLogic.php
 
 		-
-			message: '#^Access to an undefined property App\\Models\\Form\:\:\$fields\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Services/FormNotificationService.php
-
-		-
 			message: '#^Call to function is_array\(\) with string\|null will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 2
@@ -906,12 +887,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Services/PluginManager.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$author\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/SchemaBuilder.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$created_at\.$#'
@@ -944,37 +919,13 @@ parameters:
 			path: app/Services/SchemaBuilder.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$seoMeta\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Services/SeoRenderer.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>canonical_url" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Services/SeoRenderer.php
 
 		-
-			message: '#^Using nullsafe property access "\?\-\>description" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Services/SeoRenderer.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>path" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Services/SeoRenderer.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>robots" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
-			identifier: nullsafe.neverNull
-			count: 1
-			path: app/Services/SeoRenderer.php
-
-		-
-			message: '#^Using nullsafe property access "\?\-\>title" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Services/SeoRenderer.php

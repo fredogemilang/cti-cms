@@ -11,8 +11,8 @@
         $heroBg = $page->getBlockValue('hero_bg_image', 'themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
         $heroBgUrl = resolve_block_asset($heroBg);
       @endphp
-      <img src="{{ $heroBgUrl }}" alt="{{ $page->getBlockValue('hero_title', 'Management') }} Banner" title="{{ $page->getBlockValue('hero_title', 'Management') }}" class="w-full h-full object-cover">
-      <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-transparent w-full lg:w-3/4"></div>
+      <x-image :src="$heroBgUrl" alt="{{ $page->getBlockValue('hero_title', 'Management') }} Banner" title="{{ $page->getBlockValue('hero_title', 'Management') }}" class="w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-transparent w-full lg:w-3/4" /></div>
     </div>
     
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10 w-full">
@@ -81,10 +81,10 @@
                 <div class="w-full relative" style="max-width: 340px; flex-shrink: 0;">
                   <div
                     class="relative w-full aspect-[1025/1536] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-700 group-hover:-translate-y-2">
-                    <img src="{{ $photoUrl }}"
+                    <x-image :src="$photoUrl"
                       alt="{{ $name }}" title="{{ $name }}" class="absolute inset-0 w-full h-full object-cover object-top" />
                     <div
-                      class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>
                   </div>
                   <!-- Decorative Dots -->
@@ -123,10 +123,10 @@
                 <div class="w-full relative" style="max-width: 340px; flex-shrink: 0;">
                   <div
                     class="relative w-full aspect-[1025/1536] rounded-2xl overflow-hidden shadow-2xl transition-transform duration-700 group-hover:-translate-y-2">
-                    <img src="{{ $photoUrl }}"
+                    <x-image :src="$photoUrl"
                       alt="{{ $name }}" title="{{ $name }}" class="absolute inset-0 w-full h-full object-cover object-top" />
                     <div
-                      class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     </div>
                   </div>
                   <!-- Decorative Dots -->
@@ -199,11 +199,11 @@
               <div class="w-full" style="max-width: 220px; flex-shrink: 0;">
                 <div
                   class="w-full aspect-[1025/1536] rounded-xl overflow-hidden shadow-lg transition-transform duration-500 group-hover:-translate-y-1">
-                  <img src="{{ $photoUrl }}"
+                  <x-image :src="$photoUrl"
                     alt="{{ $name }}" title="{{ $name }}" class="w-full h-full object-cover object-top" />
                 </div>
               </div>
-              <div class="w-full sm:flex-1 flex flex-col pt-2">
+              <div class="w-full sm:flex-1 flex flex-col pt-2" />
                 <h3 class="text-2xl font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors">{{ $name }}</h3>
                 <p class="text-sm text-primary font-bold uppercase tracking-wider mb-4">{{ $position }}</p>
                 <div class="text-gray-600 text-sm leading-relaxed space-y-3 mb-6">

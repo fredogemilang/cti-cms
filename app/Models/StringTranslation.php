@@ -62,7 +62,7 @@ class StringTranslation extends Model
 
             // Base initialization with default_value
             foreach ($keys as $k) {
-                $fullKey = ($k->group && $k->group !== 'ui') ? "{$k->group}.{$k->key}" : $k->key;
+                $fullKey = static::resolveFullKey($k->group, $k->key);
                 $dictionary[$fullKey] = $k->default_value ?: $k->key;
             }
 
@@ -76,7 +76,7 @@ class StringTranslation extends Model
 
                 foreach ($fallbackTranslations as $ft) {
                     if ($ft->key) {
-                        $fullKey = ($ft->key->group && $ft->key->group !== 'ui') ? "{$ft->key->group}.{$ft->key->key}" : $ft->key->key;
+                        $fullKey = static::resolveFullKey($ft->key->group, $ft->key->key);
                         $dictionary[$fullKey] = $ft->value;
                     }
                 }
@@ -91,12 +91,31 @@ class StringTranslation extends Model
 
             foreach ($requestedTranslations as $rt) {
                 if ($rt->key) {
-                    $fullKey = ($rt->key->group && $rt->key->group !== 'ui') ? "{$rt->key->group}.{$rt->key->key}" : $rt->key->key;
+                    $fullKey = static::resolveFullKey($rt->key->group, $rt->key->key);
                     $dictionary[$fullKey] = $rt->value;
                 }
             }
 
             return $dictionary;
         });
+    }
+
+    /**
+     * Resolve the full dictionary key, avoiding double-prefixing when
+     * the key already starts with the group name (e.g. group='footer', key='footer.address').
+     */
+    private static function resolveFullKey(?string $group, string $key): string
+    {
+        // No group or generic 'ui' group — use key as-is
+        if (! $group || $group === 'ui') {
+            return $key;
+        }
+
+        // If the key already starts with the group prefix, don't add it again
+        if (str_starts_with($key, "{$group}.")) {
+            return $key;
+        }
+
+        return "{$group}.{$key}";
     }
 }

@@ -46,6 +46,12 @@ class PageForm extends Component
     // UI State
     public bool $showBlockSelector = false;
 
+    public bool $showRevisionsModal = false;
+
+    public ?int $selectedRevisionId = null;
+
+    public ?array $activeLock = null;
+
     public bool $showMediaPicker = false;
 
     public ?string $mediaPickerField = null;
@@ -96,7 +102,7 @@ class PageForm extends Component
             'slug' => $isDefaultLocale
                 ? ['required', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('pages', 'slug')->ignore($this->pageId)]
                 : ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
-            'status' => 'required|in:draft,published,scheduled,private',
+            'status' => 'required|in:draft,pending,published,scheduled,private',
             'parentId' => 'nullable|exists:pages,id',
             'template' => 'required|string',
             'publishedAt' => 'nullable|date',
@@ -133,6 +139,10 @@ class PageForm extends Component
         } else {
             // New page: seed blocks from default template preset
             $this->seedTemplateBlocks();
+        }
+
+        if ($this->isEdit && $this->page) {
+            $this->refreshLock();
         }
     }
 
@@ -864,6 +874,7 @@ class PageForm extends Component
             'status' => $this->status,
             'published_at' => $this->publishedAt ? Carbon::parse($this->publishedAt) : null,
             'author_id' => $this->isEdit ? $this->page->author_id : auth()->id(),
+            'updated_by' => auth()->id(),
             'template' => $this->template,
             'featured_image' => $this->featuredImage,
         ];
@@ -900,6 +911,8 @@ class PageForm extends Component
 
         $this->hasUnsavedChanges = false;
         $this->lastSavedAt = now()->format('g:i A');
+
+        $this->releaseLock();
 
         // Notify SeoMetaBox to save/attach (for new pages, it now has the ID)
         $this->dispatch('seo-attach', id: $this->page->id);
@@ -1029,6 +1042,7 @@ class PageForm extends Component
         }
 
         if ($this->isEdit && $this->page) {
+            $this->releaseLock();
             $this->page->blocks()->delete();
             $this->page->delete();
             session()->flash('success', 'Page deleted successfully.');
@@ -1053,18 +1067,101 @@ class PageForm extends Component
         $this->save();
     }
 
+    public function openRevisionsModal()
+    {
+        $this->showRevisionsModal = true;
+    }
+
+    public function closeRevisionsModal()
+    {
+        $this->showRevisionsModal = false;
+        $this->selectedRevisionId = null;
+    }
+
+    public function restoreRevision(int $revisionId)
+    {
+        if (! $this->isEdit || ! $this->page) {
+            return;
+        }
+
+        $revision = PageRevision::where('page_id', $this->page->id)->findOrFail($revisionId);
+
+        $this->title = $revision->title ?? $this->title;
+        $this->slug = $revision->slug ?? $this->slug;
+        $this->status = $revision->status ?? $this->status;
+
+        if (! empty($revision->blocks) && is_array($revision->blocks)) {
+            $this->blocks = [];
+            foreach ($revision->blocks as $b) {
+                if (empty($b['parent_block_id'])) {
+                    $val = $b['value'] ?? '';
+                    if (is_string($val) && in_array($b['type'] ?? '', ['checkbox', 'gallery', 'posts', 'repeater'])) {
+                        $decoded = json_decode($val, true);
+                        if ($decoded !== null) {
+                            $val = $decoded;
+                        }
+                    }
+                    $this->blocks[] = [
+                        'name' => $b['name'] ?? 'block',
+                        'type' => $b['type'] ?? 'text',
+                        'label' => $b['label'] ?? '',
+                        'value' => $val,
+                        'options' => $b['options'] ?? [],
+                        'is_active' => $b['is_active'] ?? true,
+                        'children' => $b['children'] ?? [],
+                    ];
+                }
+            }
+        }
+
+        $this->save();
+        $this->closeRevisionsModal();
+        $this->dispatch('notify', type: 'success', message: 'Restored from revision successfully!');
+    }
+
+    public function refreshLock()
+    {
+        if ($this->isEdit && $this->page) {
+            if (! $this->page->isLockedByOther(auth()->id())) {
+                $this->page->lock(auth()->id());
+            }
+        }
+    }
+
+    public function takeOverLock()
+    {
+        if ($this->isEdit && $this->page) {
+            $this->page->lock(auth()->id());
+        }
+    }
+
+    public function releaseLock()
+    {
+        if ($this->isEdit && $this->page) {
+            if (! $this->page->isLockedByOther(auth()->id())) {
+                $this->page->unlock();
+            }
+        }
+    }
+
     public function render()
     {
+
         $parentPages = Page::whereNull('parent_id')
             ->when($this->pageId, fn ($q) => $q->where('id', '!=', $this->pageId))
             ->orderBy('title')
             ->get();
+
+        $revisions = $this->isEdit && $this->page
+            ? PageRevision::with('user')->where('page_id', $this->page->id)->latest()->take(20)->get()
+            : collect();
 
         return view('livewire.admin.pages.page-form', [
             'parentPages' => $parentPages,
             'templates' => Page::getTemplates(),
             'blockTypes' => PageBlock::$blockTypes,
             'colorClasses' => PageBlock::$colorClasses,
+            'revisions' => $revisions,
         ]);
     }
 }

@@ -4,10 +4,12 @@ namespace App\Livewire\Admin\Cpt\Entries;
 
 use App\Models\CptEntry;
 use App\Models\CptEntryRelationship;
+use App\Models\CptEntryRevision;
 use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
 use App\Models\MetaField;
 use App\Models\TaxonomyTerm;
+use App\Services\ContentLockService;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -25,6 +27,10 @@ class EntryForm extends Component
     public ?int $entryId = null;
 
     public bool $isEdit = false;
+
+    public ?array $activeLock = null;
+
+    public bool $showRevisionsModal = false;
 
     // Core Fields
     public string $title = '';
@@ -164,7 +170,7 @@ class EntryForm extends Component
             'slug' => $isDefaultLocale ? 'required|string|max:255' : 'nullable|string|max:255',
             'content' => 'nullable|string',
             'excerpt' => 'nullable|string|max:500',
-            'status' => 'required|in:draft,published,scheduled,archived',
+            'status' => 'required|in:draft,pending,published,scheduled,archived',
             'publishedAt' => 'nullable|date',
             'parentId' => 'nullable|integer|exists:cpt_entries,id',
             'menuOrder' => 'integer|min:0',
@@ -261,6 +267,7 @@ class EntryForm extends Component
             if ($requestedLocale && in_array($requestedLocale, $this->availableLocales, true) && $requestedLocale !== CptEntry::defaultLocale()) {
                 $this->switchLocale($requestedLocale);
             }
+            $this->refreshLock();
         }
     }
 
@@ -309,18 +316,16 @@ class EntryForm extends Component
     }
 
     #[On('media-selected')]
-    public function onMediaSelected($field, $mediaId, $mediaPath, $mediaUrl)
+    public function onMediaSelected($field, $mediaId = null, $mediaPath = null, $mediaUrl = null)
     {
         if ($field === 'featured_image') {
             $this->featuredImage = $mediaPath;
-        }
-        // Handle Meta Fields
-        elseif (str_starts_with($field, 'meta.')) {
+        } elseif (str_starts_with($field, 'meta.')) {
+            $cleanPath = substr($field, 5);
             $fieldName = str_replace('meta.', '', $field);
             $this->meta[$fieldName] = $mediaPath;
-        }
-        // Handle Gallery Addition
-        elseif (str_starts_with($field, 'gallery_add.')) {
+            data_set($this->meta, $cleanPath, $mediaPath);
+        } elseif (str_starts_with($field, 'gallery_add.')) {
             $fieldName = str_replace('gallery_add.', '', $field);
             if (! isset($this->meta[$fieldName])) {
                 $this->meta[$fieldName] = [];
@@ -698,15 +703,6 @@ class EntryForm extends Component
         }
     }
 
-    #[On('media-selected')]
-    public function handleMediaSelected(string $field, mixed $mediaPath, mixed $mediaUrl = null): void
-    {
-        if (str_starts_with($field, 'meta.')) {
-            $cleanPath = substr($field, 5);
-            data_set($this->meta, $cleanPath, $mediaPath);
-        }
-    }
-
     public function save()
     {
         // Mirror current form into the active locale's snapshot before validating.
@@ -812,6 +808,7 @@ class EntryForm extends Component
                 : ($this->publishedAt ? Carbon::parse($this->publishedAt) : null),
             'parent_id' => $this->parentId,
             'menu_order' => $this->menuOrder,
+            'updated_by' => auth()->id(),
             'meta' => $finalMeta,
             'translations' => $translations ?: null,
         ];
@@ -823,6 +820,8 @@ class EntryForm extends Component
             $entry = CptEntry::create($data);
             $this->entryId = $entry->id;
         }
+
+        $this->releaseLock();
 
         // Sync taxonomy terms
         $allTerms = [];
@@ -892,6 +891,18 @@ class EntryForm extends Component
 
         // Notify SeoMetaBox to save/attach
         $this->dispatch('seo-attach', id: $entry->id);
+
+        // Create revision snapshot
+        CptEntryRevision::create([
+            'cpt_entry_id' => $entry->id,
+            'user_id' => auth()->id(),
+            'title' => $entry->title,
+            'slug' => $entry->slug,
+            'status' => $entry->status,
+            'meta' => $entry->meta,
+            'translations' => $entry->translations,
+            'is_autosave' => false,
+        ]);
 
         $this->dispatch('notify', [
             'type' => 'success',
@@ -1075,11 +1086,27 @@ class EntryForm extends Component
             $entryModel->setRelation('postType', $this->postType);
         }
 
-        $previewUrl = $entryModel->getUrl($this->editingLocale ?: null);
-        $fullPath = parse_url($previewUrl, PHP_URL_PATH) ?? '/'.$this->postType->slug.'/'.$this->slug;
+        $frontendUrl = $entryModel->getUrl($this->editingLocale ?: null);
+        if ($this->isEdit && $this->status !== 'published') {
+            $previewUrl = route('admin.cpt-entries.preview', $this->entryId);
+        } else {
+            $previewUrl = $frontendUrl;
+        }
+
+        $fullPath = parse_url($frontendUrl, PHP_URL_PATH) ?? '/'.$this->postType->slug.'/'.$this->slug;
         $trimmedPath = rtrim($fullPath, '/');
         $lastSlashPos = strrpos($trimmedPath, '/');
-        $permalinkPrefix = ($lastSlashPos !== false) ? substr($trimmedPath, 0, $lastSlashPos + 1) : '/'.$this->postType->slug.'/';
+        $revisions = ($this->isEdit && $this->entryId)
+            ? CptEntryRevision::with('user')->where('cpt_entry_id', $this->entryId)->latest()->take(20)->get()
+            : collect();
+
+        if ($this->isEdit && $this->entryId && auth()->check()) {
+            $lockService = app(ContentLockService::class);
+            $this->activeLock = $lockService->check('cpt_entry', $this->entryId, auth()->id());
+            if (! $this->activeLock) {
+                $lockService->acquire('cpt_entry', $this->entryId, auth()->id());
+            }
+        }
 
         return view('livewire.admin.cpt.entries.entry-form', [
             'taxonomies' => $taxonomies,
@@ -1090,7 +1117,68 @@ class EntryForm extends Component
             'targetEntriesByField' => $targetEntriesByField,
             'previewUrl' => $previewUrl,
             'permalinkPrefix' => $permalinkPrefix,
+            'revisions' => $revisions,
         ]);
+    }
+
+    public function refreshLock()
+    {
+        if ($this->isEdit && $this->entryId) {
+            $entry = CptEntry::find($this->entryId);
+            if ($entry && ! $entry->isLockedByOther(auth()->id())) {
+                $entry->lock(auth()->id());
+            }
+        }
+    }
+
+    public function takeOverLock()
+    {
+        if ($this->isEdit && $this->entryId) {
+            $entry = CptEntry::find($this->entryId);
+            if ($entry) {
+                $entry->lock(auth()->id());
+            }
+        }
+    }
+
+    public function releaseLock()
+    {
+        if ($this->isEdit && $this->entryId) {
+            $entry = CptEntry::find($this->entryId);
+            if ($entry && ! $entry->isLockedByOther(auth()->id())) {
+                $entry->unlock();
+            }
+        }
+    }
+
+    public function openRevisionsModal()
+    {
+        $this->showRevisionsModal = true;
+    }
+
+    public function closeRevisionsModal()
+    {
+        $this->showRevisionsModal = false;
+    }
+
+    public function restoreRevision(int $revisionId)
+    {
+        if (! $this->isEdit || ! $this->entryId) {
+            return;
+        }
+
+        $revision = CptEntryRevision::where('cpt_entry_id', $this->entryId)->findOrFail($revisionId);
+
+        $this->title = $revision->title ?? $this->title;
+        $this->slug = $revision->slug ?? $this->slug;
+        $this->status = $revision->status ?? $this->status;
+        if (! empty($revision->meta) && is_array($revision->meta)) {
+            $this->meta = $revision->meta;
+        }
+
+        $this->save();
+        $this->closeRevisionsModal();
+        $this->dispatch('notify', ['type' => 'success', 'message' => 'Restored from CPT revision successfully!']);
     }
 
     private function flattenTerms($allTerms, $parentId = null, $depth = 0)

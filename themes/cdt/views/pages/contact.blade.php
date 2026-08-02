@@ -7,7 +7,7 @@
   <section class="relative h-[400px] md:h-[500px] flex items-center pt-20 overflow-hidden bg-gray-900 text-white">
     <!-- Immersive background -->
     <div class="absolute inset-0 z-0">
-      <img src="{{ resolve_block_asset($page->getBlockValue('hero_image', 'photo-1423666639041-f56000c27a9a-w2070.jpg')) }}"
+      <x-image :src="resolve_block_asset($page->getBlockValue('hero_image', 'photo-1423666639041-f56000c27a9a-w2070.jpg'))"
         class="w-full h-full object-cover object-center" alt="Contact Us Background">
       <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/95 to-transparent w-full lg:w-3/4"></div>
     </div>

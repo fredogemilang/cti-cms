@@ -461,7 +461,7 @@ if (! function_exists('current_page_localized_url')) {
         }
 
         // Home page
-        if ($path === '') {
+        if ($cleanPath === '') {
             if ($targetLocale === $defaultLocale && $hideDefault) {
                 return url('/');
             }
@@ -472,13 +472,13 @@ if (! function_exists('current_page_localized_url')) {
         // Prefix structure
         if ($urlStructure === 'prefix') {
             if ($targetLocale === $defaultLocale && $hideDefault) {
-                return url('/'.$path);
+                return url('/'.$cleanPath);
             }
 
-            return url('/'.$targetLocale.'/'.$path);
+            return url('/'.$targetLocale.'/'.$cleanPath);
         }
 
-        return url('/'.$path);
+        return url('/'.$cleanPath);
     }
 }
 
@@ -618,4 +618,3 @@ if (! function_exists('safe_phone')) {
         return '<a href="tel:'.e($telNumber).'" class="'.e($class).'">'.e($phone).'</a>';
     }
 }
-

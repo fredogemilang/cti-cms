@@ -74,7 +74,7 @@
           @foreach($badgeImages as $img)
             @php $imgUrl = resolve_block_asset($img); @endphp
             @if($imgUrl)
-            <img src="{{ $imgUrl }}" alt="Certification Badge" class="h-20 w-auto object-contain" loading="lazy" />
+            <x-image :src="$imgUrl" alt="Certification Badge" class="h-20 w-auto object-contain" loading="lazy" />
             @endif
           @endforeach
         </div>

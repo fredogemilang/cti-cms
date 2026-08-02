@@ -157,7 +157,7 @@
         @if($bannerLogo)
         <div class="flex-shrink-0">
           <div class="w-24 h-24 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center p-4 shadow-[0_10px_25px_rgba(0,0,0,0.3)] ring-4 ring-white/20 transform hover:scale-105 transition-transform duration-500">
-            <img src="{{ resolve_block_asset($bannerLogo) }}" alt="{{ $entry->title }} Logo" class="w-full h-auto object-contain drop-shadow-sm" />
+            <x-image :src="resolve_block_asset($bannerLogo)" alt="{{ $entry->title }} Logo" class="w-full h-auto object-contain drop-shadow-sm" />
           </div>
         </div>
         @endif
@@ -200,7 +200,7 @@
         @if($aboutImg)
         <div class="w-full lg:w-1/2 lg:sticky lg:top-32">
           <div class="relative w-full aspect-square md:aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-zinc-200/80 bg-gradient-to-br from-primary/5 to-zinc-100 flex items-center justify-center">
-            <img src="{{ resolve_block_asset($aboutImg) }}" alt="{{ $entry->title }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+            <x-image :src="resolve_block_asset($aboutImg)" alt="{{ $entry->title }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
           </div>
         </div>
         @endif
@@ -307,7 +307,7 @@
         <div class="flex flex-col lg:flex-row items-center gap-10 p-10 bg-white rounded-3xl border border-zinc-200/80 hover:shadow-xl transition-shadow duration-300">
           <div class="w-full lg:w-3/5">
             @if($storyLogo)
-            <img src="{{ resolve_block_asset($storyLogo) }}" alt="{{ $storyTitle }}" class="h-10 object-contain mb-6" />
+            <x-image :src="resolve_block_asset($storyLogo)" alt="{{ $storyTitle }}" class="h-10 object-contain mb-6" />
             @endif
             <h4 class="text-2xl md:text-3xl font-bold text-zinc-900 mb-4 leading-tight">{{ $storyTitle }}</h4>
             <p class="text-zinc-600 text-base leading-relaxed mb-6">{{ $storyDesc }}</p>
@@ -470,7 +470,7 @@
         <div onclick="window.location.href='{{ $sibling->getUrl() }}'" class="bg-white {{ $cardPaddingClass }} rounded-3xl border border-zinc-200/80 shadow-sm flex flex-col items-center text-center group hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
           <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
             @if($sIcon && (str_contains($sIcon, '/') || str_contains($sIcon, '.')))
-              <img src="{{ resolve_block_asset($sIcon) }}" alt="{{ $sibling->title }}" class="w-7 h-7 object-contain">
+              <x-image :src="resolve_block_asset($sIcon)" alt="{{ $sibling->title }}" class="w-7 h-7 object-contain" />
             @elseif($sIcon)
               <x-icon :name="$sIcon" class="w-7 h-7 text-primary" />
             @else

@@ -12,6 +12,76 @@ use Illuminate\Support\Facades\View;
 class ArchiveController extends Controller
 {
     /**
+     * Localized CPT archive listing — GET /{locale}/{cpt-slug}
+     */
+    public function localeArchive(string $locale, string $cptSlug)
+    {
+        if (in_array($locale, available_locales())) {
+            app()->setLocale($locale);
+        }
+
+        return $this->archive($cptSlug);
+    }
+
+    /**
+     * Localized Single CPT entry — GET /{locale}/{cpt-slug}/{entry-slug}
+     */
+    public function localeSingle(string $locale, string $cptSlug, string $entrySlug)
+    {
+        if (in_array($locale, available_locales())) {
+            app()->setLocale($locale);
+        }
+
+        return $this->single($cptSlug, $entrySlug);
+    }
+
+    /**
+     * Localized Nested CPT entry — GET /{locale}/{cpt-slug}/{parentSlug}/{entrySlug}
+     */
+    public function localeNestedSingle(string $locale, string $cptSlug, string $parentSlug, string $entrySlug)
+    {
+        if (in_array($locale, available_locales())) {
+            app()->setLocale($locale);
+        }
+
+        return $this->nestedSingle($cptSlug, $parentSlug, $entrySlug);
+    }
+
+    /**
+     * Preview CPT Entry by ID for logged-in users — GET /admin/cpt-entries/{id}/preview
+     */
+    public function previewById(int $id)
+    {
+        abort_unless(auth()->check() && auth()->user()->can('cpt.entries.edit'), 403);
+        $entry = CptEntry::with(['author', 'postType', 'terms.taxonomy'])->findOrFail($id);
+        $postType = $entry->postType;
+
+        $viewName = $this->resolveSingleView($postType->slug);
+
+        return view($viewName, [
+            'postType' => $postType,
+            'entry' => $entry,
+            'seo' => $entry->seo ?? [],
+            'taxonomies' => $postType->taxonomies(),
+            'previousEntry' => null,
+            'nextEntry' => null,
+            'isPreview' => true,
+        ]);
+    }
+
+    /**
+     * Localized Taxonomy term archive — GET /{locale}/{taxonomy-slug}/{term-slug}
+     */
+    public function localeTermArchive(string $locale, string $taxonomySlug, string $termSlug)
+    {
+        if (in_array($locale, available_locales())) {
+            app()->setLocale($locale);
+        }
+
+        return $this->termArchive($taxonomySlug, $termSlug);
+    }
+
+    /**
      * CPT archive listing — GET /{cpt-slug}
      */
     public function archive(string $cptSlug)
@@ -21,7 +91,7 @@ class ArchiveController extends Controller
             ->where('has_archive', true)
             ->firstOrFail();
 
-        $perPage = $this->getArchiveSetting('per_page', 12);
+        $perPage = in_array($postType->slug, ['customer-success', 'client-says'], true) ? 6 : $this->getArchiveSetting('per_page', 12);
 
         $entries = CptEntry::with(['author', 'postType', 'terms.taxonomy'])
             ->where('post_type_id', $postType->id)
