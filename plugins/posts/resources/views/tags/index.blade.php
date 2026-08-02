@@ -1,22 +1,11 @@
 @extends('layouts.admin')
 
-@section('title', 'Tags')
+@section('title', 'Post Tags')
 @section('page-title', 'Post Tags')
+@section('page-subtitle', 'Organize your posts with tags')
 
 @section('content')
 <div class="flex flex-col gap-6">
-    <div class="flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold text-[#111827] dark:text-[#FCFCFC]">Tags</h2>
-            <p class="text-[#6F767E] mt-1">Manage post tags for better discoverability</p>
-        </div>
-        @can('posts.tags.create')
-        <button class="inline-flex items-center gap-2 px-4 py-2 bg-[#2563EB] text-white rounded-xl font-semibold hover:bg-[#1D4ED8] transition-all shadow-lg shadow-blue-500/20">
-            <span class="material-symbols-outlined text-xl">add</span>
-            New Tag
-        </button>
-        @endcan
-    </div>
 
     <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] shadow-sm overflow-hidden">
         <div class="p-8 text-center">

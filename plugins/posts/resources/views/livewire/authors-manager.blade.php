@@ -1,11 +1,4 @@
 <div class="flex flex-col gap-6">
-    <div class="flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold text-[#111827] dark:text-[#FCFCFC]">Authors</h2>
-            <p class="text-[#6F767E] mt-1">Manage post authors and their profiles</p>
-        </div>
-    </div>
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Left Column: Form -->
         <div class="lg:col-span-1 space-y-6">
