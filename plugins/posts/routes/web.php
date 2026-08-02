@@ -43,9 +43,13 @@ Route::middleware(['web', 'auth', 'permission:posts.view'])->prefix("{$adminPath
         return view('posts::settings');
     })->name('settings')->middleware('permission:posts.view'); // Reusing view permission
 
-    // WordPress Migration
-    Route::get('/wordpress-migration', function () {
+    // WordPress Migration / Import
+    Route::get('/import', function () {
         return view('posts::wordpress-migration');
+    })->name('import')->middleware('permission:posts.create');
+
+    Route::get('/wordpress-migration', function () {
+        return redirect()->route('admin.posts.import');
     })->name('wordpress-migration')->middleware('permission:posts.create');
 
 });

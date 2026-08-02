@@ -101,6 +101,17 @@ class PostsServiceProvider extends CmsPluginServiceProvider
                     'children' => [],
                 ],
                 [
+                    'title' => 'Import',
+                    'route' => 'admin.posts.import',
+                    'activeRoutePattern' => 'admin.posts.import|admin.posts.import.*|admin.posts.wordpress-migration',
+                    'url' => route('admin.posts.import'),
+                    'icon' => 'cloud_download',
+                    'permission' => 'posts.create',
+                    'is_active' => true,
+                    'source' => 'plugin:posts',
+                    'children' => [],
+                ],
+                [
                     'title' => 'Settings',
                     'route' => 'admin.posts.settings',
                     'url' => route('admin.posts.settings'),
