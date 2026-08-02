@@ -10,6 +10,9 @@ use Illuminate\Support\Collection;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+/**
+ * @property-read bool $hasHierarchy
+ */
 class EntriesTable extends Component
 {
     use WithPagination;
@@ -40,12 +43,8 @@ class EntriesTable extends Component
     {
         $this->postType = $postType;
 
-        // Auto-enable hierarchy view if CPT has any parent-child relationships
-        $hasHierarchy = CptEntry::where('post_type_id', $postType->id)
-            ->whereNotNull('parent_id')
-            ->exists();
-
-        if ($hasHierarchy && ! request()->has('groupByParent')) {
+        // Auto-enable hierarchy view if CPT is hierarchical or has parent-child relationships
+        if ($this->hasHierarchy && ! request()->has('groupByParent')) {
             $this->groupByParent = true;
         }
     }
@@ -253,7 +252,7 @@ class EntriesTable extends Component
      */
     public function getHasHierarchyProperty(): bool
     {
-        return CptEntry::where('post_type_id', $this->postType->id)
+        return (bool) ($this->postType->hierarchical ?? false) || CptEntry::where('post_type_id', $this->postType->id)
             ->whereNotNull('parent_id')
             ->exists();
     }

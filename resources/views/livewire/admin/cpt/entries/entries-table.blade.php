@@ -93,8 +93,18 @@
             @endif
         </div>
         
-        <!-- Display Row Size -->
+        <!-- Display Row Size & View Mode Toggle -->
         <div class="flex items-center gap-3">
+            @if($this->hasHierarchy || $groupByParent)
+            <button
+                wire:click="$toggle('groupByParent')"
+                class="h-12 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $groupByParent ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB] ring-1 ring-[#2563EB]/30' : 'bg-white dark:bg-[#1A1A1A] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30]' }}"
+                title="{{ $groupByParent ? 'Switch to Flat List View' : 'Switch to Hierarchical View' }}">
+                <span class="material-symbols-outlined text-lg">{{ $groupByParent ? 'account_tree' : 'format_list_bulleted' }}</span>
+                <span>{{ $groupByParent ? 'Hierarchy View' : 'Flat List' }}</span>
+            </button>
+            @endif
+
             <span class="text-sm font-medium text-[#6F767E]">Display:</span>
             <select
                 wire:model.live="perPage"
@@ -156,6 +166,9 @@
                             <td class="px-6 py-5">
                                 <div>
                                     <a href="{{ route('admin.cpt.entries.edit', [$postType->slug, $entry->id]) }}" class="text-[15px] font-bold text-[#111827] dark:text-[#FCFCFC] hover:text-[#2563EB] dark:hover:text-[#2563EB] transition-colors line-clamp-1">
+                                        @if(isset($entry->depth) && $entry->depth > 0)
+                                            <span class="text-blue-500 font-normal mr-1">{{ str_repeat('— ', $entry->depth) }}</span>
+                                        @endif
                                         {{ $entry->title }}
                                     </a>
                                     <div class="text-xs text-[#6F767E] mt-0.5">{{ $entry->slug }}</div>
