@@ -33,6 +33,8 @@
 
   </div>
 
+  <x-cookie-banner />
+
   @livewireScripts
   @stack('scripts')
   <script>

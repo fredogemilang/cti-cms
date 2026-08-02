@@ -99,6 +99,8 @@
         </div>
     </footer>
 
+    <x-cookie-banner />
+
     @stack('scripts')
 </body>
 </html>
