@@ -23,7 +23,7 @@
             ? asset('storage/' . $entry->getMeta('loop_image')) 
             : '/assets/images/unsplash/photo-1551288049-bebda4e38f71-w2070.jpg');
 
-    // Related products brand mapping
+    // Related products brand mapping dictionary
     $brandLogos = [
         'aws' => ['name' => 'AWS', 'logo' => asset('storage/media/logo-awspng-1785241172-yPnfNkus.webp'), 'url' => localized_url('/technology-alliance/aws')],
         'netgain-systems' => ['name' => 'NetGain Systems', 'logo' => asset('storage/media/onboarding_new_product_netgain_systems_0.png'), 'url' => localized_url('/technology-alliance/netgain-systems')],
@@ -35,39 +35,66 @@
         'dynatrace' => ['name' => 'Dynatrace', 'logo' => asset('storage/media/Dynatrace_Logo_color_positive_vertical-1024x1024.png'), 'url' => localized_url('/technology-alliance/dynatrace')],
     ];
 
-    $solutionBrandMap = [
-        // Analytics
-        'business-log-analytics' => ['aws', 'netgain-systems', 'zscaler'],
-        'digital-experience-insight' => ['dynatrace', 'netgain-systems', 'zscaler'],
-        'root-cause-threat-analytics' => ['netgain-systems', 'zscaler', 'f5'],
+    // 1. Fetch dynamic related entries from CPT Entry Pivot Relationships
+    $relatedProducts = [];
+    $relEntries = $entry->relatedEntries()->where('status', 'published')->get();
 
-        // Cloud
-        'cloud-platform' => ['aws', 'akamai'],
-        'cloud-migration' => ['aws', 'hitachi-vantara'],
-        'cloud-security-posture' => ['zscaler', 'okta'],
-        'fully-managed-services' => ['aws', 'netgain-systems'],
+    if ($relEntries->isNotEmpty()) {
+        foreach ($relEntries as $rel) {
+            $relTitle = $rel->getTranslation('title', $locale, fallback: true) ?? $rel->title;
+            $relLogo = $rel->featured_image 
+                ? asset('storage/' . $rel->featured_image) 
+                : ($rel->getMeta('logo') ? asset('storage/' . $rel->getMeta('logo')) : null);
+            $relUrl = $rel->getUrl($locale);
 
-        // Infrastructure
-        'enterprise-storage' => ['hitachi-vantara', 'aws'],
-        'server' => ['hitachi-vantara', 'aws'],
-        'fabric-network' => ['f5', 'netgain-systems'],
-        'ai-infrastructure' => ['hitachi-vantara', 'aws'],
+            $relatedProducts[] = [
+                'name' => $relTitle,
+                'logo' => $relLogo,
+                'url' => $relUrl,
+            ];
+        }
+    }
 
-        // Observability
-        'application' => ['netgain-systems', 'dynatrace'],
-        'infrastructure' => ['netgain-systems', 'hitachi-vantara'],
-        'network' => ['netgain-systems', 'f5'],
+    // 2. If no pivot entries, check MetaFields ('related_products', 'technology_alliances', 'related_brands', 'products')
+    if (empty($relatedProducts)) {
+        $metaVal = $entry->getMeta('related_products') 
+            ?? $entry->getMeta('technology_alliances') 
+            ?? $entry->getMeta('related_brands') 
+            ?? $entry->getMeta('products');
 
-        // Security
-        'identity-access-security' => ['okta'],
-        'application-web-security' => ['f5', 'akamai'],
-        'threat-detection-protection' => ['zscaler', 'netgain-systems'],
-        'compliance-siem' => ['netgain-systems', 'zscaler'],
-    ];
+        if (!empty($metaVal)) {
+            $keys = is_array($metaVal) ? $metaVal : array_filter(array_map('trim', explode(',', (string) $metaVal)));
+            
+            // Try fetching by CPT Entry IDs or slugs
+            $fetchedEntries = \App\Models\CptEntry::whereIn('id', $keys)
+                ->orWhereIn('slug', $keys)
+                ->where('status', 'published')
+                ->get();
 
-    $slugKey = $entry->slug;
-    $relatedBrandKeys = $solutionBrandMap[$slugKey] ?? ['aws', 'netgain-systems', 'zscaler'];
-    $relatedProducts = array_filter(array_map(fn($key) => $brandLogos[$key] ?? null, $relatedBrandKeys));
+            if ($fetchedEntries->isNotEmpty()) {
+                foreach ($fetchedEntries as $rel) {
+                    $relTitle = $rel->getTranslation('title', $locale, fallback: true) ?? $rel->title;
+                    $relLogo = $rel->featured_image 
+                        ? asset('storage/' . $rel->featured_image) 
+                        : ($rel->getMeta('logo') ? asset('storage/' . $rel->getMeta('logo')) : null);
+                    $relUrl = $rel->getUrl($locale);
+
+                    $relatedProducts[] = [
+                        'name' => $relTitle,
+                        'logo' => $relLogo,
+                        'url' => $relUrl,
+                    ];
+                }
+            } else {
+                // Check if keys match known brand keys in $brandLogos dictionary
+                foreach ($keys as $key) {
+                    if (isset($brandLogos[$key])) {
+                        $relatedProducts[] = $brandLogos[$key];
+                    }
+                }
+            }
+        }
+    }
 @endphp
 
 <!-- Hero V2: Full width dark immersive -->
