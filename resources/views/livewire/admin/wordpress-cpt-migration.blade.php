@@ -304,6 +304,21 @@
                     @endforeach
                 </select>
             </div>
+
+            {{-- CLI Command Box --}}
+            <div class="mt-4 p-4 rounded-2xl bg-gray-900 text-gray-100 dark:bg-[#0B0B0B] dark:border dark:border-[#272B30]">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-purple-400 text-lg">terminal</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-purple-300">Run via CLI (Unlimited Execution Time)</span>
+                    </div>
+                    <span class="text-[11px] text-gray-400">Bypass 120s timeout</span>
+                </div>
+                <div class="flex items-center gap-2 bg-black/50 p-3 rounded-xl font-mono text-xs text-green-400 overflow-x-auto select-all">
+                    <code>php artisan cms:import-wp --url={{ $wpUrl ?: 'https://www.centraldatatech.com' }} --wp-cpt={{ $selectedWpCpt ?: 'post' }} --target={{ $selectedCmsCpt ?: 'plugin_post' }}</code>
+                </div>
+                <p class="text-[11px] text-gray-400 mt-2">💡 Salin perintah di atas dan jalankan di Terminal CLI Laragon untuk mengimpor seluruh postingan & gambar secara cepat tanpa batas waktu.</p>
+            </div>
         </div>
 
         {{-- Field Mapping Table --}}
