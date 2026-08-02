@@ -15,7 +15,7 @@
         }
     }"
     x-init="checkActive()"
-    @livewire:navigated.window="checkActive()"
+    x-on:livewire:navigated.window="checkActive()"
     @click.away="flyoutOpen = false"
     :class="{ 'flyout-active': flyoutOpen }">
 
