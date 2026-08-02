@@ -196,16 +196,16 @@
             </button>
             <div class="flex items-center gap-3">
                 <button
-                    wire:click="importPosts(5)"
+                    wire:click="importPosts(6)"
                     wire:loading.attr="disabled"
                     class="h-12 px-6 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-[#8B5CF6] border border-purple-200 dark:border-purple-800 font-bold text-sm hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-all flex items-center gap-2"
                 >
-                    <span wire:loading.remove wire:target="importPosts(5)" class="material-symbols-outlined text-xl">science</span>
-                    <svg wire:loading wire:target="importPosts(5)" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <span wire:loading.remove wire:target="importPosts(6)" class="material-symbols-outlined text-xl">science</span>
+                    <svg wire:loading wire:target="importPosts(6)" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Test Run (Import 5 Posts)
+                    Test Run (Import 6 Posts)
                 </button>
                 <button
                     wire:click="importAllPosts"
