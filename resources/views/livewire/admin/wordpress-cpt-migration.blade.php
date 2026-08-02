@@ -398,12 +398,27 @@
     </div>
     @endif
 
-    {{-- Step 5: Import Results --}}
+    {{-- Step 5: Import Results & Batch Progress --}}
     @if($step === 5)
-    <div class="space-y-6">
+    <div class="space-y-6" @if($isBatchImporting) wire:poll.200ms="processNextBatch" @endif>
         <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] p-8">
             <div class="flex flex-col items-center text-center">
-                @if($importResults['failed'] === 0)
+                @if($isBatchImporting)
+                <div class="h-16 w-16 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center mb-6">
+                    <svg class="animate-spin h-8 w-8 text-[#8B5CF6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-[#111827] dark:text-[#FCFCFC] mb-2">Importing Batch {{ $currentBatchIndex }} of {{ $totalBatchCount }}...</h2>
+                <p class="text-[#6F767E] mb-6">Processing 5 items per batch to avoid HTTP timeout. Progress: {{ $importProgress }}%</p>
+
+                {{-- Progress Bar --}}
+                <div class="w-full max-w-lg bg-gray-200 dark:bg-[#272B30] h-4 rounded-full overflow-hidden mb-8">
+                    <div class="bg-[#8B5CF6] h-full transition-all duration-300 rounded-full" style="width: {{ $importProgress }}%"></div>
+                </div>
+                @else
+                @if(($importResults['failed'] ?? 0) === 0)
                 <div class="h-16 w-16 rounded-full bg-[#83BF6E]/10 flex items-center justify-center mb-6">
                     <span class="material-symbols-outlined text-[#83BF6E] text-3xl">check_circle</span>
                 </div>
@@ -414,7 +429,8 @@
                 </div>
                 <h2 class="text-2xl font-bold text-[#111827] dark:text-[#FCFCFC] mb-2">Import Completed with Issues</h2>
                 @endif
-                <p class="text-[#6F767E] mb-8">Your WordPress CPT entries have been imported.</p>
+                <p class="text-[#6F767E] mb-8">Your WordPress CPT entries have been imported safely.</p>
+                @endif
 
                 {{-- Stats --}}
                 <div class="grid grid-cols-4 gap-4 w-full max-w-lg mb-8">

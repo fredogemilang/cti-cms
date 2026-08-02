@@ -82,6 +82,14 @@ class WordPressCptMigration extends Component
 
     public $fetchAllDone = false;
 
+    public $isBatchImporting = false;
+
+    public $currentBatchIndex = 0;
+
+    public $totalBatchCount = 0;
+
+    public $selectedPostIdChunks = [];
+
     // Import State
     public $step = 1; // 1: Input URL, 2: Select CPT, 3: Preview & Select, 4: Field Mapping, 5: Results
 
@@ -863,9 +871,20 @@ SNIPPET;
 
     public function importAllPosts()
     {
-        $this->isLoading = true;
-        $this->importProgress = 0;
-        $this->currentPageImporting = 0;
+        $this->errorMessage = '';
+
+        if (empty($this->selectedCmsCpt)) {
+            $this->errorMessage = 'Please select a target CMS post type.';
+
+            return;
+        }
+
+        if (empty($this->selectedPostIds)) {
+            $this->errorMessage = 'Please select at least one post to import.';
+
+            return;
+        }
+
         $this->importResults = [
             'success' => 0,
             'failed' => 0,
@@ -875,32 +894,64 @@ SNIPPET;
             'errors' => [],
         ];
 
-        try {
-            if (empty($this->selectedCmsCpt)) {
-                throw new \Exception('Please select a target CMS post type.');
-            }
+        // 5 posts per batch chunk to prevent HTTP execution timeout
+        $this->selectedPostIdChunks = array_chunk($this->selectedPostIds, 5);
+        $this->currentBatchIndex = 0;
+        $this->totalBatchCount = count($this->selectedPostIdChunks);
+        $this->importProgress = 0;
+        $this->isBatchImporting = true;
+        $this->step = 5;
 
-            if (empty($this->selectedPostIds)) {
-                throw new \Exception('Please select at least one post to import.');
-            }
+        $this->processNextBatch();
+    }
 
-            // Get the rest_base for the selected CPT
-            $selectedCpt = collect($this->availableCpts)->firstWhere('slug', $this->selectedWpCpt);
-            $restBase = $selectedCpt['rest_base'] ?? $this->selectedWpCpt;
+    public function processNextBatch()
+    {
+        if (! $this->isBatchImporting || $this->currentBatchIndex >= $this->totalBatchCount) {
+            $this->isBatchImporting = false;
+            $this->importProgress = 100;
 
-            if ($this->isPolylang) {
-                $this->importPolylangPosts($restBase);
-            } else {
-                $this->importMonolingualPosts($restBase);
-            }
-
-        } catch (\Exception $e) {
-            $this->errorMessage = 'Import failed: '.$e->getMessage();
-            Log::error('WordPress CPT import failed', ['error' => $e->getMessage()]);
+            return;
         }
 
-        $this->step = 5;
-        $this->isLoading = false;
+        $batchIds = $this->selectedPostIdChunks[$this->currentBatchIndex] ?? [];
+        if (empty($batchIds)) {
+            $this->currentBatchIndex++;
+
+            return;
+        }
+
+        $selectedCpt = collect($this->availableCpts)->firstWhere('slug', $this->selectedWpCpt);
+        $restBase = $selectedCpt['rest_base'] ?? $this->selectedWpCpt;
+
+        try {
+            $response = Http::timeout(60)->get($this->wpUrl.'/wp-json/wp/v2/'.$restBase, [
+                'include' => implode(',', $batchIds),
+                'per_page' => count($batchIds),
+                '_embed' => true,
+            ]);
+
+            if ($response->successful()) {
+                $posts = $response->json();
+                if ($this->hasJetEngine && $this->jetEngineHelperInstalled) {
+                    $posts = $this->enrichPostsWithJetMeta($posts);
+                }
+
+                foreach ($posts as $wpPost) {
+                    $this->importOrSkip($wpPost);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Batch import error', ['batch' => $this->currentBatchIndex, 'error' => $e->getMessage()]);
+        }
+
+        $this->currentBatchIndex++;
+        $this->importProgress = (int) round(($this->currentBatchIndex / $this->totalBatchCount) * 100);
+
+        if ($this->currentBatchIndex >= $this->totalBatchCount) {
+            $this->isBatchImporting = false;
+            $this->importProgress = 100;
+        }
     }
 
     protected function importMonolingualPosts(string $restBase): void
