@@ -952,6 +952,28 @@ class EntryForm extends Component
         }
     }
 
+    public function updatedStatus($value)
+    {
+        if ($value === 'scheduled' && empty($this->publishedAt)) {
+            $this->publishedAt = now()->addHour()->format('Y-m-d\TH:i');
+        }
+    }
+
+    public function moveToTrash()
+    {
+        if ($this->isEdit && $this->entryId) {
+            $entry = CptEntry::findOrFail($this->entryId);
+            $entry->delete();
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => "'{$entry->title}' moved to trash.",
+            ]);
+
+            return redirect()->route('admin.cpt.entries.index', $this->postType->slug);
+        }
+    }
+
     public function createTerm(int $taxonomyId)
     {
         $name = trim($this->newTermInput[$taxonomyId] ?? '');
