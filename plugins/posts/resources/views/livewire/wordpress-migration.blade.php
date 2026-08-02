@@ -186,7 +186,7 @@
         <p class="text-xs text-[#6F767E] mt-2">Downloaded images will be saved to the Media Library.</p>
         
         {{-- Action Buttons --}}
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-4">
             <button
                 wire:click="resetMigration"
                 class="h-12 px-6 rounded-xl bg-gray-100 dark:bg-[#272B30] text-[#6F767E] font-bold text-sm hover:bg-gray-200 dark:hover:bg-[#333] transition-all flex items-center gap-2"
@@ -194,18 +194,32 @@
                 <span class="material-symbols-outlined text-xl">arrow_back</span>
                 Back
             </button>
-            <button
-                wire:click="importAllPosts"
-                wire:loading.attr="disabled"
-                class="h-12 px-8 rounded-xl bg-[#2563EB] text-white font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 flex items-center gap-2"
-            >
-                <span wire:loading.remove wire:target="importAllPosts" class="material-symbols-outlined text-xl">cloud_download</span>
-                <svg wire:loading wire:target="importAllPosts" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Import All {{ $totalPosts }} Posts
-            </button>
+            <div class="flex items-center gap-3">
+                <button
+                    wire:click="importPosts(5)"
+                    wire:loading.attr="disabled"
+                    class="h-12 px-6 rounded-xl bg-purple-50 dark:bg-purple-900/20 text-[#8B5CF6] border border-purple-200 dark:border-purple-800 font-bold text-sm hover:bg-purple-100 dark:hover:bg-purple-900/40 transition-all flex items-center gap-2"
+                >
+                    <span wire:loading.remove wire:target="importPosts(5)" class="material-symbols-outlined text-xl">science</span>
+                    <svg wire:loading wire:target="importPosts(5)" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Test Run (Import 5 Posts)
+                </button>
+                <button
+                    wire:click="importAllPosts"
+                    wire:loading.attr="disabled"
+                    class="h-12 px-8 rounded-xl bg-[#2563EB] text-white font-bold text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 flex items-center gap-2"
+                >
+                    <span wire:loading.remove wire:target="importAllPosts" class="material-symbols-outlined text-xl">cloud_download</span>
+                    <svg wire:loading wire:target="importAllPosts" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Import All {{ $totalPosts }} Posts
+                </button>
+            </div>
         </div>
     </div>
     @endif

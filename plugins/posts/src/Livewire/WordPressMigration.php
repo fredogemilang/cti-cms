@@ -201,7 +201,7 @@ class WordPressMigration extends Component
         }
     }
 
-    public function importAllPosts()
+    public function importPosts(int $limit = 0)
     {
         $this->isLoading = true;
         $this->importProgress = 0;
@@ -210,13 +210,18 @@ class WordPressMigration extends Component
             'success' => 0,
             'failed' => 0,
             'skipped' => 0,
+            'categories' => 0,
+            'tags' => 0,
             'skipped_posts' => [],
             'errors' => [],
         ];
 
+        $targetTotal = ($limit > 0) ? min($limit, $this->totalPosts) : $this->totalPosts;
+        $maxPages = ($limit > 0) ? (int) ceil($limit / $this->perPage) : $this->totalPages;
+
         try {
             // Process page by page to avoid memory issues
-            for ($page = 1; $page <= $this->totalPages; $page++) {
+            for ($page = 1; $page <= $maxPages; $page++) {
                 $this->currentPageImporting = $page;
 
                 // Fetch posts for current page
@@ -236,6 +241,11 @@ class WordPressMigration extends Component
 
                 // Import each post in this page
                 foreach ($posts as $wpPost) {
+                    $processed = $this->importResults['success'] + $this->importResults['skipped'] + $this->importResults['failed'];
+                    if ($limit > 0 && $processed >= $limit) {
+                        break 2;
+                    }
+
                     try {
                         $result = $this->importSinglePost($wpPost);
 
@@ -263,7 +273,8 @@ class WordPressMigration extends Component
                 }
 
                 // Update progress
-                $this->importProgress = round(($page / $this->totalPages) * 100);
+                $processed = $this->importResults['success'] + $this->importResults['skipped'] + $this->importResults['failed'];
+                $this->importProgress = round(($processed / $targetTotal) * 100);
             }
 
         } catch (\Exception $e) {
@@ -273,6 +284,11 @@ class WordPressMigration extends Component
 
         $this->step = 3;
         $this->isLoading = false;
+    }
+
+    public function importAllPosts()
+    {
+        $this->importPosts(0);
     }
 
     protected function importSinglePost($wpPost)
