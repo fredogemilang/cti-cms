@@ -129,6 +129,12 @@ class CmsSettingsServiceProvider extends ServiceProvider
                     'default' => 90,
                     'rules' => ['required', 'integer', 'min:1', 'max:3650'],
                     'help' => 'How long to keep activity log entries. The `activity:prune` command runs daily at 03:00 and deletes rows older than this.'],
+
+                // Privacy & Compliance
+                ['key' => 'enable_cookie_consent', 'label' => 'Enable Cookie Consent Banner', 'type' => 'boolean', 'section' => 'Privacy & Compliance', 'order' => 100,
+                    'default' => false,
+                    'rules' => ['boolean'],
+                    'help' => 'When enabled, a floating Cookie Consent banner is shown to website visitors. Default is OFF.'],
             ],
         ]);
     }

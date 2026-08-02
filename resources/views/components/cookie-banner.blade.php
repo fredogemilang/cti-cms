@@ -1,3 +1,4 @@
+@if(setting('enable_cookie_consent', false))
 <style>
     [x-cloak] { display: none !important; }
     .cdt-cookie-banner {
@@ -114,3 +115,4 @@
         </div>
     </div>
 </div>
+@endif
