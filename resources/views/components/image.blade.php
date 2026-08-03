@@ -21,7 +21,7 @@
     $alt = $alt ?? $data['alt'] ?? '';
     $objectPosition = isset($data['focal']) ? sprintf('%.2f%% %.2f%%', $data['focal']['x'] * 100, $data['focal']['y'] * 100) : '50% 50%';
 
-    $pictureClasses = $pictureClass ?: (str_contains($class, 'w-full') && str_contains($class, 'h-full') ? 'w-full h-full flex items-center justify-center' : 'inline-block max-w-full');
+    $pictureClasses = $pictureClass ?: (str_contains($class, 'w-full') && str_contains($class, 'h-full') ? 'w-full h-full flex items-center justify-center' : 'contents');
 
     $isSvg = str_ends_with(strtolower((string) parse_url((string) $finalSrc, PHP_URL_PATH)), '.svg')
         || str_ends_with(strtolower((string) $finalSrc), '.svg');

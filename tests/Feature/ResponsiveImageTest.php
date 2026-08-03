@@ -83,7 +83,7 @@ class ResponsiveImageTest extends TestCase
             'url' => asset('storage/media/akamai.svg'),
         ]);
 
-        $this->assertStringContainsString('class="inline-block max-w-full"', $html);
+        $this->assertStringContainsString('class="contents"', $html);
         $this->assertStringNotContainsString('srcset=', $html);
         $this->assertStringContainsString('w-full max-w-[200px]', $html);
     }
