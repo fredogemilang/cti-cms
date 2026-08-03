@@ -192,7 +192,7 @@
                 <a href="{{ $partner->getUrl() }}" x-link
                   class="alliance-link flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-all duration-500 hover:!opacity-100 hover:scale-105 hover:bg-zinc-50 rounded-2xl"
                   data-hover-effect="scale-bounce">
-                  <img src="{{ $logoUrl }}" alt="{{ $partner->title }}" title="{{ $partner->title }}" class="alliance-logo w-full h-full object-contain" loading="lazy" />
+                  <x-image :src="$logoUrl" :alt="$partner->title" :title="$partner->title" class="alliance-logo w-full h-full object-contain" loading="lazy" />
                 </a>
               @endif
             @endforeach
@@ -368,7 +368,7 @@
                   <div class="lg:w-1/3 bg-zinc-50 p-12 flex flex-col justify-between border-r border-zinc-100">
                     @if($logoUrl)
                       <div class="h-32 flex justify-start items-center mb-8">
-                        <img src="{{ $logoUrl }}" alt="{{ $companyName }}" title="{{ $companyName }}" class="max-h-full w-auto max-w-[280px] object-contain object-left mix-blend-multiply" />
+                        <x-image :src="$logoUrl" :alt="$companyName" :title="$companyName" class="max-h-full w-auto max-w-[280px] object-contain object-left mix-blend-multiply" />
                       </div>
                     @else
                       <div class="h-32 mb-8"></div>
