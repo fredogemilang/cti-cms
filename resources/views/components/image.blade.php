@@ -21,7 +21,15 @@
     $alt = $alt ?? $data['alt'] ?? '';
     $objectPosition = isset($data['focal']) ? sprintf('%.2f%% %.2f%%', $data['focal']['x'] * 100, $data['focal']['y'] * 100) : '50% 50%';
 
-    $pictureClasses = $pictureClass ?: (str_contains($class, 'w-full') && str_contains($class, 'h-full') ? 'w-full h-full flex items-center justify-center' : '');
+    $pictureClasses = $pictureClass ?: (str_contains($class, 'w-full') && str_contains($class, 'h-full') ? 'w-full h-full flex items-center justify-center' : 'inline-block max-w-full');
+
+    $isSvg = str_ends_with(strtolower((string) parse_url((string) $finalSrc, PHP_URL_PATH)), '.svg')
+        || str_ends_with(strtolower((string) $finalSrc), '.svg');
+
+    $finalClass = $class;
+    if ($isSvg && ! preg_match('/(?<![a-z-])w-(full|auto|\[|\d+)/', $class)) {
+        $finalClass = 'w-full '.$class;
+    }
 @endphp
 
 <picture @if(!empty($pictureClasses)) class="{{ $pictureClasses }}" @endif {{ $attributes->only(['style']) }}>
@@ -37,7 +45,7 @@
         alt="{{ $alt }}"
         loading="{{ $loading }}"
         decoding="async"
-        class="{{ $class }}"
+        class="{{ $finalClass }}"
         @if (!empty($data['placeholder'])) style="background-image:url('{{ $data['placeholder'] }}');background-size:cover;background-position:{{ $objectPosition }};object-position:{{ $objectPosition }}" @endif
         {{ $attributes->except(['style']) }}
     >

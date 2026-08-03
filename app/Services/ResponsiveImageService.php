@@ -38,6 +38,21 @@ class ResponsiveImageService
         $variants = (array) ($media->variants ?? []);
         $diskUrl = fn ($p) => $p ? Storage::disk(config('media.disk', 'public'))->url($p) : null;
 
+        $ext = strtolower(pathinfo($media->path, PATHINFO_EXTENSION));
+        if ($media->mime_type === 'image/svg+xml' || $ext === 'svg') {
+            return [
+                'src' => $diskUrl($media->path),
+                'srcset' => '',
+                'webp_srcset' => null,
+                'sizes' => '',
+                'width' => $media->width,
+                'height' => $media->height,
+                'placeholder' => null,
+                'alt' => $media->alt_text ?? $media->title,
+                'focal' => ['x' => 0.5, 'y' => 0.5],
+            ];
+        }
+
         $jpegPairs = [];
         $webpPairs = [];
         foreach ($variants as $label => $v) {

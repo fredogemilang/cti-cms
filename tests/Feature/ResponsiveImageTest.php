@@ -62,4 +62,29 @@ class ResponsiveImageTest extends TestCase
         $this->assertStringContainsString('type="image/webp"', $html);
         $this->assertStringContainsString('media/sample.webp', $html);
     }
+
+    public function test_x_image_handles_svg_without_srcset_or_collapsing()
+    {
+        $user = User::factory()->create();
+
+        $media = Media::create([
+            'disk' => 'public',
+            'path' => 'media/akamai.svg',
+            'filename' => 'akamai.svg',
+            'original_filename' => 'akamai.svg',
+            'file_extension' => 'svg',
+            'mime_type' => 'image/svg+xml',
+            'size' => 3300,
+            'title' => 'Akamai Logo',
+            'uploaded_by' => $user->id,
+        ]);
+
+        $html = Blade::render('<x-image :src="$url" alt="Akamai" class="max-w-[200px] h-auto object-contain" />', [
+            'url' => asset('storage/media/akamai.svg'),
+        ]);
+
+        $this->assertStringContainsString('class="inline-block max-w-full"', $html);
+        $this->assertStringNotContainsString('srcset=', $html);
+        $this->assertStringContainsString('w-full max-w-[200px]', $html);
+    }
 }
