@@ -96,6 +96,14 @@ class ThemeLoader
         // Register namespace matching the active theme's slug
         // so @extends('{slug}::layouts.app') resolves dynamically
         View::addNamespace($theme->slug, $themePath);
+
+        // Register available theme namespaces as fallbacks
+        foreach (['cdt', 'default'] as $fallbackSlug) {
+            $fallbackPath = base_path("themes/{$fallbackSlug}/views");
+            if (is_dir($fallbackPath)) {
+                View::addNamespace($fallbackSlug, $fallbackPath);
+            }
+        }
     }
 
     /**

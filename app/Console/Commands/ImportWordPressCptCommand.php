@@ -139,6 +139,8 @@ class ImportWordPressCptCommand extends Command
         }
 
         $bar->finish();
+
+        $hierarchicalParentsResolved = $this->resolveParentRelationships();
         app(MediaUsageService::class)->clearCache();
         $this->newLine(2);
         $this->info('✅ Import finished!');
@@ -148,6 +150,7 @@ class ImportWordPressCptCommand extends Command
                 ['Success', $success],
                 ['Skipped (Already exists)', $skipped],
                 ['Failed', $failed],
+                ['Hierarchical Parents Linked', $hierarchicalParentsResolved],
                 ['Total', $totalPosts],
             ]
         );
@@ -155,20 +158,172 @@ class ImportWordPressCptCommand extends Command
         return self::SUCCESS;
     }
 
+    protected function resolveParentRelationships(): int
+    {
+        if ($this->target === 'plugin_post') {
+            return 0;
+        }
+
+        $targetCptId = (int) $this->target;
+        $allEntries = CptEntry::where('post_type_id', $targetCptId)->get();
+        if ($allEntries->isEmpty()) {
+            return 0;
+        }
+
+        $wpToLocalMap = [];
+        $entriesWithParent = [];
+
+        foreach ($allEntries as $entry) {
+            $meta = $entry->meta ?? [];
+            if (is_array($meta)) {
+                if (! empty($meta['wp_original_id'])) {
+                    $wpToLocalMap[(int) $meta['wp_original_id']] = $entry->id;
+                }
+                if (! empty($meta['wp_original_ids']) && is_array($meta['wp_original_ids'])) {
+                    foreach ($meta['wp_original_ids'] as $wid) {
+                        $wpToLocalMap[(int) $wid] = $entry->id;
+                    }
+                }
+                if (! empty($meta['wp_parent_id'])) {
+                    $entriesWithParent[] = $entry;
+                }
+            }
+        }
+
+        if (empty($entriesWithParent)) {
+            return 0;
+        }
+
+        $resolvedCount = 0;
+
+        foreach ($entriesWithParent as $entry) {
+            $wpParentId = (int) ($entry->meta['wp_parent_id'] ?? 0);
+            if ($wpParentId > 0 && isset($wpToLocalMap[$wpParentId])) {
+                $localParentId = (int) $wpToLocalMap[$wpParentId];
+                if ($entry->parent_id !== $localParentId && $entry->id !== $localParentId) {
+                    $entry->parent_id = $localParentId;
+                    $entry->save();
+                    $resolvedCount++;
+                }
+            }
+        }
+
+        return $resolvedCount;
+    }
+
+    protected function findExistingPolylangEntry(array $wpPost, string $slug, $targetCpt)
+    {
+        $wpId = (int) ($wpPost['id'] ?? 0);
+        $polylangTranslations = $wpPost['translations'] ?? [];
+        $relatedWpIds = array_values(array_unique(array_filter(array_merge(
+            [$wpId],
+            is_array($polylangTranslations) ? array_values($polylangTranslations) : []
+        ))));
+
+        if ($targetCpt === 'plugin_post') {
+            if (class_exists(Post::class)) {
+                $allPosts = Post::all();
+                foreach ($allPosts as $p) {
+                    $meta = $p->meta ?? [];
+                    $origId = (int) ($meta['wp_original_id'] ?? 0);
+                    $origIds = array_map('intval', is_array($meta['wp_original_ids'] ?? null) ? $meta['wp_original_ids'] : []);
+                    if (($origId && in_array($origId, $relatedWpIds, true)) || array_intersect($origIds, $relatedWpIds)) {
+                        return $p;
+                    }
+                }
+
+                return Post::where('slug', $slug)->first();
+            }
+
+            return null;
+        }
+
+        $entries = CptEntry::where('post_type_id', $targetCpt)->get();
+        foreach ($entries as $e) {
+            $meta = $e->meta ?? [];
+            $origId = (int) ($meta['wp_original_id'] ?? 0);
+            $origIds = array_map('intval', is_array($meta['wp_original_ids'] ?? null) ? $meta['wp_original_ids'] : []);
+            if (($origId && in_array($origId, $relatedWpIds, true)) || array_intersect($origIds, $relatedWpIds)) {
+                return $e;
+            }
+        }
+
+        return null;
+    }
+
     protected function importSinglePost(array $wpPost): string
     {
         try {
             $title = html_entity_decode(strip_tags($wpPost['title']['rendered'] ?? ''), ENT_QUOTES, 'UTF-8');
             $slug = $wpPost['slug'] ?? Str::slug($title);
+            $excerpt = strip_tags($wpPost['excerpt']['rendered'] ?? '');
+            $excerpt = html_entity_decode(trim($excerpt), ENT_QUOTES, 'UTF-8');
 
-            // Check if already exists
-            if ($this->target === 'plugin_post') {
-                if (Post::where('slug', $slug)->exists()) {
-                    return 'skipped';
+            $rawLang = $wpPost['lang'] ?? null;
+            $wpLang = $rawLang ? strtolower(explode('_', str_replace('-', '_', $rawLang))[0]) : CptEntry::defaultLocale();
+            $cmsDefaultLocale = CptEntry::defaultLocale();
+            $currentLang = $wpLang;
+
+            $isPolylangPost = ! empty($wpPost['lang']) || ! empty($wpPost['translations']);
+
+            if ($isPolylangPost) {
+                $existing = $this->findExistingPolylangEntry($wpPost, $slug, $this->target);
+
+                if ($existing) {
+                    $transContent = $wpPost['content']['rendered'] ?? '';
+                    if ($this->downloadContentImages) {
+                        $transContent = $this->processContentImages($transContent);
+                    }
+
+                    $meta = $existing->meta ?? [];
+                    if ($currentLang === $cmsDefaultLocale) {
+                        // Current lang IS primary lang (e.g. English arrives after Indonesian created the initial row)
+                        $existing->title = $title;
+                        $existing->slug = $slug;
+                        $existing->content = $transContent;
+                        $existing->excerpt = $excerpt;
+                    } else {
+                        $existingTransTitle = method_exists($existing, 'hasTranslation')
+                            ? $existing->hasTranslation('title', $currentLang)
+                            : null;
+
+                        if (! empty($existingTransTitle)) {
+                            return 'skipped';
+                        }
+
+                        $transSlug = str_ends_with($slug, '-'.$currentLang) ? $slug : $slug.'-'.$currentLang;
+
+                        if (method_exists($existing, 'setTranslation')) {
+                            $existing->setTranslation('title', $currentLang, $title);
+                            $existing->setTranslation('slug', $currentLang, $slug);
+                            $existing->setTranslation('content', $currentLang, $transContent);
+                        }
+                    }
+
+                    $wpOriginalIds = $meta['wp_original_ids'] ?? [$meta['wp_original_id'] ?? null];
+                    if (! empty($wpPost['id'])) {
+                        $wpOriginalIds[] = (int) $wpPost['id'];
+                    }
+                    if (! empty($wpPost['translations']) && is_array($wpPost['translations'])) {
+                        foreach ($wpPost['translations'] as $tId) {
+                            $wpOriginalIds[] = (int) $tId;
+                        }
+                    }
+                    $meta['wp_original_ids'] = array_values(array_unique(array_filter($wpOriginalIds)));
+                    $existing->meta = $meta;
+                    $existing->save();
+
+                    return 'translated';
                 }
             } else {
-                if (CptEntry::where('slug', $slug)->where('post_type_id', $this->target)->exists()) {
-                    return 'skipped';
+                if ($this->target === 'plugin_post') {
+                    if (Post::where('slug', $slug)->exists()) {
+                        return 'skipped';
+                    }
+                } else {
+                    if (CptEntry::where('slug', $slug)->where('post_type_id', $this->target)->exists()) {
+                        return 'skipped';
+                    }
                 }
             }
 
@@ -189,6 +344,13 @@ class ImportWordPressCptCommand extends Command
             $featuredImage = null;
             if ($this->downloadFeaturedImage) {
                 $featuredImage = $this->getFeaturedImage($wpPost);
+            }
+
+            $wpOriginalIds = [(int) $wpPost['id']];
+            if (! empty($wpPost['translations']) && is_array($wpPost['translations'])) {
+                foreach ($wpPost['translations'] as $tId) {
+                    $wpOriginalIds[] = (int) $tId;
+                }
             }
 
             // Import into Post Plugin or CPT Entry
@@ -217,6 +379,10 @@ class ImportWordPressCptCommand extends Command
                     'published_at' => $publishedAt,
                     'author_id' => $authorId,
                     'is_featured' => $isSticky,
+                    'meta' => [
+                        'wp_original_id' => (int) $wpPost['id'],
+                        'wp_original_ids' => array_values(array_unique(array_filter($wpOriginalIds))),
+                    ],
                 ]);
 
                 $post->forceFill(['created_at' => $publishedAt])->save();
@@ -226,24 +392,42 @@ class ImportWordPressCptCommand extends Command
                 return 'success';
             }
 
-            // CPT Entry fallback
+            $meta = [
+                'wp_original_id' => $wpPost['id'],
+                'wp_original_ids' => array_values(array_unique(array_filter($wpOriginalIds))),
+                'wp_original_url' => $wpPost['link'] ?? null,
+            ];
+
+            if (! empty($wpPost['parent']) && (int) $wpPost['parent'] > 0) {
+                $meta['wp_parent_id'] = (int) $wpPost['parent'];
+            }
+
+            // CPT Entry creation (populating primary columns to satisfy MySQL NOT NULL constraints)
             $entry = CptEntry::create([
                 'post_type_id' => (int) $this->target,
                 'title' => $title,
                 'slug' => $slug,
                 'content' => $content,
                 'excerpt' => $excerpt,
-                'featured_image' => $featuredImage,
                 'status' => 'published',
                 'published_at' => $publishedAt,
                 'author_id' => auth()->id() ?? 1,
-                'meta' => [
-                    'wp_original_id' => $wpPost['id'],
-                    'wp_original_url' => $wpPost['link'] ?? null,
-                ],
+                'featured_image' => $featuredImage,
+                'meta' => $meta,
             ]);
 
+            // If the initial post is in a non-default locale (e.g. Indonesian comes first), also store into translations JSON
+            if ($wpLang !== $cmsDefaultLocale && method_exists($entry, 'setTranslation')) {
+                $entry->setTranslation('title', $wpLang, $title);
+                $entry->setTranslation('slug', $wpLang, $slug);
+                $entry->setTranslation('content', $wpLang, $content);
+                $entry->setTranslation('excerpt', $wpLang, $excerpt);
+                $entry->save();
+            }
+
             $entry->forceFill(['created_at' => $publishedAt])->save();
+
+            return 'success';
 
             return 'success';
 

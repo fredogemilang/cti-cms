@@ -1,13 +1,15 @@
 <div class="flex flex-col h-full overflow-hidden" 
      x-data="{ 
         activeTab: 'general',
-        titles: {
+         titles: {
             'general': 'General Settings',
+            'cpt_pairing': 'CPT Pairing',
             'comments': 'Comments',
             'feed': 'Feed & RSS'
         },
         descriptions: {
             'general': 'Manage configuration for your blog posts.',
+            'cpt_pairing': 'Pair CPT types to allow Related To associations.',
             'comments': 'Manage user interaction policies.',
             'feed': 'Configure your syndication feeds.'
         }
@@ -39,6 +41,12 @@
                             class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold rounded-lg transition-all text-left">
                         <span class="material-symbols-outlined text-[20px]" :class="{ 'text-[#2563EB]': activeTab === 'general' }">tune</span>
                         General
+                    </button>
+                    <button @click="activeTab = 'cpt_pairing'"
+                            :class="{ 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-black/5 dark:ring-white/5': activeTab === 'cpt_pairing', 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#1A1A1A]/50': activeTab !== 'cpt_pairing' }"
+                            class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold rounded-lg transition-all text-left">
+                        <span class="material-symbols-outlined text-[20px]" :class="{ 'text-[#2563EB]': activeTab === 'cpt_pairing' }">link</span>
+                        CPT Pairing
                     </button>
                     <button @click="activeTab = 'comments'"
                             :class="{ 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-black/5 dark:ring-white/5': activeTab === 'comments', 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#1A1A1A]/50': activeTab !== 'comments' }"
@@ -104,6 +112,77 @@
                                     <input type="text" wire:model="date_format" class="w-full md:w-2/3 px-3 py-2 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-lg text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all">
                                     <p class="mt-2 text-xs text-[#6F767E]">Uses standard PHP date formatting (e.g. <span class="font-mono bg-gray-100 dark:bg-[#272B30] px-1 rounded">M d, Y</span>)</p>
                                     @error('date_format') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CPT Pairing Settings -->
+                    <div x-show="activeTab === 'cpt_pairing'" class="space-y-8 animate-fade-in" x-cloak
+                        x-data="{ 
+                            confirmUnpair: false, 
+                            targetSlug: '', 
+                            targetName: '',
+                            handleToggle(slug, name, isCurrentlyPaired) {
+                                if (isCurrentlyPaired) {
+                                    this.targetSlug = slug;
+                                    this.targetName = name;
+                                    this.confirmUnpair = true;
+                                } else {
+                                    $wire.toggleCptPairing(slug);
+                                }
+                            },
+                            proceedUnpair() {
+                                $wire.toggleCptPairing(this.targetSlug);
+                                this.confirmUnpair = false;
+                            }
+                        }">
+                        <div>
+                            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Custom Post Type Pairing</h2>
+                            <p class="text-sm text-[#6F767E]">Select which CPT types can be linked to blog posts using the <strong>Related To</strong> feature.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach($availableCpts as $cpt)
+                            @php $isPaired = in_array($cpt->slug, $paired_cpts); @endphp
+                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#1A1A1A] border rounded-xl transition-all border-gray-200 dark:border-[#272B30] {{ $isPaired ? 'ring-1 ring-[#2563EB]/40 bg-blue-50/20' : '' }}">
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-[#2563EB] text-xl">{{ $cpt->icon ?: 'link' }}</span>
+                                    <div>
+                                        <h3 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $cpt->plural_label ?: $cpt->name }}</h3>
+                                        <p class="text-xs text-[#6F767E]">Slug: <code class="font-mono">{{ $cpt->slug }}</code></p>
+                                    </div>
+                                </div>
+                                <button type="button"
+                                    @click="handleToggle('{{ $cpt->slug }}', '{{ addslashes($cpt->plural_label ?: $cpt->name) }}', {{ $isPaired ? 'true' : 'false' }})"
+                                    class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
+                                    :class="{ 'bg-[#2563EB]': {{ $isPaired ? 'true' : 'false' }}, 'bg-gray-200 dark:bg-[#272B30]': !{{ $isPaired ? 'true' : 'false' }} }">
+                                    <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
+                                        :class="{ 'translate-x-5': {{ $isPaired ? 'true' : 'false' }}, 'translate-x-0': !{{ $isPaired ? 'true' : 'false' }} }"></span>
+                                </button>
+                            </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Unpair Confirmation Modal -->
+                        <div x-show="confirmUnpair" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak>
+                            <div class="bg-white dark:bg-[#1A1A1A] rounded-2xl p-6 max-w-md w-full shadow-2xl border border-gray-200 dark:border-[#272B30] space-y-4">
+                                <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
+                                    <span class="material-symbols-outlined text-2xl">warning</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-[#111827] dark:text-[#FCFCFC]">Unpair CPT: <span x-text="targetName"></span>?</h3>
+                                    <p class="text-xs text-[#6F767E] mt-2 leading-relaxed">
+                                        Unpairing this CPT will remove the <strong>Related To</strong> association for this CPT across all blog posts. Existing relations for this CPT will no longer be editable unless re-paired.
+                                    </p>
+                                </div>
+                                <div class="flex items-center justify-end gap-3 pt-2">
+                                    <button type="button" @click="confirmUnpair = false" class="px-4 py-2 text-xs font-bold text-[#6F767E] hover:text-[#111827] dark:hover:text-white rounded-lg border border-gray-200 dark:border-[#272B30]">
+                                        Cancel
+                                    </button>
+                                    <button type="button" @click="proceedUnpair()" class="px-4 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-md">
+                                        Yes, Unpair
+                                    </button>
                                 </div>
                             </div>
                         </div>

@@ -88,7 +88,7 @@
                     @if($slug)
                     <div class="flex items-center gap-2 text-xs font-bold text-[#6F767E] uppercase tracking-wider pl-1">
                         <span>PERMALINK:</span>
-                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}/</span>
+                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}/{{ !empty($archiveSlug) ? trim($archiveSlug, '/') . '/' : '' }}</span>
                         <div x-data="{ editing: false }" class="relative flex items-center gap-2">
                             <span x-show="!editing" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30]">{{ $slug }}</span>
                             <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[100px]" x-cloak>
@@ -623,9 +623,112 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Related To Card (CPT Associations) -->
+                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none space-y-4">
+                    <div class="flex items-center justify-between text-[#6F767E]">
+                        <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg">link</span>
+                            <span class="text-xs font-bold uppercase tracking-widest">Related To</span>
+                        </div>
+                        <button type="button" wire:click="openCptModal" class="text-xs font-bold text-[#2563EB] hover:underline flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">add</span>
+                            <span>Add / Edit</span>
+                        </button>
+                    </div>
+
+                    @if($attachedCptEntries->isNotEmpty())
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        @foreach($attachedCptEntries as $attached)
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 dark:bg-blue-900/30 text-[#2563EB] dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/50">
+                            <span>{{ $attached->title }}</span>
+                            <span class="text-[10px] opacity-75 font-normal">({{ $attached->postType->plural_label ?? 'CPT' }})</span>
+                            <button type="button" wire:click="removeCptEntry({{ $attached->id }})" class="hover:text-red-500 transition-colors">
+                                <span class="material-symbols-outlined text-sm">close</span>
+                            </button>
+                        </span>
+                        @endforeach
+                    </div>
+                    @else
+                    <p class="text-xs text-[#6F767E] italic">No CPT entries associated yet. Click "Add / Edit" to pair this post with Technology Alliances or other CPTs.</p>
+                    @endif
+                </div>
+
             </div>
         </aside>
     </div>
+
+    <!-- CPT Search & Selection Modal -->
+    @if($showCptModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak>
+        <div class="bg-white dark:bg-[#1A1A1A] rounded-2xl p-6 max-w-xl w-full shadow-2xl border border-gray-200 dark:border-[#272B30] space-y-4 max-h-[85vh] flex flex-col">
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-3">
+                <h3 class="text-base font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[#2563EB]">link</span>
+                    <span>Select Related CPT Entries</span>
+                </h3>
+                <button type="button" wire:click="$set('showCptModal', false)" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+            </div>
+
+            <!-- Search & Filter Controls -->
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+                <!-- Filter by CPT Type -->
+                @if($pairedCptTypes->count() > 1)
+                <select wire:model.live="cptFilterSlug" class="h-10 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC]">
+                    <option value="all">All Paired CPTs</option>
+                    @foreach($pairedCptTypes as $pt)
+                    <option value="{{ $pt->slug }}">{{ $pt->plural_label ?: $pt->name }}</option>
+                    @endforeach
+                </select>
+                @endif
+
+                <!-- Search Input -->
+                <div class="relative flex-1 w-full">
+                    <span class="material-symbols-outlined absolute left-3 top-2.5 text-gray-400 text-lg">search</span>
+                    <input type="text" wire:model.live.debounce.300ms="cptSearch" placeholder="Search entries by title..." class="w-full h-10 pl-9 pr-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB]">
+                </div>
+            </div>
+
+            <!-- Scrollable CPT List -->
+            <div class="flex-1 overflow-y-auto space-y-2 pr-1 min-h-[240px]">
+                @forelse($modalCptEntries as $entry)
+                @php $isTempChecked = in_array((int)$entry->id, array_map('intval', $tempSelectedCptEntries), true); @endphp
+                <div wire:click="toggleTempCptEntry({{ $entry->id }})" class="flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all {{ $isTempChecked ? 'bg-blue-50/50 dark:bg-blue-900/20 border-[#2563EB]/50' : 'bg-gray-50/50 dark:bg-[#0B0B0B]/50 border-gray-100 dark:border-[#272B30] hover:bg-gray-100 dark:hover:bg-[#272B30]' }}">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" {{ $isTempChecked ? 'checked' : '' }} class="rounded border-gray-300 text-[#2563EB] focus:ring-[#2563EB]">
+                        <div>
+                            <p class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $entry->title }}</p>
+                            <p class="text-[10px] text-[#6F767E]">
+                                Type: <span class="font-semibold">{{ $entry->postType->plural_label ?? 'CPT' }}</span> | Slug: {{ $entry->slug }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="text-center py-10 text-xs text-[#6F767E]">
+                    No CPT entries found matching your query.
+                </div>
+                @endforelse
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-[#272B30]">
+                <span class="text-xs text-[#6F767E] font-medium">Selected: {{ count($tempSelectedCptEntries) }} entry(ies)</span>
+                <div class="flex gap-2">
+                    <button type="button" wire:click="$set('showCptModal', false)" class="px-4 py-2 text-xs font-bold text-[#6F767E] hover:text-[#111827] dark:hover:text-white rounded-lg border border-gray-200 dark:border-[#272B30]">
+                        Cancel
+                    </button>
+                    <button type="button" wire:click="saveCptSelections" class="px-5 py-2 text-xs font-bold text-white bg-[#2563EB] hover:bg-blue-600 rounded-lg shadow-md">
+                        Apply Selections
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 
     {{-- TipTap Media Picker Modal --}}
     <livewire:admin.tiptap-media-picker />

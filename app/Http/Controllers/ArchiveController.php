@@ -86,10 +86,21 @@ class ArchiveController extends Controller
      */
     public function archive(string $cptSlug)
     {
-        $postType = CustomPostType::where('slug', $cptSlug)
+        $currentLocale = app()->getLocale();
+
+        $postType = CustomPostType::where(function ($q) use ($cptSlug) {
+            $q->where('slug', $cptSlug)
+                ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$cptSlug])
+                ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$cptSlug]);
+        })
             ->where('is_active', true)
             ->where('has_archive', true)
             ->firstOrFail();
+
+        $targetSlug = $postType->getLocalizedSlug($currentLocale);
+        if ($cptSlug !== $targetSlug) {
+            return redirect($postType->getArchiveUrl($currentLocale), 301);
+        }
 
         $perPage = in_array($postType->slug, ['customer-success', 'client-says'], true) ? 6 : $this->getArchiveSetting('per_page', 12);
 
@@ -115,13 +126,24 @@ class ArchiveController extends Controller
      */
     public function single(string $cptSlug, string $entrySlug)
     {
-        $postType = CustomPostType::where('slug', $cptSlug)
+        $currentLocale = app()->getLocale();
+
+        $postType = CustomPostType::where(function ($q) use ($cptSlug) {
+            $q->where('slug', $cptSlug)
+                ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$cptSlug])
+                ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$cptSlug]);
+        })
             ->where('is_active', true)
             ->where('publicly_queryable', true)
             ->firstOrFail();
 
         $entry = CptEntry::findByLocalizedSlug($postType, $entrySlug);
         abort_if(! $entry, 404);
+
+        $targetSlug = $postType->getLocalizedSlug($currentLocale);
+        if ($cptSlug !== $targetSlug) {
+            return redirect($entry->getUrl($currentLocale), 301);
+        }
 
         $entry->load(['author', 'postType', 'terms.taxonomy']);
 

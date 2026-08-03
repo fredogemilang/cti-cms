@@ -39,18 +39,20 @@
             wire:click.stop>
             @if($media)
             {{-- Header --}}
-            <div class="sticky top-0 bg-white dark:bg-[#1A1A1A] border-b border-gray-200 dark:border-[#272B30] p-6 flex items-center justify-between">
+            <div class="sticky top-0 bg-white dark:bg-[#1A1A1A] border-b border-gray-200 dark:border-[#272B30] p-6 flex items-center justify-between z-10">
                 <h3 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">Media Details</h3>
                 <button @click="show = false" class="p-2 hover:bg-gray-100 dark:hover:bg-[#272B30] rounded-lg transition-colors">
                     <span class="material-symbols-outlined text-[#6F767E]">close</span>
                 </button>
             </div>
 
-            {{-- Content --}}
+            {{-- Content Grid --}}
             <div class="p-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {{-- Preview --}}
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    
+                    {{-- LEFT COLUMN: Preview, Info & Appears In --}}
                     <div class="space-y-4">
+                        {{-- Preview --}}
                         <div class="aspect-video rounded-xl overflow-hidden bg-gray-100 dark:bg-[#272B30] flex items-center justify-center">
                             @if($media->isImage())
                                 <img 
@@ -66,7 +68,7 @@
                         <div class="rounded-xl bg-gray-50 dark:bg-[#272B30] p-4 space-y-2">
                             <div class="flex justify-between text-sm">
                                 <span class="text-[#6F767E]">File name:</span>
-                                <span class="font-medium text-[#111827] dark:text-[#FCFCFC]">{{ $media->original_filename }}</span>
+                                <span class="font-medium text-[#111827] dark:text-[#FCFCFC] truncate max-w-[200px]" title="{{ $media->original_filename }}">{{ $media->original_filename }}</span>
                             </div>
                             <div class="flex justify-between text-sm">
                                 <span class="text-[#6F767E]">File type:</span>
@@ -92,43 +94,61 @@
                             </div>
                         </div>
 
-                        {{-- URL Copy --}}
-                        <div class="space-y-2">
-                            <label class="text-sm font-semibold text-[#111827] dark:text-[#FCFCFC]">File URL</label>
-                            <div class="flex gap-2">
-                                <input 
-                                    type="text" 
-                                    value="{{ $media->url }}" 
-                                    readonly
-                                    class="flex-1 px-4 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm text-[#6F767E] bg-gray-50">
-                                <button 
-                                    onclick="navigator.clipboard.writeText('{{ $media->url }}')"
-                                    class="px-4 py-2 bg-gray-100 dark:bg-[#272B30] rounded-xl hover:bg-gray-200 dark:hover:bg-[#272B30]/80 transition-colors">
-                                    <span class="material-symbols-outlined text-[#6F767E]">content_copy</span>
-                                </button>
+                        {{-- Appears In / Used In Section --}}
+                        <div class="rounded-xl bg-gray-50 dark:bg-[#272B30] p-4 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-blue-500 text-lg">link</span>
+                                    Appears In
+                                </span>
+                                @if(!empty($usedLocations))
+                                    <span class="px-2 py-0.5 rounded-lg bg-blue-500/10 text-blue-500 text-xs font-bold">
+                                        {{ count($usedLocations) }} {{ Str::plural('location', count($usedLocations)) }}
+                                    </span>
+                                @else
+                                    <span class="px-2 py-0.5 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-bold">
+                                        Unused (Orphan)
+                                    </span>
+                                @endif
                             </div>
-                        </div>
 
-                        @if($media->hasWebp())
-                        <div class="space-y-2">
-                            <label class="text-sm font-semibold text-[#111827] dark:text-[#FCFCFC]">WebP URL</label>
-                            <div class="flex gap-2">
-                                <input 
-                                    type="text" 
-                                    value="{{ $media->webp_url }}" 
-                                    readonly
-                                    class="flex-1 px-4 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm text-[#6F767E] bg-gray-50">
-                                <button 
-                                    onclick="navigator.clipboard.writeText('{{ $media->webp_url }}')"
-                                    class="px-4 py-2 bg-gray-100 dark:bg-[#272B30] rounded-xl hover:bg-gray-200 dark:hover:bg-[#272B30]/80 transition-colors">
-                                    <span class="material-symbols-outlined text-[#6F767E]">content_copy</span>
-                                </button>
-                            </div>
+                            @if(!empty($usedLocations))
+                                <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                                    @foreach($usedLocations as $loc)
+                                        <div class="p-2.5 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#333] flex items-center justify-between gap-3 text-xs shadow-sm">
+                                            <div class="flex items-center gap-2 min-w-0 flex-1">
+                                                <span class="material-symbols-outlined text-base text-blue-500 shrink-0">{{ $loc['icon'] }}</span>
+                                                <div class="min-w-0 flex-1">
+                                                    <div class="flex items-center gap-1.5">
+                                                        <span class="font-bold text-[#111827] dark:text-[#FCFCFC] truncate">{{ $loc['title'] }}</span>
+                                                        <span class="px-1.5 py-0.5 rounded bg-gray-100 dark:bg-[#272B30] text-[10px] font-semibold text-[#6F767E] shrink-0">{{ $loc['type'] }}</span>
+                                                    </div>
+                                                    <p class="text-[11px] text-[#6F767E] truncate">{{ $loc['context'] }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-1 shrink-0">
+                                                @if(!empty($loc['edit_url']))
+                                                <a href="{{ $loc['edit_url'] }}" target="_blank" class="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 transition-colors flex items-center gap-1 text-[11px] font-bold" title="Edit in Admin">
+                                                    <span class="material-symbols-outlined text-xs">edit</span>
+                                                    Edit
+                                                </a>
+                                                @endif
+                                                @if(!empty($loc['public_url']))
+                                                <a href="{{ $loc['public_url'] }}" target="_blank" class="p-1.5 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 hover:bg-green-100 transition-colors flex items-center gap-1 text-[11px] font-bold" title="View Public Page">
+                                                    <span class="material-symbols-outlined text-xs">open_in_new</span>
+                                                </a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-xs text-[#6F767E]">This file is not currently used in any page, CPT entry, or setting.</p>
+                            @endif
                         </div>
-                        @endif
                     </div>
 
-                    {{-- Edit Form --}}
+                    {{-- RIGHT COLUMN: Form, URLs & Actions --}}
                     <div class="space-y-4">
                         <form wire:submit.prevent="save" class="space-y-4">
                             {{-- Title --}}
@@ -166,6 +186,43 @@
                                 @error('description') <span class="text-xs text-red-600 mt-1">{{ $message }}</span> @enderror
                             </div>
 
+                            {{-- File URL --}}
+                            <div class="space-y-2">
+                                <label class="text-sm font-semibold text-[#111827] dark:text-[#FCFCFC]">File URL</label>
+                                <div class="flex gap-2">
+                                    <input 
+                                        type="text" 
+                                        value="{{ $media->url }}" 
+                                        readonly
+                                        class="flex-1 px-4 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm text-[#6F767E] bg-gray-50">
+                                    <button 
+                                        type="button"
+                                        onclick="navigator.clipboard.writeText('{{ $media->url }}')"
+                                        class="px-4 py-2 bg-gray-100 dark:bg-[#272B30] rounded-xl hover:bg-gray-200 dark:hover:bg-[#272B30]/80 transition-colors">
+                                        <span class="material-symbols-outlined text-[#6F767E]">content_copy</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            @if($media->hasWebp())
+                            <div class="space-y-2">
+                                <label class="text-sm font-semibold text-[#111827] dark:text-[#FCFCFC]">WebP URL</label>
+                                <div class="flex gap-2">
+                                    <input 
+                                        type="text" 
+                                        value="{{ $media->webp_url }}" 
+                                        readonly
+                                        class="flex-1 px-4 py-2 rounded-xl border border-gray-300 dark:border-[#272B30] dark:bg-[#1A1D1F] text-sm text-[#6F767E] bg-gray-50">
+                                    <button 
+                                        type="button"
+                                        onclick="navigator.clipboard.writeText('{{ $media->webp_url }}')"
+                                        class="px-4 py-2 bg-gray-100 dark:bg-[#272B30] rounded-xl hover:bg-gray-200 dark:hover:bg-[#272B30]/80 transition-colors">
+                                        <span class="material-symbols-outlined text-[#6F767E]">content_copy</span>
+                                    </button>
+                                </div>
+                            </div>
+                            @endif
+
                             {{-- Action Buttons --}}
                             <div class="flex gap-3 pt-4">
                                 @can('media.edit')
@@ -188,6 +245,7 @@
                             </div>
                         </form>
                     </div>
+
                 </div>
             </div>
             @endif

@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <x-seo.head :entity="$entry ?? $page ?? null" />
+  {{-- Global Attribution Tracking Script --}}
+  @include('cdt::partials.attribution-tracker')
 
   @if(setting('site_favicon'))
     <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
@@ -15,8 +16,14 @@
 
   @livewireStyles
   @stack('styles')
+  <style>
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100% !important;
+    }
+  </style>
 </head>
-<body class="font-body text-dark antialiased bg-white overflow-x-hidden">
+<body class="font-body text-dark antialiased bg-white overflow-x-hidden w-full max-w-full relative">
   
   <div x-data="{ activeSheet: null, showMenu: false }" x-effect="const isSheetOpen = activeSheet !== null; document.documentElement.style.overflow = isSheetOpen ? 'hidden' : ''; document.body.style.overflow = isSheetOpen ? 'hidden' : '';">
     
@@ -30,6 +37,9 @@
 
     {{-- Footer Partial --}}
     @include('cdt::partials.footer')
+
+    {{-- Mobile Bottom Navigation Partial --}}
+    @include('cdt::partials.mobile-nav')
 
   </div>
 

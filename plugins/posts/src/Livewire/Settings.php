@@ -2,6 +2,8 @@
 
 namespace Plugins\Posts\Livewire;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
 use Plugins\Posts\Models\Setting;
 
@@ -26,6 +28,9 @@ class Settings extends Component
 
     public $rss_items = 10;
 
+    // CPT Pairing
+    public array $paired_cpts = [];
+
     public function mount()
     {
         $this->posts_per_page = Setting::get('posts_per_page', 10);
@@ -38,6 +43,8 @@ class Settings extends Component
 
         $this->rss_full_text = (bool) Setting::get('rss_full_text', false);
         $this->rss_items = (int) Setting::get('rss_items', 10);
+
+        $this->paired_cpts = json_decode(Setting::get('paired_cpts', json_encode(['technology-alliance'])), true) ?: ['technology-alliance'];
     }
 
     public function save()
@@ -55,6 +62,9 @@ class Settings extends Component
 
         Setting::set('posts_per_page', $this->posts_per_page);
         Setting::set('archive_slug', $this->archive_slug);
+        if (Schema::hasTable('settings')) {
+            \App\Models\Setting::set('permalink_post_base', $this->archive_slug);
+        }
         Setting::set('date_format', $this->date_format);
 
         Setting::set('enable_comments', $this->enable_comments);
@@ -64,14 +74,33 @@ class Settings extends Component
         Setting::set('rss_full_text', $this->rss_full_text);
         Setting::set('rss_items', $this->rss_items);
 
+        Setting::set('paired_cpts', json_encode(array_values($this->paired_cpts)));
+
         $this->dispatch('notify', [
             'type' => 'success',
             'message' => 'Settings saved successfully.',
         ]);
     }
 
+    public function toggleCptPairing(string $slug)
+    {
+        if (in_array($slug, $this->paired_cpts)) {
+            $this->paired_cpts = array_values(array_filter($this->paired_cpts, fn ($s) => $s !== $slug));
+        } else {
+            $this->paired_cpts[] = $slug;
+            $this->paired_cpts = array_values(array_unique($this->paired_cpts));
+        }
+    }
+
     public function render()
     {
-        return view('posts::livewire.settings');
+        $availableCpts = DB::table('custom_post_types')
+            ->select('id', 'name', 'singular_label', 'plural_label', 'slug', 'icon')
+            ->orderBy('plural_label', 'asc')
+            ->get();
+
+        return view('posts::livewire.settings', [
+            'availableCpts' => $availableCpts,
+        ]);
     }
 }

@@ -6,6 +6,7 @@
     'alt' => null,
     'loading' => 'lazy',
     'class' => '',
+    'pictureClass' => '',
 ])
 
 @php
@@ -18,9 +19,11 @@
     
     $alt = $alt ?? $data['alt'] ?? '';
     $objectPosition = isset($data['focal']) ? sprintf('%.2f%% %.2f%%', $data['focal']['x'] * 100, $data['focal']['y'] * 100) : '50% 50%';
+
+    $pictureClasses = $pictureClass ?: (str_contains($class, 'w-full') && str_contains($class, 'h-full') ? 'w-full h-full flex items-center justify-center' : '');
 @endphp
 
-<picture {{ $attributes->only(['style']) }}>
+<picture @if(!empty($pictureClasses)) class="{{ $pictureClasses }}" @endif {{ $attributes->only(['style']) }}>
     @if (!empty($data['webp_srcset']))
         <source type="image/webp" srcset="{{ $data['webp_srcset'] }}" sizes="{{ $data['sizes'] }}">
     @endif

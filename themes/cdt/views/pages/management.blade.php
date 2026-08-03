@@ -11,20 +11,14 @@
         $heroBg = $page->getBlockValue('hero_bg_image', 'themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
         $heroBgUrl = resolve_block_asset($heroBg);
       @endphp
-      <x-image :src="$heroBgUrl" alt="{{ $page->getBlockValue('hero_title', 'Management') }} Banner" title="{{ $page->getBlockValue('hero_title', 'Management') }}" class="w-full h-full object-cover" />
+      <x-image :src="$heroBgUrl" alt="{{ $page->getBlockValue('hero_title', 'Management') }} Banner" title="{{ $page->getBlockValue('hero_title', 'Management') }}" class="w-full h-full object-cover object-[right_center]" />
       <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-transparent w-full lg:w-3/4" /></div>
     </div>
     
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10 w-full">
       <div class="max-w-3xl text-white">
         <!-- Breadcrumb -->
-        <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-white/70 mb-10" aria-label="Breadcrumb" data-gsap="fade-in">
-          <a href="{{ localized_url('/') }}" title="Home" aria-label="Home" class="hover:text-white transition-colors">Home</a>
-          <svg class="w-3 h-3 text-white/40" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          <a href="{{ localized_url('/about-us') }}" title="About Us" aria-label="About Us" class="hover:text-white transition-colors">About Us</a>
-          <svg class="w-3 h-3 text-white/40" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          <span class="text-white font-bold" aria-current="page">{{ $page->getBlockValue('hero_title', 'Management') }}</span>
-        </nav>
+        <x-seo-breadcrumbs :entity="$page" class="text-white/70 mb-10" />
 
         <div class="overflow-hidden mb-2"><span class="block text-xl md:text-2xl font-light" data-gsap="fade-up">{{ $page->getBlockValue('hero_subtitle_small', 'About Us') }}</span></div>
         <div class="overflow-hidden"><h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold leading-tight" data-gsap="fade-up" data-gsap-delay="0.1">

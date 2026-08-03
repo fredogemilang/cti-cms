@@ -9,8 +9,11 @@
         open: {{ $isActive ? 'true' : 'false' }}, 
         flyoutOpen: false,
         checkActive() {
-            if ($el.querySelector('.text-\[\#2563EB\]')) {
-                this.open = true;
+            for (let a of $el.getElementsByTagName('a')) {
+                if (a.classList.contains('text-blue-600') || (a.className && (a.className.includes('2563EB') || a.className.includes('text-primary')))) {
+                    this.open = true;
+                    break;
+                }
             }
         }
     }"

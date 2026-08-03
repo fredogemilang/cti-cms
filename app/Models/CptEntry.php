@@ -200,7 +200,7 @@ class CptEntry extends Model
             'parent_entry_id',
             'child_entry_id'
         )
-            ->withPivot('order')
+            ->withPivot(['order', 'meta_field_id'])
             ->orderBy('cpt_entry_relationships.order');
 
         if ($metaField !== null) {
@@ -227,7 +227,7 @@ class CptEntry extends Model
             'child_entry_id',
             'parent_entry_id'
         )
-            ->withPivot('order')
+            ->withPivot(['order', 'meta_field_id'])
             ->orderBy('cpt_entry_relationships.order');
 
         if ($metaField !== null) {
@@ -362,9 +362,11 @@ class CptEntry extends Model
             ? '/'.$locale
             : '';
 
-        $cptSlug = $this->relationLoaded('postType') && $this->postType instanceof CustomPostType
-            ? $this->postType->slug
-            : (string) CustomPostType::where('id', $this->post_type_id)->value('slug');
+        $postType = $this->relationLoaded('postType') && $this->postType instanceof CustomPostType
+            ? $this->postType
+            : CustomPostType::find($this->post_type_id);
+
+        $cptSlug = $postType ? $postType->getLocalizedSlug($locale) : '';
 
         $entrySlug = $this->getTranslation('slug', $locale, fallback: true) ?? $this->slug;
 
@@ -381,13 +383,20 @@ class CptEntry extends Model
         /** @var CptEntry|null $parentRelated */
         $parentRelated = $this->parentRelatedEntries()->first();
         if ($parentRelated && $parentRelated->post_type_id !== $this->post_type_id) {
-            $parentSlug = $parentRelated->getTranslation('slug', $locale, fallback: true) ?? $parentRelated->slug;
-            // Use parent's CPT slug so sub-products appear under the parent's URL namespace
-            $parentCptSlug = CustomPostType::where('id', $parentRelated->post_type_id)->value('slug') ?? $cptSlug;
+            $pivotMetaFieldId = $parentRelated->pivot->meta_field_id ?? null;
+            $metaField = $pivotMetaFieldId ? MetaField::find($pivotMetaFieldId) : null;
+            $shouldRewrite = $metaField && ! empty($metaField->options['rewrite_url']);
 
-            $url = url($localePrefix.'/'.$parentCptSlug.'/'.$parentSlug.'/'.$entrySlug);
+            if ($shouldRewrite) {
+                $parentSlug = $parentRelated->getTranslation('slug', $locale, fallback: true) ?? $parentRelated->slug;
+                // Use parent's CPT slug so sub-products appear under the parent's URL namespace
+                $parentCpt = CustomPostType::find($parentRelated->post_type_id);
+                $parentCptSlug = $parentCpt ? $parentCpt->getLocalizedSlug($locale) : $cptSlug;
 
-            return apply_filters('cpt_entry.url', $url, $this, $locale);
+                $url = url($localePrefix.'/'.$parentCptSlug.'/'.$parentSlug.'/'.$entrySlug);
+
+                return apply_filters('cpt_entry.url', $url, $this, $locale);
+            }
         }
 
         $url = url($localePrefix.'/'.$cptSlug.'/'.$entrySlug);

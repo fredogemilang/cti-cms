@@ -65,21 +65,14 @@ class BreadcrumbService
         }
 
         if ($entity instanceof CustomPostType) {
-            $cptLabel = match ($entity->slug) {
+            $cptLabel = $entity->getTranslation('plural_label', $locale) ?: match ($entity->slug) {
                 'technology-alliance' => t('common.technology_alliance', 'Technology Alliance'),
                 'solution' => t('nav.solutions', 'Solutions'),
                 'industry' => t('industry.subtitle', 'Industry'),
-                'customer-success' => t('nav.customer_success', 'Customer Success'),
                 default => $entity->plural_label ?: ucfirst((string) $entity->name),
             };
 
-            $archiveUrl = match ($entity->slug) {
-                'technology-alliance' => url($locale === 'id' ? '/id/technology-alliance' : '/technology-alliance'),
-                'solution' => url($locale === 'id' ? '/id/solutions' : '/solutions'),
-                'industry' => url($locale === 'id' ? '/id/industry' : '/industry'),
-                'customer-success' => url($locale === 'id' ? '/id/customer-success' : '/customer-success'),
-                default => $entity->getArchiveUrl(),
-            };
+            $archiveUrl = $entity->getArchiveUrl($locale);
 
             $items[] = [
                 'name' => (string) $cptLabel,
@@ -99,23 +92,16 @@ class BreadcrumbService
 
             // CPT Archive level
             if ($postType) {
-                $cptLabel = match ($postType->slug) {
+                $cptLabel = $postType->getTranslation('plural_label', $locale) ?: match ($postType->slug) {
                     'technology-alliance' => t('common.technology_alliance', 'Technology Alliance'),
                     'solution' => t('nav.solutions', 'Solutions'),
                     'industry' => t('industry.subtitle', 'Industry'),
-                    'customer-success' => t('nav.customer_success', 'Customer Success'),
                     default => $postType->plural_label ?: ucfirst((string) $postType->name),
                 };
 
-                $archiveUrl = match ($postType->slug) {
-                    'technology-alliance' => url($locale === 'id' ? '/id/technology-alliance' : '/technology-alliance'),
-                    'solution' => url($locale === 'id' ? '/id/solutions' : '/solutions'),
-                    'industry' => url($locale === 'id' ? '/id/industry' : '/industry'),
-                    'customer-success' => url($locale === 'id' ? '/id/customer-success' : '/customer-success'),
-                    default => $postType->getArchiveUrl(),
-                };
+                $archiveUrl = $postType->getArchiveUrl($locale);
 
-                if ($postType->has_archive || in_array($postType->slug, ['technology-alliance', 'solution', 'industry', 'customer-success'])) {
+                if ($postType->has_archive) {
                     $items[] = [
                         'name' => (string) $cptLabel,
                         'url' => $archiveUrl,
@@ -127,14 +113,14 @@ class BreadcrumbService
             /** @var CptEntry|null $parent */
             $parent = $entity->parent ?: $entity->parentRelatedEntries()->first();
             if ($parent) {
-                $parentTitle = $parent->meta['_translations'][$locale]['title'] ?? ($parent->translations[$locale]['title'] ?? $parent->title);
+                $parentTitle = $parent->getTranslation('title', $locale) ?: $parent->title;
                 $items[] = [
                     'name' => (string) ($parentTitle ?: 'Parent'),
                     'url' => $parent->getUrl($locale),
                 ];
             }
 
-            $entryTitle = $entity->meta['_translations'][$locale]['title'] ?? ($entity->translations[$locale]['title'] ?? $entity->title);
+            $entryTitle = $entity->getTranslation('title', $locale) ?: $entity->title;
             $items[] = [
                 'name' => (string) ($entryTitle ?: 'Entry'),
                 'url' => $entity->getUrl($locale),

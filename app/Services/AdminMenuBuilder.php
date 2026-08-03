@@ -494,6 +494,13 @@ class AdminMenuBuilder
                     'permission' => null,
                     'activeRoutePattern' => 'admin.forms.assignments',
                 ],
+                [
+                    'title' => 'Webhooks',
+                    'route' => 'admin.webhooks.index',
+                    'routeParams' => [],
+                    'permission' => 'webhooks.view',
+                    'activeRoutePattern' => 'admin.webhooks.*',
+                ],
             ],
         ];
 

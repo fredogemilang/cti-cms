@@ -67,8 +67,21 @@ Route::middleware(['web'])->group(function () {
     }
     $categoryBase ??= 'category';
 
-    // Blog Index
-    Route::get("/{$archiveSlug}", function () {
+    try {
+        $allLocales = array_filter(array_map('trim', explode(',', (string) setting('available_locales', 'id,en'))));
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+    } catch (Throwable $e) {
+        $allLocales = ['id', 'en'];
+        $defaultLocale = 'en';
+    }
+    $nonDefaultLocales = array_values(array_filter($allLocales, fn ($l) => $l !== $defaultLocale));
+    $localePattern = ! empty($nonDefaultLocales) ? implode('|', array_map('preg_quote', $nonDefaultLocales)) : '';
+
+    $renderIndex = function (?string $locale = null) {
+        if ($locale && in_array($locale, available_locales(), true)) {
+            app()->setLocale($locale);
+        }
+
         $featuredPosts = Post::where('status', 'published')
             ->where('is_featured', true)
             ->latest()
@@ -84,10 +97,18 @@ Route::middleware(['web'])->group(function () {
         }
 
         return view($view, compact('featuredPosts'));
-    })->name('posts.index');
+    };
 
-    // Category Index
-    Route::get("/{$archiveSlug}/{$categoryBase}/{category}", function ($category) {
+    $renderCategory = function (?string $localeOrCategory = null, ?string $category = null) {
+        if ($category !== null) {
+            $locale = $localeOrCategory;
+            if ($locale && in_array($locale, available_locales(), true)) {
+                app()->setLocale($locale);
+            }
+        } else {
+            $category = $localeOrCategory;
+        }
+
         $featuredPosts = Post::where('status', 'published')
             ->where('is_featured', true)
             ->latest()
@@ -103,9 +124,18 @@ Route::middleware(['web'])->group(function () {
         }
 
         return view($view, compact('featuredPosts', 'category'));
-    })->name('posts.category');
+    };
 
-    Route::get("/{$archiveSlug}/{slug}", function ($slug) {
+    $renderSingle = function (?string $localeOrSlug = null, ?string $slug = null) {
+        if ($slug !== null) {
+            $locale = $localeOrSlug;
+            if ($locale && in_array($locale, available_locales(), true)) {
+                app()->setLocale($locale);
+            }
+        } else {
+            $slug = $localeOrSlug;
+        }
+
         $post = Post::findByLocalizedSlug($slug);
         abort_if(! $post, 404);
 
@@ -141,5 +171,25 @@ Route::middleware(['web'])->group(function () {
             'enableComments' => $enableComments,
             'closeCommentsDays' => $closeCommentsDays,
         ]);
-    })->name('posts.show');
+    };
+
+    // Default locale routes
+    Route::get("/{$archiveSlug}", fn () => $renderIndex())->name('posts.index');
+    Route::get("/{$archiveSlug}/{$categoryBase}/{category}", fn ($category) => $renderCategory(null, $category))->name('posts.category');
+    Route::get("/{$archiveSlug}/{slug}", fn ($slug) => $renderSingle(null, $slug))->name('posts.show');
+
+    // Localized routes (e.g. /id/blog-news, /id/blog-news/category/..., /id/blog-news/{slug})
+    if (! empty($localePattern)) {
+        Route::get("/{locale}/{$archiveSlug}", fn ($locale) => $renderIndex($locale))
+            ->where('locale', $localePattern)
+            ->name('locale.posts.index');
+
+        Route::get("/{locale}/{$archiveSlug}/{$categoryBase}/{category}", fn ($locale, $category) => $renderCategory($locale, $category))
+            ->where('locale', $localePattern)
+            ->name('locale.posts.category');
+
+        Route::get("/{locale}/{$archiveSlug}/{slug}", fn ($locale, $slug) => $renderSingle($locale, $slug))
+            ->where('locale', $localePattern)
+            ->name('locale.posts.show');
+    }
 });

@@ -15,7 +15,18 @@
         'cta' => $entry->getMeta('banner_cta', ''),
     ];
     $videos = $entry->getMeta('videos', []);
-    $articles = $entry->getMeta('related_articles', []);
+    $relatedPosts = collect();
+    if (class_exists(\Plugins\Posts\Models\Post::class)) {
+        $relatedPosts = \Plugins\Posts\Models\Post::with(['categories'])
+            ->whereHas('cptEntries', function($q) use ($entry) {
+                $q->where('cpt_entries.id', $entry->id);
+            })
+            ->where('status', 'published')
+            ->orderByDesc('published_at')
+            ->orderByDesc('id')
+            ->take(5)
+            ->get();
+    }
     $badges = $entry->getMeta('badges', []);
     $badgeImages = $entry->getMeta('hero_badge_images', []);
 @endphp
@@ -31,15 +42,8 @@
       $cptPostType = $entry->postType;
       $hasCptArchive = $cptPostType && $cptPostType->has_archive;
     @endphp
-    <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-10" data-gsap="fade-in">
-      <a href="{{ localized_url('/') }}" class="hover:text-primary transition-colors">{{ t('common.home', 'Home') }}</a>
-      @if($hasCptArchive)
-        <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        <a href="{{ $cptPostType->getArchiveUrl() }}" class="hover:text-primary transition-colors">{{ $cptPostType->plural_label ?: t('common.technology_alliance', 'Technology Alliance') }}</a>
-      @endif
-      <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-      <span class="text-zinc-800 font-bold">{{ $entry->title }}</span>
-    </nav>
+    <!-- SEO Breadcrumb -->
+    <x-seo-breadcrumbs :entity="$entry" class="text-zinc-500 mb-10" />
 
     @if($entry->featured_image)
     <div class="lg:hidden mb-8 bg-zinc-50/50 border border-zinc-200/80 rounded-3xl p-8 flex flex-col items-center shadow-sm">
@@ -122,18 +126,24 @@
         </div>
         @endif
 
-        @if($articles)
+        @if(!empty($relatedPosts) && $relatedPosts->isNotEmpty())
         <div data-gsap="fade-up" data-gsap-delay="0.2" class="bg-white border border-zinc-200/80 rounded-3xl p-8 shadow-sm">
           <div class="flex items-center gap-2.5 mb-6">
             <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
             <span class="text-zinc-800 font-extrabold text-xs tracking-wider uppercase">{{ t('alliance.related_insights', 'Related Insights') }}</span>
           </div>
           <ul class="space-y-6">
-            @foreach($articles as $article)
+            @foreach($relatedPosts as $postItem)
+            @php
+                $catObj = $postItem->categories->first();
+                $catName = $catObj ? ($catObj->getTranslation('name') ?: $catObj->name) : 'BLOG';
+                $postTitle = $postItem->getTranslation('title') ?: $postItem->title;
+                $postUrl = $postItem->getUrl();
+            @endphp
             <li>
-              <a href="{{ $article['link'] }}" class="group block">
-                <span class="text-[10px] font-bold tracking-wider uppercase text-primary">{{ $article['category'] }}</span>
-                <p class="text-sm font-bold text-zinc-800 group-hover:text-primary transition-colors mt-1">{{ $article['title'] }}</p>
+              <a href="{{ $postUrl }}" class="group block">
+                <span class="text-[10px] font-bold tracking-wider uppercase text-primary">{{ $catName }}</span>
+                <p class="text-sm font-bold text-zinc-800 group-hover:text-primary transition-colors mt-1">{{ $postTitle }}</p>
               </a>
             </li>
             @if(!$loop->last)<div class="w-full h-px bg-zinc-100 my-4"></div>@endif
@@ -301,7 +311,7 @@
       @endif
       @endforeach
     </div>
-    <a href="{{ url('/videos') }}" class="inline-flex items-center gap-2 text-zinc-600 hover:text-primary font-bold uppercase tracking-wider text-sm transition-colors group/btn relative z-10" data-gsap="fade-up">
+    <a href="{{ localized_url('/video') }}" class="inline-flex items-center gap-2 text-zinc-600 hover:text-primary font-bold uppercase tracking-wider text-sm transition-colors group/btn relative z-10" data-gsap="fade-up">
       {{ t('alliance.view_all_videos', 'View All Videos') }}
       <svg class="w-5 h-5 transform group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
     </a>
@@ -405,21 +415,37 @@
         <div class="swiper-wrapper">
           @foreach($clientStories as $story)
           @php
+            $locale = app()->getLocale();
+            $translations = $story->meta['_translations'][$locale] ?? [];
+            $meta = array_merge($story->meta ?? [], $translations);
+
             $logoPath = $story->featured_image;
-            $logoUrl = $logoPath
-                ? (str_starts_with($logoPath, 'http') ? $logoPath : asset('storage/' . $logoPath))
-                : null;
-            $personName = $story->getMeta('person') ?? $story->title;
-            $position = $story->getMeta('position') ?? '';
-            $companyName = $story->getTranslation('title') ?? $story->title;
-            $storyContent = $story->getTranslation('content') ?? $story->content ?? '';
+            $logoUrl = resolve_block_asset($logoPath);
+            if ($logoUrl && (str_contains($logoUrl, '/customer-success/') || !preg_match('/\.(jpg|png|webp|svg|jpeg)$/i', parse_url($logoUrl, PHP_URL_PATH) ?? ''))) {
+                $logoUrl = null;
+            }
+
+            $companyName = $meta['client_name'] ?? ($translations['title'] ?? $story->title);
+
+            $rawAuthor = $meta['quote_author'] ?? $meta['testimonial_author'] ?? $meta['person'] ?? null;
+            if ($rawAuthor && str_contains($rawAuthor, ' - ')) {
+                $personName = trim(\Illuminate\Support\Str::before($rawAuthor, ' - '));
+                $position = trim(\Illuminate\Support\Str::after($rawAuthor, ' - '));
+            } else {
+                $personName = $rawAuthor ?: $companyName;
+                $position = $meta['position'] ?? '';
+            }
+
+            $storyContent = !empty($meta['quote']) ? $meta['quote']
+                : (!empty($meta['testimonial_quote']) ? $meta['testimonial_quote']
+                : (!empty($translations['content']) ? $translations['content'] : $story->content));
           @endphp
           <div class="swiper-slide h-full">
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col lg:flex-row border border-zinc-100 min-h-[400px]">
               <div class="lg:w-1/3 bg-zinc-50 p-10 md:p-12 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-zinc-100">
                 @if($logoUrl)
                 <div class="h-32 flex justify-start items-center mb-8">
-                  <img src="{{ $logoUrl }}" alt="{{ $story->title }}" class="max-h-full w-auto max-w-[320px] object-contain object-left mix-blend-multiply" />
+                  <img src="{{ $logoUrl }}" alt="{{ $companyName }}" class="max-h-full w-auto max-w-[280px] object-contain object-left mix-blend-multiply" />
                 </div>
                 @else
                 <div class="h-32 mb-8"></div>
@@ -432,15 +458,15 @@
                       </svg>
                     @endfor
                   </div>
-                  @if($personName)<h3 class="font-bold text-lg text-zinc-900 uppercase">{{ $personName }}</h3>@endif
-                  @if($position)<p class="text-sm text-zinc-500 uppercase tracking-wide mb-2">{{ $position }}</p>@endif
-                  <p class="text-sm font-bold text-primary uppercase">{{ $companyName }}</p>
+                  @if($personName)<h3 class="font-bold text-lg text-zinc-900 uppercase mb-1">{{ $personName }}</h3>@endif
+                  @if(!empty($position))<p class="text-sm text-zinc-500 uppercase tracking-wide mb-2">{{ $position }}</p>@endif
+                  @if($companyName !== $personName)<p class="text-sm font-bold text-primary uppercase">{{ $companyName }}</p>@endif
                 </div>
               </div>
               <div class="lg:w-2/3 p-10 md:p-12 flex items-center relative">
                 <svg class="absolute top-8 left-8 w-24 h-24 text-zinc-100 -z-10 transform -scale-x-100" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" /></svg>
-                <div class="relative z-10">
-                  <div class="text-base md:text-lg text-zinc-900 font-light leading-relaxed">{!! $storyContent !!}</div>
+                <div class="relative z-10 prose max-w-none text-zinc-700 leading-relaxed space-y-4">
+                  {!! $storyContent !!}
                 </div>
               </div>
             </div>

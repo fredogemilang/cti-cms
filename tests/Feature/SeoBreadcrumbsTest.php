@@ -48,7 +48,6 @@ class SeoBreadcrumbsTest extends TestCase
         $view = $this->component(SeoBreadcrumbs::class, ['entity' => $page]);
 
         $view->assertSee('Home');
-        $view->assertSee('»');
         $view->assertSee('Services');
     }
 

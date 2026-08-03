@@ -2,6 +2,9 @@
 
 namespace Plugins\Posts\Livewire;
 
+use App\Models\CptEntry;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
@@ -11,6 +14,7 @@ use Livewire\WithFileUploads;
 use Plugins\Posts\Models\Category;
 use Plugins\Posts\Models\Post;
 use Plugins\Posts\Models\PostAuthor;
+use Plugins\Posts\Models\Setting;
 use Plugins\Posts\Models\Tag;
 use Plugins\Posts\Services\DocxParserService;
 
@@ -73,6 +77,17 @@ class PostForm extends Component
 
     public $password = '';
 
+    // CPT Relationships ("Related To")
+    public array $selectedCptEntries = [];
+
+    public bool $showCptModal = false;
+
+    public string $cptSearch = '';
+
+    public string $cptFilterSlug = 'all';
+
+    public array $tempSelectedCptEntries = [];
+
     // === Translations state ===
     /** Locale currently shown in the form. */
     #[Url(as: 'lang', keep: true)]
@@ -108,6 +123,7 @@ class PostForm extends Component
 
             $this->selectedCategories = $this->post->categories->pluck('id')->toArray();
             $this->tags = $this->post->tags->pluck('name')->implode(', ');
+            $this->selectedCptEntries = $this->post->cptEntries->pluck('id')->toArray();
 
             // Hydrate per-locale snapshots from translations JSON
             $this->hydrateTranslations();
@@ -380,6 +396,22 @@ class PostForm extends Component
             $post->tags()->detach();
         }
 
+        // Sync CPT Entries (Related To)
+        if (! empty($this->selectedCptEntries)) {
+            $cptEntryRecords = CptEntry::with('postType')
+                ->whereIn('id', $this->selectedCptEntries)
+                ->get();
+            $pivotData = [];
+            foreach ($cptEntryRecords as $cptEntry) {
+                $pivotData[$cptEntry->id] = [
+                    'cpt_slug' => $cptEntry->postType->slug ?? null,
+                ];
+            }
+            $post->cptEntries()->sync($pivotData);
+        } else {
+            $post->cptEntries()->detach();
+        }
+
         $queryParams = array_filter([
             'lang' => $this->editingLocale !== Post::defaultLocale() ? $this->editingLocale : null,
         ]);
@@ -393,6 +425,35 @@ class PostForm extends Component
 
             return redirect()->route('admin.posts.edit', array_merge(['id' => $post->id], $queryParams));
         }
+    }
+
+    public function openCptModal()
+    {
+        $this->tempSelectedCptEntries = array_map('intval', $this->selectedCptEntries);
+        $this->cptSearch = '';
+        $this->showCptModal = true;
+    }
+
+    public function toggleTempCptEntry($id)
+    {
+        $id = (int) $id;
+        if (in_array($id, $this->tempSelectedCptEntries, true)) {
+            $this->tempSelectedCptEntries = array_values(array_filter($this->tempSelectedCptEntries, fn ($v) => $v !== $id));
+        } else {
+            $this->tempSelectedCptEntries[] = $id;
+        }
+    }
+
+    public function saveCptSelections()
+    {
+        $this->selectedCptEntries = array_values(array_unique($this->tempSelectedCptEntries));
+        $this->showCptModal = false;
+    }
+
+    public function removeCptEntry($id)
+    {
+        $id = (int) $id;
+        $this->selectedCptEntries = array_values(array_filter($this->selectedCptEntries, fn ($v) => $v !== $id));
     }
 
     public function delete()
@@ -461,9 +522,45 @@ class PostForm extends Component
 
     public function render()
     {
+        $archiveSlug = Setting::get('archive_slug', 'blog');
+        if (Schema::hasTable('settings')) {
+            $coreBase = \App\Models\Setting::get('permalink_post_base');
+            if (! empty($coreBase)) {
+                $archiveSlug = $coreBase;
+            }
+        }
+
+        $pairedSlugs = json_decode(Setting::get('paired_cpts', json_encode(['technology-alliance'])), true) ?: ['technology-alliance'];
+
+        $pairedCptTypes = DB::table('custom_post_types')
+            ->whereIn('slug', $pairedSlugs)
+            ->orderBy('plural_label', 'asc')
+            ->get();
+
+        $attachedCptEntries = CptEntry::with('postType')
+            ->whereIn('id', array_map('intval', $this->selectedCptEntries))
+            ->get();
+
+        $cptQuery = CptEntry::with('postType')
+            ->whereHas('postType', fn ($q) => $q->whereIn('slug', $pairedSlugs));
+
+        if ($this->cptFilterSlug !== 'all') {
+            $cptQuery->whereHas('postType', fn ($q) => $q->where('slug', $this->cptFilterSlug));
+        }
+
+        if (! empty($this->cptSearch)) {
+            $cptQuery->where('title', 'like', '%'.$this->cptSearch.'%');
+        }
+
+        $modalCptEntries = $cptQuery->orderBy('title', 'asc')->get();
+
         return view('posts::livewire.post-form', [
             'categories' => Category::orderBy('name')->get(),
             'authors' => PostAuthor::orderBy('name')->get(),
+            'archiveSlug' => $archiveSlug,
+            'pairedCptTypes' => $pairedCptTypes,
+            'attachedCptEntries' => $attachedCptEntries,
+            'modalCptEntries' => $modalCptEntries,
         ]);
     }
 }

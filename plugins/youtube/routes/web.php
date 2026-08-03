@@ -33,6 +33,8 @@ Route::middleware(['web', 'auth', 'permission:youtube.view'])
 
 Route::middleware(['web'])
     ->group(function () {
+        Route::redirect('/videos', '/video', 301);
+
         Route::get('/video', function (Request $request) {
             $featured = YoutubeVideo::featured()->visible()->first();
             if (! $featured) {

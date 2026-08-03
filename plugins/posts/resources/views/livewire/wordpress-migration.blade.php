@@ -64,6 +64,104 @@
                 </div>
             </div>
         </div>
+
+        {{-- Card 2: Post Content Image Cleaner & Featured Image Extractor --}}
+        <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] p-8">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="h-12 w-12 rounded-2xl bg-amber-500/10 flex items-center justify-center">
+                    <span class="material-symbols-outlined text-amber-500 text-2xl">auto_fix_high</span>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">Content Image Cleaner & Featured Image Extractor</h2>
+                    <p class="text-sm text-[#6F767E]">Fix articles missing featured images and clean up duplicate top images from post bodies</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{-- Scanner 1 --}}
+                <div class="p-6 rounded-2xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] flex flex-col justify-between space-y-4">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="h-7 w-7 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500 font-bold text-xs">1</div>
+                            <h3 class="font-bold text-[#111827] dark:text-[#FCFCFC] text-sm">Scanner 1: Extract Featured Image</h3>
+                        </div>
+                        <p class="text-xs text-[#6F767E] leading-relaxed">
+                            Scan posts without a featured image, extract the first image found at top of content, and set it as Featured Image.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <button
+                            wire:click="runScanner1"
+                            wire:loading.attr="disabled"
+                            class="w-full h-11 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-bold text-sm transition-all shadow-md shadow-blue-500/10 flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            <span wire:loading.remove wire:target="runScanner1" class="material-symbols-outlined text-lg">search_check</span>
+                            <svg wire:loading wire:target="runScanner1" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span wire:loading.remove wire:target="runScanner1">Run Scanner 1</span>
+                            <span wire:loading wire:target="runScanner1">Scanning & Extracting...</span>
+                        </button>
+
+                        @if($scanner1Results)
+                        <div class="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 text-xs text-emerald-700 dark:text-emerald-400 space-y-1">
+                            <p class="font-bold flex items-center gap-1.5"><span class="material-symbols-outlined text-base">check_circle</span> Scanner 1 Finished!</p>
+                            <p>• Scanned {{ $scanner1Results['scanned'] }} post(s) without featured image</p>
+                            <p>• Successfully set {{ $scanner1Results['updated'] }} post(s) featured image</p>
+                            <p>• Skipped {{ $scanner1Results['skipped'] }} post(s) (no image in body)</p>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Scanner 2 --}}
+                <div class="p-6 rounded-2xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] flex flex-col justify-between space-y-4 {{ !$scanner1Completed ? 'opacity-60' : '' }}">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="h-7 w-7 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-500 font-bold text-xs">2</div>
+                                <h3 class="font-bold text-[#111827] dark:text-[#FCFCFC] text-sm">Scanner 2: Remove Top Body Image</h3>
+                            </div>
+                            @if(!$scanner1Completed)
+                            <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold border border-amber-500/20">Locked (Requires Scanner 1)</span>
+                            @else
+                            <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold border border-emerald-500/20">Unlocked & Ready</span>
+                            @endif
+                        </div>
+                        <p class="text-xs text-[#6F767E] leading-relaxed">
+                            Scan posts and remove the duplicate top image from the article body content so it doesn't appear twice under the Featured Image.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <button
+                            wire:click="runScanner2"
+                            wire:loading.attr="disabled"
+                            @if(!$scanner1Completed) disabled @endif
+                            class="w-full h-11 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 dark:disabled:bg-gray-800 disabled:cursor-not-allowed text-white font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2"
+                        >
+                            <span wire:loading.remove wire:target="runScanner2" class="material-symbols-outlined text-lg">content_cut</span>
+                            <svg wire:loading wire:target="runScanner2" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span wire:loading.remove wire:target="runScanner2">Run Scanner 2</span>
+                            <span wire:loading wire:target="runScanner2">Removing Top Images...</span>
+                        </button>
+
+                        @if($scanner2Results)
+                        <div class="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 text-xs text-emerald-700 dark:text-emerald-400 space-y-1">
+                            <p class="font-bold flex items-center gap-1.5"><span class="material-symbols-outlined text-base">check_circle</span> Scanner 2 Finished!</p>
+                            <p>• Scanned {{ $scanner2Results['scanned'] }} post(s) with featured image</p>
+                            <p>• Cleaned {{ $scanner2Results['cleaned'] }} post(s) top body image</p>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     @endif
 
@@ -129,7 +227,7 @@
                 <h4 class="text-sm font-bold text-[#6F767E] mb-3">Image Options</h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-[#6F767E] mb-2">Featured Image</label>
+                        <label class="block text-sm font-medium text-[#6F767E] mb-2">Featured Image Mode</label>
                         <select wire:model.live="fieldMappings.featured_image" class="w-full h-10 rounded-lg border-none bg-gray-50 dark:bg-[#0B0B0B] px-3 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB]">
                             <option value="download">Download to Media Library</option>
                             <option value="url">Keep as External URL</option>
@@ -142,6 +240,17 @@
                             <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">Download content images to Media Library</span>
                         </label>
                     </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-3 border-t border-dashed border-gray-200 dark:border-[#272B30]">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" wire:model.live="fieldMappings.auto_extract_featured" class="custom-checkbox" />
+                        <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">Auto-extract Featured Image from top content image if missing (Priority: EN WP ➔ ID WP ➔ EN Content ➔ ID Content)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" wire:model.live="fieldMappings.auto_clean_top_image" class="custom-checkbox" />
+                        <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">Auto-remove duplicate top image from article body content</span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -224,9 +333,52 @@
     </div>
     @endif
 
-    {{-- Step 3: Import Results --}}
+    {{-- Step 3: Import Progress & Results --}}
     @if($step === 3)
-    <div class="space-y-6">
+    <div class="space-y-6" @if($isBatchImporting && !$importFinished) wire:poll.100ms="processNextBatch" @endif>
+        @if($isBatchImporting && !$importFinished)
+        {{-- Live Progress Card --}}
+        <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] p-8">
+            <div class="flex flex-col items-center text-center max-w-xl mx-auto">
+                <div class="h-16 w-16 rounded-full bg-blue-500/10 flex items-center justify-center mb-4">
+                    <svg class="animate-spin h-8 w-8 text-[#2563EB]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                
+                <h2 class="text-2xl font-bold text-[#111827] dark:text-[#FCFCFC] mb-1">Importing Posts in Batches...</h2>
+                <p class="text-sm text-[#6F767E] mb-6">{{ $currentBatchStatus ?: "Processing batch {$currentBatchIndex} of {$totalBatchCount}..." }}</p>
+
+                {{-- Progress Bar --}}
+                <div class="w-full bg-gray-100 dark:bg-[#272B30] h-4 rounded-full overflow-hidden mb-3 relative">
+                    <div class="bg-[#2563EB] h-full transition-all duration-300 rounded-full" style="width: {{ $importProgress }}%"></div>
+                </div>
+
+                <div class="flex justify-between w-full text-xs font-bold text-[#6F767E] mb-6">
+                    <span>Batch {{ $currentBatchIndex }} / {{ $totalBatchCount }} ({{ $batchSize }} items/batch)</span>
+                    <span class="text-[#2563EB]">{{ $importProgress }}% Completed</span>
+                </div>
+
+                {{-- Live Counter Grid --}}
+                <div class="grid grid-cols-3 gap-4 w-full">
+                    <div class="p-4 rounded-2xl bg-[#83BF6E]/10 border border-[#83BF6E]/20 text-center">
+                        <p class="text-2xl font-bold text-[#83BF6E]">{{ $importResults['success'] }}</p>
+                        <p class="text-xs font-medium text-[#6F767E]">Imported</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-center">
+                        <p class="text-2xl font-bold text-amber-500">{{ $importResults['skipped'] }}</p>
+                        <p class="text-xs font-medium text-[#6F767E]">Skipped</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-center">
+                        <p class="text-2xl font-bold text-red-500">{{ $importResults['failed'] }}</p>
+                        <p class="text-xs font-medium text-[#6F767E]">Failed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @else
+        {{-- Final Results Card --}}
         <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] p-8">
             <div class="flex flex-col items-center text-center">
                 @if($importResults['failed'] === 0)
@@ -240,7 +392,7 @@
                 </div>
                 <h2 class="text-2xl font-bold text-[#111827] dark:text-[#FCFCFC] mb-2">Import Completed with Issues</h2>
                 @endif
-                <p class="text-[#6F767E] mb-8">Your WordPress posts have been imported.</p>
+                <p class="text-[#6F767E] mb-8">All {{ $totalBatchCount }} batches (12 articles/batch) have been processed successfully.</p>
 
                 {{-- Stats --}}
                 <div class="grid grid-cols-3 gap-4 w-full max-w-md mb-8">
@@ -318,6 +470,7 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
     @endif
 

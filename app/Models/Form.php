@@ -217,6 +217,92 @@ class Form extends Model
             return ['success' => false, 'errors' => $errors];
         }
 
+        // Auto-capture server-side & client-side attribution metadata (Approach B)
+        $attributionData = [];
+        if (! empty($data['_attribution'])) {
+            $attributionData = is_array($data['_attribution'])
+                ? $data['_attribution']
+                : (json_decode($data['_attribution'], true) ?? []);
+        } elseif ($request && $request->hasCookie('cdt_attribution')) {
+            $attributionData = json_decode($request->cookie('cdt_attribution'), true) ?? [];
+        }
+
+        $attributionData['submission_page'] = $data['_submission_page'] ?? ($request ? $request->fullUrl() : null);
+        $attributionData['http_referrer'] = $request ? $request->header('referer') : null;
+
+        // Calculate time to convert (supports both ISO date strings like "2026-08-03T05:04:20.373Z" and numeric timestamps)
+        if (! empty($attributionData['first_visit_at'])) {
+            $rawVisit = $attributionData['first_visit_at'];
+            $firstVisitSec = 0;
+
+            if (is_numeric($rawVisit)) {
+                $firstVisitSec = (float) $rawVisit;
+                if ($firstVisitSec > 100000000000) {
+                    $firstVisitSec = floor($firstVisitSec / 1000);
+                }
+            } else {
+                $parsedTime = strtotime((string) $rawVisit);
+                if ($parsedTime !== false && $parsedTime > 0) {
+                    $firstVisitSec = $parsedTime;
+                }
+            }
+
+            if ($firstVisitSec > 0) {
+                $nowSec = time();
+                $diffSec = max(0, $nowSec - (int) $firstVisitSec);
+
+                if ($diffSec < 60) {
+                    $attributionData['time_to_convert'] = $diffSec.'s';
+                } elseif ($diffSec < 3600) {
+                    $attributionData['time_to_convert'] = floor($diffSec / 60).'m '.($diffSec % 60).'s';
+                } else {
+                    $attributionData['time_to_convert'] = floor($diffSec / 3600).'h '.floor(($diffSec % 3600) / 60).'m';
+                }
+            }
+        }
+
+        // Parse User Agent for Browser & Operating System
+        $ua = $request ? $request->userAgent() : null;
+        if ($ua) {
+            // Parse OS
+            if (preg_match('/windows nt 10/i', $ua)) {
+                $attributionData['os'] = 'Windows 10/11';
+            } elseif (preg_match('/windows/i', $ua)) {
+                $attributionData['os'] = 'Windows';
+            } elseif (preg_match('/macintosh|mac os x/i', $ua)) {
+                $attributionData['os'] = 'macOS';
+            } elseif (preg_match('/android/i', $ua)) {
+                $attributionData['os'] = 'Android';
+            } elseif (preg_match('/iphone|ipad|ipod/i', $ua)) {
+                $attributionData['os'] = 'iOS';
+            } elseif (preg_match('/linux/i', $ua)) {
+                $attributionData['os'] = 'Linux';
+            } else {
+                $attributionData['os'] = 'Unknown OS';
+            }
+
+            // Parse Browser
+            if (preg_match('/edg/i', $ua)) {
+                $attributionData['browser'] = 'Edge';
+            } elseif (preg_match('/chrome/i', $ua)) {
+                $attributionData['browser'] = 'Chrome';
+            } elseif (preg_match('/safari/i', $ua)) {
+                $attributionData['browser'] = 'Safari';
+            } elseif (preg_match('/firefox/i', $ua)) {
+                $attributionData['browser'] = 'Firefox';
+            } elseif (preg_match('/opera|opr/i', $ua)) {
+                $attributionData['browser'] = 'Opera';
+            } else {
+                $attributionData['browser'] = 'Unknown Browser';
+            }
+        }
+
+        $attributionData = array_filter($attributionData);
+
+        if (! empty($attributionData)) {
+            $validatedData['_attribution'] = $attributionData;
+        }
+
         // Create entry
         $entry = $this->entries()->create([
             'data' => $validatedData,

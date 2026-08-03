@@ -23,6 +23,7 @@ class CustomPostType extends Model
         'supports',
         'settings',
         'is_active',
+        'translations',
     ];
 
     protected $casts = [
@@ -34,6 +35,7 @@ class CustomPostType extends Model
         'supports' => 'array',
         'settings' => 'array',
         'is_active' => 'boolean',
+        'translations' => 'array',
     ];
 
     /**
@@ -159,10 +161,74 @@ class CustomPostType extends Model
     }
 
     /**
+     * Get a translated field value for the CPT.
+     */
+    public function getTranslation(string $field, ?string $locale = null, bool $fallback = true): ?string
+    {
+        $locale ??= app()->getLocale();
+        $translations = $this->translations ?? [];
+
+        if (isset($translations[$locale][$field]) && filled($translations[$locale][$field])) {
+            return $translations[$locale][$field];
+        }
+
+        if ($fallback) {
+            $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+            if ($locale !== $defaultLocale && isset($translations[$defaultLocale][$field]) && filled($translations[$defaultLocale][$field])) {
+                return $translations[$defaultLocale][$field];
+            }
+
+            return match ($field) {
+                'singular_label' => $this->singular_label,
+                'plural_label' => $this->plural_label,
+                'slug' => $this->slug,
+                'description' => $this->description,
+                default => null,
+            };
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the localized slug for this CPT based on locale.
+     */
+    public function getLocalizedSlug(?string $locale = null): string
+    {
+        return $this->getTranslation('slug', $locale) ?: $this->slug;
+    }
+
+    /**
+     * Get all registered localized slugs for this CPT.
+     */
+    public function getAllLocalizedSlugs(): array
+    {
+        $slugs = [$this->slug];
+        if (is_array($this->translations)) {
+            foreach ($this->translations as $lang => $data) {
+                if (! empty($data['slug'])) {
+                    $slugs[] = $data['slug'];
+                }
+            }
+        }
+
+        return array_values(array_unique(array_filter($slugs)));
+    }
+
+    /**
      * Get the public archive URL for this CPT.
      */
-    public function getArchiveUrl(): string
+    public function getArchiveUrl(?string $locale = null): string
     {
-        return url('/'.$this->slug);
+        $locale ??= app()->getLocale();
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+
+        $targetSlug = $this->getLocalizedSlug($locale);
+
+        if ($locale !== $defaultLocale) {
+            return url('/'.$locale.'/'.$targetSlug);
+        }
+
+        return url('/'.$targetSlug);
     }
 }

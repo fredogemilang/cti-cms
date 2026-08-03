@@ -69,6 +69,33 @@ class CptForm extends Component
     // UI State
     public string $activeTab = 'general';
 
+    public string $activeLocale = 'en';
+
+    public array $translations = [
+        'en' => ['singular_label' => '', 'plural_label' => '', 'slug' => '', 'description' => ''],
+        'id' => ['singular_label' => '', 'plural_label' => '', 'slug' => '', 'description' => ''],
+    ];
+
+    public function setLocale(string $locale)
+    {
+        if (in_array($locale, ['en', 'id'], true)) {
+            $this->translations[$this->activeLocale] = [
+                'singular_label' => $this->singularLabel,
+                'plural_label' => $this->pluralLabel,
+                'slug' => $this->slug,
+                'description' => $this->description,
+            ];
+
+            $this->activeLocale = $locale;
+
+            $target = $this->translations[$locale] ?? [];
+            $this->singularLabel = $target['singular_label'] ?? '';
+            $this->pluralLabel = $target['plural_label'] ?? '';
+            $this->slug = $target['slug'] ?? '';
+            $this->description = $target['description'] ?? '';
+        }
+    }
+
     public function updatedNewMetaBox($value, $key)
     {
         if ($this->showMetaBoxModal) {
@@ -138,10 +165,6 @@ class CptForm extends Component
         $cpt = CustomPostType::with('metaFields')->findOrFail($this->cptId);
 
         $this->name = $cpt->name;
-        $this->singularLabel = $cpt->singular_label;
-        $this->pluralLabel = $cpt->plural_label;
-        $this->slug = $cpt->slug;
-        $this->description = $cpt->description ?? '';
         $this->icon = $cpt->icon;
         $this->isHierarchical = $cpt->is_hierarchical;
         $this->showInMenu = $cpt->show_in_menu;
@@ -149,6 +172,28 @@ class CptForm extends Component
         $this->hasArchive = $cpt->has_archive;
         $this->publiclyQueryable = $cpt->publicly_queryable;
         $this->supports = $cpt->supports ?? [];
+
+        $rawTrans = $cpt->translations ?? [];
+        $this->translations = [
+            'en' => [
+                'singular_label' => $rawTrans['en']['singular_label'] ?? $cpt->singular_label,
+                'plural_label' => $rawTrans['en']['plural_label'] ?? $cpt->plural_label,
+                'slug' => $rawTrans['en']['slug'] ?? $cpt->slug,
+                'description' => $rawTrans['en']['description'] ?? ($cpt->description ?? ''),
+            ],
+            'id' => [
+                'singular_label' => $rawTrans['id']['singular_label'] ?? $cpt->singular_label,
+                'plural_label' => $rawTrans['id']['plural_label'] ?? $cpt->plural_label,
+                'slug' => $rawTrans['id']['slug'] ?? $cpt->slug,
+                'description' => $rawTrans['id']['description'] ?? ($cpt->description ?? ''),
+            ],
+        ];
+
+        $current = $this->translations[$this->activeLocale] ?? [];
+        $this->singularLabel = $current['singular_label'] ?? $cpt->singular_label;
+        $this->pluralLabel = $current['plural_label'] ?? $cpt->plural_label;
+        $this->slug = $current['slug'] ?? $cpt->slug;
+        $this->description = $current['description'] ?? ($cpt->description ?? '');
 
         $this->taxonomies = $cpt->taxonomies()->pluck('slug')->toArray();
         $this->metaBoxes = $cpt->settings['meta_boxes'] ?? [];
@@ -396,6 +441,7 @@ class CptForm extends Component
                 ],
                 'options_list' => [],
                 'repeater_fields' => [],
+                'rewrite_url' => false,
             ],
             'order' => count($this->metaFields),
         ];
@@ -534,12 +580,21 @@ class CptForm extends Component
     {
         $this->validate();
 
-        $data = [
-            'name' => $this->name,
+        $this->translations[$this->activeLocale] = [
             'singular_label' => $this->singularLabel,
             'plural_label' => $this->pluralLabel,
             'slug' => $this->slug,
-            'description' => $this->description ?: null,
+            'description' => $this->description,
+        ];
+
+        $enData = $this->translations['en'] ?? [];
+
+        $data = [
+            'name' => $this->name,
+            'singular_label' => ! empty($enData['singular_label']) ? $enData['singular_label'] : $this->singularLabel,
+            'plural_label' => ! empty($enData['plural_label']) ? $enData['plural_label'] : $this->pluralLabel,
+            'slug' => ! empty($enData['slug']) ? $enData['slug'] : $this->slug,
+            'description' => ! empty($enData['description']) ? $enData['description'] : ($this->description ?: null),
             'icon' => $this->icon,
             'is_hierarchical' => $this->isHierarchical,
             'show_in_menu' => $this->showInMenu,
@@ -547,6 +602,7 @@ class CptForm extends Component
             'has_archive' => $this->hasArchive,
             'publicly_queryable' => $this->publiclyQueryable,
             'supports' => $this->supports,
+            'translations' => $this->translations,
             'settings' => array_merge($this->isEdit ? (CustomPostType::find($this->cptId)->settings ?? []) : [], [
                 'meta_boxes' => $this->metaBoxes,
             ]),

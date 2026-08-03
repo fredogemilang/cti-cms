@@ -18,13 +18,7 @@
       <div class="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 w-full">
 
         <!-- Breadcrumbs -->
-        <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-10" aria-label="Breadcrumb" data-gsap="fade-in">
-          <a href="{{ localized_url('/') }}" class="hover:text-primary transition-colors" title="Home" aria-label="Home">Home</a>
-          <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-          <span class="text-zinc-800 font-bold" aria-current="page">{{ $page->title }}</span>
-        </nav>
+        <x-seo-breadcrumbs :entity="$page" class="text-zinc-500 mb-10" />
 
         <div class="max-w-5xl mx-auto flex flex-col items-center text-center">
 
@@ -373,89 +367,86 @@
               ]
           ];
       }
+      $jobForm = \App\Models\Form::where('id', 5)->orWhere('slug', 'job-application-form')->where('is_active', true)->with('fields')->first();
     @endphp
 
-    <section id="job-vacancy" class="py-24 bg-zinc-50 border-t border-zinc-100"
-      x-data="{
-        selectedCategory: 'all',
-        expandedJobId: null,
-        showApplyModal: false,
-        selectedJob: null,
-        formName: '',
-        formPosition: '',
-        formPhone: '',
-        formEmail: '',
-        formLinkedin: '',
-        formConsent: false,
-        formSuccess: false,
-        jobs: {{ json_encode($formattedJobs) }},
-        toggleExpand(id) {
-          const cards = this.jobs.map(j => document.getElementById('job-card-' + j.id)).filter(Boolean);
-          const firstRects = cards.map(c => ({ el: c, rect: c.getBoundingClientRect() }));
+    <script>
+    window.formattedJobsData = @json($formattedJobs);
+    </script>
 
-          if (this.expandedJobId === id) {
-            this.expandedJobId = null;
-          } else {
-            this.expandedJobId = id;
-          }
+    @verbatim
+    <script>
+    function careerPageHandler() {
+        return {
+            selectedCategory: 'all',
+            expandedJobId: null,
+            showApplyModal: false,
+            selectedJob: null,
+            jobs: window.formattedJobsData || [],
+            toggleExpand(id) {
+              const cards = this.jobs.map(j => document.getElementById('job-card-' + j.id)).filter(Boolean);
+              const firstRects = cards.map(c => ({ el: c, rect: c.getBoundingClientRect() }));
 
-          this.$nextTick(() => {
-            firstRects.forEach(({ el, rect }) => {
-              const lastRect = el.getBoundingClientRect();
-              const dx = rect.left - lastRect.left;
-              const dy = rect.top - lastRect.top;
-              const dw = rect.width / lastRect.width;
-              const dh = rect.height / lastRect.height;
-
-              el.style.transformOrigin = 'top left';
-              el.style.transform = `translate(${dx}px, ${dy}px) scale(${dw}, ${dh})`;
-              el.style.transition = 'none';
-
-              el.offsetHeight;
-
-              el.style.transition = 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), background-color 600ms, border-color 600ms, box-shadow 600ms';
-              el.style.transform = 'none';
-            });
-
-            setTimeout(() => {
-              firstRects.forEach(({ el }) => {
-                el.style.transition = '';
-                el.style.transform = '';
-                el.style.transformOrigin = '';
-              });
-
-              const activeCard = document.getElementById('job-card-' + id);
-              if (activeCard) {
-                activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              if (this.expandedJobId === id) {
+                this.expandedJobId = null;
+              } else {
+                this.expandedJobId = id;
               }
-            }, 600);
-          });
-        },
-        openApply(job) {
-          this.selectedJob = job;
-          this.formPosition = job ? job.title : '';
-          this.showApplyModal = true;
-          this.formSuccess = false;
-          document.body.style.overflow = 'hidden';
-        },
-        closeModals() {
-          this.showApplyModal = false;
-          this.selectedJob = null;
-          document.body.style.overflow = '';
-        },
-        submitApplication() {
-          this.formSuccess = true;
-          setTimeout(() => {
-            this.closeModals();
-            this.formName = '';
-            this.formPosition = '';
-            this.formPhone = '';
-            this.formEmail = '';
-            this.formLinkedin = '';
-            this.formConsent = false;
-          }, 2500);
-        }
-      }">
+
+              this.$nextTick(() => {
+                firstRects.forEach(({ el, rect }) => {
+                  const lastRect = el.getBoundingClientRect();
+                  const dx = rect.left - lastRect.left;
+                  const dy = rect.top - lastRect.top;
+                  const dw = rect.width / lastRect.width;
+                  const dh = rect.height / lastRect.height;
+
+                  el.style.transformOrigin = 'top left';
+                  el.style.transform = `translate(${dx}px, ${dy}px) scale(${dw}, ${dh})`;
+                  el.style.transition = 'none';
+
+                  el.offsetHeight;
+
+                  el.style.transition = 'transform 600ms cubic-bezier(0.25, 1, 0.5, 1), background-color 600ms, border-color 600ms, box-shadow 600ms';
+                  el.style.transform = 'none';
+                });
+
+                setTimeout(() => {
+                  firstRects.forEach(({ el }) => {
+                    el.style.transition = '';
+                    el.style.transform = '';
+                    el.style.transformOrigin = '';
+                  });
+
+                  const activeCard = document.getElementById('job-card-' + id);
+                  if (activeCard) {
+                    activeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
+                }, 600);
+              });
+            },
+            openApply(job) {
+              this.selectedJob = job;
+              this.showApplyModal = true;
+              document.body.style.overflow = 'hidden';
+              this.$nextTick(() => {
+                const posEl = document.getElementById('preferred_job_position') || document.querySelector('[name="preferred_job_position"]');
+                if (posEl && job) {
+                  posEl.value = job.title;
+                }
+              });
+            },
+            closeModals() {
+              this.showApplyModal = false;
+              this.selectedJob = null;
+              document.body.style.overflow = '';
+            }
+        };
+    }
+    </script>
+    @endverbatim
+
+    <section id="job-vacancy" class="py-24 bg-zinc-50 border-t border-zinc-100" x-data="careerPageHandler()">
 
       <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <!-- Heading -->
@@ -660,59 +651,11 @@
               <p class="text-xs text-zinc-400 mt-1 uppercase font-semibold tracking-wider">PT Central Data Technology</p>
             </div>
 
-            <div x-show="formSuccess" x-transition class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center mb-4">
-              <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-              </div>
-              <h4 class="text-lg font-bold text-emerald-900 mb-2">Application Submitted!</h4>
-              <p class="text-emerald-700 text-sm font-light">
-                Thank you for applying. Our HR team will review your details and contact you shortly.
-              </p>
-            </div>
-
-            <form x-show="!formSuccess" @submit.prevent="submitApplication()" class="space-y-5">
-              <div>
-                <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Full Name *</label>
-                <input type="text" required x-model="formName" placeholder="e.g. John Doe" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Preferred Job Position *</label>
-                <input type="text" required x-model="formPosition" placeholder="e.g. Solution Architect" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Phone Number *</label>
-                  <input type="tel" required x-model="formPhone" placeholder="+62 812-3456-7890" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Email Address *</label>
-                  <input type="email" required x-model="formEmail" placeholder="johndoe@email.com" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">LinkedIn Profile URL <span class="text-primary font-normal">(Optional - Will Be Prioritized)</span></label>
-                <input type="url" x-model="formLinkedin" placeholder="https://linkedin.com/in/username" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-              </div>
-
-              <div class="space-y-4 pt-2">
-                <div class="flex items-start gap-3">
-                  <input type="checkbox" required id="privacy-consent-jobs-modal" x-model="formConsent" class="mt-1 h-4 w-4 rounded border-zinc-300 text-primary focus:ring-primary cursor-pointer">
-                  <label for="privacy-consent-jobs-modal" class="text-sm font-semibold text-red-600 cursor-pointer select-none leading-relaxed">
-                    By ticking this box, I agree that my personal information will be given to Central Data Technology (CDT)
-                  </label>
-                </div>
-              </div>
-
-              <div class="flex items-center justify-end gap-4 pt-4">
-                <button type="button" @click="closeModals()" class="px-5 py-3 border border-zinc-200 text-zinc-600 hover:bg-zinc-100 transition-colors rounded-xl text-xs font-bold uppercase tracking-wider">Cancel</button>
-                <button type="submit" class="px-8 py-3 bg-primary text-white hover:bg-red-700 shadow-md hover:shadow-lg transition-all rounded-xl text-xs font-bold uppercase tracking-wider">Submit Application</button>
-              </div>
-            </form>
+            @if($jobForm)
+              @include('cdt::partials.tailwind-form', ['form' => $jobForm, 'variant' => 'light'])
+            @else
+              <p class="text-zinc-500 text-sm">Job application form is being configured.</p>
+            @endif
 
           </div>
         </div>

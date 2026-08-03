@@ -103,10 +103,13 @@ class CmsEventServiceProvider extends ServiceProvider
         });
 
         FormEntry::created(function (FormEntry $entry) use ($dispatcher) {
+            $form = $entry->form;
             $dispatcher()->dispatch('form.submitted', [
                 'form_id' => $entry->form_id,
+                'form_name' => $form ? ($form->name ?? $form->title) : null,
                 'entry_id' => $entry->id,
                 'data' => $entry->data,
+                'ip_address' => $entry->ip_address,
             ]);
         });
 

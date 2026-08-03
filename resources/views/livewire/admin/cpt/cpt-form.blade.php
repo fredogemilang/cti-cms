@@ -19,10 +19,21 @@
             <div class="max-w-4xl mx-auto space-y-8">
                 <!-- Post Type Labels -->
                 <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] p-8 border border-gray-200 dark:border-[#272B30] shadow-sm">
-                    <h2 class="text-lg font-bold mb-6 flex items-center gap-2 text-gray-900 dark:text-white">
-                        <span class="material-symbols-outlined text-blue-600">label</span>
-                        Post Type Labels
-                    </h2>
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-[#272B30]">
+                        <h2 class="text-lg font-bold flex items-center gap-2 text-gray-900 dark:text-white">
+                            <span class="material-symbols-outlined text-blue-600">label</span>
+                            Post Type Labels & Slugs
+                        </h2>
+                        {{-- Language Switcher Tabs --}}
+                        <div class="flex items-center bg-gray-100 dark:bg-[#272B30] p-1 rounded-xl">
+                            <button type="button" wire:click="setLocale('en')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeLocale === 'en' ? 'bg-white dark:bg-[#111827] text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white' }}">
+                                🇬🇧 English (EN)
+                            </button>
+                            <button type="button" wire:click="setLocale('id')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeLocale === 'id' ? 'bg-white dark:bg-[#111827] text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white' }}">
+                                🇮🇩 Bahasa Indonesia (ID)
+                            </button>
+                        </div>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
                             <label class="text-xs font-bold uppercase tracking-wider text-[#6F767E]">Singular Name</label>
@@ -279,6 +290,19 @@
                                                                     <option value="many_to_many">Many to Many (Multiple Selection)</option>
                                                                     <option value="one_to_many">One to Many (Single Selection)</option>
                                                                 </select>
+                                                            </div>
+                                                            <div class="md:col-span-2 pt-2 border-t border-gray-200 dark:border-[#272B30]/60">
+                                                                <label class="flex items-center justify-between cursor-pointer">
+                                                                    <div>
+                                                                        <span class="text-xs font-bold text-gray-900 dark:text-white">Rewrite URL (Nested Permalink)</span>
+                                                                        <p class="text-[11px] text-[#6F767E]">If enabled, entries of this CPT will inherit the target parent entry's URL path (e.g. /parent-cpt/parent-slug/child-slug). Default: OFF.</p>
+                                                                    </div>
+                                                                    <input 
+                                                                        type="checkbox" 
+                                                                        wire:model="metaFields.{{ $fieldIndex }}.options.rewrite_url" 
+                                                                        class="rounded border-gray-300 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-blue-600 focus:ring-blue-600 h-5 w-5"
+                                                                    >
+                                                                </label>
                                                             </div>
                                                         </div>
                                                     </div>

@@ -71,6 +71,14 @@ class FormEntry extends Model
     }
 
     /**
+     * Get attribution metadata array.
+     */
+    public function getAttributionData(): array
+    {
+        return $this->data['_attribution'] ?? [];
+    }
+
+    /**
      * Export entry to array format.
      */
     public function toExportArray()
@@ -95,6 +103,22 @@ class FormEntry extends Model
             $export['Submitted By'] = $this->user->name;
         }
 
+        $attr = $this->getAttributionData();
+        $export['UTM Source'] = $attr['utm_source'] ?? '-';
+        $export['UTM Medium'] = $attr['utm_medium'] ?? '-';
+        $export['UTM Campaign'] = $attr['utm_campaign'] ?? '-';
+        $export['Google Click ID (gclid)'] = $attr['gclid'] ?? '-';
+        $export['Facebook Click ID (fbclid)'] = $attr['fbclid'] ?? '-';
+        $export['Device Type'] = $attr['device_type'] ?? '-';
+        $export['Browser'] = $attr['browser'] ?? '-';
+        $export['Operating System'] = $attr['os'] ?? '-';
+        $export['Screen Resolution'] = $attr['screen_resolution'] ?? '-';
+        $export['Browser Language'] = $attr['browser_language'] ?? '-';
+        $export['Page Views Count'] = $attr['page_views_count'] ?? '-';
+        $export['Time to Convert'] = $attr['time_to_convert'] ?? '-';
+        $export['Initial Landing Page'] = $attr['initial_landing_page'] ?? '-';
+        $export['Submission Page'] = $attr['submission_page'] ?? '-';
+        $export['HTTP Referrer'] = $attr['http_referrer'] ?? ($attr['initial_referrer'] ?? '-');
         $export['IP Address'] = $this->ip_address;
 
         return $export;

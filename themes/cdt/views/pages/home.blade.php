@@ -16,7 +16,7 @@
         $heroImg = $page?->block('hero_image');
         $heroImgUrl = $heroImg ? (str_starts_with($heroImg, 'http') || str_starts_with($heroImg, 'themes/') || str_starts_with($heroImg, 'assets/') ? asset($heroImg) : asset('storage/' . $heroImg)) : asset('themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
       @endphp
-      <x-image :src="$heroImgUrl" alt="{{ setting('site_name', 'Central Data Technology') }} Hero Banner" title="{{ setting('site_name', 'Central Data Technology') }}" class="hero-bg-img w-full h-full object-cover origin-center" onerror="this.src='{{ asset('themes/cdt/assets/photo-1451187580459-43490279c0fa-w2072-DWLGXPRP.jpg') }}'" />
+      <x-image :src="$heroImgUrl" alt="{{ setting('site_name', 'Central Data Technology') }} Hero Banner" title="{{ setting('site_name', 'Central Data Technology') }}" class="hero-bg-img w-full h-full object-cover object-[right_center]" onerror="this.src='{{ asset('themes/cdt/assets/photo-1451187580459-43490279c0fa-w2072-DWLGXPRP.jpg') }}'" />
     </div>
   
     <!-- Red Gradient Overlay -->
@@ -192,7 +192,7 @@
                 <a href="{{ $partner->getUrl() }}" x-link
                   class="alliance-link flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-all duration-500 hover:!opacity-100 hover:scale-105 hover:bg-zinc-50 rounded-2xl"
                   data-hover-effect="scale-bounce">
-                  <x-image :src="$logoUrl" alt="{{ $partner->title }}" title="{{ $partner->title }}" class="alliance-logo w-full h-full object-contain" />
+                  <img src="{{ $logoUrl }}" alt="{{ $partner->title }}" title="{{ $partner->title }}" class="alliance-logo w-full h-full object-contain" loading="lazy" />
                 </a>
               @endif
             @endforeach
@@ -337,14 +337,30 @@
   
             @foreach($testimonials as $testimonial)
               @php
+                $locale = app()->getLocale();
+                $translations = $testimonial->meta['_translations'][$locale] ?? [];
+                $meta = array_merge($testimonial->meta ?? [], $translations);
+
                 $logoPath = $testimonial->featured_image;
-                $logoUrl = $logoPath
-                    ? (str_starts_with($logoPath, 'http') ? $logoPath : asset('storage/' . $logoPath))
-                    : null;
-                $personName = $testimonial->getMeta('person') ?? $testimonial->title;
-                $position = $testimonial->getMeta('position') ?? '';
-                $companyName = $testimonial->getTranslation('title') ?? $testimonial->title;
-                $testimonialContent = $testimonial->getTranslation('content') ?? $testimonial->content;
+                $logoUrl = resolve_block_asset($logoPath);
+                if ($logoUrl && (str_contains($logoUrl, '/customer-success/') || !preg_match('/\.(jpg|png|webp|svg|jpeg)$/i', parse_url($logoUrl, PHP_URL_PATH) ?? ''))) {
+                    $logoUrl = null;
+                }
+
+                $companyName = $meta['client_name'] ?? ($translations['title'] ?? $testimonial->title);
+
+                $rawAuthor = $meta['quote_author'] ?? $meta['testimonial_author'] ?? $meta['person'] ?? null;
+                if ($rawAuthor && str_contains($rawAuthor, ' - ')) {
+                    $personName = trim(\Illuminate\Support\Str::before($rawAuthor, ' - '));
+                    $position = trim(\Illuminate\Support\Str::after($rawAuthor, ' - '));
+                } else {
+                    $personName = $rawAuthor ?: $companyName;
+                    $position = $meta['position'] ?? '';
+                }
+
+                $testimonialContent = !empty($meta['quote']) ? $meta['quote']
+                    : (!empty($meta['testimonial_quote']) ? $meta['testimonial_quote']
+                    : (!empty($translations['content']) ? $translations['content'] : $testimonial->content));
               @endphp
               <div class="swiper-slide h-full">
                 <div
@@ -352,7 +368,7 @@
                   <div class="lg:w-1/3 bg-zinc-50 p-12 flex flex-col justify-between border-r border-zinc-100">
                     @if($logoUrl)
                       <div class="h-32 flex justify-start items-center mb-8">
-                        <x-image :src="$logoUrl" alt="{{ $testimonial->title }}" title="{{ $testimonial->title }}" class="max-h-full w-auto max-w-[320px] object-contain object-left mix-blend-multiply" />
+                        <img src="{{ $logoUrl }}" alt="{{ $companyName }}" title="{{ $companyName }}" class="max-h-full w-auto max-w-[280px] object-contain object-left mix-blend-multiply" />
                       </div>
                     @else
                       <div class="h-32 mb-8"></div>
@@ -366,8 +382,12 @@
                         @endfor
                       </div>
                       <h3 class="font-bold text-xl text-dark mb-1">{{ $personName }}</h3>
-                      <p class="text-sm text-zinc-500 uppercase tracking-wider mb-2">{{ $position }}</p>
-                      <p class="text-sm font-semibold text-primary">{{ $companyName }}</p>
+                      @if(!empty($position))
+                        <p class="text-sm text-zinc-500 uppercase tracking-wider mb-2">{{ $position }}</p>
+                      @endif
+                      @if($companyName !== $personName)
+                        <p class="text-sm font-semibold text-primary uppercase">{{ $companyName }}</p>
+                      @endif
                     </div>
                   </div>
                   <div class="lg:w-2/3 p-12 flex items-center relative">
@@ -375,8 +395,8 @@
                       fill="currentColor" viewBox="0 0 24 24">
                       <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                     </svg>
-                    <div class="relative z-10">
-                      <div class="text-base md:text-lg text-dark font-light leading-relaxed mb-6">{!! $testimonialContent !!}</div>
+                    <div class="relative z-10 prose max-w-none text-zinc-700 leading-relaxed space-y-4">
+                      {!! $testimonialContent !!}
                     </div>
                   </div>
                 </div>
@@ -385,7 +405,6 @@
 
           </div>
         </div>
-      </div>
       </div>
     </div>
   </section>

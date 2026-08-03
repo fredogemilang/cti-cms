@@ -101,10 +101,17 @@ class CptRelationshipTest extends TestCase
         $this->assertCount(1, $parent);
         $this->assertEquals($productEntry->id, $parent->first()->id);
 
-        // 9. Verify Nested URL generation for SEO
-        $this->assertStringContainsString('/iphone-15-pro/iphone-15-pro-256gb-natural-titanium', $subProductEntry->getUrl());
+        // 9. Verify URL when rewrite_url is false (default) -> Standalone URL
+        $this->assertEquals(url('/sub-products/iphone-15-pro-256gb-natural-titanium'), $subProductEntry->getUrl());
 
-        // 10. Verify Schema JSON-LD output
+        // 10. Enable rewrite_url on MetaField -> Nested URL
+        $options = $metaField->options;
+        $options['rewrite_url'] = true;
+        $metaField->update(['options' => $options]);
+
+        $this->assertStringContainsString('/products/iphone-15-pro/iphone-15-pro-256gb-natural-titanium', $subProductEntry->getUrl());
+
+        // 11. Verify Schema JSON-LD output
         $schema = $productEntry->getSchemaJsonLd();
         $this->assertEquals('iPhone 15 Pro', $schema['name']);
         $this->assertArrayHasKey('isRelatedTo', $schema);

@@ -70,19 +70,7 @@
     @endphp
     <div class="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 w-full">
       <!-- Breadcrumbs -->
-      <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-10" aria-label="Breadcrumb">
-        <a href="{{ localized_url('/') }}" class="hover:text-primary transition-colors">{{ t('common.home', 'Home') }}</a>
-        @if($hasAllianceArchive)
-          <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          <a href="{{ url('/technology-alliance') }}" class="hover:text-primary transition-colors">{{ t('common.technology_alliance', 'Technology Alliance') }}</a>
-        @endif
-        @if($parentProduct)
-          <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          <a href="{{ $parentProduct->getUrl() }}" class="hover:text-primary transition-colors">{{ $parentProduct->title }}</a>
-        @endif
-        <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        <span class="text-zinc-800 font-bold">{{ $entry->title }}</span>
-      </nav>
+      <x-seo-breadcrumbs :entity="$entry" class="text-zinc-500 mb-10" />
   
       <div class="max-w-5xl mx-auto flex flex-col items-center text-center">
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100 border border-zinc-200 text-sm font-bold uppercase tracking-widest text-primary mb-8">

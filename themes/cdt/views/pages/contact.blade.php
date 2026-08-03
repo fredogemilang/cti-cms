@@ -8,18 +8,14 @@
     <!-- Immersive background -->
     <div class="absolute inset-0 z-0">
       <x-image :src="resolve_block_asset($page->getBlockValue('hero_image', 'photo-1423666639041-f56000c27a9a-w2070.jpg'))"
-        class="w-full h-full object-cover object-center" alt="Contact Us Background">
+        class="w-full h-full object-cover object-[right_center]" alt="Contact Us Background" />
       <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/95 to-transparent w-full lg:w-3/4"></div>
     </div>
 
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10 w-full">
       <div class="max-w-3xl text-white">
         <!-- Breadcrumb -->
-        <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-white/70 mb-10" aria-label="Breadcrumb" data-gsap="fade-in">
-          <a href="{{ url('/') }}" class="hover:text-white transition-colors">{{ t('contact.breadcrumb_home', 'Home') }}</a>
-          <svg class="w-3 h-3 text-white/40" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-          <span class="text-white font-bold" aria-current="page">{{ translate($page, 'title') }}</span>
-        </nav>
+        <x-seo-breadcrumbs :entity="$page" class="text-white/70 mb-10" />
 
         <div class="overflow-hidden mb-2">
           <p class="text-lg md:text-xl font-light text-white/90" data-gsap="fade-up">{{ $page->getBlockValue('hero_subtitle', 'Get in Touch') }}</p>

@@ -26,6 +26,10 @@ class CdtThemeSeeder extends Seeder
                 'has_archive' => true,
                 'publicly_queryable' => true,
                 'is_active' => true,
+                'translations' => [
+                    'en' => ['singular_label' => 'Product / Alliance', 'plural_label' => 'Products & Alliances', 'slug' => 'products', 'description' => 'Global technology partners and solution products'],
+                    'id' => ['singular_label' => 'Product / Alliance', 'plural_label' => 'Products & Alliances', 'slug' => 'products', 'description' => 'Global technology partners and solution products'],
+                ],
             ]
         );
 
@@ -43,6 +47,10 @@ class CdtThemeSeeder extends Seeder
                 'has_archive' => true,
                 'publicly_queryable' => true,
                 'is_active' => true,
+                'translations' => [
+                    'en' => ['singular_label' => 'Solution', 'plural_label' => 'Solutions', 'slug' => 'solutions', 'description' => 'Comprehensive IT solutions for enterprise digital transformation'],
+                    'id' => ['singular_label' => 'Solution', 'plural_label' => 'Solutions', 'slug' => 'solutions', 'description' => 'Comprehensive IT solutions for enterprise digital transformation'],
+                ],
             ]
         );
 
@@ -60,6 +68,10 @@ class CdtThemeSeeder extends Seeder
                 'has_archive' => true,
                 'publicly_queryable' => true,
                 'is_active' => true,
+                'translations' => [
+                    'en' => ['singular_label' => 'Customer Story', 'plural_label' => 'Customer Success Stories', 'slug' => 'customer-success', 'description' => 'Case studies and customer success testimonials'],
+                    'id' => ['singular_label' => 'Customer Story', 'plural_label' => 'Customer Success Stories', 'slug' => 'customer-success', 'description' => 'Case studies and customer success testimonials'],
+                ],
             ]
         );
 

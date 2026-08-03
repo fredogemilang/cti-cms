@@ -172,7 +172,14 @@ class CaptchaService
         <div class="mb-3">
             <div class="cf-turnstile" data-sitekey="'.e($siteKey).'" data-theme="auto"></div>
         </div>
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
+        <script>
+            if (!window.turnstile && !document.querySelector("script[src*=\"turnstile/v0/api.js\"]")) {
+                const s = document.createElement("script");
+                s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+                s.async = true; s.defer = true;
+                document.head.appendChild(s);
+            }
+        </script>';
     }
 
     /**

@@ -360,23 +360,70 @@
             
             <div class="space-y-3">
                 @foreach($cmsCptFields as $cmsField)
-                <div class="flex items-center gap-4 p-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B]">
-                    <div class="w-1/3">
-                        <p class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">{{ $cmsField['label'] }}</p>
-                        <p class="text-xs text-[#6F767E]">{{ $cmsField['key'] }}</p>
+                <div class="p-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] space-y-3">
+                    <div class="flex items-center gap-4">
+                        <div class="w-1/3">
+                            <p class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">{{ $cmsField['label'] }}</p>
+                            <p class="text-xs text-[#6F767E]">{{ $cmsField['key'] }}</p>
+                        </div>
+                        <span class="material-symbols-outlined text-[#6F767E]">arrow_forward</span>
+                        <div class="flex-1">
+                            <select
+                                wire:model.live="fieldMappings.{{ $cmsField['key'] }}"
+                                class="w-full h-10 rounded-lg border-none bg-white dark:bg-[#1A1A1A] px-3 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#8B5CF6]"
+                            >
+                                <option value="">-- Don't import --</option>
+                                @foreach($wpCptFields as $wpField)
+                                <option value="{{ $wpField['path'] }}">{{ $wpField['label'] }} {{ $wpField['sample'] ? '(' . $wpField['sample'] . ')' : '' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                    <span class="material-symbols-outlined text-[#6F767E]">arrow_forward</span>
-                    <div class="flex-1">
-                        <select
-                            wire:model.live="fieldMappings.{{ $cmsField['key'] }}"
-                            class="w-full h-10 rounded-lg border-none bg-white dark:bg-[#1A1A1A] px-3 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#8B5CF6]"
-                        >
-                            <option value="">-- Don't import --</option>
-                            @foreach($wpCptFields as $wpField)
-                            <option value="{{ $wpField['path'] }}">{{ $wpField['label'] }} {{ $wpField['sample'] ? '(' . $wpField['sample'] . ')' : '' }}</option>
-                            @endforeach
-                        </select>
+
+                    @php
+                        $selectedWpRepeaterPath = data_get($fieldMappings, $cmsField['key']);
+                        $availableWpSubFields = $this->getWpRepeaterSubFields($selectedWpRepeaterPath);
+                    @endphp
+
+                    {{-- Repeater Sub-field Mapping UI --}}
+                    @if(($cmsField['type'] ?? '') === 'repeater' && !empty($selectedWpRepeaterPath) && !empty($cmsField['sub_fields']))
+                    <div class="ml-4 md:ml-6 p-4 rounded-2xl bg-purple-50/60 dark:bg-purple-900/15 border border-purple-200/80 dark:border-purple-800/40 space-y-3">
+                        <div class="flex items-center justify-between mb-1">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-purple-500 text-sm">account_tree</span>
+                                <p class="text-xs font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wider">Sub-field Pairing for "{{ $cmsField['label'] }}"</p>
+                            </div>
+                            <span class="text-[11px] text-[#6F767E]">Pair inner sub-fields from WordPress</span>
+                        </div>
+
+                        @foreach($cmsField['sub_fields'] as $subField)
+                        <div class="flex items-center gap-3 p-2 rounded-xl bg-white dark:bg-[#111111] border border-purple-100 dark:border-purple-900/30">
+                            <div class="w-1/3 pl-2">
+                                <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $subField['label'] }}</span>
+                                <span class="text-[10px] text-[#6F767E] block font-mono">key: {{ $subField['name'] }} ({{ $subField['type'] }})</span>
+                            </div>
+                            <span class="material-symbols-outlined text-xs text-purple-400">subdirectory_arrow_right</span>
+                            <div class="flex-1">
+                                <select
+                                    wire:model.live="repeaterSubMappings.{{ $cmsField['key'] }}.{{ $subField['name'] }}"
+                                    class="w-full h-9 rounded-lg border-none bg-gray-50 dark:bg-[#1A1A1A] px-3 text-xs font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#8B5CF6]"
+                                >
+                                    <option value="">-- Don't import sub-field --</option>
+                                    @if(!empty($availableWpSubFields))
+                                        @foreach($availableWpSubFields as $wpSubName)
+                                        <option value="{{ $wpSubName }}">WP Sub-field: {{ $wpSubName }}</option>
+                                        @endforeach
+                                    @else
+                                        @foreach($wpCptFields as $wpField)
+                                        <option value="{{ $wpField['path'] }}">{{ $wpField['label'] }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
+                    @endif
                 </div>
                 @endforeach
             </div>
@@ -485,9 +532,10 @@
                     </div>
                 </div>
 
-                {{-- Taxonomy Stats --}}
-                @if(!empty($importResults['categories']) || !empty($importResults['tags']))
-                <div class="grid grid-cols-2 gap-4 w-full max-w-lg mb-8">
+                {{-- Taxonomy & Hierarchy Stats --}}
+                @if(!empty($importResults['categories']) || !empty($importResults['tags']) || !empty($importResults['hierarchical_parents']))
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg mb-8">
+                    @if(!empty($importResults['categories']))
                     <div class="p-3.5 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-left flex items-center gap-3">
                         <span class="material-symbols-outlined text-purple-500 text-2xl">folder</span>
                         <div>
@@ -495,6 +543,8 @@
                             <p class="text-xs font-medium text-[#6F767E]">Categories Linked</p>
                         </div>
                     </div>
+                    @endif
+                    @if(!empty($importResults['tags']))
                     <div class="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-left flex items-center gap-3">
                         <span class="material-symbols-outlined text-indigo-500 text-2xl">label</span>
                         <div>
@@ -502,6 +552,16 @@
                             <p class="text-xs font-medium text-[#6F767E]">Tags Linked</p>
                         </div>
                     </div>
+                    @endif
+                    @if(!empty($importResults['hierarchical_parents']))
+                    <div class="p-3.5 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-left flex items-center gap-3">
+                        <span class="material-symbols-outlined text-teal-500 text-2xl">account_tree</span>
+                        <div>
+                            <p class="text-xl font-bold text-teal-600 dark:text-teal-400">{{ $importResults['hierarchical_parents'] ?? 0 }}</p>
+                            <p class="text-xs font-medium text-[#6F767E]">Hierarchical Parents Linked</p>
+                        </div>
+                    </div>
+                    @endif
                 </div>
                 @endif
 

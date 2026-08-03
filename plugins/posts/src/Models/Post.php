@@ -2,6 +2,7 @@
 
 namespace Plugins\Posts\Models;
 
+use App\Models\CptEntry;
 use App\Traits\FindsByLocalizedSlug;
 use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
@@ -133,5 +134,15 @@ class Post extends Model
             'archived' => ['color' => 'amber', 'label' => 'Archived'],
             default => ['color' => 'gray', 'label' => ucfirst($this->status)],
         };
+    }
+
+    public function cptEntries(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            CptEntry::class,
+            'post_cpt_relations',
+            'post_id',
+            'cpt_entry_id'
+        )->withPivot('cpt_slug')->withTimestamps();
     }
 }

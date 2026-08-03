@@ -97,3 +97,22 @@ Publish theme assets to the public directory using artisan:
 ```bash
 php artisan theme:publish cdt
 ```
+
+---
+
+## 6. Mandatory SEO Breadcrumb Component (`<x-seo-breadcrumbs>`)
+
+All theme templates (single CPTs, single posts, static pages, archives) **MUST** use the official `<x-seo-breadcrumbs>` component for breadcrumbs.
+
+```blade
+<!-- Mandatory: Always use <x-seo-breadcrumbs> -->
+<x-seo-breadcrumbs :entity="$entry" class="text-white/70 mb-10" />
+
+<!-- For static pages -->
+<x-seo-breadcrumbs :entity="$page" class="text-zinc-500 mb-8" />
+```
+
+### Strict Rules:
+1. **No Manual `<nav>` Tags**: Writing manual/hardcoded `<nav>` breadcrumb HTML, `<a>` tag chains, or inline SVG loops in Blade views is **strictly forbidden**.
+2. **Automatic Schema Sync**: `<x-seo-breadcrumbs>` integrates directly with `BreadcrumbService`, automatically respecting `$postType->has_archive`, parent/child entry relations, and generating matching JSON-LD `BreadcrumbList` schema in `<head>`.
+3. **Attribute Customization**: Pass custom colors, font sizes, or margins via standard Blade `$attributes` (`class="..."`).

@@ -105,9 +105,15 @@ class PluginServiceProvider extends ServiceProvider
                 return;
             }
 
-            // Collect slugs to build regex constraints
-            $archiveSlugs = CustomPostType::withArchive()->pluck('slug')->toArray();
-            $singleSlugs = CustomPostType::publiclyQueryable()->pluck('slug')->toArray();
+            // Collect all localized slugs dynamically across all active CPTs
+            $archiveSlugs = CustomPostType::withArchive()->get()
+                ->flatMap(fn ($cpt) => $cpt->getAllLocalizedSlugs())
+                ->unique()->values()->toArray();
+
+            $singleSlugs = CustomPostType::publiclyQueryable()->get()
+                ->flatMap(fn ($cpt) => $cpt->getAllLocalizedSlugs())
+                ->unique()->values()->toArray();
+
             $taxonomySlugs = CustomTaxonomy::active()->pluck('slug')->toArray();
 
             if (empty($archiveSlugs) && empty($singleSlugs) && empty($taxonomySlugs)) {

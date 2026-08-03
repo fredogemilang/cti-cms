@@ -5,8 +5,10 @@ namespace App\Livewire\Admin;
 use App\Models\CptEntry;
 use App\Models\CustomPostType;
 use App\Models\Media;
+use App\Models\MetaField;
 use App\Services\MediaUsageService;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -388,12 +390,13 @@ class WordPressCptMigration extends Component
                     // Inside meta context: check if it's an associative array (object-like)
                     $isAssoc = array_keys($value) !== range(0, count($value) - 1);
 
-                    // Check if this is a JetEngine repeater pattern: keys like 'item-0', 'item-1'...
+                    // Check if this is a JetEngine or sequential array repeater pattern
+                    $firstItem = reset($value);
+                    $isListRepeater = ! $isAssoc && is_array($firstItem) && array_keys($firstItem) !== range(0, count($firstItem) - 1);
                     $isJetRepeater = $isAssoc && $this->isJetEngineRepeater($value);
 
-                    if ($isJetRepeater) {
+                    if ($isJetRepeater || $isListRepeater) {
                         // Expose the whole repeater as a single mappable field
-                        $firstItem = reset($value);
                         $subFieldNames = is_array($firstItem) ? array_keys($firstItem) : [];
                         $subFieldPreview = implode(', ', $subFieldNames);
                         $itemCount = count($value);
@@ -458,8 +461,12 @@ class WordPressCptMigration extends Component
     /**
      * Check if an array looks like a JetEngine repeater (keys: item-0, item-1, ...).
      */
-    protected function isJetEngineRepeater(array $data): bool
+    protected function isJetEngineRepeater($data): bool
     {
+        if (! is_array($data)) {
+            return false;
+        }
+
         $keys = array_keys($data);
         if (count($keys) < 1) {
             return false;
@@ -485,6 +492,7 @@ class WordPressCptMigration extends Component
             'excerpt' => 'excerpt.rendered',
             'featured_image' => 'featured_media',
             'published_at' => 'date',
+            'parent_id' => 'parent',
         ];
 
         // Get CMS CPT meta fields
@@ -501,6 +509,13 @@ class WordPressCptMigration extends Component
             ['key' => 'featured_image', 'label' => 'Featured Image'],
             ['key' => 'published_at', 'label' => 'Published Date'],
         ];
+
+        if ($this->selectedCmsCpt !== 'plugin_post') {
+            $this->cmsCptFields[] = [
+                'key' => 'parent_id',
+                'label' => 'Parent Entry (Hierarchy)',
+            ];
+        }
 
         // Add meta fields from selected CMS CPT
         if ($this->selectedCmsCpt === 'plugin_post') {
@@ -534,6 +549,42 @@ class WordPressCptMigration extends Component
                 }
             }
         }
+    }
+
+    public function getWpRepeaterSubFields(?string $path): array
+    {
+        if (empty($path)) {
+            return [];
+        }
+        if (isset($this->wpRepeaterSubFields[$path])) {
+            return $this->wpRepeaterSubFields[$path];
+        }
+        $key = last(explode('.', $path));
+        foreach ($this->wpRepeaterSubFields as $wpPath => $subFields) {
+            if (last(explode('.', $wpPath)) === $key) {
+                return $subFields;
+            }
+        }
+
+        return [];
+    }
+
+    protected function getFlattenedFieldMappings(): array
+    {
+        return Arr::dot($this->fieldMappings);
+    }
+
+    protected function getFlattenedRepeaterSubMappings(string $cmsFieldKey): array
+    {
+        $raw = data_get($this->repeaterSubMappings, $cmsFieldKey)
+            ?? data_get($this->repeaterSubMappings, str_replace('.', '_', $cmsFieldKey))
+            ?? [];
+
+        if (! is_array($raw)) {
+            return [];
+        }
+
+        return Arr::dot($raw);
     }
 
     public function updatedSelectedCmsCpt()
@@ -574,10 +625,7 @@ class WordPressCptMigration extends Component
         }
 
         // Check if WP field is a discovered repeater
-        $wpSubFields = $this->wpRepeaterSubFields[$value] ?? null;
-        if (! $wpSubFields) {
-            return;
-        }
+        $wpSubFields = $this->getWpRepeaterSubFields($value);
 
         // Get CMS sub-fields
         $cmsSubFields = $cmsField['sub_fields'] ?? [];
@@ -590,11 +638,11 @@ class WordPressCptMigration extends Component
 
         foreach ($cmsSubFields as $cmsSub) {
             $cmsName = $cmsSub['name'];
-            $bestMatch = $this->findBestSubFieldMatch($cmsName, $wpSubFields);
+            $bestMatch = ! empty($wpSubFields) ? $this->findBestSubFieldMatch($cmsName, $wpSubFields) : null;
             $mapping[$cmsName] = $bestMatch ?? '';
         }
 
-        $this->repeaterSubMappings[$cmsFieldKey] = $mapping;
+        data_set($this->repeaterSubMappings, $cmsFieldKey, $mapping);
     }
 
     /**
@@ -964,8 +1012,64 @@ SNIPPET;
         if ($this->currentBatchIndex >= $this->totalBatchCount) {
             $this->isBatchImporting = false;
             $this->importProgress = 100;
+            $this->resolveParentRelationships();
             app(MediaUsageService::class)->clearCache();
         }
+    }
+
+    /**
+     * Resolve parent_id relationships for hierarchical CPT entries after batch import.
+     */
+    protected function resolveParentRelationships(): void
+    {
+        if (empty($this->selectedCmsCpt) || $this->selectedCmsCpt === 'plugin_post') {
+            return;
+        }
+
+        $allEntries = CptEntry::where('post_type_id', $this->selectedCmsCpt)->get();
+        if ($allEntries->isEmpty()) {
+            return;
+        }
+
+        $wpToLocalMap = [];
+        $entriesWithParent = [];
+
+        foreach ($allEntries as $entry) {
+            $meta = $entry->meta ?? [];
+            if (is_array($meta)) {
+                if (! empty($meta['wp_original_id'])) {
+                    $wpToLocalMap[(int) $meta['wp_original_id']] = $entry->id;
+                }
+                if (! empty($meta['wp_original_ids']) && is_array($meta['wp_original_ids'])) {
+                    foreach ($meta['wp_original_ids'] as $wid) {
+                        $wpToLocalMap[(int) $wid] = $entry->id;
+                    }
+                }
+                if (! empty($meta['wp_parent_id'])) {
+                    $entriesWithParent[] = $entry;
+                }
+            }
+        }
+
+        if (empty($entriesWithParent)) {
+            return;
+        }
+
+        $resolvedCount = 0;
+
+        foreach ($entriesWithParent as $entry) {
+            $wpParentId = (int) ($entry->meta['wp_parent_id'] ?? 0);
+            if ($wpParentId > 0 && isset($wpToLocalMap[$wpParentId])) {
+                $localParentId = (int) $wpToLocalMap[$wpParentId];
+                if ($entry->parent_id !== $localParentId && $entry->id !== $localParentId) {
+                    $entry->parent_id = $localParentId;
+                    $entry->save();
+                    $resolvedCount++;
+                }
+            }
+        }
+
+        $this->importResults['hierarchical_parents'] = $resolvedCount;
     }
 
     protected function importMonolingualPosts(string $restBase): void
@@ -1078,6 +1182,9 @@ SNIPPET;
                 }
 
                 if ($entry) {
+                    $meta = $entry->meta ?? [];
+                    $wpOriginalIds = $meta['wp_original_ids'] ?? [$defaultPost['id']];
+
                     // Add translations for other languages
                     foreach ($otherPosts as $otherPost) {
                         $otherLang = $otherPost['lang'] ?? 'other';
@@ -1091,27 +1198,32 @@ SNIPPET;
                         $entry->setTranslation('title', $otherLang, $transTitle);
                         $entry->setTranslation('slug', $otherLang, $transSlug);
                         $entry->setTranslation('content', $otherLang, $transContent);
-                        $entry->save();
+
+                        if (! empty($otherPost['id'])) {
+                            $wpOriginalIds[] = (int) $otherPost['id'];
+                        }
 
                         $this->importResults['translated']++;
                     }
+
+                    $meta['wp_original_ids'] = array_values(array_unique($wpOriginalIds));
+                    $entry->meta = $meta;
+                    $entry->save();
                 }
             }
 
             $this->importProgress = 50 + round(($done / $total) * 50); // 50–100%: processing
         }
+
+        $this->resolveParentRelationships();
     }
 
     /**
-     * Append locale to slug to ensure uniqueness across translations.
+     * Clean slug for translations (slug is stored inside locale JSON scope).
      */
     protected function localizeSlug(string $slug, string $locale): string
     {
-        if (str_ends_with($slug, '-'.$locale)) {
-            return $slug;
-        }
-
-        return $slug.'-'.$locale;
+        return $slug;
     }
 
     /**
@@ -1158,6 +1270,46 @@ SNIPPET;
         return $posts;
     }
 
+    protected function findExistingPolylangEntry(array $wpPost, string $slug, $targetCpt)
+    {
+        $wpId = (int) ($wpPost['id'] ?? 0);
+        $polylangTranslations = $wpPost['translations'] ?? [];
+        $relatedWpIds = array_values(array_unique(array_filter(array_merge(
+            [$wpId],
+            is_array($polylangTranslations) ? array_values($polylangTranslations) : []
+        ))));
+
+        if ($targetCpt === 'plugin_post') {
+            if (class_exists(Post::class)) {
+                $allPosts = Post::all();
+                foreach ($allPosts as $p) {
+                    $meta = $p->meta ?? [];
+                    $origId = (int) ($meta['wp_original_id'] ?? 0);
+                    $origIds = array_map('intval', is_array($meta['wp_original_ids'] ?? null) ? $meta['wp_original_ids'] : []);
+                    if (($origId && in_array($origId, $relatedWpIds, true)) || array_intersect($origIds, $relatedWpIds)) {
+                        return $p;
+                    }
+                }
+
+                return Post::where('slug', $slug)->first();
+            }
+
+            return null;
+        }
+
+        $entries = CptEntry::where('post_type_id', $targetCpt)->get();
+        foreach ($entries as $e) {
+            $meta = $e->meta ?? [];
+            $origId = (int) ($meta['wp_original_id'] ?? 0);
+            $origIds = array_map('intval', is_array($meta['wp_original_ids'] ?? null) ? $meta['wp_original_ids'] : []);
+            if (($origId && in_array($origId, $relatedWpIds, true)) || array_intersect($origIds, $relatedWpIds)) {
+                return $e;
+            }
+        }
+
+        return null;
+    }
+
     protected function importOrSkip(array $wpPost): string
     {
         try {
@@ -1165,6 +1317,8 @@ SNIPPET;
 
             if ($result === 'success') {
                 $this->importResults['success']++;
+            } elseif ($result === 'translated') {
+                // Counted in translated, do not treat as skipped or failed
             } elseif ($result === 'skipped') {
                 $this->importResults['skipped']++;
                 $this->importResults['skipped_posts'][] = [
@@ -1191,14 +1345,101 @@ SNIPPET;
         // Get mapped values
         $title = html_entity_decode(strip_tags($this->getWpFieldValue($wpPost, $this->fieldMappings['title'] ?? 'title.rendered') ?? ''), ENT_QUOTES, 'UTF-8');
         $slug = $this->getWpFieldValue($wpPost, $this->fieldMappings['slug'] ?? 'slug') ?? Str::slug($title);
+        $excerpt = strip_tags($this->getWpFieldValue($wpPost, $this->fieldMappings['excerpt'] ?? 'excerpt.rendered') ?? '');
+        $excerpt = html_entity_decode(trim($excerpt), ENT_QUOTES, 'UTF-8');
 
-        // Check if entry with same slug already exists
-        if ($this->selectedCmsCpt === 'plugin_post') {
-            if (Post::where('slug', $slug)->exists()) {
+        $rawLang = $wpPost['lang'] ?? null;
+        $wpLang = $rawLang ? strtolower(explode('_', str_replace('-', '_', $rawLang))[0]) : CptEntry::defaultLocale();
+        $cmsDefaultLocale = CptEntry::defaultLocale();
+        $currentLang = $wpLang;
+        $primaryLang = $cmsDefaultLocale;
+
+        $isPolylangPost = $this->isPolylang || ! empty($wpPost['lang']) || ! empty($wpPost['translations']);
+
+        if ($isPolylangPost) {
+            $existing = $this->findExistingPolylangEntry($wpPost, $slug, $this->selectedCmsCpt);
+
+            if ($existing) {
+                $transContent = $this->getWpFieldValue($wpPost, $this->fieldMappings['content'] ?? 'content.rendered') ?? '';
+                if ($this->downloadContentImages) {
+                    $transContent = $this->processContentImages($transContent);
+                }
+
+                $thisMeta = [];
+                foreach ($this->getFlattenedFieldMappings() as $cmsField => $wpField) {
+                    if (Str::startsWith($cmsField, 'meta.')) {
+                        $metaKey = Str::after($cmsField, 'meta.');
+                        $rawValue = $this->getWpFieldValue($wpPost, $wpField);
+                        $cmsFieldDef = $cmsMetaFieldDefs[$metaKey] ?? null;
+                        $thisMeta[$metaKey] = $this->convertMetaValue($rawValue, $cmsFieldDef, $cmsField);
+                    }
+                }
+
+                if ($currentLang !== $primaryLang) {
+                    $existingTransTitle = method_exists($existing, 'hasTranslation')
+                        ? $existing->hasTranslation('title', $currentLang)
+                        : null;
+
+                    if (! empty($existingTransTitle)) {
+                        return 'skipped';
+                    }
+
+                    $transSlug = $this->localizeSlug($slug, $currentLang);
+
+                    if (method_exists($existing, 'setTranslation')) {
+                        $existing->setTranslation('title', $currentLang, $title);
+                        $existing->setTranslation('slug', $currentLang, $transSlug);
+                        $existing->setTranslation('content', $currentLang, $transContent);
+                    }
+                } else {
+                    // Current lang IS primary lang (e.g. English arrives after Indonesian created the initial row)
+                    $existing->title = $title;
+                    $existing->slug = $slug;
+                    $existing->content = $transContent;
+                    $existing->excerpt = $excerpt;
+                }
+
+                $meta = $existing->meta ?? [];
+                if ($currentLang === $primaryLang) {
+                    foreach ($thisMeta as $mKey => $mVal) {
+                        if ($mVal !== null) {
+                            $meta[$mKey] = $mVal;
+                        }
+                    }
+                } else {
+                    foreach ($thisMeta as $mKey => $mVal) {
+                        if ($mVal !== null) {
+                            $meta['_translations'][$currentLang][$mKey] = $mVal;
+                        }
+                    }
+                }
+
+                $wpOriginalIds = $meta['wp_original_ids'] ?? [$meta['wp_original_id'] ?? null];
+                if (! empty($wpPost['id'])) {
+                    $wpOriginalIds[] = (int) $wpPost['id'];
+                }
+                if (! empty($wpPost['translations']) && is_array($wpPost['translations'])) {
+                    foreach ($wpPost['translations'] as $tId) {
+                        $wpOriginalIds[] = (int) $tId;
+                    }
+                }
+                $meta['wp_original_ids'] = array_values(array_unique(array_filter($wpOriginalIds)));
+                $existing->meta = $meta;
+                $existing->save();
+
+                $this->importResults['translated']++;
+
+                return 'translated';
+            }
+        } else {
+            // Standard monolingual duplicate check
+            if ($this->selectedCmsCpt === 'plugin_post') {
+                if (Post::where('slug', $slug)->exists()) {
+                    return 'skipped';
+                }
+            } elseif (CptEntry::where('slug', $slug)->where('post_type_id', $this->selectedCmsCpt)->exists()) {
                 return 'skipped';
             }
-        } elseif (CptEntry::where('slug', $slug)->where('post_type_id', $this->selectedCmsCpt)->exists()) {
-            return 'skipped';
         }
 
         // Get content
@@ -1240,6 +1481,13 @@ SNIPPET;
 
             $isFeatured = (bool) ($this->getWpFieldValue($wpPost, $this->fieldMappings['is_featured'] ?? 'sticky') ?? false);
 
+            $wpOriginalIds = [(int) $wpPost['id']];
+            if (! empty($wpPost['translations']) && is_array($wpPost['translations'])) {
+                foreach ($wpPost['translations'] as $tId) {
+                    $wpOriginalIds[] = (int) $tId;
+                }
+            }
+
             $post = Post::create([
                 'title' => $title,
                 'slug' => $slug,
@@ -1250,6 +1498,10 @@ SNIPPET;
                 'published_at' => $publishedAt,
                 'author_id' => $authorId,
                 'is_featured' => $isFeatured,
+                'meta' => [
+                    'wp_original_id' => (int) $wpPost['id'],
+                    'wp_original_ids' => array_values(array_unique(array_filter($wpOriginalIds))),
+                ],
             ]);
 
             $post->forceFill(['created_at' => $publishedAt])->save();
@@ -1260,10 +1512,29 @@ SNIPPET;
         }
 
         // Build meta data from mapped meta fields
+        $wpParentId = null;
+        if (! empty($this->fieldMappings['parent_id'])) {
+            $wpParentId = $this->getWpFieldValue($wpPost, $this->fieldMappings['parent_id']);
+        } elseif (isset($wpPost['parent'])) {
+            $wpParentId = $wpPost['parent'];
+        }
+
+        $wpOriginalIds = [(int) $wpPost['id']];
+        if (! empty($wpPost['translations']) && is_array($wpPost['translations'])) {
+            foreach ($wpPost['translations'] as $tId) {
+                $wpOriginalIds[] = (int) $tId;
+            }
+        }
+
         $meta = [
             'wp_original_id' => $wpPost['id'],
+            'wp_original_ids' => array_values(array_unique(array_filter($wpOriginalIds))),
             'wp_original_url' => $wpPost['link'] ?? null,
         ];
+
+        if ($wpParentId && (int) $wpParentId > 0) {
+            $meta['wp_parent_id'] = (int) $wpParentId;
+        }
 
         // Load CMS CPT meta field definitions for type-aware conversion
         $cmsMetaFieldDefs = [];
@@ -1276,7 +1547,7 @@ SNIPPET;
             }
         }
 
-        foreach ($this->fieldMappings as $cmsField => $wpField) {
+        foreach ($this->getFlattenedFieldMappings() as $cmsField => $wpField) {
             if (Str::startsWith($cmsField, 'meta.')) {
                 $metaKey = Str::after($cmsField, 'meta.');
                 $rawValue = $this->getWpFieldValue($wpPost, $wpField);
@@ -1287,23 +1558,33 @@ SNIPPET;
             }
         }
 
-        // Create the CPT entry
+        // Create initial CPT entry (populating primary columns to satisfy MySQL NOT NULL constraints)
         $entry = CptEntry::create([
             'post_type_id' => $this->selectedCmsCpt,
             'title' => $title,
             'slug' => $this->ensureUniqueSlug($slug),
             'content' => $content,
             'excerpt' => $excerpt,
-            'featured_image' => $featuredImage,
             'status' => 'published',
             'published_at' => $publishedAt,
             'author_id' => auth()->id(),
+            'featured_image' => $featuredImage,
             'meta' => $meta,
         ]);
 
-        // Force set created_at to preserve original date
+        // If the initial post is in a non-default locale (e.g. Indonesian comes first), also store into translations JSON
+        if ($wpLang !== $cmsDefaultLocale && method_exists($entry, 'setTranslation')) {
+            $entry->setTranslation('title', $wpLang, $title);
+            $entry->setTranslation('slug', $wpLang, $this->localizeSlug($slug, $wpLang));
+            $entry->setTranslation('content', $wpLang, $content);
+            $entry->setTranslation('excerpt', $wpLang, $excerpt);
+            $entry->save();
+        }
+
         $entry->created_at = $publishedAt;
         $entry->save();
+
+        return 'success';
 
         return 'success';
     }
@@ -1360,7 +1641,7 @@ SNIPPET;
 
         // Get sub-field name mapping (CMS name => WP name)
         // We need to invert it to (WP name => CMS name) for conversion
-        $subMapping = $this->repeaterSubMappings[$cmsFieldKey] ?? [];
+        $subMapping = $this->getFlattenedRepeaterSubMappings($cmsFieldKey);
         $wpToCmsNameMap = [];
         foreach ($subMapping as $cmsName => $wpName) {
             if (! empty($wpName)) {
@@ -1384,7 +1665,7 @@ SNIPPET;
             if (! is_array($item)) {
                 continue;
             }
-            $result[] = $this->convertRepeaterItem($item, $cmsSubFieldTypes, $wpToCmsNameMap);
+            $result[] = $this->convertRepeaterItem($item, $cmsSubFieldTypes, $wpToCmsNameMap, $subMapping);
         }
 
         return $result;
@@ -1393,10 +1674,33 @@ SNIPPET;
     /**
      * Convert a single repeater item, handling media sub-fields and name remapping.
      */
-    protected function convertRepeaterItem(array $item, array $cmsSubFieldTypes, array $wpToCmsNameMap = []): array
+    protected function convertRepeaterItem(array $item, array $cmsSubFieldTypes, array $wpToCmsNameMap = [], array $cmsSubMapping = []): array
     {
         $converted = [];
 
+        // If explicit CMS sub-field mapping exists, iterate through mapped CMS subfields
+        if (! empty($cmsSubMapping)) {
+            foreach ($cmsSubMapping as $cmsSubName => $wpSubName) {
+                if (empty($wpSubName) || ! array_key_exists($wpSubName, $item)) {
+                    continue;
+                }
+
+                $subFieldValue = $item[$wpSubName];
+                $cmsType = $cmsSubFieldTypes[$cmsSubName] ?? null;
+
+                if ($cmsType === 'media' || $cmsType === 'icon' || $this->looksLikeMediaObject($subFieldValue)) {
+                    $converted[$cmsSubName] = $this->convertMediaValue($subFieldValue);
+                } elseif (is_array($subFieldValue) && isset($subFieldValue['rendered'])) {
+                    $converted[$cmsSubName] = strip_tags($subFieldValue['rendered']);
+                } else {
+                    $converted[$cmsSubName] = $subFieldValue;
+                }
+            }
+
+            return $converted;
+        }
+
+        // Fallback: iterate over WP item keys
         foreach ($item as $wpSubName => $subFieldValue) {
             // Resolve the CMS field name (use mapping if available, else keep original)
             $cmsSubName = $wpToCmsNameMap[$wpSubName] ?? $wpSubName;
@@ -1404,7 +1708,7 @@ SNIPPET;
             // Get the CMS type for the resolved name
             $cmsType = $cmsSubFieldTypes[$cmsSubName] ?? null;
 
-            if ($cmsType === 'media' || $this->looksLikeMediaObject($subFieldValue)) {
+            if ($cmsType === 'media' || $cmsType === 'icon' || $this->looksLikeMediaObject($subFieldValue)) {
                 $converted[$cmsSubName] = $this->convertMediaValue($subFieldValue);
             } elseif (is_array($subFieldValue) && isset($subFieldValue['rendered'])) {
                 $converted[$cmsSubName] = strip_tags($subFieldValue['rendered']);
@@ -1414,6 +1718,18 @@ SNIPPET;
         }
 
         return $converted;
+    }
+
+    protected function looksLikeMediaObject($value): bool
+    {
+        if (is_string($value)) {
+            return (bool) preg_match('/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i', $value);
+        }
+        if (is_array($value)) {
+            return isset($value['url']) || isset($value['source_url']) || (isset($value['id']) && is_numeric($value['id']));
+        }
+
+        return false;
     }
 
     /**
@@ -1452,17 +1768,6 @@ SNIPPET;
             // Fallback: return the original URL so data isn't lost
             return $imageUrl;
         }
-    }
-
-    /**
-     * Check if a value looks like a WP/JetEngine media object ({id: int, url: string}).
-     */
-    protected function looksLikeMediaObject($value): bool
-    {
-        return is_array($value)
-            && isset($value['url'])
-            && is_string($value['url'])
-            && (isset($value['id']) && is_numeric($value['id']));
     }
 
     protected function getWpFieldValue($wpPost, $fieldPath)

@@ -302,7 +302,8 @@
                 'id' => $entry->id,
                 'submitted_at' => $entry->created_at->format('M d, Y \a\t H:i'),
                 'ip_address' => $entry->ip_address,
-                'fields' => $data
+                'fields' => $data,
+                'attribution' => $entry->getAttributionData()
             ];
         });
     @endphp
@@ -345,6 +346,32 @@
                     </div>
                 `;
             });
+
+            // Add Attribution & Analytics Section
+            if (entry.attribution && Object.keys(entry.attribution).length) {
+                const attr = entry.attribution;
+                html += `
+                    <div class="border-t border-gray-200 dark:border-[#272B30] pt-4 mt-6">
+                        <div class="text-xs font-bold text-[#E2231A] dark:text-[#FF4D4D] uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[18px]">analytics</span>
+                            Attribution & Marketing Analytics
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            \${attr.utm_source ? `<div class="flex items-center justify-between py-1.5 px-3 bg-gray-50 dark:bg-zinc-900 rounded-lg"><span class="font-semibold text-gray-600 dark:text-gray-400">UTM Source</span><span class="font-bold text-gray-900 dark:text-white bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 px-2 py-0.5 rounded font-mono">\${attr.utm_source}</span></div>` : ''}
+                            \${attr.utm_medium ? `<div class="flex items-center justify-between py-1.5 px-3 bg-gray-50 dark:bg-zinc-900 rounded-lg"><span class="font-semibold text-gray-600 dark:text-gray-400">UTM Medium</span><span class="font-bold text-gray-900 dark:text-white bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 px-2 py-0.5 rounded font-mono">\${attr.utm_medium}</span></div>` : ''}
+                            \${attr.utm_campaign ? `<div class="flex items-center justify-between py-1.5 px-3 bg-gray-50 dark:bg-zinc-900 rounded-lg"><span class="font-semibold text-gray-600 dark:text-gray-400">UTM Campaign</span><span class="font-bold text-gray-900 dark:text-white bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 px-2 py-0.5 rounded font-mono">\${attr.utm_campaign}</span></div>` : ''}
+                            \${attr.gclid ? `<div class="flex items-center justify-between py-1.5 px-3 bg-gray-50 dark:bg-zinc-900 rounded-lg"><span class="font-semibold text-gray-600 dark:text-gray-400">Google Click ID (gclid)</span><span class="font-mono text-gray-900 dark:text-white break-all text-[11px]">\${attr.gclid}</span></div>` : ''}
+                            \${attr.fbclid ? `<div class="flex items-center justify-between py-1.5 px-3 bg-gray-50 dark:bg-zinc-900 rounded-lg"><span class="font-semibold text-gray-600 dark:text-gray-400">Facebook Click ID (fbclid)</span><span class="font-mono text-gray-900 dark:text-white break-all text-[11px]">\${attr.fbclid}</span></div>` : ''}
+                            \${attr.device_type ? `<div class="flex items-center justify-between py-1.5 px-3 bg-gray-50 dark:bg-zinc-900 rounded-lg"><span class="font-semibold text-gray-600 dark:text-gray-400">Device & OS</span><span class="font-medium text-gray-900 dark:text-white">\${attr.device_type} • \${attr.os || ''} (\${attr.browser || ''})</span></div>` : ''}
+                            \${attr.screen_resolution ? `<div class="flex items-center justify-between py-1.5 px-3 bg-gray-50 dark:bg-zinc-900 rounded-lg"><span class="font-semibold text-gray-600 dark:text-gray-400">Screen & Lang</span><span class="font-mono text-gray-900 dark:text-white">\${attr.screen_resolution} (\${attr.browser_language || ''})</span></div>` : ''}
+                            \${attr.page_views_count ? `<div class="flex items-center justify-between py-1.5 px-3 bg-gray-50 dark:bg-zinc-900 rounded-lg"><span class="font-semibold text-gray-600 dark:text-gray-400">Behavior Context</span><span class="font-medium text-gray-900 dark:text-white">\${attr.page_views_count} views • Converted in \${attr.time_to_convert || '-'}</span></div>` : ''}
+                            \${attr.initial_landing_page ? `<div class="py-2 px-3 bg-gray-50 dark:bg-zinc-900 rounded-lg"><div class="font-semibold text-gray-600 dark:text-gray-400 mb-1">Initial Landing Page</div><div class="font-mono text-blue-600 dark:text-blue-400 break-all text-[11px]">\${attr.initial_landing_page}</div></div>` : ''}
+                            \${attr.submission_page ? `<div class="py-2 px-3 bg-gray-50 dark:bg-zinc-900 rounded-lg"><div class="font-semibold text-gray-600 dark:text-gray-400 mb-1">Submission Page</div><div class="font-mono text-gray-900 dark:text-white break-all text-[11px]">\${attr.submission_page}</div></div>` : ''}
+                            \${attr.http_referrer ? `<div class="py-2 px-3 bg-gray-50 dark:bg-zinc-900 rounded-lg"><div class="font-semibold text-gray-600 dark:text-gray-400 mb-1">HTTP Referrer</div><div class="font-mono text-gray-500 break-all text-[11px]">\${attr.http_referrer}</div></div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
 
             // Add metadata
             html += `
