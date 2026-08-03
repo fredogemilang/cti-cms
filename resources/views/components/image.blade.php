@@ -10,7 +10,8 @@
 ])
 
 @php
-    $data = app(\App\Services\ResponsiveImageService::class)->build($media, $size, $sizes);
+    $target = $media ?: $src;
+    $data = app(\App\Services\ResponsiveImageService::class)->build($target, $size, $sizes);
     
     $finalSrc = $data['src'] ?: $src;
     if (! $finalSrc) {

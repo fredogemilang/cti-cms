@@ -50,12 +50,14 @@ class ResponsiveImageService
             }
         }
 
-        // Include the original at its native width as the largest candidate.
-        if ($media->width) {
-            $jpegPairs[] = $diskUrl($media->path)." {$media->width}w";
-            if ($media->webp_path) {
-                $webpPairs[] = $diskUrl($media->webp_path)." {$media->width}w";
-            }
+        // Include original / webp_path as candidate
+        if ($media->path) {
+            $wAttr = $media->width ? " {$media->width}w" : '';
+            $jpegPairs[] = $diskUrl($media->path).$wAttr;
+        }
+        if ($media->webp_path) {
+            $wAttr = $media->width ? " {$media->width}w" : '';
+            $webpPairs[] = $diskUrl($media->webp_path).$wAttr;
         }
 
         $picked = $variants[$size] ?? null;
@@ -63,8 +65,8 @@ class ResponsiveImageService
 
         return [
             'src' => $src,
-            'srcset' => implode(', ', $jpegPairs),
-            'webp_srcset' => $webpPairs ? implode(', ', $webpPairs) : null,
+            'srcset' => implode(', ', array_unique($jpegPairs)),
+            'webp_srcset' => $webpPairs ? implode(', ', array_unique($webpPairs)) : null,
             'sizes' => $sizesAttr,
             'width' => $picked['width'] ?? $media->width,
             'height' => $picked['height'] ?? $media->height,
@@ -83,16 +85,23 @@ class ResponsiveImageService
         $ext = strtolower(pathinfo($cleanPath, PATHINFO_EXTENSION));
 
         if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
-            $webpPathCandidate = preg_replace('/\.(jpg|jpeg|png|gif)$/i', '.webp', $cleanPath);
+            $webpCandidate = preg_replace('/\.(jpg|jpeg|png|gif)$/i', '.webp', $cleanPath);
 
-            if (file_exists(public_path($webpPathCandidate))) {
-                $webpUrl = asset($webpPathCandidate);
+            if (file_exists(public_path($webpCandidate))) {
+                $webpUrl = asset($webpCandidate);
+            } elseif (file_exists(base_path($webpCandidate))) {
+                $webpUrl = asset($webpCandidate);
             } elseif (file_exists(public_path($cleanPath.'.webp'))) {
                 $webpUrl = asset($cleanPath.'.webp');
+            } elseif (file_exists(base_path($cleanPath.'.webp'))) {
+                $webpUrl = asset($cleanPath.'.webp');
             } else {
-                $storageRelative = preg_replace('#^storage/#', '', $webpPathCandidate);
-                if (Storage::disk(config('media.disk', 'public'))->exists($storageRelative)) {
-                    $webpUrl = Storage::disk(config('media.disk', 'public'))->url($storageRelative);
+                $storageRelative = preg_replace('#^storage/#', '', $webpCandidate);
+                $disk = Storage::disk(config('media.disk', 'public'));
+                if ($disk->exists($storageRelative)) {
+                    $webpUrl = $disk->url($storageRelative);
+                } elseif ($disk->exists($storageRelative.'.webp')) {
+                    $webpUrl = $disk->url($storageRelative.'.webp');
                 }
             }
         } elseif ($ext === 'webp') {
