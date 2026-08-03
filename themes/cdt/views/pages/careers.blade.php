@@ -168,7 +168,7 @@
                 'themes/cdt/assets/images/life-at/1.png',
                 'themes/cdt/assets/images/life-at/14.png',
                 'themes/cdt/assets/images/life-at/3.png',
-                'themes/cdt/assets/images/life-at/Fitness-First-Membership-scaled.jpg',
+                'themes/cdt/assets/Fitness-First-Membership-scaled-DevESLxD.webp',
                 'themes/cdt/assets/images/life-at/13.png',
               ];
           }

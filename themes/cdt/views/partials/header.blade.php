@@ -45,7 +45,7 @@
 
     // Site logo setting fallback
     $siteLogoSetting = setting('site_logo');
-    $siteLogoUrl = $siteLogoSetting ? resolve_block_asset($siteLogoSetting) : asset('themes/cdt/assets/cropped-logo-cdt-D0j3NVKg.png');
+    $siteLogoUrl = $siteLogoSetting ? resolve_block_asset($siteLogoSetting) : asset('themes/cdt/assets/cropped-logo-cdt-D0j3NVKg.webp');
 @endphp
 
 <!-- Mobile Top Header Bar -->

@@ -8,7 +8,7 @@
     <!-- Immersive background -->
     <div class="absolute inset-0 z-0">
       @php
-        $heroBg = $page->getBlockValue('hero_bg_image', 'themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
+        $heroBg = $page->getBlockValue('hero_bg_image', 'themes/cdt/assets/banner_hero-DHYDqbF8.webp');
         $heroBgUrl = resolve_block_asset($heroBg);
       @endphp
       <x-image :src="$heroBgUrl" alt="{{ $page->getBlockValue('hero_title', 'Management') }} Banner" title="{{ $page->getBlockValue('hero_title', 'Management') }}" class="w-full h-full object-cover object-[right_center]" />
