@@ -10,20 +10,78 @@
     <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
   @endif
 
+  {{-- Critical Above-The-Fold CSS (Prevents FOUC) --}}
+  <style>
+    [x-cloak] { display: none !important; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden !important;
+      max-width: 100% !important;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #ffffff;
+      color: #18181b;
+    }
+    ul, ol { list-style: none; margin: 0; padding: 0; }
+    a { text-decoration: none; color: inherit; }
+    picture { display: inline-block; max-width: 100%; }
+    img { max-width: 100%; height: auto; }
+
+    /* Layout & Header Critical Rules */
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .w-full { width: 100%; }
+    .h-full { height: 100%; }
+    .h-12 { height: 3rem; }
+    .h-16 { height: 4rem; }
+    .w-auto { width: auto; }
+    .max-w-\[1400px\] { max-width: 1400px; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+    .bg-white { background-color: #ffffff; }
+
+    @media (min-width: 1024px) {
+      .lg\:hidden { display: none !important; }
+      .lg\:flex { display: flex !important; }
+      .lg\:block { display: block !important; }
+      header#main-header {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 100;
+        background-color: #ffffff;
+        border-bottom: 1px solid #f4f4f5;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      }
+    }
+    @media (max-width: 1023px) {
+      .lg\:hidden { display: block; }
+      .hidden.lg\:flex { display: none !important; }
+    }
+
+    /* Hero Section Above-The-Fold Layout */
+    .hero-section {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+  </style>
+
   {{-- Theme Preload & Non-blocking CSS/JS Assets --}}
-  <link rel="stylesheet" crossorigin href="{{ asset('themes/cdt/assets/main-V6bxgVBt.css') }}">
+  <link rel="preload" as="style" href="{{ asset('themes/cdt/assets/main-V6bxgVBt.css') }}">
+  <link rel="stylesheet" href="{{ asset('themes/cdt/assets/main-V6bxgVBt.css') }}" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="{{ asset('themes/cdt/assets/main-V6bxgVBt.css') }}"></noscript>
   {{-- Font Preloads --}}
   <link rel="preload" as="font" type="font/woff2" href="{{ asset('themes/cdt/assets/inter-latin-wght-normal-Dx4kXJAl.woff2') }}" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="{{ asset('themes/cdt/assets/prompt-latin-400-normal-BQ9zjSN8.woff2') }}" crossorigin>
 
   @livewireStyles
   @stack('styles')
-  <style>
-    html, body {
-      overflow-x: hidden !important;
-      max-width: 100% !important;
-    }
-  </style>
 </head>
 <body class="font-body text-dark antialiased bg-white overflow-x-hidden w-full max-w-full relative">
   
