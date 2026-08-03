@@ -219,13 +219,13 @@
         <!-- Right Column -->
         <div class="lg:w-3/4">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12 items-center [&:hover_div.aws-item]:opacity-20">
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/confluent-logo-1024x562-BFo8llUh.webp') }}" alt="Confluent" title="Confluent" class="aws-logo w-full h-full object-contain"></div>
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/datadog-logo-1024x1024-BBaPl4Qq.webp') }}" alt="Datadog" title="Datadog" class="aws-logo w-full h-full object-contain"></div>
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/PT-Urun-Bangun-Negeri-BLb9ARg2.webp') }}" alt="Fortinet" title="Fortinet" class="aws-logo w-full h-full object-contain"></div>
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/GitLab-logo-BBxYVl-u.svg') }}" alt="GitLab" title="GitLab" class="aws-logo w-full h-full object-contain"></div>
+            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><x-image :src="asset('themes/cdt/assets/confluent-logo-1024x562-BFo8llUh.png')" alt="Confluent" title="Confluent" class="aws-logo w-full h-full object-contain" /></div>
+            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><x-image :src="asset('themes/cdt/assets/datadog-logo-1024x1024-BBaPl4Qq.png')" alt="Datadog" title="Datadog" class="aws-logo w-full h-full object-contain" /></div>
+            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><x-image :src="asset('themes/cdt/assets/PT-Urun-Bangun-Negeri-BLb9ARg2.png')" alt="Fortinet" title="Fortinet" class="aws-logo w-full h-full object-contain" /></div>
+            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><x-image :src="asset('themes/cdt/assets/GitLab-logo-BBxYVl-u.svg')" alt="GitLab" title="GitLab" class="aws-logo w-full h-full object-contain" /></div>
             
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/Mongo-DB-Logo-0iY8tsMG.svg') }}" alt="MongoDB" title="MongoDB" class="aws-logo w-full h-full object-contain"></div>
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/tapway-logo-hd--DjdHTKHP.webp') }}" alt="Tapway" title="Tapway" class="aws-logo w-full h-full object-contain"></div>
+            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><x-image :src="asset('themes/cdt/assets/Mongo-DB-Logo-0iY8tsMG.svg')" alt="MongoDB" title="MongoDB" class="aws-logo w-full h-full object-contain" /></div>
+            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><x-image :src="asset('themes/cdt/assets/tapway-logo-hd--DjdHTKHP.png')" alt="Tapway" title="Tapway" class="aws-logo w-full h-full object-contain" /></div>
           </div>
         </div>
       </div>
@@ -414,7 +414,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Callout 1 -->
       <div class="relative h-64 overflow-hidden group" data-gsap="curtain-reveal" data-gsap-delay="0">
-        <img src="{{ asset('themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.webp') }}" alt="{{ t('home.blog_title', 'Blog, News & Video') }}" title="{{ t('home.blog_title', 'Blog, News & Video') }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
+        <x-image :src="asset('themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg')" :alt="t('home.blog_title', 'Blog, News & Video')" :title="t('home.blog_title', 'Blog, News & Video')" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700" />
         <div class="absolute inset-0 bg-zinc-900/60"></div>
         <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
           <h2 class="text-3xl font-bold mb-6">{{ t('home.blog_title', 'Blog, News & Video') }}</h2>
@@ -426,7 +426,7 @@
       
       <!-- Callout 2 -->
       <div class="relative h-64 overflow-hidden group" data-gsap="curtain-reveal" data-gsap-delay="0.2">
-        <img src="{{ asset('themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.webp') }}" alt="{{ t('home.life_title', 'Life at Central Data Technology') }}" title="{{ t('home.life_title', 'Life at Central Data Technology') }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
+        <x-image :src="asset('themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg')" :alt="t('home.life_title', 'Life at Central Data Technology')" :title="t('home.life_title', 'Life at Central Data Technology')" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700" />
         <div class="absolute inset-0 bg-zinc-900/60"></div>
         <div class="absolute inset-0 flex flex-col items-center justify-center text-white text-center">
           <h2 class="text-3xl font-bold mb-6">{{ t('home.life_title', 'Life at Central Data Technology') }}</h2>
