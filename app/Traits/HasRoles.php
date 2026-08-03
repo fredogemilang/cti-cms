@@ -95,43 +95,16 @@ trait HasRoles
      */
     public function hasPermission(string $permission): bool
     {
-        \Log::info('HasRoles::hasPermission called', [
-            'user_id' => $this->id,
-            'permission' => $permission,
-            'is_super_admin' => $this->isSuperAdmin(),
-            'roles_count' => $this->roles->count(),
-        ]);
-
         // Super admin bypass
         if ($this->isSuperAdmin()) {
-            \Log::info('User is super admin - permission granted');
-
             return true;
         }
 
         foreach ($this->roles as $role) {
-            \Log::info('Checking role for permission', [
-                'role_id' => $role->id,
-                'role_name' => $role->name,
-                'role_slug' => $role->slug,
-                'permission' => $permission,
-            ]);
-
             if ($role->hasPermission($permission)) {
-                \Log::info('Permission found in role', [
-                    'role_name' => $role->name,
-                    'permission' => $permission,
-                ]);
-
                 return true;
             }
         }
-
-        \Log::warning('Permission not found in any role', [
-            'user_id' => $this->id,
-            'permission' => $permission,
-            'checked_roles' => $this->roles->pluck('name')->toArray(),
-        ]);
 
         return false;
     }
