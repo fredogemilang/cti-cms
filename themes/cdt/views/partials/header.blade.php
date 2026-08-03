@@ -78,6 +78,8 @@
   </div>
 </div>
 
+<style>[x-cloak] { display: none !important; }</style>
+
 <header id="main-header" 
   x-data="{ 
     visible: true, 
@@ -129,7 +131,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <div class="absolute left-0 top-[100%] pt-4 w-56 transition-all duration-300 ease-out z-50"
+          <div x-cloak class="absolute left-0 top-[100%] pt-4 w-56 transition-all duration-300 ease-out z-50"
             :class="openDropdown === 'about' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 flex flex-col normal-case tracking-normal">
               <a href="{{ localized_url('/about-us') }}" title="{{ t('nav.overview', 'Overview') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
@@ -152,7 +154,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 w-[900px] max-w-[90vw] transition-all duration-300 ease-out z-50"
+          <div x-cloak class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 w-[900px] max-w-[90vw] transition-all duration-300 ease-out z-50"
             :class="openDropdown === 'alliance' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex">
               <div class="w-1/3 bg-gradient-to-bl from-primary to-zinc-900 p-8 text-white relative overflow-hidden flex flex-col justify-between">
@@ -233,7 +235,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 w-[700px] max-w-[90vw] transition-all duration-300 ease-out z-50"
+          <div x-cloak class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 w-[700px] max-w-[90vw] transition-all duration-300 ease-out z-50"
             :class="openDropdown === 'solutions' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex">
               <div class="w-2/5 bg-gradient-to-bl from-primary to-zinc-900 p-8 text-white relative overflow-hidden flex flex-col justify-between">
@@ -275,7 +277,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 w-[850px] max-w-[90vw] transition-all duration-300 ease-out z-50"
+          <div x-cloak class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 w-[850px] max-w-[90vw] transition-all duration-300 ease-out z-50"
             :class="openDropdown === 'industry' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex">
               <div class="w-1/3 bg-gradient-to-bl from-primary to-zinc-900 p-8 text-white relative overflow-hidden flex flex-col justify-between">
@@ -347,7 +349,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <div class="absolute left-0 top-[100%] pt-4 w-56 transition-all duration-300 ease-out z-50"
+          <div x-cloak class="absolute left-0 top-[100%] pt-4 w-56 transition-all duration-300 ease-out z-50"
             :class="openDropdown === 'insights' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 flex flex-col normal-case tracking-normal">
               @php
@@ -378,7 +380,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <div class="absolute left-0 top-[100%] pt-4 w-56 transition-all duration-300 ease-out z-50"
+          <div x-cloak class="absolute left-0 top-[100%] pt-4 w-56 transition-all duration-300 ease-out z-50"
             :class="openDropdown === 'careers' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 flex flex-col normal-case tracking-normal">
               <a href="{{ localized_url('/careers#why-cdt') }}" title="{{ t('nav.why_cdt', 'Why CDT') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
