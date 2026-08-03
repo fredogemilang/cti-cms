@@ -47,7 +47,7 @@
 
     @if($entry->featured_image)
     <div class="lg:hidden mb-8 bg-zinc-50/50 border border-zinc-200/80 rounded-3xl p-8 flex flex-col items-center shadow-sm">
-      <img src="{{ asset('storage/' . $entry->featured_image) }}" alt="{{ $entry->title }}" class="h-24 w-auto object-contain" />
+      <x-image :src="asset('storage/' . $entry->featured_image)" alt="{{ $entry->title }}" class="h-24 w-auto object-contain" />
       <div class="mt-6 text-[10px] font-bold tracking-widest text-zinc-400 uppercase">{{ t('alliance.official_partner', 'Official Technology Partner') }}</div>
     </div>
     @endif
@@ -121,7 +121,7 @@
       <div class="lg:col-span-4 flex flex-col gap-8 lg:sticky lg:top-24 self-start">
         @if($entry->featured_image)
         <div data-gsap="fade-up" class="hidden lg:flex bg-zinc-50/50 border border-zinc-200/80 rounded-3xl p-8 flex-col items-center shadow-sm">
-          <img src="{{ asset('storage/' . $entry->featured_image) }}" alt="{{ $entry->title }}" class="max-w-[200px] h-auto object-contain" />
+          <x-image :src="asset('storage/' . $entry->featured_image)" alt="{{ $entry->title }}" class="max-w-[200px] h-auto object-contain" />
           <div class="mt-6 text-[10px] font-bold tracking-widest text-zinc-400 uppercase">{{ t('alliance.official_partner', 'Official Technology Partner') }}</div>
         </div>
         @endif
@@ -252,7 +252,7 @@
       @if($fallbackLogo)
       <div class="flex-shrink-0">
         <div class="w-24 h-24 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center p-4 shadow-[0_10px_25px_rgba(0,0,0,0.3)] ring-4 ring-white/20 transform hover:scale-105 transition-transform duration-500">
-          <img src="{{ $fallbackLogo }}" alt="{{ $entry->title }}" class="w-full h-auto object-contain drop-shadow-sm" />
+          <x-image :src="$fallbackLogo" alt="{{ $entry->title }}" class="w-full h-auto object-contain drop-shadow-sm" />
         </div>
       </div>
       @endif
@@ -445,7 +445,7 @@
               <div class="lg:w-1/3 bg-zinc-50 p-10 md:p-12 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-zinc-100">
                 @if($logoUrl)
                 <div class="h-32 flex justify-start items-center mb-8">
-                  <img src="{{ $logoUrl }}" alt="{{ $companyName }}" class="max-h-full w-auto max-w-[280px] object-contain object-left mix-blend-multiply" />
+                  <x-image :src="$logoUrl" alt="{{ $companyName }}" class="max-h-full w-auto max-w-[280px] object-contain object-left mix-blend-multiply" />
                 </div>
                 @else
                 <div class="h-32 mb-8"></div>
