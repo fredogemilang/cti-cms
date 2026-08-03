@@ -123,13 +123,35 @@ class ResponsiveImageService
             $webpUrl = $originalUrl;
         }
 
+        $width = null;
+        $height = null;
+
+        $checkPath = public_path($cleanPath);
+        if (! file_exists($checkPath)) {
+            $checkPath = base_path($cleanPath);
+        }
+        if (! file_exists($checkPath)) {
+            $storageRelative = preg_replace('#^storage/#', '', $cleanPath);
+            $disk = Storage::disk(config('media.disk', 'public'));
+            if ($disk->exists($storageRelative)) {
+                $checkPath = $disk->path($storageRelative);
+            }
+        }
+        if (file_exists($checkPath) && is_file($checkPath)) {
+            $imageInfo = @getimagesize($checkPath);
+            if (is_array($imageInfo)) {
+                $width = $imageInfo[0];
+                $height = $imageInfo[1];
+            }
+        }
+
         return [
             'src' => $originalUrl,
             'srcset' => '',
             'webp_srcset' => $webpUrl,
             'sizes' => '',
-            'width' => null,
-            'height' => null,
+            'width' => $width,
+            'height' => $height,
             'placeholder' => null,
             'alt' => null,
             'focal' => ['x' => 0.5, 'y' => 0.5],

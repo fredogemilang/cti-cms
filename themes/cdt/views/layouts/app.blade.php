@@ -14,7 +14,9 @@
   <link rel="preload" as="style" href="{{ asset('themes/cdt/assets/main-V6bxgVBt.css') }}">
   <link rel="stylesheet" href="{{ asset('themes/cdt/assets/main-V6bxgVBt.css') }}" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="{{ asset('themes/cdt/assets/main-V6bxgVBt.css') }}"></noscript>
-  <script type="module" crossorigin src="{{ asset('themes/cdt/assets/main-DY6Zr0uY.js') }}"></script>
+  {{-- Font Preloads --}}
+  <link rel="preload" as="font" type="font/woff2" href="{{ asset('themes/cdt/assets/inter-latin-wght-normal-Dx4kXJAl.woff2') }}" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="{{ asset('themes/cdt/assets/prompt-latin-400-normal-BQ9zjSN8.woff2') }}" crossorigin>
 
   @livewireStyles
   @stack('styles')
