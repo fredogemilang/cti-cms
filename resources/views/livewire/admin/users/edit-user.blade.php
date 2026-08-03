@@ -33,6 +33,16 @@
                 @error('bio') <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                 <p class="text-xs text-[#6F767E] mt-2">Brief description for the user. Maximum 200 characters.</p>
             </div>
+
+            <div class="mt-8 flex justify-end">
+                <button type="button" wire:click="save" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-2xl transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                    <span wire:loading.remove wire:target="save">Save Changes</span>
+                    <span wire:loading wire:target="save" class="flex items-center gap-2">
+                        <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                        Saving...
+                    </span>
+                </button>
+            </div>
         </x-admin.ui.card>
 
         <x-admin.ui.card padding="p-10">
