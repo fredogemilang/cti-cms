@@ -73,9 +73,18 @@ class MediaOptimize extends Command
                         default => null,
                     };
                     if ($img) {
-                        imagepalettetotruecolor($img);
-                        imagealphablending($img, true);
-                        imagesavealpha($img, true);
+                        if ($mime === 'image/png') {
+                            $w = imagesx($img);
+                            $h = imagesy($img);
+                            $canvas = imagecreatetruecolor($w, $h);
+                            imagealphablending($canvas, false);
+                            imagesavealpha($canvas, true);
+                            $transparent = imagecolorallocatealpha($canvas, 0, 0, 0, 127);
+                            imagefill($canvas, 0, 0, $transparent);
+                            imagecopy($canvas, $img, 0, 0, 0, 0, $w, $h);
+                            imagedestroy($img);
+                            $img = $canvas;
+                        }
                         imagewebp($img, $webpPath, 85);
                         imagedestroy($img);
                         $ok++;

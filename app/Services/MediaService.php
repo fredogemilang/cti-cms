@@ -125,11 +125,18 @@ class MediaService
                 return null;
             }
 
-            // Preserve transparency for PNG
-            if ($mimeType === 'image/png') {
-                imagepalettetotruecolor($image);
-                imagealphablending($image, false); // MUST be false to preserve alpha
-                imagesavealpha($image, true);
+            // Preserve transparency for PNG and GIF by allocating a clean alpha canvas
+            if ($mimeType === 'image/png' || $mimeType === 'image/gif') {
+                $w = imagesx($image);
+                $h = imagesy($image);
+                $canvas = imagecreatetruecolor($w, $h);
+                imagealphablending($canvas, false);
+                imagesavealpha($canvas, true);
+                $transparent = imagecolorallocatealpha($canvas, 0, 0, 0, 127);
+                imagefill($canvas, 0, 0, $transparent);
+                imagecopy($canvas, $image, 0, 0, 0, 0, $w, $h);
+                imagedestroy($image);
+                $image = $canvas;
             }
 
             // 2. Generate normalized WebP filename without double extension
