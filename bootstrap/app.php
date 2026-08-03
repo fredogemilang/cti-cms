@@ -42,10 +42,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             SetLocale::class,
             InjectSeoTags::class,
-            PageCache::class,
             OptimizeHtml::class,
             CompressResponse::class,
             SecurityHeaders::class,
+            PageCache::class,
         ]);
 
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));

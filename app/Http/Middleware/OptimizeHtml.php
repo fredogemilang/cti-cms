@@ -23,7 +23,12 @@ class OptimizeHtml
             return $response;
         }
 
-        $html = $response->getContent();
+        $originalHtml = (string) $response->getContent();
+        if (strlen(trim($originalHtml)) === 0) {
+            return $response;
+        }
+
+        $html = $originalHtml;
 
         if (setting('cdn_enabled', false) && setting('cdn_base_url', '')) {
             $html = $this->rewriteCdn($html);
@@ -50,7 +55,12 @@ class OptimizeHtml
             $html = $this->minify($html);
         }
 
-        $response->setContent($html);
+        // Fail-safe: if transformed HTML is empty, preserve original HTML
+        if (strlen(trim($html)) > 0) {
+            $response->setContent($html);
+        } else {
+            $response->setContent($originalHtml);
+        }
 
         return $response;
     }
@@ -133,7 +143,8 @@ class OptimizeHtml
         if ($response->getStatusCode() !== 200) {
             return false;
         }
-        if (! str_contains((string) $response->headers->get('Content-Type'), 'text/html')) {
+        $contentType = (string) $response->headers->get('Content-Type', '');
+        if ($contentType !== '' && ! str_contains($contentType, 'text/html')) {
             return false;
         }
 
