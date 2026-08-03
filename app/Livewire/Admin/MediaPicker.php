@@ -360,6 +360,7 @@ class MediaPicker extends Component
         return view('livewire.admin.media-picker', [
             'mediaItems' => $this->media,
             'multiple' => $this->multiple,
+            'selectedMediaIds' => $this->selectedMediaIds,
             'field' => $this->field,
             'label' => $this->label,
             'compact' => $this->compact,
