@@ -132,9 +132,10 @@ class MediaPicker extends Component
 
     public function handleOpenMediaPicker($field = null)
     {
-        if (! $field || $field === $this->field) {
-            $this->openModal();
+        if ($field) {
+            $this->field = $field;
         }
+        $this->openModal();
     }
 
     public function openModal()

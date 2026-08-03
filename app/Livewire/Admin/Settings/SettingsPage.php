@@ -18,12 +18,27 @@ class SettingsPage extends Component
     /** @var array<string, mixed> Current form values keyed by setting key. */
     public array $values = [];
 
-    /** Receives media-selected events from the media picker modal. */
+    /** Receives media-selected events from the media picker component. */
     #[On('media-selected')]
     public function onMediaSelected(string $mediaPath, ?string $field = null): void
     {
-        if ($field && array_key_exists($field, $this->values)) {
-            $this->values[$field] = $mediaPath;
+        if ($field) {
+            $key = str_replace('values.', '', $field);
+            if (array_key_exists($key, $this->values)) {
+                $this->values[$key] = $mediaPath;
+            }
+        }
+    }
+
+    /** Receives media-removed events from the media picker component. */
+    #[On('media-removed')]
+    public function onMediaRemoved(?string $field = null): void
+    {
+        if ($field) {
+            $key = str_replace('values.', '', $field);
+            if (array_key_exists($key, $this->values)) {
+                $this->values[$key] = null;
+            }
         }
     }
 

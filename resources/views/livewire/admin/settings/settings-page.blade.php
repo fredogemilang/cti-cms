@@ -95,6 +95,6 @@
         </main>
     </div>
 
-    {{-- Media picker modal (for media-type fields like logo, favicon) --}}
+    {{-- Tiptap Media picker modal --}}
     @livewire('admin.tiptap-media-picker')
 </div>
