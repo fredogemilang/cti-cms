@@ -100,14 +100,24 @@ class MediaService
                 return null;
             }
 
+            // 1. If file is already .webp or SVG vector, return path as-is
+            $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+            if ($ext === 'webp' || $ext === 'svg') {
+                return $path;
+            }
+
             // Determine image type and create image resource
-            $imageInfo = getimagesize($fullPath);
-            $mimeType = $imageInfo['mime'] ?? null;
+            $imageInfo = @getimagesize($fullPath);
+            $mimeType = $imageInfo['mime'] ?? @mime_content_type($fullPath);
+
+            if ($mimeType === 'image/webp' || $mimeType === 'image/svg+xml') {
+                return $path;
+            }
 
             $image = match ($mimeType) {
-                'image/jpeg', 'image/jpg' => imagecreatefromjpeg($fullPath),
-                'image/png' => imagecreatefrompng($fullPath),
-                'image/gif' => imagecreatefromgif($fullPath),
+                'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($fullPath),
+                'image/png' => @imagecreatefrompng($fullPath),
+                'image/gif' => @imagecreatefromgif($fullPath),
                 default => null,
             };
 
@@ -122,9 +132,12 @@ class MediaService
                 imagesavealpha($image, true);
             }
 
-            // Generate WebP filename
-            $webpFilename = pathinfo($path, PATHINFO_FILENAME).'.webp';
-            $webpPath = config('media.path').'/'.$webpFilename;
+            // 2. Generate normalized WebP filename without double extension
+            $filenameWithoutExt = preg_replace('/\.(jpg|jpeg|png|gif)$/i', '', pathinfo($path, PATHINFO_BASENAME));
+            $webpFilename = $filenameWithoutExt.'.webp';
+
+            $dir = pathinfo($path, PATHINFO_DIRNAME);
+            $webpPath = ($dir === '.' ? '' : $dir.'/').$webpFilename;
             $webpFullPath = $disk->path($webpPath);
 
             // Convert to WebP
