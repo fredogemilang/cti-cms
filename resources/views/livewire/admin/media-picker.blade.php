@@ -1,6 +1,18 @@
 <div>
     @php
         $selectedMediaIds = $selectedMediaIds ?? [];
+        $multiple         = $multiple ?? false;
+        $activeTab        = $activeTab ?? 'library';
+        $selectedMedia    = $selectedMedia ?? null;
+        $selectedMediaId  = $selectedMediaId ?? null;
+        $showTrigger      = $showTrigger ?? true;
+        $compact          = $compact ?? false;
+        $uploadFile       = $uploadFile ?? null;
+        $uploadFiles      = $uploadFiles ?? [];
+        $value            = $value ?? null;
+        $accept           = $accept ?? 'image/*';
+        $label            = $label ?? 'Select Media';
+        $showModal        = $showModal ?? false;
     @endphp
     @if($showTrigger)
     {{-- Trigger Button / Preview --}}
