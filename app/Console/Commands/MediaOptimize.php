@@ -2,13 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\GenerateImageVariants;
 use App\Models\Media;
 use App\Services\MediaService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 
-#[Signature('media:optimize {--force : Re-convert media that already has a WebP file}')]
+#[Signature('media:optimize {--force : Re-convert media that already has a WebP file} {--queue : Dispatch variant generation jobs to background queue worker}')]
 #[Description('Generate WebP companions for existing image media. Skips files that already have webp_path.')]
 class MediaOptimize extends Command
 {
@@ -27,19 +28,26 @@ class MediaOptimize extends Command
             return self::SUCCESS;
         }
 
-        $this->info("Optimizing {$total} image(s)...");
+        $isQueue = (bool) $this->option('queue');
+
+        $this->info($isQueue ? "Dispatching {$total} image(s) to queue worker..." : "Optimizing {$total} image(s)...");
         $bar = $this->output->createProgressBar($total);
         $bar->start();
 
         $ok = $fail = 0;
         foreach ($query->cursor() as $media) {
             try {
-                $webpPath = $svc->convertToWebp($media->path);
-                if ($webpPath) {
-                    $media->update(['webp_path' => $webpPath]);
+                if ($isQueue) {
+                    GenerateImageVariants::dispatch($media->id);
                     $ok++;
                 } else {
-                    $fail++;
+                    $webpPath = $svc->convertToWebp($media->path);
+                    if ($webpPath) {
+                        $media->update(['webp_path' => $webpPath]);
+                        $ok++;
+                    } else {
+                        $fail++;
+                    }
                 }
             } catch (\Throwable $e) {
                 $fail++;
