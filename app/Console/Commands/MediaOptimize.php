@@ -48,6 +48,34 @@ class MediaOptimize extends Command
             }
             $bar->advance();
         }
+        // Also scan storage/app/public/media for unindexed images
+        $storageDir = storage_path('app/public/media');
+        if (is_dir($storageDir)) {
+            $unindexed = glob($storageDir.'/*.{jpg,jpeg,png,JPG,JPEG,PNG}', GLOB_BRACE) ?: [];
+            foreach ($unindexed as $filePath) {
+                $filename = basename($filePath);
+                $webpFilename = pathinfo($filename, PATHINFO_FILENAME).'.webp';
+                $webpPath = dirname($filePath).'/'.$webpFilename;
+
+                if (! file_exists($webpPath)) {
+                    $mime = @mime_content_type($filePath);
+                    $img = match ($mime) {
+                        'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($filePath),
+                        'image/png' => @imagecreatefrompng($filePath),
+                        default => null,
+                    };
+                    if ($img) {
+                        imagepalettetotruecolor($img);
+                        imagealphablending($img, true);
+                        imagesavealpha($img, true);
+                        imagewebp($img, $webpPath, 85);
+                        imagedestroy($img);
+                        $ok++;
+                    }
+                }
+            }
+        }
+
         $bar->finish();
         $this->newLine(2);
         $this->info("Done: {$ok} converted, {$fail} failed.");

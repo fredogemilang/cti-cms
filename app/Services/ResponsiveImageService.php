@@ -12,9 +12,26 @@ class ResponsiveImageService
      *
      * @return array{src:string,srcset:string,webp_srcset:?string,sizes:string,width:?int,height:?int,placeholder:?string,alt:?string,focal:array{x:float,y:float}}
      */
-    public function build(?Media $media, string $size = 'lg', string $sizesAttr = '100vw'): array
+    public function build(Media|string|null $media, string $size = 'lg', string $sizesAttr = '100vw'): array
     {
-        if (! $media) {
+        if (is_string($media)) {
+            $rawPath = (string) parse_url($media, PHP_URL_PATH);
+            $cleanPath = ltrim($rawPath, '/');
+            $basename = basename($cleanPath);
+
+            $mediaModel = Media::where('path', $cleanPath)
+                ->orWhere('webp_path', $cleanPath)
+                ->orWhere('path', 'like', '%/'.$basename)
+                ->first();
+
+            if ($mediaModel) {
+                $media = $mediaModel;
+            } else {
+                return $this->buildFromStringPath($media, $cleanPath);
+            }
+        }
+
+        if (! $media instanceof Media) {
             return $this->blank();
         }
 
@@ -57,6 +74,41 @@ class ResponsiveImageService
                 'x' => (float) ($media->focal_x ?? 0.5),
                 'y' => (float) ($media->focal_y ?? 0.5),
             ],
+        ];
+    }
+
+    protected function buildFromStringPath(string $originalUrl, string $cleanPath): array
+    {
+        $webpUrl = null;
+        $ext = strtolower(pathinfo($cleanPath, PATHINFO_EXTENSION));
+
+        if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif'])) {
+            $webpPathCandidate = preg_replace('/\.(jpg|jpeg|png|gif)$/i', '.webp', $cleanPath);
+
+            if (file_exists(public_path($webpPathCandidate))) {
+                $webpUrl = asset($webpPathCandidate);
+            } elseif (file_exists(public_path($cleanPath.'.webp'))) {
+                $webpUrl = asset($cleanPath.'.webp');
+            } else {
+                $storageRelative = preg_replace('#^storage/#', '', $webpPathCandidate);
+                if (Storage::disk(config('media.disk', 'public'))->exists($storageRelative)) {
+                    $webpUrl = Storage::disk(config('media.disk', 'public'))->url($storageRelative);
+                }
+            }
+        } elseif ($ext === 'webp') {
+            $webpUrl = $originalUrl;
+        }
+
+        return [
+            'src' => $originalUrl,
+            'srcset' => '',
+            'webp_srcset' => $webpUrl,
+            'sizes' => '',
+            'width' => null,
+            'height' => null,
+            'placeholder' => null,
+            'alt' => null,
+            'focal' => ['x' => 0.5, 'y' => 0.5],
         ];
     }
 
