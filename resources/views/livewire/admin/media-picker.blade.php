@@ -1,4 +1,7 @@
 <div>
+    @php
+        $selectedMediaIds = $selectedMediaIds ?? [];
+    @endphp
     @if($showTrigger)
     {{-- Trigger Button / Preview --}}
     <div class="space-y-3">
