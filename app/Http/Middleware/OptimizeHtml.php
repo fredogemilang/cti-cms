@@ -190,12 +190,26 @@ class OptimizeHtml
 
     protected function minify(string $html): string
     {
+        // Protect <script>, <style>, <textarea>, <pre> contents from whitespace collapsing
+        $placeholders = [];
+        $html = preg_replace_callback('/<(script|style|textarea|pre)\b[^>]*>.*?<\/\1>/is', function ($m) use (&$placeholders) {
+            $key = '___PROTECTED_TAG_'.count($placeholders).'___';
+            $placeholders[$key] = $m[0];
+
+            return $key;
+        }, $html) ?? $html;
+
         // Strip HTML comments (preserve IE conditionals)
         $html = preg_replace('/<!--(?!\[if).*?-->/s', '', $html) ?? $html;
         // Collapse whitespace between tags
         $html = preg_replace('/>\s+</', '><', $html) ?? $html;
         // Collapse runs of whitespace inside text nodes
         $html = preg_replace('/\s{2,}/', ' ', $html) ?? $html;
+
+        // Restore protected tags
+        if (! empty($placeholders)) {
+            $html = strtr($html, $placeholders);
+        }
 
         return trim($html);
     }

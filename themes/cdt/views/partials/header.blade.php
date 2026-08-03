@@ -88,10 +88,8 @@
         if (currentScrollY <= 20) {
           this.visible = true;
         } else if (currentScrollY > this.lastScrollY && currentScrollY > 60) {
-          // Scroll DOWN -> Hide header
           this.visible = false;
         } else if (currentScrollY < this.lastScrollY) {
-          // Scroll UP -> Show header
           this.visible = true;
         }
         this.lastScrollY = currentScrollY;

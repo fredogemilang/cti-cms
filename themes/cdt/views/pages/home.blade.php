@@ -418,7 +418,7 @@
         <div class="absolute inset-0 bg-zinc-900/60"></div>
         <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
           <h2 class="text-3xl font-bold mb-6">{{ t('home.blog_title', 'Blog, News & Video') }}</h2>
-          <a href="{{ url('/insights') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
+          <a href="{{ localized_url('/blog-news') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
             {{ t('home.explore', 'Explore') }}
           </a>
         </div>
