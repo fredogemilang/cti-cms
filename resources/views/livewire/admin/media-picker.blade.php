@@ -192,15 +192,15 @@
                                 <option value="documents">Documents</option>
                             </select>
 
-                            @if($multiple)
-                            <button 
-                                type="button"
-                                wire:click="toggleSelectAll"
-                                class="px-3 py-2 rounded-xl border border-gray-200 dark:border-[#272B30] text-xs font-bold text-[#6F767E] hover:text-[#2563EB] hover:border-blue-500 transition-all flex items-center gap-1.5 shrink-0">
-                                <span class="material-symbols-outlined text-sm">select_all</span>
-                                <span>Toggle Select All</span>
-                            </button>
-                            @endif
+                             @if(!empty($multiple))
+                             <button 
+                                 type="button"
+                                 wire:click="toggleSelectAll"
+                                 class="px-3 py-2 rounded-xl border border-gray-200 dark:border-[#272B30] text-xs font-bold text-[#6F767E] hover:text-[#2563EB] hover:border-blue-500 transition-all flex items-center gap-1.5 shrink-0">
+                                 <span class="material-symbols-outlined text-sm">select_all</span>
+                                 <span>Toggle Select All</span>
+                             </button>
+                             @endif
                         </div>
 
                         {{-- Media Grid --}}
