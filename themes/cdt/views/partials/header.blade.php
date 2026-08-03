@@ -82,6 +82,10 @@
   x-data="{ 
     visible: true, 
     lastScrollY: 0,
+    openDropdown: null,
+    toggleDropdown(name) {
+      this.openDropdown = this.openDropdown === name ? null : name;
+    },
     init() {
       window.addEventListener('scroll', () => {
         const currentScrollY = window.scrollY;
@@ -96,6 +100,7 @@
       }, { passive: true });
     }
   }"
+  @click.outside="openDropdown = null"
   :class="visible ? 'translate-y-0' : '-translate-y-full'"
   class="hidden lg:block fixed w-full top-0 z-[100] transition-transform duration-300 ease-in-out shadow-sm bg-white border-b border-zinc-100"
 >
@@ -115,14 +120,17 @@
       <ul class="hidden lg:flex items-center gap-6 text-[13px] font-bold text-zinc-800 uppercase tracking-wide h-full">
         
         <!-- About Us Dropdown -->
-        <li class="group relative flex items-center h-full py-6">
-          <span class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1">
+        <li class="group relative flex items-center h-full py-6"
+            @mouseenter="openDropdown = 'about'"
+            @mouseleave="openDropdown = null">
+          <button type="button" @click.stop="toggleDropdown('about')" class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1 focus:outline-none uppercase font-bold text-[13px] text-zinc-800 border-0 bg-transparent p-0">
             {{ t('nav.about_us', 'About Us') }}
-            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-transform duration-300" :class="openDropdown === 'about' ? 'rotate-180 text-primary' : 'group-hover:rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-          </span>
-          <div class="absolute left-0 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-56 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+          </button>
+          <div class="absolute left-0 top-[100%] pt-4 w-56 transition-all duration-300 ease-out z-50"
+            :class="openDropdown === 'about' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 flex flex-col normal-case tracking-normal">
               <a href="{{ localized_url('/about-us') }}" title="{{ t('nav.overview', 'Overview') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
                 {{ t('nav.overview', 'Overview') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
@@ -135,14 +143,17 @@
         </li>
 
         <!-- Technology Alliance Mega Menu -->
-        <li class="group relative flex items-center h-full py-6">
-          <span class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1">
+        <li class="group relative flex items-center h-full py-6"
+            @mouseenter="openDropdown = 'alliance'"
+            @mouseleave="openDropdown = null">
+          <button type="button" @click.stop="toggleDropdown('alliance')" class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1 focus:outline-none uppercase font-bold text-[13px] text-zinc-800 border-0 bg-transparent p-0">
             {{ t('nav.technology_alliance', 'Technology Alliance') }}
-            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-transform duration-300" :class="openDropdown === 'alliance' ? 'rotate-180 text-primary' : 'group-hover:rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-          </span>
-          <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-[900px] max-w-[90vw] transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+          </button>
+          <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 w-[900px] max-w-[90vw] transition-all duration-300 ease-out z-50"
+            :class="openDropdown === 'alliance' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex">
               <div class="w-1/3 bg-gradient-to-bl from-primary to-zinc-900 p-8 text-white relative overflow-hidden flex flex-col justify-between">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
@@ -213,14 +224,17 @@
 
         <!-- Solutions Mega Menu -->
         @if($solutionEntries->isNotEmpty())
-        <li class="group relative flex items-center h-full py-6">
-          <span class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1">
+        <li class="group relative flex items-center h-full py-6"
+            @mouseenter="openDropdown = 'solutions'"
+            @mouseleave="openDropdown = null">
+          <button type="button" @click.stop="toggleDropdown('solutions')" class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1 focus:outline-none uppercase font-bold text-[13px] text-zinc-800 border-0 bg-transparent p-0">
             {{ t('nav.solutions', 'Solutions') }}
-            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-transform duration-300" :class="openDropdown === 'solutions' ? 'rotate-180 text-primary' : 'group-hover:rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-          </span>
-          <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-[700px] max-w-[90vw] transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+          </button>
+          <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 w-[700px] max-w-[90vw] transition-all duration-300 ease-out z-50"
+            :class="openDropdown === 'solutions' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex">
               <div class="w-2/5 bg-gradient-to-bl from-primary to-zinc-900 p-8 text-white relative overflow-hidden flex flex-col justify-between">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
@@ -252,14 +266,17 @@
 
         <!-- Industry Mega Menu -->
         @if($industryEntries->isNotEmpty())
-        <li class="group relative flex items-center h-full py-6">
-          <span class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1">
+        <li class="group relative flex items-center h-full py-6"
+            @mouseenter="openDropdown = 'industry'"
+            @mouseleave="openDropdown = null">
+          <button type="button" @click.stop="toggleDropdown('industry')" class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1 focus:outline-none uppercase font-bold text-[13px] text-zinc-800 border-0 bg-transparent p-0">
             {{ t('nav.industry', 'Industry') }}
-            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-transform duration-300" :class="openDropdown === 'industry' ? 'rotate-180 text-primary' : 'group-hover:rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-          </span>
-          <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-[850px] max-w-[90vw] transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+          </button>
+          <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 w-[850px] max-w-[90vw] transition-all duration-300 ease-out z-50"
+            :class="openDropdown === 'industry' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex">
               <div class="w-1/3 bg-gradient-to-bl from-primary to-zinc-900 p-8 text-white relative overflow-hidden flex flex-col justify-between">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
@@ -321,14 +338,17 @@
         @endif
 
         <!-- Insight Dropdown -->
-        <li class="group relative flex items-center h-full py-6">
-          <span class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1">
+        <li class="group relative flex items-center h-full py-6"
+            @mouseenter="openDropdown = 'insights'"
+            @mouseleave="openDropdown = null">
+          <button type="button" @click.stop="toggleDropdown('insights')" class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1 focus:outline-none uppercase font-bold text-[13px] text-zinc-800 border-0 bg-transparent p-0">
             {{ t('nav.insights', 'Insight') }}
-            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-transform duration-300" :class="openDropdown === 'insights' ? 'rotate-180 text-primary' : 'group-hover:rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-          </span>
-          <div class="absolute left-0 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-56 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+          </button>
+          <div class="absolute left-0 top-[100%] pt-4 w-56 transition-all duration-300 ease-out z-50"
+            :class="openDropdown === 'insights' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 flex flex-col normal-case tracking-normal">
               @php
                 $csCpt = \App\Models\CustomPostType::where('slug', 'customer-success')->first();
@@ -349,14 +369,17 @@
         </li>
 
         <!-- Career Dropdown -->
-        <li class="group relative flex items-center h-full py-6">
-          <a href="{{ localized_url('/careers') }}" class="hover:text-primary transition duration-300 flex items-center gap-1">
+        <li class="group relative flex items-center h-full py-6"
+            @mouseenter="openDropdown = 'careers'"
+            @mouseleave="openDropdown = null">
+          <button type="button" @click.stop="toggleDropdown('careers')" class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1 focus:outline-none uppercase font-bold text-[13px] text-zinc-800 border-0 bg-transparent p-0">
             {{ t('nav.careers', 'Career') }}
-            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary transition-transform duration-300" :class="openDropdown === 'careers' ? 'rotate-180 text-primary' : 'group-hover:rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-          </a>
-          <div class="absolute left-0 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-56 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+          </button>
+          <div class="absolute left-0 top-[100%] pt-4 w-56 transition-all duration-300 ease-out z-50"
+            :class="openDropdown === 'careers' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0'">
             <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 flex flex-col normal-case tracking-normal">
               <a href="{{ localized_url('/careers#why-cdt') }}" title="{{ t('nav.why_cdt', 'Why CDT') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
                 {{ t('nav.why_cdt', 'Why CDT') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
