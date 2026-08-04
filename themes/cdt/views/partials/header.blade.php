@@ -370,9 +370,27 @@
           </div>
         </li>
 
-        <!-- Careers -->
-        <li>
-          <a href="{{ localized_url('/careers') }}" title="{{ t('nav.careers', 'Careers') }}" class="hover:text-primary transition duration-300">{{ t('nav.careers', 'Careers') }}</a>
+        <!-- Careers Simple Dropdown -->
+        <li class="group relative flex items-center h-full py-6">
+          <a href="{{ localized_url('/careers') }}" class="hover:text-primary transition duration-300 flex items-center gap-1">
+            {{ t('nav.careers', 'Careers') }}
+            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </a>
+          <div class="absolute left-0 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-56 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+            <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 flex flex-col normal-case tracking-normal">
+              <a href="{{ localized_url('/careers#why-cdt') }}" title="{{ t('nav.why_cdt', 'Why CDT') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+                {{ t('nav.why_cdt', 'Why CDT') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+              </a>
+              <a href="{{ localized_url('/careers#life-at-cdt') }}" title="{{ t('nav.life_at_cdt', 'Life at CDT') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+                {{ t('nav.life_at_cdt', 'Life at CDT') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+              </a>
+              <a href="{{ localized_url('/careers#job-vacancy') }}" title="{{ t('nav.job_vacancy', 'Job Vacancy') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+                {{ t('nav.job_vacancy', 'Job Vacancy') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+              </a>
+            </div>
+          </div>
         </li>
 
         <!-- Contact Us -->
