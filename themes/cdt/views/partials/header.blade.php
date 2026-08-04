@@ -163,7 +163,7 @@
                   @forelse($allianceProducts as $prod)
                     @php
                       $prodMeta = $prod->meta ?? [];
-                      $prodBadges = $prodMeta['badges'] ?? $prodMeta['badge'] ?? [];
+                      $prodBadges = $prod->getMeta('badge_text') ?? $prodMeta['badge_text'] ?? $prodMeta['badges'] ?? $prodMeta['badge'] ?? [];
                       $validBadges = [];
                       if (is_array($prodBadges)) {
                           foreach ($prodBadges as $b) {
@@ -236,7 +236,7 @@
                   @forelse($solutionCategories as $sol)
                     @php
                       $solMeta = $sol->meta ?? [];
-                      $solBadges = $solMeta['badges'] ?? $solMeta['badge'] ?? [];
+                      $solBadges = $sol->getMeta('badge_text') ?? $solMeta['badge_text'] ?? $solMeta['badges'] ?? $solMeta['badge'] ?? [];
                       $validSolBadges = [];
                       if (is_array($solBadges)) {
                           foreach ($solBadges as $b) {
@@ -305,7 +305,7 @@
                   @forelse($industryItems as $ind)
                     @php
                       $indMeta = $ind->meta ?? [];
-                      $indBadges = $indMeta['badges'] ?? $indMeta['badge'] ?? [];
+                      $indBadges = $ind->getMeta('badge_text') ?? $indMeta['badge_text'] ?? $indMeta['badges'] ?? $indMeta['badge'] ?? [];
                       $validIndBadges = [];
                       if (is_array($indBadges)) {
                           foreach ($indBadges as $b) {
