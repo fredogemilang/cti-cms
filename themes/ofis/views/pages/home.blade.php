@@ -2,7 +2,7 @@
 
 @php
     $packages = $packages ?? \App\Models\CptEntry::whereHas('postType', function($q){ $q->where('slug', 'package'); })->where('status', 'published')->get();
-    $posts = $posts ?? \Plugins\Posts\Models\Post::where('status', 'published')->latest()->take(6)->get();
+    $posts = $posts ?? \Plugins\Posts\Models\Post::where('status', 'published')->latest()->take(9)->get();
 @endphp
 
 @section('content')
