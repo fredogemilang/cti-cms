@@ -16,9 +16,7 @@
         $heroImg = $page?->block('hero_image');
         $heroImgUrl = $heroImg ? (str_starts_with($heroImg, 'http') || str_starts_with($heroImg, 'themes/') || str_starts_with($heroImg, 'assets/') ? asset($heroImg) : asset('storage/' . $heroImg)) : asset('themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
       @endphp
-      <img src="{{ $heroImgUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }} Hero Banner" title="{{ setting('site_name', 'Central Data Technology') }}"
-        class="hero-bg-img w-full h-full object-cover origin-center"
-        onerror="this.src='{{ asset('themes/cdt/assets/photo-1451187580459-43490279c0fa-w2072-DWLGXPRP.jpg') }}'">
+      <x-image :src="$heroImgUrl" alt="{{ setting('site_name', 'Central Data Technology') }} Hero Banner" title="{{ setting('site_name', 'Central Data Technology') }}" class="hero-bg-img w-full h-full object-cover origin-center" onerror="this.src='{{ asset('themes/cdt/assets/photo-1451187580459-43490279c0fa-w2072-DWLGXPRP.jpg') }}'" />
     </div>
   
     <!-- Red Gradient Overlay -->
@@ -150,7 +148,7 @@
               <div class="expertise-card bg-white shadow-sm border border-zinc-100 overflow-hidden hover:shadow-md transition-shadow rounded-2xl flex flex-col">
                 @if($itemImgUrl)
                   <div class="h-40 w-full overflow-hidden shrink-0">
-                    <img src="{{ $itemImgUrl }}" alt="{{ $item['title'] ?? 'Expertise' }}" title="{{ $item['title'] ?? 'Expertise' }}" class="w-full h-full object-cover">
+                    <x-image :src="$itemImgUrl" alt="{{ $item['title'] ?? 'Expertise' }}" title="{{ $item['title'] ?? 'Expertise' }}" class="w-full h-full object-cover" />
                   </div>
                 @endif
                 <div class="p-6 flex-1 flex flex-col justify-start">
@@ -194,8 +192,7 @@
                 <a href="{{ $partner->getUrl() }}" x-link
                   class="alliance-link flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-all duration-500 hover:!opacity-100 hover:scale-105 hover:bg-zinc-50 rounded-2xl"
                   data-hover-effect="scale-bounce">
-                  <img src="{{ $logoUrl }}" alt="{{ $partner->title }}" title="{{ $partner->title }}"
-                    class="alliance-logo w-full h-full object-contain">
+                  <x-image :src="$logoUrl" alt="{{ $partner->title }}" title="{{ $partner->title }}" class="alliance-logo w-full h-full object-contain" />
                 </a>
               @endif
             @endforeach
@@ -286,7 +283,7 @@
                 $delay = $index * 0.2;
               @endphp
               <div class="relative h-[320px] group overflow-hidden" data-gsap="curtain-reveal" data-gsap-delay="{{ $delay }}">
-                <img src="{{ $bgImgUrl }}" alt="{!! strip_tags($item['title'] ?? 'Why CDT') !!}" title="{!! strip_tags($item['title'] ?? 'Why CDT') !!}" class="absolute inset-0 w-full h-full object-cover grayscale group-hover:scale-105 group-hover:blur-[3px] transition-all duration-700">
+                <x-image :src="$bgImgUrl" alt="{!! strip_tags($item['title'] ?? 'Why CDT') !!}" title="{!! strip_tags($item['title'] ?? 'Why CDT') !!}" class="absolute inset-0 w-full h-full object-cover grayscale group-hover:scale-105 group-hover:blur-[3px] transition-all duration-700" />
                 <div class="absolute inset-0 bg-[#4F5B53]/85 group-hover:bg-[#dc2626]/90 transition-colors duration-500 mix-blend-multiply"></div>
                 <div class="absolute inset-0 p-10 flex flex-col justify-start items-center text-center text-white z-10">
                   <h3 class="font-bold text-lg mb-4 uppercase tracking-wider leading-snug">{!! $item['title'] ?? '' !!}</h3>
@@ -355,8 +352,7 @@
                   <div class="lg:w-1/3 bg-zinc-50 p-12 flex flex-col justify-between border-r border-zinc-100">
                     @if($logoUrl)
                       <div class="h-32 flex justify-start items-center mb-8">
-                        <img src="{{ $logoUrl }}" alt="{{ $testimonial->title }}" title="{{ $testimonial->title }}"
-                          class="max-h-full w-auto max-w-[320px] object-contain object-left mix-blend-multiply">
+                        <x-image :src="$logoUrl" alt="{{ $testimonial->title }}" title="{{ $testimonial->title }}" class="max-h-full w-auto max-w-[320px] object-contain object-left mix-blend-multiply" />
                       </div>
                     @else
                       <div class="h-32 mb-8"></div>
