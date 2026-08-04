@@ -29,12 +29,8 @@
   <div class="absolute -bottom-20 left-1/3 w-[400px] h-[400px] bg-rose-500/10 rounded-full blur-[60px] pointer-events-none mix-blend-multiply"></div>
 
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-    <!-- Breadcrumb -->
-    <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-10 text-left" aria-label="Breadcrumb">
-      <a href="{{ localized_url('/') }}" class="hover:text-primary transition-colors">Home</a>
-      <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-      <span class="text-zinc-800 font-bold" aria-current="page">Blog & News</span>
-    </nav>
+    <!-- Breadcrumb Component (Integrated with SEO & Structured Data) -->
+    <x-seo-breadcrumbs class="text-zinc-400 mb-10 text-left" />
 
     <div class="overflow-hidden">
       <h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold text-gray-900 leading-tight">
@@ -150,7 +146,7 @@
 
     @if(method_exists($posts, 'links'))
       <div class="mt-12">
-        {{ $posts->links() }}
+        {{ $posts->links('cdt::partials.pagination') }}
       </div>
     @endif
   </div>

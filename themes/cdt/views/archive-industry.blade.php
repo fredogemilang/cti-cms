@@ -101,7 +101,7 @@
 
     @if(method_exists($entries, 'links'))
       <div class="mt-12">
-        {{ $entries->links() }}
+        {{ $entries->links('cdt::partials.pagination') }}
       </div>
     @endif
   </div>
