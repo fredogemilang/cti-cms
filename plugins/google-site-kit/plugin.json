@@ -1,0 +1,28 @@
+{
+    "name": "GoogleSiteKit",
+    "slug": "google-site-kit",
+    "version": "1.0.0",
+    "description": "A GoogleSiteKit plugin for the CMS.",
+    "author": "CMS Team",
+    "namespace": "Plugins\\GoogleSiteKit",
+    "provider": "Plugins\\GoogleSiteKit\\Providers\\GoogleSiteKitServiceProvider",
+    "permissions": {
+        "resources": [
+            {
+                "module": "google-site-kit",
+                "actions": [
+                    "view",
+                    "create",
+                    "edit",
+                    "delete"
+                ],
+                "icon": "extension",
+                "description": "Manage GoogleSiteKit"
+            }
+        ]
+    },
+    "requires": {
+        "php": ">=8.2",
+        "cms": ">=1.0"
+    }
+}
