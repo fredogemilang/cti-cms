@@ -254,6 +254,7 @@
     </div>
   </div>
 </section>
+@endif
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const article = document.querySelector("article");
