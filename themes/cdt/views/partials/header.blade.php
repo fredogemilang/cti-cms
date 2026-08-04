@@ -35,6 +35,10 @@
         ->orderBy('title')
         ->get() : collect();
 
+    // Dynamic Blog URL from Posts Settings
+    $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::get('archive_slug', 'blog') : 'blog';
+    $blogUrl = localized_url('/' . $blogSlug);
+
     // Site logo setting fallback
     $siteLogoSetting = setting('site_logo');
     $siteLogoUrl = $siteLogoSetting ? resolve_block_asset($siteLogoSetting) : asset('themes/cdt/assets/cropped-logo-cdt-D0j3NVKg.png');
@@ -356,7 +360,7 @@
               <a href="{{ localized_url('/customer-success') }}" title="{{ t('nav.customer_success', 'Customer Success') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
                 {{ t('nav.customer_success', 'Customer Success') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
               </a>
-              <a href="{{ localized_url('/blog') }}" title="{{ t('nav.blog_news', 'Blog & News') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+              <a href="{{ $blogUrl }}" title="{{ t('nav.blog_news', 'Blog & News') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
                 {{ t('nav.blog_news', 'Blog & News') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
               </a>
               <a href="{{ localized_url('/video') }}" title="{{ t('nav.video', 'Video') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">

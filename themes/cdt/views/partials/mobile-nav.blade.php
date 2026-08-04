@@ -28,6 +28,8 @@
             ->orderBy('title')
             ->get();
     }
+    $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::get('archive_slug', 'blog') : 'blog';
+    $blogUrl = localized_url('/' . $blogSlug);
 @endphp
 
 <!-- Mobile Bottom Navigation Bar & Bottom Sheets -->
@@ -352,7 +354,7 @@
               $csTitle = $csCpt ? ($csCpt->getTranslation('plural_label', $currentLocale ?? app()->getLocale()) ?: $csCpt->plural_label) : t('nav.customer_success', 'Customer Success');
             @endphp
             <a href="{{ $csUrl }}" class="block hover:text-primary font-medium">{{ $csTitle }}</a>
-            <a href="{{ localized_url('/blog-news') }}" class="block hover:text-primary font-medium">{{ t('nav.blog_news', 'Blog & News') }}</a>
+            <a href="{{ $blogUrl }}" class="block hover:text-primary font-medium">{{ t('nav.blog_news', 'Blog & News') }}</a>
             <a href="{{ localized_url('/video') }}" class="block hover:text-primary font-medium">{{ t('nav.video', 'Video') }}</a>
           </div>
         </div>

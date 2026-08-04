@@ -9,6 +9,8 @@
     $dateFormat = $dateFormat ?? \Plugins\Posts\Models\Setting::get('date_format', 'M d, Y');
     $date = $post->published_at ? $post->published_at->format($dateFormat) : $post->created_at->format($dateFormat);
     $featImg = $post->featured_image ? resolve_block_asset($post->featured_image) : null;
+    $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::get('archive_slug', 'blog') : 'blog';
+    $blogUrl = localized_url('/' . $blogSlug);
     
     // Sidebar Recent Posts
     $recentPosts = \Plugins\Posts\Models\Post::published()
@@ -124,7 +126,7 @@
             </a>
           </div>
 
-          <a href="{{ localized_url('/blog') }}" class="text-sm font-bold text-primary hover:underline flex items-center gap-1">
+          <a href="{{ $blogUrl }}" class="text-sm font-bold text-primary hover:underline flex items-center gap-1">
             ← Back to Blog & News
           </a>
         </div>
