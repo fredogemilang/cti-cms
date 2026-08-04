@@ -14,8 +14,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- Local Swiper Assets -->
+    <link rel="stylesheet" href="{{ theme_asset('swiper-bundle.min.css') }}" />
+    <script src="{{ theme_asset('swiper-bundle.min.js') }}"></script>
 
     <!-- Theme Assets -->
     <link rel="stylesheet" href="{{ theme_asset('main-CBW6bIvn.css') }}">
