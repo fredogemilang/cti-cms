@@ -12,3 +12,9 @@ Whenever adding or modifying a `MetaField` for any `CustomPostType` (`cpt_entrie
 2. **Never Reinvent Breadcrumb HTML**: Do not write custom `<nav>` tags, manual `<a>` links, or inline chevron SVG loops in template files.
 3. **Integrates with BreadcrumbService**: The component automatically resolves `$postType->has_archive`, parent/child entry hierarchies, current locale translations, and syncs with JSON-LD schema structured data in `<head>`.
 4. **Pass Custom Styling via Attributes**: Customize text colors and margins directly via Blade attributes (e.g. `<x-seo-breadcrumbs :entity="$entry" class="text-white/70 mb-10" />`).
+
+## Mandatory MediaService Image Import Rule
+1. **Always Use `MediaService`**: All images during import MUST be processed via `app(App\Services\MediaService::class)->upload($file, $metadata)`.
+2. **Automatic Optimization**: Calling `MediaService` ensures images are compressed, converted to WebP, provided with responsive variants (`sm`, `md`, `lg`, `xl`, `thumb`), and registered in the `media` table.
+3. **Store Relative Paths**: Store `$media->path` in database fields, NEVER hardcode external URLs or direct un-tracked file copies.
+
