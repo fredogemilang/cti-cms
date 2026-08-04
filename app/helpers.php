@@ -618,3 +618,13 @@ if (! function_exists('safe_phone')) {
         return '<a href="tel:'.e($telNumber).'" class="'.e($class).'">'.e($phone).'</a>';
     }
 }
+
+if (! function_exists('is_plugin_active')) {
+    /**
+     * Check if a plugin is active in the system.
+     */
+    function is_plugin_active(string $slug): bool
+    {
+        return \App\Models\Plugin::where('slug', $slug)->where('is_active', true)->exists();
+    }
+}

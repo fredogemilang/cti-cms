@@ -2,7 +2,9 @@
 
 @php
     $packages = $packages ?? \App\Models\CptEntry::whereHas('postType', function($q){ $q->where('slug', 'package'); })->where('status', 'published')->get();
-    $posts = $posts ?? \Plugins\Posts\Models\Post::where('status', 'published')->latest()->take(9)->get();
+    $posts = $posts ?? (is_plugin_active('posts') && class_exists(\Plugins\Posts\Models\Post::class) 
+        ? \Plugins\Posts\Models\Post::where('status', 'published')->latest()->take(9)->get() 
+        : collect());
 @endphp
 
 @section('content')
