@@ -188,6 +188,25 @@ class Page extends Model
         return $this->getBlockValue($name, $default);
     }
 
+    /**
+     * Get array payload of a repeater block.
+     */
+    public function repeaterBlock(string $name, array $default = []): array
+    {
+        $value = $this->block($name);
+        if (is_array($value)) {
+            return $value;
+        }
+        if (is_string($value) && ! empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        return $default;
+    }
+
     public function isSystem(): bool
     {
         return (bool) $this->is_system;

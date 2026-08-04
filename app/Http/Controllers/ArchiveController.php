@@ -180,8 +180,15 @@ class ArchiveController extends Controller
 
         $entry = CptEntry::findByLocalizedSlug($postType, $entrySlug);
         if (! $entry) {
-            $entry = CptEntry::where('post_type_id', $postType->id)
-                ->where('slug', $entrySlug)
+            $entry = CptEntry::where('slug', $entrySlug)
+                ->where('status', 'published')
+                ->first();
+        }
+        if (! $entry) {
+            $entry = CptEntry::where(function ($q) use ($entrySlug) {
+                $q->whereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$entrySlug])
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$entrySlug]);
+            })
                 ->where('status', 'published')
                 ->first();
         }
@@ -199,7 +206,8 @@ class ArchiveController extends Controller
         $nextEntry = $entry->getNextEntry();
 
         $postTypeSlug = $postType->slug;
-        $viewName = $this->resolveSingleView($postTypeSlug, true);
+        $entryCptSlug = ($entry->postType instanceof CustomPostType) ? $entry->postType->slug : $postTypeSlug;
+        $viewName = $this->resolveSingleView($entryCptSlug, true, $postTypeSlug);
 
         return view($viewName, [
             'postType' => $postType,
@@ -283,9 +291,9 @@ class ArchiveController extends Controller
     /**
      * Resolve the view for a single CPT entry.
      *
-     * Priority: {theme}::single-{cpt} → {theme}::single-entry → single-{cpt} → single-entry
+     * Priority: {theme}::single-sub-{cpt} → {theme}::single-{cpt} → {theme}::single-entry → single-entry
      */
-    protected function resolveSingleView(string $cptSlug, bool $isNested = false): string
+    protected function resolveSingleView(string $cptSlug, bool $isNested = false, ?string $fallbackCptSlug = null): string
     {
         $theme = app(ThemeLoader::class)->getActiveTheme();
         $ns = $theme?->slug;
@@ -295,15 +303,27 @@ class ArchiveController extends Controller
         if ($ns) {
             if ($isNested) {
                 $candidates[] = "{$ns}::single-sub-{$cptSlug}";
+                if ($fallbackCptSlug && $fallbackCptSlug !== $cptSlug) {
+                    $candidates[] = "{$ns}::single-sub-{$fallbackCptSlug}";
+                }
             }
             $candidates[] = "{$ns}::single-{$cptSlug}";
+            if ($fallbackCptSlug && $fallbackCptSlug !== $cptSlug) {
+                $candidates[] = "{$ns}::single-{$fallbackCptSlug}";
+            }
             $candidates[] = "{$ns}::single-entry";
         }
 
         if ($isNested) {
             $candidates[] = "single-sub-{$cptSlug}";
+            if ($fallbackCptSlug && $fallbackCptSlug !== $cptSlug) {
+                $candidates[] = "single-sub-{$fallbackCptSlug}";
+            }
         }
         $candidates[] = "single-{$cptSlug}";
+        if ($fallbackCptSlug && $fallbackCptSlug !== $cptSlug) {
+            $candidates[] = "single-{$fallbackCptSlug}";
+        }
         $candidates[] = 'single-entry';
 
         foreach ($candidates as $view) {
