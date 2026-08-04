@@ -28,5 +28,10 @@ Whenever adding or modifying a `MetaField` for any `CustomPostType` (`cpt_entrie
 2. **Never Assume Dedicated Pages**: DO NOT create separate dedicated `Page` records in the database without checking reference files first.
 3. **Ask in Implementation Plan**: If there is ambiguity or options on page creation vs single-page scroll layout, list the question explicitly under `## Open Questions` in `implementation_plan.md` for user confirmation BEFORE executing.
 
+## Mandatory Plugin Status Fail-Safe Rule
+1. **Always Check Plugin Status**: Theme views MUST check `is_plugin_active('posts') && class_exists(\Plugins\Posts\Models\Post::class)` before querying model classes from optional plugins.
+2. **Graceful Fallback**: If a plugin is deactivated in the admin panel, the view MUST fallback gracefully (e.g. returning an empty collection or hiding the section) without throwing `ClassNotFoundException` or crashing the app.
+
+
 
 
