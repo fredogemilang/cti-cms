@@ -32,8 +32,17 @@
 </head>
 <body class="@yield('body-class')">
 
+    @php
+        $headerView = view()->exists("{$activeTheme->slug}::partials.header")
+            ? "{$activeTheme->slug}::partials.header"
+            : (view()->exists('default::partials.header') ? 'default::partials.header' : 'partials.header');
+        $footerView = view()->exists("{$activeTheme->slug}::partials.footer")
+            ? "{$activeTheme->slug}::partials.footer"
+            : (view()->exists('default::partials.footer') ? 'default::partials.footer' : 'partials.footer');
+    @endphp
+
     {{-- Header --}}
-    @include($activeTheme->slug . '::partials.header')
+    @include($headerView)
 
     {{-- Main Content --}}
     <main id="main-content">
@@ -41,7 +50,7 @@
     </main>
 
     {{-- Footer --}}
-    @include($activeTheme->slug . '::partials.footer')
+    @include($footerView)
 
     @livewireScripts
 

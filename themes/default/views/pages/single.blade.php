@@ -1,4 +1,9 @@
-@extends($activeTheme->slug . '::layouts.app')
+@php
+    $layoutView = view()->exists("{$activeTheme->slug}::layouts.app")
+        ? "{$activeTheme->slug}::layouts.app"
+        : (view()->exists('default::layouts.app') ? 'default::layouts.app' : 'layouts.app');
+@endphp
+@extends($layoutView)
 
 @section('title', $page->getMetaTitle())
 
@@ -19,9 +24,14 @@
     {{-- Page Blocks --}}
     <section class="section page-body">
         <div class="container container-narrow">
+            @php
+                $blockView = view()->exists("{$activeTheme->slug}::partials.block")
+                    ? "{$activeTheme->slug}::partials.block"
+                    : (view()->exists('default::partials.block') ? 'default::partials.block' : 'partials.block');
+            @endphp
             @foreach($blocks as $block)
                 @if($block->is_active)
-                    @include($activeTheme->slug . '::partials.block', ['block' => $block])
+                    @include($blockView, ['block' => $block])
                 @endif
             @endforeach
         </div>
