@@ -133,12 +133,12 @@
       @if($relatedProducts->isNotEmpty())
         <div class="w-full lg:w-1/3 space-y-8 lg:sticky lg:top-32 order-1 lg:order-2" data-gsap="fade-up" data-gsap-delay="0.2">
           <div class="bg-white rounded-3xl border border-zinc-200 p-8 shadow-sm hover:shadow-xl hover:border-primary/30 transition-all duration-300 relative overflow-hidden">
-            <h4 class="text-sm font-bold tracking-widest text-zinc-400 uppercase mb-8 flex items-center gap-3 relative z-10">
+            <h2 class="text-sm font-bold tracking-widest text-zinc-400 uppercase mb-8 flex items-center gap-3 relative z-10">
               <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
               </svg>
               {{ t('cs.products_used', 'Products & Technology Used') }}
-            </h4>
+            </h2>
 
             <div class="flex flex-col gap-8 relative z-10 max-h-[60vh] overflow-y-auto overscroll-contain pr-4" style="scrollbar-width: thin;">
               @foreach($relatedProducts as $index => $prod)
@@ -153,9 +153,9 @@
                     <x-image :src="$prodLogoUrl" alt="{{ $prodTitle }}" class="max-w-full max-h-full object-contain" />
                   </a>
                   <div class="mt-5">
-                    <h5 class="font-bold text-gray-900 text-base mb-2">
+                    <h3 class="font-bold text-gray-900 text-base mb-2">
                       <a href="{{ $prod->getUrl($prodLocale) }}" class="hover:text-primary transition-colors">{{ $prodTitle }}</a>
-                    </h5>
+                    </h3>
                     @if(!empty($prodExcerpt))
                       <p class="text-sm text-gray-600 font-light leading-relaxed">
                         {{ Str::limit(strip_tags($prodExcerpt), 120) }}

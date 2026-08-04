@@ -144,10 +144,10 @@
           
           <!-- TOC Widget -->
           <div id="toc-widget" class="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
-            <h4 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <h2 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
               <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
               Table of Contents
-            </h4>
+            </h2>
             <nav class="toc-nav">
               <ul id="toc-list" class="space-y-2.5 text-sm font-medium text-gray-500 relative border-l-2 border-zinc-200 ml-2 pl-5">
               </ul>
@@ -179,7 +179,7 @@
           </div>
           <div>
             <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Previous Article</span>
-            <h4 class="text-base font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2">{{ $prevTitle }}</h4>
+            <h3 class="text-base font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2">{{ $prevTitle }}</h3>
           </div>
         </a>
       @else
@@ -197,7 +197,7 @@
           </div>
           <div class="md:ml-auto">
             <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Next Article</span>
-            <h4 class="text-base font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2">{{ $nextTitle }}</h4>
+            <h3 class="text-base font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2">{{ $nextTitle }}</h3>
           </div>
         </a>
       @else

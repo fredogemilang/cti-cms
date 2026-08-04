@@ -50,7 +50,7 @@
             <div class="h-16 flex items-center justify-start mb-6">
               <x-image :src="$logoUrl" alt="{{ $title }}" class="max-h-full max-w-[160px] object-contain" />
             </div>
-            <h3 class="text-xl font-bold text-gray-900 mb-4 line-clamp-2">{{ $title }}</h3>
+            <h2 class="text-xl font-bold text-gray-900 mb-4 line-clamp-2">{{ $title }}</h2>
             <p class="text-gray-600 font-light leading-relaxed mb-10 flex-grow line-clamp-4">
               {{ Str::limit(strip_tags($excerpt), 180) }}
             </p>

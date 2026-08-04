@@ -85,7 +85,7 @@
               {{ $itemTitle }}
             </a>
           @else
-            <h4 class="relative z-10 text-xl font-bold text-gray-900 leading-snug">{{ $itemTitle }}</h4>
+            <h3 class="relative z-10 text-xl font-bold text-gray-900 leading-snug">{{ $itemTitle }}</h3>
           @endif
         </div>
       @endforeach
@@ -122,7 +122,7 @@
               {{ $itemTitle }}
             </a>
           @else
-            <h4 class="relative z-10 text-xl font-bold text-gray-900 leading-snug">{{ $itemTitle }}</h4>
+            <h3 class="relative z-10 text-xl font-bold text-gray-900 leading-snug">{{ $itemTitle }}</h3>
           @endif
         </div>
       @endforeach
@@ -159,7 +159,7 @@
               {{ $itemTitle }}
             </a>
           @else
-            <h4 class="relative z-10 text-xl lg:text-2xl font-bold text-gray-900 leading-tight">{{ $itemTitle }}</h4>
+            <h3 class="relative z-10 text-xl lg:text-2xl font-bold text-gray-900 leading-tight">{{ $itemTitle }}</h3>
           @endif
         </div>
       @endforeach

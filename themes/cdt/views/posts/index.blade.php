@@ -70,9 +70,9 @@
                   {{ $featDate }}
                 </span>
               </div>
-              <h3 class="text-xl md:text-2xl lg:text-3xl font-extrabold leading-tight mb-4 text-gray-900 hover:text-primary transition-colors">
+              <h2 class="text-xl md:text-2xl lg:text-3xl font-extrabold leading-tight mb-4 text-gray-900 hover:text-primary transition-colors">
                 <a href="{{ $feat->getUrl() }}">{{ $featTitle }}</a>
-              </h3>
+              </h2>
               <p class="text-gray-600 font-light text-xs md:text-sm lg:text-base leading-relaxed mb-6">
                 {{ $featExcerpt }}
               </p>
@@ -187,9 +187,9 @@
               {{ $pDate }}
             </div>
 
-            <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
+            <h2 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
               <a href="{{ $post->getUrl() }}">{{ $pTitle }}</a>
-            </h3>
+            </h2>
 
             <p class="text-sm text-gray-600 font-light leading-relaxed line-clamp-3 mb-6">
               {{ $pExcerpt }}

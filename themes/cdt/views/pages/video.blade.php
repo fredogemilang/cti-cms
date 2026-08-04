@@ -594,7 +594,7 @@
       </div>
       <div class="p-4 flex flex-col flex-1">
         ${nowPlaying}
-        <h4 class="text-[14px] font-semibold text-gray-900 leading-snug line-clamp-2 ${isActive ? 'mt-2' : ''}">${video.title}</h4>
+        <h3 class="text-[14px] font-semibold text-gray-900 leading-snug line-clamp-2 ${isActive ? 'mt-2' : ''}">${video.title}</h3>
         <div class="video-meta mt-auto pt-2">
           <span>${video.author}</span>
           <span class="dot"></span>

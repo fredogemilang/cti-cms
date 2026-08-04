@@ -287,7 +287,7 @@
                 
                 <div class="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-white/20 transform group-hover:-translate-y-2 transition-transform duration-500 flex justify-between items-center">
                   <div>
-                    <h4 class="font-extrabold text-gray-900 text-lg md:text-xl tracking-wide">{{ $s['name'] ?? '' }}</h4>
+                    <h3 class="font-extrabold text-gray-900 text-lg md:text-xl tracking-wide">{{ $s['name'] ?? '' }}</h3>
                     <p class="text-sm font-semibold text-primary mt-1 uppercase tracking-wider">{{ $s['position'] ?? '' }}</p>
                   </div>
                   @if(!empty($s['linkedin_url']))

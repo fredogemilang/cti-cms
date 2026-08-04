@@ -78,9 +78,9 @@
               </div>
             @endif
 
-            <h3 class="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors mb-3">
+            <h2 class="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors mb-3">
               {{ $indTitle }}
-            </h3>
+            </h2>
             
             <p class="text-gray-600 text-sm line-clamp-3 leading-relaxed mb-6 font-light">
               {{ Str::limit(strip_tags($indContent), 140) }}

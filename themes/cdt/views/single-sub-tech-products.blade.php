@@ -309,7 +309,7 @@
             @if($storyLogo)
             <img src="{{ resolve_block_asset($storyLogo) }}" alt="{{ $storyTitle }}" class="h-10 object-contain mb-6" />
             @endif
-            <h4 class="text-2xl md:text-3xl font-bold text-zinc-900 mb-4 leading-tight">{{ $storyTitle }}</h4>
+            <h3 class="text-2xl md:text-3xl font-bold text-zinc-900 mb-4 leading-tight">{{ $storyTitle }}</h3>
             <p class="text-zinc-600 text-base leading-relaxed mb-6">{{ $storyDesc }}</p>
             @if($storyLink && $storyLink !== '#')
             <a href="{{ $storyLink }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-primary font-bold hover:underline">
@@ -363,7 +363,7 @@
                 <x-icon name="lucide:book-open" class="w-7 h-7 text-primary" />
               </div>
               <div>
-                <h4 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.advanced_action_title', 'Advanced Action and Review') }}</h4>
+                <h3 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.advanced_action_title', 'Advanced Action and Review') }}</h3>
                 <p class="text-base text-zinc-500 font-light leading-relaxed">{{ t('product.advanced_action_desc', 'PT Central Data Technology (CDT) is a subsidiary of the CTI Group that focuses on distributing IT infrastructure solutions to customers.') }}</p>
               </div>
             </div>
@@ -374,7 +374,7 @@
                 <x-icon name="lucide:users" class="w-7 h-7 text-primary" />
               </div>
               <div>
-                <h4 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.understand_it_expert_title', 'Understand IT Expert') }}</h4>
+                <h3 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.understand_it_expert_title', 'Understand IT Expert') }}</h3>
                 <p class="text-base text-zinc-500 font-light leading-relaxed">{{ t('product.understand_it_expert_desc', 'By providing IT experts, we have secured CDT\'s presence in a variety of industries in Indonesia, Malaysia, and other countries in the world to overcome challenges related to digital operations.') }}</p>
               </div>
             </div>
@@ -385,7 +385,7 @@
                 <x-icon name="lucide:award" class="w-7 h-7 text-primary" />
               </div>
               <div>
-                <h4 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.certified_specialist_title', 'Certified Specialist') }}</h4>
+                <h3 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.certified_specialist_title', 'Certified Specialist') }}</h3>
                 <p class="text-base text-zinc-500 font-light leading-relaxed">{{ t('product.certified_specialist_desc', 'CDT IT specialists are certified to ensure solution quality follows with strict implementation standards.') }}</p>
               </div>
             </div>
