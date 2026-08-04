@@ -180,8 +180,15 @@ class ArchiveController extends Controller
 
         $entry = CptEntry::findByLocalizedSlug($postType, $entrySlug);
         if (! $entry) {
-            $entry = CptEntry::where('post_type_id', $postType->id)
-                ->where('slug', $entrySlug)
+            $entry = CptEntry::where('slug', $entrySlug)
+                ->where('status', 'published')
+                ->first();
+        }
+        if (! $entry) {
+            $entry = CptEntry::where(function ($q) use ($entrySlug) {
+                $q->whereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$entrySlug])
+                  ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$entrySlug]);
+            })
                 ->where('status', 'published')
                 ->first();
         }
