@@ -2,13 +2,25 @@
     $currentLocale = app()->getLocale();
     $altLocale = $currentLocale === 'en' ? 'id' : 'en';
 
-    // Get active products/technology alliances for Technology Alliance Mega Menu
-    $allianceProducts = \App\Models\CptEntry::published()
-        ->whereHas('postType', fn($q) => $q->whereIn('slug', ['technology-alliance', 'products']))
+    // Technology Alliance CPT & Entries
+    $allianceCpt = \App\Models\CustomPostType::whereIn('slug', ['technology-alliance', 'technology_alliance'])->first();
+    $allianceCptUrl = ($allianceCpt && $allianceCpt->has_archive) ? localized_url('/technology-alliance') : 'javascript:void(0)';
+    $allianceProducts = $allianceCpt ? \App\Models\CptEntry::published()
+        ->where('post_type_id', $allianceCpt->id)
         ->orderBy('menu_order')
         ->orderBy('title')
-        ->limit(12)
-        ->get();
+        ->limit(14)
+        ->get() : collect();
+
+    // Solutions CPT & Entries
+    $solutionCpt = \App\Models\CustomPostType::whereIn('slug', ['solutions', 'solution'])->first();
+    $solutionCptUrl = ($solutionCpt && $solutionCpt->has_archive) ? localized_url('/solution') : 'javascript:void(0)';
+    $solutionCategories = $solutionCpt ? \App\Models\CptEntry::published()
+        ->where('post_type_id', $solutionCpt->id)
+        ->whereNull('parent_id')
+        ->orderBy('menu_order')
+        ->orderBy('title')
+        ->get() : collect();
 
     // Site logo setting fallback
     $siteLogoSetting = setting('site_logo');
@@ -105,14 +117,14 @@
 
         <!-- Technology Alliance (Mega Menu - Split Editorial Design) -->
         <li class="group relative flex items-center h-full py-6">
-          <span class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1">
+          <a href="{{ $allianceCptUrl }}" class="hover:text-primary transition duration-300 flex items-center gap-1">
             {{ t('nav.technology_alliance', 'Technology Alliance') }}
             <svg
               class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300"
               fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
-          </span>
+          </a>
           <div
             class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-[900px] max-w-[90vw] transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex">
@@ -131,7 +143,7 @@
                   @forelse($allianceProducts as $prod)
                     @php
                       $prodMeta = $prod->meta ?? [];
-                      $prodBadges = $prodMeta['badges'] ?? [];
+                      $prodBadges = $prodMeta['badges'] ?? $prodMeta['badge'] ?? [];
                       $validBadges = [];
                       if (is_array($prodBadges)) {
                           foreach ($prodBadges as $b) {
@@ -140,6 +152,8 @@
                                   $validBadges[] = trim($txt);
                               }
                           }
+                      } elseif (is_string($prodBadges) && !empty(trim($prodBadges))) {
+                          $validBadges[] = trim($prodBadges);
                       }
                     @endphp
 
@@ -163,8 +177,7 @@
                       </a>
                     @endif
                   @empty
-                    <a href="{{ url('/technology-alliance') }}" title="{{ t('nav.all_technology_partners', 'All Technology Partners') }}"
-                      class="text-sm font-semibold text-gray-700 hover:text-primary border-b border-gray-200 py-2.5 px-3">{{ t('nav.all_technology_partners', 'All Technology Partners') }} →</a>
+                    <span class="text-sm text-gray-500 py-2">{{ t('nav.no_technology_alliances', 'No technology partners available') }}</span>
                   @endforelse
                 </div>
               </div>
@@ -174,7 +187,7 @@
 
         <!-- Solutions Mega Menu -->
         <li class="group relative flex items-center h-full py-6">
-          <a href="{{ localized_url('/solutions') }}" title="{{ t('nav.solutions', 'Solutions') }}" class="hover:text-primary transition duration-300 flex items-center gap-1">
+          <a href="{{ $solutionCptUrl }}" title="{{ t('nav.solutions', 'Solutions') }}" class="hover:text-primary transition duration-300 flex items-center gap-1">
             {{ t('nav.solutions', 'Solutions') }}
             <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -191,26 +204,41 @@
               </div>
               <div class="w-3/5 p-8">
                 <div class="flex flex-col gap-y-2">
-                  <a href="{{ localized_url('/solutions#analytics') }}" title="Analytics" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-3 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
-                    <span>Analytics</span>
-                    <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
-                  </a>
-                  <a href="{{ localized_url('/solutions#cloud') }}" title="Cloud" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-3 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
-                    <span>Cloud</span>
-                    <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
-                  </a>
-                  <a href="{{ localized_url('/solutions#infrastructure') }}" title="Infrastructure" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-3 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
-                    <span>Infrastructure</span>
-                    <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
-                  </a>
-                  <a href="{{ localized_url('/solutions#observability') }}" title="Observability" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-3 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
-                    <span>Observability</span>
-                    <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
-                  </a>
-                  <a href="{{ localized_url('/solutions#security') }}" title="Security" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-3 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
-                    <span>Security</span>
-                    <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
-                  </a>
+                  @forelse($solutionCategories as $sol)
+                    @php
+                      $solMeta = $sol->meta ?? [];
+                      $solBadges = $solMeta['badges'] ?? $solMeta['badge'] ?? [];
+                      $validSolBadges = [];
+                      if (is_array($solBadges)) {
+                          foreach ($solBadges as $b) {
+                              $txt = is_array($b) ? ($b['text'] ?? $b['title'] ?? '') : (string)$b;
+                              if (!empty(trim($txt))) {
+                                  $validSolBadges[] = trim($txt);
+                              }
+                          }
+                      } elseif (is_string($solBadges) && !empty(trim($solBadges))) {
+                          $validSolBadges[] = trim($solBadges);
+                      }
+                    @endphp
+
+                    @if(!empty($validSolBadges))
+                      <a href="{{ $sol->getUrl() }}" title="{{ $sol->title }}" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-2.5 px-3 -mx-3 hover:bg-gray-50 rounded-md flex flex-col justify-center items-start gap-1.5 group/link">
+                        <span>{{ $sol->title }}</span>
+                        <div class="flex flex-wrap items-center gap-1.5">
+                          @foreach($validSolBadges as $badgeTxt)
+                            <span class="text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full group-hover/link:bg-red-100 group-hover/link:text-primary transition-colors whitespace-nowrap">{{ $badgeTxt }}</span>
+                          @endforeach
+                        </div>
+                      </a>
+                    @else
+                      <a href="{{ $sol->getUrl() }}" title="{{ $sol->title }}" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-2.5 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
+                        <span>{{ $sol->title }}</span>
+                        <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+                      </a>
+                    @endif
+                  @empty
+                    <span class="text-sm text-gray-500 py-2">{{ t('nav.no_solutions', 'No solutions available') }}</span>
+                  @endforelse
                 </div>
               </div>
             </div>
