@@ -35,7 +35,7 @@
       <a href="{{ localized_url('/') }}" class="hover:text-primary transition-colors">{{ t('common.home', 'Home') }}</a>
       @if($hasCptArchive)
         <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        <a href="{{ $cptPostType->getArchiveUrl() }}" class="hover:text-primary transition-colors">{{ $cptPostType->plural_label ?: t('common.technology_alliance', 'Technology Alliance') }}</a>
+        <a href="{{ $cptPostType->getArchiveUrl() }}" class="hover:text-primary transition-colors">{{ $cptPostType->getTranslation('plural_label', app()->getLocale()) ?: $cptPostType->plural_label ?: t('common.technology_alliance', 'Technology Alliance') }}</a>
       @endif
       <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
       <span class="text-zinc-800 font-bold">{{ $entry->title }}</span>

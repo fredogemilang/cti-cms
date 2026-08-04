@@ -1,6 +1,6 @@
 @extends('cdt::layouts.app')
 
-@section('title', (isset($postType) ? $postType->name : 'Customer Success') . ' — ' . setting('site_name', 'Central Data Technology'))
+@section('title', (isset($postType) ? ($postType->getTranslation('plural_label', app()->getLocale()) ?: $postType->plural_label ?: $postType->name) : t('cs.customer_success', 'Customer Success')) . ' — ' . setting('site_name', 'Central Data Technology'))
 
 @section('content')
 <!-- Customer Success Hero Section -->
