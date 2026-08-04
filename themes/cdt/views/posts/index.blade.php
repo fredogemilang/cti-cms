@@ -3,16 +3,19 @@
 @php
     $currentLocale = app()->getLocale();
     
-    // Featured Posts (for Swiper hero slider)
-    if (!isset($featuredPosts) || $featuredPosts->isEmpty()) {
+    // Featured Posts (for Swiper hero slider - minimum 3 items)
+    if (!isset($featuredPosts) || $featuredPosts->count() < 3) {
         $featuredPosts = \Plugins\Posts\Models\Post::published()
             ->where('is_featured', true)
             ->latest()
-            ->take(4)
+            ->take(3)
             ->get();
             
-        if ($featuredPosts->isEmpty()) {
-            $featuredPosts = \Plugins\Posts\Models\Post::published()->latest()->take(3)->get();
+        if ($featuredPosts->count() < 3) {
+            $featuredPosts = \Plugins\Posts\Models\Post::published()
+                ->latest()
+                ->take(3)
+                ->get();
         }
     }
 
@@ -42,7 +45,7 @@
       </h1>
     </div>
 
-    <!-- Single Featured Article Slider / Card -->
+    <!-- Featured Articles Swiper Hero Slider -->
     @if($featuredPosts->isNotEmpty())
     <div class="swiper featured-slider mt-16 relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-white to-red-50 border border-zinc-100 shadow-2xl w-full h-auto md:aspect-[16/9]">
       <div class="swiper-wrapper">
@@ -94,11 +97,66 @@
           </div>
         @endforeach
       </div>
+
+      <!-- Slider Navigation (Top Right on Mobile, Edge Chevrons on Desktop) -->
+      <div class="absolute bottom-4 right-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:left-6 md:right-6 z-30 flex md:justify-between items-center gap-2 md:gap-0 pointer-events-none">
+        <button class="swiper-button-prev-opt2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/80 backdrop-blur-md border border-zinc-200 text-gray-800 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all cursor-pointer shadow-lg pointer-events-auto">
+          <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <button class="swiper-button-next-opt2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/80 backdrop-blur-md border border-zinc-200 text-gray-800 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all cursor-pointer shadow-lg pointer-events-auto">
+          <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+      </div>
+
+      <!-- Top thin progress bar on Mobile, Bottom on Desktop -->
+      <div class="swiper-pagination-opt2-progress absolute !top-0 !bottom-auto md:!top-auto md:!bottom-0 !left-0 !w-full z-30"></div>
     </div>
     @endif
 
   </div>
 </section>
+
+<!-- Custom Styles for Featured Slider -->
+<style>
+  .featured-slider .swiper-pagination-progressbar {
+    background: rgba(0, 0, 0, 0.1) !important;
+    height: 4px !important;
+    border-radius: 99px !important;
+  }
+  .featured-slider .swiper-pagination-progressbar-fill {
+    background: #e30613 !important;
+    border-radius: 99px !important;
+  }
+</style>
+
+<!-- Swiper Initialization for Featured Slider -->
+<script>
+  (function initFeaturedSlider() {
+    if (typeof Swiper === 'undefined') {
+      setTimeout(initFeaturedSlider, 100);
+      return;
+    }
+
+    new Swiper('.featured-slider', {
+      slidesPerView: 1,
+      spaceBetween: 0,
+      loop: true,
+      speed: 800,
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: '.swiper-pagination-opt2-progress',
+        type: 'progressbar',
+      },
+      navigation: {
+        nextEl: '.swiper-button-next-opt2',
+        prevEl: '.swiper-button-prev-opt2',
+      },
+    });
+  })();
+</script>
 
 <!-- Blog Grid Section -->
 <section class="py-16 md:py-24 bg-zinc-50 relative">
@@ -123,23 +181,27 @@
             </div>
 
             <div class="text-xs text-gray-500 mb-3 flex items-center gap-2">
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-              <span>{{ $pDate }}</span>
+              <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              {{ $pDate }}
             </div>
 
-            <h3 class="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors mb-3 line-clamp-2">
+            <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
               <a href="{{ $post->getUrl() }}">{{ $pTitle }}</a>
             </h3>
 
-            <p class="text-gray-600 text-sm line-clamp-3 leading-relaxed mb-6 font-light">
+            <p class="text-sm text-gray-600 font-light leading-relaxed line-clamp-3 mb-6">
               {{ $pExcerpt }}
             </p>
           </div>
 
-          <a href="{{ $post->getUrl() }}" class="inline-flex items-center gap-2 text-sm font-bold text-primary hover:text-red-800 transition-colors group/link">
-            <span>Read Article</span>
-            <span class="group-hover/link:translate-x-1 transition-transform">→</span>
-          </a>
+          <div class="pt-4 border-t border-zinc-100 flex items-center justify-between mt-auto">
+            <a href="{{ $post->getUrl() }}" class="text-xs font-bold text-primary hover:text-red-800 transition-colors flex items-center gap-1 group/link">
+              <span>Read Article</span>
+              <span class="group-hover/link:translate-x-1 transition-transform">→</span>
+            </a>
+          </div>
         </div>
       @empty
         <div class="col-span-full text-center py-16 text-gray-500">
