@@ -1,3 +1,11 @@
+@php
+    $themeSlug = isset($activeTheme) ? $activeTheme->slug : setting('active_theme', 'default');
+    if ($themeSlug === 'default' && file_exists(base_path('themes/cdt/theme.json'))) {
+        $themeSlug = 'cdt';
+    }
+    $primaryColor = $themeSlug === 'cdt' ? '#e30613' : '#2563eb';
+    $primaryHover = $themeSlug === 'cdt' ? '#c00510' : '#1d4ed8';
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -13,20 +21,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --color-primary: #2563eb;
-            --color-primary-hover: #1d4ed8;
+            --color-primary: {{ $primaryColor }};
+            --color-primary-hover: {{ $primaryHover }};
         }
         .btn-theme-primary {
-            background-color: var(--color-primary, #2563eb);
+            background-color: var(--color-primary, {{ $primaryColor }});
             color: #ffffff;
         }
         .btn-theme-primary:hover {
-            background-color: var(--color-primary-hover, #1d4ed8);
+            background-color: var(--color-primary-hover, {{ $primaryHover }});
         }
         .badge-theme {
-            background-color: color-mix(in srgb, var(--color-primary, #2563eb) 10%, transparent);
-            color: var(--color-primary, #2563eb);
-            border-color: color-mix(in srgb, var(--color-primary, #2563eb) 25%, transparent);
+            background-color: color-mix(in srgb, var(--color-primary, {{ $primaryColor }}) 10%, transparent);
+            color: var(--color-primary, {{ $primaryColor }});
+            border-color: color-mix(in srgb, var(--color-primary, {{ $primaryColor }}) 25%, transparent);
         }
     </style>
 </head>
