@@ -111,8 +111,12 @@ class Post extends Model
         $defaultLocale = config('app.locale', 'en');
         $prefix = ($locale !== $defaultLocale) ? '/'.$locale : '';
         $slug = $this->getTranslation('slug', $locale, fallback: true) ?? $this->slug;
+        $archiveSlug = 'blog';
+        if (class_exists(\Plugins\Posts\Models\Setting::class)) {
+            $archiveSlug = \Plugins\Posts\Models\Setting::get('archive_slug', 'blog');
+        }
 
-        return url($prefix.'/blog-news/'.$slug);
+        return url($prefix.'/'.$archiveSlug.'/'.$slug);
     }
 
     public function scopeDraft($query)

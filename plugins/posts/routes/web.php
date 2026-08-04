@@ -192,4 +192,9 @@ Route::middleware(['web'])->group(function () {
             ->where('locale', $localePattern)
             ->name('locale.posts.show');
     }
+
+    if ($archiveSlug !== 'blog-news') {
+        Route::get('/blog-news', fn () => redirect(url("/{$archiveSlug}"), 301));
+        Route::get('/blog-news/{slug}', fn ($slug) => redirect(url("/{$archiveSlug}/{$slug}"), 301));
+    }
 });
