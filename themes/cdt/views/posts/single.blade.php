@@ -115,15 +115,21 @@
         </article>
 
         <!-- Social Share / Author Footer -->
-        <div class="mt-12 pt-8 border-t border-gray-200 flex items-center justify-between">
+        <div class="mt-12 pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div class="flex items-center gap-3">
             <span class="text-sm font-bold text-gray-700">Share article:</span>
-            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 hover:bg-primary hover:text-white flex items-center justify-center transition-colors">
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 hover:bg-[#0077b5] hover:text-white flex items-center justify-center transition-colors" title="Share on LinkedIn">
               <x-icon name="lucide:linkedin" class="w-4 h-4" />
             </a>
-            <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode($title) }}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 hover:bg-primary hover:text-white flex items-center justify-center transition-colors">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 hover:bg-[#1877f2] hover:text-white flex items-center justify-center transition-colors" title="Share on Facebook">
+              <x-icon name="lucide:facebook" class="w-4 h-4" />
+            </a>
+            <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode($title) }}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 hover:bg-black hover:text-white flex items-center justify-center transition-colors" title="Share on Twitter">
               <x-icon name="lucide:twitter" class="w-4 h-4" />
             </a>
+            <button onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!')" class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 hover:bg-primary hover:text-white flex items-center justify-center transition-colors" title="Copy Link">
+              <x-icon name="lucide:link" class="w-4 h-4" />
+            </button>
           </div>
 
           <a href="{{ $blogUrl }}" class="text-sm font-bold text-primary hover:underline flex items-center gap-1">
@@ -132,81 +138,23 @@
         </div>
       </div>
 
-      <!-- Sidebar Widget Area (Right: 4 Cols) -->
-      <div class="lg:col-span-4 space-y-8 sticky top-24">
-        
-        <!-- Table of Contents Widget -->
-        <div id="toc-widget" class="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
-          <h4 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-            Table of Contents
-          </h4>
-          <nav class="toc-nav">
-            <ul id="toc-list" class="space-y-2.5 text-sm font-medium text-gray-500 relative border-l-2 border-zinc-200 ml-2 pl-5">
-            </ul>
-          </nav>
-        </div>
-
-        <!-- Share Widget -->
-        <div class="bg-zinc-50 rounded-2xl border border-zinc-200 p-6 shadow-sm text-center">
-          <h4 class="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Share this Article</h4>
-          <div class="flex justify-center gap-3">
-            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-gray-600 hover:bg-[#0077b5] hover:text-white hover:border-[#0077b5] transition-all shadow-sm" title="Share on LinkedIn">
-              <x-icon name="lucide:linkedin" class="w-4 h-4" />
-            </a>
-            <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-gray-600 hover:bg-[#1877f2] hover:text-white hover:border-[#1877f2] transition-all shadow-sm" title="Share on Facebook">
-              <x-icon name="lucide:facebook" class="w-4 h-4" />
-            </a>
-            <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode($title) }}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-gray-600 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm" title="Share on Twitter">
-              <x-icon name="lucide:twitter" class="w-4 h-4" />
-            </a>
-            <button onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!')" class="w-10 h-10 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm" title="Copy Link">
-              <x-icon name="lucide:link" class="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        <!-- Recent Articles Card Widget -->
-        @if($recentPosts->isNotEmpty())
-        <div class="bg-zinc-50 rounded-3xl p-8 border border-zinc-100">
-          <h3 class="text-xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-200 flex items-center gap-2">
-            <x-icon name="lucide:newspaper" class="w-5 h-5 text-primary" />
-            Recent Articles
-          </h3>
+      <!-- Sidebar Widget Area (Right: 4 Cols) - Sticky Table of Contents -->
+      <div class="lg:col-span-4 hidden lg:block" id="blog-sidebar-col">
+        <div class="sticky top-28" id="blog-sidebar">
           
-          <div class="space-y-6">
-            @foreach($recentPosts as $rec)
-              @php
-                $rTitle = $rec->getTranslation('title', $currentLocale) ?: $rec->title;
-                $rDate = $rec->published_at ? $rec->published_at->format($dateFormat) : $rec->created_at->format($dateFormat);
-                $rImg = $rec->featured_image ? resolve_block_asset($rec->featured_image) : asset('themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
-              @endphp
-              <div class="flex items-center gap-4 group">
-                <img src="{{ $rImg }}" alt="{{ $rTitle }}" class="w-16 h-16 rounded-xl object-cover flex-shrink-0 group-hover:scale-105 transition-transform">
-                <div>
-                  <span class="text-[11px] text-gray-400 block mb-1 font-medium">{{ $rDate }}</span>
-                  <a href="{{ $rec->getUrl() }}" class="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
-                    {{ $rTitle }}
-                  </a>
-                </div>
-              </div>
-            @endforeach
+          <!-- TOC Widget -->
+          <div id="toc-widget" class="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
+            <h4 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+              Table of Contents
+            </h4>
+            <nav class="toc-nav">
+              <ul id="toc-list" class="space-y-2.5 text-sm font-medium text-gray-500 relative border-l-2 border-zinc-200 ml-2 pl-5">
+              </ul>
+            </nav>
           </div>
-        </div>
-        @endif
 
-        <!-- Newsletter Subscription Widget -->
-        <div class="bg-gradient-to-br from-primary to-zinc-900 rounded-3xl p-8 text-white relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-          <h3 class="text-2xl font-bold mb-3 relative z-10">Stay Updated</h3>
-          <p class="text-sm text-white/80 leading-relaxed mb-6 relative z-10">
-            Subscribe to our newsletter for the latest tech insights and enterprise news.
-          </p>
-          <a href="#subscribe-modal" onclick="if(window.openModal) openModal(event)" class="inline-block w-full text-center py-3 px-6 bg-white text-primary rounded-xl font-bold text-sm hover:bg-gray-100 transition-colors relative z-10">
-            Subscribe Now
-          </a>
         </div>
-
       </div>
 
     </div>
@@ -313,36 +261,87 @@ document.addEventListener("DOMContentLoaded", function () {
   const tocWidget = document.getElementById("toc-widget");
   if (!article || !tocList) return;
 
-  const headings = article.querySelectorAll("h2, h3");
+  const headings = Array.from(article.querySelectorAll("h2, h3"));
   if (headings.length === 0) {
     if (tocWidget) tocWidget.style.display = "none";
     return;
   }
 
+  const tocItems = [];
+
   headings.forEach((heading, index) => {
     if (!heading.id) {
-      heading.id = "heading-" + index;
+      const cleanText = heading.textContent
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+      heading.id = cleanText || ("heading-" + index);
     }
+
     const li = document.createElement("li");
     const isH3 = heading.tagName.toLowerCase() === "h3";
     if (isH3) {
-      li.className = "pl-3 text-xs text-gray-400";
+      li.className = "pl-3 text-xs";
     }
 
     const a = document.createElement("a");
     a.href = "#" + heading.id;
-    a.textContent = heading.textContent;
-    a.className = "toc-link hover:text-primary transition-all duration-300 block leading-snug relative " +
-      (isH3 ? "" : "before:absolute before:-left-[25px] before:top-[7px] before:w-[8px] before:h-[8px] before:rounded-full before:bg-zinc-300 before:transition-all before:duration-300 before:z-10");
-    
+    a.textContent = heading.textContent.trim();
+
+    if (isH3) {
+      a.className = "toc-link text-gray-400 hover:text-primary transition-all duration-300 block leading-snug";
+    } else {
+      a.className = "toc-link text-gray-500 hover:text-primary transition-all duration-300 block leading-snug relative before:absolute before:-left-[25px] before:top-[7px] before:w-[8px] before:h-[8px] before:rounded-full before:bg-zinc-300 before:transition-all before:duration-300 before:z-10";
+    }
+
     a.addEventListener("click", function (e) {
       e.preventDefault();
-      heading.scrollIntoView({ behavior: "smooth" });
+      const target = document.getElementById(heading.id);
+      if (target) {
+        const headerOffset = 110;
+        const elementPosition = target.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth"
+        });
+      }
     });
 
     li.appendChild(a);
     tocList.appendChild(li);
+    tocItems.push({ heading, a, isH3 });
   });
+
+  function updateActiveToc() {
+    const scrollPos = window.pageYOffset + 140;
+    let activeIdx = -1;
+
+    for (let i = 0; i < headings.length; i++) {
+      if (scrollPos >= headings[i].offsetTop) {
+        activeIdx = i;
+      }
+    }
+
+    tocItems.forEach((item, idx) => {
+      if (idx === activeIdx) {
+        if (item.isH3) {
+          item.a.className = "toc-link text-primary font-bold transition-all duration-300 block leading-snug";
+        } else {
+          item.a.className = "toc-link text-primary font-bold transition-all duration-300 block leading-snug relative before:absolute before:-left-[25px] before:top-[7px] before:w-[8px] before:h-[8px] before:rounded-full before:bg-primary before:scale-125 before:transition-all before:duration-300 before:z-10";
+        }
+      } else {
+        if (item.isH3) {
+          item.a.className = "toc-link text-gray-400 hover:text-primary transition-all duration-300 block leading-snug";
+        } else {
+          item.a.className = "toc-link text-gray-500 hover:text-primary transition-all duration-300 block leading-snug relative before:absolute before:-left-[25px] before:top-[7px] before:w-[8px] before:h-[8px] before:rounded-full before:bg-zinc-300 before:transition-all before:duration-300 before:z-10";
+        }
+      }
+    });
+  }
+
+  window.addEventListener("scroll", updateActiveToc, { passive: true });
+  updateActiveToc();
 });
 </script>
 
