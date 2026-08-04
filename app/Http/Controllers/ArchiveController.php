@@ -206,7 +206,7 @@ class ArchiveController extends Controller
         $nextEntry = $entry->getNextEntry();
 
         $postTypeSlug = $postType->slug;
-        $entryCptSlug = $entry->postType ? $entry->postType->slug : $postTypeSlug;
+        $entryCptSlug = ($entry->postType instanceof CustomPostType) ? $entry->postType->slug : $postTypeSlug;
         $viewName = $this->resolveSingleView($entryCptSlug, true, $postTypeSlug);
 
         return view($viewName, [
