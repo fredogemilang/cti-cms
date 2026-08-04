@@ -4,7 +4,8 @@
 
     // Technology Alliance CPT & Entries
     $allianceCpt = \App\Models\CustomPostType::whereIn('slug', ['technology-alliance', 'technology_alliance'])->first();
-    $allianceCptUrl = ($allianceCpt && $allianceCpt->has_archive) ? localized_url('/technology-alliance') : 'javascript:void(0)';
+    $allianceHasArchive = (bool)($allianceCpt && $allianceCpt->has_archive);
+    $allianceCptUrl = $allianceHasArchive ? localized_url('/technology-alliance') : null;
     $allianceProducts = $allianceCpt ? \App\Models\CptEntry::published()
         ->where('post_type_id', $allianceCpt->id)
         ->orderBy('menu_order')
@@ -14,7 +15,8 @@
 
     // Solutions CPT & Entries
     $solutionCpt = \App\Models\CustomPostType::whereIn('slug', ['solutions', 'solution'])->first();
-    $solutionCptUrl = ($solutionCpt && $solutionCpt->has_archive) ? localized_url('/solution') : 'javascript:void(0)';
+    $solutionHasArchive = (bool)($solutionCpt && $solutionCpt->has_archive);
+    $solutionCptUrl = $solutionHasArchive ? localized_url('/solution') : null;
     $solutionCategories = $solutionCpt ? \App\Models\CptEntry::published()
         ->where('post_type_id', $solutionCpt->id)
         ->whereNull('parent_id')
@@ -117,14 +119,21 @@
 
         <!-- Technology Alliance (Mega Menu - Split Editorial Design) -->
         <li class="group relative flex items-center h-full py-6">
-          <a href="{{ $allianceCptUrl }}" class="hover:text-primary transition duration-300 flex items-center gap-1">
-            {{ t('nav.technology_alliance', 'Technology Alliance') }}
-            <svg
-              class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300"
-              fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </a>
+          @if($allianceHasArchive && $allianceCptUrl)
+            <a href="{{ $allianceCptUrl }}" class="hover:text-primary transition duration-300 flex items-center gap-1 cursor-pointer">
+              {{ t('nav.technology_alliance', 'Technology Alliance') }}
+              <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </a>
+          @else
+            <span class="hover:text-primary transition duration-300 flex items-center gap-1 cursor-pointer">
+              {{ t('nav.technology_alliance', 'Technology Alliance') }}
+              <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          @endif
           <div
             class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-[900px] max-w-[90vw] transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex">
@@ -187,12 +196,21 @@
 
         <!-- Solutions Mega Menu -->
         <li class="group relative flex items-center h-full py-6">
-          <a href="{{ $solutionCptUrl }}" title="{{ t('nav.solutions', 'Solutions') }}" class="hover:text-primary transition duration-300 flex items-center gap-1">
-            {{ t('nav.solutions', 'Solutions') }}
-            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </a>
+          @if($solutionHasArchive && $solutionCptUrl)
+            <a href="{{ $solutionCptUrl }}" title="{{ t('nav.solutions', 'Solutions') }}" class="hover:text-primary transition duration-300 flex items-center gap-1 cursor-pointer">
+              {{ t('nav.solutions', 'Solutions') }}
+              <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </a>
+          @else
+            <span class="hover:text-primary transition duration-300 flex items-center gap-1 cursor-pointer">
+              {{ t('nav.solutions', 'Solutions') }}
+              <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          @endif
           <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-[700px] max-w-[90vw] transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex">
               <div class="w-2/5 bg-gradient-to-bl from-primary to-zinc-900 p-8 text-white relative overflow-hidden flex flex-col justify-between">
