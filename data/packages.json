@@ -1,0 +1,124 @@
+[
+    {
+        "slug": "efficiency",
+        "title": "OFIS Efficiency",
+        "subtitle": "Work Smarter, Ditch The Hustle",
+        "description": "Save money and time by managing your resources more efficiently with OFIS\u2019s Efficiency Package. This package will help you optimize your office operations with:",
+        "hero_image": "uploads/ofis/Logo-OFIS-e1711423097777.png.webp",
+        "features": [
+            {
+                "title": "Smart HVAC and Lighting Management System",
+                "description": "Deploy a Smart HVAC and Lighting Management System to automate HVAC and lighting functions according to office operations and schedules.\r\nEnable adjustments based on environmental conditions to optimize energy efficiency.\r\nProvide a single dashboard for monitoring energy consumption and allow users to override operations via application, switches, or voice commands. Additionally, generate electricity usage reports and offer integration with existing Building Automation Systems for seamless functionality."
+            },
+            {
+                "title": "Smart Energy Optimization",
+                "description": "Implement energy usage analytics to monitor and analyze energy consumption patterns.\r\nUtilize anomaly detection to identify irregularities in energy usage for proactive maintenance.\r\nOffer a single dashboard with automation features and an alert system for efficient management and timely response to energy-related issues."
+            },
+            {
+                "title": "Building Automation System",
+                "description": "Establish connectivity with HVAC, lighting, security, and building protection systems to centralize control and management.\r\nProvide a single dashboard for monitoring and controlling all building electronics, ensuring ease of operation and oversight.\r\nOffer open integration capabilities with other systems to enhance interoperability and functionality."
+            }
+        ]
+    },
+    {
+        "slug": "safety-and-security",
+        "title": "OFIS Safety and Security",
+        "subtitle": "Taking Safety and Security to The Next Level",
+        "description": "Transform your smart office solution with a comprehensive, end-to-end OFIS solution to safeguard your employees and all workplaces. This package includes a Surveillance and Tracking System, Time and Attendance System, and Access Control System.",
+        "hero_image": "",
+        "features": [
+            {
+                "title": "Surveillance and Tracking System",
+                "description": "Integrates a Video Analytic System with surveillance infrastructure for real-time anomaly detection.\r\nUtilizes active/passive RFID, face recognition, and access control to track employees and visitors seamlessly.\r\nImplements advanced asset tracking and integrates a 3D realistic dashboard with an Alert System and Incident SOP for enhanced operational efficiency and incident management."
+            },
+            {
+                "title": "Attendance System",
+                "description": "Supports various on-site attendance methods like smart card, biometric, or face recognition.\r\nFacilitates remote work with online attendance via GPS and map integration for WFH and mobile offices.\r\nSeamlessly integrates with ERP systems for comprehensive attendance management."
+            },
+            {
+                "title": "Access Control System",
+                "description": "Ensure office security by preventing unauthorized access to restricted areas.\r\nProvide diverse access methods such as smart cards, biometrics, or face recognition for entry.\r\nIntegrate seamlessly with front desk, smart meeting rooms, and other OFIS packages, and also allow\r\nintegration with Building Automation, Fire, and PAVA Systems within the building."
+            }
+        ]
+    },
+    {
+        "slug": "seat-management-system",
+        "title": "OFIS Seat Management System",
+        "subtitle": "Boost Productivity, Spark Collaboration",
+        "description": "Transform your workplace environment with the OFIS Seat Management System package, a smart solution that helps you manage your employees\u2019 seating arrangements for optimal productivity and convenience. With this package, you can enjoy:",
+        "hero_image": "",
+        "features": [
+            {
+                "title": "Desk Booking System",
+                "description": "Support a mobile office setup where employees do not have assigned seats within the office premises.\r\nEnable a seat booking system to facilitate workspace reservation.\r\nProvide office amenities such as seats, phones, and other facilities to employees upon their arrival at the office."
+            },
+            {
+                "title": "Desk Facility Automation System",
+                "description": "Enable desk automation for electricity management.\r\nControl desk functions via an application or display interface.\r\nUtilize QR code technology to activate desk facilities, and integrate seamlessly with pantry, cleaning services, and front desk operations."
+            },
+            {
+                "title": "Office Automation Application",
+                "description": "Enhance efficiency in office operations through an application designed to assist with a range of tasks.\r\nManage vacation requests, leave approvals, and overtime submissions seamlessly.\r\nFacilitate borrowing and returning of items or vehicles, along with interdepartmental communication, and additional functionalities."
+            }
+        ]
+    },
+    {
+        "slug": "service-and-facility",
+        "title": "OFIS Service and Facility",
+        "subtitle": "Comprehensive Services for Worry-Free Operations",
+        "description": "Create a highly convenient, customizable, secure, and modern smart office with the OFIS Service and Facility Package. This package will help you manage additional facilities to enhance employee productivity and save more costs. With this package, you can enjoy:",
+        "hero_image": "",
+        "features": [
+            {
+                "title": "Parking System",
+                "description": "Efficiently oversee parking spaces utilizing occupancy sensors for monitoring.\r\nEnable membership access, offering options for card membership or License Plate Recognition.\r\nUtilize a mobile application to identify available parking spaces and seamlessly integrate with the payment system."
+            },
+            {
+                "title": "Smart Locker System",
+                "description": "Implement a system-managed locker system tailored for employees\u2019 convenience.\r\nOffer access options via card, face recognition, or application for locker opening.\r\nSeamlessly integrate with all OFIS Systems, including access control and attendance tracking, for comprehensive management."
+            },
+            {
+                "title": "Cleaning Service and Pantry",
+                "description": "Facilitate job orders for cleaning services through the system.\r\nOffer the capability to arrange meals for meetings or employees as needed.\r\nAutomatically notify and track orders sent directly to the designated person in charge (PIC), with reporting and dashboard functionalities available for monitoring and analysis."
+            }
+        ]
+    },
+    {
+        "slug": "smart-front-desk",
+        "title": "OFIS Smart Front Desk",
+        "subtitle": "Manage Visitors Access More Effectively",
+        "description": "Boost your office productivity and efficiency with OFIS\u2019 Smart Front Desk package, a comprehensive solution for managing visitor access to your office. This package includes:",
+        "hero_image": "",
+        "features": [
+            {
+                "title": "Visitor Management System",
+                "description": "Implement a comprehensive visitor management system to register, grant access, and monitor visitors throughout their visit duration.\r\nEnable temporary access using card or face recognition systems for streamlined visitor entry.\r\nAutomatically notify employees upon visitor arrival and integrate with Smart Meeting Rooms for meeting attendance and information dissemination. Additionally, integrate with digitalization for a wayfinding system.\r\nOffer a visitor tracking dashboard displaying real-time daily traffic for enhanced monitoring and analysis."
+            },
+            {
+                "title": "Self-Registration Kiosk",
+                "description": "Enable visitor self-registration and data acquisition through e-KTP and invitation QR codes, providing a convenient and efficient process.\r\nOffer customizable design options to tailor the system according to specific needs and branding preferences.\r\nGrant temporary access to visitors via card or face recognition methods, ensuring seamless entry and security management."
+            },
+            {
+                "title": "Wayfinding System",
+                "description": "Implement a wayfinding system designed to guide individuals through unfamiliar environments, ensuring clarity and ease of navigation.\r\nProvide intuitive maps and routes displayed on screens or accessible via apps, eliminating the need for users to guess their location or destination.\r\nSeamlessly integrate the wayfinding system with the OFIS Package to enhance overall office functionality and user experience."
+            }
+        ]
+    },
+    {
+        "slug": "smart-meeting-room",
+        "title": "OFIS Smart Meeting Room",
+        "subtitle": "Work Smarter with Smart Meeting for Every Need and Budget",
+        "description": "In the era of hybrid work, virtual meetings require innovative tools and resources. The OFIS Smart Meeting Room is a comprehensive solution that includes both the booking and all the supporting facilities for conducting effective meetings. With this package, you can enjoy:  \r\nBooking System Software: Manage your meeting room reservations with ease and convenience. You can:\r\n  * Book, cancel, or extend your meeting room anytime, anywhere.\r\n  * Automatically integrate your booking with Outlook and Google Calendars for reminders.\r\n  * Order food and beverage from the receptionist or hospitality department before or during the meeting.\r\n  * Invite internal and external attendees via email and send them QR codes to access the meeting room.\r\n  * Edit the meeting room name and invitation template to suit your preferences.\r\n  * Approve or reject the meeting room requests from other users.\r\n\r\n\r\nThis module divided by two, for users and admins. Users as an application user can book and cancel from anywhere in the system at any time. Meanwhile, Admin as administrator operator who has the right to enter data that appears on user display, such as meeting room name, meeting room capacity, invitation template, and others.",
+        "hero_image": "uploads/ofis/Logo-OFIS-e1711423097777.png.webp",
+        "features": [
+            {
+                "title": "Booking System",
+                "description": "Implement a QR Code-based Meeting Room Booking System, allowing convenient booking, cancellation, and extension of meetings through approval processes.\r\nIntegrate seamlessly with pantry and cleaning services, front desk, security systems, and wayfinding systems to streamline operations and enhance visitor experience.\r\nEnable integration with Google and Outlook calendar systems for efficient scheduling and coordination, and utilize digital signage for both information dissemination and access control purposes."
+            },
+            {
+                "title": "Room Facility Automation System",
+                "description": "Provide automation for air conditioning, lighting, and door lock security systems to enhance comfort and security.\r\nEnable control over teleconference systems, interactive displays, projectors, smart glass, and other meeting room electronics through various means such as applications, tablets within the meeting room, voice commands, or augmented reality.\r\nOffer integration with teleconference systems and room audio-visual devices for seamless operation and enhanced meeting experiences."
+            }
+        ]
+    }
+]
