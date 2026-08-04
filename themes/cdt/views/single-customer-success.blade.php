@@ -17,6 +17,8 @@
 
     // Client logo & banner image
     $logoUrl = $entry->featured_image ? (str_starts_with($entry->featured_image, 'http') || str_starts_with($entry->featured_image, 'themes/') ? asset($entry->featured_image) : asset('storage/' . $entry->featured_image)) : asset('themes/cdt/assets/cropped-logo-cdt-D0j3NVKg.png');
+    $bannerImage = $meta['banner_image'] ?? null;
+    $bannerImageUrl = $bannerImage ? (str_starts_with($bannerImage, 'http') || str_starts_with($bannerImage, 'themes/') ? asset($bannerImage) : asset('storage/' . $bannerImage)) : asset('themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
 
     // Products & Technology Used
     $relatedProductIds = $meta['related_products'] ?? $meta['products'] ?? $meta['technology_used'] ?? [];
@@ -35,7 +37,7 @@
 <section class="relative min-h-[400px] md:min-h-[500px] flex items-center py-12 md:py-0 pt-24 md:pt-20 overflow-hidden bg-gray-900 text-white">
   <!-- Immersive background -->
   <div class="absolute inset-0 z-0">
-    <x-image :src="asset('themes/cdt/assets/photo-1522071820081-009f0129c71c-w2070.jpg')" class="w-full h-full object-cover opacity-50" alt="{{ $title }}" />
+    <x-image :src="$bannerImageUrl" class="w-full h-full object-cover opacity-50" alt="{{ $title }}" />
     <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-transparent w-full lg:w-3/4"></div>
   </div>
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10 w-full">
