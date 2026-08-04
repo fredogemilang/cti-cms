@@ -24,6 +24,9 @@
 </head>
 <body class="font-body bg-white antialiased text-gray-800">
 
+    <!-- Admin Top Bar (Only rendered for logged-in admin users) -->
+    <x-admin-bar />
+
     <!-- Header Navigation -->
     @include('ofis::header')
 
