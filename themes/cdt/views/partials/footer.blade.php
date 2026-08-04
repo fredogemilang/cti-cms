@@ -164,6 +164,11 @@
           card.classList.add("scale-100", "opacity-100");
           card.classList.remove("scale-95", "opacity-0");
           document.body.style.overflow = "hidden";
+
+          // Re-render Turnstile widget if present inside the unhidden modal
+          if (window.turnstile && card.querySelector(".cf-turnstile")) {
+            try { window.turnstile.render(card.querySelector(".cf-turnstile")); } catch(err){}
+          }
         }
 
         function closeModal() {
