@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ t('errors.503_title', 'System Under Maintenance') }} - {{ setting('site_name', 'CDT') }}</title>
+    <title>{{ t('errors.503_title', 'System Under Maintenance') }} - {{ setting('site_name', config('app.name')) }}</title>
     @if(setting('site_favicon'))
         <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
     @endif
@@ -23,7 +23,7 @@
             {{ t('errors.503_message', 'We are currently performing scheduled maintenance to enhance your experience. We will be back online shortly.') }}
         </p>
         <div class="text-xs text-zinc-400 border-t border-zinc-100 pt-6">
-            &copy; {{ date('Y') }} {{ setting('site_name', 'CDT') }}. All rights reserved.
+            &copy; {{ date('Y') }} {{ setting('site_name', config('app.name')) }}. All rights reserved.
         </div>
     </div>
 </body>
