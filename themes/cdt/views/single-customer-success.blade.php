@@ -62,13 +62,6 @@
 
         <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-6 tracking-tight leading-tight">{{ $title }}</h1>
         
-        @if(!empty($impact))
-          <div class="p-4 md:p-6 bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 text-white/95 font-semibold text-lg md:text-xl leading-relaxed mb-6">
-            <span class="text-primary-light font-bold uppercase tracking-wider text-xs block mb-1 text-red-400">{{ t('cs.impact_heading', 'Key Impact') }}</span>
-            {{ $impact }}
-          </div>
-        @endif
-
         @if(!empty($excerpt))
           <div class="text-lg md:text-xl text-white/90 font-light leading-relaxed">
             {!! $excerpt !!}
@@ -87,6 +80,17 @@
 
       <!-- Left Column: Main Story -->
       <div class="w-full lg:w-2/3 space-y-8 order-2 lg:order-1" data-gsap="fade-up">
+        <!-- Key Impact Card -->
+        @if(!empty($impact))
+          <div class="p-6 md:p-8 bg-zinc-50 rounded-3xl border border-zinc-200/80 shadow-sm relative overflow-hidden group hover:border-primary/40 transition-all duration-300">
+            <div class="absolute top-0 left-0 w-2 h-full bg-primary"></div>
+            <span class="text-xs font-bold uppercase tracking-widest text-primary block mb-2">{{ t('cs.impact_heading', 'Key Impact') }}</span>
+            <p class="text-xl md:text-2xl font-bold text-gray-900 leading-snug">
+              {{ $impact }}
+            </p>
+          </div>
+        @endif
+
         @if(!empty($content))
           <div class="prose prose-lg prose-zinc max-w-none text-gray-700 font-light leading-loose text-lg md:text-xl space-y-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-gray-900 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-gray-800 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_ul]:list-disc [&_ul]:pl-6">
             {!! $content !!}
