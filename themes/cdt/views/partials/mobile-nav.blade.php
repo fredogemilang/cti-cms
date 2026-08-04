@@ -259,7 +259,7 @@
               $solUrl = $sol->getUrl();
               $solIcon = 'lucide:layers';
               if (isset($sol->postType) && !empty($sol->postType->settings['meta_boxes'])) {
-                  $iconField = \App\Models\MetaField::where('post_type_id', $sol->post_type_id)->where('name', 'icon')->first();
+                  $iconField = $sol->postType->metaFields()->where('name', 'icon')->first();
                   if ($iconField) {
                       $rawIcon = $sol->getMeta('icon');
                       $solIcon = $rawIcon ?: 'lucide:layers';
