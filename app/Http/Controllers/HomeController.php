@@ -22,10 +22,13 @@ class HomeController extends Controller
         $theme = app(ThemeLoader::class)->getActiveTheme();
         $themeNamespace = $theme?->slug;
 
-        // Resolve home view: theme namespace first, then fallback to default
-        $viewName = $themeNamespace && view()->exists("{$themeNamespace}::pages.home")
-            ? "{$themeNamespace}::pages.home"
-            : 'pages.home';
+        // Resolve home view: active theme namespace first, then global pages.home, default theme, or welcome fallback
+        $viewName = match (true) {
+            ! empty($themeNamespace) && view()->exists("{$themeNamespace}::pages.home") => "{$themeNamespace}::pages.home",
+            view()->exists('pages.home') => 'pages.home',
+            view()->exists('default::pages.home') => 'default::pages.home',
+            default => 'welcome',
+        };
 
         $page = $this->loadHomePage();
         abort_if(! $page, 404, 'Homepage not found. Create a page with slug "home".');
