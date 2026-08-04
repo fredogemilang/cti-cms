@@ -23,4 +23,10 @@ Whenever adding or modifying a `MetaField` for any `CustomPostType` (`cpt_entrie
 2. **Theme Asset Helper**: Place theme scripts and styles inside `themes/{theme}/assets/` and load them via `{{ theme_asset('filename.js') }}`.
 3. **No External URLs**: NEVER write external CDN `<script src="https://cdn...">` or `<link href="https://cdn...">` tags in Blade views or layouts. All asset dependencies must work 100% offline.
 
+## Mandatory Reference Inspection & User Confirmation Rule for Pages
+1. **Inspect HTML Reference First**: ALWAYS inspect the original HTML export (`dist/index.html`) to verify whether sections (e.g. About, Contact) are designed as *One-Page Scroll Anchors* (`/#about`, `/#contact`) or *Dedicated Standalone Pages*.
+2. **Never Assume Dedicated Pages**: DO NOT create separate dedicated `Page` records in the database without checking reference files first.
+3. **Ask in Implementation Plan**: If there is ambiguity or options on page creation vs single-page scroll layout, list the question explicitly under `## Open Questions` in `implementation_plan.md` for user confirmation BEFORE executing.
+
+
 
