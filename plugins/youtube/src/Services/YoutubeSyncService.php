@@ -3,14 +3,16 @@
 namespace Plugins\Youtube\Services;
 
 use App\Models\Setting;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Plugins\Youtube\Models\YoutubePlaylist;
 use Plugins\Youtube\Models\YoutubeVideo;
 
 class YoutubeSyncService
 {
     /**
-     * Sync videos from YouTube Channel (supports API Key and RSS Fallback).
+     * Sync videos and playlists from YouTube Channel.
      *
      * @return array Sync result summary
      */
@@ -28,10 +30,10 @@ class YoutubeSyncService
 
         $syncedCount = 0;
 
-        // Try YouTube Data API v3 first if API key exists
         if (! empty($apiKey) && ! empty($channelId)) {
             try {
                 $syncedCount = $this->syncViaApi($apiKey, $channelId);
+                $this->syncPlaylistsViaApi($apiKey, $channelId);
             } catch (\Throwable $e) {
                 Log::warning("YouTube API sync failed: " . $e->getMessage() . ". Falling back to RSS feed.");
                 $syncedCount = $this->syncViaRss($channelId);
@@ -43,18 +45,18 @@ class YoutubeSyncService
         return [
             'status' => 'success',
             'count' => $syncedCount,
-            'message' => "Successfully synced {$syncedCount} videos from YouTube Channel.",
+            'message' => "Successfully synced {$syncedCount} videos and playlists from YouTube Channel.",
         ];
     }
 
     /**
-     * Sync via YouTube Data API v3 (fetches multiple pages if available).
+     * Sync videos via YouTube Data API v3.
      */
     protected function syncViaApi(string $apiKey, string $channelId): int
     {
         $pageToken = null;
         $totalSynced = 0;
-        $maxPages = 5; // Fetch up to 250 videos
+        $maxPages = 5;
 
         for ($page = 0; $page < $maxPages; $page++) {
             $queryParams = [
@@ -124,6 +126,74 @@ class YoutubeSyncService
         }
 
         return $totalSynced;
+    }
+
+    /**
+     * Sync Playlists & Playlist Items via YouTube Data API v3.
+     */
+    protected function syncPlaylistsViaApi(string $apiKey, string $channelId): void
+    {
+        $response = Http::get('https://www.googleapis.com/youtube/v3/playlists', [
+            'key' => $apiKey,
+            'channelId' => $channelId,
+            'part' => 'snippet,contentDetails',
+            'maxResults' => 50,
+        ]);
+
+        if ($response->failed()) {
+            return;
+        }
+
+        $playlists = $response->json()['items'] ?? [];
+
+        foreach ($playlists as $pl) {
+            $ytId = $pl['id'] ?? null;
+            if (! $ytId) {
+                continue;
+            }
+
+            $snippet = $pl['snippet'] ?? [];
+            $content = $pl['contentDetails'] ?? [];
+            $thumbs = $snippet['thumbnails'] ?? [];
+
+            $playlist = YoutubePlaylist::updateOrCreate(
+                ['youtube_id' => $ytId],
+                [
+                    'title' => html_entity_decode($snippet['title'] ?? 'Playlist', ENT_QUOTES, 'UTF-8'),
+                    'description' => $snippet['description'] ?? '',
+                    'thumbnail_url' => $thumbs['high']['url'] ?? ($thumbs['medium']['url'] ?? null),
+                    'video_count' => $content['itemCount'] ?? 0,
+                    'is_visible' => true,
+                    'synced_at' => now(),
+                ]
+            );
+
+            // Fetch playlist items
+            $itemResp = Http::get('https://www.googleapis.com/youtube/v3/playlistItems', [
+                'key' => $apiKey,
+                'playlistId' => $ytId,
+                'part' => 'snippet',
+                'maxResults' => 50,
+            ]);
+
+            if ($itemResp->successful()) {
+                $items = $itemResp->json()['items'] ?? [];
+                foreach ($items as $idx => $item) {
+                    $vId = $item['snippet']['resourceId']['videoId'] ?? null;
+                    if (! $vId) {
+                        continue;
+                    }
+
+                    $dbVideo = YoutubeVideo::where('youtube_id', $vId)->first();
+                    if ($dbVideo) {
+                        DB::table('youtube_playlist_videos')->updateOrInsert(
+                            ['playlist_id' => $playlist->id, 'video_id' => $dbVideo->id],
+                            ['position' => $idx + 1, 'updated_at' => now()]
+                        );
+                    }
+                }
+            }
+        }
     }
 
     /**

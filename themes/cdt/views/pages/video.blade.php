@@ -5,15 +5,30 @@
         ? \Plugins\Youtube\Models\YoutubeVideo::where('is_visible', true)->orderBy('published_at', 'desc')->get()
         : collect();
 
+    $playlists = class_exists(\Plugins\Youtube\Models\YoutubePlaylist::class)
+        ? \Plugins\Youtube\Models\YoutubePlaylist::where('is_visible', true)->orderBy('sort_order')->get()
+        : collect();
+
+    // Map playlist relationships
+    $playlistVideoMap = [];
+    if (class_exists(\Plugins\Youtube\Models\YoutubePlaylist::class)) {
+        $pvRows = \Illuminate\Support\Facades\DB::table('youtube_playlist_videos')->get();
+        foreach ($pvRows as $row) {
+            $playlistVideoMap[$row->video_id][] = (string) $row->playlist_id;
+        }
+    }
+
     $formattedVideos = [];
     foreach ($dbVideos as $v) {
+        $plIds = $playlistVideoMap[$v->id] ?? [];
         $formattedVideos[] = [
             'id' => $v->youtube_id,
             'title' => $v->title,
             'description' => $v->description ?: '',
             'category' => $v->category ?: 'Webinar',
+            'playlists' => $plIds,
             'date' => $v->published_at ? $v->published_at->format('M d, Y') : date('M d, Y'),
-            'duration' => $v->duration ?: '10:00',
+            'duration' => $v->duration ?: '',
             'author' => $v->channel_title ?: 'Central Data Technology',
             'thumbnail' => $v->getBestThumbnail(),
         ];
@@ -331,16 +346,16 @@
       <!-- Video Details -->
       <div id="details-container-col" class="mb-4">
         <h2 id="main-title" class="text-xl md:text-2xl font-bold text-gray-900 leading-snug">
-          Transformasi Digital Enterprise: Roadmap Menuju Cloud-Native Architecture
+          Transformasi Digital Enterprise
         </h2>
         <div id="main-meta-line" class="video-meta mt-3">
           <span id="main-category-badge" class="inline-block px-2.5 py-0.5 bg-red-50 border border-red-100 rounded-full text-[11px] font-bold text-primary uppercase tracking-wider">
-            Webinar
+            Video
           </span>
           <span class="dot"></span>
-          <span id="main-date" class="text-gray-400 text-xs">May 15, 2025</span>
+          <span id="main-date" class="text-gray-400 text-xs">Recently Added</span>
           <span class="dot"></span>
-          <span id="main-author" class="text-gray-400 text-xs">CDT Engineering</span>
+          <span id="main-author" class="text-gray-400 text-xs">CDT</span>
         </div>
       </div>
     </div>
@@ -372,14 +387,12 @@
         </div>
       </div>
 
-      <!-- Category Pills -->
+      <!-- Category Pills (Dynamic from YouTube Playlists) -->
       <div class="flex items-center gap-2 overflow-x-auto scrollbar-none pt-0 pl-3 pr-3 pb-4">
-        <button class="cat-pill active" data-category="All">All</button>
-        <button class="cat-pill" data-category="Webinar">Webinar</button>
-        <button class="cat-pill" data-category="Security">Security</button>
-        <button class="cat-pill" data-category="Engineering">Engineering</button>
-        <button class="cat-pill" data-category="Events">Events</button>
-        <button class="cat-pill" data-category="Products">Products</button>
+        <button class="cat-pill active" data-category="All">All Videos</button>
+        @foreach($playlists as $pl)
+          <button class="cat-pill" data-category="{{ $pl->id }}">{{ $pl->title }}</button>
+        @endforeach
       </div>
     </div>
 
@@ -392,39 +405,20 @@
 
 <!-- Dynamic logic script -->
 <script>
-  // Initial DB Video Dataset (fallback if empty)
+  // Initial DB Video Dataset
   const DB_VIDEOS = @json($formattedVideos);
 
   const FALLBACK_VIDEOS = [
     {
       id: "dQw4w9WgXcQ",
       title: "Transformasi Digital Enterprise: Roadmap Menuju Cloud-Native Architecture",
-      description: "Pelajari bagaimana perusahaan terkemuka di Indonesia melakukan transformasi digital end-to-end dengan pendekatan cloud-native yang terukur dan aman.",
+      description: "Pelajari bagaimana perusahaan terkemuka di Indonesia melakukan transformasi digital end-to-end.",
       category: "Webinar",
+      playlists: [],
       date: "May 15, 2025",
       duration: "12:00",
       author: "CDT Engineering",
       thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
-    },
-    {
-      id: "ScMzIvxBSi4",
-      title: "Cybersecurity Best Practices untuk Enterprise di Era AI",
-      description: "Bagaimana mengamankan infrastruktur TI perusahaan Anda dari serangan siber modern berbasis AI? Temukan praktik terbaik dan solusi mitigasi dari tim ahli kami.",
-      category: "Security",
-      date: "Apr 20, 2025",
-      duration: "8:24",
-      author: "CDT Security",
-      thumbnail: "https://img.youtube.com/vi/ScMzIvxBSi4/hqdefault.jpg"
-    },
-    {
-      id: "9bZkp7q19f0",
-      title: "Setup Monitoring Infrastructure dengan Dynatrace",
-      description: "Panduan lengkap langkah demi langkah melakukan monitoring performa sistem secara real-time dan otomatis menggunakan platform Dynatrace APM.",
-      category: "Engineering",
-      date: "Apr 10, 2025",
-      duration: "15:30",
-      author: "CDT Engineering",
-      thumbnail: "https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg"
     }
   ];
 
@@ -486,7 +480,8 @@
 
     const pills = document.querySelectorAll(".cat-pill");
     pills.forEach(pill => {
-      pill.addEventListener("click", function () {
+      pill.addEventListener("click", function (e) {
+        e.preventDefault();
         pills.forEach(p => p.classList.remove("active"));
         this.classList.add("active");
         activeCategory = this.dataset.category;
@@ -518,14 +513,20 @@
     }
   }
 
-  function playVideo(id) {
+  function playVideo(id, event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
     currentVideoId = id;
 
+    // Update URL query string using replaceState to prevent browser navigation / new tab jumps
     const newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?v=' + id;
-    window.history.pushState({ path: newurl }, '', newurl);
+    window.history.replaceState({ path: newurl }, '', newurl);
 
     const playerWrapper = document.getElementById("player-aspect-wrap");
-    const headerOffset = 100;
+    const headerOffset = 110;
     let scrollTarget = 0;
     if (playerWrapper) {
       const rect = playerWrapper.getBoundingClientRect();
@@ -553,7 +554,7 @@
           player.style.pointerEvents = "";
           player.removeAttribute("tabindex");
         }
-      }, 800);
+      }, 600);
     }, 50);
   }
 
@@ -580,7 +581,7 @@
     const thumbUrl = video.thumbnail || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
 
     return `
-    <a href="#" class="video-card ${activeClass} video-item flex flex-col" data-video="${video.id}">
+    <div role="button" tabindex="0" class="video-card ${activeClass} video-item flex flex-col cursor-pointer select-none" data-video="${video.id}">
       <div class="card-thumb relative w-full aspect-video bg-zinc-900">
         <img src="${thumbUrl}" class="w-full h-full object-cover" alt="${video.title}" loading="lazy">
         <div class="cat-tag">${video.category}</div>
@@ -600,7 +601,7 @@
           <span>${video.date}</span>
         </div>
       </div>
-    </a>
+    </div>
   `;
   }
 
@@ -610,7 +611,10 @@
 
     let filtered = VIDEO_DATA;
     if (activeCategory !== "All") {
-      filtered = filtered.filter(v => v.category === activeCategory);
+      filtered = filtered.filter(v => 
+        (v.playlists && v.playlists.includes(activeCategory)) || 
+        v.category === activeCategory
+      );
     }
     if (searchFilter.length > 0) {
       filtered = filtered.filter(v =>
@@ -639,11 +643,8 @@
 
     const items = document.querySelectorAll(".video-item");
     items.forEach(item => {
-      const newItem = item.cloneNode(true);
-      item.parentNode.replaceChild(newItem, item);
-      newItem.addEventListener("click", function (e) {
-        e.preventDefault();
-        playVideo(this.dataset.video);
+      item.addEventListener("click", function (e) {
+        playVideo(this.dataset.video, e);
       });
     });
   }
