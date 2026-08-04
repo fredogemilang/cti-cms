@@ -133,8 +133,39 @@
       </div>
 
       <!-- Sidebar Widget Area (Right: 4 Cols) -->
-      <div class="lg:col-span-4 space-y-8">
+      <div class="lg:col-span-4 space-y-8 sticky top-24">
         
+        <!-- Table of Contents Widget -->
+        <div id="toc-widget" class="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
+          <h4 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+            Table of Contents
+          </h4>
+          <nav class="toc-nav">
+            <ul id="toc-list" class="space-y-2.5 text-sm font-medium text-gray-500 relative border-l-2 border-zinc-200 ml-2 pl-5">
+            </ul>
+          </nav>
+        </div>
+
+        <!-- Share Widget -->
+        <div class="bg-zinc-50 rounded-2xl border border-zinc-200 p-6 shadow-sm text-center">
+          <h4 class="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Share this Article</h4>
+          <div class="flex justify-center gap-3">
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-gray-600 hover:bg-[#0077b5] hover:text-white hover:border-[#0077b5] transition-all shadow-sm" title="Share on LinkedIn">
+              <x-icon name="lucide:linkedin" class="w-4 h-4" />
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-gray-600 hover:bg-[#1877f2] hover:text-white hover:border-[#1877f2] transition-all shadow-sm" title="Share on Facebook">
+              <x-icon name="lucide:facebook" class="w-4 h-4" />
+            </a>
+            <a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode($title) }}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-gray-600 hover:bg-black hover:text-white hover:border-black transition-all shadow-sm" title="Share on Twitter">
+              <x-icon name="lucide:twitter" class="w-4 h-4" />
+            </a>
+            <button onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!')" class="w-10 h-10 rounded-full bg-white border border-zinc-200 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm" title="Copy Link">
+              <x-icon name="lucide:link" class="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
         <!-- Recent Articles Card Widget -->
         @if($recentPosts->isNotEmpty())
         <div class="bg-zinc-50 rounded-3xl p-8 border border-zinc-100">
@@ -275,6 +306,44 @@
     </div>
   </div>
 </section>
-@endif
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const article = document.querySelector("article");
+  const tocList = document.getElementById("toc-list");
+  const tocWidget = document.getElementById("toc-widget");
+  if (!article || !tocList) return;
+
+  const headings = article.querySelectorAll("h2, h3");
+  if (headings.length === 0) {
+    if (tocWidget) tocWidget.style.display = "none";
+    return;
+  }
+
+  headings.forEach((heading, index) => {
+    if (!heading.id) {
+      heading.id = "heading-" + index;
+    }
+    const li = document.createElement("li");
+    const isH3 = heading.tagName.toLowerCase() === "h3";
+    if (isH3) {
+      li.className = "pl-3 text-xs text-gray-400";
+    }
+
+    const a = document.createElement("a");
+    a.href = "#" + heading.id;
+    a.textContent = heading.textContent;
+    a.className = "toc-link hover:text-primary transition-all duration-300 block leading-snug relative " +
+      (isH3 ? "" : "before:absolute before:-left-[25px] before:top-[7px] before:w-[8px] before:h-[8px] before:rounded-full before:bg-zinc-300 before:transition-all before:duration-300 before:z-10");
+    
+    a.addEventListener("click", function (e) {
+      e.preventDefault();
+      heading.scrollIntoView({ behavior: "smooth" });
+    });
+
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+});
+</script>
 
 @endsection
