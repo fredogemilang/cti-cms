@@ -64,7 +64,7 @@
       <div class="flex flex-col lg:flex-row gap-12 lg:gap-20 mb-24 items-center" data-gsap="fade-up">
         <div class="w-full lg:w-5/12">
           <h2 class="text-4xl md:text-5xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            {{ $page?->block('vision_title_prefix') ?? 'Our' }}<br>
+            {{ $page?->block('vision_title_prefix') ?? 'Our' }} <br>
             <span class="font-bold text-dark">{{ $page?->block('vision_title_main') ?? 'Vision' }}</span>
           </h2>
           <div class="w-16 h-1 bg-primary mt-6" data-gsap="line-grow"></div>
@@ -83,7 +83,7 @@
       <div class="flex flex-col lg:flex-row-reverse gap-12 lg:gap-20 items-center" data-gsap="fade-up" data-gsap-delay="0.1">
         <div class="w-full lg:w-5/12">
           <h2 class="text-4xl md:text-5xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            {{ $page?->block('mission_title_prefix') ?? 'Our' }}<br>
+            {{ $page?->block('mission_title_prefix') ?? 'Our' }} <br>
             <span class="font-bold text-dark">{{ $page?->block('mission_title_main') ?? 'Mission' }}</span>
           </h2>
           <div class="w-16 h-1 bg-primary mt-6" data-gsap="line-grow"></div>

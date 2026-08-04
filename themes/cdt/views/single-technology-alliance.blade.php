@@ -86,7 +86,7 @@
 
         @if($features)
         <div class="mb-8">
-          <h2 data-gsap="fade-up" data-gsap-delay="0.2" class="text-4xl font-light text-zinc-500 leading-tight">{{ t('alliance.why_prefix', 'Why') }}<br><span class="font-bold text-dark">{{ $entry->title }}?</span></h2>
+          <h2 data-gsap="fade-up" data-gsap-delay="0.2" class="text-4xl font-light text-zinc-500 leading-tight">{{ t('alliance.why_prefix', 'Why') }} <br><span class="font-bold text-dark">{{ $entry->title }}?</span></h2>
           <div class="h-1 bg-primary mt-4 w-16" data-gsap="line-grow"></div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
@@ -153,7 +153,7 @@
     <div class="flex flex-col lg:flex-row gap-16 lg:gap-24">
       <div class="lg:w-1/3">
         <div class="sticky top-32">
-          <h2 data-gsap="fade-up" class="text-4xl font-light text-zinc-500 leading-tight">{{ $entry->title }}<br><span class="font-bold text-dark">{{ t('alliance.solutions_suffix', 'Solutions') }}</span></h2>
+          <h2 data-gsap="fade-up" class="text-4xl font-light text-zinc-500 leading-tight">{{ $entry->title }} <br><span class="font-bold text-dark">{{ t('alliance.solutions_suffix', 'Solutions') }}</span></h2>
           <div class="h-1 bg-primary mt-4 w-16" data-gsap="line-grow"></div>
           <p data-gsap="fade-up" data-gsap-delay="0.1" class="text-lg text-zinc-600 leading-relaxed mt-8">{{ $solutionsDescription }}</p>
           <a href="#explore" class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition-colors shadow-sm mt-8">
@@ -319,7 +319,7 @@
     <div class="flex flex-col lg:flex-row gap-12 lg:gap-20">
       <div class="w-full lg:w-1/2 flex flex-col justify-center">
         <div class="mb-10">
-          <h2 data-gsap="fade-up" class="text-4xl font-light text-zinc-500 leading-tight">{{ t('alliance.explore_prefix', 'Explore') }} {{ $entry->title }}<br><span class="font-bold text-zinc-900">{{ t('alliance.with_cdt', 'with CDT') }}</span></h2>
+          <h2 data-gsap="fade-up" class="text-4xl font-light text-zinc-500 leading-tight">{{ t('alliance.explore_prefix', 'Explore') }} {{ $entry->title }} <br><span class="font-bold text-zinc-900">{{ t('alliance.with_cdt', 'with CDT') }}</span></h2>
           <div class="h-1 bg-primary mt-4 w-16" data-gsap="line-grow"></div>
         </div>
         <div class="space-y-8 mt-12">

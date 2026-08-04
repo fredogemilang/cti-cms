@@ -66,7 +66,7 @@
           <div class="lg:w-1/4 shrink-0">
             <div class="sticky top-28">
               <h2 class="text-4xl md:text-5xl font-light text-zinc-500 leading-tight mb-6" data-gsap="fade-up">
-                {{ $page->getBlockValue('why_cdt_title_prefix', 'Why') }}<br>
+                {{ $page->getBlockValue('why_cdt_title_prefix', 'Why') }} <br>
                 <span class="font-bold text-dark italic">{{ $page->getBlockValue('why_cdt_title_main', 'CDT?') }}</span>
               </h2>
               <div class="h-1 bg-primary w-16 mb-8" data-gsap="line-grow"></div>

@@ -27,7 +27,7 @@
       <div class="max-w-xl text-white">
         <div class="overflow-hidden">
           <h1 class="hero-text-anim">
-            <span class="block text-xl md:text-2xl font-light mb-2">{{ $page?->block('hero_prefix') ?? 'Speed Up Your' }}</span>
+            <span class="block text-xl md:text-2xl font-light mb-2">{{ $page?->block('hero_prefix') ?? 'Speed Up Your' }} </span>
             <span class="block text-4xl md:text-5xl lg:text-[54px] font-bold leading-tight mb-6">{!! $page?->block('hero_title') ?? 'Transformation Journey' !!}</span>
           </h1>
         </div>
@@ -106,7 +106,7 @@
         <!-- Left Column: Title -->
         <div class="lg:w-1/4 shrink-0 overflow-hidden">
           <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            {!! $page?->block('expertise_title_prefix') ?? 'Area Of' !!}<br>
+            {!! $page?->block('expertise_title_prefix') ?? 'Area Of' !!} <br>
             <span class="font-bold text-dark">{!! $page?->block('expertise_title_main') ?? 'Expertise' !!}</span>
           </h2>
           <div class="h-1 bg-primary mt-4" data-gsap="line-grow"></div>
@@ -172,7 +172,7 @@
         <!-- Left Column -->
         <div class="lg:w-1/4 shrink-0 overflow-hidden">
           <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            {{ t('home.alliance_title_prefix', 'Technology') }}<br>
+            {{ t('home.alliance_title_prefix', 'Technology') }} <br>
             <span class="font-bold text-dark">{{ t('home.alliance_title_main', 'Alliance') }}</span>
           </h2>
           <div class="h-1 bg-primary mt-4" data-gsap="line-grow"></div>
@@ -210,7 +210,7 @@
         <!-- Left Column -->
         <div class="lg:w-1/4 shrink-0 overflow-hidden">
           <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            {{ t('home.aws_title_prefix', 'AWS') }}<br>
+            {{ t('home.aws_title_prefix', 'AWS') }} <br>
             <span class="font-bold text-dark">{{ t('home.aws_title_main', 'Private Offers') }}</span>
           </h2>
           <div class="h-1 bg-primary mt-4" data-gsap="line-grow"></div>
@@ -239,7 +239,7 @@
         <!-- Left Column -->
         <div class="lg:w-1/4 shrink-0 overflow-hidden">
           <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            {!! $page?->block('why_cdt_title_prefix') ?? 'Why' !!}<br>
+            {!! $page?->block('why_cdt_title_prefix') ?? 'Why' !!} <br>
             <span class="font-bold text-dark italic">{!! $page?->block('why_cdt_title_main') ?? ($page?->block('why_cdt_title') ?? 'CDT?') !!}</span>
           </h2>
           <div class="h-1 bg-primary mt-4" data-gsap="line-grow"></div>
