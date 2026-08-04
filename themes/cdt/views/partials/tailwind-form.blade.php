@@ -76,16 +76,45 @@
   </div>
 @endif
 
-<form method="POST" action="{{ route('forms.submit', $form->slug) }}" class="space-y-6 {{ $formTextAlign }}"
-      novalidate
-      x-data="tailwindFormValidator({{ json_encode([
-          'fields'       => $fieldConfig,
-          'serverErrors' => $fieldErrors,
-          'captcha'      => $captchaProvider,
-      ]) }})"
-      @submit.prevent="validateAndSubmit">
+<div x-data="tailwindFormValidator({{ json_encode([
+        'fields'       => $fieldConfig,
+        'serverErrors' => $fieldErrors,
+        'captcha'      => $captchaProvider,
+        'ajaxUrl'      => route('forms.submit.ajax', $form->slug),
+    ]) }})">
+
+    <form method="POST" action="{{ route('forms.submit', $form->slug) }}" class="elementor-form space-y-8 {{ $formTextAlign }}"
+          novalidate
+          @submit.prevent="validateAndSubmit">
 
     @csrf
+
+    {{-- Form Success Alert --}}
+    <div x-show="isSubmitted" x-transition
+         id="elementor-message-success"
+         class="elementor-message elementor-message-success elementor-help-inline bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center mb-8"
+         role="alert">
+        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+        </div>
+        <h4 class="text-lg font-bold text-emerald-900 mb-2">Thank you!</h4>
+        <p class="text-emerald-700 text-sm font-light leading-relaxed max-w-md mx-auto" x-text="successMessage"></p>
+    </div>
+
+    {{-- Auto-Injected Attribution Metadata Fields --}}
+    <input type="hidden" name="_submission_page" value="{{ url()->current() }}">
+    <input type="hidden" name="_attribution" id="_attribution_{{ $form->id }}" value="">
+    <script>
+    (function() {
+        var el = document.getElementById('_attribution_{{ $form->id }}');
+        if (el) {
+            var m = document.cookie.match(new RegExp('(^| )cdt_attribution=([^;]+)'));
+            if (m) { try { el.value = decodeURIComponent(m[2]); } catch(e){} }
+        }
+    })();
+    </script>
 
     {{-- Honeypot --}}
     @if($honeypot)
@@ -283,9 +312,6 @@
         @endforeach
     </div>
 
-    {{-- Consent / GDPR / Terms fields are now CMS-managed via gdpr/terms field types.
-         Add these fields in the form studio and they'll render with proper Tailwind styling. --}}
-
     {{-- CAPTCHA — respects form's spam_protection settings --}}
     @if($captchaProvider === 'none')
         {{-- Simple honeypot-only, no visible captcha. Skip captcha validation. --}}
@@ -305,16 +331,6 @@
                 @else
                     <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
                     <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const form = document.querySelector('#g-recaptcha-response')?.closest('form');
-                            if (form) {
-                                form.addEventListener('submit', function(e) {
-                                    const originalHandler = e.preventDefault; // let Alpine handle it
-                                });
-                            }
-                        });
-                    </script>
                 @endif
             @endif
         @elseif($captchaProvider === 'turnstile')
@@ -331,20 +347,39 @@
     @endif
 
     {{-- Submit --}}
-    <div class="{{ $isDark ? 'flex flex-col items-center' : 'pt-6' }}">
-        <button type="submit" class="{{ $btnClass }}">
-            {{ t('form.submit_' . $form->slug, $form->submit_button_text ?? 'Send Message') }}
+    <div class="{{ $isDark ? 'flex flex-col items-center' : 'pt-4 flex justify-end' }}">
+        @php
+            $btnText = !empty($form->submit_button_text) ? $form->submit_button_text : t('form.submit_' . $form->slug, 'Send Message');
+        @endphp
+        <button type="submit" :disabled="submitting" class="{{ $btnClass }} inline-flex items-center justify-center gap-2 text-center transition-all duration-300">
+            <template x-if="submitting">
+                <svg class="h-4 w-4 text-current shrink-0 animate-spin" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3.5"></circle>
+                    <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </template>
+            <template x-if="justSubmitted && !submitting">
+                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </template>
+            <span x-text="submitting ? 'Submitting...' : (justSubmitted ? 'Submitted!' : '{{ addslashes($btnText) }}')">{{ $btnText }}</span>
         </button>
     </div>
 </form>
+</div>
 
-{{-- Alpine.js validator (loaded once per page) --}}
+{{-- Alpine.js validator --}}
 @once
 @push('scripts')
 <script>
 document.addEventListener('alpine:init', () => {
     Alpine.data('tailwindFormValidator', (config) => ({
         errors: {},
+        submitting: false,
+        justSubmitted: false,
+        isSubmitted: false,
+        successMessage: '',
 
         init() {
             if (config.serverErrors && Object.keys(config.serverErrors).length) {
@@ -352,14 +387,23 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
+        resetForm() {
+            this.isSubmitted = false;
+            this.justSubmitted = false;
+            this.errors = {};
+            this.successMessage = '';
+            this.submitting = false;
+        },
+
         validateAndSubmit(e) {
             this.errors = {};
             let valid = true;
+            const formEl = e.target;
 
             // Validate form fields
             config.fields.forEach(f => {
                 if (!f.is_required) return;
-                const el = document.getElementById(f.field_id);
+                const el = formEl.querySelector(`[name="${f.field_id}"]`) || document.getElementById(f.field_id);
                 if (!el) return;
 
                 // Checkbox fields (gdpr, terms, checkbox) — check .checked
@@ -399,8 +443,6 @@ document.addEventListener('alpine:init', () => {
                     valid = false;
                 }
             }
-            // recaptcha_v3 is invisible — no user-facing validation needed
-            // 'none' skips captcha entirely
 
             if (!valid) {
                 const firstError = document.querySelector('[x-show^="errors["]');
@@ -408,7 +450,61 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
 
-            e.target.submit();
+            // Perform AJAX Submission without page refresh if ajaxUrl is present
+            if (config.ajaxUrl) {
+                this.submitting = true;
+                const formData = new FormData(formEl);
+
+                fetch(config.ajaxUrl, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(async (res) => {
+                    const data = await res.json();
+                    this.submitting = false;
+
+                    if (res.ok && data.success) {
+                        if (data.redirect_url) {
+                            window.location.href = data.redirect_url;
+                            return;
+                        }
+                        this.isSubmitted = true;
+                        this.justSubmitted = true;
+                        this.successMessage = data.message || 'Thank you for your submission!';
+                        try { formEl.reset(); } catch(e){}
+
+                        setTimeout(() => {
+                            this.justSubmitted = false;
+                        }, 3000);
+
+                        const banner = formEl.querySelector('#elementor-message-success');
+                        if (banner) banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                        try {
+                            const eventData = { form_id: formEl.getAttribute('action'), message: data.message };
+                            window.dispatchEvent(new CustomEvent('submit_success', { detail: eventData }));
+                            document.dispatchEvent(new CustomEvent('submit_success', { detail: eventData }));
+                        } catch(e) {}
+                    } else if (data.errors) {
+                        this.errors = data.errors;
+                        const firstError = document.querySelector('[x-show^="errors["]');
+                        if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    } else {
+                        this.errors['captcha'] = 'Submission failed. Please try again.';
+                    }
+                })
+                .catch((err) => {
+                    this.submitting = false;
+                    console.error('AJAX form submission error:', err);
+                    formEl.submit();
+                });
+            } else {
+                formEl.submit();
+            }
         }
     }));
 });
