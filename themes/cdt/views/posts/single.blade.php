@@ -6,7 +6,8 @@
     $content = $post->getTranslation('content', $currentLocale) ?: $post->content;
     $category = $post->category ? $post->category->name : 'Technology';
     $author = $post->author ? $post->author->name : 'CDT Editorial';
-    $date = $post->published_at ? $post->published_at->format('F d, Y') : $post->created_at->format('F d, Y');
+    $dateFormat = $dateFormat ?? \Plugins\Posts\Models\Setting::get('date_format', 'M d, Y');
+    $date = $post->published_at ? $post->published_at->format($dateFormat) : $post->created_at->format($dateFormat);
     $featImg = $post->featured_image ? resolve_block_asset($post->featured_image) : null;
     
     // Recent related posts
@@ -117,7 +118,7 @@
             @foreach($recentPosts as $rec)
               @php
                 $rTitle = $rec->getTranslation('title', $currentLocale) ?: $rec->title;
-                $rDate = $rec->published_at ? $rec->published_at->format('M d, Y') : $rec->created_at->format('M d, Y');
+                $rDate = $rec->published_at ? $rec->published_at->format($dateFormat) : $rec->created_at->format($dateFormat);
                 $rImg = $rec->featured_image ? resolve_block_asset($rec->featured_image) : asset('themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
               @endphp
               <div class="flex items-center gap-4 group">

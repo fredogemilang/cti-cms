@@ -16,8 +16,12 @@
         }
     }
 
-    // All published posts paginated
-    $posts = \Plugins\Posts\Models\Post::published()->latest()->paginate(9);
+    // Date format and Posts pagination from Posts Settings
+    $dateFormat = $dateFormat ?? \Plugins\Posts\Models\Setting::get('date_format', 'M d, Y');
+    if (!isset($posts)) {
+        $perPage = (int) \Plugins\Posts\Models\Setting::get('posts_per_page', 9);
+        $posts = \Plugins\Posts\Models\Post::published()->latest()->paginate($perPage);
+    }
 @endphp
 
 @section('content')
@@ -49,7 +53,7 @@
             $featImg = $feat->featured_image ? resolve_block_asset($feat->featured_image) : asset('themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
             $featCategory = $feat->category ? $feat->category->name : 'Technology';
             $featAuthor = $feat->author ? $feat->author->name : 'CDT Editorial';
-            $featDate = $feat->published_at ? $feat->published_at->format('M d, Y') : $feat->created_at->format('M d, Y');
+            $featDate = $feat->published_at ? $feat->published_at->format($dateFormat) : $feat->created_at->format($dateFormat);
           @endphp
           <div class="swiper-slide relative w-full h-full flex flex-col pb-16 md:pb-0 md:block">
             <img src="{{ $featImg }}" class="relative md:absolute inset-0 w-full aspect-[16/9] md:aspect-auto md:h-full object-cover" alt="{{ $featTitle }}">
@@ -106,7 +110,7 @@
           $pExcerpt = $post->getTranslation('excerpt', $currentLocale) ?: ($post->excerpt ?: Str::limit(strip_tags($post->content), 120));
           $pImg = $post->featured_image ? resolve_block_asset($post->featured_image) : asset('themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
           $pCategory = $post->category ? $post->category->name : 'Technology';
-          $pDate = $post->published_at ? $post->published_at->format('M d, Y') : $post->created_at->format('M d, Y');
+          $pDate = $post->published_at ? $post->published_at->format($dateFormat) : $post->created_at->format($dateFormat);
         @endphp
         <div class="group relative rounded-3xl bg-white border border-zinc-100 p-6 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col justify-between">
           <div>

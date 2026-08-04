@@ -82,11 +82,16 @@ Route::middleware(['web'])->group(function () {
             app()->setLocale($locale);
         }
 
+        $perPage = (int) Setting::get('posts_per_page', 9);
+        $dateFormat = Setting::get('date_format', 'M d, Y');
+
         $featuredPosts = Post::where('status', 'published')
             ->where('is_featured', true)
             ->latest()
             ->take(4)
             ->get();
+
+        $posts = Post::published()->latest()->paginate($perPage);
 
         $activeTheme = app(ThemeLoader::class)->getActiveTheme();
         $themeSlug = $activeTheme ? $activeTheme->slug : 'default';
@@ -96,7 +101,7 @@ Route::middleware(['web'])->group(function () {
             $view = view()->exists('iccom::posts.index') ? 'iccom::posts.index' : 'posts::blog-index';
         }
 
-        return view($view, compact('featuredPosts'));
+        return view($view, compact('featuredPosts', 'posts', 'dateFormat'));
     };
 
     $renderCategory = function (?string $localeOrCategory = null, ?string $category = null) {
@@ -109,11 +114,19 @@ Route::middleware(['web'])->group(function () {
             $category = $localeOrCategory;
         }
 
+        $perPage = (int) Setting::get('posts_per_page', 9);
+        $dateFormat = Setting::get('date_format', 'M d, Y');
+
         $featuredPosts = Post::where('status', 'published')
             ->where('is_featured', true)
             ->latest()
             ->take(4)
             ->get();
+
+        $posts = Post::published()
+            ->whereHas('category', fn($q) => $q->where('slug', $category))
+            ->latest()
+            ->paginate($perPage);
 
         $activeTheme = app(ThemeLoader::class)->getActiveTheme();
         $themeSlug = $activeTheme ? $activeTheme->slug : 'default';
@@ -123,7 +136,7 @@ Route::middleware(['web'])->group(function () {
             $view = view()->exists('iccom::posts.index') ? 'iccom::posts.index' : 'posts::blog-index';
         }
 
-        return view($view, compact('featuredPosts', 'category'));
+        return view($view, compact('featuredPosts', 'posts', 'category', 'dateFormat'));
     };
 
     $renderSingle = function (?string $localeOrSlug = null, ?string $slug = null) {
