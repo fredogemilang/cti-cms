@@ -99,7 +99,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
         </div>
-        <h4 class="text-lg font-bold text-emerald-900 mb-2">Thank you!</h4>
+        <div class="text-lg font-bold text-emerald-900 mb-2">Thank you!</div>
         <p class="text-emerald-700 text-sm font-light leading-relaxed max-w-md mx-auto" x-text="successMessage"></p>
     </div>
 

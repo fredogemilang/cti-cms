@@ -92,7 +92,7 @@
 
         <div class="space-y-2.5 flex-1 min-w-0">
             <div class="flex items-center justify-between gap-2">
-                <h4 class="font-bold text-base tracking-tight text-gray-900 dark:text-white">We value your privacy</h4>
+                <p class="font-bold text-base tracking-tight text-gray-900 dark:text-white">We value your privacy</p>
                 <button type="button" @click="accept()" class="text-gray-400 hover:text-gray-600 dark:hover:text-white p-1 rounded-lg transition-colors" title="Close">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>

@@ -591,7 +591,7 @@
 
                 <div class="lg:col-span-7 space-y-6 lg:border-l lg:border-zinc-200 lg:pl-8 pt-6 lg:pt-0">
                   <div>
-                    <h4 class="text-xs font-bold uppercase tracking-widest text-primary mb-3">Key Responsibilities</h4>
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-primary mb-3">Key Responsibilities</h3>
                     <ul class="space-y-2.5">
                       <template x-for="(resp, idx) in job.responsibilities" :key="idx">
                         <li class="flex items-start gap-3 text-sm text-zinc-600 leading-relaxed font-light">
@@ -603,7 +603,7 @@
                   </div>
 
                   <div class="pt-4 border-t border-zinc-200/60">
-                    <h4 class="text-xs font-bold uppercase tracking-widest text-primary mb-3">Requirements & Qualifications</h4>
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-primary mb-3">Requirements & Qualifications</h3>
                     <ul class="space-y-2.5">
                       <template x-for="(req, idx) in job.requirements" :key="idx">
                         <li class="flex items-start gap-3 text-sm text-zinc-600 leading-relaxed font-light">
@@ -666,7 +666,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
               </div>
-              <h4 class="text-lg font-bold text-emerald-900 mb-2">Application Submitted!</h4>
+              <div class="text-lg font-bold text-emerald-900 mb-2">Application Submitted!</div>
               <p class="text-emerald-700 text-sm font-light">
                 Thank you for applying. Our HR team will review your details and contact you shortly.
               </p>

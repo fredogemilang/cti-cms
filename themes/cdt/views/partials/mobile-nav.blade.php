@@ -161,7 +161,7 @@
             <x-icon name="lucide:info" class="w-5 h-5 text-primary" />
           </div>
           <div class="flex-1">
-            <h4 class="font-bold text-gray-800 group-hover:text-primary transition-colors text-sm">{{ t('nav.overview', 'Overview') }}</h4>
+            <div class="font-bold text-gray-800 group-hover:text-primary transition-colors text-sm">{{ t('nav.overview', 'Overview') }}</div>
             <p class="text-xs text-gray-500 mt-0.5">Central Data Technology at a glance</p>
           </div>
           <span class="text-gray-400 group-hover:text-primary transition-colors group-hover:translate-x-1 transition-transform">→</span>
@@ -173,7 +173,7 @@
             <x-icon name="lucide:users" class="w-5 h-5 text-primary" />
           </div>
           <div class="flex-1">
-            <h4 class="font-bold text-gray-800 group-hover:text-primary transition-colors text-sm">{{ t('nav.management', 'About Management') }}</h4>
+            <div class="font-bold text-gray-800 group-hover:text-primary transition-colors text-sm">{{ t('nav.management', 'About Management') }}</div>
             <p class="text-xs text-gray-500 mt-0.5">Meet our leadership team</p>
           </div>
           <span class="text-gray-400 group-hover:text-primary transition-colors group-hover:translate-x-1 transition-transform">→</span>
@@ -273,7 +273,7 @@
                 <x-icon :name="$solIcon" class="w-5 h-5 text-primary" />
               </div>
               <div class="flex-1">
-                <h4 class="font-bold text-gray-800 group-hover:text-primary transition-colors text-sm">{{ $solTitle }}</h4>
+                <div class="font-bold text-gray-800 group-hover:text-primary transition-colors text-sm">{{ $solTitle }}</div>
                 <p class="text-xs text-gray-500 mt-0.5 line-clamp-1">{{ Str::limit(strip_tags($sol->getTranslation('excerpt', $currentLocale ?? app()->getLocale()) ?: $sol->excerpt), 60) }}</p>
               </div>
               <span class="text-gray-400 group-hover:text-primary transition-colors group-hover:translate-x-1 transition-transform">→</span>
