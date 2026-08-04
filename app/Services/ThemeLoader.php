@@ -97,6 +97,11 @@ class ThemeLoader
         // so @extends('{slug}::layouts.app') resolves dynamically
         View::addNamespace($theme->slug, $themePath);
 
+        // Prepend theme errors directory to 'errors' view namespace
+        if (is_dir("{$themePath}/errors")) {
+            View::prependNamespace('errors', "{$themePath}/errors");
+        }
+
         // Register available theme namespaces as fallbacks
         foreach (['cdt', 'default'] as $fallbackSlug) {
             $fallbackPath = base_path("themes/{$fallbackSlug}/views");
