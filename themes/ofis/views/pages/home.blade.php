@@ -202,28 +202,44 @@
 
         <!-- Form Renderer / Static Fallback Form -->
         <div class="bg-white/5 border border-white/10 rounded-3xl p-8 text-left max-w-2xl mx-auto">
-            <form action="#" method="POST" class="space-y-4">
+            @if (session('success'))
+                <div class="bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 px-6 py-4 rounded-xl mb-6 font-medium text-sm">
+                    <strong>✓ Success!</strong> {{ session('success') }}
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="bg-rose-500/20 border border-rose-500/40 text-rose-200 px-6 py-4 rounded-xl mb-6 font-medium text-sm">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('forms.submit', 'contact-form') }}" method="POST" class="space-y-4">
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-gray-300">Name</label>
-                        <input type="text" name="name" required class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-[#fab54f]" placeholder="Your Full Name">
+                        <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-gray-300">{{ t('form.name', 'Name') }}</label>
+                        <input type="text" name="name" value="{{ old('name') }}" required class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-[#fab54f]" placeholder="Your Full Name">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-gray-300">Email</label>
-                        <input type="email" name="email" required class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-[#fab54f]" placeholder="you@company.com">
+                        <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-gray-300">{{ t('form.email', 'Email') }}</label>
+                        <input type="email" name="email" value="{{ old('email') }}" required class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-[#fab54f]" placeholder="you@company.com">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-gray-300">Company</label>
-                    <input type="text" name="company" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-[#fab54f]" placeholder="Company Name">
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-gray-300">{{ t('form.company', 'Company') }}</label>
+                    <input type="text" name="company" value="{{ old('company') }}" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-[#fab54f]" placeholder="Company Name">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-gray-300">Message</label>
-                    <textarea name="message" rows="4" required class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-[#fab54f]" placeholder="Tell us about your requirements..."></textarea>
+                    <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-gray-300">{{ t('form.message', 'Message') }}</label>
+                    <textarea name="message" rows="4" required class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-[#fab54f]" placeholder="Tell us about your requirements...">{{ old('message') }}</textarea>
                 </div>
                 <button type="submit" class="w-full py-4 bg-[#fab54f] hover:bg-[#fab54f]/90 text-ofis-ink font-bold rounded-xl shadow-lg transition">
-                    Send Inquiry
+                    {{ t('form.submit', 'Send Inquiry') }}
                 </button>
             </form>
         </div>
