@@ -9,30 +9,57 @@ class YoutubeVideo extends Model
     protected $table = 'youtube_videos';
 
     protected $fillable = [
-        'video_id',
+        'youtube_id',
         'title',
         'description',
-        'category',
-        'thumbnail_url',
-        'duration',
-        'author',
+        'thumbnail_default',
+        'thumbnail_medium',
+        'thumbnail_high',
+        'channel_title',
         'published_at',
-        'is_active',
+        'duration',
+        'duration_seconds',
+        'view_count',
+        'like_count',
+        'tags',
+        'is_featured',
+        'is_visible',
         'sort_order',
+        'synced_at',
     ];
 
     protected $casts = [
         'published_at' => 'datetime',
-        'is_active' => 'boolean',
+        'synced_at' => 'datetime',
+        'is_featured' => 'boolean',
+        'is_visible' => 'boolean',
+        'tags' => 'array',
     ];
 
     public function getUrl(): string
     {
-        return "https://www.youtube.com/watch?v={$this->video_id}";
+        $id = $this->youtube_id ?: ($this->video_id ?? '');
+        return "https://www.youtube.com/watch?v={$id}";
     }
 
     public function getEmbedUrl(): string
     {
-        return "https://www.youtube-nocookie.com/embed/{$this->video_id}";
+        $id = $this->youtube_id ?: ($this->video_id ?? '');
+        return "https://www.youtube-nocookie.com/embed/{$id}";
+    }
+
+    public function getBestThumbnail(): string
+    {
+        if (! empty($this->thumbnail_high)) {
+            return $this->thumbnail_high;
+        }
+        if (! empty($this->thumbnail_medium)) {
+            return $this->thumbnail_medium;
+        }
+        if (! empty($this->thumbnail_default)) {
+            return $this->thumbnail_default;
+        }
+        $id = $this->youtube_id ?: ($this->video_id ?? '');
+        return "https://img.youtube.com/vi/{$id}/hqdefault.jpg";
     }
 }
