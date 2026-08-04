@@ -22,8 +22,7 @@
 /storage/cms_installed
 /vendor
 /public/themes/*/assets
-/themes/cdt
-/public/themes/cdt
+
 Homestead.json
 Homestead.yaml
 Thumbs.db
