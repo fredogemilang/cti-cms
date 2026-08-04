@@ -1,0 +1,43 @@
+{
+    "name": "Ofis",
+    "slug": "ofis",
+    "version": "1.0.0",
+    "description": "A starter theme for the CMS.",
+    "author": "Blue Power Technology",
+    "screenshot": "screenshot.png",
+    "supports": [
+        "pages",
+        "menus"
+    ],
+    "page_templates": {
+        "default": {
+            "label": "Default",
+            "description": "Standard page with flexible block content",
+            "blocks": []
+        },
+        "home": {
+            "label": "Homepage",
+            "description": "Main landing page",
+            "blocks": [
+                {
+                    "name": "hero_title",
+                    "type": "text",
+                    "label": "Hero Title",
+                    "default": "Welcome"
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "Your website tagline goes here."
+                },
+                {
+                    "name": "hero_image",
+                    "type": "media",
+                    "label": "Hero Image",
+                    "default": ""
+                }
+            ]
+        }
+    }
+}
