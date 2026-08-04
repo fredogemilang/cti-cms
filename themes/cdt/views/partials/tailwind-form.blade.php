@@ -321,25 +321,21 @@
             <span><strong>CAPTCHA not configured.</strong> The {{ $captchaProvider }} site key is missing. Configure it in <code>config/services.php</code> or set captcha to "none" in form settings.</span>
         </div>
     @else
-        @if(in_array($captchaProvider, ['recaptcha_v2', 'recaptcha_v3']))
-            @if(!empty(config('services.recaptcha.site_key')))
-                @if($captchaProvider === 'recaptcha_v2')
-                    <div class="mb-3">
-                        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
-                    </div>
-                    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-                @else
-                    <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
-                    <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
-                @endif
-            @endif
-        @elseif($captchaProvider === 'turnstile')
-            @if(!empty(config('services.turnstile.site_key')))
+        @if(in_array($captchaProvider, ['recaptcha_v2', 'recaptcha_v3']) && !empty(config('services.recaptcha.site_key')))
+            @if($captchaProvider === 'recaptcha_v2')
                 <div class="mb-3">
-                    <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-theme="auto"></div>
+                    <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
                 </div>
-                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+            @else
+                <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
             @endif
+        @elseif($captchaProvider === 'turnstile' && !empty(config('services.turnstile.site_key')))
+            <div class="mb-3">
+                <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-theme="auto"></div>
+            </div>
+            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         @endif
 
         {{-- Show captcha not completed error --}}
