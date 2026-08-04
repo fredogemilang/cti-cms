@@ -145,7 +145,6 @@
           </a>
         </article>
       @empty
-        <!-- Fallback static cards if DB empty -->
         <article class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition flex flex-col p-6">
           <div class="flex items-start gap-4 mb-3">
             <div class="w-14 h-14 bg-[#FFF6E8] rounded-xl flex items-center justify-center shrink-0 p-2 border border-orange-100">
@@ -161,10 +160,10 @@
   </div>
 </section>
 
-<!-- Customers Marquee Section -->
+<!-- Customers Marquee Section (Using MediaService processed icon) -->
 <section class="relative w-full flex flex-col py-8 md:py-12">
   <div class="relative flex items-center justify-center gap-4 mb-8 px-4">
-    <img src="data:image/webp;base64,UklGRh4FAABXRUJQVlA4WAoAAAAQAAAASwAATQAAQUxQSG8EAAABkFZte942DwRBeCEIghjUDGIGNoOIQc3AYeAxEARDeCG8EO4f/k4HICImQNfTe4V1Nj1YWhDtpS8cgv33bdbYd3vsDTH1XXV432QObej6D7g9ZLCaJKUPdPd8YNS2BO2hD27ab6wHZZinl+0ZVO0XKM8Eow4L2MYau3PajISOG9MzUI4SFEk5IFoLcJP0oZ2YmJ/KR9qxwIskVWiSplP1qZXxqICkD27aHeEl9cSJhfGZynr0oUkJXjpsNCnB68DAnjGY997wkgqko56QtBC2Y07Twx/wl1lpEJJ60HEBSQbM2ewd0D30Ds7+JnWQjnpWKTfO+usJWyFa23gLcEswHi3MegG+OBDrCrzvSw5TklIpJqUKnhpuewOUDrxIyiUnqTi8b/tA1ekcLBm8SEpvcAvcdPoD5SaDqosj/DrgyxLAshCm88lpN33wdEUrl0ddLVDuWZl12cGH3NV5Hkr+APWSnPEe+Ln0hinppDmUSx/mWwzKFYNJ55Pjlyb+fckH19UCP1cq7UuC1yU1/v2RAvnaiH9Nm8+voOs9LPP59b7rcUPhxns0tasrfk+7unT3XO+Je/Rk6qdl9W1bamcXKNenK7mfltW3bamdnIs+d6fuPUpDCy5W8LkOfd/XaVnZxmw75Sbf6xrbWOc69H1fpyWYoepkKtMK8Noo2cncjWOfzczSzgJEG7LOtktbm2DcOVlasPW5S9ptxJB08R71YOfSL6dbLUkaiaSvWHCdLg5eTUplcnbXZYL+KwyIVrtiZqWfAhh1nIfGYfuKunstRdD6VYW7NIX1D418ZlvWEZ92agvELDF7aNUsvcNPNjfYFPaQ9aQA33d1Deq4x6/ANbro9BeNjBj8HHaymBz+0x0ZCh44nHaYuXStgT63MBxmKDs1xu5SK+pBBOehAh+aA2xVNrA9NuA77E+bEB9yuFCjPOPMdHyKrgtsFBfWRDOUGg1FSBbcLE/HIB9cNHSRJquB2rkB5wpnv6HHtVnA7pWB6oEC+Y2LdUwW3U5V44IPrDmc+UAW3MwXKfc50xxvykSq4ndDKdFsBu+EXJp2t4HaiEumuD6uupLLCqvMV3I4Myl2Ovy60AKZ0QRXc9vIE7aYOwPMpoBWdHKYkSRXcJJUGEOmct90l8Ab8pr00zdNgOh2sSZJGYJkDiAre9oM5OFtVHNx27qywJknqgm17SY2zc1cP53mQpAqe71KFeSNziCJJVs+armcnXpdytY0qzBvZSqTN4+bwurLgtlGFeSMLylfIHMqFAm4bVZg3Wum/Q+ZE3iu2UQ9uG1WYJVnw8yUyJ/Kmw22jHtw2mmAp3Qr2LTInsqTkuG1UYU0bNXarvtecyJJy4LZRhTVteiBa0TebEyYpB24bVViTpJEwfbs5bpJy4LZRhdVUglnfb46bpBy4bTQBDm5/QBa4ScrgtilsW9afzIGbpB7cJPXQ9Vl/NQdukip4VnFm/eUcuEmJfbc/pRy4aYAAPOuP5wAHVy5Zf7844Kb/pPV1SPpOAFZQOCCIAAAAkAgAnQEqTABOAD5ZIo1FI6IhGjQAOAWEtIAK4A9/3v8L//YSPtOAdjoXajz9EUzxd96mbr8lv1UTOHjemXyQXTAYnmJNx9wsxISCEAAA/vq2f/78yift1TehEmW78c5bMCkGEukaDq+xVKD3cXP6B//wQ+XOpTvE7/qhj0WWDAe0xb+gSAAAAA==" alt="customersicon" class="h-16 w-auto" loading="lazy" />
+    <img src="{{ asset('storage/media/customersiconpng-1785858551-4pZnF6dr.webp') }}" alt="customersicon" class="h-16 w-auto" loading="lazy" />
     <h2 class="text-3xl md:text-4xl font-bold text-ofis-ink text-center leading-tight mb-6">Our Customers</h2>
   </div>
 
@@ -215,7 +214,7 @@
   }
 </style>
 
-<!-- Advantages Section -->
+<!-- Advantages Section (Using MediaService processed icons) -->
 <section class="relative max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-col py-8 md:py-12">
   <h2 class="text-3xl md:text-4xl font-bold text-ofis-ink text-center leading-tight">
     {{ t('home.advantages_title', 'Advantages of Implementing OFIS in Your Office') }}
@@ -227,7 +226,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 lg:gap-16 xl:gap-20 mt-20">
     <article class="advantage-card relative bg-white border border-gray-200 rounded-2xl pt-16 pb-10 px-8 text-center">
       <div class="advantage-icon absolute left-1/2 -top-12 -translate-x-1/2 w-24 h-24 rounded-full bg-ofis-teal/80 flex items-center justify-center p-5 shadow-sm">
-        <img src="data:image/webp;base64,UklGRq4DAABXRUJQVlA4WAoAAAAQAAAAMQAANgAAQUxQSDUDAAABoFbbdtDqWhIi4UhAwnHw4aBxAA4aB8UBOOA6yHMQCUdCJOwfh`..." alt="Boost Productivity" class="w-full h-full object-contain" loading="lazy" />
+        <img src="{{ asset('storage/media/boostpng-1785858553-KO58Oozl.webp') }}" alt="Boost Productivity" class="w-full h-full object-contain" loading="lazy" />
       </div>
       <h3 class="text-xl md:text-2xl font-bold text-ofis-ink">Boost Productivity and Maintain Efficiency</h3>
       <p class="text-gray-600 mt-4 max-w-md mx-auto">Improve your employees' productivity by simplifying their activities and save more money by monitoring and reducing your resources consumption.</p>
@@ -235,7 +234,7 @@
 
     <article class="advantage-card relative bg-white border border-gray-200 rounded-2xl pt-16 pb-10 px-8 text-center">
       <div class="advantage-icon absolute left-1/2 -top-12 -translate-x-1/2 w-24 h-24 rounded-full bg-ofis-teal/80 flex items-center justify-center p-5 shadow-sm">
-        <img src="data:image/webp;base64,UklGRtYCAABXRUJQVlA4WAoAAAAQAAAAMQAAMAAAQUxQSGACAAABgFXbdtDoSoiEJ6ESnoPBAXEADsDBxAE4QEIkIOFJiITzQaFpFUTEBKivTUc0iLq+9JteeRrjD1iFVgaTlLwEhH1rbMSopzlg+c4CJenDFZZvTDBLUppWSb66JA2NpZ81ZklpaeBSQDVJDt4tWCVZwElMOxGwSJqJ1CkTkhScrgLEywq4pMraKRgvO1XSUNYkDYRJclrq8iJ0TTTdF2ZdK7nLSnljnFKatuKX/zeZrUvFJau1serVABa9oB6LlIgujSQVYJcF25Abo3JAkxSkHjRJldWkzCbJqVLyhkkn1iUknbiklVmSCEmKS8U7JR3MSZrZJDmnJGtfaCyMBViUGstrCEa9ApB0Yp9FNMA8KszKXHdZ4zyLlECfnwBFkpyQbK/HKM1sujotg3IQekvTfWF+szP3kGV7s1AleR4kZSJJMrAu941q+gfCtMCfpJ1NX30FrdLKSVRYJTnYd2Q7MEgNwiVZsOphjfdneiJZKZKGzXUNqp5yn599mCLSB3Y9qNvtOjyzkvQp6LrzOP7twcpfvy3fTiew+U1y9ct66DsQo1169pEsB7DZL0nyA9r4W5LttPRj0s76G7ba3cD2GyvUMb2ZKb9hewCbSxb4E8ulHmMfScMBxAlFb5NPW+Pt0UuyHECb3CyX2gDaNg05WB/UbdvKA0m+N+7Pkk1XJx68TVK6k9JQ6nkekyc9BKjXRnH3l7S39KCrEcGt6+1cJRusV/KgJDN3NzM9LbANnyUvFahJXW0H4t8eJC8VoNVR3S0HcIwvyXyqDWh19aTv+t64b3X1pJ/MxwlRiyc9BlZQOCBQAAAAkAQAnQEqMgAxAD5VIIxFI6IhGvQAOAVEtIAAZkaKRq8XcITj0yXBg2Oxbrs4AP2z//0iWr/btaf/zQCz//6KVLvl/5rMnv+tZ///R8AAAAA=" alt="Improve Collaboration" class="w-full h-full object-contain" loading="lazy" />
+        <img src="{{ asset('storage/media/improvepng-1785858553-BrPHDKZb.webp') }}" alt="Improve Collaboration" class="w-full h-full object-contain" loading="lazy" />
       </div>
       <h3 class="text-xl md:text-2xl font-bold text-ofis-ink">Improve Collaboration</h3>
       <p class="text-gray-600 mt-4 max-w-md mx-auto">Improve collaboration with internal and external team and unleash the true potential of your workforce.</p>
@@ -243,7 +242,7 @@
 
     <article class="advantage-card relative bg-white border border-gray-200 rounded-2xl pt-16 pb-10 px-8 text-center">
       <div class="advantage-icon absolute left-1/2 -top-12 -translate-x-1/2 w-24 h-24 rounded-full bg-ofis-teal/80 flex items-center justify-center p-5 shadow-sm">
-        <img src="data:image/webp;base64,UklGRm4DAABXRUJQVlA4WAoAAAAQAAAAMQAAMQAAQUxQSAUDAAABkFXbdtBaW8KRsCVEQhxcHIADcNA4aBxQB62DIwEJR8KRsD+A9PUpiIgJwOUacmL85RgvrpgxuirfShuLGGOmh7aRCENVtEuOlXZ5aIJljugDQLdpI5a6NeCtEc8/e6rx3MURqvPc9bCqY6SkpAOX7ZuGsx2SkiNg35v9BFj2TvzrE4HItXLop03v1AaXJP43ik5YndYVVMy/MgPXCoAsBIAu7fwJ4wPAVk9JSp8JvhTlByVygT1S6Xtr3SXtxJJZvmDf56uSUTClfDJcL66Ywfhc2WPvRElJhwFgJPFQThheQg+YXYUkVVdF05Oka8ZDBwGgeMoJADz0AFBqrU81m9LlgOlyx6IwAGCmv5UFAOzQhEmXAFyRhkneWluNEcT5EAGmn8BIs8zW3qqwiE3xziTOL804mz4A0MURJjU0VTD1TjUsIS/AM0AFLql2ajfwNKoDdMWG++PAovmq6llrrbvqVdUGT3xrcrjsZK7Bw06Wji5+U9WRjvOmvd2+1E7wxKK/b5oWar94CYPaL15i1XbjcZmqVBuZ3KeRJlIZl8/XVbiNUZmqY+buHuHeMEjtA0110jbQRfzDlUgfmPR2zQOe4PwV1eFpd+jSCwNyvGTfINI2LQPoLwwsmpEH7tfUUYCuxdJHrq9cXNSB4ooHHsq3kqhyNE0Autpy+1QHsGiHq4KZe2iLMFR5a5JZJgGGBoMAI0iptUMTLEMOmC7/MOkwAHW5rQZYaMakSwNcnn/21EaSAJqC+JKHGgCS7HqgyktKOnBeoqAp5rEp1WCGsx2SkmDfV7somQVLKGa7ssWVE0p8LoBl78R4ydzAlyTfW9s9lc0wZ5abf8nQTnDxlKT01WBvRcEv+ZKeAGAkAeCRcuLHU4hY11pLXWZQUfH7JlK3RjX8H2BdM9fJ8Av2fbYRABEARuyxdw6VlHTYL+yQlGXkUEXTk+f+TSfJ8lSzKX1EHwC6DRux1C0A10imYdLRLgtGwHZ5qMLiGNkURyYxfHPLlKfmEWwhLxj3fQzlUGy4BABWUDggQgAAAPADAJ0BKjIAMgA+YSySRiQioaEqCACADAlpCHAAAJMcY3d3dC4ycIAA/sgACf//+NrCV4kO///xoXOxF//+NrAAAA==" alt="Extra Secure" class="w-full h-full object-contain" loading="lazy" />
+        <img src="{{ asset('storage/media/extrapng-1785858553-guoaBkKg.webp') }}" alt="Extra Secure" class="w-full h-full object-contain" loading="lazy" />
       </div>
       <h3 class="text-xl md:text-2xl font-bold text-ofis-ink">Extra Secure</h3>
       <p class="text-gray-600 mt-4 max-w-md mx-auto">Provide unparalleled extra security by safeguarding your employees and valuable assets safe from all types of threats.</p>
@@ -251,7 +250,7 @@
 
     <article class="advantage-card relative bg-white border border-gray-200 rounded-2xl pt-16 pb-10 px-8 text-center">
       <div class="advantage-icon absolute left-1/2 -top-12 -translate-x-1/2 w-24 h-24 rounded-full bg-ofis-teal/80 flex items-center justify-center p-5 shadow-sm">
-        <img src="data:image/webp;base64,UklGRuYBAABXRUJQVlA4WAoAAAAQAAAAMQAANQAAQUxQSHYBAAABkJVtb95mLwRDEIRAEIOFQc2gZhAzaBikDDYGhmAIgiAI70ESp9G+n9OImABc1+YcbQ/cv5C9jZLlNqEJhsU83ZX5AICUa50TABTmuyoVwNNJ0goAZQ2x0OukT+MSZqIJAIhRo3xTcKhsUbzjtHsUNmiVXWMU75jZdt2jNCpWAhBuUZQmACBGiYJKe6ouzoowyEaSXhAis2A/15oTAGR+3ZXcZHcuRrkLhWyjnSy4PzfnoDfFH33SaGLkFuzNzSixGjEzB5Lv7oTS+yuM0bmjswYR/qDvtuSuEmRD21UYyVe4zTgFM2Tm/5bUl0jPnpA61yFZt8dOM5IKdLryZk+NbKcCiJN0bhg9SO2UbEbaqQBvlvTmJ4SDJsYFg80ANK7XzheaQKyOrJyBtE6fqyYAEkbFXXD1AhKuF/ZLhTr00ZWvKyunu1LnfMEMt4u7DC2s96HQZOBBkwCoND1Z6IKQlZyOOgVBG/XIDFHzL6j/KFOWo3n+BFZQOCBKAAAAUAQAnQEqMgA2AD5VHoxFI6GhHP7EADgFRLSAAGeJf9sO4+NSxRnTdZ/AAAD9s//9ImOlf//R8ACr/6Y+ub//+j7U/5rXj/TvQAA=" alt="Everything is Touchless" class="w-full h-full object-contain" loading="lazy" />
+        <img src="{{ asset('storage/media/everythingpng-1785858553-ZK6w9Mzu.webp') }}" alt="Everything is Touchless" class="w-full h-full object-contain" loading="lazy" />
       </div>
       <h3 class="text-xl md:text-2xl font-bold text-ofis-ink">Everything is Touchless</h3>
       <p class="text-gray-600 mt-4 max-w-md mx-auto">Allow employees and visitors to use facilities without physical contact, promoting a safer and more efficient workplace.</p>
@@ -259,35 +258,35 @@
   </div>
 </section>
 
-<!-- Why Choose OFIS Section -->
+<!-- Why Choose OFIS Section (Using MediaService processed icons) -->
 <section class="relative max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-col py-8 md:py-12">
   <h2 class="text-4xl font-bold text-ofis-ink text-center leading-tight">
     {{ t('home.why_choose_title', 'Why Choose OFIS') }}
   </h2>
   <div class="relative grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10 mt-8 max-w-5xl mx-auto">
     <div class="flex flex-row items-start text-left gap-5">
-      <img src="data:image/webp;base64,UklGRpAEAABXRUJQVlA4WAoAAAAQAAAAOwAAPAAAQUxQSA8EAAABoFXbttXYGhK2hCUBCTi4OAgOEgfgoHAADrgOtoQtYUnYEsYHeVTlGIiICeBbd83gH51V139gvAecrqMJZbldlnauU3zBou6TBt156foD+HT8s0GbaoNNtenKqLba+fPZJGpuAWXLOnK68VArX1i6I2+HBoerxhewWoGxZq834HCH6lh9fMNgwuLTBU5nYODh/39W7rW7M+gW5aE3Vq23gNH8s6bW4HQFeFhhUxsU/bWIZ7oVoDtcihYoUxfQ+KWpZzzpPgDSuPCE0Uv/tUgzLk37Xqiul9mEpWsCyqdlWveWmV3bJbamK6M+YOzemLVvAxT7e2WpvpsXYDJh9ekB1ZXrZH1nrGqv2zxGDN2MF7MNmJvmAzjcnxyur6JqP8fC08kMnkd642nhGt3xkg4vFu1r4c1H8HK2E3tdAJazBqcbMJs8japb4ZdnPbu6w6Ja9QaktyeR5sibkZltfMWq1nu3kG6HegCLyXXotuBanhyq+xvEFFB9DCbEtgKk42XoHoXr0lsBmv9N9kt14eVDuzuv48a1enAdUq1QFLoBP2pOz0pqH954We48rebc3acfK5ye0499StsziOAPVzeGrrrC6nVkc3/1esk8y0ejHWZzmwGmLfsM6fhRqM4f0Rz5eLDz9r3v4+m52cYlf54N+y2IdP5stgflfk5PFp8OpXv9eZJqTVtcxq1l1n26lGZvai+Xaj2sI8SZ+6EBLGZVWwHu3Zd5A0pTa/pz2dx4czaBogMxbwVK1bqOEeM9tQWU7V4YtQCTCWXJtgdUH5c0g2ukfeLlnGZwjWYGjLuVSNUMVlsAkWZcmhm8Gc12iTQDftSJwxyH00rpugPRbMBiBm+XdAWaGUC1DtAcoHQLcSjAfCnpjQ9He4HqDJAuQBrApczPDh8wW/m4+oCH9XJqBqc7LCaRmuNWu45wevtstsKotn1kTnei27tOzPa1pNpPIB0+CzuwpdphMiGatglOH6BTcFV+UbnGpHBYAUoAPKyX4O8ol+7PtG8B5b7fBi2obb8B3fis2IFpb142r1lIrwmPqjpAdf5stEKovT6AzXpv/sz2rdkCoIzNB6zWzw43mM2h8LTAqN0bBC8fVigan4QGHK683TSDdw8T2GyfnO5AWt/7tOw6AyXd31vMAObuWX6v2UeuQ7fGq1LtA9chzfJboQOUCRhS9/EyLt0+AEPApMNvcXouVRcgDtXMrtYAFm333Z1fj652XQDiSNXcRoBFu2r8Ho/cRya98bREFJ5OOjMebeXPq/89e3c0+c5QiHMfy6VMWw3ojt8x+z+Rqg+YVTM4XL+jeg5prtUK1bY2czht3zGrZlDs0B0oqbp+B3GYAaRD2IFIa/C1UQAOe7cCxMDXz6q3y78ZwbcCAFZQOCBaAAAAcAUAnQEqPAA9AD5hKJBFJCKhmA78AEAGBLSABsfgwkG+9pOh0S+L5nUqCLIZEtVNApmXgAD+/s0Z+Oba0Jwcrx5HFU039r/if/+9t1HvYXxh0/RdnssAAAAA=" alt="complete" class="w-14 h-14 object-contain shrink-0" loading="lazy"/>
+      <img src="{{ asset('storage/media/completepng-1785858553-EkReiIhR.webp') }}" alt="complete" class="w-14 h-14 object-contain shrink-0" loading="lazy"/>
       <div class="flex flex-col gap-2">
         <h3 class="text-xl font-bold text-ofis-ink">Complete Office Automation</h3>
         <p class="text-base text-gray-600">Keep your productivity at peak levels with complete automation for all your systems and applications.</p>
       </div>
     </div>
     <div class="flex flex-row items-start text-left gap-5">
-      <img src="data:image/webp;base64,UklGRmQDAABXRUJQVlA4WAoAAAAQAAAANgAAOAAAQUxQSN4CAAABkFXbdtBaW0IkHAmREAcXB42D4oA4eDgIDngOIgEJR0IkrA9SClUQERMgSdb4zWPSl073nwS7Fmn6zcJ8LVElkxSkEJ7IlO8mXlqIav3HrJpiDZrmH/vNrzIt/+ZGvWKNX/bXB3Oco/zmjsM02iiJqt/MlEQfOboQ3mstaWRrPa9SrsN4UiMO8E9hY+jpNDGOOhiug430jTm9TOndYJGU2VJKO0mWhuEmc9agc+6kU5G0kXTxno1VWtpRTRN+7e3nY76pd1MFcFMjXWoM13sS/5XxFFeqMqsy4yTZUPdkilb+pIDL+K/oAzddfCCfuiJNVzeG8z2JqoQnq1RNrJINg1R8eFPoPWgH6KadPyXGQRdvUaG+wRvUNy5lemvNSYOQUkrrLcGBSTIH0qlK2kaB8R0yp9d3Xg/IumYmo9da2z2yjWFLuhY7L8MlZUpw/n0l2VTKO2qYOUopB3MH9g/HASzfXc98LhlYJUWHIzrLN1aG00BTzjkvUKSphPQuZQq5BJmzfLEyPEbDjUOSUmO4SFKGcM2mfI6XzKnSAu2d3xu4aYKsU6QN7rXOX6Ynne2g6WDWQE57EDcnKixtfykczAVv7d/JnCfXTJU5wKLEETpnlyS7eWc2UyOpsVruJB1YMPMPd29kSQcSXVJh1kaS5Dx9coJwSTPlZ2YL2klqLDE5pkYMZg6uBwvAPFMUO0CR4eacH4mtNbp1omxr+0tqvDLeWnlGUuj8zXjSOey4DmZJvYdHwsEhFdjfKa8dN2V4SRvLIys9SMrOcA2SZnqQdWp+8B8sUlhslbrmkIpkTpEUnaeX2GGWZB2qOUXDXL7cOMp45yil09lxSZnDgaKbZ14aB1yKnawPxZyiuxv2QU6QLEn0WmujyCbdjuvzStawM3zpwUS9kFlHls5RTxZeFwI+eja899Zap/tFaK211R4x5/7+esLZk90bC93uSxy6v7DeV3i23ZcOf7R8BVZQOCBgAAAAsAQAnQEqNwA5AD5hLJJGJCKhoSoIAIAMCWkAAE1rQte+aeeUDyPkFz2ImXYQAAD+9zKBl+Ysew2Hn9v4QIPAi8ANmQuo/eHwhA8KDfuOlOVklINSSVYpdcn8dFn+fUAA" alt="customizeable" class="w-14 h-14 object-contain shrink-0" loading="lazy"/>
+      <img src="{{ asset('storage/media/customizeablepng-1785858553-I6g1Vkeo.webp') }}" alt="customizeable" class="w-14 h-14 object-contain shrink-0" loading="lazy"/>
       <div class="flex flex-col gap-2">
         <h3 class="text-xl font-bold text-ofis-ink">Customizable Application and Modular System</h3>
         <p class="text-base text-gray-600">Tailor your package based on the applications and processes that best fits your company's needs and budget.</p>
       </div>
     </div>
     <div class="flex flex-row items-start text-left gap-5">
-      <img src="data:image/webp;base64,UklGRvwCAABXRUJQVlA4WAoAAAAQAAAANgAANgAAQUxQSKcCAAABoFXbbt5a2xAEQRACQQxuGcQMWgYxg2MGKYNeBoJgCIIgCPshjk+a7+c5IiYAX5bnHslw90iGtwW3lC2Zvu+7k+T+6aQvN7CkG8alMxZoDf587ckwzJbgCuib8qUnu2JegwZA8V3NEAy1LwNohADAc/uGUzEuLCMY90OlX premature-end" alt="affordable" class="w-14 h-14 object-contain shrink-0" loading="lazy"/>
+      <img src="{{ asset('storage/media/affordablepng-1785858554-KUaz0qb4.webp') }}" alt="affordable" class="w-14 h-14 object-contain shrink-0" loading="lazy"/>
       <div class="flex flex-col gap-2">
         <h3 class="text-xl font-bold text-ofis-ink">Affordable Pricing</h3>
         <p class="text-base text-gray-600">Choose the best smart office plan that fit your company's budget and need.</p>
       </div>
     </div>
     <div class="flex flex-row items-start text-left gap-5">
-      <img src="data:image/webp;base64,UklGRngEAABXRUJQVlA4WAoAAAAQAAAANgAANwAAQUxQSCQEAAABkE5teyZJN8KL8CIUQgymDCoGVQYVgy6DKoNagyAE4UUIwvOj0h/nrEBETADjtdbqfGhTXksp65yMrRlDv2t98aElXD1UMAcsHU2ftq4TMGdXDTnTm6bo+iPU1 premature-end" alt="Open to Connect" class="w-14 h-14 object-contain shrink-0" loading="lazy"/>
+      <img src="{{ asset('storage/media/openpng-1785858554-pZ5BgsJk.webp') }}" alt="Open to Connect" class="w-14 h-14 object-contain shrink-0" loading="lazy"/>
       <div class="flex flex-col gap-2">
         <h3 class="text-xl font-bold text-ofis-ink">Open to Connect with Other System</h3>
         <p class="text-base text-gray-600">Our system is integrated and easily connects to other systems or applications that your company already has in place.</p>
@@ -429,11 +428,11 @@
   }
 </style>
 
-<!-- Newsletter Subscribe Banner -->
+<!-- Newsletter Subscribe Banner (Using MediaService processed icon) -->
 <section class="relative w-full bg-ofis-teal">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6 py-8">
     <div class="relative flex flex-row items-center gap-4">
-      <img src="data:image/webp;base64,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" alt="subscribemail" class="w-16 h-16 object-contain shrink-0" loading="lazy"/>
+      <img src="{{ asset('storage/media/subscribemailpng-1785858554-bjnAvijO.webp') }}" alt="subscribemail" class="w-16 h-16 object-contain shrink-0" loading="lazy"/>
       <div class="flex flex-col gap-1">
         <h3 class="text-2xl md:text-3xl font-semibold text-white leading-tight">Stay Ahead Of The Game, Subscribe Now!</h3>
         <p class="text-sm text-white/90">Join our newsletter to be the first to know about the latest OFIS promotions, news, and breakthrough innovations!</p>
