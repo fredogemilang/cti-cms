@@ -11,7 +11,7 @@
     dynamically populate from vendor sub-products.
 --}}
 
-@php
+<?php
     $theme = active_theme();
     $variant = $variant ?? 'light'; // 'light' or 'dark'
     $captchaProvider = $form->spam_protection['captcha_provider'] ?? 'none';
@@ -66,7 +66,7 @@
     $formTextAlign = $isDark ? 'text-left' : '';
     $consentLabelClass = $isDark ? 'text-xs font-normal text-white/90 leading-relaxed' : 'text-xs text-zinc-500';
     $consentCheckClass = $isDark ? 'mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary' : 'mt-1 h-4 w-4 rounded border-zinc-300 text-primary focus:ring-primary';
-@endphp
+?>
 
 {{-- Success message --}}
 @if(session('success') || session('form_success_message'))
@@ -132,7 +132,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 {{ $gridGap }}">
         @foreach($form->fields as $field)
-            @php
+            <?php
                 $colClass = match($field->column_width) {
                     'full' => 'md:col-span-2',
                     'half' => '',
@@ -142,7 +142,7 @@
                 $hasError = isset($fieldErrors[$field->field_id]);
                 $baseClass = 'w-full bg-transparent border-t-0 border-x-0 py-2.5 text-sm focus:outline-none transition-all text-zinc-800 placeholder-zinc-400/70';
                 $defaultBorder = $hasError ? ($isDark ? 'ring-2 ring-yellow-300 border-yellow-300' : 'border-b-2 border-red-500') : ($isDark ? '' : 'border-b border-zinc-300 focus:border-primary');
-            @endphp
+            ?>
 
             <div class="{{ $colClass }}">
                 @if($field->type === 'gdpr' || $field->type === 'terms')
@@ -159,7 +159,7 @@
                 @endif
 
                 @if($field->type === 'select' || $field->type === 'vendor_solutions')
-                    @php
+                    <?php
                         $defaultOptions = [
                             ['label' => 'Cloud Services', 'value' => 'Cloud Services'],
                             ['label' => 'Consulting', 'value' => 'Consulting'],
@@ -213,7 +213,7 @@
                         if (empty($selectOptions)) {
                             $selectOptions = $defaultOptions;
                         }
-                    @endphp
+                    ?>
                     <div class="relative">
                         <select name="{{ $field->field_id }}" id="{{ $field->field_id }}"
                                 data-required="{{ $field->is_required ? 'true' : 'false' }}"
@@ -224,9 +224,9 @@
                               <option value="" disabled {{ empty($selectedVal) ? 'selected' : '' }}>{{ $field->localizedPlaceholder() }}</option>
                             @endif
                             @foreach($selectOptions as $opt)
-                              @php
+                              <?php
                                 $isSelected = !empty($selectedVal) && strtolower(trim((string)$selectedVal)) === strtolower(trim((string)$opt['value']));
-                              @endphp
+                              ?>
                               <option value="{{ $opt['value'] }}" {{ $isSelected ? 'selected' : '' }}>{{ $opt['label'] }}</option>
                             @endforeach
                         </select>
@@ -237,14 +237,14 @@
 
                 @elseif($field->type === 'textarea')
                     <textarea name="{{ $field->field_id }}" id="{{ $field->field_id }}" rows="4"
-                              data-required="{{ $field->is_required ? 'true' : 'false' }}"
-                              placeholder="{{ $field->localizedPlaceholder() }}"
-                              class="{{ $isDark ? $textareaClass : $baseClass.' resize-none' }}"
-                              :class="errors['{{ $field->field_id }}'] ? '{{ $errorBorderClass }}' : '{{ $defaultBorder }}'"
-                              @input="delete errors['{{ $field->field_id }}']"></textarea>
+                               data-required="{{ $field->is_required ? 'true' : 'false' }}"
+                               placeholder="{{ $field->localizedPlaceholder() }}"
+                               class="{{ $isDark ? $textareaClass : $baseClass.' resize-none' }}"
+                               :class="errors['{{ $field->field_id }}'] ? '{{ $errorBorderClass }}' : '{{ $defaultBorder }}'"
+                               @input="delete errors['{{ $field->field_id }}']"></textarea>
 
                 @elseif($field->type === 'gdpr' || $field->type === 'terms')
-                    @php
+                    <?php
                         $locale = app()->getLocale();
                         $defaultLocale = setting('default_locale', config('app.locale', 'en'));
                         $enConsentText = $field->type === 'gdpr'
@@ -259,7 +259,7 @@
                         } else {
                             $consentText = $enConsentText;
                         }
-                    @endphp
+                    ?>
                     <div class="flex items-start gap-3 pt-2">
                       <input type="checkbox" name="{{ $field->field_id }}" id="{{ $field->field_id }}" value="1"
                              data-required="{{ $field->is_required ? 'true' : 'false' }}"
@@ -348,9 +348,9 @@
 
     {{-- Submit --}}
     <div class="{{ $isDark ? 'flex flex-col items-center' : 'pt-4 flex justify-end' }}">
-        @php
+        <?php
             $btnText = !empty($form->submit_button_text) ? $form->submit_button_text : t('form.submit_' . $form->slug, 'Send Message');
-        @endphp
+        ?>
         <button type="submit" :disabled="submitting" class="{{ $btnClass }} inline-flex items-center justify-center gap-2 text-center transition-all duration-300">
             <template x-if="submitting">
                 <svg class="h-4 w-4 text-current shrink-0 animate-spin" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
