@@ -172,24 +172,77 @@
           </div>
         </li>
 
-        <!-- Solutions -->
-        <li>
-          <a href="{{ url('/solutions') }}" title="{{ t('nav.solutions', 'Solutions') }}" class="hover:text-primary transition duration-300">{{ t('nav.solutions', 'Solutions') }}</a>
+        <!-- Solutions Mega Menu -->
+        <li class="group relative flex items-center h-full py-6">
+          <a href="{{ localized_url('/solutions') }}" title="{{ t('nav.solutions', 'Solutions') }}" class="hover:text-primary transition duration-300 flex items-center gap-1">
+            {{ t('nav.solutions', 'Solutions') }}
+            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </a>
+          <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-[700px] max-w-[90vw] transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+            <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex">
+              <div class="w-2/5 bg-gradient-to-bl from-primary to-zinc-900 p-8 text-white relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                <div>
+                  <span class="text-xl font-bold mb-4 relative z-10 leading-tight block">{{ t('nav.solutions', 'Solutions') }}</span>
+                  <p class="text-sm text-white/80 leading-relaxed relative z-10 normal-case font-normal tracking-normal">{{ t('nav.solutions_desc', 'Discover our comprehensive range of IT solutions tailored to drive your business forward.') }}</p>
+                </div>
+              </div>
+              <div class="w-3/5 p-8">
+                <div class="flex flex-col gap-y-2">
+                  <a href="{{ localized_url('/solutions#analytics') }}" title="Analytics" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-3 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
+                    <span>Analytics</span>
+                    <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+                  </a>
+                  <a href="{{ localized_url('/solutions#cloud') }}" title="Cloud" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-3 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
+                    <span>Cloud</span>
+                    <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+                  </a>
+                  <a href="{{ localized_url('/solutions#infrastructure') }}" title="Infrastructure" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-3 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
+                    <span>Infrastructure</span>
+                    <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+                  </a>
+                  <a href="{{ localized_url('/solutions#observability') }}" title="Observability" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-3 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
+                    <span>Observability</span>
+                    <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+                  </a>
+                  <a href="{{ localized_url('/solutions#security') }}" title="Security" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-3 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
+                    <span>Security</span>
+                    <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </li>
 
-        <!-- Customer Success -->
-        <li>
-          <a href="{{ url('/customer-success') }}" title="{{ t('nav.customer_success', 'Customer Success') }}" class="hover:text-primary transition duration-300">{{ t('nav.customer_success', 'Customer Success') }}</a>
-        </li>
-
-        <!-- Insights / Blog -->
-        <li>
-          <a href="{{ url('/blog') }}" title="{{ t('nav.insights', 'Insights') }}" class="hover:text-primary transition duration-300">{{ t('nav.insights', 'Insights') }}</a>
+        <!-- Insight Simple Dropdown -->
+        <li class="group relative flex items-center h-full py-6">
+          <span class="cursor-pointer hover:text-primary transition duration-300 flex items-center gap-1">
+            {{ t('nav.insights', 'Insight') }}
+            <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </span>
+          <div class="absolute left-0 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-56 transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+            <div class="bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden py-2 flex flex-col normal-case tracking-normal">
+              <a href="{{ localized_url('/customer-success') }}" title="{{ t('nav.customer_success', 'Customer Success') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+                {{ t('nav.customer_success', 'Customer Success') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+              </a>
+              <a href="{{ localized_url('/blog') }}" title="{{ t('nav.blog_news', 'Blog & News') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+                {{ t('nav.blog_news', 'Blog & News') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+              </a>
+              <a href="{{ localized_url('/video') }}" title="{{ t('nav.video', 'Video') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+                {{ t('nav.video', 'Video') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+              </a>
+            </div>
+          </div>
         </li>
 
         <!-- Careers -->
         <li>
-          <a href="{{ url('/careers') }}" title="{{ t('nav.careers', 'Careers') }}" class="hover:text-primary transition duration-300">{{ t('nav.careers', 'Careers') }}</a>
+          <a href="{{ localized_url('/careers') }}" title="{{ t('nav.careers', 'Careers') }}" class="hover:text-primary transition duration-300">{{ t('nav.careers', 'Careers') }}</a>
         </li>
 
         <!-- Contact Us -->
