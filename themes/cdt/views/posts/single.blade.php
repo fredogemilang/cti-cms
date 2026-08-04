@@ -10,12 +10,39 @@
     $date = $post->published_at ? $post->published_at->format($dateFormat) : $post->created_at->format($dateFormat);
     $featImg = $post->featured_image ? resolve_block_asset($post->featured_image) : null;
     
-    // Recent related posts
+    // Sidebar Recent Posts
     $recentPosts = \Plugins\Posts\Models\Post::published()
         ->where('id', '!=', $post->id)
         ->latest()
         ->take(4)
         ->get();
+
+    // Previous & Next Posts
+    $prevPost = \Plugins\Posts\Models\Post::published()
+        ->where('id', '<', $post->id)
+        ->latest('id')
+        ->first();
+
+    $nextPost = \Plugins\Posts\Models\Post::published()
+        ->where('id', '>', $post->id)
+        ->oldest('id')
+        ->first();
+
+    // Related Posts (3 items)
+    $relatedPosts = \Plugins\Posts\Models\Post::published()
+        ->where('id', '!=', $post->id)
+        ->when($post->category_id, fn($q) => $q->where('category_id', $post->category_id))
+        ->latest()
+        ->take(3)
+        ->get();
+
+    if ($relatedPosts->count() < 3) {
+        $relatedPosts = \Plugins\Posts\Models\Post::published()
+            ->where('id', '!=', $post->id)
+            ->latest()
+            ->take(3)
+            ->get();
+    }
 @endphp
 
 @section('content')
@@ -153,5 +180,99 @@
 
   </div>
 </section>
+
+<!-- Previous / Next Article Navigation -->
+@if($prevPost || $nextPost)
+<section class="py-12 border-y border-zinc-200 bg-zinc-50 relative z-10">
+  <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row items-stretch justify-between gap-6">
+      
+      <!-- Prev Article -->
+      @if($prevPost)
+        @php
+          $prevTitle = $prevPost->getTranslation('title', $currentLocale) ?: $prevPost->title;
+        @endphp
+        <a href="{{ $prevPost->getUrl() }}" class="flex-1 flex items-center gap-6 p-6 rounded-2xl bg-white border border-zinc-200 hover:border-primary/50 hover:shadow-lg transition-all group">
+          <div class="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center text-gray-500 group-hover:bg-primary group-hover:text-white transition-colors flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+          </div>
+          <div>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Previous Article</span>
+            <h4 class="text-base font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2">{{ $prevTitle }}</h4>
+          </div>
+        </a>
+      @else
+        <div class="flex-1"></div>
+      @endif
+
+      <!-- Next Article -->
+      @if($nextPost)
+        @php
+          $nextTitle = $nextPost->getTranslation('title', $currentLocale) ?: $nextPost->title;
+        @endphp
+        <a href="{{ $nextPost->getUrl() }}" class="flex-1 flex items-center gap-6 p-6 rounded-2xl bg-white border border-zinc-200 hover:border-primary/50 hover:shadow-lg transition-all group text-right flex-row-reverse md:flex-row md:text-right">
+          <div class="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center text-gray-500 group-hover:bg-primary group-hover:text-white transition-colors flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          </div>
+          <div class="md:ml-auto">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Next Article</span>
+            <h4 class="text-base font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2">{{ $nextTitle }}</h4>
+          </div>
+        </a>
+      @else
+        <div class="flex-1"></div>
+      @endif
+
+    </div>
+  </div>
+</section>
+@endif
+
+<!-- Related Posts -->
+@if($relatedPosts->isNotEmpty())
+<section class="py-12 pb-32 md:py-24 md:pb-24 bg-white relative z-10">
+  <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">You Might Also Like</h2>
+      <p class="text-gray-600">Rekomendasi artikel terbaik dari pakar industri kami.</p>
+    </div>
+
+    <!-- Unified 3-Column Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      @foreach($relatedPosts as $rel)
+        @php
+          $rTitle = $rel->getTranslation('title', $currentLocale) ?: $rel->title;
+          $rExcerpt = $rel->getTranslation('excerpt', $currentLocale) ?: ($rel->excerpt ?: Str::limit(strip_tags($rel->content), 100));
+          $rImg = $rel->featured_image ? resolve_block_asset($rel->featured_image) : asset('themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
+          $rCat = $rel->category ? $rel->category->name : 'Technology';
+          $rDate = $rel->published_at ? $rel->published_at->format($dateFormat) : $rel->created_at->format($dateFormat);
+        @endphp
+        <div class="group flex flex-col bg-white rounded-[1.5rem] border border-zinc-200 overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 relative">
+          <div class="relative h-48 overflow-hidden z-10 bg-zinc-100">
+            <img src="{{ $rImg }}" alt="{{ $rTitle }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+            <div class="absolute top-4 left-4">
+              <span class="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">{{ $rCat }}</span>
+            </div>
+          </div>
+          <div class="p-6 md:p-8 flex-grow flex flex-col relative z-10 bg-white">
+            <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+              <a href="{{ $rel->getUrl() }}">{{ $rTitle }}</a>
+            </h3>
+            <p class="text-sm text-gray-600 font-light leading-relaxed mb-6 flex-grow line-clamp-2">
+              {{ $rExcerpt }}
+            </p>
+            <div class="flex items-center justify-between mt-auto pt-4 border-t border-zinc-100">
+              <span class="text-xs font-bold text-gray-500 uppercase">{{ $rDate }}</span>
+              <a href="{{ $rel->getUrl() }}" class="text-primary hover:text-red-800 transition-colors bg-red-50 p-2 rounded-full group-hover:bg-primary group-hover:text-white">
+                <svg class="w-4 h-4 transform group-hover:-rotate-45 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      @endforeach
+    </div>
+  </div>
+</section>
+@endif
 
 @endsection
