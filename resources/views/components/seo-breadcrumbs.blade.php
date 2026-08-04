@@ -10,7 +10,7 @@
             @endphp
 
             @if($index > 0)
-                <svg class="w-3 h-3 opacity-40 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                <svg width="12" height="12" style="width:12px;height:12px;flex-shrink:0;display:inline-block;" class="w-3 h-3 opacity-40 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
             @endif
 
             @if($isLast)
