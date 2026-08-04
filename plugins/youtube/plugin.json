@@ -1,0 +1,28 @@
+{
+    "name": "YouTube Videos",
+    "slug": "youtube",
+    "version": "1.0.0",
+    "description": "YouTube Videos management and automatic channel sync plugin for CDT.",
+    "author": "CMS Team",
+    "namespace": "Plugins\\Youtube",
+    "provider": "Plugins\\Youtube\\Providers\\YoutubeServiceProvider",
+    "permissions": {
+        "resources": [
+            {
+                "module": "youtube",
+                "actions": [
+                    "view",
+                    "edit",
+                    "delete",
+                    "sync"
+                ],
+                "icon": "video_library",
+                "description": "Manage YouTube Videos and Channel Sync"
+            }
+        ]
+    },
+    "requires": {
+        "php": ">=8.2",
+        "cms": ">=1.0"
+    }
+}

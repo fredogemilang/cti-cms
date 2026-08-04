@@ -1,5 +1,25 @@
 @extends('cdt::layouts.app')
 
+@php
+    $dbVideos = class_exists(\Plugins\Youtube\Models\YoutubeVideo::class)
+        ? \Plugins\Youtube\Models\YoutubeVideo::where('is_visible', true)->orderBy('published_at', 'desc')->get()
+        : collect();
+
+    $formattedVideos = [];
+    foreach ($dbVideos as $v) {
+        $formattedVideos[] = [
+            'id' => $v->youtube_id,
+            'title' => $v->title,
+            'description' => $v->description ?: '',
+            'category' => $v->category ?: 'Webinar',
+            'date' => $v->published_at ? $v->published_at->format('M d, Y') : date('M d, Y'),
+            'duration' => $v->duration ?: '10:00',
+            'author' => $v->channel_title ?: 'Central Data Technology',
+            'thumbnail' => $v->getBestThumbnail(),
+        ];
+    }
+@endphp
+
 @section('content')
 <style>
   /* ===== Video V3 Light Modern Styles ===== */
@@ -286,7 +306,7 @@
   <div class="absolute -bottom-20 left-1/3 w-[400px] h-[400px] bg-rose-500/10 rounded-full blur-[60px] pointer-events-none mix-blend-multiply"></div>
 
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
-    <!-- Breadcrumb Component (Integrated with SEO & Structured Data) -->
+    <!-- Breadcrumb Component -->
     <x-seo-breadcrumbs :entity="$page" class="text-zinc-400 mb-10 text-left" />
 
     <div class="mx-auto max-w-[1200px] relative">
@@ -372,8 +392,10 @@
 
 <!-- Dynamic logic script -->
 <script>
-  // The Videos Dataset
-  const VIDEO_DATA = [
+  // Initial DB Video Dataset (fallback if empty)
+  const DB_VIDEOS = @json($formattedVideos);
+
+  const FALLBACK_VIDEOS = [
     {
       id: "dQw4w9WgXcQ",
       title: "Transformasi Digital Enterprise: Roadmap Menuju Cloud-Native Architecture",
@@ -381,10 +403,8 @@
       category: "Webinar",
       date: "May 15, 2025",
       duration: "12:00",
-      seconds: 720,
       author: "CDT Engineering",
-      company: "Central Data Technology",
-      avatar: "CDT"
+      thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
     },
     {
       id: "ScMzIvxBSi4",
@@ -393,10 +413,8 @@
       category: "Security",
       date: "Apr 20, 2025",
       duration: "8:24",
-      seconds: 504,
       author: "CDT Security",
-      company: "Central Data Technology",
-      avatar: "SEC"
+      thumbnail: "https://img.youtube.com/vi/ScMzIvxBSi4/hqdefault.jpg"
     },
     {
       id: "9bZkp7q19f0",
@@ -405,75 +423,15 @@
       category: "Engineering",
       date: "Apr 10, 2025",
       duration: "15:30",
-      seconds: 930,
       author: "CDT Engineering",
-      company: "Central Data Technology",
-      avatar: "CDT"
-    },
-    {
-      id: "jNQXAC9IVRw",
-      title: "Highlights: CDT Annual IT Infrastructure Summit 2025",
-      description: "Kumpulan momen terbaik, diskusi panel, dan keynote session dari acara IT Infrastructure Summit terbesar tahun ini yang diselenggarakan oleh CDT.",
-      category: "Events",
-      date: "Mar 28, 2025",
-      duration: "5:12",
-      seconds: 312,
-      author: "CDT Events",
-      company: "Central Data Technology",
-      avatar: "EVE"
-    },
-    {
-      id: "LXb3EKWsInQ",
-      title: "Demo: Akamai Cloud Computing untuk Workload Enterprise",
-      description: "Lihat langsung bagaimana Akamai Cloud Computing (sebelumnya Linode) menjalankan beban kerja komputasi skala besar dengan performa tinggi dan efisiensi biaya.",
-      category: "Products",
-      date: "Mar 15, 2025",
-      duration: "22:15",
-      seconds: 1335,
-      author: "CDT Products",
-      company: "Central Data Technology",
-      avatar: "PRO"
-    },
-    {
-      id: "aircAruvnKk",
-      title: "Data Lakehouse vs Data Warehouse: Mana yang Tepat?",
-      description: "Analisis mendalam perbedaan arsitektur data modern. Pelajari kapan harus menggunakan data lakehouse, data warehouse, atau kombinasi keduanya untuk kebutuhan analytics bisnis.",
-      category: "Engineering",
-      date: "Feb 28, 2025",
-      duration: "18:45",
-      seconds: 1125,
-      author: "CDT Engineering",
-      company: "Central Data Technology",
-      avatar: "CDT"
-    },
-    {
-      id: "YQHsXMglC9A",
-      title: "Getting Started: Zscaler Zero Trust Security",
-      description: "Pelajari konsep dasar arsitektur keamanan Zero Trust dan bagaimana mengimplementasikan solusi Zscaler untuk mengamankan koneksi pengguna ke aplikasi internal perusahaan.",
-      category: "Security",
-      date: "Feb 10, 2025",
-      duration: "10:30",
-      seconds: 630,
-      author: "CDT Security",
-      company: "Central Data Technology",
-      avatar: "SEC"
-    },
-    {
-      id: "aqz-KE-bpKQ",
-      title: "NetGain Systems: Network Performance Monitoring",
-      description: "Bagaimana mengawasi seluruh perangkat jaringan di berbagai kantor cabang secara terpusat? Tonton demo singkat penggunaan NetGain untuk monitoring performa jaringan.",
-      category: "Products",
-      date: "Jan 22, 2025",
-      duration: "7:20",
-      seconds: 440,
-      author: "CDT Products",
-      company: "Central Data Technology",
-      avatar: "PRO"
+      thumbnail: "https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg"
     }
   ];
 
+  const VIDEO_DATA = DB_VIDEOS.length > 0 ? DB_VIDEOS : FALLBACK_VIDEOS;
+
   // App States
-  let currentVideoId = "dQw4w9WgXcQ";
+  let currentVideoId = VIDEO_DATA[0].id;
   let activeCategory = "All";
   let searchFilter = "";
   let ytPlayer = null;
@@ -619,14 +577,14 @@
     const nowPlaying = isActive
       ? `<span class="now-playing-badge"><span class="eq-dot"></span><span class="eq-dot"></span><span class="eq-dot"></span>Now Playing</span>`
       : '';
-    const thumbUrl = `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
+    const thumbUrl = video.thumbnail || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
 
     return `
     <a href="#" class="video-card ${activeClass} video-item flex flex-col" data-video="${video.id}">
       <div class="card-thumb relative w-full aspect-video bg-zinc-900">
         <img src="${thumbUrl}" class="w-full h-full object-cover" alt="${video.title}" loading="lazy">
         <div class="cat-tag">${video.category}</div>
-        <div class="duration-badge">${video.duration}</div>
+        ${video.duration ? `<div class="duration-badge">${video.duration}</div>` : ''}
         <div class="play-overlay">
           <div class="play-btn-circle">
             <svg class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
