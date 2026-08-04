@@ -474,7 +474,7 @@
                 <span class="date">{{ optional($post->published_at ?? $post->created_at)->format('F d, Y') }}</span>
               </div>
               <a href="{{ url('/blog/' . $post->slug) }}" class="block overflow-hidden rounded-2xl mb-5">
-                <img src="{{ $imageSrc }}" alt="{{ $post->title }}" class="w-full h-44 object-cover group-hover:scale-105 transition duration-500" loading="lazy"/>
+                <x-image :src="$imageSrc" :alt="$post->title" class="w-full h-44 object-cover group-hover:scale-105 transition duration-500" />
               </a>
               <h3 class="title">{{ $post->title }}</h3>
               <p class="excerpt">{{ Str::limit(strip_tags($post->content), 120) }}</p>
