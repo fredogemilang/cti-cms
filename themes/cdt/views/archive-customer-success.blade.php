@@ -23,7 +23,7 @@
       </div>
       <div class="overflow-hidden mb-6">
         <h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold leading-tight" data-gsap="fade-up" data-gsap-delay="0.1">
-          {{ t('cs.customer_success', 'Customer Success') }}
+          {{ isset($postType) ? ($postType->getTranslation('plural_label', app()->getLocale()) ?: $postType->plural_label ?: $postType->name) : t('cs.customer_success', 'Customer Success') }}
         </h1>
       </div>
     </div>
