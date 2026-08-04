@@ -31,14 +31,8 @@
 
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10 w-full">
     <div class="max-w-3xl text-white">
-      <!-- Breadcrumb -->
-      <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-white/70 mb-10" aria-label="Breadcrumb">
-        <a href="{{ localized_url('/') }}" class="hover:text-white transition-colors">Home</a>
-        <svg class="w-3 h-3 text-white/40" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        <span class="text-white/80">{{ t('nav.industry', 'Industry') }}</span>
-        <svg class="w-3 h-3 text-white/40" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        <span class="text-white font-bold" aria-current="page">{{ $title }}</span>
-      </nav>
+      <!-- Breadcrumb Component (Integrated with SEO & Structured Data) -->
+      <x-seo-breadcrumbs :entity="$entry" class="text-white/70 mb-10" />
 
       <div class="overflow-hidden mb-2">
         <p class="text-lg md:text-xl font-light text-white/90">{{ t('nav.industry', 'Industry') }}</p>
