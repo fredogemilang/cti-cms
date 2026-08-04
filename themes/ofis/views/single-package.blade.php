@@ -1,1 +1,1 @@
-@include('themes::ofis.pages.package-single')
+@include('ofis::pages.package-single')

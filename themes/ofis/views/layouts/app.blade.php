@@ -23,7 +23,7 @@
 <body class="font-body bg-white antialiased text-gray-800">
 
     <!-- Header Navigation -->
-    @include('themes::ofis.header')
+    @include('ofis::header')
 
     <!-- Main Content Area -->
     <main id="content">
@@ -31,7 +31,7 @@
     </main>
 
     <!-- Footer -->
-    @include('themes::ofis.footer')
+    @include('ofis::footer')
 
     <!-- Floating WhatsApp CTA Button -->
     <a href="https://wa.me/628111925345?text=Hello%20OFIS%20Team"

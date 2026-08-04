@@ -1,4 +1,4 @@
-@extends('themes::ofis.layouts.app')
+@extends('ofis::layouts.app')
 
 @section('content')
 <article class="py-12 bg-white">

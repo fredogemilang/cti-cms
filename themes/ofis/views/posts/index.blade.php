@@ -1,4 +1,4 @@
-@extends('themes::ofis.layouts.app')
+@extends('ofis::layouts.app')
 
 @section('content')
 <section class="bg-slate-50 py-12 border-b border-slate-200">
