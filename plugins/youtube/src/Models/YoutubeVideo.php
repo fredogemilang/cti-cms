@@ -39,12 +39,14 @@ class YoutubeVideo extends Model
     public function getUrl(): string
     {
         $id = $this->youtube_id ?: ($this->video_id ?? '');
+
         return "https://www.youtube.com/watch?v={$id}";
     }
 
     public function getEmbedUrl(): string
     {
         $id = $this->youtube_id ?: ($this->video_id ?? '');
+
         return "https://www.youtube-nocookie.com/embed/{$id}";
     }
 
@@ -60,6 +62,7 @@ class YoutubeVideo extends Model
             return $this->thumbnail_default;
         }
         $id = $this->youtube_id ?: ($this->video_id ?? '');
+
         return "https://img.youtube.com/vi/{$id}/hqdefault.jpg";
     }
 }

@@ -18,9 +18,11 @@ class SyncYoutubeVideosCommand extends Command
         try {
             $result = $syncService->sync();
             $this->info($result['message']);
+
             return Command::SUCCESS;
         } catch (\Throwable $e) {
-            $this->error("Failed to sync YouTube videos: " . $e->getMessage());
+            $this->error('Failed to sync YouTube videos: '.$e->getMessage());
+
             return Command::FAILURE;
         }
     }

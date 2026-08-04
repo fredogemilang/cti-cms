@@ -9,11 +9,15 @@ use Plugins\Youtube\Services\YoutubeSyncService;
 class YoutubeSettings extends Component
 {
     public string $channelId = '';
+
     public string $apiKey = '';
+
     public bool $autoSync = false;
+
     public int $perPage = 12;
 
     public string $notification = '';
+
     public string $notificationType = 'success';
 
     public function mount(): void
@@ -45,10 +49,10 @@ class YoutubeSettings extends Component
         $this->saveSettings();
         try {
             $result = $syncService->sync();
-            $this->notification = "Connection successful! " . $result['message'];
+            $this->notification = 'Connection successful! '.$result['message'];
             $this->notificationType = 'success';
         } catch (\Throwable $e) {
-            $this->notification = 'Sync test failed: ' . $e->getMessage();
+            $this->notification = 'Sync test failed: '.$e->getMessage();
             $this->notificationType = 'error';
         }
     }

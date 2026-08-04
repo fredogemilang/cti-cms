@@ -112,8 +112,8 @@ class Post extends Model
         $prefix = ($locale !== $defaultLocale) ? '/'.$locale : '';
         $slug = $this->getTranslation('slug', $locale, fallback: true) ?? $this->slug;
         $archiveSlug = 'blog';
-        if (class_exists(\Plugins\Posts\Models\Setting::class)) {
-            $archiveSlug = \Plugins\Posts\Models\Setting::get('archive_slug', 'blog');
+        if (class_exists(Setting::class)) {
+            $archiveSlug = Setting::get('archive_slug', 'blog');
         }
 
         return url($prefix.'/'.$archiveSlug.'/'.$slug);

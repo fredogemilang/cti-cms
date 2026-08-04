@@ -124,7 +124,7 @@ Route::middleware(['web'])->group(function () {
             ->get();
 
         $posts = Post::published()
-            ->whereHas('category', fn($q) => $q->where('slug', $category))
+            ->whereHas('category', fn ($q) => $q->where('slug', $category))
             ->latest()
             ->paginate($perPage);
 

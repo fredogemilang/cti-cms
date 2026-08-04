@@ -35,7 +35,7 @@ class YoutubeSyncService
                 $syncedCount = $this->syncViaApi($apiKey, $channelId);
                 $this->syncPlaylistsViaApi($apiKey, $channelId);
             } catch (\Throwable $e) {
-                Log::warning("YouTube API sync failed: " . $e->getMessage() . ". Falling back to RSS feed.");
+                Log::warning('YouTube API sync failed: '.$e->getMessage().'. Falling back to RSS feed.');
                 $syncedCount = $this->syncViaRss($channelId);
             }
         } elseif (! empty($channelId)) {
@@ -76,7 +76,7 @@ class YoutubeSyncService
 
             if ($response->failed()) {
                 if ($page === 0) {
-                    throw new \Exception("YouTube API request failed with status " . $response->status());
+                    throw new \Exception('YouTube API request failed with status '.$response->status());
                 }
                 break;
             }

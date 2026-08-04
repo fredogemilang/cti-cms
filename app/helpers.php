@@ -5,6 +5,7 @@ use App\Models\CustomPostType;
 use App\Models\Form;
 use App\Models\FormField;
 use App\Models\Page;
+use App\Models\Plugin;
 use App\Models\Setting;
 use App\Models\StringTranslation;
 use App\Models\Theme;
@@ -625,6 +626,6 @@ if (! function_exists('is_plugin_active')) {
      */
     function is_plugin_active(string $slug): bool
     {
-        return \App\Models\Plugin::where('slug', $slug)->where('is_active', true)->exists();
+        return Plugin::where('slug', $slug)->where('is_active', true)->exists();
     }
 }

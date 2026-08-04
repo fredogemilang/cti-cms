@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\CptEntry;
 use App\Models\CustomPostType;
 use App\Models\Media;
-use App\Models\MetaField;
 use App\Services\MediaService;
 use Illuminate\Console\Command;
 use Illuminate\Http\UploadedFile;

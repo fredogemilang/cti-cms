@@ -12,9 +12,13 @@ class YoutubeTable extends Component
     use WithPagination;
 
     public string $search = '';
+
     public string $statusFilter = 'all';
+
     public bool $isSyncing = false;
+
     public string $syncNotification = '';
+
     public string $syncNotificationType = 'success';
 
     protected $queryString = [
@@ -40,7 +44,7 @@ class YoutubeTable extends Component
             $this->syncNotification = $result['message'];
             $this->syncNotificationType = 'success';
         } catch (\Throwable $e) {
-            $this->syncNotification = 'Failed to sync: ' . $e->getMessage();
+            $this->syncNotification = 'Failed to sync: '.$e->getMessage();
             $this->syncNotificationType = 'error';
         } finally {
             $this->isSyncing = false;
@@ -74,8 +78,8 @@ class YoutubeTable extends Component
         if (! empty($this->search)) {
             $query->where(function ($q) {
                 $q->where('title', 'like', "%{$this->search}%")
-                  ->orWhere('youtube_id', 'like', "%{$this->search}%")
-                  ->orWhere('description', 'like', "%{$this->search}%");
+                    ->orWhere('youtube_id', 'like', "%{$this->search}%")
+                    ->orWhere('description', 'like', "%{$this->search}%");
             });
         }
 
