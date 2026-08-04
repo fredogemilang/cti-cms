@@ -1,0 +1,20 @@
+[
+    {
+        "title": "OFIS Smart Office",
+        "slug": "home",
+        "template": "home",
+        "status": "published"
+    },
+    {
+        "title": "About BPT",
+        "slug": "about-us",
+        "template": "default",
+        "status": "published"
+    },
+    {
+        "title": "Contact Us",
+        "slug": "contact-us",
+        "template": "default",
+        "status": "published"
+    }
+]
