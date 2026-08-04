@@ -11,8 +11,12 @@
     $securityList = $entry->getMeta('security_list') ?? $meta['security_list'] ?? [];
     $cloudList = $entry->getMeta('cloud_list') ?? $meta['cloud_list'] ?? [];
     
-    // Banner Background Image
-    $bannerImage = $entry->meta['banner_image'] ?? $entry->meta['hero_image'] ?? null;
+    // Banner Background Image (Featured Image prioritized)
+    $bannerImage = $entry->featured_image 
+        ?? $entry->meta['featured_image'] 
+        ?? $entry->meta['banner_image'] 
+        ?? $entry->meta['hero_image'] 
+        ?? null;
     $bannerImageUrl = $bannerImage ? resolve_block_asset($bannerImage) : asset('themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
 @endphp
 

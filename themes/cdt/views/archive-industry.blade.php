@@ -48,21 +48,35 @@
           $indContent = $ind->getTranslation('content', $currentLocale) ?: $ind->content;
           $indUrl = $ind->getUrl();
           $badgeText = $ind->getMeta('badge_text');
+          $indImg = $ind->featured_image ?? $ind->meta['featured_image'] ?? null;
+          $indImgUrl = $indImg ? resolve_block_asset($indImg) : null;
         @endphp
         <div class="group relative rounded-3xl bg-white border border-zinc-100 p-8 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col justify-between">
           <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
           
           <div>
-            <div class="flex items-center justify-between mb-6">
-              <div class="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                <x-icon name="lucide:building-2" class="w-7 h-7" />
+            @if($indImgUrl)
+              <div class="h-44 -mx-8 -mt-8 mb-6 overflow-hidden relative">
+                <img src="{{ $indImgUrl }}" alt="{{ $indTitle }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                @if(!empty($badgeText))
+                  <span class="absolute top-4 right-4 text-xs bg-primary text-white px-3 py-1 rounded-full font-bold uppercase tracking-wider shadow-md z-10">
+                    {{ $badgeText }}
+                  </span>
+                @endif
               </div>
-              @if(!empty($badgeText))
-                <span class="text-xs bg-red-100 text-primary px-3 py-1 rounded-full font-bold uppercase tracking-wider">
-                  {{ $badgeText }}
-                </span>
-              @endif
-            </div>
+            @else
+              <div class="flex items-center justify-between mb-6">
+                <div class="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                  <x-icon name="lucide:building-2" class="w-7 h-7" />
+                </div>
+                @if(!empty($badgeText))
+                  <span class="text-xs bg-red-100 text-primary px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+                    {{ $badgeText }}
+                  </span>
+                @endif
+              </div>
+            @endif
 
             <h3 class="text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors mb-3">
               {{ $indTitle }}
