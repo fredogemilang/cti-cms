@@ -41,7 +41,7 @@
         }
     @endphp
 
-    <div class="flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 max-w-full overflow-x-auto scrollbar-hide py-3 px-2" style="scrollbar-width: none; -webkit-overflow-scrolling: touch;">
+    <div class="flex items-center justify-center gap-1.5 sm:gap-2 max-w-full overflow-x-auto scrollbar-hide py-3 px-2" style="scrollbar-width: none; -webkit-overflow-scrolling: touch;">
         {{-- Previous Page Link --}}
         @if ($paginator->onFirstPage())
             <span class="w-10 h-10 sm:w-11 sm:h-11 rounded-full shrink-0 flex items-center justify-center bg-zinc-100 text-zinc-300 cursor-not-allowed select-none opacity-50" aria-disabled="true">
