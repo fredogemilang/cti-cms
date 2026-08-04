@@ -153,17 +153,18 @@
             <p class="text-sm text-zinc-400 mt-1 font-light">{{ $page->getBlockValue('form_subheading', "Fill out the form below, and we'll connect you with a solutions expert.") }}</p>
           </div>
 
-          @php
+          <?php
             $tTheme = active_theme();
-            $contactFormId = setting("theme_{$tTheme->slug}_form_assignments", [])['contact_form'] ?? 2;
+            $assignments = setting("theme_{$tTheme->slug}_form_assignments", []);
+            $contactFormId = is_array($assignments) ? ($assignments['contact_form'] ?? 2) : 2;
             $contactForm = $contactFormId ? \App\Models\Form::where('id', $contactFormId)->where('is_active', true)->with('fields')->first() : null;
-          @endphp
 
-          @if($contactForm)
-            @include('cdt::partials.tailwind-form', ['form' => $contactForm, 'variant' => 'light'])
-          @else
-            <p class="text-sm text-zinc-500">Form is being configured. Please assign a form at <a href="{{ route('admin.forms.assignments') }}" class="text-primary hover:underline font-semibold">Form Assignments</a>.</p>
-          @endif
+            if ($contactForm) {
+                echo view('cdt::partials.tailwind-form', ['form' => $contactForm, 'variant' => 'light'])->render();
+            } else {
+                echo '<p class="text-sm text-zinc-500">Form is being configured.</p>';
+            }
+          ?>
         </div>
 
       </div>
