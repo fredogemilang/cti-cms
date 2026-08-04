@@ -18,3 +18,9 @@ Whenever adding or modifying a `MetaField` for any `CustomPostType` (`cpt_entrie
 2. **Automatic Optimization**: Calling `MediaService` ensures images are compressed, converted to WebP, provided with responsive variants (`sm`, `md`, `lg`, `xl`, `thumb`), and registered in the `media` table.
 3. **Store Relative Paths**: Store `$media->path` in database fields, NEVER hardcode external URLs or direct un-tracked file copies.
 
+## Mandatory Local Asset Rule (No External CDN)
+1. **Zero External CDN Dependencies**: ALL frontend assets (CSS, JS libraries like Swiper/Alpine/jQuery, fonts, icons, etc.) MUST be downloaded and stored locally.
+2. **Theme Asset Helper**: Place theme scripts and styles inside `themes/{theme}/assets/` and load them via `{{ theme_asset('filename.js') }}`.
+3. **No External URLs**: NEVER write external CDN `<script src="https://cdn...">` or `<link href="https://cdn...">` tags in Blade views or layouts. All asset dependencies must work 100% offline.
+
+
