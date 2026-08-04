@@ -24,6 +24,17 @@
         ->orderBy('title')
         ->get() : collect();
 
+    // Industry CPT & Entries
+    $industryCpt = \App\Models\CustomPostType::whereIn('slug', ['industry', 'industries'])->first();
+    $industryHasArchive = (bool)($industryCpt && $industryCpt->has_archive);
+    $industryCptUrl = $industryHasArchive ? localized_url('/industry') : null;
+    $industryItems = $industryCpt ? \App\Models\CptEntry::published()
+        ->where('post_type_id', $industryCpt->id)
+        ->whereNull('parent_id')
+        ->orderBy('menu_order')
+        ->orderBy('title')
+        ->get() : collect();
+
     // Site logo setting fallback
     $siteLogoSetting = setting('site_logo');
     $siteLogoUrl = $siteLogoSetting ? resolve_block_asset($siteLogoSetting) : asset('themes/cdt/assets/cropped-logo-cdt-D0j3NVKg.png');
@@ -256,6 +267,75 @@
                     @endif
                   @empty
                     <span class="text-sm text-gray-500 py-2">{{ t('nav.no_solutions', 'No solutions available') }}</span>
+                  @endforelse
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- Industry Mega Menu -->
+        <li class="group relative flex items-center h-full py-6">
+          @if($industryHasArchive && $industryCptUrl)
+            <a href="{{ $industryCptUrl }}" title="{{ t('nav.industry', 'Industry') }}" class="hover:text-primary transition duration-300 flex items-center gap-1 cursor-pointer">
+              {{ t('nav.industry', 'Industry') }}
+              <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </a>
+          @else
+            <span class="hover:text-primary transition duration-300 flex items-center gap-1 cursor-pointer">
+              {{ t('nav.industry', 'Industry') }}
+              <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:rotate-180 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </span>
+          @endif
+          <div class="absolute left-1/2 -translate-x-1/2 top-[100%] pt-4 opacity-0 invisible translate-y-2 w-[850px] max-w-[90vw] transition-all duration-300 ease-out group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 z-50">
+            <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex">
+              <div class="w-1/3 bg-gradient-to-bl from-primary to-zinc-900 p-8 text-white relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                <div>
+                  <span class="text-xl font-bold mb-4 relative z-10 leading-tight block">{{ t('nav.industry', 'Industry') }}</span>
+                  <p class="text-sm text-white/80 leading-relaxed relative z-10 normal-case font-normal tracking-normal">{{ t('nav.industry_desc', 'Explore tailored IT solutions designed to meet the unique challenges of your specific industry.') }}</p>
+                </div>
+              </div>
+              <div class="w-2/3 p-8">
+                <div class="grid grid-cols-2 gap-y-2 gap-x-6">
+                  @forelse($industryItems as $ind)
+                    @php
+                      $indMeta = $ind->meta ?? [];
+                      $indBadges = $indMeta['badges'] ?? $indMeta['badge'] ?? [];
+                      $validIndBadges = [];
+                      if (is_array($indBadges)) {
+                          foreach ($indBadges as $b) {
+                              $txt = is_array($b) ? ($b['text'] ?? $b['title'] ?? '') : (string)$b;
+                              if (!empty(trim($txt))) {
+                                  $validIndBadges[] = trim($txt);
+                              }
+                          }
+                      } elseif (is_string($indBadges) && !empty(trim($indBadges))) {
+                          $validIndBadges[] = trim($indBadges);
+                      }
+                    @endphp
+
+                    @if(!empty($validIndBadges))
+                      <a href="{{ $ind->getUrl() }}" title="{{ $ind->title }}" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-2.5 px-3 -mx-3 hover:bg-gray-50 rounded-md flex flex-col justify-center items-start gap-1.5 group/link">
+                        <span>{{ $ind->title }}</span>
+                        <div class="flex flex-wrap items-center gap-1.5">
+                          @foreach($validIndBadges as $badgeTxt)
+                            <span class="text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full group-hover/link:bg-red-100 group-hover/link:text-primary transition-colors whitespace-nowrap">{{ $badgeTxt }}</span>
+                          @endforeach
+                        </div>
+                      </a>
+                    @else
+                      <a href="{{ $ind->getUrl() }}" title="{{ $ind->title }}" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-2.5 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
+                        <span>{{ $ind->title }}</span>
+                        <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+                      </a>
+                    @endif
+                  @empty
+                    <span class="text-sm text-gray-500 py-2">{{ t('nav.no_industries', 'No industries available') }}</span>
                   @endforelse
                 </div>
               </div>
