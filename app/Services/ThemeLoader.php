@@ -89,6 +89,7 @@ class ThemeLoader
         // Prepend theme path to the beginning
         array_unshift($paths, $themePath);
         $finder->setPaths($paths);
+        config(['view.paths' => $paths]);
 
         // Register theme namespace for direct access (e.g., themes::default.layouts.main)
         View::addNamespace('themes', base_path('themes'));
