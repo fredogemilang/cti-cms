@@ -660,19 +660,18 @@
               <p class="text-xs text-zinc-400 mt-1 uppercase font-semibold tracking-wider">PT Central Data Technology</p>
             </div>
 
-            <div x-show="formSuccess" x-transition class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center mb-4">
-              <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-              </div>
-              <div class="text-lg font-bold text-emerald-900 mb-2">Application Submitted!</div>
-              <p class="text-emerald-700 text-sm font-light">
-                Thank you for applying. Our HR team will review your details and contact you shortly.
-              </p>
-            </div>
+            @php
+              $tTheme = active_theme();
+              $jobAppFormId = setting("theme_{$tTheme->slug}_form_assignments", [])['job_application_form'] ?? null;
+              $jobAppForm = $jobAppFormId
+                ? \App\Models\Form::where('id', $jobAppFormId)->where('is_active', true)->with('fields')->first()
+                : \App\Models\Form::where('slug', 'job-application-form')->where('is_active', true)->with('fields')->first();
+            @endphp
 
-            <form x-show="!formSuccess" @submit.prevent="submitApplication()" class="space-y-5">
+            @if($jobAppForm)
+              @include('cdt::partials.tailwind-form', ['form' => $jobAppForm, 'variant' => 'light'])
+            @else
+              <form x-show="!formSuccess" @submit.prevent="submitApplication()" class="space-y-5">
               <div>
                 <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Full Name *</label>
                 <input type="text" required x-model="formName" placeholder="e.g. John Doe" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
@@ -713,6 +712,7 @@
                 <button type="submit" class="px-8 py-3 bg-primary text-white hover:bg-red-700 shadow-md hover:shadow-lg transition-all rounded-xl text-xs font-bold uppercase tracking-wider">Submit Application</button>
               </div>
             </form>
+            @endif
 
           </div>
         </div>

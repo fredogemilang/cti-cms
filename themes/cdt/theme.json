@@ -24,6 +24,16 @@
             "description": "Consultation request form displayed on Technology Alliance and Tech Product single pages."
         },
         {
+            "key": "solution_guide_form",
+            "label": "Digital Solution Guide Form",
+            "description": "Download Digital Solution Guide modal form on the Homepage."
+        },
+        {
+            "key": "job_application_form",
+            "label": "Job Application Form",
+            "description": "Candidate application modal form on the Careers page."
+        },
+        {
             "key": "newsletter_form",
             "label": "Newsletter Subscription Form",
             "description": "Newsletter subscription form displayed in the footer modal."
