@@ -71,12 +71,12 @@
 
     <!-- Title: Larger & text-zinc-400 -->
     <h3 class="text-3xl md:text-4xl font-extrabold text-zinc-400 mb-4 tracking-tight w-full text-center">
-      {{ t('blog.no_posts_title', 'Artikel Tidak Ditemukan') }}
+      {{ t('blog.no_posts_title', 'No Articles Found') }}
     </h3>
 
     <!-- Description: Larger & text-zinc-300 -->
     <p class="text-zinc-300 font-normal text-base md:text-lg leading-relaxed mb-8 max-w-xl mx-auto text-center">
-      {{ t('blog.no_posts_desc', 'Maaf, tidak ada artikel yang sesuai dengan filter atau pencarian Anda. Silakan coba kata kunci lain atau reset filter.') }}
+      {{ t('blog.no_posts_desc', 'Sorry, no articles matched your filter or search criteria. Please try another keyword or reset filters.') }}
     </p>
 
     <!-- Reset Filter Button -->
@@ -85,7 +85,7 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-        <span>{{ t('blog.reset_filters', 'Reset Filter') }}</span>
+        <span>{{ t('blog.reset_filters', 'Reset Filters') }}</span>
       </button>
     </div>
 

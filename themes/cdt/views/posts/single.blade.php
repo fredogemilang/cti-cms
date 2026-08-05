@@ -250,7 +250,7 @@
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-2xl mx-auto mb-16">
       <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{{ t('blog.you_might_also_like', 'You Might Also Like') }}</h2>
-      <p class="text-gray-600">{{ t('blog.you_might_also_like_desc', 'Rekomendasi artikel terbaik dari pakar industri kami.') }}</p>
+      <p class="text-gray-600">{{ t('blog.you_might_also_like_desc', 'Top recommended articles from our industry experts.') }}</p>
     </div>
 
     <!-- Unified 3-Column Grid -->
