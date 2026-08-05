@@ -98,11 +98,18 @@ class PageController extends Controller
             abort(403);
         }
 
+        $locale = request()->query('lang', app()->getLocale());
+        if (in_array($locale, available_locales(), true)) {
+            app()->setLocale($locale);
+        }
+
         $page = Page::with(['blocks' => function ($q) {
             $q->whereNull('parent_block_id')
                 ->with('childBlocks')
                 ->orderBy('order');
         }])->findOrFail($id);
+
+        View::share('page', $page);
 
         $viewName = $this->resolveTemplate($page->template, $page->slug);
 

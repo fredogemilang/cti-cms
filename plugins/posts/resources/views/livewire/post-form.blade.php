@@ -436,7 +436,7 @@
 
                             @if($slug)
                             <a 
-                                href="{{ route('posts.show', $slug) }}" 
+                                href="{{ route('posts.show', $slug) . ($editingLocale && $editingLocale !== Plugins\Posts\Models\Post::defaultLocale() ? '?lang='.$editingLocale : '') }}" 
                                 target="_blank"
                                 class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-50 dark:bg-[#0B0B0B] hover:bg-gray-100 dark:hover:bg-[#272B30] border border-gray-200 dark:border-[#272B30] transition-all flex items-center justify-center gap-1.5"
                             >

@@ -1164,9 +1164,23 @@ class PageForm extends Component
             ? PageRevision::with('user')->where('page_id', $this->page->id)->latest()->take(20)->get()
             : collect();
 
-        $frontendUrl = url($this->slug);
+        $targetLocale = $this->editingLocale ?: Page::defaultLocale();
+
+        if ($this->isEdit && $this->page) {
+            $frontendUrl = $this->page->getUrl($targetLocale);
+            if ($targetLocale !== Page::defaultLocale() && ! str_contains($frontendUrl, 'lang=')) {
+                $frontendUrl .= (str_contains($frontendUrl, '?') ? '&' : '?') . 'lang=' . $targetLocale;
+            }
+        } else {
+            $targetSlug = ! empty($this->slug) ? $this->slug : 'home';
+            $frontendUrl = url($targetSlug);
+            if ($targetLocale !== Page::defaultLocale()) {
+                $frontendUrl .= (str_contains($frontendUrl, '?') ? '&' : '?') . 'lang=' . $targetLocale;
+            }
+        }
+
         if ($this->isEdit && $this->pageId && $this->status !== 'published') {
-            $previewUrl = route('admin.pages.preview', $this->pageId);
+            $previewUrl = route('pages.preview', ['id' => $this->pageId, 'lang' => $targetLocale]);
         } else {
             $previewUrl = $frontendUrl;
         }
