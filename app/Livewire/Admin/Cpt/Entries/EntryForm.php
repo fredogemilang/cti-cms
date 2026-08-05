@@ -603,6 +603,7 @@ class EntryForm extends Component
 
         // Notify SeoMetaBox to switch locale
         $this->dispatch('seo-locale-switched', locale: $newLocale);
+        $this->dispatch('tiptap-refresh-content');
 
         $this->editingLocale = $newLocale;
         $this->resetErrorBag();

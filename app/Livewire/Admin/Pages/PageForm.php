@@ -293,6 +293,7 @@ class PageForm extends Component
 
         // 4. Notify SeoMetaBox to switch locale
         $this->dispatch('seo-locale-switched', locale: $newLocale);
+        $this->dispatch('tiptap-refresh-content');
 
         // 5. Apply NEW locale's block values into $blocks (atomic blocks unchanged)
         $this->applyBlocksFromLocale($newLocale);

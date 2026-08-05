@@ -141,6 +141,10 @@ document.addEventListener('alpine:init', () => {
                         },
                     },
                     content: initialContent,
+                    onUpdate: () => {
+                        // Sync to Livewire on every content update
+                        this.$wire.set(modelName, editorInstance.getHTML(), false);
+                    },
                     onBlur: () => {
                         // Sync to Livewire on blur
                         this.$wire.set(modelName, editorInstance.getHTML());
@@ -157,11 +161,23 @@ document.addEventListener('alpine:init', () => {
                     this.selectionTick++;
                 });
 
-                // Sync from Livewire model changes (e.g. Docx upload)
+                // Sync from Livewire model changes (e.g. Docx upload, locale switch)
                 this.$watch('$wire.' + modelName, (value) => {
                     if (editorInstance && value !== editorInstance.getHTML()) {
                         editorInstance.commands.setContent(value || '', false);
                     }
+                });
+
+                // Listen for locale switch to reload fresh content from Livewire
+                Livewire.on('tiptap-refresh-content', () => {
+                    setTimeout(() => {
+                        if (editorInstance) {
+                            const freshContent = this.$wire.get(modelName) || '';
+                            if (freshContent !== editorInstance.getHTML()) {
+                                editorInstance.commands.setContent(freshContent, false);
+                            }
+                        }
+                    }, 50);
                 });
                 
                 // Listen for media picker selection
