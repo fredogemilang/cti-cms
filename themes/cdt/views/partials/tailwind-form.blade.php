@@ -195,7 +195,7 @@
                                     }
                                 }
 
-                                if ($relatedProducts->isNotEmpty()) {
+                                if (empty($optionsList) && $relatedProducts->isNotEmpty()) {
                                     foreach ($relatedProducts as $rp) {
                                         $optionsList[] = ['label' => $rp->title, 'value' => $rp->title];
                                     }
