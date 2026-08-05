@@ -1168,15 +1168,11 @@ class PageForm extends Component
 
         if ($this->isEdit && $this->page) {
             $frontendUrl = $this->page->getUrl($targetLocale);
-            if ($targetLocale !== Page::defaultLocale() && ! str_contains($frontendUrl, 'lang=')) {
-                $frontendUrl .= (str_contains($frontendUrl, '?') ? '&' : '?') . 'lang=' . $targetLocale;
-            }
         } else {
             $targetSlug = ! empty($this->slug) ? $this->slug : 'home';
-            $frontendUrl = url($targetSlug);
-            if ($targetLocale !== Page::defaultLocale()) {
-                $frontendUrl .= (str_contains($frontendUrl, '?') ? '&' : '?') . 'lang=' . $targetLocale;
-            }
+            $frontendUrl = $targetLocale !== Page::defaultLocale()
+                ? url("/{$targetLocale}/{$targetSlug}")
+                : url("/{$targetSlug}");
         }
 
         if ($this->isEdit && $this->pageId && $this->status !== 'published') {

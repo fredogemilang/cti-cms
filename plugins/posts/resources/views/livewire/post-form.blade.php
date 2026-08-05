@@ -85,13 +85,15 @@
                         <p class="text-sm text-red-500 font-medium mt-1">{{ $message }}</p>
                     @enderror
                     
-                    @if($slug)
+                    @if($slug || !empty($postId))
                     <div class="flex items-center gap-2 text-xs font-bold text-[#6F767E] uppercase tracking-wider pl-1">
                         <span>PERMALINK:</span>
-                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}/{{ !empty($archiveSlug) ? trim($archiveSlug, '/') . '/' : '' }}</span>
+                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}{{ $editingLocale && $editingLocale !== $defaultLocale ? '/' . $editingLocale : '' }}/{{ !empty($archiveSlug) ? trim($archiveSlug, '/') . '/' : '' }}</span>
                         <div x-data="{ editing: false }" class="relative flex items-center gap-2">
-                            <span x-show="!editing" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30]">{{ $slug }}</span>
-                            <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[100px]" x-cloak>
+                            <span x-show="!editing" @click="editing = true" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30] cursor-pointer hover:border-[#2563EB] {{ empty($slug) ? 'italic text-gray-400' : '' }}">
+                                {{ !empty($slug) ? $slug : (($post ? $post->slug : '') ?: 'enter-slug') }}
+                            </span>
+                            <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[120px]" placeholder="{{ $post ? $post->slug : 'slug' }}" x-cloak>
                             <button @click="editing = !editing; $nextTick(() => $el.previousElementSibling.focus())" class="text-[#6F767E] hover:text-[#FCFCFC] transition-colors">
                                 <span class="material-symbols-outlined text-[14px]">edit</span>
                             </button>
@@ -436,7 +438,7 @@
 
                             @if($slug)
                             <a 
-                                href="{{ route('posts.show', $slug) . ($editingLocale && $editingLocale !== Plugins\Posts\Models\Post::defaultLocale() ? '?lang='.$editingLocale : '') }}" 
+                                href="{{ $editingLocale && $editingLocale !== Plugins\Posts\Models\Post::defaultLocale() ? url('/' . $editingLocale . '/' . $slug) : route('posts.show', $slug) }}" 
                                 target="_blank"
                                 class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-50 dark:bg-[#0B0B0B] hover:bg-gray-100 dark:hover:bg-[#272B30] border border-gray-200 dark:border-[#272B30] transition-all flex items-center justify-center gap-1.5"
                             >
