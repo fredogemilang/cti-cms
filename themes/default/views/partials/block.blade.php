@@ -11,7 +11,7 @@
             @break
 
         @case('wysiwyg')
-            <div class="prose">{!! $block->localizedValue !!}</div>
+            <div class="prose [&_a]:text-red-600 hover:[&_a]:text-red-700 [&_a]:underline [&_a]:font-medium transition-colors">{!! $block->localizedValue !!}</div>
             @break
 
         @case('number')
