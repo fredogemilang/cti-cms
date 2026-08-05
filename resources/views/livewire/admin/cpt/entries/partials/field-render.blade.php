@@ -169,14 +169,16 @@
                     
                     <div class="w-px h-5 bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
-                    <!-- Headings -->
-                    <div class="flex items-center gap-0.5">
-                        <button type="button" @click="toggleHeading(2)" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('heading', { level: 2 }) }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Heading 2">
-                            <span class="material-symbols-outlined text-[20px]">format_h2</span>
-                        </button>
-                        <button type="button" @click="toggleHeading(3)" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('heading', { level: 3 }) }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Heading 3">
-                            <span class="material-symbols-outlined text-[20px]">format_h3</span>
-                        </button>
+                    <!-- Format Dropdown -->
+                    <div class="flex items-center">
+                        <select @change="setFormat($event.target.value)" 
+                                :value="isActive('heading', { level: 2 }) ? 'h2' : (isActive('heading', { level: 3 }) ? 'h3' : (isActive('heading', { level: 4 }) ? 'h4' : 'p'))" 
+                                class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-gray-700 dark:text-gray-200 focus:outline-none focus:border-blue-500 cursor-pointer">
+                            <option value="p">Paragraph</option>
+                            <option value="h2">Heading 2</option>
+                            <option value="h3">Heading 3</option>
+                            <option value="h4">Heading 4</option>
+                        </select>
                     </div>
 
                     <div class="w-px h-5 bg-gray-200 dark:bg-gray-700 mx-1"></div>

@@ -12,7 +12,7 @@
                         placeholder: '{{ $block['options']['placeholder'] ?? 'Write your content here...' }}',
                         modules: {
                             toolbar: [
-                                [{ 'header': [1, 2, 3, false] }],
+                                [{ 'header': [2, 3, 4, false] }],
                                 ['bold', 'italic', 'underline', 'strike'],
                                 [{ 'color': [] }, { 'background': [] }],
                                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
