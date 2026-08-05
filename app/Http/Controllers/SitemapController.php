@@ -32,20 +32,22 @@ class SitemapController extends Controller
         $cleanType = str_replace('-sitemap.xml', '', $type);
         $cleanType = str_replace('.xml', '', $cleanType);
 
+        $urls = match ($cleanType) {
+            'page', 'pages' => $builder->getPageUrls(),
+            'post', 'posts' => $builder->getPostUrls(),
+            'taxonomy', 'taxonomies' => $builder->getTaxonomyUrls(),
+            default => $builder->getCptUrls($cleanType),
+        };
+
+        if (empty($urls) && $cleanType === 'all') {
+            $urls = $builder->getAllUrls();
+        }
+
+        abort_if(empty($urls), 404);
+
         $cacheKey = "sitemap_type_{$cleanType}_v2";
 
-        $xml = Cache::remember($cacheKey, now()->addHour(), function () use ($cleanType, $builder, $renderer) {
-            $urls = match ($cleanType) {
-                'page', 'pages' => $builder->getPageUrls(),
-                'post', 'posts' => $builder->getPostUrls(),
-                'taxonomy', 'taxonomies' => $builder->getTaxonomyUrls(),
-                default => $builder->getCptUrls($cleanType),
-            };
-
-            if (empty($urls) && $cleanType === 'all') {
-                $urls = $builder->getAllUrls();
-            }
-
+        $xml = Cache::remember($cacheKey, now()->addHour(), function () use ($urls, $renderer) {
             return $renderer->renderUrlSet($urls);
         });
 

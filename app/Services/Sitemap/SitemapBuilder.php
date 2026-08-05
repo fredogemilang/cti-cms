@@ -51,32 +51,42 @@ class SitemapBuilder
 
         // 1. Pages sitemap
         if (setting('seo_content_type_pages_index_enabled', true)) {
-            $lastPageMod = Page::where('status', 'published')->max('updated_at');
-            $sitemaps[] = [
-                'loc' => url('/page-sitemap.xml'),
-                'lastmod' => $lastPageMod ? Carbon::parse($lastPageMod)->toAtomString() : now()->toAtomString(),
-                'type' => 'Pages',
-            ];
+            $pageUrls = $this->getPageUrls();
+            if (! empty($pageUrls)) {
+                $lastPageMod = Page::where('status', 'published')->max('updated_at');
+                $sitemaps[] = [
+                    'loc' => url('/page-sitemap.xml'),
+                    'lastmod' => $lastPageMod ? Carbon::parse($lastPageMod)->toAtomString() : now()->toAtomString(),
+                    'type' => 'Pages',
+                ];
+            }
         }
 
         // 2. Posts plugin sitemap (if plugin is active and indexing enabled)
         if ($this->isPostsPluginActive() && setting('seo_content_type_posts_index_enabled', true)) {
-            $postModel = $this->getPostModelClass();
-            $lastPostMod = $postModel::where('status', 'published')->max('updated_at');
-            $sitemaps[] = [
-                'loc' => url('/post-sitemap.xml'),
-                'lastmod' => $lastPostMod ? Carbon::parse($lastPostMod)->toAtomString() : now()->toAtomString(),
-                'type' => 'Posts',
-            ];
+            $postUrls = $this->getPostUrls();
+            if (! empty($postUrls)) {
+                $postModel = $this->getPostModelClass();
+                $lastPostMod = $postModel::where('status', 'published')->max('updated_at');
+                $sitemaps[] = [
+                    'loc' => url('/post-sitemap.xml'),
+                    'lastmod' => $lastPostMod ? Carbon::parse($lastPostMod)->toAtomString() : now()->toAtomString(),
+                    'type' => 'Posts',
+                ];
+            }
         }
 
-        // 3. Custom Post Types sitemaps (respect index_enabled, has_archive, and publicly_queryable)
+        // 3. Custom Post Types sitemaps (respect index_enabled, has_archive, publicly_queryable, and non-empty URLs)
         $cpts = CustomPostType::where('is_active', true)->get();
         foreach ($cpts as $cpt) {
             if (! setting("seo_content_type_{$cpt->slug}_index_enabled", true)) {
                 continue;
             }
             if (! $cpt->has_archive && ! $cpt->publicly_queryable) {
+                continue;
+            }
+            $cptUrls = $this->getCptUrls($cpt->slug);
+            if (empty($cptUrls)) {
                 continue;
             }
             $lastCptMod = CptEntry::where('post_type_id', $cpt->id)->where('status', 'published')->max('updated_at');
@@ -87,12 +97,13 @@ class SitemapBuilder
             ];
         }
 
-        // 4. Taxonomies sitemap
-        $lastTaxMod = TaxonomyTerm::max('updated_at');
-        if ($lastTaxMod) {
+        // 4. Taxonomies sitemap (only if taxonomy URLs are non-empty)
+        $taxUrls = $this->getTaxonomyUrls();
+        if (! empty($taxUrls)) {
+            $lastTaxMod = TaxonomyTerm::max('updated_at');
             $sitemaps[] = [
                 'loc' => url('/taxonomy-sitemap.xml'),
-                'lastmod' => Carbon::parse($lastTaxMod)->toAtomString(),
+                'lastmod' => $lastTaxMod ? Carbon::parse($lastTaxMod)->toAtomString() : now()->toAtomString(),
                 'type' => 'Taxonomies',
             ];
         }
