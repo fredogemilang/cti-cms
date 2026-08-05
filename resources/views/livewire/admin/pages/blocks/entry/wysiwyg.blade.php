@@ -20,30 +20,29 @@
                     <button type="button" @click="toggleUnderline()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('underline') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Underline">
                         <span class="material-symbols-outlined text-[20px]">format_underlined</span>
                     </button>
-                    <button type="button" @click="toggleStrike()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('strike') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Strikethrough">
+                    <button type="button" @click="toggleStrike()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('strike') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Strike">
                         <span class="material-symbols-outlined text-[20px]">strikethrough_s</span>
                     </button>
-                    <button type="button" @click="toggleCode()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('code') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Inline Code">
+                    <button type="button" @click="toggleCodeBlock()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('codeBlock') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Code Block">
                         <span class="material-symbols-outlined text-[20px]">code</span>
                     </button>
                 </div>
+                
+                <div class="w-px h-5 bg-gray-200 dark:bg-[#272B30] mx-1"></div>
 
-                <div class="h-4 w-px bg-gray-200 dark:bg-[#272B30] mx-1"></div>
-
-                <!-- Headings -->
-                <div class="flex items-center gap-0.5">
-                    <button type="button" @click="toggleHeading(2)" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('heading', { level: 2 }) }" class="px-2 py-1 text-xs font-bold rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Heading 2">
-                        H2
-                    </button>
-                    <button type="button" @click="toggleHeading(3)" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('heading', { level: 3 }) }" class="px-2 py-1 text-xs font-bold rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Heading 3">
-                        H3
-                    </button>
-                    <button type="button" @click="toggleHeading(4)" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('heading', { level: 4 }) }" class="px-2 py-1 text-xs font-bold rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Heading 4">
-                        H4
-                    </button>
+                <!-- Format Dropdown -->
+                <div class="flex items-center">
+                    <select @change="setFormat($event.target.value)" 
+                            :value="isActive('heading', { level: 2 }) ? 'h2' : (isActive('heading', { level: 3 }) ? 'h3' : (isActive('heading', { level: 4 }) ? 'h4' : 'p'))" 
+                            class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-gray-700 dark:text-gray-200 focus:outline-none focus:border-blue-500 cursor-pointer">
+                        <option value="p">Paragraph</option>
+                        <option value="h2">Heading 2</option>
+                        <option value="h3">Heading 3</option>
+                        <option value="h4">Heading 4</option>
+                    </select>
                 </div>
 
-                <div class="h-4 w-px bg-gray-200 dark:bg-[#272B30] mx-1"></div>
+                <div class="w-px h-5 bg-gray-200 dark:bg-[#272B30] mx-1"></div>
 
                 <!-- Alignment -->
                 <div class="flex items-center gap-0.5">
@@ -56,48 +55,51 @@
                     <button type="button" @click="setTextAlign('right')" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive({ textAlign: 'right' }) }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Align Right">
                         <span class="material-symbols-outlined text-[20px]">format_align_right</span>
                     </button>
+                    <button type="button" @click="setTextAlign('justify')" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive({ textAlign: 'justify' }) }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Justify">
+                        <span class="material-symbols-outlined text-[20px]">format_align_justify</span>
+                    </button>
                 </div>
 
-                <div class="h-4 w-px bg-gray-200 dark:bg-[#272B30] mx-1"></div>
+                <div class="w-px h-5 bg-gray-200 dark:bg-[#272B30] mx-1"></div>
 
-                <!-- Lists -->
+                <!-- Lists & Indent -->
                 <div class="flex items-center gap-0.5">
                     <button type="button" @click="toggleBulletList()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('bulletList') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Bullet List">
                         <span class="material-symbols-outlined text-[20px]">format_list_bulleted</span>
                     </button>
-                    <button type="button" @click="toggleOrderedList()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('orderedList') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Numbered List">
+                    <button type="button" @click="toggleOrderedList()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('orderedList') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Ordered List">
                         <span class="material-symbols-outlined text-[20px]">format_list_numbered</span>
                     </button>
                 </div>
 
-                <div class="h-4 w-px bg-gray-200 dark:bg-[#272B30] mx-1"></div>
+                <div class="w-px h-5 bg-gray-200 dark:bg-[#272B30] mx-1"></div>
 
-                <!-- Inserts & Links -->
+                <!-- Insert -->
                 <div class="flex items-center gap-0.5">
-                    <button type="button" @click="openLinkModal()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('link') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Insert / Edit Link">
+                    <button type="button" @click="setLink()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('link') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Link">
                         <span class="material-symbols-outlined text-[20px]">link</span>
                     </button>
-                    <button type="button" @click="openMediaPicker()" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Insert Image from Media Library">
+                    <button type="button" @click="openMediaPicker()" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Image from Media Library">
                         <span class="material-symbols-outlined text-[20px]">image</span>
                     </button>
-                    <button type="button" @click="openButtonCreator()" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Create Link Button">
+                    <button type="button" @click="openButtonCreator()" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Insert Button">
                         <span class="material-symbols-outlined text-[20px]">smart_button</span>
                     </button>
                     <button type="button" @click="toggleBlockquote()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('blockquote') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Blockquote">
                         <span class="material-symbols-outlined text-[20px]">format_quote</span>
-                    </button>
-                    <button type="button" @click="toggleCodeBlock()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('codeBlock') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Code Block">
-                        <span class="material-symbols-outlined text-[20px]">developer_mode</span>
                     </button>
                     <button type="button" @click="setHorizontalRule()" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Horizontal Rule">
                         <span class="material-symbols-outlined text-[20px]">horizontal_rule</span>
                     </button>
                 </div>
 
-                <div class="h-4 w-px bg-gray-200 dark:bg-[#272B30] mx-1"></div>
+                <div class="w-px h-5 bg-gray-200 dark:bg-[#272B30] mx-1"></div>
 
-                <!-- History -->
+                <!-- Clear & History -->
                 <div class="flex items-center gap-0.5">
+                    <button type="button" @click="clearFormatting()" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Clear Formatting">
+                        <span class="material-symbols-outlined text-[20px]">format_clear</span>
+                    </button>
                     <button type="button" @click="undo()" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Undo">
                         <span class="material-symbols-outlined text-[20px]">undo</span>
                     </button>
