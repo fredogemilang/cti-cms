@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Sitemap\SitemapBuilder;
 use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
@@ -48,6 +49,19 @@ class CptEntry extends Model
 
     /** Fields that can carry per-locale values via the translations JSON column. */
     protected array $translatable = ['title', 'slug', 'content', 'excerpt'];
+
+    protected static function booted(): void
+    {
+        static::saved(function ($entry) {
+            $slug = $entry->postType?->slug;
+            SitemapBuilder::clearCache($slug);
+        });
+
+        static::deleted(function ($entry) {
+            $slug = $entry->postType?->slug;
+            SitemapBuilder::clearCache($slug);
+        });
+    }
 
     /**
      * Resolve a CptEntry by slug within a given post type, scanning the default
@@ -354,10 +368,22 @@ class CptEntry extends Model
      * Uses translated slugs so /products/what-is-cdt and /products/apa-itu-cdt
      * both resolve to the same entry while keeping the locale in the URL.
      */
+    public function hasTranslationForLocale(string $locale): bool
+    {
+        $transSlug = $this->getTranslation('slug', $locale, false);
+
+        return ! empty($transSlug) && trim((string) $transSlug) !== '';
+    }
+
     public function getUrl(?string $locale = null): string
     {
         $locale ??= app()->getLocale();
         $defaultLocale = static::defaultLocale();
+
+        if ($locale !== $defaultLocale && ! $this->hasTranslationForLocale($locale)) {
+            $locale = $defaultLocale;
+        }
+
         $localePrefix = ($locale !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix')
             ? '/'.$locale
             : '';

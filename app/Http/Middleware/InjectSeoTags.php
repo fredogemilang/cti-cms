@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\CustomTaxonomy;
 use App\Models\Page;
+use App\Models\TaxonomyTerm;
 use App\Services\BreadcrumbService;
 use App\Services\SchemaBuilder;
 use App\Services\SeoRenderer;
@@ -10,6 +12,8 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Plugins\Posts\Models\Category;
+use Plugins\Posts\Models\Tag;
 
 /**
  * Auto-inject SEO meta tags, Open Graph, Twitter Cards, and JSON-LD
@@ -63,6 +67,11 @@ class InjectSeoTags
             $content = (string) preg_replace('/<title\b[^>]*>(.*?)<\/title>/is', '<title>'.e($seo['title']).'</title>', $content);
         }
 
+        // Replace existing <meta name="robots"> if present so noindex,follow takes full precedence
+        if ($seo['robots'] !== 'index,follow' && preg_match('/<meta\s+name=["\']robots["\'][^>]*>/is', $content)) {
+            $content = (string) preg_replace('/<meta\s+name=["\']robots["\'][^>]*>/is', '<meta name="robots" content="'.e($seo['robots']).'">', $content);
+        }
+
         // Build SEO tags
         $seoHtml = $this->buildSeoHtml($seo, $entity);
 
@@ -84,7 +93,7 @@ class InjectSeoTags
 
         if (is_object($original) && method_exists($original, 'getData')) {
             $data = $original->getData();
-            foreach (['page', 'entry', 'post', 'event'] as $key) {
+            foreach (['page', 'entry', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm'] as $key) {
                 if (isset($data[$key]) && $data[$key] instanceof Model) {
                     return $data[$key];
                 }
@@ -94,10 +103,48 @@ class InjectSeoTags
         // Fallback 1: Route parameters
         $route = $request->route();
         if ($route) {
-            foreach (['page', 'entry', 'post', 'event'] as $param) {
+            foreach (['page', 'entry', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm'] as $param) {
                 $val = $route->parameter($param);
                 if ($val instanceof Model) {
                     return $val;
+                }
+            }
+
+            $catSlug = $route->parameter('category');
+            if (is_string($catSlug) && class_exists(Category::class)) {
+                $catModel = Category::where('slug', $catSlug)
+                    ->orWhere('id', $catSlug)
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$catSlug])
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$catSlug])
+                    ->first();
+                if ($catModel) {
+                    return $catModel;
+                }
+            }
+
+            $tagSlug = $route->parameter('tag');
+            if (is_string($tagSlug) && class_exists(Tag::class)) {
+                $tagModel = Tag::where('slug', $tagSlug)
+                    ->orWhere('id', $tagSlug)
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$tagSlug])
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$tagSlug])
+                    ->first();
+                if ($tagModel) {
+                    return $tagModel;
+                }
+            }
+
+            $taxSlug = $route->parameter('taxonomy') ?: $route->parameter('taxonomySlug');
+            $termSlug = $route->parameter('term') ?: $route->parameter('termSlug');
+            if (is_string($taxSlug) && is_string($termSlug) && class_exists(CustomTaxonomy::class)) {
+                $taxonomy = CustomTaxonomy::where('slug', $taxSlug)->first();
+                if ($taxonomy && class_exists(TaxonomyTerm::class)) {
+                    $termModel = TaxonomyTerm::where('taxonomy_id', $taxonomy->id)
+                        ->where('slug', $termSlug)
+                        ->first();
+                    if ($termModel) {
+                        return $termModel;
+                    }
                 }
             }
         }

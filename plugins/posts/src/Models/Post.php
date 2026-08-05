@@ -105,15 +105,28 @@ class Post extends Model
             ->where('published_at', '<=', now());
     }
 
+    public function hasTranslationForLocale(string $locale): bool
+    {
+        $transSlug = $this->getTranslation('slug', $locale, false);
+
+        return ! empty($transSlug) && trim((string) $transSlug) !== '';
+    }
+
     public function getUrl(?string $locale = null): string
     {
         $locale ??= app()->getLocale();
-        $defaultLocale = config('app.locale', 'en');
+        $defaultLocale = function_exists('setting') ? setting('default_locale', config('app.locale', 'en')) : config('app.locale', 'en');
+
+        // If requested locale is non-default and post DOES NOT have a translation for it, fallback to default locale URL
+        if ($locale !== $defaultLocale && ! $this->hasTranslationForLocale($locale)) {
+            $locale = $defaultLocale;
+        }
+
         $prefix = ($locale !== $defaultLocale) ? '/'.$locale : '';
-        $slug = $this->getTranslation('slug', $locale, fallback: true) ?? $this->slug;
-        $archiveSlug = 'blog';
+        $slug = $this->getTranslation('slug', $locale, fallback: false) ?: $this->slug;
+        $archiveSlug = 'blog-news';
         if (class_exists(Setting::class)) {
-            $archiveSlug = Setting::get('archive_slug', 'blog');
+            $archiveSlug = Setting::getArchiveSlug($locale);
         }
 
         return url($prefix.'/'.$archiveSlug.'/'.$slug);
@@ -148,5 +161,18 @@ class Post extends Model
             'post_id',
             'cpt_entry_id'
         )->withPivot('cpt_slug')->withTimestamps();
+    }
+
+    public function getReadingTime(?string $locale = null, int $wpm = 200): int
+    {
+        $locale ??= app()->getLocale();
+        $rawContent = $this->getTranslation('content', $locale) ?: ($this->content ?? '');
+        $plainText = trim(strip_tags($rawContent));
+        if (empty($plainText)) {
+            return 1;
+        }
+        $wordCount = str_word_count($plainText);
+
+        return max(1, (int) ceil($wordCount / $wpm));
     }
 }

@@ -47,6 +47,14 @@ class ArchiveController extends Controller
         return $this->nestedSingle($cptSlug, $parentSlug, $entrySlug);
     }
 
+    protected function shareEntry(CptEntry $entry): void
+    {
+        request()->attributes->set('cpt_entry', $entry);
+        request()->attributes->set('entry', $entry);
+        View::share('cpt_entry', $entry);
+        View::share('entry', $entry);
+    }
+
     /**
      * Preview CPT Entry by ID for logged-in users — GET /admin/cpt-entries/{id}/preview
      */
@@ -54,6 +62,7 @@ class ArchiveController extends Controller
     {
         abort_unless(auth()->check() && auth()->user()->can('cpt.entries.edit'), 403);
         $entry = CptEntry::with(['author', 'postType', 'terms.taxonomy'])->findOrFail($id);
+        $this->shareEntry($entry);
         $postType = $entry->postType;
 
         $viewName = $this->resolveSingleView($postType->slug);
@@ -99,7 +108,9 @@ class ArchiveController extends Controller
 
         $targetSlug = $postType->getLocalizedSlug($currentLocale);
         if ($cptSlug !== $targetSlug) {
-            return redirect($postType->getArchiveUrl($currentLocale), 301);
+            $queryString = request()->getQueryString();
+
+            return redirect($postType->getArchiveUrl($currentLocale).($queryString ? "?{$queryString}" : ''), 301);
         }
 
         $perPage = in_array($postType->slug, ['customer-success', 'client-says'], true) ? 6 : $this->getArchiveSetting('per_page', 12);
@@ -140,9 +151,14 @@ class ArchiveController extends Controller
         $entry = CptEntry::findByLocalizedSlug($postType, $entrySlug);
         abort_if(! $entry, 404);
 
-        $targetSlug = $postType->getLocalizedSlug($currentLocale);
-        if ($cptSlug !== $targetSlug) {
-            return redirect($entry->getUrl($currentLocale), 301);
+        $this->shareEntry($entry);
+
+        $canonicalUrl = $entry->getUrl($currentLocale);
+        $currentUrl = request()->url();
+        if ($currentUrl !== $canonicalUrl) {
+            $queryString = request()->getQueryString();
+
+            return redirect($canonicalUrl.($queryString ? "?{$queryString}" : ''), 301);
         }
 
         $entry->load(['author', 'postType', 'terms.taxonomy']);
@@ -195,6 +211,7 @@ class ArchiveController extends Controller
         abort_if(! $entry, 404);
 
         $entry->load(['author', 'postType', 'terms.taxonomy']);
+        $this->shareEntry($entry);
 
         $redirectUrl = apply_filters('cpt_entry.url_redirect', null, $entry);
         if ($redirectUrl) {
@@ -217,6 +234,88 @@ class ArchiveController extends Controller
             'previousEntry' => $previousEntry,
             'nextEntry' => $nextEntry,
         ]);
+    }
+
+    /**
+     * Short Vendor Single — GET /{vendorSlug}
+     */
+    public function shortVendorSingle(string $vendorSlug)
+    {
+        return $this->localeShortVendorSingle(app()->getLocale(), $vendorSlug);
+    }
+
+    public function localeShortVendorSingle(string $locale, string $vendorSlug)
+    {
+        if (in_array($locale, available_locales(), true)) {
+            app()->setLocale($locale);
+        }
+
+        $techAllianceCpt = CustomPostType::where('slug', 'technology-alliance')
+            ->where('is_active', true)
+            ->first();
+
+        if ($techAllianceCpt) {
+            $entry = CptEntry::findByLocalizedSlug($techAllianceCpt, $vendorSlug);
+            if ($entry && $entry->status === 'published') {
+                $entry->load(['author', 'postType', 'terms.taxonomy']);
+                $this->shareEntry($entry);
+                $taxonomies = $techAllianceCpt->taxonomies();
+                $viewName = $this->resolveSingleView($techAllianceCpt->slug);
+
+                return view($viewName, [
+                    'postType' => $techAllianceCpt,
+                    'entry' => $entry,
+                    'seo' => $entry->seo ?? [],
+                    'taxonomies' => $taxonomies,
+                    'previousEntry' => $entry->getPreviousEntry(),
+                    'nextEntry' => $entry->getNextEntry(),
+                ]);
+            }
+        }
+
+        // Fallback to regular Page Controller if vendor entry not found
+        return app(PageController::class)->show($vendorSlug);
+    }
+
+    /**
+     * Short Product Single — GET /{vendorSlug}/{productSlug}
+     */
+    public function shortProductSingle(string $vendorSlug, string $productSlug)
+    {
+        return $this->localeShortProductSingle(app()->getLocale(), $vendorSlug, $productSlug);
+    }
+
+    public function localeShortProductSingle(string $locale, string $vendorSlug, string $productSlug)
+    {
+        if (in_array($locale, available_locales(), true)) {
+            app()->setLocale($locale);
+        }
+
+        $productCpt = CustomPostType::whereIn('slug', ['tech-products', 'products'])
+            ->where('is_active', true)
+            ->first();
+
+        if ($productCpt) {
+            $entry = CptEntry::findByLocalizedSlug($productCpt, $productSlug);
+            if ($entry && $entry->status === 'published') {
+                $entry->load(['author', 'postType', 'terms.taxonomy']);
+                $this->shareEntry($entry);
+                $taxonomies = $productCpt->taxonomies();
+                $viewName = $this->resolveSingleView($productCpt->slug, true, 'technology-alliance');
+
+                return view($viewName, [
+                    'postType' => $productCpt,
+                    'entry' => $entry,
+                    'seo' => $entry->seo ?? [],
+                    'taxonomies' => $taxonomies,
+                    'previousEntry' => $entry->getPreviousEntry(),
+                    'nextEntry' => $entry->getNextEntry(),
+                    'parentVendorSlug' => $vendorSlug,
+                ]);
+            }
+        }
+
+        abort(404);
     }
 
     /**

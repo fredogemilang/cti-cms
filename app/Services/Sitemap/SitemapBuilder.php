@@ -10,12 +10,41 @@ use App\Models\Page;
 use App\Models\Setting;
 use App\Models\TaxonomyTerm;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Plugins\Posts\Models\Post;
 
 class SitemapBuilder
 {
+    /**
+     * Flush sitemap index cache and type caches.
+     */
+    public static function clearCache(?string $type = null): void
+    {
+        Cache::forget('sitemap.xml_index_v2');
+
+        if ($type) {
+            Cache::forget("sitemap_type_{$type}_v2");
+            Cache::forget('sitemap_type_'.str_replace('_', '-', $type).'_v2');
+            Cache::forget('sitemap_type_'.str_replace('-', '_', $type).'_v2');
+        } else {
+            foreach (['page', 'pages', 'post', 'posts', 'taxonomy', 'taxonomies', 'all'] as $t) {
+                Cache::forget("sitemap_type_{$t}_v2");
+            }
+            try {
+                $cptSlugs = CustomPostType::pluck('slug');
+                foreach ($cptSlugs as $cptSlug) {
+                    Cache::forget("sitemap_type_{$cptSlug}_v2");
+                    Cache::forget('sitemap_type_'.str_replace('_', '-', $cptSlug).'_v2');
+                    Cache::forget('sitemap_type_'.str_replace('-', '_', $cptSlug).'_v2');
+                }
+            } catch (\Throwable) {
+                // Ignore DB errors during setup/migration
+            }
+        }
+    }
+
     public function getIndexSitemaps(): array
     {
         $sitemaps = [];
@@ -41,10 +70,13 @@ class SitemapBuilder
             ];
         }
 
-        // 3. Custom Post Types sitemaps (respect index_enabled)
+        // 3. Custom Post Types sitemaps (respect index_enabled, has_archive, and publicly_queryable)
         $cpts = CustomPostType::where('is_active', true)->get();
         foreach ($cpts as $cpt) {
             if (! setting("seo_content_type_{$cpt->slug}_index_enabled", true)) {
+                continue;
+            }
+            if (! $cpt->has_archive && ! $cpt->publicly_queryable) {
                 continue;
             }
             $lastCptMod = CptEntry::where('post_type_id', $cpt->id)->where('status', 'published')->max('updated_at');
@@ -75,18 +107,27 @@ class SitemapBuilder
             return $urls;
         }
 
+        $locales = available_locales();
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+
         foreach (Page::with('allBlocks')->where('status', 'published')->orderBy('updated_at', 'desc')->get() as $page) {
             $blockValues = $page->allBlocks->pluck('value')->filter()->toArray();
             $images = $this->extractImages($page->featured_image ?? null, $blockValues);
 
-            $urls[] = [
-                'loc' => $page->slug === 'home' ? url('/') : url('/'.$page->slug),
-                'lastmod' => $page->updated_at ? $page->updated_at->toAtomString() : null,
-                'changefreq' => 'weekly',
-                'priority' => $page->slug === 'home' ? 1.0 : 0.8,
-                'type' => 'Page',
-                'images' => $images,
-            ];
+            foreach ($locales as $loc) {
+                if ($loc !== $defaultLocale && ! $page->hasTranslationForLocale($loc)) {
+                    continue;
+                }
+
+                $urls[] = [
+                    'loc' => $page->getUrl($loc),
+                    'lastmod' => $page->updated_at ? $page->updated_at->toAtomString() : null,
+                    'changefreq' => 'weekly',
+                    'priority' => ($page->slug === 'home' && $loc === $defaultLocale) ? 1.0 : 0.8,
+                    'type' => 'Page',
+                    'images' => $images,
+                ];
+            }
         }
 
         return $urls;
@@ -99,19 +140,30 @@ class SitemapBuilder
         }
 
         $postModel = $this->getPostModelClass();
-        $archiveSlug = (string) Setting::get('permalink_post_base', Setting::get('archive_slug', 'blog'));
+        $locales = available_locales();
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
 
         $urls = [];
 
-        // Archive page
-        $urls[] = [
-            'loc' => url('/'.$archiveSlug),
-            'lastmod' => now()->toAtomString(),
-            'changefreq' => 'daily',
-            'priority' => 0.8,
-            'type' => 'Post Archive',
-            'images' => [],
-        ];
+        // Archive pages for each locale
+        foreach ($locales as $loc) {
+            $archiveSlug = class_exists(\Plugins\Posts\Models\Setting::class)
+                ? \Plugins\Posts\Models\Setting::getArchiveSlug($loc)
+                : (string) Setting::get('permalink_post_base', Setting::get('archive_slug', 'blog'));
+
+            $archiveUrl = ($loc !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix')
+                ? url('/'.$loc.'/'.$archiveSlug)
+                : url('/'.$archiveSlug);
+
+            $urls[] = [
+                'loc' => $archiveUrl,
+                'lastmod' => now()->toAtomString(),
+                'changefreq' => 'daily',
+                'priority' => 0.8,
+                'type' => 'Post Archive',
+                'images' => [],
+            ];
+        }
 
         $posts = $postModel::where('status', 'published')
             ->orderBy('updated_at', 'desc')
@@ -121,14 +173,20 @@ class SitemapBuilder
             /** @var Post $post */
             $images = $this->extractImages($post->featured_image ?? null, $post->content ?? null);
 
-            $urls[] = [
-                'loc' => url('/'.$archiveSlug.'/'.$post->slug),
-                'lastmod' => $post->updated_at ? $post->updated_at->toAtomString() : null,
-                'changefreq' => 'weekly',
-                'priority' => 0.6,
-                'type' => 'Post',
-                'images' => $images,
-            ];
+            foreach ($locales as $loc) {
+                if ($loc !== $defaultLocale && ! $post->hasTranslationForLocale($loc)) {
+                    continue;
+                }
+
+                $urls[] = [
+                    'loc' => $post->getUrl($loc),
+                    'lastmod' => $post->updated_at ? $post->updated_at->toAtomString() : null,
+                    'changefreq' => 'weekly',
+                    'priority' => 0.6,
+                    'type' => 'Post',
+                    'images' => $images,
+                ];
+            }
         }
 
         return $urls;
@@ -138,6 +196,11 @@ class SitemapBuilder
     {
         $cpt = CustomPostType::where('slug', $cptSlug)->where('is_active', true)->first();
         if (! $cpt) {
+            $altSlug = str_contains($cptSlug, '-') ? str_replace('-', '_', $cptSlug) : str_replace('_', '-', $cptSlug);
+            $cpt = CustomPostType::where('slug', $altSlug)->where('is_active', true)->first();
+        }
+
+        if (! $cpt) {
             return [];
         }
 
@@ -145,33 +208,49 @@ class SitemapBuilder
             return [];
         }
 
+        $locales = available_locales();
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+
         $urls = [];
-        // Archive url
-        $urls[] = [
-            'loc' => url('/'.$cpt->slug),
-            'lastmod' => now()->toAtomString(),
-            'changefreq' => 'daily',
-            'priority' => 0.8,
-            'type' => $cpt->name.' Archive',
-            'images' => [],
-        ];
+        // Archive url (only if has_archive is enabled) for each locale
+        if ($cpt->has_archive) {
+            foreach ($locales as $loc) {
+                $urls[] = [
+                    'loc' => $cpt->getArchiveUrl($loc),
+                    'lastmod' => now()->toAtomString(),
+                    'changefreq' => 'daily',
+                    'priority' => 0.8,
+                    'type' => $cpt->name.' Archive',
+                    'images' => [],
+                ];
+            }
+        }
 
-        $entries = CptEntry::where('post_type_id', $cpt->id)
-            ->where('status', 'published')
-            ->orderBy('updated_at', 'desc')
-            ->get();
+        // Single entry urls (only if publicly_queryable is enabled) for each locale
+        if ($cpt->publicly_queryable) {
+            $entries = CptEntry::where('post_type_id', $cpt->id)
+                ->where('status', 'published')
+                ->orderBy('updated_at', 'desc')
+                ->get();
 
-        foreach ($entries as $entry) {
-            $images = $this->extractImages($entry->featured_image ?? null, $entry->content ?? null);
+            foreach ($entries as $entry) {
+                $images = $this->extractImages($entry->featured_image ?? null, $entry->content ?? null);
 
-            $urls[] = [
-                'loc' => url('/'.$cpt->slug.'/'.$entry->slug),
-                'lastmod' => $entry->updated_at ? $entry->updated_at->toAtomString() : null,
-                'changefreq' => 'weekly',
-                'priority' => 0.6,
-                'type' => $cpt->name,
-                'images' => $images,
-            ];
+                foreach ($locales as $loc) {
+                    if ($loc !== $defaultLocale && ! $entry->hasTranslationForLocale($loc)) {
+                        continue;
+                    }
+
+                    $urls[] = [
+                        'loc' => $entry->getUrl($loc),
+                        'lastmod' => $entry->updated_at ? $entry->updated_at->toAtomString() : null,
+                        'changefreq' => 'weekly',
+                        'priority' => 0.6,
+                        'type' => $cpt->name,
+                        'images' => $images,
+                    ];
+                }
+            }
         }
 
         return $urls;
@@ -180,6 +259,8 @@ class SitemapBuilder
     public function getTaxonomyUrls(): array
     {
         $urls = [];
+        $locales = available_locales();
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
 
         // 1. Custom Taxonomy Terms (from CPT system)
         $terms = TaxonomyTerm::with('taxonomy')->get();
@@ -191,45 +272,77 @@ class SitemapBuilder
                     continue;
                 }
 
-                $urls[] = [
-                    'loc' => url('/'.$term->taxonomy->slug.'/'.$term->slug),
-                    'lastmod' => $term->updated_at ? $term->updated_at->toAtomString() : null,
-                    'changefreq' => 'monthly',
-                    'priority' => 0.4,
-                    'type' => 'Taxonomy',
-                ];
+                foreach ($locales as $loc) {
+                    $prefix = ($loc !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix') ? '/'.$loc : '';
+                    $tSlug = method_exists($term, 'getTranslation') ? ($term->getTranslation('slug', $loc, fallback: true) ?? $term->slug) : $term->slug;
+                    $urls[] = [
+                        'loc' => url($prefix.'/'.$term->taxonomy->slug.'/'.$tSlug),
+                        'lastmod' => $term->updated_at ? $term->updated_at->toAtomString() : null,
+                        'changefreq' => 'monthly',
+                        'priority' => 0.4,
+                        'type' => 'Taxonomy',
+                    ];
+                }
             }
         }
 
         // 2. Posts plugin Categories (if plugin is active and indexing enabled)
         if ($this->isPostsPluginActive() && setting('seo_taxonomy_categories_index_enabled', true)) {
-            $archiveSlug = (string) Setting::get('permalink_post_base', Setting::get('archive_slug', 'blog'));
             $categoryBase = (string) Setting::get('permalink_category_base', 'category');
-            $categories = DB::table('categories')->select('slug', 'updated_at')->get();
+            $categories = DB::table('categories')->select('slug', 'updated_at', 'translations')->get();
             foreach ($categories as $category) {
-                $urls[] = [
-                    'loc' => url('/'.$archiveSlug.'/'.$categoryBase.'/'.$category->slug),
-                    'lastmod' => $category->updated_at ? Carbon::parse($category->updated_at)->toAtomString() : null,
-                    'changefreq' => 'weekly',
-                    'priority' => 0.4,
-                    'type' => 'Category',
-                ];
+                foreach ($locales as $loc) {
+                    $archiveSlug = class_exists(\Plugins\Posts\Models\Setting::class)
+                        ? \Plugins\Posts\Models\Setting::getArchiveSlug($loc)
+                        : 'blog';
+                    $prefix = ($loc !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix') ? '/'.$loc : '';
+
+                    $catSlug = $category->slug;
+                    if (! empty($category->translations)) {
+                        $trans = is_string($category->translations) ? json_decode($category->translations, true) : (array) $category->translations;
+                        if (! empty($trans[$loc]['slug'])) {
+                            $catSlug = $trans[$loc]['slug'];
+                        }
+                    }
+
+                    $urls[] = [
+                        'loc' => url($prefix.'/'.$archiveSlug.'/'.$categoryBase.'/'.$catSlug),
+                        'lastmod' => $category->updated_at ? Carbon::parse($category->updated_at)->toAtomString() : null,
+                        'changefreq' => 'weekly',
+                        'priority' => 0.4,
+                        'type' => 'Category',
+                    ];
+                }
             }
         }
 
         // 3. Posts plugin Tags (if plugin is active and indexing enabled)
         if ($this->isPostsPluginActive() && setting('seo_taxonomy_tags_index_enabled', true)) {
-            $archiveSlug ??= (string) Setting::get('permalink_post_base', Setting::get('archive_slug', 'blog'));
             $tagBase = (string) Setting::get('permalink_tag_base', 'tag');
-            $tags = DB::table('tags')->select('slug', 'updated_at')->get();
+            $tags = DB::table('tags')->select('slug', 'updated_at', 'translations')->get();
             foreach ($tags as $tag) {
-                $urls[] = [
-                    'loc' => url('/'.$archiveSlug.'/'.$tagBase.'/'.$tag->slug),
-                    'lastmod' => $tag->updated_at ? Carbon::parse($tag->updated_at)->toAtomString() : null,
-                    'changefreq' => 'weekly',
-                    'priority' => 0.3,
-                    'type' => 'Tag',
-                ];
+                foreach ($locales as $loc) {
+                    $archiveSlug = class_exists(\Plugins\Posts\Models\Setting::class)
+                        ? \Plugins\Posts\Models\Setting::getArchiveSlug($loc)
+                        : 'blog';
+                    $prefix = ($loc !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix') ? '/'.$loc : '';
+
+                    $tSlug = $tag->slug;
+                    if (! empty($tag->translations)) {
+                        $trans = is_string($tag->translations) ? json_decode($tag->translations, true) : (array) $tag->translations;
+                        if (! empty($trans[$loc]['slug'])) {
+                            $tSlug = $trans[$loc]['slug'];
+                        }
+                    }
+
+                    $urls[] = [
+                        'loc' => url($prefix.'/'.$archiveSlug.'/'.$tagBase.'/'.$tSlug),
+                        'lastmod' => $tag->updated_at ? Carbon::parse($tag->updated_at)->toAtomString() : null,
+                        'changefreq' => 'weekly',
+                        'priority' => 0.3,
+                        'type' => 'Tag',
+                    ];
+                }
             }
         }
 

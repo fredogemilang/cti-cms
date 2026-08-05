@@ -44,4 +44,23 @@ class Tag extends Model
     {
         return $this->posts()->count();
     }
+
+    public function getUrl(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $defaultLocale = function_exists('default_locale') ? default_locale() : (function_exists('setting') ? setting('default_locale', config('app.locale', 'en')) : config('app.locale', 'en'));
+
+        $prefix = ($locale !== $defaultLocale) ? '/'.$locale : '';
+        $slug = $this->getTranslation('slug', $locale, fallback: false) ?: $this->slug;
+        $archiveSlug = 'blog-news';
+        if (class_exists(Setting::class)) {
+            $archiveSlug = Setting::getArchiveSlug($locale);
+        }
+        $tagBase = 'tag';
+        if (class_exists(\App\Models\Setting::class)) {
+            $tagBase = \App\Models\Setting::get('permalink_tag_base', 'tag');
+        }
+
+        return url($prefix.'/'.$archiveSlug.'/'.$tagBase.'/'.$slug);
+    }
 }

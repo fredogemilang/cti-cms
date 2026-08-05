@@ -17,6 +17,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ViewErrorBag;
+use Plugins\Posts\Models\Post;
 
 if (! function_exists('activity')) {
     /**
@@ -423,7 +424,16 @@ if (! function_exists('current_page_localized_url')) {
         $urlStructure = setting('locale_url_structure', 'prefix');
         $hideDefault = (bool) setting('locale_prefix_hide_default', true);
 
-        // 1. If viewing a CPT Entry (passed via view data or request attributes)
+        // 1. If viewing a Post (single blog detail)
+        $post = request()->attributes->get('post')
+            ?? view()->shared('post')
+            ?? null;
+
+        if (class_exists(Post::class) && $post instanceof Post) {
+            return $post->getUrl($targetLocale);
+        }
+
+        // 2. If viewing a CPT Entry (passed via view data or request attributes)
         $entry = request()->attributes->get('cpt_entry')
             ?? view()->shared('entry')
             ?? null;
@@ -432,10 +442,10 @@ if (! function_exists('current_page_localized_url')) {
             return $entry->getUrl($targetLocale);
         }
 
-        // 2. If viewing a Page
+        // 3. If viewing a Page
         $page = view()->shared('page') ?? null;
 
-        // 3. Fallback: Parse request path
+        // 4. Fallback: Parse request path
         $path = ltrim(request()->path(), '/');
 
         // Strip current non-default locale prefix if present at start of path
@@ -450,6 +460,41 @@ if (! function_exists('current_page_localized_url')) {
             if (str_starts_with($cleanPath, $l.'/')) {
                 $cleanPath = substr($cleanPath, strlen($l) + 1);
                 break;
+            }
+        }
+
+        // 5. If path is a Blog archive or single post detail (e.g. blog-news, blog-berita, etc.)
+        if (class_exists(Plugins\Posts\Models\Setting::class) && ! empty($cleanPath)) {
+            $segments = explode('/', $cleanPath);
+            $firstSeg = $segments[0];
+            $isBlogPath = false;
+
+            foreach ($available as $loc) {
+                if ($firstSeg === Plugins\Posts\Models\Setting::getArchiveSlug($loc) || $firstSeg === 'blog-news' || $firstSeg === 'blog') {
+                    $isBlogPath = true;
+                    break;
+                }
+            }
+
+            if ($isBlogPath) {
+                // If single post detail page (/blog-news/{post_slug})
+                if (count($segments) >= 2 && class_exists(Post::class)) {
+                    $postSlug = end($segments);
+                    $foundPost = Post::findByLocalizedSlug($postSlug);
+                    if ($foundPost) {
+                        return $foundPost->getUrl($targetLocale);
+                    }
+                }
+
+                $targetSlug = Plugins\Posts\Models\Setting::getArchiveSlug($targetLocale);
+                $segments[0] = $targetSlug;
+                $newPath = implode('/', $segments);
+
+                if ($targetLocale === $defaultLocale && $hideDefault) {
+                    return url('/'.$newPath);
+                }
+
+                return url('/'.$targetLocale.'/'.$newPath);
             }
         }
 
@@ -555,6 +600,30 @@ if (! function_exists('localized_url')) {
         $urlStructure = setting('locale_url_structure', 'prefix');
 
         $cleanPath = trim((string) $path, '/');
+
+        if (class_exists(Plugins\Posts\Models\Setting::class) && ! empty($cleanPath)) {
+            $segments = explode('/', $cleanPath);
+            $firstSeg = $segments[0];
+            $isBlogPath = false;
+            foreach (available_locales() as $loc) {
+                if ($firstSeg === Plugins\Posts\Models\Setting::getArchiveSlug($loc) || $firstSeg === 'blog-news' || $firstSeg === 'blog') {
+                    $isBlogPath = true;
+                    break;
+                }
+            }
+
+            if ($isBlogPath) {
+                $targetSlug = Plugins\Posts\Models\Setting::getArchiveSlug($locale);
+                $segments[0] = $targetSlug;
+                $cleanPath = implode('/', $segments);
+
+                if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
+                    return url("/{$locale}/{$cleanPath}");
+                }
+
+                return url($hideDefault || $urlStructure !== 'prefix' ? "/{$cleanPath}" : "/{$defaultLocale}/{$cleanPath}");
+            }
+        }
 
         if ($cleanPath !== '' && ! str_contains($cleanPath, '/')) {
             $page = Page::where('slug', $cleanPath)

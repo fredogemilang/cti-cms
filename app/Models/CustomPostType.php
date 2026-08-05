@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Sitemap\SitemapBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
@@ -75,6 +76,14 @@ class CustomPostType extends Model
             if (empty($cpt->supports)) {
                 $cpt->supports = self::$defaultSupports;
             }
+        });
+
+        static::saved(function ($cpt) {
+            SitemapBuilder::clearCache($cpt->slug);
+        });
+
+        static::deleted(function ($cpt) {
+            SitemapBuilder::clearCache($cpt->slug);
         });
     }
 
@@ -226,9 +235,11 @@ class CustomPostType extends Model
         $targetSlug = $this->getLocalizedSlug($locale);
 
         if ($locale !== $defaultLocale) {
-            return url('/'.$locale.'/'.$targetSlug);
+            $url = url('/'.$locale.'/'.$targetSlug);
+        } else {
+            $url = url('/'.$targetSlug);
         }
 
-        return url('/'.$targetSlug);
+        return apply_filters('cpt.archive_url', $url, $this, $locale);
     }
 }

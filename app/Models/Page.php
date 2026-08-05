@@ -302,20 +302,34 @@ class Page extends Model
         return $path;
     }
 
+    public function hasTranslationForLocale(string $locale): bool
+    {
+        $transSlug = $this->getTranslation('slug', $locale, false);
+
+        return ! empty($transSlug) && trim((string) $transSlug) !== '';
+    }
+
     public function getUrl(?string $locale = null): string
     {
         $locale ??= app()->getLocale();
         $defaultLocale = static::defaultLocale();
+
+        if ($locale !== $defaultLocale && ! $this->hasTranslationForLocale($locale)) {
+            $locale = $defaultLocale;
+        }
+
         $prefix = ($locale !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix')
             ? '/'.$locale
             : '';
 
+        $slug = $this->getTranslation('slug', $locale, false) ?: $this->slug;
+
         // Homepage resolves to root URL, not /home
-        if ($this->slug === 'home') {
+        if ($slug === 'home' || $this->slug === 'home') {
             return url($prefix ?: '/');
         }
 
-        return url($prefix.'/'.$this->getFullPath());
+        return url($prefix.'/'.$slug);
     }
 
     /**
