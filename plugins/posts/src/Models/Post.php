@@ -107,9 +107,23 @@ class Post extends Model
 
     public function hasTranslationForLocale(string $locale): bool
     {
-        $transSlug = $this->getTranslation('slug', $locale, false);
+        $defaultLocale = function_exists('setting') ? setting('default_locale', config('app.locale', 'en')) : config('app.locale', 'en');
+        if ($locale === $defaultLocale) {
+            return true;
+        }
 
-        return ! empty($transSlug) && trim((string) $transSlug) !== '';
+        if (! empty($this->translations[$locale]) && is_array($this->translations[$locale]) && count(array_filter($this->translations[$locale])) > 0) {
+            return true;
+        }
+
+        $transSlug = $this->getTranslation('slug', $locale, false);
+        if (! empty($transSlug) && trim((string) $transSlug) !== '') {
+            return true;
+        }
+
+        $transTitle = $this->getTranslation('title', $locale, false);
+
+        return ! empty($transTitle) && trim((string) $transTitle) !== '';
     }
 
     public function getUrl(?string $locale = null): string
