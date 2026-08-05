@@ -71,28 +71,83 @@ Include partials in page templates using dot notation:
 
 ---
 
-## 5. Theme Manifest (`theme.json`) & Publishing
+## 5. Theme Manifest (`theme.json`) & Form Assignments
 
-Every theme requires a `theme.json` manifest defining available templates, block schemas, form placeholders, and menu locations:
+Every theme **MUST** contain a `theme.json` manifest at its root directory. This manifest defines theme metadata, supported capabilities, page templates, block schemas, form placeholders, and archive settings.
+
+### A. Manifest Schema (`theme.json`)
 
 ```json
 {
-  "name": "CDT Theme",
-  "slug": "cdt",
-  "version": "1.0.0",
-  "templates": {
-    "home": {
-      "label": "Home Page",
-      "blocks": []
+    "name": "CDT Theme",
+    "slug": "cdt",
+    "version": "1.0.0",
+    "description": "Official Central Data Technology (CDT) Enterprise Theme.",
+    "author": "CTI Group",
+    "screenshot": "screenshot.png",
+    "supports": [
+        "pages",
+        "posts",
+        "menus",
+        "cpt",
+        "forms"
+    ],
+    "form_placeholders": [
+        {
+            "key": "contact_form",
+            "label": "Contact Form",
+            "description": "Main contact form displayed on the Contact Us page and global Contact Section."
+        },
+        {
+            "key": "consultation_form",
+            "label": "Consultation Form",
+            "description": "Consultation request form displayed on Technology Alliance and Tech Product single pages."
+        },
+        {
+            "key": "newsletter_form",
+            "label": "Newsletter Subscription Form",
+            "description": "Newsletter subscription form displayed in the footer modal."
+        }
+    ],
+    "page_templates": {
+        "default": {
+            "label": "Default",
+            "description": "Standard page layout",
+            "blocks": []
+        },
+        "home": {
+            "label": "Homepage",
+            "description": "CDT Main Homepage layout",
+            "blocks": []
+        }
+    },
+    "archive_settings": {
+        "per_page": 12,
+        "layout": "grid",
+        "show_sidebar": false
     }
-  },
-  "menu_locations": {
-    "primary": "Primary Navigation",
-    "footer": "Footer Navigation"
-  }
 }
 ```
 
+### B. Form Placeholders & Admin Assignments
+
+1. **Placeholder Registration**: Form slots defined under `"form_placeholders"` in `theme.json` are automatically parsed by the Form Builder engine.
+2. **Admin Assignments UI**: Admins manage form-to-placeholder mappings at `/ctrlpanel/forms/assignments` (or via Form Studio). Mappings are saved into site settings as `theme_{$theme->slug}_form_assignments`.
+3. **Rendering Assigned Forms in Theme Blade Views**:
+```blade
+@php
+    $theme = active_theme();
+    $assignments = setting("theme_{$theme->slug}_form_assignments", []);
+    $formId = $assignments['contact_form'] ?? null;
+    $form = $formId ? \App\Models\Form::with('fields')->find($formId) : null;
+@endphp
+
+@if($form)
+    @include('cdt::partials.tailwind-form', ['form' => $form, 'variant' => 'dark'])
+@endif
+```
+
+### C. Publishing Theme Assets
 Publish theme assets to the public directory using artisan:
 ```bash
 php artisan theme:publish cdt
