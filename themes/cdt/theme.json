@@ -1,0 +1,73 @@
+{
+    "name": "CDT Theme",
+    "slug": "cdt",
+    "version": "1.0.0",
+    "description": "Official Central Data Technology (CDT) Enterprise Theme.",
+    "author": "CTI Group",
+    "screenshot": "screenshot.png",
+    "supports": [
+        "pages",
+        "posts",
+        "menus",
+        "cpt",
+        "forms"
+    ],
+    "form_placeholders": [
+        {
+            "key": "contact_form",
+            "label": "Contact Form",
+            "description": "Main contact form displayed on the Contact Us page and global Contact Section."
+        },
+        {
+            "key": "consultation_form",
+            "label": "Consultation Form",
+            "description": "Consultation request form displayed on Technology Alliance and Tech Product single pages."
+        },
+        {
+            "key": "newsletter_form",
+            "label": "Newsletter Subscription Form",
+            "description": "Newsletter subscription form displayed in the footer modal."
+        }
+    ],
+    "page_templates": {
+        "default": {
+            "label": "Default",
+            "description": "Standard page layout",
+            "blocks": []
+        },
+        "home": {
+            "label": "Homepage",
+            "description": "CDT Main Homepage layout",
+            "blocks": []
+        },
+        "about": {
+            "label": "About Us",
+            "description": "CDT Company Overview & Vision page layout",
+            "blocks": []
+        },
+        "contact": {
+            "label": "Contact Us",
+            "description": "CDT Contact & Consultation page layout",
+            "blocks": []
+        },
+        "video": {
+            "label": "Video Library",
+            "description": "Interactive YouTube Video Library page layout",
+            "blocks": []
+        },
+        "careers": {
+            "label": "Careers",
+            "description": "CDT Careers & Job Opportunities page layout",
+            "blocks": []
+        }
+    },
+    "archive_settings": {
+        "per_page": 12,
+        "layout": "grid",
+        "show_sidebar": false,
+        "show_excerpt": true,
+        "show_author": false,
+        "show_date": true,
+        "excerpt_length": 150
+    }
+}
