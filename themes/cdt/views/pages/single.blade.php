@@ -55,7 +55,7 @@
           @endforeach
         </div>
       @elseif(isset($page) && $page->content)
-        <div class="prose max-w-none text-zinc-800 text-base md:text-lg leading-relaxed [&_a]:text-red-600 hover:[&_a]:text-red-700 [&_a]:underline [&_a]:font-medium transition-colors">
+        <div class="prose max-w-none text-zinc-800 text-base md:text-lg leading-relaxed prose-a:text-blue-500 hover:prose-a:text-blue-600 prose-a:underline">
           {!! $page->content !!}
         </div>
       @endif

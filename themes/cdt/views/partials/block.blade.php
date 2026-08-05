@@ -6,7 +6,7 @@
 <div class="block-item block-{{ $block->type }} mb-8" data-block-name="{{ $block->name }}">
     @switch($block->type)
         @case('wysiwyg')
-            <div class="prose max-w-none text-zinc-800 text-base md:text-lg leading-relaxed space-y-4 [&_a]:text-red-600 hover:[&_a]:text-red-700 [&_a]:underline [&_a]:font-medium transition-colors">
+            <div class="prose max-w-none text-zinc-800 text-base md:text-lg leading-relaxed space-y-4 prose-a:text-blue-500 hover:prose-a:text-blue-600 prose-a:underline">
                 {!! $val !!}
             </div>
             @break
