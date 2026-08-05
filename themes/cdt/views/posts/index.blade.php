@@ -3,6 +3,10 @@
 @php
     $currentLocale = app()->getLocale();
     
+    // Categories and Tags for Filter Bar & Modal
+    $categories = \Plugins\Posts\Models\Category::where('slug', '!=', 'uncategorized')->orderBy('name')->get();
+    $tags = \Plugins\Posts\Models\Tag::withCount('posts')->orderBy('name')->get();
+
     // Featured Posts (for Swiper hero slider - minimum 3 items)
     if (!isset($featuredPosts) || $featuredPosts->count() < 3) {
         $featuredPosts = \Plugins\Posts\Models\Post::published()
@@ -19,12 +23,40 @@
         }
     }
 
-    // Date format and Posts pagination from Posts Settings
     $dateFormat = $dateFormat ?? \Plugins\Posts\Models\Setting::get('date_format', 'M d, Y');
-    if (!isset($posts)) {
-        $perPage = (int) \Plugins\Posts\Models\Setting::get('posts_per_page', 9);
-        $posts = \Plugins\Posts\Models\Post::published()->latest()->paginate($perPage);
+    $perPage = (int) \Plugins\Posts\Models\Setting::get('posts_per_page', 9);
+
+    // Active Filters
+    $selectedCategory = request('category', $category ?? null);
+    $selectedTag = request('tag');
+    $searchQuery = request('q');
+
+    // Build Posts Query
+    $postsQuery = \Plugins\Posts\Models\Post::published()->with(['categories', 'author', 'tags'])->latest();
+
+    if ($selectedCategory) {
+        $postsQuery->whereHas('categories', function ($q) use ($selectedCategory) {
+            $q->where('slug', $selectedCategory)
+              ->orWhere('id', $selectedCategory);
+        });
     }
+
+    if ($selectedTag) {
+        $postsQuery->whereHas('tags', function ($q) use ($selectedTag) {
+            $q->where('slug', $selectedTag)
+              ->orWhere('id', $selectedTag);
+        });
+    }
+
+    if ($searchQuery) {
+        $postsQuery->where(function ($q) use ($searchQuery) {
+            $q->where('title', 'like', "%{$searchQuery}%")
+              ->orWhere('excerpt', 'like', "%{$searchQuery}%")
+              ->orWhere('content', 'like', "%{$searchQuery}%");
+        });
+    }
+
+    $posts = $postsQuery->paginate($perPage)->withQueryString();
 @endphp
 
 @section('content')
@@ -41,7 +73,7 @@
 
     <div class="overflow-hidden">
       <h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold text-gray-900 leading-tight">
-        Blog & News
+        {{ class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::getArchiveTitle($currentLocale) : 'Blog & News' }}
       </h1>
     </div>
 
@@ -54,7 +86,8 @@
             $featTitle = $feat->getTranslation('title', $currentLocale) ?: $feat->title;
             $featExcerpt = $feat->getTranslation('excerpt', $currentLocale) ?: ($feat->excerpt ?: Str::limit(strip_tags($feat->content), 160));
             $featImg = $feat->featured_image ? resolve_block_asset($feat->featured_image) : asset('themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
-            $featCategory = $feat->category ? $feat->category->name : 'Technology';
+            $featCatObj = $feat->categories->first();
+            $featCategory = $featCatObj ? ($featCatObj->getTranslation('name', $currentLocale) ?: $featCatObj->name) : 'Technology';
             $featAuthor = $feat->author ? $feat->author->name : 'CDT Editorial';
             $featDate = $feat->published_at ? $feat->published_at->format($dateFormat) : $feat->created_at->format($dateFormat);
           @endphp
@@ -87,7 +120,7 @@
                   </div>
                 </div>
                 <a href="{{ $feat->getUrl() }}" class="flex items-center gap-2 text-primary font-bold text-xs hover:text-red-800 transition-colors group/btn">
-                  <span>Read More</span>
+                  <span>{{ t('common.read_more', 'Read More') }}</span>
                   <span class="bg-red-50 p-2 rounded-full group-hover:bg-primary group-hover:text-white transition-colors">
                     <svg class="w-4 h-4 transform group-hover:-rotate-45 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                   </span>
@@ -104,7 +137,7 @@
           <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
         </button>
         <button class="swiper-button-next-opt2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/80 backdrop-blur-md border border-zinc-200 text-gray-800 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all cursor-pointer shadow-lg pointer-events-auto">
-          <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+          <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7m0 0l-7 7m7-7H3"></path></svg>
         </button>
       </div>
 
@@ -159,63 +192,305 @@
 </script>
 
 <!-- Blog Grid Section -->
-<section class="py-16 md:py-24 bg-zinc-50 relative">
+@php
+  $blogArchiveSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::getArchiveSlug($currentLocale) : 'blog-news';
+  $baseUrl = localized_url('/' . $blogArchiveSlug);
+@endphp
+
+<section 
+  x-data="blogFilter({
+    baseUrl: '{{ $baseUrl }}',
+    category: '{{ $selectedCategory }}',
+    tag: '{{ $selectedTag }}',
+    search: '{{ $searchQuery }}'
+  })"
+  class="py-12 md:py-20 bg-zinc-50 relative z-10"
+>
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      @forelse($posts as $post)
-        @php
-          $pTitle = $post->getTranslation('title', $currentLocale) ?: $post->title;
-          $pExcerpt = $post->getTranslation('excerpt', $currentLocale) ?: ($post->excerpt ?: Str::limit(strip_tags($post->content), 120));
-          $pImg = $post->featured_image ? resolve_block_asset($post->featured_image) : asset('themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
-          $pCategory = $post->category ? $post->category->name : 'Technology';
-          $pDate = $post->published_at ? $post->published_at->format($dateFormat) : $post->created_at->format($dateFormat);
-        @endphp
-        <div class="group relative rounded-3xl bg-white border border-zinc-100 p-6 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col justify-between">
-          <div>
-            <div class="h-48 -mx-6 -mt-6 mb-6 overflow-hidden relative">
-              <img src="{{ $pImg }}" alt="{{ $pTitle }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-              <span class="absolute top-4 left-4 text-xs bg-primary text-white px-3 py-1 rounded-full font-bold uppercase tracking-wider shadow-md">
-                {{ $pCategory }}
-              </span>
-            </div>
+    
+    <!-- Modern Horizontal Filter Bar -->
+    <div class="mb-12 bg-white rounded-2xl border border-zinc-200 p-4 shadow-sm flex flex-col md:flex-row gap-6 items-center justify-between relative z-20">
+      
+      <!-- Scrollable Category Pills -->
+      <div class="w-full md:w-auto flex-1 overflow-x-auto pb-2 md:pb-0 scrollbar-hide" style="scrollbar-width: none;">
+        <div class="flex items-center gap-2 min-w-max">
+          <button type="button" 
+            @click="setCategory('')" 
+            :class="!category && !tag && !search ? 'bg-primary text-white font-bold shadow-md transform -translate-y-0.5' : 'bg-zinc-50 text-gray-600 hover:bg-red-50 hover:text-primary font-medium border border-transparent hover:border-red-100'"
+            class="px-5 py-2 rounded-full text-sm transition-all cursor-pointer">
+            {{ t('blog.all', 'All') }}
+          </button>
 
-            <div class="text-xs text-gray-500 mb-3 flex items-center gap-2">
-              <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              {{ $pDate }}
-            </div>
-
-            <h2 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
-              <a href="{{ $post->getUrl() }}">{{ $pTitle }}</a>
-            </h2>
-
-            <p class="text-sm text-gray-600 font-light leading-relaxed line-clamp-3 mb-6">
-              {{ $pExcerpt }}
-            </p>
+          @foreach($categories as $cat)
+            @php
+              $catName = $cat->getTranslation('name', $currentLocale) ?: $cat->name;
+              $catSlug = $cat->getTranslation('slug', $currentLocale) ?: $cat->slug;
+            @endphp
+            <button type="button"
+              @click="setCategory('{{ $catSlug }}')"
+              :class="category === '{{ $catSlug }}' || category == '{{ $cat->id }}' ? 'bg-primary text-white font-bold shadow-md' : 'bg-zinc-50 text-gray-600 hover:bg-red-50 hover:text-primary font-medium border border-transparent hover:border-red-100'"
+              class="px-5 py-2 rounded-full text-sm transition-colors border cursor-pointer">
+              {{ $catName }}
+            </button>
+          @endforeach
+          
+          <!-- Button for Popular Tags Modal -->
+          @if(isset($tags) && $tags->isNotEmpty())
+          <div class="ml-2">
+            <button type="button" onclick="document.getElementById('tagsModal').classList.remove('hidden')" class="px-5 py-2 rounded-full bg-zinc-50 text-gray-600 hover:bg-zinc-100 text-sm font-medium transition-colors flex items-center gap-2 border border-zinc-200 cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+              {{ t('blog.popular_tags', 'Popular Tags') }}
+              <span x-show="tag" class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+            </button>
           </div>
+          @endif
+        </div>
+      </div>
 
-          <div class="pt-4 border-t border-zinc-100 flex items-center justify-between mt-auto">
-            <a href="{{ $post->getUrl() }}" class="text-xs font-bold text-primary hover:text-red-800 transition-colors flex items-center gap-1 group/link">
-              <span>Read Article</span>
-              <span class="group-hover/link:translate-x-1 transition-transform">→</span>
-            </a>
-          </div>
+      <!-- Command Search Bar -->
+      <form @submit.prevent="fetchPosts(true)" class="w-full md:w-80 relative group">
+        <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+          <svg class="h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
         </div>
-      @empty
-        <div class="col-span-full text-center py-16 text-gray-500">
-          No blog posts available at the moment.
+        <input type="text" x-model="search" @input.debounce.400ms="fetchPosts(true)" id="blogSearchInput" placeholder="{{ t('blog.search_placeholder', 'Search articles...') }}" class="block w-full pl-11 pr-14 py-2.5 bg-zinc-50 border border-zinc-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-gray-800 placeholder-gray-400">
+        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+           <span class="text-[10px] text-gray-500 font-bold px-2 py-1 bg-white border border-zinc-200 rounded shadow-sm">⌘K</span>
         </div>
-      @endforelse
+      </form>
     </div>
 
-    @if(method_exists($posts, 'links'))
-      <div class="mt-12">
-        {{ $posts->links('cdt::partials.pagination') }}
+    <!-- Active Filter Indicators -->
+    <div x-show="category || tag || search" x-cloak class="mb-8 flex items-center gap-3 flex-wrap text-sm text-gray-600">
+      <span class="font-medium">{{ t('blog.active_filters', 'Active Filters:') }}</span>
+      
+      <template x-if="category">
+        <button type="button" @click="setCategory('')" class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary font-semibold rounded-full text-xs hover:bg-primary/20 transition-colors cursor-pointer">
+          <span>Category: <span x-text="category"></span></span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </template>
+
+      <template x-if="tag">
+        <button type="button" @click="setTag('')" class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary font-semibold rounded-full text-xs hover:bg-primary/20 transition-colors cursor-pointer">
+          <span>Tag: #<span x-text="tag"></span></span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </template>
+
+      <template x-if="search">
+        <button type="button" @click="search = ''; fetchPosts(true)" class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary font-semibold rounded-full text-xs hover:bg-primary/20 transition-colors cursor-pointer">
+          <span>Search: "<span x-text="search"></span>"</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </template>
+
+      <button type="button" @click="resetFilters()" class="text-xs text-gray-400 hover:text-primary underline ml-2 cursor-pointer">{{ t('blog.clear_all', 'Clear All') }}</button>
+    </div>
+
+    <!-- Blog Container (Skeletons when loading, Partial Grid when loaded) -->
+    <div class="relative min-h-[400px]">
+      <!-- Loading Skeleton Overlay -->
+      <div x-show="loading" x-cloak class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10 animate-pulse">
+        @for($i = 0; $i < 6; $i++)
+          <div class="bg-white rounded-[1.5rem] border border-zinc-200 overflow-hidden shadow-sm h-[400px] flex flex-col p-6">
+            <div class="w-full h-48 bg-zinc-200 rounded-xl mb-4"></div>
+            <div class="w-1/3 h-4 bg-zinc-200 rounded mb-3"></div>
+            <div class="w-3/4 h-6 bg-zinc-200 rounded mb-2"></div>
+            <div class="w-full h-12 bg-zinc-200 rounded mb-4"></div>
+            <div class="w-1/2 h-4 bg-zinc-200 rounded mt-auto"></div>
+          </div>
+        @endfor
       </div>
-    @endif
+
+      <!-- Main HTML Container -->
+      <div x-show="!loading" id="blogGridContainer">
+        @include('cdt::posts.partials.grid-partial')
+      </div>
+    </div>
   </div>
+
+  <!-- Popular Tags Modal -->
+  @if(isset($tags) && $tags->isNotEmpty())
+  <div id="tagsModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="document.getElementById('tagsModal').classList.add('hidden')"></div>
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0 relative">
+      <div class="relative bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg w-full p-6" role="dialog" aria-modal="true">
+        <div class="flex justify-between items-center mb-5">
+          <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+            {{ t('blog.popular_tags', 'Popular Tags') }}
+          </h3>
+          <button type="button" onclick="document.getElementById('tagsModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-500 hover:bg-gray-100 rounded-full p-1 transition-colors">
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        
+        <p class="text-sm text-gray-500 mb-6">{{ t('blog.modal_tags_desc', 'Discover trending topics across our blog. Select a tag to filter articles.') }}</p>
+        
+        <div class="flex flex-wrap gap-3">
+          @foreach($tags as $tItem)
+            @php
+              $tName = $tItem->getTranslation('name', $currentLocale) ?: $tItem->name;
+              $tSlug = $tItem->getTranslation('slug', $currentLocale) ?: $tItem->slug;
+              $tCount = $tItem->posts_count ?? 0;
+            @endphp
+            <button type="button"
+              @click="setTag('{{ $tSlug }}')"
+              :class="tag === '{{ $tSlug }}' ? 'bg-primary text-white' : 'bg-zinc-50 text-gray-700 hover:bg-primary hover:text-white'"
+              class="px-4 py-2 text-sm font-medium rounded-xl transition-all border border-zinc-200 shadow-sm hover:shadow-md cursor-pointer">
+              #{{ $tName }} <span class="ml-1 text-xs opacity-60">({{ $tCount }})</span>
+            </button>
+          @endforeach
+        </div>
+        
+        <div class="mt-8 pt-5 border-t border-gray-100 flex justify-end">
+          <button type="button" onclick="document.getElementById('tagsModal').classList.add('hidden')" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg text-sm transition-colors cursor-pointer">{{ t('common.close', 'Close') }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  @endif
 </section>
+
+<!-- Alpine.js Component Script for Blog AJAX Filtering & URL History Sync -->
+<script>
+  function blogFilter(config) {
+    return {
+      baseUrl: config.baseUrl,
+      category: config.category || '',
+      tag: config.tag || '',
+      search: config.search || '',
+      loading: false,
+
+      init() {
+        window.addEventListener('popstate', () => {
+          const path = window.location.pathname;
+          const params = new URLSearchParams(window.location.search);
+
+          const catMatch = path.match(/\/category\/([^\/]+)/);
+          const tagMatch = path.match(/\/tag\/([^\/]+)/);
+
+          this.category = catMatch ? decodeURIComponent(catMatch[1]) : (params.get('category') || '');
+          this.tag = tagMatch ? decodeURIComponent(tagMatch[1]) : (params.get('tag') || '');
+          this.search = params.get('q') || params.get('search') || '';
+
+          this.fetchPosts(false);
+        });
+
+        // Delegate pagination click events inside container
+        document.addEventListener('click', (e) => {
+          const paginationLink = e.target.closest('#blogGridContainer .blog-pagination-nav a');
+          if (paginationLink && paginationLink.href) {
+            e.preventDefault();
+            const url = new URL(paginationLink.href);
+            const path = url.pathname;
+            const params = new URLSearchParams(url.search);
+
+            const catMatch = path.match(/\/category\/([^\/]+)/);
+            const tagMatch = path.match(/\/tag\/([^\/]+)/);
+
+            this.category = catMatch ? decodeURIComponent(catMatch[1]) : (params.get('category') || '');
+            this.tag = tagMatch ? decodeURIComponent(tagMatch[1]) : (params.get('tag') || '');
+            this.search = params.get('q') || params.get('search') || '';
+
+            this.loading = true;
+            window.history.pushState(null, '', url.href);
+            fetch(url.href, {
+              headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+              }
+            })
+            .then(res => res.json())
+            .then(data => {
+              this.loading = false;
+              if (data.html) {
+                const container = document.getElementById('blogGridContainer');
+                if (container) container.innerHTML = data.html;
+                window.scrollTo({ top: container.offsetTop - 100, behavior: 'smooth' });
+              }
+            })
+            .catch(() => { this.loading = false; });
+          }
+        });
+      },
+
+      setCategory(catSlug) {
+        this.category = (this.category === catSlug) ? '' : catSlug;
+        if (this.category) this.tag = '';
+        this.fetchPosts(true);
+      },
+
+      setTag(tagSlug) {
+        this.tag = (this.tag === tagSlug) ? '' : tagSlug;
+        if (this.tag) this.category = '';
+        const modal = document.getElementById('tagsModal');
+        if (modal) modal.classList.add('hidden');
+        this.fetchPosts(true);
+      },
+
+      resetFilters() {
+        this.category = '';
+        this.tag = '';
+        this.search = '';
+        this.fetchPosts(true);
+      },
+
+      fetchPosts(pushState = true) {
+        this.loading = true;
+
+        let targetUrl = this.baseUrl;
+        if (this.category) {
+          targetUrl += '/category/' + encodeURIComponent(this.category);
+        } else if (this.tag) {
+          targetUrl += '/tag/' + encodeURIComponent(this.tag);
+        }
+
+        const params = new URLSearchParams();
+        if (this.search) {
+          params.set('q', this.search);
+        }
+
+        const queryString = params.toString();
+        const requestUrl = targetUrl + (queryString ? '?' + queryString : '');
+
+        if (pushState) {
+          window.history.pushState(null, '', requestUrl);
+        }
+
+        fetch(requestUrl, {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
+          }
+        })
+        .then(res => res.json())
+        .then(data => {
+          this.loading = false;
+          if (data.html) {
+            const container = document.getElementById('blogGridContainer');
+            if (container) {
+              container.innerHTML = data.html;
+            }
+          }
+        })
+        .catch(err => {
+          this.loading = false;
+          console.error('Failed to fetch posts:', err);
+        });
+      }
+    }
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      const input = document.getElementById('blogSearchInput');
+      if (input) input.focus();
+    }
+  });
+</script>
 
 @endsection

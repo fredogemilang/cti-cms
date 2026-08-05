@@ -52,6 +52,7 @@
                 <option value="all">All Visibility Status</option>
                 <option value="visible">Visible Only</option>
                 <option value="hidden">Hidden Only</option>
+                <option value="featured">Featured Only</option>
             </select>
         </div>
     </div>
@@ -65,7 +66,8 @@
                         <th class="px-6 py-4">Video</th>
                         <th class="px-6 py-4">YouTube ID</th>
                         <th class="px-6 py-4">Published Date</th>
-                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">Visibility</th>
+                        <th class="px-6 py-4">Featured</th>
                         <th class="px-6 py-4 text-right">Actions</th>
                     </tr>
                 </thead>
@@ -83,9 +85,17 @@
                                         @endif
                                     </div>
                                     <div class="max-w-md">
-                                        <h4 class="font-bold text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug">
-                                            {{ $video->title }}
-                                        </h4>
+                                        <div class="flex items-center gap-2">
+                                            <h4 class="font-bold text-gray-900 dark:text-gray-100 line-clamp-2 leading-snug">
+                                                {{ $video->title }}
+                                            </h4>
+                                        </div>
+                                        @if($video->is_featured)
+                                            <span class="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-md border border-amber-300 dark:border-amber-700 mt-1">
+                                                <svg class="w-3 h-3 fill-amber-500 text-amber-500" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                                Featured Video
+                                            </span>
+                                        @endif
                                         <p class="text-[11px] text-gray-400 mt-1 line-clamp-1">
                                             {{ $video->description }}
                                         </p>
@@ -104,6 +114,12 @@
                             <td class="px-6 py-4">
                                 <button wire:click="toggleVisibility({{ $video->id }})" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition cursor-pointer {{ $video->is_visible ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300' : 'bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-gray-400' }}">
                                     {{ $video->is_visible ? 'Visible' : 'Hidden' }}
+                                </button>
+                            </td>
+                            <td class="px-6 py-4">
+                                <button wire:click="toggleFeatured({{ $video->id }})" title="Toggle Featured Video" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition cursor-pointer flex items-center gap-1.5 {{ $video->is_featured ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/70 dark:text-amber-200 border border-amber-300 dark:border-amber-700' : 'bg-gray-100 text-gray-500 dark:bg-zinc-800 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700' }}">
+                                    <svg class="w-3 h-3 {{ $video->is_featured ? 'fill-amber-500 text-amber-500' : 'text-gray-400' }}" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                    {{ $video->is_featured ? 'Featured' : 'Normal' }}
                                 </button>
                             </td>
                             <td class="px-6 py-4 text-right">

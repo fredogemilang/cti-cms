@@ -35,8 +35,9 @@
         ->orderBy('title')
         ->get() : collect();
 
-    // Dynamic Blog URL from Posts Settings
-    $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::get('archive_slug', 'blog') : 'blog';
+    // Dynamic Blog URL & Title from Posts Settings
+    $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::getArchiveSlug($currentLocale) : 'blog-news';
+    $blogTitle = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::getArchiveTitle($currentLocale) : t('nav.blog_news', 'Blog & News');
     $blogUrl = localized_url('/' . $blogSlug);
 
     // Site logo setting fallback
@@ -360,8 +361,8 @@
               <a href="{{ localized_url('/customer-success') }}" title="{{ t('nav.customer_success', 'Customer Success') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
                 {{ t('nav.customer_success', 'Customer Success') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
               </a>
-              <a href="{{ $blogUrl }}" title="{{ t('nav.blog_news', 'Blog & News') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
-                {{ t('nav.blog_news', 'Blog & News') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+              <a href="{{ $blogUrl }}" title="{{ $blogTitle }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
+                {{ $blogTitle }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
               </a>
               <a href="{{ localized_url('/video') }}" title="{{ t('nav.video', 'Video') }}" class="text-sm font-semibold text-gray-700 hover:text-primary hover:bg-gray-50 transition-colors px-5 py-3 flex justify-between items-center group/link">
                 {{ t('nav.video', 'Video') }} <span class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>

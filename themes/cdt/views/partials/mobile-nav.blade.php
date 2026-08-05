@@ -28,7 +28,8 @@
             ->orderBy('title')
             ->get();
     }
-    $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::get('archive_slug', 'blog') : 'blog';
+    $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::getArchiveSlug($currentLocale) : 'blog-news';
+    $blogTitle = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::getArchiveTitle($currentLocale) : t('nav.blog_news', 'Blog & News');
     $blogUrl = localized_url('/' . $blogSlug);
 @endphp
 
@@ -354,7 +355,7 @@
               $csTitle = $csCpt ? ($csCpt->getTranslation('plural_label', $currentLocale ?? app()->getLocale()) ?: $csCpt->plural_label) : t('nav.customer_success', 'Customer Success');
             @endphp
             <a href="{{ $csUrl }}" class="block hover:text-primary font-medium">{{ $csTitle }}</a>
-            <a href="{{ $blogUrl }}" class="block hover:text-primary font-medium">{{ t('nav.blog_news', 'Blog & News') }}</a>
+            <a href="{{ $blogUrl }}" class="block hover:text-primary font-medium">{{ $blogTitle }}</a>
             <a href="{{ localized_url('/video') }}" class="block hover:text-primary font-medium">{{ t('nav.video', 'Video') }}</a>
           </div>
         </div>

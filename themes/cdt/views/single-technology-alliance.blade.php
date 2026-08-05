@@ -176,8 +176,14 @@
                 <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
                   {!! render_icon($rel->getMeta('icon', 'shield-check'), 'w-7 h-7') !!}
                 </div>
-                <h3 class="text-xl font-bold text-zinc-900 mb-3 group-hover:text-primary transition-colors">{{ $rel->getTranslation('title') }}</h3>
-                <p class="text-zinc-600 text-base leading-relaxed mb-6">{{ strip_tags($rel->content ?: ($rel->excerpt ?: '')) }}</p>
+                @php
+                  $relLocale = app()->getLocale();
+                  $relDesc = $rel->getTranslation('excerpt', $relLocale, false)
+                      ?: ($rel->getTranslation('content', $relLocale, false)
+                      ?: ($rel->getMeta('hero_description')
+                      ?: ($rel->excerpt ?: $rel->content)));
+                @endphp
+                <p class="text-zinc-600 text-base leading-relaxed mb-6">{{ \Illuminate\Support\Str::limit(strip_tags($relDesc), 140) }}</p>
               </div>
               <span class="inline-flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider">{{ t('common.explore_more', 'Explore More') }} <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></span>
             </a>

@@ -8,9 +8,14 @@
     $editUrl = null;
     $editLabel = null;
 
+    $page = $page ?? view()->shared('page') ?? request()->attributes->get('page');
+    $entry = $entry ?? view()->shared('entry') ?? view()->shared('cpt_entry') ?? request()->attributes->get('cpt_entry') ?? request()->attributes->get('entry');
+    $post = $post ?? view()->shared('post') ?? request()->attributes->get('post');
+
     if (isset($entry) && $entry instanceof \App\Models\CptEntry) {
-        $editUrl = url("{$adminPath}/cpt/entries/{$entry->postType->slug}/{$entry->id}/edit");
-        $editLabel = 'Edit ' . ($entry->postType->singular_label ?? 'Entry');
+        $postTypeSlug = $entry->postType?->slug ?? $entry->post_type_slug ?? 'technology-alliance';
+        $editUrl = url("{$adminPath}/cpt/entries/{$postTypeSlug}/{$entry->id}/edit");
+        $editLabel = 'Edit ' . ($entry->postType?->singular_label ?? 'Entry');
     } elseif (isset($page) && $page instanceof \App\Models\Page) {
         $editUrl = url("{$adminPath}/pages/{$page->id}/edit");
         $editLabel = 'Edit Page';

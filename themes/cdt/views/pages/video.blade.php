@@ -1,6 +1,7 @@
 @extends('cdt::layouts.app')
 
 @php
+    $currentLocale = app()->getLocale();
     $dbVideos = class_exists(\Plugins\Youtube\Models\YoutubeVideo::class)
         ? \Plugins\Youtube\Models\YoutubeVideo::where('is_visible', true)->orderBy('published_at', 'desc')->get()
         : collect();
@@ -19,8 +20,13 @@
     }
 
     $formattedVideos = [];
+    $defaultVideoId = null;
     foreach ($dbVideos as $v) {
         $plIds = $playlistVideoMap[$v->id] ?? [];
+        $isFeatured = (bool) $v->is_featured;
+        if ($isFeatured && ! $defaultVideoId) {
+            $defaultVideoId = $v->youtube_id;
+        }
         $formattedVideos[] = [
             'id' => $v->youtube_id,
             'title' => $v->title,
@@ -31,7 +37,11 @@
             'duration' => $v->duration ?: '',
             'author' => $v->channel_title ?: 'Central Data Technology',
             'thumbnail' => $v->getBestThumbnail(),
+            'is_featured' => $isFeatured,
         ];
+    }
+    if (! $defaultVideoId && ! empty($formattedVideos)) {
+        $defaultVideoId = $formattedVideos[0]['id'];
     }
 @endphp
 
@@ -249,6 +259,23 @@
     z-index: 5;
   }
 
+  /* Featured tag */
+  .featured-tag {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border-radius: 6px;
+    z-index: 5;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+  }
+
   /* Empty state */
   .empty-state {
     grid-column: 1 / -1;
@@ -329,7 +356,7 @@
       <!-- Centered Title -->
       <div class="overflow-hidden text-center mb-10">
         <h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold text-gray-900 leading-tight">
-          Video Library
+          {{ isset($page) && $page ? ($page->getTranslation('title', $currentLocale) ?: $page->title) : t('video.title', 'Video Library') }}
         </h1>
       </div>
 
@@ -369,7 +396,7 @@
     <!-- Section Header + Filters -->
     <div class="pt-10 mb-8">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8">
-        <span class="section-label">All Videos</span>
+        <span class="section-label">{{ t('video.all_videos', 'All Videos') }}</span>
 
         <!-- Search -->
         <div class="relative w-full md:w-72">
@@ -378,7 +405,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
           </span>
-          <input type="text" id="video-search" placeholder="Search videos..." class="search-light">
+          <input type="text" id="video-search" placeholder="{{ t('video.search_placeholder', 'Search videos...') }}" class="search-light">
           <button id="clear-search" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 hidden transition-colors">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -389,7 +416,7 @@
 
       <!-- Category Pills (Dynamic from YouTube Playlists) -->
       <div class="flex items-center gap-2 overflow-x-auto scrollbar-none pt-0 pl-3 pr-3 pb-4">
-        <button class="cat-pill active" data-category="All">All Videos</button>
+        <button class="cat-pill active" data-category="All">{{ t('video.all_videos', 'All Videos') }}</button>
         @foreach($playlists as $pl)
           <button class="cat-pill" data-category="{{ $pl->id }}">{{ $pl->title }}</button>
         @endforeach
@@ -422,10 +449,18 @@
     }
   ];
 
+  const DEFAULT_VIDEO_ID = @json($defaultVideoId);
   const VIDEO_DATA = DB_VIDEOS.length > 0 ? DB_VIDEOS : FALLBACK_VIDEOS;
+  const STRINGS = {
+    featuredVideo: @json(t('video.featured_video', 'Featured Video')),
+    nowPlaying: @json(t('video.now_playing', 'Now Playing')),
+    featured: @json(t('video.featured', 'Featured')),
+    noVideosFound: @json(t('video.no_videos_found', 'No videos found')),
+    noVideosDesc: @json(t('video.no_videos_desc', 'Try adjusting your filters or search terms.'))
+  };
 
   // App States
-  let currentVideoId = VIDEO_DATA[0].id;
+  let currentVideoId = DEFAULT_VIDEO_ID || (VIDEO_DATA.length > 0 ? VIDEO_DATA[0].id : '');
   let activeCategory = "All";
   let searchFilter = "";
   let ytPlayer = null;
@@ -568,7 +603,15 @@
     const authorEl = document.getElementById("main-author");
 
     if (titleEl) titleEl.textContent = video.title;
-    if (catEl) catEl.textContent = video.category;
+    if (catEl) {
+      if (video.is_featured) {
+        catEl.className = "inline-block px-2.5 py-0.5 bg-amber-50 border border-amber-200 rounded-full text-[11px] font-bold text-amber-700 uppercase tracking-wider";
+        catEl.textContent = "★ " + STRINGS.featuredVideo;
+      } else {
+        catEl.className = "inline-block px-2.5 py-0.5 bg-red-50 border border-red-100 rounded-full text-[11px] font-bold text-primary uppercase tracking-wider";
+        catEl.textContent = video.category || "Video";
+      }
+    }
     if (dateEl) dateEl.textContent = video.date;
     if (authorEl) authorEl.textContent = video.author;
   }
@@ -576,15 +619,17 @@
   function generateCardHTML(video, isActive) {
     const activeClass = isActive ? 'is-active' : '';
     const nowPlaying = isActive
-      ? `<span class="now-playing-badge"><span class="eq-dot"></span><span class="eq-dot"></span><span class="eq-dot"></span>Now Playing</span>`
+      ? `<span class="now-playing-badge"><span class="eq-dot"></span><span class="eq-dot"></span><span class="eq-dot"></span>${STRINGS.nowPlaying}</span>`
       : '';
     const thumbUrl = video.thumbnail || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
+    const featuredTag = video.is_featured ? `<div class="featured-tag">★ ${STRINGS.featured}</div>` : '';
 
     return `
     <div role="button" tabindex="0" class="video-card ${activeClass} video-item flex flex-col cursor-pointer select-none" data-video="${video.id}">
       <div class="card-thumb relative w-full aspect-video bg-zinc-900">
         <img src="${thumbUrl}" class="w-full h-full object-cover" alt="${video.title}" loading="lazy">
         <div class="cat-tag">${video.category}</div>
+        ${featuredTag}
         ${video.duration ? `<div class="duration-badge">${video.duration}</div>` : ''}
         <div class="play-overlay">
           <div class="play-btn-circle">
@@ -633,8 +678,8 @@
       allHtml = `
       <div class="empty-state">
         <svg class="w-14 h-14 text-gray-200 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-        <p class="text-gray-600 font-semibold mb-1">No videos found</p>
-        <p class="text-sm text-gray-400">Try adjusting your filters or search terms.</p>
+        <p class="text-gray-600 font-semibold mb-1">${STRINGS.noVideosFound}</p>
+        <p class="text-sm text-gray-400">${STRINGS.noVideosDesc}</p>
       </div>
     `;
     }

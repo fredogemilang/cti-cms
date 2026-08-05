@@ -4,19 +4,21 @@
     $currentLocale = app()->getLocale();
     $title = $post->getTranslation('title', $currentLocale) ?: $post->title;
     $content = $post->getTranslation('content', $currentLocale) ?: $post->content;
-    $category = $post->category ? $post->category->name : 'Technology';
+    $catObj = $post->categories->first();
+    $category = $catObj ? ($catObj->getTranslation('name', $currentLocale) ?: $catObj->name) : 'Technology';
     $author = $post->author ? $post->author->name : 'CDT Editorial';
     $dateFormat = $dateFormat ?? \Plugins\Posts\Models\Setting::get('date_format', 'M d, Y');
     $date = $post->published_at ? $post->published_at->format($dateFormat) : $post->created_at->format($dateFormat);
+    $readTime = method_exists($post, 'getReadingTime') ? $post->getReadingTime($currentLocale) : 1;
     $featImg = $post->featured_image ? resolve_block_asset($post->featured_image) : null;
-    $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::get('archive_slug', 'blog') : 'blog';
+    $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::getArchiveSlug($currentLocale) : 'blog-news';
     $blogUrl = localized_url('/' . $blogSlug);
     
     // Sidebar Recent Posts
     $recentPosts = \Plugins\Posts\Models\Post::published()
         ->where('id', '!=', $post->id)
         ->latest()
-        ->take(4)
+        ->take(3)
         ->get();
 
     // Previous & Next Posts
@@ -33,7 +35,7 @@
     // Related Posts (3 items)
     $relatedPosts = \Plugins\Posts\Models\Post::published()
         ->where('id', '!=', $post->id)
-        ->when($post->category_id, fn($q) => $q->where('category_id', $post->category_id))
+        ->when($catObj, fn($q) => $q->whereHas('categories', fn($c) => $c->where('categories.id', $catObj->id)))
         ->latest()
         ->take(3)
         ->get();
@@ -65,7 +67,10 @@
       <div class="flex items-center justify-center gap-3 mb-6">
         <span class="px-4 py-1.5 bg-red-100 text-primary text-xs font-bold uppercase tracking-wider rounded-full">{{ $category }}</span>
         <span class="text-gray-400">•</span>
-        <span class="text-sm font-medium text-gray-600">{{ $date }}</span>
+        <span class="text-sm font-medium text-gray-600 flex items-center gap-1">
+          <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          {{ $readTime }} min read
+        </span>
       </div>
       <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6 md:mb-8 tracking-tight">
         {{ $title }}
@@ -77,12 +82,12 @@
           </div>
           <div class="text-left">
             <p class="text-gray-900 font-bold leading-tight">{{ $author }}</p>
-            <p class="text-gray-500 text-xs leading-tight">CDT Editorial</p>
+            <p class="text-gray-500 text-xs leading-tight">{{ t('blog.cdt_editorial', 'CDT Editorial') }}</p>
           </div>
         </div>
         <div class="hidden sm:block h-10 border-r border-gray-300"></div>
         <div class="text-left">
-          <p class="text-gray-500 text-xs leading-tight">Published</p>
+          <p class="text-gray-500 text-xs leading-tight">{{ t('blog.published', 'Published') }}</p>
           <p class="text-gray-900 font-bold leading-tight">{{ $date }}</p>
         </div>
       </div>
@@ -117,7 +122,7 @@
         <!-- Social Share / Author Footer -->
         <div class="mt-12 pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div class="flex items-center gap-3">
-            <span class="text-sm font-bold text-gray-700">Share article:</span>
+            <span class="text-sm font-bold text-gray-700">{{ t('blog.share_article', 'Share article:') }}</span>
             <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->fullUrl()) }}" target="_blank" rel="noopener noreferrer" class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 hover:bg-[#0077b5] hover:text-white flex items-center justify-center transition-colors" title="Share on LinkedIn">
               <x-icon name="lucide:linkedin" class="w-4 h-4" />
             </a>
@@ -133,28 +138,58 @@
           </div>
 
           <a href="{{ $blogUrl }}" class="text-sm font-bold text-primary hover:underline flex items-center gap-1">
-            ← Back to Blog & News
+            ← {{ t('blog.back_to_blog', 'Back to Blog & News') }}
           </a>
         </div>
       </div>
 
-      <!-- Sidebar Widget Area (Right: 4 Cols) - Sticky Table of Contents -->
+      <!-- Sidebar Widget Area (Right: 4 Cols) -->
       <div class="lg:col-span-4 hidden lg:block" id="blog-sidebar-col">
-        <div class="sticky top-28" id="blog-sidebar">
-          
-          <!-- TOC Widget -->
-          <div id="toc-widget" class="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm">
-            <h2 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+        
+        <!-- Recent Posts Widget (Non-Sticky, Max 3) -->
+        @if($recentPosts->isNotEmpty())
+        <div id="recent-posts-widget" class="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm mb-4">
+          <h2 class="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+            {{ t('blog.recent_posts', 'Recent Posts') }}
+          </h2>
+          <div class="space-y-3">
+            @foreach($recentPosts as $rec)
+              @php
+                $recTitle = $rec->getTranslation('title', $currentLocale) ?: $rec->title;
+                $recImg = $rec->featured_image ? resolve_block_asset($rec->featured_image) : asset('themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
+                $recDate = $rec->published_at ? $rec->published_at->format($dateFormat) : $rec->created_at->format($dateFormat);
+              @endphp
+              <a href="{{ $rec->getUrl() }}" class="flex items-center gap-3 group">
+                <div class="w-14 h-14 rounded-xl overflow-hidden bg-zinc-100 flex-shrink-0 border border-zinc-100">
+                  <img src="{{ $recImg }}" alt="{{ $recTitle }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                </div>
+                <div class="flex-grow min-w-0">
+                  <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">{{ $recDate }}</span>
+                  <h3 class="text-xs font-bold text-gray-900 line-clamp-2 leading-snug group-hover:text-primary transition-colors">
+                    {{ $recTitle }}
+                  </h3>
+                </div>
+              </a>
+            @endforeach
+          </div>
+        </div>
+        @endif
+
+        <!-- TOC Widget (Sticky, flush to top) -->
+        <div id="blog-sidebar">
+          <div id="toc-widget" class="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
+            <h2 class="text-base font-bold text-gray-900 mb-3.5 flex items-center gap-2">
               <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-              Table of Contents
+              {{ t('blog.table_of_contents', 'Table of Contents') }}
             </h2>
             <nav class="toc-nav">
-              <ul id="toc-list" class="space-y-2.5 text-sm font-medium text-gray-500 relative border-l-2 border-zinc-200 ml-2 pl-5">
+              <ul id="toc-list" class="space-y-2 text-sm font-medium text-gray-500 relative border-l-2 border-zinc-200 ml-2 pl-5">
               </ul>
             </nav>
           </div>
-
         </div>
+
       </div>
 
     </div>
@@ -178,7 +213,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
           </div>
           <div>
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Previous Article</span>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">{{ t('blog.prev_article', 'Previous Article') }}</span>
             <h3 class="text-base font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2">{{ $prevTitle }}</h3>
           </div>
         </a>
@@ -196,7 +231,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
           </div>
           <div class="md:ml-auto">
-            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Next Article</span>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">{{ t('blog.next_article', 'Next Article') }}</span>
             <h3 class="text-base font-bold text-gray-900 group-hover:text-primary transition-colors line-clamp-2">{{ $nextTitle }}</h3>
           </div>
         </a>
@@ -214,8 +249,8 @@
 <section class="py-12 pb-32 md:py-24 md:pb-24 bg-white relative z-10">
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-2xl mx-auto mb-16">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">You Might Also Like</h2>
-      <p class="text-gray-600">Rekomendasi artikel terbaik dari pakar industri kami.</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{{ t('blog.you_might_also_like', 'You Might Also Like') }}</h2>
+      <p class="text-gray-600">{{ t('blog.you_might_also_like_desc', 'Rekomendasi artikel terbaik dari pakar industri kami.') }}</p>
     </div>
 
     <!-- Unified 3-Column Grid -->
@@ -223,29 +258,46 @@
       @foreach($relatedPosts as $rel)
         @php
           $rTitle = $rel->getTranslation('title', $currentLocale) ?: $rel->title;
-          $rExcerpt = $rel->getTranslation('excerpt', $currentLocale) ?: ($rel->excerpt ?: Str::limit(strip_tags($rel->content), 100));
+          $rExcerpt = $rel->getTranslation('excerpt', $currentLocale) ?: ($rel->excerpt ?: Str::limit(strip_tags($rel->content), 120));
           $rImg = $rel->featured_image ? resolve_block_asset($rel->featured_image) : asset('themes/cdt/assets/about-us-bg-DOuRQvF3.webp');
-          $rCat = $rel->category ? $rel->category->name : 'Technology';
+          $rCatObj = $rel->categories->first();
+          $rCategory = $rCatObj ? ($rCatObj->getTranslation('name', $currentLocale) ?: $rCatObj->name) : 'Technology';
+          $rAuthor = $rel->author ? $rel->author->name : 'CDT Editorial';
           $rDate = $rel->published_at ? $rel->published_at->format($dateFormat) : $rel->created_at->format($dateFormat);
+          $rReadTime = method_exists($rel, 'getReadingTime') ? $rel->getReadingTime($currentLocale) : 1;
         @endphp
         <div class="group flex flex-col bg-white rounded-[1.5rem] border border-zinc-200 overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 relative">
-          <div class="relative h-48 overflow-hidden z-10 bg-zinc-100">
+          <a href="{{ $rel->getUrl() }}" class="relative block h-56 overflow-hidden z-10 bg-zinc-100">
             <img src="{{ $rImg }}" alt="{{ $rTitle }}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
             <div class="absolute top-4 left-4">
-              <span class="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">{{ $rCat }}</span>
+              <span class="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">{{ $rCategory }}</span>
             </div>
-          </div>
+          </a>
           <div class="p-6 md:p-8 flex-grow flex flex-col relative z-10 bg-white">
-            <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
-              <a href="{{ $rel->getUrl() }}">{{ $rTitle }}</a>
-            </h3>
-            <p class="text-sm text-gray-600 font-light leading-relaxed mb-6 flex-grow line-clamp-2">
+            <div class="flex items-center justify-between mb-4 text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest">
+              <span>{{ $rDate }}</span>
+              <span class="flex items-center gap-1"><svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> {{ $rReadTime }} min</span>
+            </div>
+            <a href="{{ $rel->getUrl() }}">
+              <h3 class="text-lg md:text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+                {{ $rTitle }}
+              </h3>
+            </a>
+            <p class="text-sm md:text-base text-gray-600 font-light leading-relaxed mb-6 flex-grow line-clamp-3">
               {{ $rExcerpt }}
             </p>
             <div class="flex items-center justify-between mt-auto pt-4 border-t border-zinc-100">
-              <span class="text-xs font-bold text-gray-500 uppercase">{{ $rDate }}</span>
-              <a href="{{ $rel->getUrl() }}" class="text-primary hover:text-red-800 transition-colors bg-red-50 p-2 rounded-full group-hover:bg-primary group-hover:text-white">
-                <svg class="w-4 h-4 transform group-hover:-rotate-45 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                  {{ substr($rAuthor, 0, 1) }}
+                </div>
+                <span class="text-sm font-medium text-gray-700">{{ $rAuthor }}</span>
+              </div>
+              <a href="{{ $rel->getUrl() }}" class="flex items-center gap-2 text-primary font-bold text-xs hover:text-red-800 transition-colors group/btn">
+                <span>{{ t('common.read_more', 'Read More') }}</span>
+                <span class="bg-red-50 p-2 rounded-full group-hover:bg-primary group-hover:text-white group-hover/btn:bg-primary group-hover/btn:text-white transition-colors">
+                  <svg class="w-4 h-4 transform group-hover:-rotate-45 group-hover/btn:-rotate-45 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </span>
               </a>
             </div>
           </div>
@@ -255,6 +307,27 @@
   </div>
 </section>
 @endif
+<style>
+  .toc-link.toc-dot {
+    position: relative;
+  }
+  .toc-link.toc-dot::before {
+    content: '';
+    position: absolute;
+    left: -25px;
+    top: 7px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #d4d4d8;
+    transition: all 0.3s ease;
+    z-index: 10;
+  }
+  .toc-link.toc-dot.active::before {
+    background-color: #dc2626;
+    transform: scale(1.3);
+  }
+</style>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const article = document.querySelector("article");
@@ -292,7 +365,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (isH3) {
       a.className = "toc-link text-gray-400 hover:text-primary transition-all duration-300 block leading-snug";
     } else {
-      a.className = "toc-link text-gray-500 hover:text-primary transition-all duration-300 block leading-snug relative before:absolute before:-left-[25px] before:top-[7px] before:w-[8px] before:h-[8px] before:rounded-full before:bg-zinc-300 before:transition-all before:duration-300 before:z-10";
+      a.className = "toc-link toc-dot text-gray-500 hover:text-primary transition-all duration-300 block leading-snug";
     }
 
     a.addEventListener("click", function (e) {
@@ -329,13 +402,13 @@ document.addEventListener("DOMContentLoaded", function () {
         if (item.isH3) {
           item.a.className = "toc-link text-primary font-bold transition-all duration-300 block leading-snug";
         } else {
-          item.a.className = "toc-link text-primary font-bold transition-all duration-300 block leading-snug relative before:absolute before:-left-[25px] before:top-[7px] before:w-[8px] before:h-[8px] before:rounded-full before:bg-primary before:scale-125 before:transition-all before:duration-300 before:z-10";
+          item.a.className = "toc-link toc-dot active text-primary font-bold transition-all duration-300 block leading-snug";
         }
       } else {
         if (item.isH3) {
           item.a.className = "toc-link text-gray-400 hover:text-primary transition-all duration-300 block leading-snug";
         } else {
-          item.a.className = "toc-link text-gray-500 hover:text-primary transition-all duration-300 block leading-snug relative before:absolute before:-left-[25px] before:top-[7px] before:w-[8px] before:h-[8px] before:rounded-full before:bg-zinc-300 before:transition-all before:duration-300 before:z-10";
+          item.a.className = "toc-link toc-dot text-gray-500 hover:text-primary transition-all duration-300 block leading-snug";
         }
       }
     });
@@ -343,6 +416,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.addEventListener("scroll", updateActiveToc, { passive: true });
   updateActiveToc();
+});
+</script>
+
+{{-- Override GSAP pin top position via DOM observer --}}
+{{-- GSAP bundle pins #blog-sidebar at ~379px (because Recent Posts is above it). --}}
+{{-- This observer detects when GSAP sets position:fixed and overrides top to 24px. --}}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const sidebar = document.getElementById('blog-sidebar');
+  if (!sidebar) return;
+
+  // Use a MutationObserver to catch when GSAP sets position:fixed via inline style
+  const observer = new MutationObserver(() => {
+    if (sidebar.style.position === 'fixed') {
+      sidebar.style.top = '24px';
+    }
+  });
+
+  observer.observe(sidebar, { attributes: true, attributeFilter: ['style'] });
+
+  // Also use a scroll listener as a safety net (GSAP may update on each scroll frame)
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(() => {
+        if (sidebar.style.position === 'fixed') {
+          sidebar.style.top = '24px';
+        }
+        ticking = false;
+      });
+    }
+  }, { passive: true });
 });
 </script>
 

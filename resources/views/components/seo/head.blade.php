@@ -3,7 +3,8 @@
 @php
     /** @var \App\Services\SeoRenderer $renderer */
     $renderer = app(\App\Services\SeoRenderer::class);
-    $seo = $renderer->resolve($entity, $overrides);
+    $targetEntity = $entity ?? $category ?? $tag ?? $term ?? $taxonomyTerm ?? null;
+    $seo = $renderer->resolve($targetEntity, $overrides);
 @endphp
 
 <title>{{ $seo['title'] }}</title>
@@ -13,6 +14,11 @@
 <meta name="robots" content="{{ $seo['robots'] }}">
 @if ($seo['canonical'])
     <link rel="canonical" href="{{ $seo['canonical'] }}">
+@endif
+@if (! empty($seo['hreflangs']))
+    @foreach ($seo['hreflangs'] as $lang => $url)
+        <link rel="alternate" hreflang="{{ $lang }}" href="{{ $url }}">
+    @endforeach
 @endif
 
 {{-- Open Graph --}}

@@ -24,7 +24,7 @@
         </div>
 
         <div class="overflow-hidden mb-2">
-          <h2 class="text-xl md:text-2xl font-light" data-gsap="fade-up">{{ $page?->block('hero_subtitle_small') ?? 'Company' }}</h2>
+          <p class="text-xl md:text-2xl font-light" data-gsap="fade-up">{{ $page?->block('hero_subtitle_small') ?? 'Company' }}</p>
         </div>
         <div class="overflow-hidden">
           <h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold leading-tight" data-gsap="fade-up" data-gsap-delay="0.1">

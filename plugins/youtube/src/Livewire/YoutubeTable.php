@@ -61,6 +61,23 @@ class YoutubeTable extends Component
         }
     }
 
+    public function toggleFeatured(int $id): void
+    {
+        $video = YoutubeVideo::find($id);
+        if ($video) {
+            if (! $video->is_featured) {
+                // Keep 1 featured video primary by unsetting previous featured videos
+                YoutubeVideo::where('is_featured', true)->update(['is_featured' => false]);
+                $video->is_featured = true;
+            } else {
+                $video->is_featured = false;
+            }
+            $video->save();
+            $this->syncNotification = $video->is_featured ? 'Video set as featured.' : 'Video removed from featured.';
+            $this->syncNotificationType = 'success';
+        }
+    }
+
     public function deleteVideo(int $id): void
     {
         $video = YoutubeVideo::find($id);
@@ -87,6 +104,8 @@ class YoutubeTable extends Component
             $query->where('is_visible', true);
         } elseif ($this->statusFilter === 'hidden') {
             $query->where('is_visible', false);
+        } elseif ($this->statusFilter === 'featured') {
+            $query->where('is_featured', true);
         }
 
         $videos = $query->orderBy('published_at', 'desc')->paginate(15);

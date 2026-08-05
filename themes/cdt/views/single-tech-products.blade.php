@@ -427,14 +427,11 @@
   @if($siblingProducts->isNotEmpty())
   @php
     $siblingCount = $siblingProducts->count();
-    if ($siblingCount <= 2) {
-        $gridColsClass = 'grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto';
-        $cardPaddingClass = 'p-8 md:p-10';
-    } elseif ($siblingCount <= 4) {
-        $gridColsClass = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1400px] mx-auto';
+    if ($siblingCount <= 3) {
+        $gridColsClass = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1400px]';
         $cardPaddingClass = 'p-8 md:p-10';
     } else {
-        $gridColsClass = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-[1400px] mx-auto';
+        $gridColsClass = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-[1400px]';
         $cardPaddingClass = 'p-6 md:p-8';
     }
   @endphp
@@ -463,9 +460,11 @@
         @foreach($siblingProducts as $sibling)
         @php
           $sIcon = $sibling->getMeta('icon') ?: ($sibling->getMeta('hero_icon') ?: 'lucide:layers');
-          if ($sIcon && ! str_starts_with($sIcon, 'lucide:') && ! str_contains($sIcon, '/') && ! str_contains($sIcon, '.')) {
-              $sIcon = 'lucide:' . $sIcon;
-          }
+          $sLocale = app()->getLocale();
+          $sExcerpt = $sibling->getTranslation('excerpt', $sLocale, false);
+          $sContent = $sibling->getTranslation('content', $sLocale, false);
+          $sHeroDesc = $sibling->getMeta('hero_description');
+          $sDesc = $sExcerpt ?: ($sContent ?: ($sHeroDesc ?: ($sibling->excerpt ?: $sibling->content)));
         @endphp
         <div onclick="window.location.href='{{ $sibling->getUrl() }}'" class="bg-white {{ $cardPaddingClass }} rounded-3xl border border-zinc-200/80 shadow-sm flex flex-col items-center text-center group hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
           <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -478,7 +477,7 @@
             @endif
           </div>
           <h3 class="text-xl font-bold text-zinc-900 mb-3">{{ $sibling->title }}</h3>
-          <p class="text-zinc-600 text-sm leading-relaxed mb-8">{{ $sibling->excerpt ?: ($sibling->getMeta('hero_description') ?: \Illuminate\Support\Str::limit(strip_tags($sibling->content), 120)) }}</p>
+          <p class="text-zinc-600 text-sm leading-relaxed mb-8">{{ \Illuminate\Support\Str::limit(strip_tags($sDesc), 140) }}</p>
           <a href="{{ $sibling->getUrl() }}" class="inline-block bg-primary hover:bg-red-700 text-white text-xs font-bold py-3 px-8 rounded-full uppercase tracking-wider transition-colors mt-auto shadow-md hover:shadow-lg transform hover:-translate-y-0.5 duration-300">{{ t('common.read_more', 'Read More') }}</a>
         </div>
         @endforeach

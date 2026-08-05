@@ -35,7 +35,7 @@
           <div class="overflow-hidden mb-6">
             <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[1.1] tracking-tight" data-gsap="fade-up" data-gsap-delay="0.1">
               {{ $page->getBlockValue('hero_title_prefix', 'Start Your Journey') }} <br />
-              With <span class="text-primary">{{ $page->getBlockValue('hero_title_main', 'Central Data Technology') }}</span>
+              {{ t('careers.hero_with', 'With') }} <span class="text-primary">{{ $page->getBlockValue('hero_title_main', 'Central Data Technology') }}</span>
             </h1>
           </div>
 
@@ -47,7 +47,7 @@
 
           <div data-gsap="fade-up" data-gsap-delay="0.3">
             <a href="#why-cdt" class="inline-flex items-center justify-center px-10 py-4 font-bold text-white uppercase tracking-wider transition-all duration-300 bg-primary rounded-full shadow-lg shadow-primary/30 hover:bg-red-700 hover:shadow-xl hover:-translate-y-1 gap-3 group">
-              Discover More Below
+              {{ t('careers.discover_more', 'Discover More Below') }}
               <svg class="w-5 h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 13l5 5m0 0l5-5m-5 5V6"></path>
               </svg>

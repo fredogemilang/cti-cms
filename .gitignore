@@ -22,6 +22,7 @@
 /storage/cms_installed
 /vendor
 /public/themes/*/assets
+/themes/ofis
 
 Homestead.json
 Homestead.yaml

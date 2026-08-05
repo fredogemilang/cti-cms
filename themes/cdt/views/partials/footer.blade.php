@@ -1,5 +1,6 @@
 @php
-    $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::get('archive_slug', 'blog') : 'blog';
+    $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::getArchiveSlug(app()->getLocale()) : 'blog-news';
+    $blogTitle = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::getArchiveTitle(app()->getLocale()) : t('nav.blog_news', 'Blog & News');
     $blogUrl = localized_url('/' . $blogSlug);
 @endphp
 
@@ -85,7 +86,7 @@
 
           <ul class="space-y-4 text-[13px] text-white/90">
             <li><a href="{{ localized_url('/about-us') }}" title="{{ t('nav.about_us', 'About Us') }}" class="hover:text-white transition">{{ t('nav.about_us', 'About Us') }}</a></li>
-            <li><a href="{{ $blogUrl }}" title="{{ t('nav.blog_news', 'Blog & News') }}" class="hover:text-white transition">{{ t('nav.blog_news', 'Blog & News') }}</a></li>
+            <li><a href="{{ $blogUrl }}" title="{{ $blogTitle }}" class="hover:text-white transition">{{ $blogTitle }}</a></li>
             <li><a href="{{ localized_url('/careers') }}" title="{{ t('nav.careers', 'Careers') }}" class="hover:text-white transition">{{ t('nav.careers', 'Careers') }}</a></li>
             <li><a href="{{ localized_url('/contact-us') }}" title="{{ t('nav.contact', 'Contact Us') }}" class="hover:text-white transition">{{ t('nav.contact', 'Contact Us') }}</a></li>
           </ul>
