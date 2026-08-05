@@ -120,7 +120,7 @@
         // Builder actions
         addField(type) {
             const fieldId = 'field_' + Math.random().toString(36).substr(2, 6);
-            const labelMap = { gdpr: 'Privacy Consent', terms: 'Terms & Conditions', vendor_solutions: 'Solution Needed' };
+            const labelMap = { gdpr: 'Privacy Consent', terms: 'Terms & Conditions', vendor_solutions: 'Solution Needed', solution_needed: 'Solution Needed' };
             const label = labelMap[type] || (type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' '));
 
             const defaultConsent = 'I consent to having my personal data processed and agree to the Privacy Policy.';

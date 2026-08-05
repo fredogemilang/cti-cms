@@ -158,7 +158,7 @@
                     </label>
                 @endif
 
-                @if($field->type === 'select' || $field->type === 'vendor_solutions')
+                @if($field->type === 'select' || $field->type === 'vendor_solutions' || $field->type === 'solution_needed')
                     <?php
                         $defaultOptions = [
                             ['label' => 'Cloud Services', 'value' => 'Cloud Services'],
@@ -168,45 +168,71 @@
                         ];
 
                         $selectedVal = null;
-                        $isSolutionField = ($field->type === 'vendor_solutions' || str_contains(strtolower($field->getRawOriginal('label') ?? $field->label), 'solution') || str_contains(strtolower($field->field_id), 'solution'));
+                        $selectOptions = [];
+                        $isSolutionField = ($field->type === 'vendor_solutions' || $field->type === 'solution_needed' || str_contains(strtolower($field->getRawOriginal('label') ?? $field->label), 'solution') || str_contains(strtolower($field->field_id), 'solution'));
 
                         if ($isSolutionField && isset($entry)) {
-                            // Check if $entry is a sub-product with parent vendor or parent entry
-                            $parentVendorSlug = $entry->getMeta('parent_vendor');
-                            $parentVendor = $entry->parentRelatedEntries()->first() 
-                                ?? ($parentVendorSlug ? \App\Models\CptEntry::where('slug', $parentVendorSlug)->first() : null);
+                            $postTypeSlug = $entry->postType?->slug;
 
-                            if ($parentVendor) {
-                                // Sub-product page — fetch all sibling sub-products under the parent vendor
-                                $subProducts = $parentVendor->relatedEntries('product_id')->published()->get();
-                                if ($subProducts->isEmpty() && $parentVendor->slug) {
-                                    $subProducts = \App\Models\CptEntry::published()
-                                        ->whereHas('postType', fn($q) => $q->where('slug', 'tech-products'))
-                                        ->where('meta->parent_vendor', $parentVendor->slug)
-                                        ->get();
-                                }
-                                $selectedVal = $entry->title;
-                            } else {
-                                // Parent vendor page — fetch all sub-products under this vendor
-                                $subProducts = $entry->relatedEntries('product_id')->published()->get();
-                                if ($subProducts->isEmpty() && $entry->slug) {
-                                    $subProducts = \App\Models\CptEntry::published()
+                            if ($postTypeSlug === 'technology-alliance') {
+                                // 1. Single Technology Alliance Page (e.g. /akamai)
+                                // Extract Featured Solutions titles & related products
+                                $solutionsFeatured = $entry->getMeta('solutions_featured', []);
+                                $relatedProducts = $entry->relatedEntries('product_id')->published()->get();
+                                if ($relatedProducts->isEmpty() && $entry->slug) {
+                                    $relatedProducts = \App\Models\CptEntry::published()
                                         ->whereHas('postType', fn($q) => $q->where('slug', 'tech-products'))
                                         ->where('meta->parent_vendor', $entry->slug)
                                         ->get();
                                 }
-                            }
 
-                            if (isset($subProducts) && $subProducts->isNotEmpty()) {
-                                $selectOptions = $subProducts->map(fn($s) => ['label' => $s->title, 'value' => $s->title])->toArray();
-                            } else {
-                                $targetEntry = $parentVendor ?? $entry;
-                                $selectOptions = array_merge(
-                                    [['label' => $targetEntry->title, 'value' => $targetEntry->title]],
-                                    $defaultOptions
-                                );
+                                $optionsList = [];
+                                if (!empty($solutionsFeatured) && is_array($solutionsFeatured)) {
+                                    foreach ($solutionsFeatured as $sf) {
+                                        if (!empty($sf['title'])) {
+                                            $optionsList[] = ['label' => $sf['title'], 'value' => $sf['title']];
+                                        }
+                                    }
+                                }
+
+                                if ($relatedProducts->isNotEmpty()) {
+                                    foreach ($relatedProducts as $rp) {
+                                        $optionsList[] = ['label' => $rp->title, 'value' => $rp->title];
+                                    }
+                                }
+
+                                if (!empty($optionsList)) {
+                                    $selectOptions = array_values(array_column($optionsList, null, 'value'));
+                                }
+                            } elseif ($postTypeSlug === 'tech-products') {
+                                // 2. Tech Products Page (e.g. /akamai-connected-cloud)
+                                // Fetch all sibling tech products under the same parent alliance
+                                $parentVendorSlug = $entry->getMeta('parent_vendor');
+                                $parentVendor = $entry->parentRelatedEntries()->first() 
+                                    ?? ($parentVendorSlug ? \App\Models\CptEntry::where('slug', $parentVendorSlug)->first() : null);
+
+                                if ($parentVendor) {
+                                    $subProducts = $parentVendor->relatedEntries('product_id')->published()->get();
+                                    if ($subProducts->isEmpty() && $parentVendor->slug) {
+                                        $subProducts = \App\Models\CptEntry::published()
+                                            ->whereHas('postType', fn($q) => $q->where('slug', 'tech-products'))
+                                            ->where('meta->parent_vendor', $parentVendor->slug)
+                                            ->get();
+                                    }
+                                    $selectedVal = $entry->title;
+                                    if ($subProducts->isNotEmpty()) {
+                                        $selectOptions = $subProducts->map(fn($s) => ['label' => $s->title, 'value' => $s->title])->toArray();
+                                    }
+                                } else {
+                                    $selectOptions = array_merge(
+                                        [['label' => $entry->title, 'value' => $entry->title]],
+                                        $defaultOptions
+                                    );
+                                }
                             }
-                        } else {
+                        }
+
+                        if (empty($selectOptions)) {
                             $selectOptions = !empty($field->options) ? $field->options : $defaultOptions;
                         }
 

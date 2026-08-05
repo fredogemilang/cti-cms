@@ -5,6 +5,14 @@
     "description": "Official Central Data Technology (CDT) Enterprise Theme.",
     "author": "CTI Group",
     "screenshot": "screenshot.png",
+    "custom_field_types": [
+        {
+            "type": "solution_needed",
+            "label": "Solution Needed",
+            "icon": "inventory_2",
+            "category": "basic"
+        }
+    ],
     "supports": [
         "pages",
         "posts",
