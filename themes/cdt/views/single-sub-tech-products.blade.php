@@ -404,7 +404,7 @@
             @php
               $theme = active_theme();
               $assignments = setting("theme_{$theme->slug}_form_assignments", []);
-              $formId = $assignments['alliance_form'] ?? $assignments['gated_content_form'] ?? $assignments['contact_form'] ?? null;
+              $formId = $assignments['alliance_form'] ?? $assignments['consultation_form'] ?? $assignments['gated_content_form'] ?? $assignments['contact_form'] ?? null;
               $formModel = $formId ? \App\Models\Form::where('id', $formId)->where('is_active', true)->with('fields')->first() : null;
             @endphp
 
