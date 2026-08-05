@@ -307,7 +307,7 @@
       @endif
       @endforeach
     </div>
-    <a href="{{ url('/videos') }}" class="inline-flex items-center gap-2 text-zinc-600 hover:text-primary font-bold uppercase tracking-wider text-sm transition-colors group/btn relative z-10" data-gsap="fade-up">
+    <a href="{{ localized_url('/video') }}" class="inline-flex items-center gap-2 text-zinc-600 hover:text-primary font-bold uppercase tracking-wider text-sm transition-colors group/btn relative z-10" data-gsap="fade-up">
       {{ t('alliance.view_all_videos', 'View All Videos') }}
       <svg class="w-5 h-5 transform group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
     </a>
