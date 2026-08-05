@@ -108,7 +108,8 @@
                     <div wire:ignore x-data="tiptapEditor('content')" 
                          @tiptap-undo.window="undo()" 
                          @tiptap-redo.window="redo()"
-                         id="post-content-editor" class="h-[600px] min-h-[500px] rounded-3xl border border-gray-200 dark:border-[#272B30]/30 bg-white dark:bg-[#1A1A1A] flex flex-col overflow-hidden shadow-sm">
+                         class="relative">
+                        <div id="post-content-editor" class="h-[600px] min-h-[500px] rounded-3xl border border-gray-200 dark:border-[#272B30]/30 bg-white dark:bg-[#1A1A1A] flex flex-col overflow-hidden shadow-sm">
 
                         <!-- Toolbar -->
                         <div class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-[#272B30] overflow-x-auto flex-wrap shrink-0 bg-white dark:bg-[#1A1A1A] rounded-t-3xl">
@@ -120,6 +121,9 @@
                                 <button type="button" @click="toggleItalic()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('italic') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Italic">
                                     <span class="material-symbols-outlined text-[20px]">format_italic</span>
                                 </button>
+                                <button type="button" @click="toggleUnderline()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('underline') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Underline">
+                                    <span class="material-symbols-outlined text-[20px]">format_underlined</span>
+                                </button>
                                 <button type="button" @click="toggleStrike()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('strike') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Strike">
                                     <span class="material-symbols-outlined text-[20px]">strikethrough_s</span>
                                 </button>
@@ -130,17 +134,16 @@
                             
                             <div class="w-px h-5 bg-gray-200 dark:bg-[#272B30] mx-1"></div>
 
-                            <!-- Headings -->
-                            <div class="flex items-center gap-0.5">
-                                <button type="button" @click="toggleHeading(1)" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('heading', { level: 1 }) }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Heading 1">
-                                    <span class="material-symbols-outlined text-[20px]">format_h1</span>
-                                </button>
-                                <button type="button" @click="toggleHeading(2)" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('heading', { level: 2 }) }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Heading 2">
-                                    <span class="material-symbols-outlined text-[20px]">format_h2</span>
-                                </button>
-                                <button type="button" @click="toggleHeading(3)" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('heading', { level: 3 }) }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Heading 3">
-                                    <span class="material-symbols-outlined text-[20px]">format_h3</span>
-                                </button>
+                            <!-- Format Dropdown -->
+                            <div class="flex items-center">
+                                <select @change="setFormat($event.target.value)" 
+                                        :value="isActive('heading', { level: 2 }) ? 'h2' : (isActive('heading', { level: 3 }) ? 'h3' : (isActive('heading', { level: 4 }) ? 'h4' : 'p'))" 
+                                        class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-gray-700 dark:text-gray-200 focus:outline-none focus:border-blue-500 cursor-pointer">
+                                    <option value="p">Paragraph</option>
+                                    <option value="h2">Heading 2</option>
+                                    <option value="h3">Heading 3</option>
+                                    <option value="h4">Heading 4</option>
+                                </select>
                             </div>
 
                             <div class="w-px h-5 bg-gray-200 dark:bg-[#272B30] mx-1"></div>
@@ -212,6 +215,7 @@
                         
                         <!-- Editor Area -->
                         <div x-ref="editor" class="flex-1 overflow-y-auto cursor-text relative"></div>
+                    </div>
 
                         <!-- Button Creator Modal -->
                         <div x-show="showButtonCreator" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
@@ -289,6 +293,66 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Custom Link Modal -->
+                        <div x-show="showLinkModal" 
+                             class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" 
+                             x-cloak 
+                             style="display: none;"
+                             @keydown.escape.window="showLinkModal = false">
+                            <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-6 w-full max-w-md space-y-5 shadow-2xl" @click.outside="showLinkModal = false">
+                                <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-3">
+                                    <h3 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-[20px] text-[#2563EB]">link</span>
+                                        <span>Insert / Edit Link</span>
+                                    </h3>
+                                    <button type="button" @click="showLinkModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                        <span class="material-symbols-outlined text-lg">close</span>
+                                    </button>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <!-- Display Text Input -->
+                                    <div class="space-y-1.5">
+                                        <label class="text-xs font-semibold text-[#6F767E] dark:text-gray-300">Display Text</label>
+                                        <input x-model="linkSelectedText" 
+                                               type="text" 
+                                               class="w-full h-10 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB] focus:outline-none" 
+                                               placeholder="Text to display (e.g. Privacy Policy)">
+                                    </div>
+
+                                    <!-- URL Input -->
+                                    <div class="space-y-1.5">
+                                        <label class="text-xs font-semibold text-[#6F767E] dark:text-gray-300">Target URL</label>
+                                        <input x-ref="linkUrlInput" 
+                                               x-model="linkUrl" 
+                                               @keydown.enter.prevent="saveLink()"
+                                               type="text" 
+                                               class="w-full h-10 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB] focus:outline-none" 
+                                               placeholder="https://example.com, /privacy-policy, mailto:info@example.com">
+                                    </div>
+                                    
+                                    <!-- Open in New Tab Checkbox -->
+                                    <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                                        <input type="checkbox" x-model="linkTargetBlank" class="w-4 h-4 rounded border-gray-300 text-[#2563EB] focus:ring-[#2563EB] dark:border-gray-700 dark:bg-[#0B0B0B]">
+                                        <span class="text-xs font-medium text-[#111827] dark:text-[#FCFCFC]">Open link in a new tab</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-[#272B30]">
+                                    <div>
+                                        <button x-show="isActive('link')" type="button" @click="removeLink()" class="px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors">
+                                            Remove Link
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" @click="showLinkModal = false" class="px-4 py-2 text-xs font-bold text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-colors">Cancel</button>
+                                        <button type="button" @click="saveLink()" class="px-5 py-2 text-xs font-bold text-white bg-[#2563EB] hover:bg-blue-600 rounded-lg transition-colors shadow-sm">Save Link</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                         <!-- Excerpt -->
@@ -546,7 +610,35 @@
 
                     </div>
 
-                <!-- Featured Image Card -->
+                    <!-- Word Document Import Card -->
+                    <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none space-y-3">
+                        <div class="flex items-center gap-2 text-[#6F767E]">
+                            <span class="material-symbols-outlined text-lg">description</span>
+                            <span class="text-xs font-bold uppercase tracking-widest">DOCX Source</span>
+                        </div>
+                        
+                        <p class="text-xs text-[#6F767E]">Import post title, content structure, format, and embedded images directly from a Word document (.docx).</p>
+                        
+                        <div class="relative flex items-center justify-center border-2 border-dashed border-gray-200 dark:border-[#272B30] hover:border-[#2563EB] transition-colors rounded-xl p-4 cursor-pointer">
+                            <input type="file" wire:model="docxFile" accept=".docx" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+                            <div class="text-center space-y-1">
+                                <span class="material-symbols-outlined text-[#6F767E] text-2xl">cloud_upload</span>
+                                <span class="block text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Upload .docx file</span>
+                                <span class="block text-[10px] text-[#6F767E]">Max 10MB</span>
+                            </div>
+                        </div>
+                        
+                        <div wire:loading wire:target="docxFile" class="text-xs text-[#2563EB] font-semibold animate-pulse flex items-center gap-2 mt-2">
+                            <span class="inline-block animate-spin w-3 h-3 border-2 border-[#2563EB] border-t-transparent rounded-full"></span>
+                            <span>Parsing Word document...</span>
+                        </div>
+
+                        @error('docxFile')
+                            <p class="text-xs text-red-500 font-medium mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Featured Image Card -->
                 <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none">
                     <div class="flex items-center gap-2 mb-6 text-[#6F767E]">
                         <span class="material-symbols-outlined text-lg">image</span>

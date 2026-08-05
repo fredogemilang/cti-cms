@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\Sitemap\SitemapBuilder;
+use App\Traits\HasSanitizedContent;
 use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Support\Str;
 
 class CptEntry extends Model
 {
-    use HasSeoMeta, HasTranslations, SoftDeletes;
+    use HasSanitizedContent, HasSeoMeta, HasTranslations, SoftDeletes;
 
     protected $table = 'cpt_entries';
 

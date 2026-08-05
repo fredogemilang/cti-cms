@@ -60,6 +60,15 @@ document.addEventListener('alpine:init', () => {
         let editorId = null;
         
         return {
+            // Real-time selection tracking tick for Alpine reactivity
+            selectionTick: 0,
+
+            // Link Modal State
+            showLinkModal: false,
+            linkUrl: '',
+            linkTargetBlank: false,
+            linkSelectedText: '',
+
             // Button Creator State
             showButtonCreator: false,
             buttonText: '',
@@ -140,6 +149,14 @@ document.addEventListener('alpine:init', () => {
 
                 window._tiptapEditors[editorId] = editorInstance;
 
+                // Track selection & transaction updates for real-time Alpine toolbar reactivity
+                editorInstance.on('selectionUpdate', () => {
+                    this.selectionTick++;
+                });
+                editorInstance.on('transaction', () => {
+                    this.selectionTick++;
+                });
+
                 // Sync from Livewire model changes (e.g. Docx upload)
                 this.$watch('$wire.' + modelName, (value) => {
                     if (editorInstance && value !== editorInstance.getHTML()) {
@@ -174,6 +191,9 @@ document.addEventListener('alpine:init', () => {
             },
             toggleItalic() {
                 if (editorInstance) editorInstance.chain().focus().toggleItalic().run();
+            },
+            toggleUnderline() {
+                if (editorInstance) editorInstance.chain().focus().toggleUnderline().run();
             },
             toggleStrike() {
                 if (editorInstance) editorInstance.chain().focus().toggleStrike().run();
@@ -210,23 +230,62 @@ document.addEventListener('alpine:init', () => {
             setHorizontalRule() {
                 if (editorInstance) editorInstance.chain().focus().setHorizontalRule().run();
             },
-            setLink() {
-                const previousUrl = editorInstance.getAttributes('link').href;
-                const url = window.prompt('URL', previousUrl);
-                
-                // cancelled
-                if (url === null) {
-                    return;
-                }
-                
-                // empty
-                if (url === '') {
+            openLinkModal() {
+                if (!editorInstance) return;
+                const { from, to } = editorInstance.state.selection;
+                const selectedText = editorInstance.state.doc.textBetween(from, to, ' ');
+                this.linkSelectedText = selectedText ? selectedText.trim() : '';
+
+                const attrs = editorInstance.getAttributes('link');
+                this.linkUrl = attrs.href || '';
+                this.linkTargetBlank = attrs.target === '_blank';
+                this.showLinkModal = true;
+                this.$nextTick(() => {
+                    if (this.$refs.linkUrlInput) {
+                        this.$refs.linkUrlInput.focus();
+                    }
+                });
+            },
+            saveLink() {
+                if (!editorInstance) return;
+                const url = (this.linkUrl || '').trim();
+                const text = (this.linkSelectedText || '').trim();
+
+                if (!url) {
                     editorInstance.chain().focus().extendMarkRange('link').unsetLink().run();
-                    return;
+                } else {
+                    const attrs = { href: url };
+                    if (this.linkTargetBlank) {
+                        attrs.target = '_blank';
+                        attrs.rel = 'noopener noreferrer';
+                    } else {
+                        attrs.target = null;
+                        attrs.rel = null;
+                    }
+
+                    const { from, to } = editorInstance.state.selection;
+                    const currentSelectedText = editorInstance.state.doc.textBetween(from, to, ' ').trim();
+
+                    if (text && (from === to || text !== currentSelectedText)) {
+                        editorInstance.chain().focus().insertContent({
+                            type: 'text',
+                            text: text,
+                            marks: [{ type: 'link', attrs: attrs }]
+                        }).run();
+                    } else {
+                        editorInstance.chain().focus().extendMarkRange('link').setLink(attrs).run();
+                    }
                 }
-                
-                // update
-                editorInstance.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+                this.showLinkModal = false;
+            },
+            removeLink() {
+                if (editorInstance) {
+                    editorInstance.chain().focus().extendMarkRange('link').unsetLink().run();
+                }
+                this.showLinkModal = false;
+            },
+            setLink() {
+                this.openLinkModal();
             },
             unsetLink() {
                 if (editorInstance) editorInstance.chain().focus().unsetLink().run();
@@ -292,6 +351,8 @@ document.addEventListener('alpine:init', () => {
                 if (editorInstance) editorInstance.chain().focus().unsetAllMarks().clearNodes().run();
             },
             isActive(name, attrs = {}) {
+                // Access selectionTick so Alpine registers this function call in its dependency graph
+                const _tick = this.selectionTick;
                 return editorInstance ? editorInstance.isActive(name, attrs) : false;
             },
 

@@ -159,6 +159,9 @@
                         <button type="button" @click="toggleItalic()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('italic') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Italic">
                             <span class="material-symbols-outlined text-[20px]">format_italic</span>
                         </button>
+                        <button type="button" @click="toggleUnderline()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('underline') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Underline">
+                            <span class="material-symbols-outlined text-[20px]">format_underlined</span>
+                        </button>
                         <button type="button" @click="toggleStrike()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('strike') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Strike">
                             <span class="material-symbols-outlined text-[20px]">strikethrough_s</span>
                         </button>
@@ -247,6 +250,65 @@
                 
                 <!-- Editor Area -->
                 <div x-ref="editor" class="flex-1 overflow-y-auto cursor-text relative bg-white dark:bg-[#1A1A1A]"></div>
+
+                <!-- Custom Link Modal -->
+                <div x-show="showLinkModal" 
+                     class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" 
+                     x-cloak 
+                     style="display: none;"
+                     @keydown.escape.window="showLinkModal = false">
+                    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-6 w-full max-w-md space-y-5 shadow-2xl" @click.outside="showLinkModal = false">
+                        <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-3">
+                            <h3 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[20px] text-[#2563EB]">link</span>
+                                <span>Insert / Edit Link</span>
+                            </h3>
+                            <button type="button" @click="showLinkModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                <span class="material-symbols-outlined text-lg">close</span>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <!-- Display Text Input -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-semibold text-[#6F767E] dark:text-gray-300">Display Text</label>
+                                <input x-model="linkSelectedText" 
+                                       type="text" 
+                                       class="w-full h-10 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB] focus:outline-none" 
+                                       placeholder="Text to display (e.g. Privacy Policy)">
+                            </div>
+
+                            <!-- URL Input -->
+                            <div class="space-y-1.5">
+                                <label class="text-xs font-semibold text-[#6F767E] dark:text-gray-300">Target URL</label>
+                                <input x-ref="linkUrlInput" 
+                                       x-model="linkUrl" 
+                                       @keydown.enter.prevent="saveLink()"
+                                       type="text" 
+                                       class="w-full h-10 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB] focus:outline-none" 
+                                       placeholder="https://example.com, /privacy-policy, mailto:info@example.com">
+                            </div>
+                            
+                            <!-- Open in New Tab Checkbox -->
+                            <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                                <input type="checkbox" x-model="linkTargetBlank" class="w-4 h-4 rounded border-gray-300 text-[#2563EB] focus:ring-[#2563EB] dark:border-gray-700 dark:bg-[#0B0B0B]">
+                                <span class="text-xs font-medium text-[#111827] dark:text-[#FCFCFC]">Open link in a new tab</span>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-[#272B30]">
+                            <div>
+                                <button x-show="isActive('link')" type="button" @click="removeLink()" class="px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors">
+                                    Remove Link
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" @click="showLinkModal = false" class="px-4 py-2 text-xs font-bold text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-colors">Cancel</button>
+                                <button type="button" @click="saveLink()" class="px-5 py-2 text-xs font-bold text-white bg-[#2563EB] hover:bg-blue-600 rounded-lg transition-colors shadow-sm">Save Link</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             @break
 

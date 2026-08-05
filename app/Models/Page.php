@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\SeoRenderer;
 use App\Services\ThemeLoader;
+use App\Traits\HasSanitizedContent;
 use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,7 @@ use Illuminate\Support\Str;
 
 class Page extends Model
 {
-    use HasSeoMeta, HasTranslations, SoftDeletes;
+    use HasSanitizedContent, HasSeoMeta, HasTranslations, SoftDeletes;
 
     protected $fillable = [
         'title',
