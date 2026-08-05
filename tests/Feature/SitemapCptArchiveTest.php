@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\CptEntry;
 use App\Models\CustomPostType;
 use App\Models\Setting;
+use App\Models\User;
+use App\Services\Sitemap\SitemapBuilder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -26,16 +29,28 @@ class SitemapCptArchiveTest extends TestCase
             'is_active' => true,
         ]);
 
+        $user = User::factory()->create();
+
+        CptEntry::create([
+            'post_type_id' => $cpt->id,
+            'title' => 'Sample Alliance',
+            'slug' => 'sample-alliance',
+            'status' => 'published',
+            'author_id' => $user->id,
+        ]);
+
         // 1. When has_archive is true, sitemap should contain archive URL
         $response = $this->get('/technology-alliance-sitemap.xml');
         $response->assertStatus(200);
         $response->assertSee(url('/technology-alliance'));
 
-        // 2. When has_archive is set to false, sitemap should NOT contain archive URL
+        // 2. When has_archive is set to false, sitemap should NOT contain archive URL (but should contain single entry)
         $cpt->update(['has_archive' => false]);
+        SitemapBuilder::clearCache('technology-alliance');
 
         $response2 = $this->get('/technology-alliance-sitemap.xml');
         $response2->assertStatus(200);
-        $response2->assertDontSee(url('/technology-alliance'));
+        $response2->assertSee(url('/technology-alliance/sample-alliance'));
+        $response2->assertDontSee('<loc>'.url('/technology-alliance').'</loc>', false);
     }
 }
