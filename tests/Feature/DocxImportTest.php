@@ -48,9 +48,10 @@ class DocxImportTest extends TestCase
             ]
         );
 
-        // 4. Force run plugin migrations for the posts plugin
+        // 4. Force run plugin migrations
         Artisan::call('migrate', [
-            '--path' => 'plugins/posts/database/migrations',
+            '--path' => base_path('plugins/posts/database/migrations'),
+            '--realpath' => true,
             '--force' => true,
         ]);
 

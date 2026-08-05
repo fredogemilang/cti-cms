@@ -33,7 +33,9 @@ class PageController extends Controller
         $canonicalUrl = $page->getUrl(app()->getLocale());
         $currentUrl = request()->url();
         if ($currentUrl !== $canonicalUrl) {
-            return redirect($canonicalUrl, 301);
+            $queryString = request()->getQueryString();
+
+            return redirect($canonicalUrl.($queryString ? "?{$queryString}" : ''), 301);
         }
 
         // Load blocks (shared across locales for now)

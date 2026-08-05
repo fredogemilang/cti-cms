@@ -56,7 +56,8 @@ class PostAuthorTest extends TestCase
 
         // Run migrations
         Artisan::call('migrate', [
-            '--path' => 'plugins/posts/database/migrations',
+            '--path' => base_path('plugins/posts/database/migrations'),
+            '--realpath' => true,
             '--force' => true,
         ]);
 
@@ -201,20 +202,22 @@ class PostAuthorTest extends TestCase
 
         $this->assertEquals(0, $post->fresh()->views_count);
 
+        $postUrl = $post->getUrl('en');
+
         // 1. Visit as a bot crawler - views_count should remain 0
         $response = $this->withHeaders(['User-Agent' => 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'])
-            ->get('/blog/sample-view-test-post');
+            ->get($postUrl);
         $response->assertStatus(200);
         $this->assertEquals(0, $post->fresh()->views_count);
 
         // 2. Visit as a real user - views_count should become 1
         $response = $this->withHeaders(['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'])
-            ->get('/blog/sample-view-test-post');
+            ->get($postUrl);
         $response->assertStatus(200);
         $this->assertEquals(1, $post->fresh()->views_count);
 
         // 3. Visit again in the same session - views_count should remain 1
-        $response = $this->get('/blog/sample-view-test-post');
+        $response = $this->get($postUrl);
         $response->assertStatus(200);
         $this->assertEquals(1, $post->fresh()->views_count);
     }

@@ -17,6 +17,7 @@ use App\Services\Schema\Providers\PageSchemaProvider;
 use App\Services\Schema\SchemaRegistry;
 use App\Services\SettingsRegistry;
 use App\Services\TaxonomyRegistry;
+use App\Support\Filter;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\ServiceProvider;
 
@@ -80,5 +81,64 @@ class AppServiceProvider extends ServiceProvider
         $this->app['events']->listen(JobProcessing::class, function () {
             Setting::flushMemo();
         });
+
+        // CDT Theme Short URLs Filter Hooks
+        Filter::add('cpt_entry.url', function ($url, $entry, $locale = null) {
+            if (active_theme()?->slug !== 'cdt') {
+                return $url;
+            }
+
+            if (! $entry || ! isset($entry->postType)) {
+                return $url;
+            }
+
+            $cptSlug = $entry->postType->slug;
+            $locale ??= app()->getLocale();
+            $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+
+            $localePrefix = ($locale !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix')
+                ? '/'.$locale
+                : '';
+
+            $entrySlug = $entry->getTranslation('slug', $locale, fallback: true) ?? $entry->slug;
+
+            if ($cptSlug === 'technology-alliance') {
+                return url($localePrefix.'/'.ltrim($entrySlug, '/'));
+            }
+
+            if ($cptSlug === 'tech-products' || $cptSlug === 'products') {
+                $parentVendor = $entry->parentRelatedEntries()->first();
+                $parentSlug = $parentVendor
+                    ? ($parentVendor->getTranslation('slug', $locale, fallback: true) ?? $parentVendor->slug)
+                    : ($entry->getMeta('parent_vendor') ?: null);
+
+                if ($parentSlug) {
+                    return url($localePrefix.'/'.ltrim($parentSlug, '/').'/'.ltrim($entrySlug, '/'));
+                }
+            }
+
+            return $url;
+        }, 10);
+
+        Filter::add('cpt_entry.url_redirect', function ($redirectUrl, $entry) {
+            if (active_theme()?->slug !== 'cdt') {
+                return $redirectUrl;
+            }
+
+            if (! $entry || ! isset($entry->postType)) {
+                return $redirectUrl;
+            }
+
+            $cptSlug = $entry->postType->slug;
+            if ($cptSlug === 'technology-alliance' || $cptSlug === 'tech-products' || $cptSlug === 'products') {
+                $shortUrl = $entry->getUrl();
+                $currentUrl = request()->url();
+                if ($shortUrl !== $currentUrl && ! str_ends_with($currentUrl, '/preview')) {
+                    return $shortUrl;
+                }
+            }
+
+            return $redirectUrl;
+        }, 10);
     }
 }

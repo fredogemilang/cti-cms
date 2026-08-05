@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\CustomTaxonomy;
 use App\Models\Media;
 use App\Models\SeoMeta;
 use Illuminate\Database\Eloquent\Model;
@@ -103,9 +104,11 @@ class SeoRenderer
         // Robots Indexing Check (Content Type toggle / Taxonomy toggle / Global toggle)
         $isIndexed = true;
         if ($ctSlug) {
-            $isIndexed = (bool) setting("seo_content_type_{$ctSlug}_index_enabled", true);
+            $val = setting("seo_content_type_{$ctSlug}_index_enabled", true);
+            $isIndexed = filter_var($val, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
         } elseif ($taxSlug) {
-            $isIndexed = (bool) setting("seo_taxonomy_{$taxSlug}_index_enabled", true);
+            $val = setting("seo_taxonomy_{$taxSlug}_index_enabled", true);
+            $isIndexed = filter_var($val, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
         }
 
         $robots = $meta?->robots ?? ($isIndexed ? 'index,follow' : 'noindex,follow');
@@ -193,6 +196,7 @@ class SeoRenderer
         ];
 
         $schema = $entity ? $this->schemaBuilder->build($entity, $meta) : null;
+        $hreflangs = $this->resolveHreflangs($entity, $canonical);
 
         return [
             'title' => $title,
@@ -202,7 +206,36 @@ class SeoRenderer
             'og' => $og,
             'twitter' => $twitter,
             'schema' => $schema,
+            'hreflangs' => $hreflangs,
         ];
+    }
+
+    /**
+     * Resolve hreflang alternate URLs for available locales.
+     */
+    protected function resolveHreflangs(?Model $entity, ?string $canonical): array
+    {
+        $hreflangs = [];
+        $availableLocales = function_exists('available_locales') ? available_locales() : ['en', 'id'];
+        $defaultLocale = function_exists('setting') ? setting('default_locale', config('app.locale', 'en')) : config('app.locale', 'en');
+
+        if (! $entity) {
+            foreach ($availableLocales as $loc) {
+                $hreflangs[$loc] = function_exists('current_page_localized_url') ? current_page_localized_url($loc) : url('/'.$loc);
+            }
+            $hreflangs['x-default'] = function_exists('current_page_localized_url') ? current_page_localized_url($defaultLocale) : url('/');
+
+            return array_filter($hreflangs);
+        }
+
+        if (method_exists($entity, 'getUrl')) {
+            foreach ($availableLocales as $loc) {
+                $hreflangs[$loc] = $entity->getUrl($loc);
+            }
+            $hreflangs['x-default'] = $entity->getUrl($defaultLocale);
+        }
+
+        return array_filter($hreflangs);
     }
 
     /**
@@ -215,6 +248,10 @@ class SeoRenderer
         }
 
         $class = class_basename($entity);
+
+        if ($class === 'TaxonomyTerm' || $class === 'Category' || $class === 'Tag') {
+            return null;
+        }
 
         if ($class === 'Page') {
             return 'pages';
@@ -245,11 +282,18 @@ class SeoRenderer
         $class = class_basename($entity);
 
         if ($class === 'TaxonomyTerm' || $class === 'Category' || $class === 'Tag') {
-            if (isset($entity->taxonomy) && is_object($entity->taxonomy) && isset($entity->taxonomy->slug)) {
-                return (string) $entity->taxonomy->slug;
+            $taxObj = $entity->getAttribute('taxonomy');
+            if (is_object($taxObj) && isset($taxObj->slug)) {
+                return (string) $taxObj->slug;
             }
             if (isset($entity->taxonomy_slug)) {
                 return (string) $entity->taxonomy_slug;
+            }
+            if (isset($entity->taxonomy_id)) {
+                $tax = CustomTaxonomy::find($entity->taxonomy_id);
+                if ($tax && ! empty($tax->slug)) {
+                    return (string) $tax->slug;
+                }
             }
 
             return match ($class) {
@@ -325,17 +369,47 @@ class SeoRenderer
             return null;
         }
 
-        // Try excerpt first
-        if (! empty($entity->excerpt)) {
-            $text = strip_tags((string) $entity->excerpt);
+        $currentLocale = app()->getLocale();
+
+        // 1. Try Excerpt (Localized, Direct Attribute, CPT Meta, or Page Blocks)
+        $excerpt = null;
+        if (method_exists($entity, 'getTranslation')) {
+            $excerpt = $entity->getTranslation('excerpt', $currentLocale);
+        }
+        if (empty($excerpt) && ! empty($entity->excerpt)) {
+            $excerpt = (string) $entity->excerpt;
+        }
+        if (empty($excerpt) && method_exists($entity, 'getMeta')) {
+            $excerpt = $entity->getMeta('short_description')
+                ?: ($entity->getMeta('excerpt') ?: $entity->getMeta('description'));
+        }
+        if (empty($excerpt) && method_exists($entity, 'getBlockValue')) {
+            $excerpt = $entity->getBlockValue('hero_subtitle')
+                ?: ($entity->getBlockValue('subtitle') ?: ($entity->getBlockValue('description') ?: $entity->getBlockValue('intro')));
+        }
+
+        if (! empty($excerpt)) {
+            $text = strip_tags((string) $excerpt);
             $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
             $text = preg_replace('/\s+/', ' ', trim($text));
 
-            return mb_strlen($text) > 160 ? mb_substr($text, 0, 157).'...' : $text;
+            if (mb_strlen($text) > 0) {
+                return mb_strlen($text) > 160 ? mb_substr($text, 0, 157).'...' : $text;
+            }
         }
 
-        // Fallback to content snippet
-        $content = $entity->content ?? null;
+        // 2. Fallback to Content (Localized, Direct Attribute, or Meta)
+        $content = null;
+        if (method_exists($entity, 'getTranslation')) {
+            $content = $entity->getTranslation('content', $currentLocale);
+        }
+        if (empty($content) && ! empty($entity->content)) {
+            $content = (string) $entity->content;
+        }
+        if (empty($content) && method_exists($entity, 'getMeta')) {
+            $content = $entity->getMeta('content') ?: $entity->getMeta('overview');
+        }
+
         if (! empty($content)) {
             $text = strip_tags((string) $content);
             $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');

@@ -8,6 +8,9 @@ use App\Models\CustomTaxonomy;
 use App\Models\Page;
 use App\Models\TaxonomyTerm;
 use Illuminate\Database\Eloquent\Model;
+use Plugins\Posts\Models\Category;
+use Plugins\Posts\Models\Post;
+use Plugins\Posts\Models\Setting;
 
 class BreadcrumbService
 {
@@ -21,7 +24,7 @@ class BreadcrumbService
         $locale = app()->getLocale();
         $homeUrl = url($locale === 'id' ? '/id' : '/');
         $homeSetting = setting('seo_breadcrumb_home_text');
-        $homeText = ! empty($homeSetting) ? $homeSetting : t('common.home', 'Home');
+        $homeText = (! empty($homeSetting) && $homeSetting !== 'Home') ? $homeSetting : t('common.home', 'Home');
 
         $items = [
             [
@@ -55,6 +58,34 @@ class BreadcrumbService
                     $page = Page::where('slug', $firstSegment)->first();
                     if ($page) {
                         $entity = $page;
+                    } else {
+                        // 3. Try matching Posts plugin archive slug
+                        $blogArchiveSlug = class_exists(Setting::class)
+                            ? Setting::getArchiveSlug($locale)
+                            : 'blog-news';
+
+                        $isBlogSlug = ($firstSegment === $blogArchiveSlug || $firstSegment === 'blog' || $firstSegment === 'blog-news');
+                        if (! $isBlogSlug && class_exists(Setting::class)) {
+                            foreach (available_locales() as $loc) {
+                                if ($firstSegment === Setting::getArchiveSlug($loc)) {
+                                    $isBlogSlug = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if ($isBlogSlug) {
+                            $blogArchiveTitle = class_exists(Setting::class)
+                                ? Setting::getArchiveTitle($locale, t('blog.title', 'Blog & News'))
+                                : t('blog.title', 'Blog & News');
+
+                            $items[] = [
+                                'name' => $blogArchiveTitle,
+                                'url' => localized_url('/'.$blogArchiveSlug),
+                            ];
+
+                            return $items;
+                        }
                     }
                 }
             }
@@ -125,14 +156,78 @@ class BreadcrumbService
                 'name' => (string) ($entryTitle ?: 'Entry'),
                 'url' => $entity->getUrl($locale),
             ];
+        } elseif (class_exists(Post::class) && $entity instanceof Post) {
+            $blogArchiveSlug = class_exists(Setting::class)
+                ? Setting::getArchiveSlug($locale)
+                : 'blog-news';
+
+            $blogArchiveTitle = class_exists(Setting::class)
+                ? Setting::getArchiveTitle($locale, t('blog.title', 'Blog & News'))
+                : t('blog.title', 'Blog & News');
+
+            $items[] = [
+                'name' => $blogArchiveTitle,
+                'url' => localized_url('/'.$blogArchiveSlug),
+            ];
+
+            $showCategoryInBreadcrumb = (bool) setting('seo_taxonomy_categories_index_enabled', true);
+            $postTaxonomySetting = (string) setting('seo_breadcrumb_post_taxonomy', 'categories');
+            if ($postTaxonomySetting === 'none') {
+                $showCategoryInBreadcrumb = false;
+            }
+
+            if ($showCategoryInBreadcrumb) {
+                /** @var Category|null $category */
+                $category = $entity->categories->first();
+                if ($category) {
+                    $catName = $category->getTranslation('name', $locale) ?: $category->getAttribute('name');
+                    $catUrl = $category->getUrl($locale);
+
+                    $items[] = [
+                        'name' => (string) $catName,
+                        'url' => $catUrl,
+                    ];
+                }
+            }
+
+            $postTitle = $entity->getTranslation('title', $locale) ?: $entity->title;
+            $items[] = [
+                'name' => (string) $postTitle,
+                'url' => $entity->getUrl($locale),
+            ];
+        } elseif (class_exists(Category::class) && $entity instanceof Category) {
+            $blogArchiveSlug = class_exists(Setting::class)
+                ? Setting::getArchiveSlug($locale)
+                : 'blog-news';
+
+            $blogArchiveTitle = class_exists(Setting::class)
+                ? Setting::getArchiveTitle($locale, t('blog.title', 'Blog & News'))
+                : t('blog.title', 'Blog & News');
+
+            $items[] = [
+                'name' => $blogArchiveTitle,
+                'url' => localized_url('/'.$blogArchiveSlug),
+            ];
+
+            $catName = $entity->getTranslation('name', $locale) ?: $entity->getAttribute('name');
+            $catUrl = $entity->getUrl($locale);
+
+            $items[] = [
+                'name' => (string) $catName,
+                'url' => $catUrl,
+            ];
         } elseif ($entity instanceof TaxonomyTerm) {
             /** @var CustomTaxonomy|null $taxonomy */
             $taxonomy = $entity->taxonomy;
             if ($taxonomy) {
-                $items[] = [
-                    'name' => (string) ($taxonomy->plural_label ?: ucfirst((string) $taxonomy->name)),
-                    'url' => url('/'.ltrim((string) $taxonomy->slug, '/')),
-                ];
+                $taxSlug = $taxonomy->slug;
+                $showTaxInBreadcrumb = (bool) setting("seo_taxonomy_{$taxSlug}_index_enabled", true);
+                if ($showTaxInBreadcrumb) {
+                    $items[] = [
+                        'name' => (string) ($taxonomy->plural_label ?: ucfirst((string) $taxonomy->name)),
+                        'url' => url('/'.ltrim((string) $taxonomy->slug, '/')),
+                    ];
+                }
             }
 
             $items[] = [

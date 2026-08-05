@@ -91,27 +91,59 @@
                             <div class="flex flex-col md:flex-row md:items-start gap-4 md:gap-8 pb-6 border-b border-gray-100 dark:border-[#272B30]">
                                 <div class="md:w-1/3">
                                     <label class="block text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Archive Slug</label>
-                                    <p class="text-xs text-[#6F767E] mt-1">Base URL for your blog section.</p>
+                                    <p class="text-xs text-[#6F767E] mt-1">Base URL for your blog section per active language. If left empty for a secondary language, it will automatically fallback to the primary archive slug.</p>
                                 </div>
-                                <div class="md:w-2/3">
-                                    <div class="flex items-center">
-                                        <span class="px-3 py-2 bg-gray-50 dark:bg-[#272B30] border border-r-0 border-gray-200 dark:border-[#272B30] rounded-l-lg text-sm text-[#6F767E]">{{ url('/') }}/</span>
-                                        <input type="text" wire:model="archive_slug" class="flex-1 px-3 py-2 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-r-lg text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all">
+                                <div class="md:w-2/3 space-y-4">
+                                    @php
+                                        $locales = function_exists('available_locales') ? available_locales() : ['id', 'en'];
+                                        $defaultLocale = function_exists('setting') ? setting('default_locale', 'en') : 'en';
+                                    @endphp
+                                    <div>
+                                        <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1.5">Primary Slug ({{ strtoupper($defaultLocale) }})</label>
+                                        <div class="flex items-center">
+                                            <span class="px-3 py-2 bg-gray-50 dark:bg-[#272B30] border border-r-0 border-gray-200 dark:border-[#272B30] rounded-l-lg text-sm text-[#6F767E]">{{ url('/') }}/</span>
+                                            <input type="text" wire:model="archive_slug" class="flex-1 px-3 py-2 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-r-lg text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all" placeholder="blog-news">
+                                        </div>
+                                        @error('archive_slug') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                                     </div>
-                                    @error('archive_slug') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+
+                                    @foreach($locales as $loc)
+                                        @if($loc !== $defaultLocale)
+                                            <div>
+                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1.5">Localized Slug ({{ strtoupper($loc) }})</label>
+                                                <div class="flex items-center">
+                                                    <span class="px-3 py-2 bg-gray-50 dark:bg-[#272B30] border border-r-0 border-gray-200 dark:border-[#272B30] rounded-l-lg text-sm text-[#6F767E]">{{ url('/') }}/{{ $loc }}/</span>
+                                                    <input type="text" wire:model="archive_slug_translations.{{ $loc }}" class="flex-1 px-3 py-2 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-r-lg text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all" placeholder="{{ $archive_slug ?: 'blog-news' }} (Default)">
+                                                </div>
+                                                <p class="text-[11px] text-[#6F767E] mt-1">If left empty, defaults to <span class="font-semibold text-[#111827] dark:text-[#FCFCFC]">{{ $archive_slug ?: 'blog-news' }}</span></p>
+                                            </div>
+                                        @endif
+                                    @endforeach
                                 </div>
                             </div>
 
-                            <!-- Date Format -->
+                            <!-- Archive Title / Name -->
                             <div class="flex flex-col md:flex-row md:items-start gap-4 md:gap-8">
                                 <div class="md:w-1/3">
-                                    <label class="block text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Date Format</label>
-                                    <p class="text-xs text-[#6F767E] mt-1">Display format for dates.</p>
+                                    <label class="block text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Archive Title / Name</label>
+                                    <p class="text-xs text-[#6F767E] mt-1">Display name for your blog archive section per active language (e.g. <span class="font-mono bg-gray-100 dark:bg-[#272B30] px-1 rounded">Blog & News</span> for EN, <span class="font-mono bg-gray-100 dark:bg-[#272B30] px-1 rounded">Blog & Berita</span> for ID). If left empty, it will fallback to the primary title.</p>
                                 </div>
-                                <div class="md:w-2/3">
-                                    <input type="text" wire:model="date_format" class="w-full md:w-2/3 px-3 py-2 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-lg text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all">
-                                    <p class="mt-2 text-xs text-[#6F767E]">Uses standard PHP date formatting (e.g. <span class="font-mono bg-gray-100 dark:bg-[#272B30] px-1 rounded">M d, Y</span>)</p>
-                                    @error('date_format') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                                <div class="md:w-2/3 space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1.5">Primary Title ({{ strtoupper($defaultLocale) }})</label>
+                                        <input type="text" wire:model="archive_title" class="w-full px-3 py-2 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-lg text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all" placeholder="Blog & News">
+                                        @error('archive_title') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                                    </div>
+
+                                    @foreach($locales as $loc)
+                                        @if($loc !== $defaultLocale)
+                                            <div>
+                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1.5">Localized Title ({{ strtoupper($loc) }})</label>
+                                                <input type="text" wire:model="archive_title_translations.{{ $loc }}" class="w-full px-3 py-2 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-lg text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all" placeholder="{{ $archive_title ?: 'Blog & News' }} (Default)">
+                                                <p class="text-[11px] text-[#6F767E] mt-1">If left empty, defaults to <span class="font-semibold text-[#111827] dark:text-[#FCFCFC]">{{ $archive_title ?: 'Blog & News' }}</span></p>
+                                            </div>
+                                        @endif
+                                    @endforeach
                                 </div>
                             </div>
                         </div>

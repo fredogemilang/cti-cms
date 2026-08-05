@@ -6,6 +6,7 @@ use App\Models\CptEntry;
 use App\Models\CustomPostType;
 use App\Models\Page;
 use App\Services\ThemeLoader;
+use Illuminate\Support\Facades\View;
 
 /**
  * Public homepage controller. Pulls the active theme's home view with:
@@ -38,6 +39,9 @@ class HomeController extends Controller
 
         $page = $this->loadHomePage();
         abort_if(! $page, 404, 'Homepage not found. Create a page with slug "home".');
+
+        request()->attributes->set('page', $page);
+        View::share('page', $page);
 
         return view($viewName, [
             'testimonials' => $this->latestEntries('client-says'),

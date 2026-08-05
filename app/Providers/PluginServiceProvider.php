@@ -48,6 +48,31 @@ class PluginServiceProvider extends ServiceProvider
 
                 $localePattern = $this->nonDefaultLocalesPattern();
 
+                // Register CDT theme short CPT routes
+                if (active_theme()?->slug === 'cdt') {
+                    if ($localePattern !== 'nothing-to-match') {
+                        Route::get('/{locale}/{vendorSlug}/{productSlug}', [ArchiveController::class, 'localeShortProductSingle'])
+                            ->where('locale', $localePattern)
+                            ->where('vendorSlug', '[a-zA-Z0-9\-]+')
+                            ->where('productSlug', '[a-zA-Z0-9\-]+')
+                            ->name('locale.cdt.product.single');
+
+                        Route::get('/{locale}/{vendorSlug}', [ArchiveController::class, 'localeShortVendorSingle'])
+                            ->where('locale', $localePattern)
+                            ->where('vendorSlug', '(?!'.preg_quote($adminPath, '/').')[a-zA-Z0-9\-]+')
+                            ->name('locale.cdt.vendor.single');
+                    }
+
+                    Route::get('/{vendorSlug}/{productSlug}', [ArchiveController::class, 'shortProductSingle'])
+                        ->where('vendorSlug', '[a-zA-Z0-9\-]+')
+                        ->where('productSlug', '[a-zA-Z0-9\-]+')
+                        ->name('cdt.product.single');
+
+                    Route::get('/{vendorSlug}', [ArchiveController::class, 'shortVendorSingle'])
+                        ->where('vendorSlug', '(?!'.preg_quote($adminPath, '/').')[a-zA-Z0-9\-]+')
+                        ->name('cdt.vendor.single');
+                }
+
                 if ($localePattern !== 'nothing-to-match') {
                     // Localized Catch-all: Pages (e.g. /id/about-us)
                     Route::get('/{locale}/{slug}', [PageController::class, 'show'])

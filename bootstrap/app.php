@@ -8,10 +8,12 @@ use App\Http\Middleware\CompressResponse;
 use App\Http\Middleware\EnforceTwoFactor;
 use App\Http\Middleware\HandleRedirects;
 use App\Http\Middleware\InjectSeoTags;
+use App\Http\Middleware\Log404;
 use App\Http\Middleware\OptimizeHtml;
 use App\Http\Middleware\PageCache;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetLocale;
+use App\Models\NotFoundLog;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -46,6 +48,7 @@ return Application::configure(basePath: dirname(__DIR__))
             CompressResponse::class,
             SecurityHeaders::class,
             PageCache::class,
+            Log404::class,
         ]);
 
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
@@ -60,6 +63,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Prune old audit log entries (default 90 days, configurable via setting)
         $schedule->command('activity:prune')->dailyAt('03:00')->onOneServer();
+
+        // Prune resolved 404 logs older than 90 days
+        $schedule->call(fn () => NotFoundLog::prune(90))
+            ->name('prune-404-logs')->dailyAt('03:15')->onOneServer();
 
         // Flip scheduled content to published once published_at arrives.
         $schedule->command('content:publish-scheduled')->everyMinute()->withoutOverlapping();

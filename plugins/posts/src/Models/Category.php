@@ -65,4 +65,23 @@ class Category extends Model
     {
         return $this->posts()->count();
     }
+
+    public function getUrl(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $defaultLocale = function_exists('default_locale') ? default_locale() : (function_exists('setting') ? setting('default_locale', config('app.locale', 'en')) : config('app.locale', 'en'));
+
+        $prefix = ($locale !== $defaultLocale) ? '/'.$locale : '';
+        $slug = $this->getTranslation('slug', $locale, fallback: false) ?: $this->slug;
+        $archiveSlug = 'blog-news';
+        if (class_exists(Setting::class)) {
+            $archiveSlug = Setting::getArchiveSlug($locale);
+        }
+        $categoryBase = 'category';
+        if (class_exists(\App\Models\Setting::class)) {
+            $categoryBase = \App\Models\Setting::get('permalink_category_base', 'category');
+        }
+
+        return url($prefix.'/'.$archiveSlug.'/'.$categoryBase.'/'.$slug);
+    }
 }
