@@ -90,7 +90,7 @@ document.addEventListener('alpine:init', () => {
                     element: this.$refs.editor,
                     extensions: [
                         StarterKit.configure({
-                            heading: { levels: [1, 2, 3] },
+                            heading: { levels: [2, 3, 4] },
                             link: {
                                 openOnClick: false,
                                 HTMLAttributes: { class: 'text-blue-500 hover:underline' },
@@ -178,8 +178,22 @@ document.addEventListener('alpine:init', () => {
             toggleStrike() {
                 if (editorInstance) editorInstance.chain().focus().toggleStrike().run();
             },
+            setParagraph() {
+                if (editorInstance) editorInstance.chain().focus().setParagraph().run();
+            },
             toggleHeading(level) {
                 if (editorInstance) editorInstance.chain().focus().toggleHeading({ level }).run();
+            },
+            setFormat(val) {
+                if (!editorInstance) return;
+                if (val === 'p') {
+                    editorInstance.chain().focus().setParagraph().run();
+                } else {
+                    const level = parseInt(val.replace('h', ''), 10);
+                    if ([2, 3, 4].includes(level)) {
+                        editorInstance.chain().focus().toggleHeading({ level }).run();
+                    }
+                }
             },
             toggleBulletList() {
                 if (editorInstance) editorInstance.chain().focus().toggleBulletList().run();
