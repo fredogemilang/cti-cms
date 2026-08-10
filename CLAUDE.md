@@ -1,6 +1,7 @@
-# CLAUDE.md
+# CLAUDE.md — CTI CMS
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+> **CTI CMS** is a reusable, modular Laravel CMS core. Deployed as **CDT** at `cdt.devs`.
+> Core = generic (`app/`, `database/`). Theme = client-specific (`themes/cdt/`). Plugin = domain extensions.
 
 ## Quick Reference
 
@@ -8,145 +9,159 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |------|---------|
 | Dev server (all services) | `composer run dev` |
 | Run all tests | `composer run test` |
-| Run a single test | `php artisan test --filter=ClassName` |
-| Run a specific test method | `php artisan test --filter=testMethodName` |
+| Run single test | `php artisan test --filter=ClassName` |
 | Build frontend | `npm run build` |
-| Laravel commands | `php artisan` (standard) |
-| List routes | `php artisan route:list` |
 | Clear all caches | `php artisan optimize:clear` |
-| Lint (Pint) | `./vendor/bin/pint` |
-| Run queue worker | `php artisan queue:work` |
-| Tinker REPL | `php artisan tinker` |
+| Lint | `./vendor/bin/pint` |
+| Queue worker | `php artisan queue:work` |
+| Tinker | `php artisan tinker` |
+| Publish theme assets | `php artisan theme:publish cdt` |
 
 ## Tech Stack
 
-- **PHP 8.2+** / **Laravel 13.x** (Laravel 12 framework)
-- **Livewire 4.0** — all admin views are Livewire full-page components
-- **Tailwind CSS 4** (via Vite plugin) — dark mode via `.dark` class selector
-- **TipTap 3.x** — rich text editor (see `resources/js/app.js`)
-- **Vite 7** — asset bundling; includes Tailwind, auto-discovers theme assets
-- **SQLite** (local dev, `database/database.sqlite`) or **MySQL** (production)
+- **PHP 8.2+** / **Laravel 13.x**
+- **Livewire 4.0** — all admin views are full-page Livewire components
+- **Alpine.js** — lightweight reactivity in Blade views
+- **Tailwind CSS 4** — via Vite plugin, dark mode via `.dark` class
+- **TipTap 3.x** — rich text editor
+- **Vite 7** — asset bundling, auto-discovers theme assets
+- **SQLite** (dev) / **MySQL** (production)
+- **spatie/laravel-permission** — RBAC
 
-## Project Structure & Architecture
+## ⚠️ Core vs Theme Boundary (CRITICAL)
 
 ```
-plugins/                  # ⚠️ THE CORE EXTENSIBILITY LAYER — most domain logic lives here
-  events/                 # Events management, registration, doorprize
-  membership/             # Member registration & approval
-  posts/                  # Blog/news with categories/tags
-  article-submission/     # Public article uploads
+app/              ← Generic CMS features ANY site would need
+themes/cdt/       ← CDT-specific views, partials, URL overrides
+plugins/          ← Domain extensions (posts, google-site-kit, etc.)
+```
+
+**When unsure whether something belongs in core or theme → discuss before implementing.**
+
+## 5 Rules for AI Agents
+
+1. **ALWAYS use `resolve_block_asset($path)`** — never `asset('storage/' . $v)`. See docs/gotchas.md#media
+2. **NEVER hardcode content in templates** — all from database via `$entry->meta`, `setting()`, `t()`
+3. **Scan ALL pages/vendors** — don't assume a bug is isolated to one item
+4. **EN and ID must stay in sync** — verify after every data edit
+5. **Core vs Theme boundary** — generic in `app/`, project-specific in `themes/{project}/`
+
+## Key Conventions
+
+1. **Translations**: JSON `translations` column on Page, PageBlock, CptEntry, FormField. Trait: `HasTranslations`. Default locale in main columns, others in `translations.{locale}.{field}`.
+2. **Assets**: `resolve_block_asset($path, 'sm')` resolves to correct public path + variant WebP. Falls back to original if variant missing.
+3. **Settings**: `setting('key', default)` helper — reads from `settings` table via in-memory cache.
+4. **Forms**: Created via admin UI, assigned to theme placeholders via `theme_{slug}_form_assignments`. Rendered with `tailwind-form.blade.php`.
+5. **SEO**: `SeoMeta` polymorphic per-locale. `InjectSeoTags` middleware auto-injects. Always use `<x-seo-breadcrumbs :entity="$entry" />`.
+6. **Localization**: URL prefix `/id/path`. `SetLocale` middleware. `t('group.key', 'Default')` for string translations.
+7. **Page Builder**: `Page` → `PageBlock` with `translations` JSON. Repeaters store rows in `value` (JSON).
+8. **CPT**: `CustomPostType` → `CptEntry` + `MetaField`. Entry meta in `meta` JSON. Translations in `meta._translations.{locale}`.
+9. **Debug**: Use `scratch/` dir for temp PHP scripts. Bootstrap: `require 'vendor/autoload.php'; $app = require_once 'bootstrap/app.php';`
+10. **SEO Headings**: Strict `h1 > h2 > h3`. No heading tags in nav/footer — use `<span>`. Exactly one `<h1>` per page.
+11. **Admin Menu**: Registered via `AdminMenuBuilder` + `RenderAdminMenu` event. Never hardcode sidebar.
+12. **Themes**: `theme.json` defines templates, blocks, form_placeholders, menu_locations. Published with `theme:publish`.
+13. **Redirects**: `Redirect` model + `HandleRedirects` middleware (prepended, pre-route).
+14. **404 Logging**: `NotFoundLog` + `Log404` middleware (terminable). Throttled 5min, static assets skipped, auto-prune 90 days.
+15. **Sitemap**: On-the-fly with per-type cache. Multi-locale with `<xhtml:link>` alternates. Respects filter hooks.
+16. **Plugins**: Check `is_plugin_active('posts')` before using plugin models. Blog ALWAYS uses Posts plugin, never CPT.
+
+## Project Structure
+
+```
 app/
-  Livewire/Admin/         # Core admin Livewire components
-  Models/                 # Core Eloquent models (User, Page, Media, etc.)
-  Services/               # Singletons: PluginLoader, ThemeLoader, SettingsRegistry, etc.
-  Traits/                 # HasTranslations, HasSeoMeta, HasRoles, FindsByLocalizedSlug
-  Providers/              # App, Auth, Plugin, Theme, BrevoMail service providers
-themes/                   # Blade-based themes (iccom/ active)
+├── Livewire/Admin/         ← Core admin Livewire components
+├── Models/                 ← 36 Eloquent models
+├── Services/               ← PluginLoader, ThemeLoader, SettingsRegistry, etc.
+├── Traits/                 ← HasTranslations, HasSeoMeta, HasRoles
+├── Providers/              ← App, Auth, Plugin, Theme service providers
+├── Http/Middleware/        ← 13 middleware layers
+└── Support/                ← Filter, helpers
+plugins/
+├── posts/                  ← Blog with categories/tags
+└── google-site-kit/        ← Analytics integration
+themes/cdt/                 ← Active theme
+├── theme.json              ← Templates, blocks, form_placeholders
+├── views/                  ← Blade templates + partials
+└── assets/                 ← Published to public/themes/cdt/
 ```
 
-### Plugin System
+## Middleware Stack (order matters)
 
-Plugins are the primary organizational pattern. Each plugin is a self-contained package at `plugins/{slug}/`:
+| # | Middleware | Role |
+|---|-----------|------|
+| 0 | `HandleRedirects` | 301/302 before route matching |
+| 1 | `SetLocale` | Locale from URL/query/session/cookie |
+| 2 | `InjectSeoTags` | Meta tags, OG, JSON-LD in `<head>` |
+| 3 | `OptimizeHtml` | Minify HTML |
+| 4 | `CompressResponse` | Gzip/Brotli |
+| 5 | `SecurityHeaders` | CSP, X-Frame, HSTS |
+| 6 | `PageCache` | Full-page cache for static pages |
+| 7 | `Log404` | Passive 404 logging (terminable) |
 
-```
-plugins/{slug}/
-  plugin.json             # {name, slug, version, provider} — provider class is the entry point
-  routes/web.php          # MUST include 'web' middleware (see docs/plugin-development.md)
-  src/
-    Providers/            # ServiceProvider — boot loads routes/views/migrations, registers menu via event
-    Http/Controllers/     # Plugin controllers
-    Livewire/             # Plugin Livewire components
-    Models/               # Plugin Eloquent models
-  database/migrations/    # Migrations auto-loaded by PluginLoader
-  resources/views/        # Views namespace = plugin slug
-```
+## Key Models (36 total)
 
-- **PluginLoader** (`app/Services/PluginLoader.php`): Boots active plugins from DB, auto-registers PSR-4 namespace `Plugins\{PascalCaseSlug}\`, validates routes include `web` middleware.
-- **Activation**: Plugins are stored in the `plugins` table. Activation/deactivation managed via admin UI.
-- **Menu registration**: Use the `RenderAdminMenu` event — never seed menus to DB.
-- **Permission naming**: `{resource}.{action}` format (e.g. `events.view`, `posts.create`).
+| Model | Table | Purpose |
+|-------|-------|---------|
+| `Page` | `pages` | Static pages with PageBuilder |
+| `PageBlock` | `page_blocks` | Block-based builder, translations JSON |
+| `CustomPostType` | `custom_post_types` | CPT schema definition |
+| `CptEntry` | `cpt_entries` | CPT content, meta JSON |
+| `MetaField` | `meta_fields` | CPT field schema |
+| `Form` | `forms` | Dynamic forms (SoftDeletes) |
+| `FormField` | `form_fields` | Form field definitions |
+| `FormEntry` | `form_entries` | Form submissions |
+| `Media` | `media` | Uploads, WebP variants |
+| `SeoMeta` | `seo_metas` | Per-locale SEO (polymorphic) |
+| `Redirect` | `redirects` | 301/302 rules |
+| `NotFoundLog` | `not_found_logs` | 404 tracking |
+| `Setting` | `settings` | Key-value config |
+| `User` | `users` | spatie RBAC |
+| `MenuItem` | `menu_items` | Navigation hierarchy |
 
-### Theme System
+## Translation Systems
 
-Themes live in `themes/{slug}/` with a `theme.json` manifest. On activation, assets are published to `public/themes/{slug}/`. Views are referenced by namespace: `themename::view.path`. The `theme_view()`, `theme_asset()`, and `active_theme()` helpers resolve the active theme. See `docs/theme-development.md`.
+Three independent systems that work together:
 
-### Admin Panel
-
-- **Path**: Configurable via `ADMIN_PATH` env var (default `admin`), accessible at `config('admin.path')`.
-- **UI**: Livewire full-page components with dark-mode-ready design (`dark:bg-[#1A1A1A]`). All admin index views MUST adhere to the 5 standard UI rules (Header `@section('page-actions')`, filter status tabs with `getStatusCountsProperty()` count badges, search via `<x-admin.ui.input>`, shared `<x-admin.ui.table>`, and `data-tooltip` action buttons — see `docs/plugin-development.md#admin-index-page--ui-standards`).
-- **Auth**: Custom `AuthController` with 2FA support (`EnforceTwoFactor` middleware). Optional enforced 2FA per role.
-- **RBAC**: Users → Roles → Permissions. `CheckPermission` middleware gates all admin routes.
-
-### Content Architecture
-
-- **Pages**: Row-per-page with `PageBlock` children (block-based builder). Slug is the URL path.
-- **Custom Post Types (CPT)**: Dynamic content types with entries, taxonomies, and meta fields.
-- **Forms**: Builder-based forms with conditional logic, entries, CSV export.
-- **Catch-all route**: `/{slug}` is the *last* registered route (in `PluginServiceProvider::booted`) — plugin routes take precedence.
-
-### Translation Pattern (`HasTranslations` trait)
-
-The default locale (e.g. `id`) is stored in the model's primary columns (`title`, `slug`, etc.). Translations for other locales go into a `translations` JSON column: `{"en": {"title": "About"}, "ja": {...}}`. This keeps default-locale queries unchanged. Use `$model->getTranslation('field', 'en')` or the `translate()` helper.
-
-### Settings
-
-`SettingsRegistry` defines groups of key-value pairs with field types, validation rules, and sections. The `setting()` helper reads from the `settings` table with in-memory cache. Admin UI renders settings at `/admin/settings/{group}` via `SettingsPage` Livewire component.
-
-### Scheduled Tasks
-
-- `events:complete-expired` — marks past events as completed (daily 00:01)
-- `activity:prune` — prunes old audit log entries
-- `content:purge-trash` — removes expired trashed content
-- `content:publish-scheduled` — publishes scheduled content
-- `media:optimize` — backfill WebP conversions
-
-Setup cron: `* * * * * php artisan schedule:run`
-
-## Key Patterns
-
-- **Livewire components** are full-page components in admin. Use `#[Layout]` attribute or extend `layouts.admin`.
-- **Slug UI**: Always use the click-to-edit inline badge pattern (see `docs/plugin-development.md#permalink-slug-pattern`).
-- **Permission middleware**: `permission:{resource}.{action}` — checks the `permissions` table.
-- **Media picker**: `TiptapMediaPicker` Livewire component bridges TipTap editor and media library.
-- **SEO**: Per-model `HasSeoMeta` trait stores SEO metadata. `SeoRenderer` service outputs meta tags.
-- **Page cache**: `PageCache` middleware caches anonymous GET responses; auto-purged on Page/CPT save.
-- **Audit log**: `ActivityLogger` service with `activity()` helper. Model observers track CRUD.
+1. **Model-Level** (`HasTranslations` trait): Default locale in main columns, others in `translations` JSON
+2. **String Registry** (`t()` helper): `t('group.key', 'Default')` — scanned and managed in admin
+3. **CPT Meta** (`meta._translations.{locale}`): Custom field translations within entry meta JSON
 
 ## API
 
-REST API v1 at `/api/v1/`. Auth via token (create/revoke in admin → API Tokens). Public endpoints: pages, CPT entries, media, form submissions. See `routes/api.php`.
+REST API v1 at `/api/v1/`. 98 endpoints total — see `docs/api-reference.md`.
+- Admin endpoints require Bearer token
+- Public endpoints: pages, CPT entries, menus, forms, posts, settings
+- Plugin auto-discovery: `plugins/{slug}/routes/api.php`
 
-## Queue
+## Critical Gotchas (see `docs/gotchas.md` for full list)
 
-Uses `database` queue driver by default. Run with:
-```bash
-php artisan queue:work       # for production (under Supervisor)
-php artisan queue:listen     # for development (included in `composer run dev`)
+| # | Issue | Fix |
+|---|-------|-----|
+| G12 | Controller param binding in localized routes | Signature must accept `$localeOrSlug, $slug` |
+| G6 | PageBlocks unique constraint too restrictive | Dropped DB constraint, app-level validation |
+| G24 | Image variants need queue worker | `QUEUE_CONNECTION=database` requires active worker |
+| G25 | `resolve_block_asset($path, 'sm')` fallback | Falls back to original (2-3MB) if variant missing |
+| G34 | Polylang import slug conflicts | Use `findExistingPolylangEntry()` + merge translations |
+| G45 | `.gitignore` blocking theme files on project branches | Remove `/themes/{name}` from `.gitignore` on project branches |
+
+## Scheduled Tasks
+
 ```
+* * * * * php artisan schedule:run
+```
+- `events:complete-expired` (daily 00:01)
+- `activity:prune` (daily 03:00, 90d)
+- `content:purge-trash` (daily 02:30, 30d)
+- `content:publish-scheduled` (every minute)
+- `media:optimize` (backfill WebP)
 
-## Known Bugs & Watch-Outs (Fixed & Standardized)
+## Documentation
 
-### Repeater Fields: Canonical `repeater_fields` Key
-- **Official Standard**: The official key for repeater sub-fields in the `options` JSON column is strictly **`repeater_fields`**.
-- **Strict Validation & Clean Rejection**: All legacy keys (such as `sub_fields`) or unsupported keys (such as `anak_fields`, `items`) are **strictly rejected with HTTP 422 Unprocessable Entity**.
-
-### Repeater Key Binding: `name` vs `id`
-API data uses `name` as the key for repeater sub-fields. Always use: `$subField['name'] ?? $subField['id'] ?? Str::snake(...)`.
-
-### CPT MetaBoxes & Field Groups
-All CPT MetaFields default to `field_group = 'general'`. `CptForm` automatically creates and ensures a `'general'` MetaBox exists when loading or saving CPT schemas.
-
-### Media Upload: `uploaded_by` Column
-`MediaService::upload()` hardcodes `auth()->id()` which can be null for API token auth. Fixed to fallback: `$metadata['uploaded_by'] ?? auth()->id() ?? 1`.
-
-### Icon Library System
-- **Lucide Icons**: 2,007 official Lucide SVG icons loaded via `resources/icons/lucide.json`.
-- **Field Type**: `'icon'` registered in `MetaField::$fieldTypes` and `PageBlock::$blockTypes`.
-- **Rendering**: `<x-icon name="lucide:shield" class="w-5 h-5 text-blue-500" />` or `render_icon($name, $class)` helper.
-- **Admin Settings**: Icon libraries managed at `/ctrlpanel/settings/icons` (`IconLibrariesSettings.php`).
-
-## Plugins: Reference Implementations
-
-- **Posts** (`plugins/posts`) — complete example with Livewire CRUD, categories, tags, slug generation, permissions
-- **Events** (`plugins/events`) — complex plugin with wizard, registration flow, doorprize console, custom questions
-- **Membership** (`plugins/membership`) — simpler plugin with approval workflow
+| File | Content |
+|------|---------|
+| `docs/gotchas.md` | All 45 gotchas & lessons learned |
+| `docs/architecture/` | Per-subsystem architecture deep dives |
+| `docs/api-reference.md` | 98 REST API endpoints |
+| `docs/theme-development.md` | Theme creation guide |
+| `docs/plugin-development.md` | Plugin creation guide |
+| `docs/sidebar-menu-system.md` | Admin menu system |
