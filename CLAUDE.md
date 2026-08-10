@@ -159,7 +159,9 @@ REST API v1 at `/api/v1/`. 98 endpoints total — see `docs/api-reference.md`.
 
 | File | Content |
 |------|---------|
+| `docs/branching-strategy.md` | Git branching, core vs project, server deploy protocol |
 | `docs/gotchas.md` | All 45 gotchas & lessons learned |
+| `docs/conventions.md` | Patterns, deployment, branching |
 | `docs/architecture/` | Per-subsystem architecture deep dives |
 | `docs/api-reference.md` | 98 REST API endpoints |
 | `docs/theme-development.md` | Theme creation guide |
