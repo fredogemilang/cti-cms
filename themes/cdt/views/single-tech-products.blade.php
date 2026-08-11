@@ -42,11 +42,16 @@
 
     $siblingProducts = collect();
     if ($parentProduct) {
-        $siblingProducts = $parentProduct->relatedEntries('product_id')->where('cpt_entries.id', '!=', $entry->id)->get();
+        $siblingProducts = $parentProduct->relatedEntries('product_id')
+            ->where('cpt_entries.id', '!=', $entry->id)
+            ->reorder()
+            ->orderBy('cpt_entries.title')
+            ->get();
         if ($siblingProducts->isEmpty() && $parentProduct->slug) {
             $siblingProducts = \App\Models\CptEntry::where('id', '!=', $entry->id)
                 ->whereHas('postType', fn($q) => $q->where('slug', 'tech-products'))
                 ->where('meta->parent_vendor', $parentProduct->slug)
+                ->orderBy('title')
                 ->get();
         }
     }

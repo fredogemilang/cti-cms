@@ -43,10 +43,14 @@
     $allSubProducts = collect();
     $siblingProducts = collect();
     if ($parentProduct) {
-        $allSubProducts = $parentProduct->relatedEntries('product_id')->get();
+        $allSubProducts = $parentProduct->relatedEntries('product_id')
+            ->reorder()
+            ->orderBy('cpt_entries.title')
+            ->get();
         if ($allSubProducts->isEmpty() && $parentProduct->slug) {
             $allSubProducts = \App\Models\CptEntry::whereHas('postType', fn($q) => $q->where('slug', 'tech-products'))
                 ->where('meta->parent_vendor', $parentProduct->slug)
+                ->orderBy('title')
                 ->get();
         }
         $siblingProducts = $allSubProducts->where('id', '!=', $entry->id);
