@@ -175,10 +175,19 @@ class PageForm extends Component
         $this->blocks = $this->page->blocks->map(function ($block) use ($schemaMap) {
             $value = $block->value;
             // Decode JSON for specific types
-            if (in_array($block->type, ['checkbox', 'gallery', 'posts', 'repeater'])) {
+            if (in_array($block->type, ['checkbox', 'gallery', 'posts', 'repeater', 'button', 'title', 'card'])) {
                 $value = is_string($value) ? json_decode($value, true) : $value;
                 if ($block->type === 'repeater' && ! is_array($value)) {
                     $value = [];
+                }
+                if ($block->type === 'button' && ! is_array($value)) {
+                    $value = ['text' => '', 'url' => '#', 'target' => '_self'];
+                }
+                if ($block->type === 'title' && ! is_array($value)) {
+                    $value = ['prefix' => '', 'main' => ''];
+                }
+                if ($block->type === 'card' && ! is_array($value)) {
+                    $value = ['title' => '', 'description' => '', 'image' => ''];
                 }
             }
 
@@ -831,6 +840,22 @@ class PageForm extends Component
         }
     }
 
+    public function reorderGalleryImages(int $blockIndex, int $fromIndex, int $toIndex)
+    {
+        if (isset($this->blocks[$blockIndex])) {
+            $val = $this->blocks[$blockIndex]['value'] ?? [];
+            if (is_string($val)) {
+                $val = json_decode($val, true) ?: [];
+            }
+            if (is_array($val) && isset($val[$fromIndex]) && isset($val[$toIndex])) {
+                $item = array_splice($val, $fromIndex, 1)[0];
+                array_splice($val, $toIndex, 0, [$item]);
+                $this->blocks[$blockIndex]['value'] = array_values($val);
+                $this->hasUnsavedChanges = true;
+            }
+        }
+    }
+
     #[On('media-picker-closed')]
     public function onMediaPickerClosed()
     {
@@ -943,8 +968,8 @@ class PageForm extends Component
                 $defaultValue = $blockData['value'] ?? '';
             }
 
-            // Encode JSON for collection-style types
-            if (in_array($blockData['type'], ['checkbox', 'gallery', 'posts', 'repeater'])) {
+            // Encode JSON for collection-style and compound types or array values
+            if (in_array($blockData['type'], ['checkbox', 'gallery', 'posts', 'repeater', 'button', 'title', 'card']) || is_array($defaultValue)) {
                 $defaultValue = is_array($defaultValue) ? json_encode($defaultValue) : $defaultValue;
             }
 
@@ -959,7 +984,7 @@ class PageForm extends Component
                     if ($v === null || $v === '' || (is_array($v) && empty($v))) {
                         continue;
                     }
-                    if ($blockData['type'] === 'repeater' && is_array($v)) {
+                    if (is_array($v)) {
                         $v = json_encode($v);
                     }
                     $blockTranslations[$locale]['value'] = $v;

@@ -9,18 +9,22 @@
 
 ## Block Types
 
-**Translatable:** `text`, `textarea`, `wysiwyg`, `code`, `markdown`
+**Translatable:** `text`, `textarea`, `wysiwyg`, `code`, `markdown`, `button`, `title`, `card`
 
 **Atomic (not translatable):** `number`, `date`, `media`, `switcher`, `select`, `radio`, `checkbox`, `gallery`, `posts`, `color`, `icon`, `url`, `email`
 
-**Special:** `repeater` — has children blocks + value is JSON array of rows
+**Special:**
+- `button`: Compound block combining text and URL in one editor card (value: `{"text":"...","url":"...","target":"_self"}`). Access via `$page->buttonBlock('name')`.
+- `title`: Compound block combining optional prefix and main title in one editor card (value: `{"prefix":"...","main":"..."}`). Access via `$page->titleBlock('name')`.
+- `card`: Compound block combining title, description, and image in one editor card (value: `{"title":"...","description":"...","image":"..."}`). Access via `$page->cardBlock('name')`.
+- `repeater`: Has children blocks + value is JSON array of rows. Access via `$page->repeaterBlock('name')`.
 
 ## Translation Flow
 
 1. Default locale values stored in `value` column
 2. Non-default locales stored in `translations` JSON: `{locale: {value: "..."}}`
 3. `switchLocale()` in PageForm: snapshot → swap → restore on save
-4. Repeaters: entire rows array stored per locale
+4. Repeaters & Compound blocks (`button`, `title`, `card`): entire payload array stored per locale
 
 ## Template Schema (theme.json)
 
@@ -30,7 +34,9 @@
     "home": {
       "label": "Home Page",
       "blocks": [
-        {"name": "hero_prefix", "type": "text", "label": "Hero Prefix", "default": "Speed Up Your"},
+        {"name": "hero_title", "type": "title", "label": "Hero Title", "default": {"prefix": "Speed Up Your", "main": "Transformation Journey"}},
+        {"name": "hero_cta", "type": "button", "label": "Hero Button", "default": {"text": "Learn More", "url": "#areas-of-expertise"}},
+        {"name": "blog_callout", "type": "card", "label": "Blog Callout", "default": {"title": "Blog, News & Video", "description": "...", "image": "..."}},
         {"name": "expertise_list", "type": "repeater", "label": "Cards", "children": [
           {"name": "image", "type": "media"},
           {"name": "title", "type": "text"},
@@ -40,6 +46,22 @@
     }
   }
 }
+```
+
+### Compound Block Helpers
+
+```php
+// Title Block (prefix + main)
+$heroTitle = $page->titleBlock('hero_title', ['prefix' => 'Speed Up Your', 'main' => 'Transformation Journey']);
+// Returns: ['prefix' => 'Speed Up Your', 'main' => 'Transformation Journey']
+
+// Button Block (text + url + target)
+$heroCta = $page->buttonBlock('hero_cta', ['text' => 'Learn More', 'url' => '#areas-of-expertise']);
+// Returns: ['text' => 'Learn More', 'url' => '#areas-of-expertise', 'target' => '_self']
+
+// Card Block (title + description + image)
+$blogCard = $page->cardBlock('blog_callout', ['title' => 'Blog, News & Video', 'description' => '...', 'image' => '...']);
+// Returns: ['title' => 'Blog, News & Video', 'description' => '...', 'image' => '...']
 ```
 
 ## Key Files

@@ -147,6 +147,15 @@
                     @case('repeater')
                         @include('livewire.admin.pages.blocks.config.repeater', ['index' => $index, 'block' => $block])
                         @break
+                    @case('button')
+                        @include('livewire.admin.pages.blocks.config.button', ['index' => $index, 'block' => $block])
+                        @break
+                    @case('title')
+                        @include('livewire.admin.pages.blocks.config.title', ['index' => $index, 'block' => $block])
+                        @break
+                    @case('card')
+                        @include('livewire.admin.pages.blocks.config.card', ['index' => $index, 'block' => $block])
+                        @break
                 @endswitch
             </div>
 
@@ -215,6 +224,15 @@
                     @break
                 @case('repeater')
                     @include('livewire.admin.pages.blocks.entry.repeater', ['index' => $index, 'block' => $block])
+                    @break
+                @case('button')
+                    @include('livewire.admin.pages.blocks.entry.button', ['index' => $index, 'block' => $block])
+                    @break
+                @case('title')
+                    @include('livewire.admin.pages.blocks.entry.title', ['index' => $index, 'block' => $block])
+                    @break
+                @case('card')
+                    @include('livewire.admin.pages.blocks.entry.card', ['index' => $index, 'block' => $block])
                     @break
                 @default
                     <div class="text-[#6F767E] italic">Unknown block type: {{ $block['type'] }}</div>

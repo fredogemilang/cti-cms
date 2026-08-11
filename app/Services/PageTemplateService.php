@@ -81,6 +81,9 @@ class PageTemplateService
         return match ($type) {
             'switcher' => false,
             'number' => 0,
+            'button' => '{"text":"","url":"","target":"_self"}',
+            'title' => '{"prefix":"","main":""}',
+            'card' => '{"title":"","description":"","image":""}',
             'checkbox', 'gallery', 'posts', 'repeater' => '[]',
             default => '',
         };

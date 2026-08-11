@@ -57,12 +57,67 @@
             "label": "Homepage",
             "description": "CDT Main Homepage layout",
             "blocks": [
-                {"name": "hero_prefix", "type": "text", "label": "Hero Prefix", "default": "Speed Up Your"},
-                {"name": "hero_title", "type": "wysiwyg", "label": "Hero Title", "default": "Transformation Journey"},
+                {"name": "hero_title", "type": "title", "label": "Hero Title", "default": {"prefix": "Speed Up Your", "main": "Transformation Journey"}},
                 {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "Accelerate IT transformation journey with our end-to-end expertise, from strategy to execution across cloud, security, and observability."},
-                {"name": "hero_cta_text", "type": "text", "label": "Learn More Button Text", "default": "Learn More"},
-                {"name": "hero_cta_url", "type": "text", "label": "Learn More Button Link", "default": "#areas-of-expertise"},
-                {"name": "hero_image", "type": "media", "label": "Hero Background Image", "default": "themes/cdt/assets/banner_hero-DHYDqbF8.jpg"}
+                {"name": "hero_cta", "type": "button", "label": "Learn More Button", "default": {"text": "Learn More", "url": "#areas-of-expertise"}},
+                {"name": "hero_image", "type": "media", "label": "Hero Background Image", "default": "themes/cdt/assets/banner_hero-DHYDqbF8.jpg"},
+                {"name": "expertise_title", "type": "title", "label": "Area of Expertise Title", "default": {"prefix": "Area Of", "main": "Expertise"}},
+                {"name": "expertise_list", "type": "repeater", "label": "Area of Expertise Cards", "children": [
+                    {"name": "image", "type": "media", "label": "Card Image"},
+                    {"name": "title", "type": "text", "label": "Card Title"},
+                    {"name": "description", "type": "textarea", "label": "Card Description"}
+                ], "default": [
+                    {
+                        "image": "themes/cdt/assets/security-DrNRARC-.webp",
+                        "title": "Security",
+                        "description": "In the modern environment, it's essential for businesses to work together to ensure applications are secure. CDT's security solutions allow you to take a preventative approach against cyber threats by helping you keep tabs on potential weak spots, reduce impact in the event of an attack, and build a more powerful defense to keep your most critical assets secure. Additionally, you can tailor our security solutions to fit your specific requirements."
+                    },
+                    {
+                        "image": "themes/cdt/assets/clouds.png-Doka7eSJ.webp",
+                        "title": "Cloud",
+                        "description": "Cloud technology opens the door to new innovations, promoting emerging markets like cloud-native development. CDT is a cloud expert with certified teams, so we see this as an opportunity to help businesses reap the benefits of the cloud by providing a variety of cloud-based solutions. Our competence has also earned the reputation of AWS Advanced Consulting Partner of the year 2022, AWS Security Expert, AWS Migration consultant, AWS Infrastructure provider, AWS Analytics, and AWS DevOps specialty."
+                    },
+                    {
+                        "image": "themes/cdt/assets/analytics.png-Bdc2CvaB.webp",
+                        "title": "Observability",
+                        "description": "Observability in IT refers to the practice of monitoring and analyzing system and application performance in real-time. It provides insight into the behavior and health of software systems, helping organizations detect and resolve issues quickly and effectively. CDT can help using observability in business and can ensure yours IT systems are performing optimally, identify and resolve problems before they impact customers, and improve overall reliability and customer satisfaction."
+                    }
+                ]},
+                {"name": "alliance_title", "type": "title", "label": "Technology Alliance Title", "default": {"prefix": "Technology", "main": "Alliance"}},
+                {"name": "aws_title", "type": "title", "label": "AWS Section Title", "default": {"prefix": "AWS", "main": "Private Offers"}},
+                {"name": "aws_offers_gallery", "type": "gallery", "label": "AWS Private Offers Gallery", "default": [
+                    "themes/cdt/assets/confluent-logo-1024x562-BFo8llUh.png",
+                    "themes/cdt/assets/datadog-logo-1024x1024-BBaPl4Qq.png",
+                    "themes/cdt/assets/PT-Urun-Bangun-Negeri-BLb9ARg2.png",
+                    "themes/cdt/assets/GitLab-logo-BBxYVl-u.svg",
+                    "themes/cdt/assets/Mongo-DB-Logo-0iY8tsMG.svg",
+                    "themes/cdt/assets/tapway-logo-hd--DjdHTKHP.png"
+                ]},
+                {"name": "why_cdt_title", "type": "title", "label": "Why CDT Title", "default": {"prefix": "Why", "main": "CDT?"}},
+                {"name": "why_cdt_list", "type": "repeater", "label": "Why CDT Feature Boxes", "children": [
+                    {"name": "image", "type": "media", "label": "Box Background Image"},
+                    {"name": "title", "type": "text", "label": "Box Title"},
+                    {"name": "description", "type": "textarea", "label": "Box Description"}
+                ], "default": [
+                    {
+                        "image": "themes/cdt/assets/photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg",
+                        "title": "NUMBER ONE IT SERVICE DELIVERY",
+                        "description": "Guarantee the best quality of IT service delivery with every stage delivery involves many IT experts' role and ensure that service-level agreement (SLA) is applied."
+                    },
+                    {
+                        "image": "themes/cdt/assets/photo-1522071820081-009f0129c71c-w800-D1mgrB8h.jpg",
+                        "title": "EXCELLENT CUSTOMER SERVICES",
+                        "description": "24/7 customer response center, and many other convenient services were given fulfill customer requirement in today's digital era."
+                    },
+                    {
+                        "image": "themes/cdt/assets/photo-1552664730-d307ca884978-w800-DNfMnljE.jpg",
+                        "title": "YEARS OF EXPERIENCE EXPERTS",
+                        "description": "With years of experience and numerous of project portfolios, professional IT experts will measure and manage risk to ensure accuracy in implementing solutions into customer's IT environment."
+                    }
+                ]},
+                {"name": "testimonial_title", "type": "title", "label": "Testimonials Title", "default": {"prefix": "What Our", "main": "Client Says"}},
+                {"name": "blog_callout", "type": "card", "label": "Blog Callout Card", "default": {"title": "Blog, News & Video", "description": "Explore our latest insights and news.", "image": "themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg"}},
+                {"name": "life_callout", "type": "card", "label": "Life at CDT Callout Card", "default": {"title": "Life at Central Data Technology", "description": "Discover life and opportunities at CDT.", "image": "themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg"}}
             ]
         },
         "about": {

@@ -26,9 +26,14 @@
     <div class="relative z-10 mx-auto max-w-[1400px] w-full px-4 sm:px-6 lg:px-8">
       <div class="max-w-xl text-white">
         <div class="overflow-hidden">
+          @php
+            $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Speed Up Your', 'main' => 'Transformation Journey']);
+          @endphp
           <h1 class="hero-text-anim">
-            <span class="block text-xl md:text-2xl font-light mb-2">{{ $page?->block('hero_prefix') ?? 'Speed Up Your' }} </span>
-            <span class="block text-4xl md:text-5xl lg:text-[54px] font-bold leading-tight mb-6">{!! $page?->block('hero_title') ?? 'Transformation Journey' !!}</span>
+            @if(!empty($heroTitle['prefix']))
+              <span class="block text-xl md:text-2xl font-light mb-2">{!! $heroTitle['prefix'] !!}</span>
+            @endif
+            <span class="block text-4xl md:text-5xl lg:text-[54px] font-bold leading-tight mb-6">{!! $heroTitle['main'] !!}</span>
           </h1>
         </div>
         <div class="overflow-hidden">
@@ -36,10 +41,13 @@
             {{ $page?->block('hero_subtitle') ?? 'Accelerate IT transformation journey with our end-to-end expertise, from strategy to execution across cloud, security, and observability.' }}
           </p>
         </div>
+        @php
+          $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Learn More', 'url' => '#areas-of-expertise']);
+        @endphp
         <div class="hero-text-anim flex items-center gap-3 sm:gap-6">
-          <a href="{{ $page?->block('hero_cta_url') ?? '#areas-of-expertise' }}" x-link
+          <a href="{{ $heroCta['url'] ?? '#areas-of-expertise' }}" x-link
             class="inline-flex items-center justify-center whitespace-nowrap bg-white text-primary px-5 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm font-bold uppercase tracking-wider hover:bg-zinc-100 transition rounded-full">
-            {{ $page?->block('hero_cta_text') ?? t('home.learn_more', 'Learn More') }}
+            {{ $heroCta['text'] ?? t('home.learn_more', 'Learn More') }}
           </a>
           <button type="button" @click="catalogueOpen = true"
             class="group inline-flex items-center gap-2 whitespace-nowrap text-white text-xs sm:text-sm font-semibold hover:text-white/80 transition-colors cursor-pointer">
@@ -108,10 +116,15 @@
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col lg:flex-row gap-12">
         <!-- Left Column: Title -->
+        @php
+          $expTitle = $page?->titleBlock('expertise_title', ['prefix' => 'Area Of', 'main' => 'Expertise']);
+        @endphp
         <div class="lg:w-1/4 shrink-0 overflow-hidden">
           <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            {!! $page?->block('expertise_title_prefix') ?? 'Area Of' !!} <br>
-            <span class="font-bold text-dark">{!! $page?->block('expertise_title_main') ?? 'Expertise' !!}</span>
+            @if(!empty($expTitle['prefix']))
+              {!! $expTitle['prefix'] !!} <br>
+            @endif
+            <span class="font-bold text-dark">{!! $expTitle['main'] !!}</span>
           </h2>
           <div class="h-1 bg-primary mt-4" data-gsap="line-grow"></div>
         </div>
@@ -174,10 +187,15 @@
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col lg:flex-row gap-12">
         <!-- Left Column -->
+        @php
+          $allianceTitle = $page?->titleBlock('alliance_title', ['prefix' => 'Technology', 'main' => 'Alliance']);
+        @endphp
         <div class="lg:w-1/4 shrink-0 overflow-hidden">
           <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            {{ t('home.alliance_title_prefix', 'Technology') }} <br>
-            <span class="font-bold text-dark">{{ t('home.alliance_title_main', 'Alliance') }}</span>
+            @if(!empty($allianceTitle['prefix']))
+              {!! $allianceTitle['prefix'] !!} <br>
+            @endif
+            <span class="font-bold text-dark">{!! $allianceTitle['main'] !!}</span>
           </h2>
           <div class="h-1 bg-primary mt-4" data-gsap="line-grow"></div>
         </div>
@@ -212,24 +230,44 @@
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col lg:flex-row gap-12">
         <!-- Left Column -->
+        @php
+          $awsTitle = $page?->titleBlock('aws_title', ['prefix' => 'AWS', 'main' => 'Private Offers']);
+        @endphp
         <div class="lg:w-1/4 shrink-0 overflow-hidden">
           <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            {{ t('home.aws_title_prefix', 'AWS') }} <br>
-            <span class="font-bold text-dark">{{ t('home.aws_title_main', 'Private Offers') }}</span>
+            @if(!empty($awsTitle['prefix']))
+              {!! $awsTitle['prefix'] !!} <br>
+            @endif
+            <span class="font-bold text-dark">{!! $awsTitle['main'] !!}</span>
           </h2>
           <div class="h-1 bg-primary mt-4" data-gsap="line-grow"></div>
         </div>
         
+        @php
+          $awsLogos = $page?->block('aws_offers_gallery');
+          if (is_string($awsLogos)) {
+              $awsLogos = json_decode($awsLogos, true);
+          }
+          if (empty($awsLogos) || !is_array($awsLogos)) {
+              $awsLogos = [
+                  'themes/cdt/assets/confluent-logo-1024x562-BFo8llUh.png',
+                  'themes/cdt/assets/datadog-logo-1024x1024-BBaPl4Qq.png',
+                  'themes/cdt/assets/PT-Urun-Bangun-Negeri-BLb9ARg2.png',
+                  'themes/cdt/assets/GitLab-logo-BBxYVl-u.svg',
+                  'themes/cdt/assets/Mongo-DB-Logo-0iY8tsMG.svg',
+                  'themes/cdt/assets/tapway-logo-hd--DjdHTKHP.png'
+              ];
+          }
+        @endphp
+
         <!-- Right Column -->
         <div class="lg:w-3/4">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12 items-center [&:hover_div.aws-item]:opacity-20">
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/confluent-logo-1024x562-BFo8llUh.png') }}" alt="Confluent" title="Confluent" class="aws-logo w-full h-full object-contain"></div>
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/datadog-logo-1024x1024-BBaPl4Qq.png') }}" alt="Datadog" title="Datadog" class="aws-logo w-full h-full object-contain"></div>
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/PT-Urun-Bangun-Negeri-BLb9ARg2.png') }}" alt="Fortinet" title="Fortinet" class="aws-logo w-full h-full object-contain"></div>
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/GitLab-logo-BBxYVl-u.svg') }}" alt="GitLab" title="GitLab" class="aws-logo w-full h-full object-contain"></div>
-            
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/Mongo-DB-Logo-0iY8tsMG.svg') }}" alt="MongoDB" title="MongoDB" class="aws-logo w-full h-full object-contain"></div>
-            <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl"><img src="{{ asset('themes/cdt/assets/tapway-logo-hd--DjdHTKHP.png') }}" alt="Tapway" title="Tapway" class="aws-logo w-full h-full object-contain"></div>
+            @foreach($awsLogos as $logo)
+              <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl">
+                <img src="{{ resolve_block_asset($logo) }}" alt="AWS Private Offer Partner" class="aws-logo w-full h-full object-contain">
+              </div>
+            @endforeach
           </div>
         </div>
       </div>
@@ -241,10 +279,15 @@
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col lg:flex-row gap-12">
         <!-- Left Column -->
+        @php
+          $whyTitle = $page?->titleBlock('why_cdt_title', ['prefix' => 'Why', 'main' => 'CDT?']);
+        @endphp
         <div class="lg:w-1/4 shrink-0 overflow-hidden">
           <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
-            {!! $page?->block('why_cdt_title_prefix') ?? 'Why' !!} <br>
-            <span class="font-bold text-dark italic">{!! $page?->block('why_cdt_title_main') ?? ($page?->block('why_cdt_title') ?? 'CDT?') !!}</span>
+            @if(!empty($whyTitle['prefix']))
+              {!! $whyTitle['prefix'] !!} <br>
+            @endif
+            <span class="font-bold text-dark italic">{!! $whyTitle['main'] !!}</span>
           </h2>
           <div class="h-1 bg-primary mt-4" data-gsap="line-grow"></div>
         </div>
@@ -309,9 +352,16 @@
     <div class="absolute inset-0 bg-testimonial-image opacity-[0.5] bg-cover bg-center blur-sm"></div>
   
     <div class="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
+      @php
+        $testimonialTitle = $page?->titleBlock('testimonial_title', ['prefix' => 'What Our', 'main' => 'Client Says']);
+      @endphp
       <div class="text-center mb-16">
-        <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">{{ t('home.testimonial_title_prefix', 'What Our') }} <span
-            class="font-bold text-dark">{{ t('home.testimonial_title_main', 'Client Says') }}</span></h2>
+        <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
+          @if(!empty($testimonialTitle['prefix']))
+            {!! $testimonialTitle['prefix'] !!}
+          @endif
+          <span class="font-bold text-dark">{!! $testimonialTitle['main'] !!}</span>
+        </h2>
         <div class="h-1 bg-primary mt-4 mx-auto" style="width: 50px;" data-gsap="line-grow"></div>
       </div>
   
@@ -395,14 +445,29 @@
   </section>
 
   <!-- Blog Callouts Section -->
+  @php
+    $blogCard = $page?->cardBlock('blog_callout', [
+      'title' => 'Blog, News & Video',
+      'description' => '',
+      'image' => 'themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg'
+    ]);
+    $lifeCard = $page?->cardBlock('life_callout', [
+      'title' => 'Life at Central Data Technology',
+      'description' => '',
+      'image' => 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg'
+    ]);
+  @endphp
   <section class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Callout 1 -->
       <div class="relative h-64 overflow-hidden group" data-gsap="curtain-reveal" data-gsap-delay="0">
-        <img src="{{ asset('themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg') }}" alt="{{ t('home.blog_title', 'Blog, News & Video') }}" title="{{ t('home.blog_title', 'Blog, News & Video') }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
+        <img src="{{ resolve_block_asset($blogCard['image'] ?: 'themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg') }}" alt="{{ $blogCard['title'] }}" title="{{ $blogCard['title'] }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
         <div class="absolute inset-0 bg-zinc-900/60"></div>
-        <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
-          <h2 class="text-3xl font-bold mb-6">{{ t('home.blog_title', 'Blog, News & Video') }}</h2>
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-6">
+          <h2 class="text-3xl font-bold mb-3">{!! $blogCard['title'] !!}</h2>
+          @if(!empty($blogCard['description']))
+            <p class="text-sm text-white/80 mb-4 max-w-sm">{!! $blogCard['description'] !!}</p>
+          @endif
           <a href="{{ url('/insights') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
             {{ t('home.explore', 'Explore') }}
           </a>
@@ -411,10 +476,13 @@
       
       <!-- Callout 2 -->
       <div class="relative h-64 overflow-hidden group" data-gsap="curtain-reveal" data-gsap-delay="0.2">
-        <img src="{{ asset('themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg') }}" alt="{{ t('home.life_title', 'Life at Central Data Technology') }}" title="{{ t('home.life_title', 'Life at Central Data Technology') }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
+        <img src="{{ resolve_block_asset($lifeCard['image'] ?: 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg') }}" alt="{{ $lifeCard['title'] }}" title="{{ $lifeCard['title'] }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
         <div class="absolute inset-0 bg-zinc-900/60"></div>
-        <div class="absolute inset-0 flex flex-col items-center justify-center text-white text-center">
-          <h2 class="text-3xl font-bold mb-6">{{ t('home.life_title', 'Life at Central Data Technology') }}</h2>
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-6">
+          <h2 class="text-3xl font-bold mb-3">{!! $lifeCard['title'] !!}</h2>
+          @if(!empty($lifeCard['description']))
+            <p class="text-sm text-white/80 mb-4 max-w-sm">{!! $lifeCard['description'] !!}</p>
+          @endif
           <a href="{{ url('/careers') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
             {{ t('home.learn_more', 'Learn More') }}
           </a>

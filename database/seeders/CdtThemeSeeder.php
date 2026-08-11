@@ -199,7 +199,12 @@ class CdtThemeSeeder extends Seeder
 
         PageBlock::updateOrCreate(
             ['page_id' => $homePage->id, 'name' => 'hero_title'],
-            ['type' => 'wysiwyg', 'label' => 'Hero Title', 'value' => 'Transformation Journey', 'order' => 0]
+            [
+                'type' => 'title',
+                'label' => 'Hero Title',
+                'value' => json_encode(['prefix' => 'Speed Up Your', 'main' => 'Transformation Journey']),
+                'order' => 0
+            ]
         );
 
         PageBlock::updateOrCreate(
@@ -208,13 +213,200 @@ class CdtThemeSeeder extends Seeder
         );
 
         PageBlock::updateOrCreate(
-            ['page_id' => $homePage->id, 'name' => 'hero_cta_text'],
-            ['type' => 'text', 'label' => 'Learn More Button Text', 'value' => 'Learn More', 'order' => 2]
+            ['page_id' => $homePage->id, 'name' => 'hero_cta'],
+            [
+                'type' => 'button',
+                'label' => 'Learn More Button',
+                'value' => json_encode(['text' => 'Learn More', 'url' => '#areas-of-expertise', 'target' => '_self']),
+                'order' => 2
+            ]
         );
 
         PageBlock::updateOrCreate(
-            ['page_id' => $homePage->id, 'name' => 'hero_cta_url'],
-            ['type' => 'text', 'label' => 'Learn More Button Link', 'value' => '#areas-of-expertise', 'order' => 3]
+            ['page_id' => $homePage->id, 'name' => 'expertise_title'],
+            [
+                'type' => 'title',
+                'label' => 'Area of Expertise Title',
+                'value' => json_encode(['prefix' => 'Area Of', 'main' => 'Expertise']),
+                'order' => 3
+            ]
+        );
+
+        $expertiseBlock = PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'name' => 'expertise_list'],
+            [
+                'type' => 'repeater',
+                'label' => 'Area of Expertise Cards',
+                'value' => json_encode([
+                    [
+                        'image' => 'themes/cdt/assets/security-DrNRARC-.webp',
+                        'title' => 'Security',
+                        'description' => "In the modern environment, it's essential for businesses to work together to ensure applications are secure. CDT's security solutions allow you to take a preventative approach against cyber threats by helping you keep tabs on potential weak spots, reduce impact in the event of an attack, and build a more powerful defense to keep your most critical assets secure. Additionally, you can tailor our security solutions to fit your specific requirements."
+                    ],
+                    [
+                        'image' => 'themes/cdt/assets/clouds.png-Doka7eSJ.webp',
+                        'title' => 'Cloud',
+                        'description' => "Cloud technology opens the door to new innovations, promoting emerging markets like cloud-native development. CDT is a cloud expert with certified teams, so we see this as an opportunity to help businesses reap the benefits of the cloud by providing a variety of cloud-based solutions. Our competence has also earned the reputation of AWS Advanced Consulting Partner of the year 2022, AWS Security Expert, AWS Migration consultant, AWS Infrastructure provider, AWS Analytics, and AWS DevOps specialty."
+                    ],
+                    [
+                        'image' => 'themes/cdt/assets/analytics.png-Bdc2CvaB.webp',
+                        'title' => 'Observability',
+                        'description' => "Observability in IT refers to the practice of monitoring and analyzing system and application performance in real-time. It provides insight into the behavior and health of software systems, helping organizations detect and resolve issues quickly and effectively. CDT can help using observability in business and can ensure yours IT systems are performing optimally, identify and resolve problems before they impact customers, and improve overall reliability and customer satisfaction."
+                    ]
+                ]),
+                'options' => [
+                    'children' => [
+                        ['name' => 'image', 'type' => 'media', 'label' => 'Card Image'],
+                        ['name' => 'title', 'type' => 'text', 'label' => 'Card Title'],
+                        ['name' => 'description', 'type' => 'textarea', 'label' => 'Card Description']
+                    ]
+                ],
+                'order' => 4
+            ]
+        );
+
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'parent_block_id' => $expertiseBlock->id, 'name' => 'image'],
+            ['type' => 'media', 'label' => 'Card Image', 'value' => '', 'order' => 0]
+        );
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'parent_block_id' => $expertiseBlock->id, 'name' => 'title'],
+            ['type' => 'text', 'label' => 'Card Title', 'value' => '', 'order' => 1]
+        );
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'parent_block_id' => $expertiseBlock->id, 'name' => 'description'],
+            ['type' => 'textarea', 'label' => 'Card Description', 'value' => '', 'order' => 2]
+        );
+
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'name' => 'alliance_title'],
+            [
+                'type' => 'title',
+                'label' => 'Technology Alliance Title',
+                'value' => json_encode(['prefix' => 'Technology', 'main' => 'Alliance']),
+                'order' => 5
+            ]
+        );
+
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'name' => 'aws_title'],
+            [
+                'type' => 'title',
+                'label' => 'AWS Section Title',
+                'value' => json_encode(['prefix' => 'AWS', 'main' => 'Private Offers']),
+                'order' => 6
+            ]
+        );
+
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'name' => 'aws_offers_gallery'],
+            [
+                'type' => 'gallery',
+                'label' => 'AWS Private Offers Gallery',
+                'value' => json_encode([
+                    'themes/cdt/assets/confluent-logo-1024x562-BFo8llUh.png',
+                    'themes/cdt/assets/datadog-logo-1024x1024-BBaPl4Qq.png',
+                    'themes/cdt/assets/PT-Urun-Bangun-Negeri-BLb9ARg2.png',
+                    'themes/cdt/assets/GitLab-logo-BBxYVl-u.svg',
+                    'themes/cdt/assets/Mongo-DB-Logo-0iY8tsMG.svg',
+                    'themes/cdt/assets/tapway-logo-hd--DjdHTKHP.png'
+                ]),
+                'order' => 7
+            ]
+        );
+
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'name' => 'why_cdt_title'],
+            [
+                'type' => 'title',
+                'label' => 'Why CDT Title',
+                'value' => json_encode(['prefix' => 'Why', 'main' => 'CDT?']),
+                'order' => 8
+            ]
+        );
+
+        $whyCdtBlock = PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'name' => 'why_cdt_list'],
+            [
+                'type' => 'repeater',
+                'label' => 'Why CDT Feature Boxes',
+                'value' => json_encode([
+                    [
+                        'image' => 'themes/cdt/assets/photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg',
+                        'title' => 'NUMBER ONE IT SERVICE DELIVERY',
+                        'description' => "Guarantee the best quality of IT service delivery with every stage delivery involves many IT experts' role and ensure that service-level agreement (SLA) is applied."
+                    ],
+                    [
+                        'image' => 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w800-D1mgrB8h.jpg',
+                        'title' => 'EXCELLENT CUSTOMER SERVICES',
+                        'description' => "24/7 customer response center, and many other convenient services were given fulfill customer requirement in today's digital era."
+                    ],
+                    [
+                        'image' => 'themes/cdt/assets/photo-1552664730-d307ca884978-w800-DNfMnljE.jpg',
+                        'title' => 'YEARS OF EXPERIENCE EXPERTS',
+                        'description' => "With years of experience and numerous of project portfolios, professional IT experts will measure and manage risk to ensure accuracy in implementing solutions into customer's IT environment."
+                    ]
+                ]),
+                'options' => [
+                    'children' => [
+                        ['name' => 'image', 'type' => 'media', 'label' => 'Box Background Image'],
+                        ['name' => 'title', 'type' => 'text', 'label' => 'Box Title'],
+                        ['name' => 'description', 'type' => 'textarea', 'label' => 'Box Description']
+                    ]
+                ],
+                'order' => 9
+            ]
+        );
+
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'parent_block_id' => $whyCdtBlock->id, 'name' => 'image'],
+            ['type' => 'media', 'label' => 'Box Background Image', 'value' => '', 'order' => 0]
+        );
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'parent_block_id' => $whyCdtBlock->id, 'name' => 'title'],
+            ['type' => 'text', 'label' => 'Box Title', 'value' => '', 'order' => 1]
+        );
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'parent_block_id' => $whyCdtBlock->id, 'name' => 'description'],
+            ['type' => 'textarea', 'label' => 'Box Description', 'value' => '', 'order' => 2]
+        );
+
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'name' => 'testimonial_title'],
+            [
+                'type' => 'title',
+                'label' => 'Testimonials Title',
+                'value' => json_encode(['prefix' => 'What Our', 'main' => 'Client Says']),
+                'order' => 10
+            ]
+        );
+
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'name' => 'blog_callout'],
+            [
+                'type' => 'card',
+                'label' => 'Blog Callout Card',
+                'value' => json_encode([
+                    'title' => 'Blog, News & Video',
+                    'description' => 'Explore our latest insights and news.',
+                    'image' => 'themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg'
+                ]),
+                'order' => 11
+            ]
+        );
+
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'name' => 'life_callout'],
+            [
+                'type' => 'card',
+                'label' => 'Life at CDT Callout Card',
+                'value' => json_encode([
+                    'title' => 'Life at Central Data Technology',
+                    'description' => 'Discover life and opportunities at CDT.',
+                    'image' => 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg'
+                ]),
+                'order' => 12
+            ]
         );
     }
 }

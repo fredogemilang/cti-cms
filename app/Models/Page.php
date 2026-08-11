@@ -208,6 +208,65 @@ class Page extends Model
         return $default;
     }
 
+    /**
+     * Get array payload of a button block ['text' => '...', 'url' => '...', 'target' => '...'].
+     */
+    public function buttonBlock(string $name, array $default = []): array
+    {
+        $value = $this->block($name);
+        if (is_array($value)) {
+            return array_merge(['text' => '', 'url' => '#', 'target' => '_self'], $value);
+        }
+        if (is_string($value) && ! empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                return array_merge(['text' => '', 'url' => '#', 'target' => '_self'], $decoded);
+            }
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get array payload of a title block ['prefix' => '...', 'main' => '...'].
+     */
+    public function titleBlock(string $name, array $default = []): array
+    {
+        $value = $this->block($name);
+        if (is_array($value)) {
+            return array_merge(['prefix' => '', 'main' => ''], $value);
+        }
+        if (is_string($value) && ! empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                return array_merge(['prefix' => '', 'main' => ''], $decoded);
+            }
+            return ['prefix' => '', 'main' => $value];
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get array payload of a card block ['title' => '...', 'description' => '...', 'image' => '...'].
+     */
+    public function cardBlock(string $name, array $default = []): array
+    {
+        $value = $this->block($name);
+        if (is_array($value)) {
+            return array_merge(['title' => '', 'description' => '', 'image' => ''], $value);
+        }
+        if (is_string($value) && ! empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                return array_merge(['title' => '', 'description' => '', 'image' => ''], $decoded);
+            }
+            return ['title' => $value, 'description' => '', 'image' => ''];
+        }
+
+        return $default;
+    }
+
     public function isSystem(): bool
     {
         return (bool) $this->is_system;
