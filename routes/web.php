@@ -44,7 +44,10 @@ $adminPath = config('admin.path', 'admin');
 // Public homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Localized homepage (e.g. /id)
+// Search page
+Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
+
+// Localized homepage and search (e.g. /id, /id/search)
 try {
     $allLocales = array_filter(array_map('trim', explode(',', (string) setting('available_locales', 'id,en'))));
     $defaultLocale = setting('default_locale', config('app.locale', 'en'));
@@ -59,6 +62,10 @@ if (! empty($nonDefaultLocales)) {
     Route::get('/{locale}', [HomeController::class, 'index'])
         ->where('locale', $localePattern)
         ->name('locale.home');
+
+    Route::get('/{locale}/search', [\App\Http\Controllers\SearchController::class, 'index'])
+        ->where('locale', $localePattern)
+        ->name('locale.search');
 }
 
 // Public Language Switcher

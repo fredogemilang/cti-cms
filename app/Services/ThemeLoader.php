@@ -159,6 +159,18 @@ class ThemeLoader
     }
 
     /**
+     * Set the currently active theme at runtime.
+     */
+    public function setActiveTheme(Theme $theme): void
+    {
+        $this->activeTheme = $theme;
+        $this->registerViewPaths($theme);
+        $this->shareThemeData($theme);
+        $this->registerCustomFieldTypes($theme);
+        $this->bootThemeServiceProvider($theme);
+    }
+
+    /**
      * Get theme asset path.
      */
     public function getAssetPath(string $path): string

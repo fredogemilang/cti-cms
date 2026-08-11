@@ -1,0 +1,634 @@
+{
+    "name": "Xyora Network Theme",
+    "slug": "xyora",
+    "version": "1.0.0",
+    "description": "Official Xyora theme for networking solutions, featuring modern styling, products catalog, and dynamic use case templates.",
+    "author": "Xyora Indonesia",
+    "screenshot": "screenshot.png",
+    "supports": [
+        "pages",
+        "posts",
+        "menus",
+        "cpt",
+        "forms"
+    ],
+    "form_placeholders": [
+        {
+            "key": "contact_form",
+            "label": "Contact Form",
+            "description": "Main contact form displayed on the Contact Us page."
+        }
+    ],
+    "page_templates": {
+        "default": {
+            "label": "Default Page",
+            "description": "Standard page layout",
+            "blocks": []
+        },
+        "home": {
+            "label": "Homepage",
+            "description": "Xyora Homepage landing page layout",
+            "blocks": [
+                {
+                    "name": "slider_items",
+                    "type": "repeater",
+                    "label": "Slider Items",
+                    "default": [
+                        {
+                            "title": "WiFi Kencang,<br />Desain Elegan",
+                            "subtitle": "In-Wall Access Point Wifi 7",
+                            "button_text": "Info Lengkap",
+                            "button_link": "/products/access-point/wi-fi-7-in-wall-access-point",
+                            "image": "images/slider1.png"
+                        },
+                        {
+                            "title": "Performa Andal <br />di Segala Kondisi",
+                            "subtitle": "Outdoor Access Point",
+                            "button_text": "Info Lengkap",
+                            "button_link": "/products/access-point/outdoor-access-point",
+                            "image": "images/slider2.png"
+                        },
+                        {
+                            "title": "Integrasi Mudah, <br />Operasional Efisien",
+                            "subtitle": "Smart Network Switch",
+                            "button_text": "Info Lengkap",
+                            "button_link": "/products/switch/poe-switch",
+                            "image": "images/slider3.png"
+                        }
+                    ],
+                    "children": [
+                        { "name": "title", "type": "text", "label": "Title" },
+                        { "name": "subtitle", "type": "text", "label": "Subtitle" },
+                        { "name": "button_text", "type": "text", "label": "Button Text" },
+                        { "name": "button_link", "type": "text", "label": "Button Link" },
+                        { "name": "image", "type": "media", "label": "Image" }
+                    ]
+                },
+                {
+                    "name": "overview_title",
+                    "type": "text",
+                    "label": "Overview Title",
+                    "default": "Jaringan Cepat, Stabil, dan Mudah Dikelola"
+                },
+                {
+                    "name": "overview_text",
+                    "type": "textarea",
+                    "label": "Overview Text",
+                    "default": "Dirancang untuk menghadirkan konektivitas yang andal, terintegrasi, dan siap mendukung kebutuhan operasional yang terus berkembang untuk kantor, ritel, dan berbagai bisnis modern dari enterprise hingga SMB."
+                },
+                {
+                    "name": "overview_image",
+                    "type": "media",
+                    "label": "Overview Image",
+                    "default": "images/overview.png"
+                },
+                {
+                    "name": "overview_btn_text",
+                    "type": "text",
+                    "label": "Overview Button Text",
+                    "default": "Pelajari Selengkapnya"
+                },
+                {
+                    "name": "overview_btn_link",
+                    "type": "text",
+                    "label": "Overview Button Link",
+                    "default": "/tentang"
+                },
+                {
+                    "name": "why_background",
+                    "type": "media",
+                    "label": "Why Section Background Image",
+                    "default": ""
+                },
+                {
+                    "name": "why_title",
+                    "type": "text",
+                    "label": "Why Section Title",
+                    "default": "Mengapa Xyora?"
+                },
+                {
+                    "name": "why_subtitle",
+                    "type": "textarea",
+                    "label": "Why Section Subtitle",
+                    "default": "Teknologi mutakhir untuk performa jaringan terbaik bisnis Anda."
+                },
+                {
+                    "name": "why_cards",
+                    "type": "repeater",
+                    "label": "Why Cards",
+                    "default": [
+                        {
+                            "title": "Sesuai dengan Kebutuhan Bisnis",
+                            "text": "Xyora mendukung kebutuhan operasional bisnis yang dinamis dan mudah beradaptasi dengan pertumbuhan perangkat, infrastruktur, dan ekspansi lokal.",
+                            "image": "images/why1.jpg"
+                        },
+                        {
+                            "title": "Local Brand dengan Local Support",
+                            "text": "Sebagai brand lokal Indonesia, Xyora memahami kebutuhan SMB lokal dan memberikan layanan yang lebih cepat, responsif, dan mudah dijangkau.",
+                            "image": "images/why2.jpg"
+                        },
+                        {
+                            "title": "Performa Sesuai Kebutuhan Bisnis",
+                            "text": "Performa jaringan andal dengan investasi tetap efisien, cocok untuk bisnis yang membutuhkan koneksi stabil.",
+                            "image": "images/why3.jpg"
+                        },
+                        {
+                            "title": "Mudah Terintegrasi",
+                            "text": "Desain modern yang dirancang agar mudah terintegrasi dengan perangkat dan sistem bisnis tanpa mengganggu operasional.",
+                            "image": "images/why4.jpg"
+                        }
+                    ],
+                    "children": [
+                        { "name": "title", "type": "text", "label": "Title" },
+                        { "name": "text", "type": "textarea", "label": "Description Text" },
+                        { "name": "image", "type": "media", "label": "Background Image" }
+                    ]
+                },
+                {
+                    "name": "bisnis_background",
+                    "type": "media",
+                    "label": "Bisnis Section Background Image",
+                    "default": ""
+                },
+                {
+                    "name": "bisnis_title",
+                    "type": "text",
+                    "label": "Bisnis Section Title",
+                    "default": "Bagaimana Xyora Membantu Bisnis Anda?"
+                },
+                {
+                    "name": "bisnis_slides",
+                    "type": "repeater",
+                    "label": "Bisnis Slides",
+                    "default": [
+                        {
+                            "image_caption": "Gedung Bertingkat",
+                            "challenge_text": "Pertumbuhan jumlah pengguna dan perangkat yang terhubung secara bersamaan di gedung bertingkat seperti perkantoran, mal, dan apartemen menuntut jaringan yang lebih andal dan berkapasitas tinggi.\n\nNamun, banyak infrastruktur yang belum dirancang untuk mendukung kebutuhan digital saat ini, sehingga berpotensi menimbulkan gangguan konektivitas, pengalaman pengguna yang tidak konsisten, serta menurunkan produktivitas operasional.",
+                            "solution_text": "Xyora menghadirkan solusi jaringan yang stabil, cepat, dan aman untuk mendukung kebutuhan operasional bisnis dan hunian modern. Dirancang untuk menangani pertumbuhan pengguna, perangkat, dan aplikasi yang terus meningkat, Xyora membantu memastikan konektivitas tetap optimal di seluruh area.\n\nDengan performa yang andal and pengelolaan yang efisien, bisnis dapat beroperasi lebih produktif tanpa hambatan jaringan.",
+                            "button_link": "/usecase-gedung-bertingkat",
+                            "image": "images/industri1.jpg"
+                        },
+                        {
+                            "image_caption": "Hotel & Resort",
+                            "challenge_text": "Access point yang sudah tidak optimal kerap kesulitan menangani lonjakan jumlah pengguna dan perangkat yang terhubung secara bersamaan di hotel maupun resort sehingga berpotensi menyebabkan koneksi melambat, cakupan Wi-Fi yang tidak merata, pengalaman internet yang kurang konsisten, serta mengganggu kelancaran operasional dan kepuasan tamu.",
+                            "solution_text": "Xyora menyediakan solusi jaringan yang dirancang untuk memenuhi kebutuhan konektivitas di lingkungan hospitality. Performa yang stabil, cakupan yang luas, serta kapasitas tinggi memungkinkan tamu menikmati akses internet yang lancar di seluruh area hotel maupun resort.\n\nSementara itu, pengelolaan jaringan yang efisien membantu tim operasional memastikan layanan tetap optimal, sehingga pengalaman menginap dan kualitas pelayanan dapat terus terjaga.",
+                            "button_link": "/usecase-hotel-resort",
+                            "image": "images/industri2.jpg"
+                        },
+                        {
+                            "image_caption": "Sekolah & Kampus",
+                            "challenge_text": "Jaringan Wi-Fi sekolah atau kampus yang lambat dan sering terputus menghambat metode belajar mengajar digital (e-learning). Sinyal yang lemah di beberapa area kelas dan kesulitan dalam mengelola ratusan perangkat siswa/mahasiswa secara efisien sering kali menjadi kendala utama.",
+                            "solution_text": "Xyora menyediakan Wi-Fi 6 berkecepatan tinggi yang stabil untuk mendukung aktivitas e-learning secara seamless. Dengan jangkauan luas di area kelas dan kapasitas besar untuk menampung ratusan perangkat sekaligus, koneksi tetap lancar.\n\nManajemen terpusat yang mudah membantu staf IT mengontrol jaringan secara efisien demi menunjang kualitas pendidikan terbaik.",
+                            "button_link": "/usecase-sekolah-kampus",
+                            "image": "images/industri3.jpg"
+                        }
+                    ],
+                    "children": [
+                        { "name": "image_caption", "type": "text", "label": "Image Caption (e.g. Gedung Bertingkat)" },
+                        { "name": "challenge_text", "type": "textarea", "label": "Challenge Text" },
+                        { "name": "solution_text", "type": "textarea", "label": "Solution Text" },
+                        { "name": "button_link", "type": "text", "label": "Button Link" },
+                        { "name": "image", "type": "media", "label": "Image" }
+                    ]
+                }
+            ]
+        },
+        "about": {
+            "label": "About Page",
+            "description": "Xyora About Us details layout",
+            "blocks": [
+                {
+                    "name": "hero_bg",
+                    "type": "media",
+                    "label": "Hero Background Image",
+                    "default": "images/bg-about.jpg"
+                },
+                {
+                    "name": "about_title",
+                    "type": "text",
+                    "label": "About Title",
+                    "default": "Tentang Kami"
+                },
+                {
+                    "name": "about_text",
+                    "type": "textarea",
+                    "label": "About Description",
+                    "default": "Xyora adalah brand teknologi jaringan Indonesia yang menghadirkan solusi konektivitas modern yang simple, seamless, dan relevan untuk kebutuhan rumah modern, gedung bertingkat, SOHO (Smart Office Home Office), ritel, hospitality, ruang publik, sekolah, dan kampus."
+                },
+                {
+                    "name": "vision_title",
+                    "type": "text",
+                    "label": "Vision Title",
+                    "default": "Visi Kami"
+                },
+                {
+                    "name": "vision_text",
+                    "type": "textarea",
+                    "label": "Vision Description",
+                    "default": "Xyora memberikan konektivitas modern yang stabil, fleksibel, dan siap bertumbuh untuk membantu bisnis di berbagai industri, SMB, kampus, sekolah, dan gedung bertingkat di Indonesia untuk menjalankan operasional secara lebih efisien dan produktif."
+                },
+                {
+                    "name": "mission_title",
+                    "type": "text",
+                    "label": "Mission Title",
+                    "default": "Misi Kami"
+                },
+                {
+                    "name": "mission_cards",
+                    "type": "repeater",
+                    "label": "Misi Cards",
+                    "default": [
+                        {
+                            "icon": "icons/misi1.png",
+                            "title": "Dependable",
+                            "text": "Menghadirkan konektivitas yang stabil dan andal untuk menjaga produktivitas tetap optimal."
+                        },
+                        {
+                            "icon": "icons/misi2.png",
+                            "title": "Built for Growth",
+                            "text": "Mempersiapkan jaringan untuk mendukung ekspansi bisnis dan kebutuhan teknologi yang terus berkembang."
+                        },
+                        {
+                            "icon": "icons/misi3.png",
+                            "title": "Value-Driven",
+                            "text": "Memaksimalkan performa dengan investasi yang lebih efisien, tanpa mengurangi kualitas dan keandalan jaringan."
+                        }
+                    ],
+                    "children": [
+                        { "name": "icon", "type": "media", "label": "Mission Icon" },
+                        { "name": "title", "type": "text", "label": "Mission Card Title" },
+                        { "name": "text", "type": "textarea", "label": "Mission Card Text" }
+                    ]
+                }
+            ]
+        },
+        "contact": {
+            "label": "Contact Page",
+            "description": "Xyora Contact Us page with contact form layout",
+            "blocks": [
+                {
+                    "name": "contact_title",
+                    "type": "text",
+                    "label": "Contact Title",
+                    "default": "Konsultasikan Kebutuhan Anda Bersama Kami"
+                },
+                {
+                    "name": "contact_text",
+                    "type": "textarea",
+                    "label": "Contact Description",
+                    "default": "Butuh informasi harga, promo terbaru, konsultasi solusi, atau ingin melakukan pembelian? Isi formulir berikut agar tim sales kami dapat menghubungi Anda."
+                },
+                {
+                    "name": "contact_image",
+                    "type": "media",
+                    "label": "Contact Section Image",
+                    "default": "images/contact1.png"
+                },
+                {
+                    "name": "rma_title",
+                    "type": "text",
+                    "label": "RMA Title",
+                    "default": "Ajukan Proses RMA Anda"
+                },
+                {
+                    "name": "rma_text",
+                    "type": "textarea",
+                    "label": "RMA Description",
+                    "default": "Mengalami kendala pada produk Anda? Isi formulir berikut untuk mengajukan proses RMA, dan tim kami akan segera membantu Anda."
+                },
+                {
+                    "name": "rma_image",
+                    "type": "media",
+                    "label": "RMA Section Image",
+                    "default": "images/contact2.png"
+                },
+                {
+                    "name": "status_title",
+                    "type": "text",
+                    "label": "RMA Status Title",
+                    "default": "Cek Status Pengajuan RMA Anda"
+                },
+                {
+                    "name": "status_text",
+                    "type": "textarea",
+                    "label": "RMA Status Description",
+                    "default": "Sudah mengajukan RMA? Masukkan nomor RMA Anda untuk melihat status pengajuan terbaru."
+                },
+                {
+                    "name": "status_image",
+                    "type": "media",
+                    "label": "RMA Status Image",
+                    "default": "images/contact3.png"
+                }
+            ]
+        },
+        "usecase-sekolah-kampus": {
+            "label": "Usecase Sekolah & Kampus",
+            "description": "Sekolah & Kampus usecase page layout",
+            "blocks": [
+                {
+                    "name": "hero_bg",
+                    "type": "media",
+                    "label": "Hero Background Image",
+                    "default": "images/sekolah-kampus.png"
+                },
+                {
+                    "name": "about_image",
+                    "type": "media",
+                    "label": "About/Challenge Image",
+                    "default": "images/about-sekolah-kampus.png"
+                },
+                {
+                    "name": "solusi_cards",
+                    "type": "repeater",
+                    "label": "Solusi Cards",
+                    "default": [
+                        {
+                            "badge": "icons/verified.png",
+                            "image": "images/solusi1.png",
+                            "title": "Ruang Kelas",
+                            "text": "Untuk mendukung pembelajaran digital dengan banyak pengguna secara bersamaan, Xyora Ceiling Access Point (XA-CAP625-P) menyediakan akses WiFi stabil dengan cakupan luas.",
+                            "subtext": "Didukung oleh Xyora PoE Switch (XA-SWG108-P), memudahkan distribusi daya dan jaringan melalui satu kabel Ethernet."
+                        },
+                        {
+                            "badge": "icons/verified.png",
+                            "image": "images/solusi2.png",
+                            "title": "Ruang Dosen & Administrasi",
+                            "text": "Area operasional membutuhkan koneksi stabil untuk mendukung administrasi, sistem akademik, dan komunikasi internal.",
+                            "subtext": "Xyora XA-IAP641-P In-Wall Access Point menghadirkan koneksi stabil untuk kebutuhan jaringan di dalam satu ruangan. Desain elegan dengan instalasi menyatu pada dinding yang rapi, didukung Xyora XA-SWG108-P PoE Switch untuk distribusi jaringan yang praktis."
+                        },
+                        {
+                            "badge": "icons/verified.png",
+                            "image": "images/solusi3.png",
+                            "title": "Koridor, Taman, dan Lobby Terbuka",
+                            "text": "Area outdoor seperti koridor terbuka, taman kampus, atrium, dan lobby membutuhkan konektivitas stabil di berbagai kondisi.",
+                            "subtext": "Xyora XA-OAP621-P Outdoor Access Point menghadirkan cakupan WiFi yang luas dengan perlindungan IP65 and jangkauan hingga 100 meter."
+                        }
+                    ],
+                    "children": [
+                        { "name": "badge", "type": "media", "label": "Badge Icon" },
+                        { "name": "image", "type": "media", "label": "Card Image" },
+                        { "name": "title", "type": "text", "label": "Card Title" },
+                        { "name": "text", "type": "textarea", "label": "Card Description" },
+                        { "name": "subtext", "type": "textarea", "label": "Card Subtext" }
+                    ]
+                },
+                {
+                    "name": "manajemen_image",
+                    "type": "media",
+                    "label": "Manajemen Background Image",
+                    "default": "images/bg-manajemen-jaringan.png"
+                },
+                {
+                    "name": "manajemen_title",
+                    "type": "text",
+                    "label": "Manajemen Title",
+                    "default": "Manajemen Jaringan Terpusat"
+                },
+                {
+                    "name": "manajemen_text",
+                    "type": "textarea",
+                    "label": "Manajemen Description",
+                    "default": "Seluruh infrastruktur jaringan dapat dikelola secara terpusat melalui Xyora XA-GW411S Smart Gateway, yang mampu mengelola hingga 128 access point dalam satu sistem terintegrasi. Dilengkapi fitur cloud management, security firewall, distributed AP networking, dan remote management, solusi ini memudahkan tim IT untuk memantau, mengamankan, dan mengoptimalkan seluruh jaringan dari satu platform."
+                }
+            ]
+        },
+        "usecase-hotel-resort": {
+            "label": "Usecase Hotel & Resort",
+            "description": "Hotel & Resort usecase page layout",
+            "blocks": [
+                {
+                    "name": "hero_bg",
+                    "type": "media",
+                    "label": "Hero Background Image",
+                    "default": "images/hotel-resort.png"
+                },
+                {
+                    "name": "about_image",
+                    "type": "media",
+                    "label": "About/Challenge Image",
+                    "default": "images/about-hotel-resort.png"
+                },
+                {
+                    "name": "solusi_cards",
+                    "type": "repeater",
+                    "label": "Solusi Cards",
+                    "default": [
+                        {
+                            "badge": "icons/verified.png",
+                            "image": "images/solusi4.png",
+                            "title": "Kamar Tamu",
+                            "text": "Kenyamanan tamu dimulai dari koneksi internet yang cepat dan stabil di dalam kamar. Xyora XA-IAP641-P In-Wall Access Point menghadirkan WiFi andal dengan desain menyatu pada dinding sehingga tetap estetik.",
+                            "subtext": "Infrastruktur jaringan yang stabil juga mendukung implementasi layanan IPTV, memungkinkan penyajian informasi hotel, promosi fasilitas, layanan kamar, hingga hiburan digital langsung melalui televisi."
+                        },
+                        {
+                            "badge": "icons/verified.png",
+                            "image": "images/solusi5.png",
+                            "title": "Lobi, Restoran, Ballroom, Ruang Meeting",
+                            "text": "Area publik dengan kepadatan pengguna yang tinggi membutuhkan koneksi cepat dan konsisten. Xyora XA-CAP625-P Ceiling Access Point menghadirkan performa WiFi yang optimal untuk mendukung aktivitas tamu maupun operasional hotel.",
+                            "subtext": "Instalasinya didukung oleh Xyora XA-SWG108-P PoE Switch, yang menyalurkan daya dan konektivitas melalui satu kabel Ethernet sehingga implementasi jaringan menjadi lebih efisien dan rapi."
+                        },
+                        {
+                            "badge": "icons/verified.png",
+                            "image": "images/solusi6.png",
+                            "title": "Kolam Renang, Taman, dan Area Outdoor",
+                            "text": "Untuk menjaga pengalaman tamu tetap terhubung di seluruh area properti, Xyora XA-OAP621-P Outdoor Access Point menghadirkan konektivitas yang andal di area luar ruangan seperti kolam renang, taman, hingga area rekreasi.",
+                            "subtext": "Solusi ini membantu memperluas cakupan WiFi sehingga akses internet tetap optimal di berbagai area outdoor."
+                        }
+                    ],
+                    "children": [
+                        { "name": "badge", "type": "media", "label": "Badge Icon" },
+                        { "name": "image", "type": "media", "label": "Card Image" },
+                        { "name": "title", "type": "text", "label": "Card Title" },
+                        { "name": "text", "type": "textarea", "label": "Card Description" },
+                        { "name": "subtext", "type": "textarea", "label": "Card Subtext" }
+                    ]
+                },
+                {
+                    "name": "manajemen_image",
+                    "type": "media",
+                    "label": "Manajemen Background Image",
+                    "default": "images/bg-manajemen-jaringan.png"
+                },
+                {
+                    "name": "manajemen_title",
+                    "type": "text",
+                    "label": "Manajemen Title",
+                    "default": "Manajemen Jaringan Terpusat"
+                },
+                {
+                    "name": "manajemen_text",
+                    "type": "textarea",
+                    "label": "Manajemen Description",
+                    "default": "Seluruh infrastruktur jaringan dapat dikelola secara terpusat melalui Xyora XA-GW411S Smart Gateway, yang mampu mengelola hingga 128 access point dalam satu sistem terintegrasi. Dilengkapi fitur cloud management, security firewall, distributed AP networking, dan remote management, solusi ini memudahkan tim IT untuk memantau, mengamankan, dan mengoptimalkan seluruh jaringan dari satu platform."
+                }
+            ]
+        },
+        "usecase-gedung-bertingkat": {
+            "label": "Usecase Gedung Bertingkat",
+            "description": "Gedung Bertingkat usecase page layout",
+            "blocks": [
+                {
+                    "name": "hero_bg",
+                    "type": "media",
+                    "label": "Hero Background Image",
+                    "default": "images/gedung-bertingkat.png"
+                },
+                {
+                    "name": "about_image",
+                    "type": "media",
+                    "label": "About/Challenge Image",
+                    "default": "images/about-gedung-bertingkat.png"
+                },
+                {
+                    "name": "solusi_cards",
+                    "type": "repeater",
+                    "label": "Solusi Cards",
+                    "default": [
+                        {
+                            "badge": "icons/verified.png",
+                            "image": "images/solusi7.png",
+                            "title": "Ruang Kerja & Area Publik",
+                            "text": "Untuk mengantisipasi lonjakan trafik dari puluhan hingga ratusan perangkat simultan di ruang meeting, area kolaborasi, apartemen, hingga mal, Xyora Ceiling Access Point (XA-CAP625-P) mengimplementasikan teknologi WiFi 6 yang dirancang khusus untuk skenario high-density deployment dan mendukung seamless roaming antartitik tanpa packet loss.",
+                            "subtext": ""
+                        },
+                        {
+                            "badge": "icons/verified.png",
+                            "image": "images/solusi8.png",
+                            "title": "Workspace Eksklusif & Staff Room",
+                            "text": "Hadirkan koneksi privat yang aman dan minim latensi untuk operasional penting (ERP/Cloud) tanpa merusak estetika interior dengan Xyora In-Wall Access Point XA-IAP641-P.",
+                            "subtext": "Desain flush-mount yang menyatu rapi di dinding serta dukungan VLAN terdedikasi jamin kerahasiaan data bisnis Anda."
+                        },
+                        {
+                            "badge": "icons/verified.png",
+                            "image": "images/solusi9.png",
+                            "title": "Area Parkir & Rooftop",
+                            "text": "Perluas cakupan bisnis Anda dengan Xyora Outdoor Access Point XA-OAP621-P.",
+                            "subtext": "Berbekal proteksi tangguh bersertifikasi IP65 (weatherproof), perangkat ini mampu memancarkan sinyal WiFi berkecepatan tinggi yang stabil hingga radius 100 meter, siap menghadapi segala tantangan cuaca ekstrem di luar gedung."
+                        }
+                    ],
+                    "children": [
+                        { "name": "badge", "type": "media", "label": "Badge Icon" },
+                        { "name": "image", "type": "media", "label": "Card Image" },
+                        { "name": "title", "type": "text", "label": "Card Title" },
+                        { "name": "text", "type": "textarea", "label": "Card Description" },
+                        { "name": "subtext", "type": "textarea", "label": "Card Subtext" }
+                    ]
+                },
+                {
+                    "name": "manajemen_image",
+                    "type": "media",
+                    "label": "Manajemen Background Image",
+                    "default": "images/bg-manajemen-jaringan.png"
+                },
+                {
+                    "name": "manajemen_title",
+                    "type": "text",
+                    "label": "Manajemen Title",
+                    "default": "Manajemen Jaringan Terpusat"
+                },
+                {
+                    "name": "manajemen_text",
+                    "type": "textarea",
+                    "label": "Manajemen Description",
+                    "default": "Seluruh infrastruktur jaringan dapat dikelola secara terpusat melalui Xyora XA-GW411S Smart Gateway, yang mampu mengelola hingga 128 access point dalam satu sistem terintegrasi. Dilengkapi fitur cloud management, security firewall, distributed AP networking, dan remote management, solusi ini memudahkan tim IT untuk memantau, mengamankan, dan mengoptimalkan seluruh jaringan dari satu platform."
+                }
+            ]
+        },
+        "category": {
+            "label": "Product Category Page",
+            "description": "Template for product categories (Gateway, Switch, Access Point)",
+            "blocks": [
+                {
+                    "name": "hero_bg",
+                    "type": "media",
+                    "label": "Hero Background Image"
+                },
+                {
+                    "name": "category_title",
+                    "type": "text",
+                    "label": "Category Title"
+                },
+                {
+                    "name": "category_excerpt",
+                    "type": "textarea",
+                    "label": "Category Excerpt"
+                },
+                {
+                    "name": "category_description",
+                    "type": "textarea",
+                    "label": "Category Full Description"
+                }
+            ]
+        }
+    },
+    "seed_pages": [
+        {
+            "title": "Home",
+            "slug": "home",
+            "template": "home",
+            "status": "published",
+            "menu_order": 0
+        },
+        {
+            "title": "Tentang Kami",
+            "slug": "tentang",
+            "template": "about",
+            "status": "published",
+            "menu_order": 1
+        },
+        {
+            "title": "Hubungi Kami",
+            "slug": "kontak",
+            "template": "contact",
+            "status": "published",
+            "menu_order": 2
+        },
+        {
+            "title": "Sekolah & Kampus",
+            "slug": "usecase-sekolah-kampus",
+            "template": "usecase-sekolah-kampus",
+            "status": "published",
+            "menu_order": 3
+        },
+        {
+            "title": "Hotel & Resort",
+            "slug": "usecase-hotel-resort",
+            "template": "usecase-hotel-resort",
+            "status": "published",
+            "menu_order": 4
+        },
+        {
+            "title": "Gedung Bertingkat",
+            "slug": "usecase-gedung-bertingkat",
+            "template": "usecase-gedung-bertingkat",
+            "status": "published",
+            "menu_order": 5
+        },
+        {
+            "title": "Wireless Access Point",
+            "slug": "access-point",
+            "template": "category",
+            "status": "published",
+            "menu_order": 6
+        },
+        {
+            "title": "Smart Gateway",
+            "slug": "gateway",
+            "template": "category",
+            "status": "published",
+            "menu_order": 7
+        },
+        {
+            "title": "Switch",
+            "slug": "switch",
+            "template": "category",
+            "status": "published",
+            "menu_order": 8
+        }
+    ],
+    "menu_locations": {
+        "primary": "Primary Header Navigation",
+        "footer": "Footer Navigation"
+    }
+}

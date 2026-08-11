@@ -93,6 +93,11 @@ class MediaService
     public function convertToWebp(string $path): ?string
     {
         try {
+            if (! function_exists('imagewebp')) {
+                \Log::warning('imagewebp() is not available on this server.');
+                return null;
+            }
+
             $disk = Storage::disk(config('media.disk'));
             $fullPath = $disk->path($path);
 
@@ -315,7 +320,7 @@ class MediaService
 
             match ($mimeType) {
                 'image/jpeg', 'image/jpg' => imagejpeg($source, $fullPath, $jpgQ),
-                'image/webp' => imagewebp($source, $fullPath, $webpQ),
+                'image/webp' => function_exists('imagewebp') ? imagewebp($source, $fullPath, $webpQ) : imagepng($source, $fullPath, 6),
                 'image/gif' => imagegif($source, $fullPath),
                 default => imagepng($source, $fullPath, 6),
             };

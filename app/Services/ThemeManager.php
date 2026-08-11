@@ -199,6 +199,11 @@ class ThemeManager
             'activated_at' => now(),
         ]);
 
+        // Dynamically refresh active theme in singleton registry
+        if (class_exists(\App\Services\ThemeLoader::class)) {
+            app(\App\Services\ThemeLoader::class)->setActiveTheme($theme);
+        }
+
         // Publish assets
         $this->publishAssets($theme);
 

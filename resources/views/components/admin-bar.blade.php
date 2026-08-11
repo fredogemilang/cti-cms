@@ -20,48 +20,148 @@
     }
 @endphp
 
-<!-- Ultra-Sleek Professional Admin Top Bar (Core Component) -->
-<div id="cms-admin-bar" 
-     style="background-color: #09090b !important; color: #d4d4d8 !important;"
-     class="w-full h-8 bg-[#09090b] text-zinc-300 border-b border-zinc-800/80 text-[11px] flex items-center justify-between px-3 md:px-5 font-sans select-none shrink-0 tracking-tight z-[9999] relative">
-    
+<style>
+    #cms-admin-bar {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        background-color: #1d2327 !important;
+        color: #f0f0f1 !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+        font-size: 13px !important;
+        height: 32px !important;
+        position: relative !important;
+        z-index: 99999 !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+        padding: 0 15px !important;
+        border-bottom: 1px solid #101517 !important;
+    }
+    #cms-admin-bar a {
+        color: #f0f0f1 !important;
+        text-decoration: none !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding: 0 10px !important;
+        height: 32px !important;
+        line-height: 32px !important;
+        transition: background 0.1s ease-in-out, color 0.1s ease-in-out !important;
+    }
+    #cms-admin-bar a:hover {
+        background-color: #2c3338 !important;
+        color: #72aee6 !important;
+    }
+    #cms-admin-bar .admin-bar-left, #cms-admin-bar .admin-bar-right {
+        display: flex !important;
+        align-items: center !important;
+    }
+    #cms-admin-bar .divider {
+        width: 1px !important;
+        height: 16px !important;
+        background-color: #3c434a !important;
+        margin: 0 8px !important;
+    }
+    #cms-admin-bar .avatar {
+        width: 20px !important;
+        height: 20px !important;
+        border-radius: 50% !important;
+        background: #72aee6 !important;
+        color: #fff !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-weight: bold !important;
+        font-size: 11px !important;
+    }
+    #cms-admin-bar .user-info {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        padding: 0 10px !important;
+        font-size: 13px !important;
+        color: #c3c4c7 !important;
+    }
+    #cms-admin-bar button {
+        background: none !important;
+        border: none !important;
+        color: #f0f0f1 !important;
+        padding: 0 10px !important;
+        height: 32px !important;
+        line-height: 32px !important;
+        font-family: inherit !important;
+        font-size: 13px !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        transition: background 0.1s ease-in-out, color 0.1s ease-in-out !important;
+    }
+    #cms-admin-bar button:hover {
+        background-color: #d63638 !important;
+        color: #fff !important;
+    }
+    @media (max-width: 768px) {
+        #cms-admin-bar {
+            padding: 0 5px !important;
+            font-size: 11px !important;
+        }
+        #cms-admin-bar a {
+            padding: 0 4px !important;
+            gap: 4px !important;
+        }
+        #cms-admin-bar .user-info {
+            padding: 0 4px !important;
+            gap: 4px !important;
+            font-size: 11px !important;
+        }
+        #cms-admin-bar .user-info > span:not(.avatar) {
+            display: none !important;
+        }
+        #cms-admin-bar .site-name-text {
+            display: none !important;
+        }
+        #cms-admin-bar .edit-label-text {
+            display: none !important;
+        }
+        #cms-admin-bar .divider {
+            margin: 0 4px !important;
+        }
+    }
+</style>
+
+<div id="cms-admin-bar">
     <!-- Left Section -->
-    <div class="flex items-center gap-1 md:gap-2">
-        <!-- Control Panel Brand Link -->
-        <a href="{{ $adminUrl }}/dashboard" class="flex items-center gap-1.5 px-2 py-0.5 rounded text-zinc-200 hover:text-white hover:bg-white/10 transition-colors font-medium group">
-            <span class="w-4 h-4 rounded bg-amber-500 flex items-center justify-center text-[10px] text-zinc-950 font-black tracking-tighter group-hover:scale-105 transition-transform shadow-xs">C</span>
-            <span class="font-semibold text-zinc-100 group-hover:text-white">{{ setting('site_name', config('app.name', 'CMS')) }} Control Panel</span>
+    <div class="admin-bar-left">
+        <a href="{{ $adminUrl }}/dashboard" style="font-weight: 600;">
+            <span style="display: inline-block; width: 16px; height: 16px; background: #89C55C; color: #fff; border-radius: 3px; text-align: center; line-height: 16px; font-size: 11px; font-weight: 900; margin-right: 4px;">C</span>
+            <span class="site-name-text">{{ setting('site_name', config('app.name', 'CMS')) }}</span> Dashboard
         </a>
 
         @if($editUrl)
-        <span class="w-px h-3 bg-zinc-800/80 mx-0.5"></span>
-
-        <!-- Edit Current Item (Contextual Button ala WordPress) -->
-        <a href="{{ $editUrl }}" class="flex items-center gap-1.5 px-2 py-0.5 rounded text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 transition-colors font-medium">
-            <svg class="w-3 h-3 text-blue-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-            </svg>
-            <span class="font-medium text-blue-300 hover:text-blue-200">{{ $editLabel }}</span>
-        </a>
+            <div class="divider"></div>
+            <a href="{{ $editUrl }}">
+                <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+                <span class="edit-label-text">{{ $editLabel }}</span>
+            </a>
         @endif
     </div>
 
     <!-- Right Section -->
-    <div class="flex items-center gap-2 md:gap-3">
-        <!-- User Profile -->
-        <div class="flex items-center gap-2 px-2 py-0.5 text-zinc-300 font-medium">
-            <span class="w-4 h-4 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold text-[9px] shrink-0">
+    <div class="admin-bar-right">
+        <div class="user-info">
+            <span class="avatar">
                 {{ strtoupper(substr($user->name ?? 'A', 0, 1)) }}
             </span>
-            <span class="hidden sm:inline font-normal text-zinc-400">Logged in as <strong class="font-semibold text-zinc-200">{{ $user->name ?? 'Admin' }}</strong></span>
+            <span>Howdy, <strong>{{ $user->name ?? 'Admin' }}</strong></span>
         </div>
-
-        <span class="w-px h-3 bg-zinc-800/80 mx-0.5"></span>
-
-        <!-- Logout Button -->
-        <form method="POST" action="{{ route('logout') }}" class="inline">
+        
+        <div class="divider"></div>
+        
+        <form method="POST" action="{{ route('logout') }}" style="margin: 0; padding: 0; display: inline;">
             @csrf
-            <button type="submit" class="text-zinc-400 hover:text-red-400 px-1.5 py-0.5 rounded transition-colors text-[11px] cursor-pointer">
+            <button type="submit">
                 Logout
             </button>
         </form>
