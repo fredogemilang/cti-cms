@@ -28,29 +28,39 @@ class EntriesReorder extends Component
 
     public function render()
     {
-        $query = CptEntry::where('post_type_id', $this->postType->id);
+        $hasHierarchy = (bool) ($this->postType->hierarchical || CptEntry::where('post_type_id', $this->postType->id)->whereNotNull('parent_id')->exists());
 
-        if ($this->postType->hierarchical) {
+        if ($hasHierarchy) {
             if ($this->parentId) {
-                $query->where('parent_id', $this->parentId);
+                $entries = CptEntry::where('post_type_id', $this->postType->id)
+                    ->where('parent_id', $this->parentId)
+                    ->orderBy('menu_order')
+                    ->orderBy('id')
+                    ->get();
             } else {
-                $query->whereNull('parent_id');
+                $entries = CptEntry::where('post_type_id', $this->postType->id)
+                    ->whereNull('parent_id')
+                    ->orderBy('menu_order')
+                    ->orderBy('id')
+                    ->get();
             }
+
+            $parentEntries = CptEntry::where('post_type_id', $this->postType->id)
+                ->whereNull('parent_id')
+                ->orderBy('menu_order')
+                ->orderBy('id')
+                ->get();
+        } else {
+            $entries = CptEntry::where('post_type_id', $this->postType->id)
+                ->orderBy('menu_order')
+                ->orderBy('id')
+                ->get();
+
+            $parentEntries = collect();
         }
 
-        $entries = $query->orderBy('menu_order')
-            ->orderBy('id')
-            ->get();
-
-        $parentEntries = $this->postType->hierarchical
-            ? CptEntry::where('post_type_id', $this->postType->id)
-                ->whereNull('parent_id')
-                ->whereHas('children')
-                ->orderBy('title')
-                ->get()
-            : collect();
-
         return view('livewire.admin.cpt.entries.entries-reorder', [
+            'hasHierarchy' => $hasHierarchy,
             'entries' => $entries,
             'parentEntries' => $parentEntries,
         ]);
