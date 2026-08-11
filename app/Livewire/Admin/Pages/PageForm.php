@@ -791,9 +791,21 @@ class PageForm extends Component
                 $this->blocks[$blockIndex]['value'] = $val;
             }
         } elseif (str_starts_with($this->mediaPickerField, 'block_')) {
-            $blockIndex = (int) str_replace('block_', '', $this->mediaPickerField);
-            if (isset($this->blocks[$blockIndex])) {
-                $this->blocks[$blockIndex]['value'] = $mediaPath;
+            $target = str_replace('block_', '', $this->mediaPickerField);
+            if (str_contains($target, '.')) {
+                [$blockIndexStr, $subKey] = explode('.', $target, 2);
+                $blockIndex = (int) $blockIndexStr;
+                if (isset($this->blocks[$blockIndex])) {
+                    if (! is_array($this->blocks[$blockIndex]['value'])) {
+                        $this->blocks[$blockIndex]['value'] = [];
+                    }
+                    $this->blocks[$blockIndex]['value'][$subKey] = $mediaPath;
+                }
+            } else {
+                $blockIndex = (int) $target;
+                if (isset($this->blocks[$blockIndex])) {
+                    $this->blocks[$blockIndex]['value'] = $mediaPath;
+                }
             }
         } elseif (str_starts_with($this->mediaPickerField, 'repeater_')) {
             // Format: repeater_{blockIndex}_{rowIndex}_{fieldName}
