@@ -466,8 +466,8 @@
         @php
           $sIcon = $sibling->getMeta('icon') ?: ($sibling->getMeta('hero_icon') ?: 'lucide:layers');
           $sLocale = app()->getLocale();
-          $sExcerpt = $sibling->getTranslation('excerpt', $sLocale, false);
-          $sContent = $sibling->getTranslation('content', $sLocale, false);
+          $sExcerpt = $sibling->getTranslation('excerpt', $sLocale);
+          $sContent = $sibling->getTranslation('content', $sLocale);
           $sHeroDesc = $sibling->getMeta('hero_description');
           $sDesc = $sExcerpt ?: ($sContent ?: ($sHeroDesc ?: ($sibling->excerpt ?: $sibling->content)));
         @endphp
