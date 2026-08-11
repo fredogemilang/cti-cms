@@ -205,7 +205,7 @@
             ? \App\Models\CptEntry::where('post_type_id', \App\Models\CustomPostType::where('slug', 'award-certifications')->value('id'))
                 ->where('status', 'published')
                 ->whereHas('terms', fn($q) => $q->where('slug', 'awards'))
-                ->latest()
+                ->orderBy('title')
                 ->get()
             : collect();
         @endphp
@@ -241,7 +241,7 @@
               ? \App\Models\CptEntry::where('post_type_id', \App\Models\CustomPostType::where('slug', 'award-certifications')->value('id'))
                   ->where('status', 'published')
                   ->whereHas('terms', fn($q) => $q->where('slug', 'certifications'))
-                  ->latest()
+                  ->orderBy('title')
                   ->get()
               : collect();
           @endphp
