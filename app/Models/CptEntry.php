@@ -142,6 +142,32 @@ class CptEntry extends Model
     }
 
     /**
+     * Check if this entry has non-empty content or excerpt for a specific locale
+     * without falling back to another locale.
+     */
+    public function hasContentForLocale(?string $locale = null): bool
+    {
+        $locale ??= app()->getLocale();
+
+        if ($this->isDefaultLocale($locale)) {
+            $rawContent = $this->getRawAttribute('content');
+            $rawExcerpt = $this->getRawAttribute('excerpt');
+
+            return ! empty(trim(strip_tags((string) $rawContent))) || ! empty(trim(strip_tags((string) $rawExcerpt)));
+        }
+
+        $translations = $this->getAttribute('translations');
+        if (! is_array($translations) || empty($translations[$locale])) {
+            return false;
+        }
+
+        $translatedContent = $translations[$locale]['content'] ?? null;
+        $translatedExcerpt = $translations[$locale]['excerpt'] ?? null;
+
+        return ! empty(trim(strip_tags((string) $translatedContent))) || ! empty(trim(strip_tags((string) $translatedExcerpt)));
+    }
+
+    /**
      * Get the post type this entry belongs to
      */
     public function postType(): BelongsTo

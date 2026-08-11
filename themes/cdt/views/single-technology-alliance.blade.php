@@ -379,10 +379,14 @@
 
 <!-- Client Stories Carousel -->
 @php
+  $currentLocale = app()->getLocale();
   $clientStories = \App\Models\CptEntry::where('post_type_id', \App\Models\CustomPostType::where('slug', 'client-says')->value('id'))
     ->where('status', 'published')
-    ->limit(20)
-    ->get();
+    ->latest()
+    ->get()
+    ->filter(fn ($story) => $story->hasContentForLocale($currentLocale))
+    ->values()
+    ->take(20);
 @endphp
 @if($clientStories->isNotEmpty())
 <section class="py-24 relative overflow-hidden bg-white" id="client-story">

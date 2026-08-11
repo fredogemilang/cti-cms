@@ -57,16 +57,23 @@ class HomeController extends Controller
             return collect();
         }
 
-        $q = CptEntry::with('author')
+        $currentLocale = app()->getLocale();
+
+        $entries = CptEntry::with('author')
             ->where('post_type_id', $cpt->id)
             ->where('status', 'published')
-            ->latest();
+            ->latest()
+            ->get();
 
-        if ($limit) {
-            $q->take($limit);
+        if (in_array($cptSlug, ['client-says', 'customer-success'], true)) {
+            $entries = $entries->filter(fn ($entry) => $entry->hasContentForLocale($currentLocale))->values();
         }
 
-        return $q->get();
+        if ($limit) {
+            return $entries->take($limit);
+        }
+
+        return $entries;
     }
 
     protected function partnerEntries()
