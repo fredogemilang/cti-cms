@@ -201,26 +201,33 @@
       <!-- Awards Grid -->
       <div x-show="activeTab === 'awards'" x-transition:enter="transition ease-out duration-500" class="grid grid-cols-1 md:grid-cols-3 gap-8 xl:gap-12">
         @php
-          $awardsList = $page?->repeaterBlock('awards_list') ?? [];
+          $awardsList = \App\Models\CustomPostType::where('slug', 'award-certifications')->first()
+            ? \App\Models\CptEntry::where('post_type_id', \App\Models\CustomPostType::where('slug', 'award-certifications')->value('id'))
+                ->where('status', 'published')
+                ->whereHas('terms', fn($q) => $q->where('slug', 'awards'))
+                ->latest()
+                ->get()
+            : collect();
         @endphp
         @foreach($awardsList as $award)
           @php
-            $aImg = $award['image'] ?? null;
-            $aImgUrl = $aImg ? (str_starts_with($aImg, 'http') || str_starts_with($aImg, 'themes/') || str_starts_with($aImg, 'assets/') ? asset($aImg) : asset('storage/' . $aImg)) : asset('themes/cdt/assets/AWS-Partner-Awards-_-Consulting-Partner-of-the-Year-2026-BKvKVlUl.png');
+            $aImg = $award->featured_image;
+            $aImgUrl = $aImg ? resolve_block_asset($aImg) : asset('themes/cdt/assets/AWS-Partner-Awards-_-Consulting-Partner-of-the-Year-2026-BKvKVlUl.png');
+            preg_match('/(\d{4})/', $award->title, $yearMatch);
+            $aYearBadge = $yearMatch[1] ?? '';
           @endphp
           <div class="group relative bg-white rounded-[2rem] border border-gray-100 p-6 xl:p-8 shadow-xl hover:border-red-100 hover:shadow-[0_20px_60px_-15px_rgba(226,35,26,0.12)] transition-all duration-500 flex flex-col h-full overflow-hidden">
             <div class="mb-8 flex flex-col items-center text-center">
-              @if(!empty($award['year_badge']))
+              @if($aYearBadge)
                 <div class="inline-block px-4 py-1.5 bg-red-50 text-primary text-xs font-extrabold tracking-widest rounded-full uppercase mb-6 shadow-sm border border-red-100">
-                  {{ $award['year_badge'] }}
+                  {{ $aYearBadge }}
                 </div>
               @endif
-              <h3 class="text-lg md:text-xl font-extrabold text-gray-900 leading-tight mb-2 h-[56px] flex items-center justify-center">{{ $award['title'] ?? '' }}</h3>
-              <p class="text-sm text-gray-500 font-medium">{{ $award['subtitle'] ?? '' }}</p>
+              <h3 class="text-lg md:text-xl font-extrabold text-gray-900 leading-tight mb-2 h-[56px] flex items-center justify-center">{{ $award->title }}</h3>
             </div>
             <div class="relative flex-grow flex items-center justify-center rounded-2xl overflow-hidden bg-[#050505] shadow-inner group-hover:shadow-2xl transition-all duration-500 min-h-[320px]">
               <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none"></div>
-              <x-image :src="$aImgUrl" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" alt="{{ $award['title'] ?? 'Award' }}" />
+              <x-image :src="$aImgUrl" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" alt="{{ $award->title ?? 'Award' }}" />
             </div>
           </div>
         @endforeach
@@ -230,13 +237,19 @@
       <div x-show="activeTab === 'certification'" x-transition:enter="transition ease-out duration-500" style="display: none;">
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 xl:gap-8 items-stretch justify-center max-w-[1300px] mx-auto">
           @php
-            $certificationsList = $page?->repeaterBlock('certifications_list') ?? [];
+            $certificationsList = \App\Models\CustomPostType::where('slug', 'award-certifications')->first()
+              ? \App\Models\CptEntry::where('post_type_id', \App\Models\CustomPostType::where('slug', 'award-certifications')->value('id'))
+                  ->where('status', 'published')
+                  ->whereHas('terms', fn($q) => $q->where('slug', 'certifications'))
+                  ->latest()
+                  ->get()
+              : collect();
           @endphp
-          @foreach($certificationsList as $cIndex => $cert)
+          @foreach($certificationsList as $cert)
             @php
-              $cImg = $cert['image'] ?? null;
-              $cImgUrl = $cImg ? (str_starts_with($cImg, 'http') || str_starts_with($cImg, 'themes/') || str_starts_with($cImg, 'assets/') ? asset($cImg) : asset('storage/' . $cImg)) : asset('themes/cdt/assets/AWS-Advanced-Networking.png-CqnflKau.webp');
-              $cTitle = $cert['title'] ?? 'Certification';
+              $cImg = $cert->featured_image;
+              $cImgUrl = $cImg ? resolve_block_asset($cImg) : asset('themes/cdt/assets/AWS-Advanced-Networking.png-CqnflKau.webp');
+              $cTitle = $cert->title;
             @endphp
             <div class="group relative bg-white rounded-2xl border border-zinc-200/80 p-6 shadow-sm hover:shadow-xl hover:border-red-200 hover:-translate-y-2 transition-all duration-500 flex flex-col items-center justify-between text-center overflow-hidden h-full">
               <div class="absolute -top-12 -left-12 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:scale-150 group-hover:bg-primary/20 transition-all duration-500 pointer-events-none"></div>
