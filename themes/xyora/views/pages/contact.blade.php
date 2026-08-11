@@ -72,23 +72,7 @@
 
         <!-- Right Column (Form Card) -->
         <div class="kontak-card">
-          @if (session('success') && !request()->has('rma'))
-            <div class="success-alert"
-              style="background: rgba(137, 197, 92, 0.2); border: 1px solid #89C55C; color: #538d24; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 600;">
-              ✓ {{ session('success') }}
-            </div>
-          @endif
 
-          @if ($errors->any() && !request()->has('rma'))
-            <div class="error-alert"
-              style="background: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #b02a37; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-              <ul style="margin: 0; padding-left: 20px;">
-                @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-                @endforeach
-              </ul>
-            </div>
-          @endif
 
           @php
             $contactForm = \App\Models\Form::where('slug', 'contact-form')->with('fields')->first();
@@ -198,23 +182,7 @@
       <div class="rma-container-custom">
         <!-- Left Column (Form Card) -->
         <div class="rma-card">
-          @if (session('success') && request()->has('rma'))
-            <div class="success-alert"
-              style="background: rgba(137, 197, 92, 0.2); border: 1px solid #89C55C; color: #538d24; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 600;">
-              ✓ {{ session('success') }}
-            </div>
-          @endif
 
-          @if ($errors->any() && request()->has('rma'))
-            <div class="error-alert"
-              style="background: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #b02a37; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-              <ul style="margin: 0; padding-left: 20px;">
-                @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-                @endforeach
-              </ul>
-            </div>
-          @endif
 
           @php
             $rmaForm = \App\Models\Form::where('slug', 'rma-form')->with('fields')->first();

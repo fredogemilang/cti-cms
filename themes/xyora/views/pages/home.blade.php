@@ -371,11 +371,6 @@
       </p>
     </div>
 
-    @if (session('success'))
-      <div class="success-alert" style="background: rgba(137, 197, 92, 0.2); border: 1px solid #89C55C; color: #538d24; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 600; position: relative; z-index: 10;">
-        ✓ {{ session('success') }}
-      </div>
-    @endif
     @php
       $contactForm = \App\Models\Form::where('slug', 'contact-form')->with('fields')->first();
     @endphp
@@ -427,7 +422,7 @@
                         placeholder="{{ $field->localizedPlaceholder() ?: $field->localizedLabel() }}" 
                         class="form-input form-textarea" 
                         style="grid-column: 1 / -1; height: 100px; resize: vertical; margin-bottom: 1.25rem;"
-                        {{ $field->is_required ? 'required' : '' }}>{{ old($field->field_id) ?: 'Konsultasi gratis via formulir beranda Xyora.' }}</textarea>
+                        {{ $field->is_required ? 'required' : '' }}>{{ old($field->field_id) ?: '' }}</textarea>
             @else
               <div class="form-row" style="display: block;">
                 <input type="{{ $field->type === 'email' ? 'email' : ($field->type === 'tel' ? 'tel' : 'text') }}" 

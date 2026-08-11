@@ -78,21 +78,7 @@
       
       <!-- Right Column: Form Section -->
       <div class="footer-right-form-section">
-        @if (session('success'))
-          <div class="alert alert-success" style="background-color: #d1e7dd; color: #0f5132; padding: 12px 15px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; font-weight: 500;">
-            {{ session('success') }}
-          </div>
-        @endif
-
-        @if ($errors->any())
-          <div class="alert alert-danger" style="background-color: #f8d7da; color: #842029; padding: 12px 15px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; font-weight: 500;">
-            <ul style="margin: 0; padding-left: 20px; list-style-type: disc;">
-              @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-              @endforeach
-            </ul>
-          </div>
-        @endif
+        <!-- SweetAlert handles notifications -->
 
         @php
           $contactForm = \App\Models\Form::where('slug', 'contact-form')->with('fields')->first();

@@ -96,8 +96,51 @@
 
     @livewireScripts
 
+    {{-- SweetAlert2 (Local Asset) --}}
+    <script src="{{ theme_asset('js/sweetalert2.all.min.js') }}"></script>
+
     {{-- Theme Javascript --}}
     <script src="{{ theme_asset('js/theme.js') }}"></script>
+
+    {{-- SweetAlert Flash Notifications --}}
+    @if(session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    icon: 'success',
+                    confirmButtonColor: '#89C55C'
+                });
+            });
+        </script>
+    @endif
+
+    @if(session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48'
+                });
+            });
+        </script>
+    @endif
+
+    @if($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: 'Pengisian Belum Lengkap',
+                    html: `{!! implode('<br>', $errors->all()) !!}`,
+                    icon: 'warning',
+                    confirmButtonColor: '#e11d48'
+                });
+            });
+        </script>
+    @endif
 
     @stack('scripts')
 </body>
