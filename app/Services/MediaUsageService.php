@@ -49,18 +49,24 @@ class MediaUsageService
                 $map[$id] = ($map[$id] ?? 0) + 1;
             };
 
-            // Build path → media id lookup; both `path` (original) and `webp_path` (companion)
-            // can be referenced by content rows, so include both.
             $pathToId = [];
-            foreach (Media::query()->get(['id', 'path', 'webp_path']) as $m) {
+            foreach (Media::query()->get(['id', 'path', 'webp_path', 'original_filename', 'filename']) as $m) {
                 if ($m->path) {
                     $pathToId[$m->path] = $m->id;
+                    $pathToId[basename($m->path)] = $m->id;
                 }
                 if ($m->webp_path) {
                     $pathToId[$m->webp_path] = $m->id;
+                    $pathToId[basename($m->webp_path)] = $m->id;
+                }
+                if ($m->filename) {
+                    $pathToId[$m->filename] = $m->id;
+                }
+                if ($m->original_filename) {
+                    $pathToId[$m->original_filename] = $m->id;
                 }
             }
-            $resolveByPath = function ($v) use ($pathToId) {
+            $resolveByPath = function ($v) use (&$pathToId) {
                 if (! is_string($v) || empty($v)) {
                     return null;
                 }
@@ -70,7 +76,9 @@ class MediaUsageService
                     $clean = substr($clean, 8);
                 }
 
-                return $pathToId[$clean] ?? $pathToId[ltrim($path, '/')] ?? $pathToId[$v] ?? null;
+                $filename = basename($clean);
+
+                return $pathToId[$clean] ?? $pathToId[ltrim($path, '/')] ?? $pathToId[$filename] ?? $pathToId[$v] ?? null;
             };
 
             foreach (Page::select('featured_image', 'seo')->get() as $p) {
@@ -80,20 +88,25 @@ class MediaUsageService
                 }
             }
 
-            // PageBlock values
+            // PageBlock values — scan all block types (media, gallery, card, repeater, wysiwyg, etc.)
             foreach (PageBlock::select('type', 'value')->get() as $b) {
                 $val = $b->value;
-                if ($b->type === 'media') {
-                    // value can be a media id or a path
-                    if (is_numeric($val)) {
-                        $bump($val);
+                if (is_array($val)) {
+                    $this->scanMetaForMediaReferences($val, $bump, $resolveByPath);
+                } elseif (is_numeric($val)) {
+                    $bump($val);
+                } elseif (is_string($val) && ! empty($val)) {
+                    $decoded = json_decode($val, true);
+                    if (is_array($decoded)) {
+                        $this->scanMetaForMediaReferences($decoded, $bump, $resolveByPath);
                     } else {
                         $bump($resolveByPath($val));
-                    }
-                } elseif ($b->type === 'gallery') {
-                    $arr = is_array($val) ? $val : (json_decode((string) $val, true) ?: []);
-                    foreach ($arr as $v) {
-                        is_numeric($v) ? $bump($v) : $bump($resolveByPath($v));
+                        if (str_contains($val, '<img')) {
+                            preg_match_all('/<img[^>]+src=("|\')([^"\']+)\1/i', $val, $m);
+                            foreach ($m[2] ?? [] as $src) {
+                                $bump($resolveByPath($src));
+                            }
+                        }
                     }
                 }
             }
@@ -242,12 +255,17 @@ class MediaUsageService
                 $blocks = PageBlock::where('page_id', $page->id)->get();
                 foreach ($blocks as $block) {
                     $val = $block->value;
-                    if (is_array($val)) {
-                        foreach ($val as $subVal) {
-                            if ($matchesValue($subVal)) {
-                                $foundContext = 'Block: '.ucfirst($block->name ?? $block->type);
-                                break 2;
-                            }
+                    if (is_array($val) && $this->metaContainsMedia($val, $matchesValue)) {
+                        $foundContext = 'Block: '.ucfirst($block->name ?? $block->type);
+                        break;
+                    } elseif (is_string($val) && ! empty($val)) {
+                        $decoded = json_decode($val, true);
+                        if (is_array($decoded) && $this->metaContainsMedia($decoded, $matchesValue)) {
+                            $foundContext = 'Block: '.ucfirst($block->name ?? $block->type);
+                            break;
+                        } elseif ($matchesValue($val)) {
+                            $foundContext = 'Block: '.ucfirst($block->name ?? $block->type);
+                            break;
                         }
                     } elseif ($matchesValue($val)) {
                         $foundContext = 'Block: '.ucfirst($block->name ?? $block->type);

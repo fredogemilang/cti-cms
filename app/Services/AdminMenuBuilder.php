@@ -155,7 +155,6 @@ class AdminMenuBuilder
             'builtin:cpt-manager' => 'SYSTEM',
             'builtin:plugins-manager' => 'SYSTEM',
             'builtin:activity-log' => 'SYSTEM',
-            'builtin:api-tokens' => 'SYSTEM',
             'builtin:settings' => 'SYSTEM',
         ];
 
@@ -621,21 +620,6 @@ class AdminMenuBuilder
             'children' => [],
         ];
 
-        // API Tokens
-        $items[] = [
-            'key' => 'builtin:api-tokens',
-            'title' => 'API Tokens',
-            'icon' => 'key',
-            'permission' => 'api-tokens.view',
-            'source' => 'core',
-            'source_label' => 'Core System',
-            'section' => $activeSectionMap['builtin:api-tokens'] ?? 'SYSTEM',
-            'is_active' => true,
-            'activeRoutePattern' => 'admin.api-tokens.*',
-            'url' => route('admin.api-tokens.index'),
-            'children' => [],
-        ];
-
         // Settings — children are dynamic from SettingsRegistry
         $settingsGroups = app(SettingsRegistry::class)->groups();
         $settingsChildren = [];
@@ -693,7 +677,6 @@ class AdminMenuBuilder
                 'builtin:cpt-manager', // CPT Manager (SYSTEM)
                 'builtin:plugins-manager', // Plugins Manager (SYSTEM)
                 'builtin:activity-log', // Activity Log (SYSTEM)
-                'builtin:api-tokens', // API Tokens (SYSTEM)
                 'builtin:settings', // Settings (SYSTEM)
             ];
             $orderMap = array_flip($defaultOrderKeys);
