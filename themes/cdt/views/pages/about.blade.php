@@ -242,7 +242,7 @@
               <div class="absolute -top-12 -left-12 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:scale-150 group-hover:bg-primary/20 transition-all duration-500 pointer-events-none"></div>
 
               <div class="relative z-10 w-full flex justify-center items-center py-4 mb-4">
-                <x-image :src="$cImgUrl" alt="{{ $cTitle }}" class="w-full max-w-[120px] h-auto object-contain drop-shadow-md group-hover:drop-shadow-[0_12px_24px_rgba(226,35,26,0.25)] group-hover:scale-110 transition-all duration-500" />
+                <x-image :src="$cImgUrl" alt="{{ $cTitle }}" class="w-full max-w-[120px] h-auto object-contain group-hover:scale-110 transition-all duration-500" />
               </div>
 
               <div class="relative z-10 w-full mt-auto pt-3 border-t border-zinc-100">
