@@ -221,13 +221,20 @@
                 @if (count($row) === 2)
                   <div class="kontak-form-row">
                     @foreach ($row as $field)
-                      @if ($field->type === 'date')
+                      @if ($field->field_id === 'tanggal_pembelian')
                         <input type="text" name="{{ $field->field_id }}" 
                                value="{{ old($field->field_id) }}" 
                                placeholder="{{ $field->localizedPlaceholder() ?: $field->localizedLabel() }}" 
                                class="kontak-input" 
                                onfocus="this.type = 'date'" 
-                               onblur="this.type = 'text'" 
+                               onblur="this.value ? this.type = 'date' : this.type = 'text'" 
+                               {{ $field->is_required ? 'required' : '' }} />
+                      @elseif ($field->field_id === 'jumlah_unit')
+                        <input type="number" name="{{ $field->field_id }}" 
+                               value="{{ old($field->field_id) }}" 
+                               placeholder="{{ $field->localizedPlaceholder() ?: $field->localizedLabel() }}" 
+                               class="kontak-input" 
+                               min="1" 
                                {{ $field->is_required ? 'required' : '' }} />
                       @else
                         <input type="{{ $field->type === 'email' ? 'email' : ($field->type === 'tel' ? 'tel' : 'text') }}" 
@@ -257,14 +264,22 @@
                     </div>
                   @else
                     <div class="kontak-form-row" style="display: block;">
-                      @if ($field->type === 'date')
+                      @if ($field->field_id === 'tanggal_pembelian')
                         <input type="text" name="{{ $field->field_id }}" 
                                value="{{ old($field->field_id) }}" 
                                placeholder="{{ $field->localizedPlaceholder() ?: $field->localizedLabel() }}" 
                                class="kontak-input" 
                                style="width: 100%;" 
                                onfocus="this.type = 'date'" 
-                               onblur="this.type = 'text'" 
+                               onblur="this.value ? this.type = 'date' : this.type = 'text'" 
+                               {{ $field->is_required ? 'required' : '' }} />
+                      @elseif ($field->field_id === 'jumlah_unit')
+                        <input type="number" name="{{ $field->field_id }}" 
+                               value="{{ old($field->field_id) }}" 
+                               placeholder="{{ $field->localizedPlaceholder() ?: $field->localizedLabel() }}" 
+                               class="kontak-input" 
+                               style="width: 100%;" 
+                               min="1" 
                                {{ $field->is_required ? 'required' : '' }} />
                       @else
                         <input type="{{ $field->type === 'email' ? 'email' : ($field->type === 'tel' ? 'tel' : 'text') }}" 
