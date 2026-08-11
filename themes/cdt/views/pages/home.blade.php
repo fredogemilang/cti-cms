@@ -406,7 +406,7 @@
                   <div class="lg:w-1/3 bg-zinc-50 p-12 flex flex-col justify-between border-r border-zinc-100">
                     @if($logoUrl)
                       <div class="h-32 flex justify-start items-center mb-8">
-                        <x-image :src="$logoUrl" alt="{{ $testimonial->title }}" title="{{ $testimonial->title }}" class="max-h-full w-auto max-w-[320px] object-contain object-left mix-blend-multiply" />
+                        <x-image :src="$logoUrl" alt="{{ $testimonial->title }}" title="{{ $testimonial->title }}" class="max-h-full w-auto max-w-[320px] object-contain object-left" />
                       </div>
                     @else
                       <div class="h-32 mb-8"></div>

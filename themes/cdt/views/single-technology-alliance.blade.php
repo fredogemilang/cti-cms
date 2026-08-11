@@ -431,7 +431,7 @@
               <div class="lg:w-1/3 bg-zinc-50 p-10 md:p-12 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-zinc-100">
                 @if($logoUrl)
                 <div class="h-32 flex justify-start items-center mb-8">
-                  <img src="{{ $logoUrl }}" alt="{{ $story->title }}" class="max-h-full w-auto max-w-[320px] object-contain object-left mix-blend-multiply" />
+                  <img src="{{ $logoUrl }}" alt="{{ $story->title }}" class="max-h-full w-auto max-w-[320px] object-contain object-left" />
                 </div>
                 @else
                 <div class="h-32 mb-8"></div>
