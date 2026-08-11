@@ -39,29 +39,49 @@
                             "subtitle": "In-Wall Access Point Wifi 7",
                             "button_text": "Info Lengkap",
                             "button_link": "/products/access-point/wi-fi-7-in-wall-access-point",
-                            "image": "images/slider1.png"
+                            "image": "media/slider1-1786426893-XUZFMrXq.png"
                         },
                         {
                             "title": "Performa Andal <br />di Segala Kondisi",
                             "subtitle": "Outdoor Access Point",
                             "button_text": "Info Lengkap",
                             "button_link": "/products/access-point/outdoor-access-point",
-                            "image": "images/slider2.png"
+                            "image": "media/slider2-1786426894-KTV184y5.png"
                         },
                         {
                             "title": "Integrasi Mudah, <br />Operasional Efisien",
                             "subtitle": "Smart Network Switch",
                             "button_text": "Info Lengkap",
                             "button_link": "/products/switch/poe-switch",
-                            "image": "images/slider3.png"
+                            "image": "media/slider3-1786426894-NJtK4r7I.png"
                         }
                     ],
                     "children": [
-                        { "name": "title", "type": "text", "label": "Title" },
-                        { "name": "subtitle", "type": "text", "label": "Subtitle" },
-                        { "name": "button_text", "type": "text", "label": "Button Text" },
-                        { "name": "button_link", "type": "text", "label": "Button Link" },
-                        { "name": "image", "type": "media", "label": "Image" }
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Title"
+                        },
+                        {
+                            "name": "subtitle",
+                            "type": "text",
+                            "label": "Subtitle"
+                        },
+                        {
+                            "name": "button_text",
+                            "type": "text",
+                            "label": "Button Text"
+                        },
+                        {
+                            "name": "button_link",
+                            "type": "text",
+                            "label": "Button Link"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Image"
+                        }
                     ]
                 },
                 {
@@ -80,7 +100,7 @@
                     "name": "overview_image",
                     "type": "media",
                     "label": "Overview Image",
-                    "default": "images/overview.png"
+                    "default": "media/overview-1786427150-lvdB6Icf.png"
                 },
                 {
                     "name": "overview_btn_text",
@@ -120,28 +140,40 @@
                         {
                             "title": "Sesuai dengan Kebutuhan Bisnis",
                             "text": "Xyora mendukung kebutuhan operasional bisnis yang dinamis dan mudah beradaptasi dengan pertumbuhan perangkat, infrastruktur, dan ekspansi lokal.",
-                            "image": "images/why1.jpg"
+                            "image": "media/why1-1786427226-Ej9XAJqj.jpg"
                         },
                         {
                             "title": "Local Brand dengan Local Support",
                             "text": "Sebagai brand lokal Indonesia, Xyora memahami kebutuhan SMB lokal dan memberikan layanan yang lebih cepat, responsif, dan mudah dijangkau.",
-                            "image": "images/why2.jpg"
+                            "image": "media/why2-1786427226-pNXg1yUo.jpg"
                         },
                         {
                             "title": "Performa Sesuai Kebutuhan Bisnis",
                             "text": "Performa jaringan andal dengan investasi tetap efisien, cocok untuk bisnis yang membutuhkan koneksi stabil.",
-                            "image": "images/why3.jpg"
+                            "image": "media/why3-1786427226-pg22Bpxo.jpg"
                         },
                         {
                             "title": "Mudah Terintegrasi",
                             "text": "Desain modern yang dirancang agar mudah terintegrasi dengan perangkat dan sistem bisnis tanpa mengganggu operasional.",
-                            "image": "images/why4.jpg"
+                            "image": "media/why4-1786427226-BkgNGZDn.jpg"
                         }
                     ],
                     "children": [
-                        { "name": "title", "type": "text", "label": "Title" },
-                        { "name": "text", "type": "textarea", "label": "Description Text" },
-                        { "name": "image", "type": "media", "label": "Background Image" }
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Title"
+                        },
+                        {
+                            "name": "text",
+                            "type": "textarea",
+                            "label": "Description Text"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Background Image"
+                        }
                     ]
                 },
                 {
@@ -166,29 +198,49 @@
                             "challenge_text": "Pertumbuhan jumlah pengguna dan perangkat yang terhubung secara bersamaan di gedung bertingkat seperti perkantoran, mal, dan apartemen menuntut jaringan yang lebih andal dan berkapasitas tinggi.\n\nNamun, banyak infrastruktur yang belum dirancang untuk mendukung kebutuhan digital saat ini, sehingga berpotensi menimbulkan gangguan konektivitas, pengalaman pengguna yang tidak konsisten, serta menurunkan produktivitas operasional.",
                             "solution_text": "Xyora menghadirkan solusi jaringan yang stabil, cepat, dan aman untuk mendukung kebutuhan operasional bisnis dan hunian modern. Dirancang untuk menangani pertumbuhan pengguna, perangkat, dan aplikasi yang terus meningkat, Xyora membantu memastikan konektivitas tetap optimal di seluruh area.\n\nDengan performa yang andal and pengelolaan yang efisien, bisnis dapat beroperasi lebih produktif tanpa hambatan jaringan.",
                             "button_link": "/usecase-gedung-bertingkat",
-                            "image": "images/industri1.jpg"
+                            "image": "media/industri1-1786427373-vjOA7ysz.jpg"
                         },
                         {
                             "image_caption": "Hotel & Resort",
                             "challenge_text": "Access point yang sudah tidak optimal kerap kesulitan menangani lonjakan jumlah pengguna dan perangkat yang terhubung secara bersamaan di hotel maupun resort sehingga berpotensi menyebabkan koneksi melambat, cakupan Wi-Fi yang tidak merata, pengalaman internet yang kurang konsisten, serta mengganggu kelancaran operasional dan kepuasan tamu.",
                             "solution_text": "Xyora menyediakan solusi jaringan yang dirancang untuk memenuhi kebutuhan konektivitas di lingkungan hospitality. Performa yang stabil, cakupan yang luas, serta kapasitas tinggi memungkinkan tamu menikmati akses internet yang lancar di seluruh area hotel maupun resort.\n\nSementara itu, pengelolaan jaringan yang efisien membantu tim operasional memastikan layanan tetap optimal, sehingga pengalaman menginap dan kualitas pelayanan dapat terus terjaga.",
                             "button_link": "/usecase-hotel-resort",
-                            "image": "images/industri2.jpg"
+                            "image": "media/industri2-1786427373-gI46UhAA.jpg"
                         },
                         {
                             "image_caption": "Sekolah & Kampus",
                             "challenge_text": "Jaringan Wi-Fi sekolah atau kampus yang lambat dan sering terputus menghambat metode belajar mengajar digital (e-learning). Sinyal yang lemah di beberapa area kelas dan kesulitan dalam mengelola ratusan perangkat siswa/mahasiswa secara efisien sering kali menjadi kendala utama.",
                             "solution_text": "Xyora menyediakan Wi-Fi 6 berkecepatan tinggi yang stabil untuk mendukung aktivitas e-learning secara seamless. Dengan jangkauan luas di area kelas dan kapasitas besar untuk menampung ratusan perangkat sekaligus, koneksi tetap lancar.\n\nManajemen terpusat yang mudah membantu staf IT mengontrol jaringan secara efisien demi menunjang kualitas pendidikan terbaik.",
                             "button_link": "/usecase-sekolah-kampus",
-                            "image": "images/industri3.jpg"
+                            "image": "media/industri3-1786427373-nEBRasWB.jpg"
                         }
                     ],
                     "children": [
-                        { "name": "image_caption", "type": "text", "label": "Image Caption (e.g. Gedung Bertingkat)" },
-                        { "name": "challenge_text", "type": "textarea", "label": "Challenge Text" },
-                        { "name": "solution_text", "type": "textarea", "label": "Solution Text" },
-                        { "name": "button_link", "type": "text", "label": "Button Link" },
-                        { "name": "image", "type": "media", "label": "Image" }
+                        {
+                            "name": "image_caption",
+                            "type": "text",
+                            "label": "Image Caption (e.g. Gedung Bertingkat)"
+                        },
+                        {
+                            "name": "challenge_text",
+                            "type": "textarea",
+                            "label": "Challenge Text"
+                        },
+                        {
+                            "name": "solution_text",
+                            "type": "textarea",
+                            "label": "Solution Text"
+                        },
+                        {
+                            "name": "button_link",
+                            "type": "text",
+                            "label": "Button Link"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Image"
+                        }
                     ]
                 }
             ]
@@ -201,7 +253,7 @@
                     "name": "hero_bg",
                     "type": "media",
                     "label": "Hero Background Image",
-                    "default": "images/bg-about.jpg"
+                    "default": "media/bg-about-1786430297-qfb3yoZr.jpg"
                 },
                 {
                     "name": "about_title",
@@ -239,25 +291,37 @@
                     "label": "Misi Cards",
                     "default": [
                         {
-                            "icon": "icons/misi1.png",
+                            "icon": "media/misi1-1786430353-XJaaSxBN.png",
                             "title": "Dependable",
                             "text": "Menghadirkan konektivitas yang stabil dan andal untuk menjaga produktivitas tetap optimal."
                         },
                         {
-                            "icon": "icons/misi2.png",
+                            "icon": "media/misi2-1786430353-o5umBeb4.png",
                             "title": "Built for Growth",
                             "text": "Mempersiapkan jaringan untuk mendukung ekspansi bisnis dan kebutuhan teknologi yang terus berkembang."
                         },
                         {
-                            "icon": "icons/misi3.png",
+                            "icon": "media/misi3-1786430353-mUQbk1To.png",
                             "title": "Value-Driven",
                             "text": "Memaksimalkan performa dengan investasi yang lebih efisien, tanpa mengurangi kualitas dan keandalan jaringan."
                         }
                     ],
                     "children": [
-                        { "name": "icon", "type": "media", "label": "Mission Icon" },
-                        { "name": "title", "type": "text", "label": "Mission Card Title" },
-                        { "name": "text", "type": "textarea", "label": "Mission Card Text" }
+                        {
+                            "name": "icon",
+                            "type": "media",
+                            "label": "Mission Icon"
+                        },
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Mission Card Title"
+                        },
+                        {
+                            "name": "text",
+                            "type": "textarea",
+                            "label": "Mission Card Text"
+                        }
                     ]
                 }
             ]
@@ -282,7 +346,7 @@
                     "name": "contact_image",
                     "type": "media",
                     "label": "Contact Section Image",
-                    "default": "images/contact1.png"
+                    "default": "media/contact1-1786430651-7MA7GXt8.png"
                 },
                 {
                     "name": "rma_title",
@@ -300,7 +364,7 @@
                     "name": "rma_image",
                     "type": "media",
                     "label": "RMA Section Image",
-                    "default": "images/contact2.png"
+                    "default": "media/contact2-1786430652-9xnGcFK7.png"
                 },
                 {
                     "name": "status_title",
@@ -318,7 +382,7 @@
                     "name": "status_image",
                     "type": "media",
                     "label": "RMA Status Image",
-                    "default": "images/contact3.png"
+                    "default": "media/contact3-1786430652-cfxATzti.png"
                 }
             ]
         },
@@ -330,13 +394,13 @@
                     "name": "hero_bg",
                     "type": "media",
                     "label": "Hero Background Image",
-                    "default": "images/sekolah-kampus.png"
+                    "default": "media/sekolah-kampus-1786429213-0nTfvcc8.png"
                 },
                 {
                     "name": "about_image",
                     "type": "media",
                     "label": "About/Challenge Image",
-                    "default": "images/about-sekolah-kampus.png"
+                    "default": "media/about-sekolah-kampus-1786429254-W3umm4Vy.png"
                 },
                 {
                     "name": "solusi_cards",
@@ -344,40 +408,60 @@
                     "label": "Solusi Cards",
                     "default": [
                         {
-                            "badge": "icons/verified.png",
-                            "image": "images/solusi1.png",
+                            "badge": "media/verified-1786429289-YiDUXwRt.png",
+                            "image": "media/solusi1-1786429376-C6iITPWj.png",
                             "title": "Ruang Kelas",
                             "text": "Untuk mendukung pembelajaran digital dengan banyak pengguna secara bersamaan, Xyora Ceiling Access Point (XA-CAP625-P) menyediakan akses WiFi stabil dengan cakupan luas.",
                             "subtext": "Didukung oleh Xyora PoE Switch (XA-SWG108-P), memudahkan distribusi daya dan jaringan melalui satu kabel Ethernet."
                         },
                         {
-                            "badge": "icons/verified.png",
-                            "image": "images/solusi2.png",
+                            "badge": "media/verified-1786429289-YiDUXwRt.png",
+                            "image": "media/solusi2-1786429377-h9lO6UR8.png",
                             "title": "Ruang Dosen & Administrasi",
                             "text": "Area operasional membutuhkan koneksi stabil untuk mendukung administrasi, sistem akademik, dan komunikasi internal.",
                             "subtext": "Xyora XA-IAP641-P In-Wall Access Point menghadirkan koneksi stabil untuk kebutuhan jaringan di dalam satu ruangan. Desain elegan dengan instalasi menyatu pada dinding yang rapi, didukung Xyora XA-SWG108-P PoE Switch untuk distribusi jaringan yang praktis."
                         },
                         {
-                            "badge": "icons/verified.png",
-                            "image": "images/solusi3.png",
+                            "badge": "media/verified-1786429289-YiDUXwRt.png",
+                            "image": "media/solusi3-1786429377-NC4hQQRK.png",
                             "title": "Koridor, Taman, dan Lobby Terbuka",
                             "text": "Area outdoor seperti koridor terbuka, taman kampus, atrium, dan lobby membutuhkan konektivitas stabil di berbagai kondisi.",
                             "subtext": "Xyora XA-OAP621-P Outdoor Access Point menghadirkan cakupan WiFi yang luas dengan perlindungan IP65 and jangkauan hingga 100 meter."
                         }
                     ],
                     "children": [
-                        { "name": "badge", "type": "media", "label": "Badge Icon" },
-                        { "name": "image", "type": "media", "label": "Card Image" },
-                        { "name": "title", "type": "text", "label": "Card Title" },
-                        { "name": "text", "type": "textarea", "label": "Card Description" },
-                        { "name": "subtext", "type": "textarea", "label": "Card Subtext" }
+                        {
+                            "name": "badge",
+                            "type": "media",
+                            "label": "Badge Icon"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Card Image"
+                        },
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Card Title"
+                        },
+                        {
+                            "name": "text",
+                            "type": "textarea",
+                            "label": "Card Description"
+                        },
+                        {
+                            "name": "subtext",
+                            "type": "textarea",
+                            "label": "Card Subtext"
+                        }
                     ]
                 },
                 {
                     "name": "manajemen_image",
                     "type": "media",
                     "label": "Manajemen Background Image",
-                    "default": "images/bg-manajemen-jaringan.png"
+                    "default": "media/bg-manajemen-jaringan-1786429433-gPu827Tr.png"
                 },
                 {
                     "name": "manajemen_title",
@@ -401,13 +485,13 @@
                     "name": "hero_bg",
                     "type": "media",
                     "label": "Hero Background Image",
-                    "default": "images/hotel-resort.png"
+                    "default": "media/hotel-resort-1786429573-ztihMzia.png"
                 },
                 {
                     "name": "about_image",
                     "type": "media",
                     "label": "About/Challenge Image",
-                    "default": "images/about-hotel-resort.png"
+                    "default": "media/about-hotel-resort-1786429590-uH6hFYq6.png"
                 },
                 {
                     "name": "solusi_cards",
@@ -415,40 +499,60 @@
                     "label": "Solusi Cards",
                     "default": [
                         {
-                            "badge": "icons/verified.png",
-                            "image": "images/solusi4.png",
+                            "badge": "media/verified-1786429289-YiDUXwRt.png",
+                            "image": "media/solusi4-1786429617-qswsMHRo.png",
                             "title": "Kamar Tamu",
                             "text": "Kenyamanan tamu dimulai dari koneksi internet yang cepat dan stabil di dalam kamar. Xyora XA-IAP641-P In-Wall Access Point menghadirkan WiFi andal dengan desain menyatu pada dinding sehingga tetap estetik.",
                             "subtext": "Infrastruktur jaringan yang stabil juga mendukung implementasi layanan IPTV, memungkinkan penyajian informasi hotel, promosi fasilitas, layanan kamar, hingga hiburan digital langsung melalui televisi."
                         },
                         {
-                            "badge": "icons/verified.png",
-                            "image": "images/solusi5.png",
+                            "badge": "media/verified-1786429289-YiDUXwRt.png",
+                            "image": "media/solusi5-1786429618-263D2yNX.png",
                             "title": "Lobi, Restoran, Ballroom, Ruang Meeting",
                             "text": "Area publik dengan kepadatan pengguna yang tinggi membutuhkan koneksi cepat dan konsisten. Xyora XA-CAP625-P Ceiling Access Point menghadirkan performa WiFi yang optimal untuk mendukung aktivitas tamu maupun operasional hotel.",
                             "subtext": "Instalasinya didukung oleh Xyora XA-SWG108-P PoE Switch, yang menyalurkan daya dan konektivitas melalui satu kabel Ethernet sehingga implementasi jaringan menjadi lebih efisien dan rapi."
                         },
                         {
-                            "badge": "icons/verified.png",
-                            "image": "images/solusi6.png",
+                            "badge": "media/verified-1786429289-YiDUXwRt.png",
+                            "image": "media/solusi6-1786429619-lSsXZxiF.png",
                             "title": "Kolam Renang, Taman, dan Area Outdoor",
                             "text": "Untuk menjaga pengalaman tamu tetap terhubung di seluruh area properti, Xyora XA-OAP621-P Outdoor Access Point menghadirkan konektivitas yang andal di area luar ruangan seperti kolam renang, taman, hingga area rekreasi.",
                             "subtext": "Solusi ini membantu memperluas cakupan WiFi sehingga akses internet tetap optimal di berbagai area outdoor."
                         }
                     ],
                     "children": [
-                        { "name": "badge", "type": "media", "label": "Badge Icon" },
-                        { "name": "image", "type": "media", "label": "Card Image" },
-                        { "name": "title", "type": "text", "label": "Card Title" },
-                        { "name": "text", "type": "textarea", "label": "Card Description" },
-                        { "name": "subtext", "type": "textarea", "label": "Card Subtext" }
+                        {
+                            "name": "badge",
+                            "type": "media",
+                            "label": "Badge Icon"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Card Image"
+                        },
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Card Title"
+                        },
+                        {
+                            "name": "text",
+                            "type": "textarea",
+                            "label": "Card Description"
+                        },
+                        {
+                            "name": "subtext",
+                            "type": "textarea",
+                            "label": "Card Subtext"
+                        }
                     ]
                 },
                 {
                     "name": "manajemen_image",
                     "type": "media",
                     "label": "Manajemen Background Image",
-                    "default": "images/bg-manajemen-jaringan.png"
+                    "default": "media/bg-manajemen-jaringan-1786429433-gPu827Tr.png"
                 },
                 {
                     "name": "manajemen_title",
@@ -472,13 +576,13 @@
                     "name": "hero_bg",
                     "type": "media",
                     "label": "Hero Background Image",
-                    "default": "images/gedung-bertingkat.png"
+                    "default": "media/gedung-bertingkat-1786429792-DV9H6PbV.png"
                 },
                 {
                     "name": "about_image",
                     "type": "media",
                     "label": "About/Challenge Image",
-                    "default": "images/about-gedung-bertingkat.png"
+                    "default": "media/about-gedung-bertingkat-1786429813-ZAipHgAh.png"
                 },
                 {
                     "name": "solusi_cards",
@@ -486,40 +590,60 @@
                     "label": "Solusi Cards",
                     "default": [
                         {
-                            "badge": "icons/verified.png",
-                            "image": "images/solusi7.png",
+                            "badge": "media/verified-1786429289-YiDUXwRt.png",
+                            "image": "media/solusi7-1786429873-JatbD0Zs.png",
                             "title": "Ruang Kerja & Area Publik",
                             "text": "Untuk mengantisipasi lonjakan trafik dari puluhan hingga ratusan perangkat simultan di ruang meeting, area kolaborasi, apartemen, hingga mal, Xyora Ceiling Access Point (XA-CAP625-P) mengimplementasikan teknologi WiFi 6 yang dirancang khusus untuk skenario high-density deployment dan mendukung seamless roaming antartitik tanpa packet loss.",
                             "subtext": ""
                         },
                         {
-                            "badge": "icons/verified.png",
-                            "image": "images/solusi8.png",
+                            "badge": "media/verified-1786429289-YiDUXwRt.png",
+                            "image": "media/solusi8-1786429873-efCcsTh5.png",
                             "title": "Workspace Eksklusif & Staff Room",
                             "text": "Hadirkan koneksi privat yang aman dan minim latensi untuk operasional penting (ERP/Cloud) tanpa merusak estetika interior dengan Xyora In-Wall Access Point XA-IAP641-P.",
                             "subtext": "Desain flush-mount yang menyatu rapi di dinding serta dukungan VLAN terdedikasi jamin kerahasiaan data bisnis Anda."
                         },
                         {
-                            "badge": "icons/verified.png",
-                            "image": "images/solusi9.png",
+                            "badge": "media/verified-1786429289-YiDUXwRt.png",
+                            "image": "media/solusi9-1786429874-Uja2zZhy.png",
                             "title": "Area Parkir & Rooftop",
                             "text": "Perluas cakupan bisnis Anda dengan Xyora Outdoor Access Point XA-OAP621-P.",
                             "subtext": "Berbekal proteksi tangguh bersertifikasi IP65 (weatherproof), perangkat ini mampu memancarkan sinyal WiFi berkecepatan tinggi yang stabil hingga radius 100 meter, siap menghadapi segala tantangan cuaca ekstrem di luar gedung."
                         }
                     ],
                     "children": [
-                        { "name": "badge", "type": "media", "label": "Badge Icon" },
-                        { "name": "image", "type": "media", "label": "Card Image" },
-                        { "name": "title", "type": "text", "label": "Card Title" },
-                        { "name": "text", "type": "textarea", "label": "Card Description" },
-                        { "name": "subtext", "type": "textarea", "label": "Card Subtext" }
+                        {
+                            "name": "badge",
+                            "type": "media",
+                            "label": "Badge Icon"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Card Image"
+                        },
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Card Title"
+                        },
+                        {
+                            "name": "text",
+                            "type": "textarea",
+                            "label": "Card Description"
+                        },
+                        {
+                            "name": "subtext",
+                            "type": "textarea",
+                            "label": "Card Subtext"
+                        }
                     ]
                 },
                 {
                     "name": "manajemen_image",
                     "type": "media",
                     "label": "Manajemen Background Image",
-                    "default": "images/bg-manajemen-jaringan.png"
+                    "default": "media/bg-manajemen-jaringan-1786429433-gPu827Tr.png"
                 },
                 {
                     "name": "manajemen_title",
@@ -542,22 +666,26 @@
                 {
                     "name": "hero_bg",
                     "type": "media",
-                    "label": "Hero Background Image"
+                    "label": "Hero Background Image",
+                    "default": "media/main-product2-1786426725-ddgvrUGq.png"
                 },
                 {
                     "name": "category_title",
                     "type": "text",
-                    "label": "Category Title"
+                    "label": "Category Title",
+                    "default": "Switch"
                 },
                 {
                     "name": "category_excerpt",
                     "type": "textarea",
-                    "label": "Category Excerpt"
+                    "label": "Category Excerpt",
+                    "default": "Pilihan switch dengan variasi jumlah port dan fitur yang siap"
                 },
                 {
                     "name": "category_description",
                     "type": "textarea",
-                    "label": "Category Full Description"
+                    "label": "Category Full Description",
+                    "default": "menyesuaikan kebutuhan infrastruktur jaringan anda."
                 }
             ]
         }

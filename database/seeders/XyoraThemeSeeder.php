@@ -260,13 +260,12 @@ class XyoraThemeSeeder extends Seeder
 
         // 3. Seed Child Product Entries (with Category parent_id)
         $subProductsData = [
-            // Under Wireless Access Point
             [
                 'parent_slug' => 'access-point',
-                'title' => 'Ceiling Wireless Access Point XA-CAP625-P',
+                'title' => 'Ceiling Wireless Access Point',
                 'slug' => 'ceiling-wireless-access-point',
                 'excerpt' => 'WiFi 6 Ceiling Access Point untuk high-density deployment.',
-                'content' => 'Ceiling Access Point dengan standard WiFi 6 dan dual band up to 3000Mbps.',
+                'content' => '<p>Ceiling Access Point dengan standard WiFi 6 dan dual band up to 3000Mbps.</p>',
                 'menu_order' => 0,
                 'meta' => [
                     'model_code' => 'XA-CAP625-P',
@@ -294,112 +293,116 @@ class XyoraThemeSeeder extends Seeder
                         ['key' => 'Flash + RAM', 'value' => '8MB+128MB+512MB'],
                         ['key' => 'Radio', 'value' => '2.4G+5G'],
                         ['key' => 'Wireless Rate', 'value' => '3000Mbps'],
-                        ['key' => 'Interface', 'value' => "1×2500Mbps WAN\n1×1000Mbps LAN"]
+                        ['key' => 'Interface', 'value' => '1×2500Mbps, 1×1000Mbps']
                     ],
                     'datasheet_link' => '#',
                     'applications' => [
-                        ['title' => 'Hotel & Resort', 'image' => 'images/ap7.png', 'url' => '/usecase-hotel-resort'],
-                        ['title' => 'Gedung Kantor', 'image' => 'images/ap8.png', 'url' => '/usecase-gedung-bertingkat'],
-                        ['title' => 'Sekolah & Kampus', 'image' => 'images/ap9.png', 'url' => '/usecase-sekolah-kampus']
+                        ['title' => 'Hotel & Resort', 'image' => 'media/ap10-1786426624-F50Ehya6.png', 'url' => '/usecase-hotel-resort'],
+                        ['title' => 'Gedung Kantor', 'image' => 'media/ap11-1786426625-9cSq50rO.png', 'url' => '/usecase-gedung-bertingkat'],
+                        ['title' => 'Sekolah & Kampus', 'image' => 'media/ap12-1786426625-RrMA4eUO.png', 'url' => '/usecase-sekolah-kampus']
                     ],
                     'gallery' => [
-                        'images/wifi1.png',
-                        'images/wifi2.png',
-                        'images/wifi3.png'
+                        'media/wifi1-1786425031-NnZ05YL8.png',
+                        'media/wifi2-1786425032-wBHhMQLZ.png',
+                        'media/wifi4-1786425032-ypv9nIgj.png'
                     ]
                 ]
             ],
             [
                 'parent_slug' => 'access-point',
-                'title' => 'In Wall Wifi 6 XA-IAP622-P',
+                'title' => 'Wi-Fi 6 In Wall Access Point',
                 'slug' => 'wi-fi-6-in-wall-access-point',
                 'excerpt' => 'In-Wall Access Point dengan performa stabil untuk kamar hotel atau kos.',
                 'content' => 'Access Point standard WiFi 6 dual band up to 1800Mbps dengan standard 86-type wall mount.',
                 'menu_order' => 1,
                 'meta' => [
-                    'model_code' => 'XA-IAP622-P',
+                    'model_code' => 'XA-IAP641-P',
                     'badge' => 'New',
                     'features' => [
-                        ['feature' => 'WiFi 6 Dual-Band up to 1800 Mbps'],
-                        ['feature' => 'Supports Up to 64 Devices'],
-                        ['feature' => 'Standard 86-Type Wall Mount'],
+                        ['feature' => 'WiFi 6 Dual-Band up to 3000 Mbps'],
+                        ['feature' => 'Supports Up to 128 Devices'],
+                        ['feature' => 'Powered by Qualcomm Chipset'],
                         ['feature' => 'Supports VLAN'],
                         ['feature' => '2×2 + 2×2 MIMO Technology'],
+                        ['feature' => 'Adjustable Transmit Power'],
+                        ['feature' => 'Flexible Ceiling or Wall Mount Design'],
                         ['feature' => 'Seamless Roaming'],
-                        ['feature' => '1×Gigabit Uplink and 2×Gigabit LAN Ports'],
-                        ['feature' => 'PoE Support'],
+                        ['feature' => '2.5GbE Uplink and Gigabit LAN Port'],
+                        ['feature' => 'High-power Wall Penetration'],
+                        ['feature' => 'PoE and 12V DC Support'],
                         ['feature' => 'Cloud-Based Management'],
                         ['feature' => 'Fat and Thin AP Modes']
                     ],
                     'specs' => [
-                        ['key' => 'Part Number', 'value' => 'XA-IAP622-P'],
+                        ['key' => 'Part Number', 'value' => 'XA-CAP625-P'],
                         ['key' => 'Standard', 'value' => 'WiFi6'],
                         ['key' => 'Class', 'value' => 'Commercial'],
-                        ['key' => 'CPU', 'value' => 'IPQ5010+QCN6102'],
-                        ['key' => 'Flash + RAM', 'value' => '8MB+128MB+256MB'],
+                        ['key' => 'CPU', 'value' => 'IPQ5018+QCN6102+QCA8081'],
+                        ['key' => 'Flash + RAM', 'value' => '8MB+128MB+512MB'],
                         ['key' => 'Radio', 'value' => '2.4G+5G'],
-                        ['key' => 'Wireless Rate', 'value' => '1800Mbps'],
-                        ['key' => 'Interface', 'value' => '1×1000Mbps WAN, 2×1000Mbps LAN']
+                        ['key' => 'Wireless Rate', 'value' => '3000Mbps'],
+                        ['key' => 'Interface', 'value' => '1×2500Mbps, 1×1000Mbps']
                     ],
-                    'datasheet_link' => '#',
                     'applications' => [
-                        ['title' => 'Workspace Eksklusif', 'image' => 'images/solusi8.png', 'url' => '/usecase-gedung-bertingkat'],
-                        ['title' => 'Kamar Tamu', 'image' => 'images/solusi4.png', 'url' => '/usecase-hotel-resort']
+                        ['title' => 'Hotel & Resort', 'image' => 'media/solusi5-1786429618-263D2yNX.png', 'url' => '/usecase-hotel-resort'],
+                        ['title' => 'Gedung Kantor', 'image' => 'media/solusi7-1786429873-JatbD0Zs.png', 'url' => '/usecase-gedung-bertingkat'],
+                        ['title' => 'Sekolah & Kampus', 'image' => 'media/solusi1-1786429376-C6iITPWj.png', 'url' => '/usecase-sekolah-kampus']
                     ],
                     'gallery' => [
-                        'images/wifi1.png',
-                        'images/wifi2.png',
-                        'images/wifi3.png'
+                        'media/wifi3-1786424972-fKfp70Uj.png',
+                        'media/wifi1-1786425031-NnZ05YL8.png',
+                        'media/wifi4-1786425032-ypv9nIgj.png'
                     ]
                 ]
             ],
             [
                 'parent_slug' => 'access-point',
-                'title' => 'In Wall Wifi 7 XA-IAP641-P',
+                'title' => 'Wi-Fi 7 In Wall Access Point',
                 'slug' => 'wi-fi-7-in-wall-access-point',
                 'excerpt' => 'In-Wall Access Point dengan standard WiFi 7 tri-band premium.',
                 'content' => 'WiFi 7 Tri-Band premium dengan multi-link operation untuk hunian eksklusif.',
                 'menu_order' => 2,
                 'meta' => [
-                    'model_code' => 'XA-IAP641-P',
+                    'model_code' => 'XA-IAP725D-P',
                     'badge' => 'New',
                     'features' => [
-                        ['feature' => 'WiFi 7 Tri-Band up to 6400 Mbps'],
-                        ['feature' => 'Supports Up to 256 Devices'],
-                        ['feature' => 'Standard 86-Type Wall Mount'],
+                        ['feature' => 'WiFi7 dual-band 3.6Gbps'],
+                        ['feature' => 'Supports up to 128 devices'],
+                        ['feature' => 'MIMO2×2(2G)+3×3(5G:2SS)'],
                         ['feature' => 'Supports VLAN'],
-                        ['feature' => 'MLO (Multi-Link Operation)'],
-                        ['feature' => 'Seamless Roaming'],
-                        ['feature' => '1×2.5G Uplink and 2×Gigabit LAN Ports'],
-                        ['feature' => 'PoE Support'],
-                        ['feature' => 'Cloud-Based Management'],
-                        ['feature' => 'Fat and Thin AP Modes']
+                        ['feature' => '5 omnidirectional antennas'],
+                        ['feature' => 'Cloud platform management'],
+                        ['feature' => '86 wall-mounted boxes'],
+                        ['feature' => '1 2.5G network port, 1 1G network port'],
+                        ['feature' => 'Standard PoE'],
+                        ['feature' => 'Fat and thin in one']
                     ],
                     'specs' => [
-                        ['key' => 'Part Number', 'value' => 'XA-IAP641-P'],
+                        ['key' => 'Part Number', 'value' => 'XA-IAP725D-P'],
                         ['key' => 'Standard', 'value' => 'WiFi7'],
-                        ['key' => 'Class', 'value' => 'Commercial'],
-                        ['key' => 'CPU', 'value' => 'IPQ9574+QCN9274'],
-                        ['key' => 'Flash + RAM', 'value' => '16MB+256MB+1GB'],
-                        ['key' => 'Radio', 'value' => '2.4G+5G+6G'],
-                        ['key' => 'Wireless Rate', 'value' => '6400Mbps'],
-                        ['key' => 'Interface', 'value' => '1×2500Mbps WAN, 2×1000Mbps LAN']
+                        ['key' => 'Class', 'value' => 'Home'],
+                        ['key' => 'CPU', 'value' => 'AN7563+MT7991B+MT7976CN+EN8811H'],
+                        ['key' => 'Flash + RAM', 'value' => '128MB+256MB'],
+                        ['key' => 'Radio', 'value' => '2.4G+5G'],
+                        ['key' => 'Wireless Rate', 'value' => '3.6Gbps'],
+                        ['key' => 'Interface', 'value' => '1×2.5GE, 1×1GE']
                     ],
                     'datasheet_link' => '#',
                     'applications' => [
-                        ['title' => 'Workspace Eksklusif', 'image' => 'images/solusi8.png', 'url' => '/usecase-gedung-bertingkat'],
-                        ['title' => 'Kamar Tamu', 'image' => 'images/solusi4.png', 'url' => '/usecase-hotel-resort']
+                        ['title' => 'Hotel & Resort', 'image' => 'media/ap4-1786425763-tpGj65z1.png', 'url' => '/usecase-hotel-resort'],
+                        ['title' => 'Gedung Kantor', 'image' => 'media/ap5-1786425764-xqNWSX9D.png', 'url' => '/usecase-gedung-bertingkat'],
+                        ['title' => 'Sekolah & Kampus', 'image' => 'media/ap6-1786425764-N9kZWOee.png', 'url' => '/usecase-sekolah-kampus']
                     ],
                     'gallery' => [
-                        'images/wifi1.png',
-                        'images/wifi2.png',
-                        'images/wifi4.png'
+                        'media/wifi3-1786424972-fKfp70Uj.png',
+                        'media/wifi2-1786425032-wBHhMQLZ.png',
+                        'media/wifi4-1786425032-ypv9nIgj.png'
                     ]
                 ]
             ],
             [
                 'parent_slug' => 'access-point',
-                'title' => 'Outdoor Access Point XA-OAP621-P',
+                'title' => 'Outdoor Access Point',
                 'slug' => 'outdoor-access-point',
                 'excerpt' => 'Outdoor Access Point tahan cuaca ekstrem dengan sertifikasi IP65.',
                 'content' => 'Access Point outdoor dual band WiFi 6 dengan jangkauan luas radius 100m.',
@@ -408,40 +411,47 @@ class XyoraThemeSeeder extends Seeder
                     'model_code' => 'XA-OAP621-P',
                     'badge' => 'New',
                     'features' => [
-                        ['feature' => 'WiFi 6 Dual-Band up to 1800 Mbps'],
-                        ['feature' => 'Supports Up to 100+ Devices'],
-                        ['feature' => 'IP65 Weatherproof Enclosure'],
-                        ['feature' => 'PoE Support'],
-                        ['feature' => 'Up to 100m Coverage Radius'],
+                        ['feature' => 'WiFi 6 Dual-Band up to 3000 Mbps'],
+                        ['feature' => 'Supports Up to 128 Devices'],
+                        ['feature' => 'Powered by Qualcomm Chipset'],
+                        ['feature' => 'Supports VLAN'],
+                        ['feature' => '2×2 + 2×2 MIMO Technology'],
+                        ['feature' => 'Adjustable Transmit Power'],
+                        ['feature' => 'Flexible Ceiling or Wall Mount Design'],
                         ['feature' => 'Seamless Roaming'],
+                        ['feature' => '2.5GbE Uplink and Gigabit LAN Port'],
+                        ['feature' => 'High-power Wall Penetration'],
+                        ['feature' => 'PoE and 12V DC Support'],
                         ['feature' => 'Cloud-Based Management'],
-                        ['feature' => 'High-power Wall Penetration']
+                        ['feature' => 'Fat and Thin AP Modes']
                     ],
                     'specs' => [
-                        ['key' => 'Part Number', 'value' => 'XA-OAP621-P'],
+                        ['key' => 'Product Model', 'value' => 'XA-OAP621-P'],
+                        ['key' => 'Part Number', 'value' => 'XA-CAP625-P'],
                         ['key' => 'Standard', 'value' => 'WiFi6'],
                         ['key' => 'Class', 'value' => 'Commercial'],
-                        ['key' => 'IP Rating', 'value' => 'IP65'],
-                        ['key' => 'Coverage', 'value' => '100m Radius'],
+                        ['key' => 'CPU', 'value' => 'IPQ5018+QCN6102+QCA8081'],
+                        ['key' => 'Flash + RAM', 'value' => '8MB+128MB+512MB'],
                         ['key' => 'Radio', 'value' => '2.4G+5G'],
-                        ['key' => 'Wireless Rate', 'value' => '1800Mbps']
+                        ['key' => 'Wireless Rate', 'value' => '3000Mbps'],
+                        ['key' => 'Interface', 'value' => '1×2500Mbps, 1×1000Mbps']
                     ],
                     'datasheet_link' => '#',
                     'applications' => [
-                        ['title' => 'Area Parkir & Rooftop', 'image' => 'images/solusi9.png', 'url' => '/usecase-gedung-bertingkat'],
-                        ['title' => 'Kolam Renang & Outdoor', 'image' => 'images/solusi6.png', 'url' => '/usecase-hotel-resort']
+                        ['title' => 'Hotel & Resort', 'image' => 'media/ap10-1786426624-F50Ehya6.png', 'url' => '/usecase-hotel-resort'],
+                        ['title' => ' Gedung Kantor', 'image' => 'media/ap11-1786426625-9cSq50rO.png', 'url' => '/usecase-gedung-bertingkat'],
+                        ['title' => ' Sekolah & Kampus', 'image' => 'media/ap12-1786426625-RrMA4eUO.png', 'url' => '/usecase-sekolah-kampus']
                     ],
                     'gallery' => [
-                        'images/wifi1.png',
-                        'images/wifi2.png',
-                        'images/wifi3.png'
+                        'media/wifi3-1786424972-fKfp70Uj.png',
+                        'media/wifi1-1786425031-NnZ05YL8.png',
+                        'media/wifi2-1786425032-wBHhMQLZ.png'
                     ]
                 ]
             ],
-            // Under Smart Gateway
             [
                 'parent_slug' => 'gateway',
-                'title' => 'Smart Gateway XA-GW411S',
+                'title' => 'Smart Gateway',
                 'slug' => 'smart-gateway',
                 'excerpt' => 'Gateway andal pengelola AP terpusat hingga 128 unit.',
                 'content' => 'Multi-WAN Gateway Load Balancing dengan output PoE dan cloud remote management.',
@@ -450,34 +460,45 @@ class XyoraThemeSeeder extends Seeder
                     'model_code' => 'XA-GW411S',
                     'badge' => 'New',
                     'features' => [
-                        ['feature' => 'Manages Up to 128 Access Points'],
-                        ['feature' => 'Dukungan Multi-WAN Load Balancing'],
-                        ['feature' => 'Intelligent Bandwidth Control'],
-                        ['feature' => 'Built-in Security Firewall'],
-                        ['feature' => 'Cloud Remote Management'],
-                        ['feature' => 'PoE Output Ports']
+                        ['feature' => 'Router + AC + PoE Combo'],
+                        ['feature' => 'Distributed AP Networking'],
+                        ['feature' => 'Standalone Installation'],
+                        ['feature' => 'Template Configuration'],
+                        ['feature' => '1× Gigabit WAN Port + 4× Gigabit LAN Ports'],
+                        ['feature' => 'Seamless Roaming'],
+                        ['feature' => 'IEEE 802.3at Protocol'],
+                        ['feature' => 'IPTV Passthrough'],
+                        ['feature' => '60W Power Supply'],
+                        ['feature' => 'Security Firewall'],
+                        ['feature' => 'Supports Max Bandwidth 1000Mbps'],
+                        ['feature' => 'Cloud Platform Management'],
+                        ['feature' => 'Manages up to 128 APs'],
+                        ['feature' => 'Remote Management'],
+                        ['feature' => 'Max Concurrent Users 128']
                     ],
                     'specs' => [
                         ['key' => 'Part Number', 'value' => 'XA-GW411S'],
-                        ['key' => 'Class', 'value' => 'Commercial'],
-                        ['key' => 'AP Management Capacity', 'value' => '128 APs'],
-                        ['key' => 'Interface', 'value' => '4×Gigabit LAN (PoE), 1×Gigabit WAN']
+                        ['key' => 'CPU', 'value' => 'MT7621DAT'],
+                        ['key' => 'Flash + RAM', 'value' => '16MB+128MB'],
+                        ['key' => 'Interface', 'value' => '1×1000Mbps(RJ45) LAN, 4×1000Mbps(RJ45)'],
+                        ['key' => 'PoE standard', 'value' => 'IEEE 802.3af (15.4W), IEEE 802.3at (30W)'],
+                        ['key' => 'Button', 'value' => '1× Reset button'],
+                        ['key' => 'Power', 'value' => '52V 1.2A, Total PoE Output: 54W (max)'],
+                        ['key' => 'Power Consumption', 'value' => '8W (Non-PoE)'],
+                        ['key' => 'Dimensions', 'value' => '122mm×90mm×27.3mm']
                     ],
                     'datasheet_link' => '#',
                     'applications' => [
-                        ['title' => 'Gedung Kantor', 'image' => 'images/ap8.png', 'url' => '/usecase-gedung-bertingkat'],
-                        ['title' => 'Sekolah & Kampus', 'image' => 'images/ap9.png', 'url' => '/usecase-sekolah-kampus']
+                        ['title' => 'Hotel & Resort', 'image' => 'media/sg1-1786428096-2bbvvkei.png', 'url' => '/usecase-hotel-resort'],
+                        ['title' => 'Gedung Kantor', 'image' => 'media/sg2-1786428097-YqMIkkp6.png', 'url' => '/usecase-gedung-bertingkat'],
+                        ['title' => 'Sekolah & Kampus', 'image' => 'media/sg3-1786428097-hDPd5ZEG.png', 'url' => '/usecase-sekolah-kampus']
                     ],
-                    'gallery' => [
-                        'images/smart-gateway.png',
-                        'images/ap7.png'
-                    ]
+                    'gallery' => []
                 ]
             ],
-            // Under Switch
             [
                 'parent_slug' => 'switch',
-                'title' => 'Switch PoE XA-SWG108-P',
+                'title' => 'Switch',
                 'slug' => 'poe-switch',
                 'excerpt' => 'Smart PoE Switch dengan 8 Port PoE Gigabit dan 2 Port Uplink.',
                 'content' => 'Smart PoE Switch gigabit dengan total budget 120W dan casing metal kuat fanless.',
@@ -486,36 +507,38 @@ class XyoraThemeSeeder extends Seeder
                     'model_code' => 'XA-SWG108-P',
                     'badge' => 'New',
                     'features' => [
-                        ['feature' => '8×Gigabit PoE Ports'],
-                        ['feature' => '2×Gigabit Uplink Ports'],
-                        ['feature' => 'IEEE 802.3af/at PoE Standards'],
-                        ['feature' => 'Total PoE Budget: 120W'],
-                        ['feature' => 'Smart Power Management'],
-                        ['feature' => 'Metal Case, Fanless Design']
+                        ['feature' => 'Complies with IEEE 802.3af/at standards, automatically identifies powered devices (PDs), and delivers safe power supply'],
+                        ['feature' => 'Supports port short-circuit protection and overload protection'],
+                        ['feature' => 'Provides 8×10/100/1000Mbps PoE ports+2×10/100/1000Mbps RJ45 uplink ports'],
+                        ['feature' => 'Full metal casing with efficient heat dissipation'],
+                        ['feature' => 'Total power: 120W; maximum output power per port: 30W'],
+                        ['feature' => 'Plug and play, zero configuration'],
+                        ['feature' => 'Supports 4KV surge protection']
                     ],
                     'specs' => [
                         ['key' => 'Part Number', 'value' => 'XA-SWG108-P'],
-                        ['key' => 'Class', 'value' => 'Commercial'],
-                        ['key' => 'PoE Standard', 'value' => '802.3af/at'],
-                        ['key' => 'PoE Budget', 'value' => '120W'],
-                        ['key' => 'Interface', 'value' => '8×10/100/1000Mbps PoE, 2×10/100/1000Mbps Uplink']
+                        ['key' => 'PoE Standard', 'value' => 'IEEE 802.3 10BASE-T Ethernet, IEEE 802.3u 100BASE-TX Fast Ethernet, IEEE 802.3ab 1000BASE-T Gigabit Ethernet, IEEE 802.3az (Half-Duplex, Full-Duplex)'],
+                        ['key' => 'Fixed Ports', 'value' => '8×10/100/1000Mbps PoE ports with 52V PoE power supply, compliant with IEEE 802.3af/at, max. 30W per port 2×10/100/1000Mbps RJ45 uplink ports'],
+                        ['key' => 'PoE', 'value' => 'Adaptive power output supports IEEE 802.3af (15.4W) and IEEE 802.3at (30W) Power pinout: 1/2+ 3/6-'],
+                        ['key' => 'Backplane Bandwidth', 'value' => '12Gbps'],
+                        ['key' => 'Power Consumption', 'value' => 'Total power consumption (without PoE load) < 5W'],
+                        ['key' => 'Power Supply', 'value' => 'Input voltage: AC 100~240V, Maximum total output power: 120W'],
+                        ['key' => 'Dimensions', 'value' => '220mm×162mm×43.2mm (bare unit)']
                     ],
                     'datasheet_link' => '#',
                     'applications' => [
-                        ['title' => 'Gedung Kantor', 'image' => 'images/ap8.png', 'url' => '/usecase-gedung-bertingkat'],
-                        ['title' => 'Sekolah & Kampus', 'image' => 'images/ap9.png', 'url' => '/usecase-sekolah-kampus']
+                        ['title' => 'Hotel & Resort', 'image' => 'media/sw1-1786428477-1Aa2qHnN.png', 'url' => '/usecase-hotel-resort'],
+                        ['title' => 'Gedung Kantor', 'image' => 'media/sw2-1786428478-V4UbsGW1.png', 'url' => '/usecase-gedung-bertingkat'],
+                        ['title' => 'Sekolah & Kampus', 'image' => 'media/sw2-1786428478-V4UbsGW1.png', 'url' => '/usecase-sekolah-kampus']
                     ],
-                    'gallery' => [
-                        'images/switch.png',
-                        'images/ap8.png'
-                    ]
+                    'gallery' => []
                 ]
             ]
         ];
 
         foreach ($subProductsData as $prod) {
             $parent = $categories[$prod['parent_slug']] ?? null;
-            $entry = CptEntry::updateOrCreate(
+            $entry = CptEntry::firstOrCreate(
                 [
                     'post_type_id' => $productsCpt->id,
                     'slug' => $prod['slug'],
@@ -636,7 +659,7 @@ class XyoraThemeSeeder extends Seeder
         ];
 
         foreach ($pagesData as $p) {
-            $page = Page::updateOrCreate(
+            $page = Page::firstOrCreate(
                 ['slug' => $p['slug']],
                 [
                     'title' => $p['title'],
