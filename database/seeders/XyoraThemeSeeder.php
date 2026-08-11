@@ -607,7 +607,7 @@ class XyoraThemeSeeder extends Seeder
             ['field_id' => 'jenis_pengajuan', 'type' => 'text', 'label' => 'Jenis Pengajuan', 'is_required' => true, 'order' => 5],
             ['field_id' => 'jumlah_unit', 'type' => 'text', 'label' => 'Jumlah Unit', 'is_required' => true, 'order' => 6],
             ['field_id' => 'tanggal_pembelian', 'type' => 'text', 'label' => 'Tanggal Pembelian', 'is_required' => true, 'order' => 7],
-            ['field_id' => 'bukti_pembelian', 'type' => 'text', 'label' => 'Bukti Pembelian', 'is_required' => true, 'order' => 8]
+            ['field_id' => 'bukti_pembelian', 'type' => 'text', 'label' => 'Link Dokumen Bukti Pembelian & Kondisi Unit', 'is_required' => true, 'order' => 8]
         ];
 
         foreach ($rmaFields as $f) {
