@@ -259,6 +259,11 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
 
                 return view('admin.cpt.entries.create', ['postType' => $postType]);
             })->name('create');
+            Route::get('/reorder', function ($postTypeSlug) {
+                $postType = CustomPostType::where('slug', $postTypeSlug)->firstOrFail();
+
+                return view('admin.cpt.entries.reorder', ['postType' => $postType]);
+            })->name('reorder');
             Route::get('/{id}/edit', function ($postTypeSlug, $id) {
                 $postType = CustomPostType::where('slug', $postTypeSlug)->firstOrFail();
 
