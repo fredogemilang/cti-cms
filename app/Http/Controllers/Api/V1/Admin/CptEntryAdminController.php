@@ -75,6 +75,11 @@ class CptEntryAdminController extends Controller
             $this->syncRelationships($entry, $relationships);
         }
 
+        // Sync taxonomy terms
+        if ($request->has('terms')) {
+            $this->syncTerms($entry, $request->input('terms'));
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'CPT Entry created successfully.',
@@ -129,6 +134,11 @@ class CptEntryAdminController extends Controller
 
         if ($relationships !== null) {
             $this->syncRelationships($entry, $relationships);
+        }
+
+        // Sync taxonomy terms
+        if ($request->has('terms')) {
+            $this->syncTerms($entry, $request->input('terms'));
         }
 
         return response()->json([
@@ -190,6 +200,27 @@ class CptEntryAdminController extends Controller
                     ]);
                 }
             }
+        }
+    }
+
+    /**
+     * Sync taxonomy terms for a CPT entry.
+     * Accepts either a flat array of term IDs or an object grouped by taxonomy_id.
+     *
+     * Flat:   {"terms": [4, 5]}
+     * Group:  {"terms": {"2": [4], "2": [5]}}
+     */
+    protected function syncTerms(CptEntry $entry, array $terms): void
+    {
+        // Detect format: flat list or grouped by taxonomy_id
+        if (array_is_list($terms)) {
+            $entry->terms()->sync($terms);
+        } else {
+            $allTermIds = [];
+            foreach ($terms as $termIds) {
+                $allTermIds = array_merge($allTermIds, (array) $termIds);
+            }
+            $entry->terms()->sync($allTermIds);
         }
     }
 }
