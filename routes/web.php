@@ -407,6 +407,12 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
             if ($group === 'redirect') {
                 return redirect()->route('admin.seo.redirects');
             }
+            if ($group === 'api-tokens' || $group === 'tokens') {
+                return redirect()->route('admin.api-tokens.index');
+            }
+            if ($group === 'webhooks') {
+                return redirect()->route('admin.webhooks.index');
+            }
 
             abort_unless(app(SettingsRegistry::class)->hasGroup($group), 404);
 
