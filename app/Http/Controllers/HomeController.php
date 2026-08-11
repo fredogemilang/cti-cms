@@ -62,7 +62,8 @@ class HomeController extends Controller
         $entries = CptEntry::with('author')
             ->where('post_type_id', $cpt->id)
             ->where('status', 'published')
-            ->latest()
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id')
             ->get();
 
         if (in_array($cptSlug, ['client-says', 'customer-success'], true)) {

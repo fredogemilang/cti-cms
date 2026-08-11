@@ -118,7 +118,8 @@ class ArchiveController extends Controller
         $entriesQuery = CptEntry::with(['author', 'postType', 'terms.taxonomy'])
             ->where('post_type_id', $postType->id)
             ->published()
-            ->latest('published_at');
+            ->orderByDesc('updated_at')
+            ->orderByDesc('id');
 
         if (in_array($postType->slug, ['customer-success', 'client-says'], true)) {
             $allEntries = $entriesQuery->get()

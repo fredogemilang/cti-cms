@@ -382,7 +382,8 @@
   $currentLocale = app()->getLocale();
   $clientStories = \App\Models\CptEntry::where('post_type_id', \App\Models\CustomPostType::where('slug', 'client-says')->value('id'))
     ->where('status', 'published')
-    ->latest()
+    ->orderByDesc('updated_at')
+    ->orderByDesc('id')
     ->get()
     ->filter(fn ($story) => $story->hasContentForLocale($currentLocale))
     ->values()
