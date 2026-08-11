@@ -389,7 +389,9 @@ class CdtThemeSeeder extends Seeder
                 'value' => json_encode([
                     'title' => 'Blog, News & Video',
                     'description' => 'Explore our latest insights and news.',
-                    'image' => 'themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg'
+                    'image' => 'themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg',
+                    'button_text' => 'Explore',
+                    'button_url' => '/insights'
                 ]),
                 'order' => 11
             ]
@@ -403,7 +405,9 @@ class CdtThemeSeeder extends Seeder
                 'value' => json_encode([
                     'title' => 'Life at Central Data Technology',
                     'description' => 'Discover life and opportunities at CDT.',
-                    'image' => 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg'
+                    'image' => 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg',
+                    'button_text' => 'Learn More',
+                    'button_url' => '/careers'
                 ]),
                 'order' => 12
             ]

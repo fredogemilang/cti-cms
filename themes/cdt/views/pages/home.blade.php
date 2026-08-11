@@ -449,12 +449,16 @@
     $blogCard = $page?->cardBlock('blog_callout', [
       'title' => 'Blog, News & Video',
       'description' => '',
-      'image' => 'themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg'
+      'image' => 'themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg',
+      'button_text' => 'Explore',
+      'button_url' => '/insights'
     ]);
     $lifeCard = $page?->cardBlock('life_callout', [
       'title' => 'Life at Central Data Technology',
       'description' => '',
-      'image' => 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg'
+      'image' => 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg',
+      'button_text' => 'Learn More',
+      'button_url' => '/careers'
     ]);
   @endphp
   <section class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -468,8 +472,8 @@
           @if(!empty($blogCard['description']))
             <p class="text-sm text-white/80 mb-4 max-w-sm">{!! $blogCard['description'] !!}</p>
           @endif
-          <a href="{{ url('/insights') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
-            {{ t('home.explore', 'Explore') }}
+          <a href="{{ url($blogCard['button_url'] ?: '/insights') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
+            {{ $blogCard['button_text'] ?: t('home.explore', 'Explore') }}
           </a>
         </div>
       </div>
@@ -483,8 +487,8 @@
           @if(!empty($lifeCard['description']))
             <p class="text-sm text-white/80 mb-4 max-w-sm">{!! $lifeCard['description'] !!}</p>
           @endif
-          <a href="{{ url('/careers') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
-            {{ t('home.learn_more', 'Learn More') }}
+          <a href="{{ url($lifeCard['button_url'] ?: '/careers') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
+            {{ $lifeCard['button_text'] ?: t('home.learn_more', 'Learn More') }}
           </a>
         </div>
       </div>

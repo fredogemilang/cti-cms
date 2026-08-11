@@ -16,7 +16,7 @@
 **Special:**
 - `button`: Compound block combining text and URL in one editor card (value: `{"text":"...","url":"...","target":"_self"}`). Access via `$page->buttonBlock('name')`.
 - `title`: Compound block combining optional prefix and main title in one editor card (value: `{"prefix":"...","main":"..."}`). Access via `$page->titleBlock('name')`.
-- `card`: Compound block combining title, description, and image in one editor card (value: `{"title":"...","description":"...","image":"..."}`). Access via `$page->cardBlock('name')`.
+- `card`: Compound block combining title, description, image, button_text, and button_url in one editor card (value: `{"title":"...","description":"...","image":"...","button_text":"...","button_url":"..."}`). Access via `$page->cardBlock('name')`.
 - `repeater`: Has children blocks + value is JSON array of rows. Access via `$page->repeaterBlock('name')`.
 
 ## Translation Flow
@@ -36,7 +36,7 @@
       "blocks": [
         {"name": "hero_title", "type": "title", "label": "Hero Title", "default": {"prefix": "Speed Up Your", "main": "Transformation Journey"}},
         {"name": "hero_cta", "type": "button", "label": "Hero Button", "default": {"text": "Learn More", "url": "#areas-of-expertise"}},
-        {"name": "blog_callout", "type": "card", "label": "Blog Callout", "default": {"title": "Blog, News & Video", "description": "...", "image": "..."}},
+        {"name": "blog_callout", "type": "card", "label": "Blog Callout", "default": {"title": "Blog, News & Video", "description": "...", "image": "...", "button_text": "Explore", "button_url": "/insights"}},
         {"name": "expertise_list", "type": "repeater", "label": "Cards", "children": [
           {"name": "image", "type": "media"},
           {"name": "title", "type": "text"},
@@ -59,9 +59,9 @@ $heroTitle = $page->titleBlock('hero_title', ['prefix' => 'Speed Up Your', 'main
 $heroCta = $page->buttonBlock('hero_cta', ['text' => 'Learn More', 'url' => '#areas-of-expertise']);
 // Returns: ['text' => 'Learn More', 'url' => '#areas-of-expertise', 'target' => '_self']
 
-// Card Block (title + description + image)
-$blogCard = $page->cardBlock('blog_callout', ['title' => 'Blog, News & Video', 'description' => '...', 'image' => '...']);
-// Returns: ['title' => 'Blog, News & Video', 'description' => '...', 'image' => '...']
+// Card Block (title + description + image + button_text + button_url)
+$blogCard = $page->cardBlock('blog_callout', ['title' => 'Blog, News & Video', 'button_text' => 'Explore', 'button_url' => '/insights']);
+// Returns: ['title' => 'Blog, News & Video', 'description' => '...', 'image' => '...', 'button_text' => 'Explore', 'button_url' => '/insights']
 ```
 
 ## Key Files

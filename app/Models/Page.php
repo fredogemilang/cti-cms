@@ -248,23 +248,24 @@ class Page extends Model
     }
 
     /**
-     * Get array payload of a card block ['title' => '...', 'description' => '...', 'image' => '...'].
+     * Get array payload of a card block ['title' => '...', 'description' => '...', 'image' => '...', 'button_text' => '...', 'button_url' => '...'].
      */
     public function cardBlock(string $name, array $default = []): array
     {
         $value = $this->block($name);
+        $defaults = ['title' => '', 'description' => '', 'image' => '', 'button_text' => '', 'button_url' => '#'];
         if (is_array($value)) {
-            return array_merge(['title' => '', 'description' => '', 'image' => ''], $value);
+            return array_merge($defaults, $value);
         }
         if (is_string($value) && ! empty($value)) {
             $decoded = json_decode($value, true);
             if (is_array($decoded)) {
-                return array_merge(['title' => '', 'description' => '', 'image' => ''], $decoded);
+                return array_merge($defaults, $decoded);
             }
-            return ['title' => $value, 'description' => '', 'image' => ''];
+            return array_merge($defaults, ['title' => $value]);
         }
 
-        return $default;
+        return array_merge($defaults, $default);
     }
 
     public function isSystem(): bool

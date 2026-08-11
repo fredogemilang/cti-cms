@@ -187,7 +187,7 @@ class PageForm extends Component
                     $value = ['prefix' => '', 'main' => ''];
                 }
                 if ($block->type === 'card' && ! is_array($value)) {
-                    $value = ['title' => '', 'description' => '', 'image' => ''];
+                    $value = ['title' => '', 'description' => '', 'image' => '', 'button_text' => '', 'button_url' => '#'];
                 }
             }
 
@@ -344,7 +344,7 @@ class PageForm extends Component
                 } elseif ($type === 'title') {
                     $snap = is_array($snap) ? array_merge(['prefix' => '', 'main' => ''], $snap) : ['prefix' => '', 'main' => ''];
                 } elseif ($type === 'card') {
-                    $snap = is_array($snap) ? array_merge(['title' => '', 'description' => '', 'image' => ''], $snap) : ['title' => '', 'description' => '', 'image' => ''];
+                    $snap = is_array($snap) ? array_merge(['title' => '', 'description' => '', 'image' => '', 'button_text' => '', 'button_url' => '#'], $snap) : ['title' => '', 'description' => '', 'image' => '', 'button_text' => '', 'button_url' => '#'];
                 }
 
                 $this->blocks[$bi]['value'] = $snap;
@@ -356,7 +356,7 @@ class PageForm extends Component
                     'repeater', 'checkbox', 'gallery', 'posts' => [],
                     'button' => ['text' => '', 'url' => '#', 'target' => '_self'],
                     'title' => ['prefix' => '', 'main' => ''],
-                    'card' => ['title' => '', 'description' => '', 'image' => ''],
+                    'card' => ['title' => '', 'description' => '', 'image' => '', 'button_text' => '', 'button_url' => '#'],
                     default => '',
                 };
             }

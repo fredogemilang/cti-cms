@@ -83,7 +83,7 @@ class PageTemplateService
             'number' => 0,
             'button' => '{"text":"","url":"","target":"_self"}',
             'title' => '{"prefix":"","main":""}',
-            'card' => '{"title":"","description":"","image":""}',
+            'card' => '{"title":"","description":"","image":"","button_text":"","button_url":""}',
             'checkbox', 'gallery', 'posts', 'repeater' => '[]',
             default => '',
         };
