@@ -264,9 +264,9 @@ class PageForm extends Component
                     continue;
                 }
                 $value = $fields['value'] ?? null;
-                // Decode JSON for repeater (whole rows array stored as JSON string)
-                if ($block['type'] === 'repeater' && is_string($value)) {
-                    $value = json_decode($value, true) ?: [];
+                // Decode JSON for repeater and compound/collection block types
+                if (in_array($block['type'], ['repeater', 'button', 'title', 'card', 'checkbox', 'gallery', 'posts'], true) && is_string($value)) {
+                    $value = json_decode($value, true) ?: $value;
                 }
                 $this->localizedBlockValues[$locale][$bi]['value'] = $value;
             }
@@ -330,15 +330,35 @@ class PageForm extends Component
                 continue;
             }
 
+            $type = $block['type'] ?? '';
             $snap = $this->localizedBlockValues[$locale][$bi]['value'] ?? null;
 
             if ($snap !== null) {
+                if (in_array($type, ['button', 'title', 'card', 'repeater', 'checkbox', 'gallery', 'posts'], true) && is_string($snap)) {
+                    $snap = json_decode($snap, true);
+                }
+
+                // Ensure compound block types have a complete array structure
+                if ($type === 'button') {
+                    $snap = is_array($snap) ? array_merge(['text' => '', 'url' => '#', 'target' => '_self'], $snap) : ['text' => '', 'url' => '#', 'target' => '_self'];
+                } elseif ($type === 'title') {
+                    $snap = is_array($snap) ? array_merge(['prefix' => '', 'main' => ''], $snap) : ['prefix' => '', 'main' => ''];
+                } elseif ($type === 'card') {
+                    $snap = is_array($snap) ? array_merge(['title' => '', 'description' => '', 'image' => ''], $snap) : ['title' => '', 'description' => '', 'image' => ''];
+                }
+
                 $this->blocks[$bi]['value'] = $snap;
             } elseif ($locale === $defaultLocale) {
                 // Default locale, no snapshot yet — keep whatever's currently in the form
             } else {
-                // Non-default locale with no translation: blank for text types, empty array for repeater
-                $this->blocks[$bi]['value'] = ($block['type'] === 'repeater') ? [] : '';
+                // Non-default locale with no translation: assign matching array structure for compound types
+                $this->blocks[$bi]['value'] = match ($type) {
+                    'repeater', 'checkbox', 'gallery', 'posts' => [],
+                    'button' => ['text' => '', 'url' => '#', 'target' => '_self'],
+                    'title' => ['prefix' => '', 'main' => ''],
+                    'card' => ['title' => '', 'description' => '', 'image' => ''],
+                    default => '',
+                };
             }
         }
     }
@@ -973,7 +993,6 @@ class PageForm extends Component
                 $defaultValue = is_array($defaultValue) ? json_encode($defaultValue) : $defaultValue;
             }
 
-            // Build per-block translations JSON from non-default locale snapshots.
             $blockTranslations = [];
             if ($this->isTranslatableBlockType($blockData['type'] ?? '')) {
                 foreach ($this->localizedBlockValues as $locale => $snaps) {
@@ -981,10 +1000,15 @@ class PageForm extends Component
                         continue;
                     }
                     $v = $snaps[$index]['value'] ?? null;
-                    if ($v === null || $v === '' || (is_array($v) && empty($v))) {
+                    if ($v === null || $v === '') {
                         continue;
                     }
                     if (is_array($v)) {
+                        // Check if compound or array block has any non-empty user content
+                        $hasContent = collect($v)->flatten()->filter(fn ($item) => $item !== null && $item !== '' && $item !== '#')->isNotEmpty();
+                        if (! $hasContent) {
+                            continue;
+                        }
                         $v = json_encode($v);
                     }
                     $blockTranslations[$locale]['value'] = $v;

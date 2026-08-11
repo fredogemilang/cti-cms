@@ -284,9 +284,9 @@ class PageBlock extends Model
 
         $raw = $this->getTranslation('value', $locale);
 
-        // Repeater values are stored as JSON strings — decode for theme consumption.
-        if ($this->type === 'repeater' && is_string($raw)) {
-            return json_decode($raw, true) ?: [];
+        // Repeater & compound block values are stored as JSON strings — decode for theme consumption.
+        if (in_array($this->type, ['repeater', 'button', 'title', 'card', 'checkbox', 'gallery', 'posts'], true) && is_string($raw)) {
+            return json_decode($raw, true) ?: $raw;
         }
 
         return $raw;
