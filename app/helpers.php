@@ -599,8 +599,29 @@ if (! function_exists('localized_url')) {
         $hideDefault = (bool) setting('locale_prefix_hide_default', true);
         $urlStructure = setting('locale_url_structure', 'prefix');
 
+        if ($path === null || $path === '') {
+            $path = '/';
+        }
+
+        // 1. Separate fragment (#anchor) and query string (?foo=bar) if present
+        $fragment = '';
+        $query = '';
+
+        $hashPos = strpos($path, '#');
+        if ($hashPos !== false) {
+            $fragment = substr($path, $hashPos);
+            $path = substr($path, 0, $hashPos);
+        }
+
+        $queryPos = strpos($path, '?');
+        if ($queryPos !== false) {
+            $query = substr($path, $queryPos);
+            $path = substr($path, 0, $queryPos);
+        }
+
         $cleanPath = trim((string) $path, '/');
 
+        // 2. Blog Posts Archive handling
         if (class_exists(Plugins\Posts\Models\Setting::class) && ! empty($cleanPath)) {
             $segments = explode('/', $cleanPath);
             $firstSeg = $segments[0];
@@ -618,37 +639,46 @@ if (! function_exists('localized_url')) {
                 $cleanPath = implode('/', $segments);
 
                 if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
-                    return url("/{$locale}/{$cleanPath}");
+                    return url("/{$locale}/{$cleanPath}").$query.$fragment;
                 }
 
-                return url($hideDefault || $urlStructure !== 'prefix' ? "/{$cleanPath}" : "/{$defaultLocale}/{$cleanPath}");
+                $base = $hideDefault || $urlStructure !== 'prefix' ? "/{$cleanPath}" : "/{$defaultLocale}/{$cleanPath}";
+
+                return url($base).$query.$fragment;
             }
         }
 
+        // 3. Page Slug Resolution (single segment paths like "careers", "about-us", "karir", etc.)
         if ($cleanPath !== '' && ! str_contains($cleanPath, '/')) {
-            $page = Page::where('slug', $cleanPath)
-                ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$cleanPath])
-                ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$cleanPath])
-                ->first();
+            $page = Page::findByLocalizedSlug($cleanPath);
             if ($page) {
                 $targetSlug = $page->getTranslation('slug', $locale) ?? $page->slug;
                 if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
-                    return url("/{$locale}/{$targetSlug}");
+                    return url("/{$locale}/{$targetSlug}").$query.$fragment;
                 }
 
-                return url($hideDefault || $urlStructure !== 'prefix' ? "/{$targetSlug}" : "/{$defaultLocale}/{$targetSlug}");
+                $base = $hideDefault || $urlStructure !== 'prefix' ? "/{$targetSlug}" : "/{$defaultLocale}/{$targetSlug}";
+
+                return url($base).$query.$fragment;
             }
         }
 
+        // 4. Default Fallback
         if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
-            return url($cleanPath !== '' ? "/{$locale}/{$cleanPath}" : "/{$locale}");
+            $base = $cleanPath !== '' ? "/{$locale}/{$cleanPath}" : "/{$locale}";
+
+            return url($base).$query.$fragment;
         }
 
         if (! $hideDefault && $urlStructure === 'prefix') {
-            return url($cleanPath !== '' ? "/{$defaultLocale}/{$cleanPath}" : "/{$defaultLocale}");
+            $base = $cleanPath !== '' ? "/{$defaultLocale}/{$cleanPath}" : "/{$defaultLocale}";
+
+            return url($base).$query.$fragment;
         }
 
-        return url($cleanPath !== '' ? "/{$cleanPath}" : '/');
+        $base = $cleanPath !== '' ? "/{$cleanPath}" : '/';
+
+        return url($base).$query.$fragment;
     }
 }
 
