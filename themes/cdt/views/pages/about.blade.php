@@ -228,19 +228,27 @@
 
       <!-- Certification Grid -->
       <div x-show="activeTab === 'certification'" x-transition:enter="transition ease-out duration-500" style="display: none;">
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 lg:gap-12 items-center justify-center max-w-[1200px] mx-auto">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 xl:gap-8 items-stretch justify-center max-w-[1300px] mx-auto">
           @php
             $certificationsList = $page?->repeaterBlock('certifications_list') ?? [];
           @endphp
-          @foreach($certificationsList as $cert)
+          @foreach($certificationsList as $cIndex => $cert)
             @php
               $cImg = $cert['image'] ?? null;
               $cImgUrl = $cImg ? (str_starts_with($cImg, 'http') || str_starts_with($cImg, 'themes/') || str_starts_with($cImg, 'assets/') ? asset($cImg) : asset('storage/' . $cImg)) : asset('themes/cdt/assets/AWS-Advanced-Networking.png-CqnflKau.webp');
+              $cTitle = $cert['title'] ?? 'Certification';
             @endphp
-            <div class="flex justify-center group relative">
-              <div class="relative transition-all duration-500 group-hover:-translate-y-4 cursor-pointer w-full flex justify-center">
-                <div class="absolute inset-0 bg-primary/30 blur-2xl rounded-full scale-50 opacity-0 group-hover:scale-110 group-hover:opacity-100 transition-all duration-500 pointer-events-none"></div>
-                <x-image :src="$cImgUrl" alt="{{ $cert['title'] ?? 'Certification' }}" class="relative z-10 w-full max-w-[140px] drop-shadow-xl group-hover:drop-shadow-[0_10px_25px_rgba(226,35,26,0.3)] transition-all duration-500" />
+            <div class="group relative bg-white rounded-2xl border border-zinc-200/80 p-6 shadow-sm hover:shadow-xl hover:border-red-200 hover:-translate-y-2 transition-all duration-500 flex flex-col items-center justify-between text-center overflow-hidden h-full">
+              <div class="absolute -top-12 -left-12 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:scale-150 group-hover:bg-primary/20 transition-all duration-500 pointer-events-none"></div>
+
+              <div class="relative z-10 w-full flex justify-center items-center py-4 mb-4">
+                <x-image :src="$cImgUrl" alt="{{ $cTitle }}" class="w-full max-w-[120px] h-auto object-contain drop-shadow-md group-hover:drop-shadow-[0_12px_24px_rgba(226,35,26,0.25)] group-hover:scale-110 transition-all duration-500" />
+              </div>
+
+              <div class="relative z-10 w-full mt-auto pt-3 border-t border-zinc-100">
+                <h3 class="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors duration-300 leading-snug tracking-tight">
+                  {{ $cTitle }}
+                </h3>
               </div>
             </div>
           @endforeach
