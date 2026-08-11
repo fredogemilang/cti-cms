@@ -56,7 +56,14 @@
         "home": {
             "label": "Homepage",
             "description": "CDT Main Homepage layout",
-            "blocks": []
+            "blocks": [
+                {"name": "hero_prefix", "type": "text", "label": "Hero Prefix", "default": "Speed Up Your"},
+                {"name": "hero_title", "type": "wysiwyg", "label": "Hero Title", "default": "Transformation Journey"},
+                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "Accelerate IT transformation journey with our end-to-end expertise, from strategy to execution across cloud, security, and observability."},
+                {"name": "hero_cta_text", "type": "text", "label": "Learn More Button Text", "default": "Learn More"},
+                {"name": "hero_cta_url", "type": "text", "label": "Learn More Button Link", "default": "#areas-of-expertise"},
+                {"name": "hero_image", "type": "media", "label": "Hero Background Image", "default": "themes/cdt/assets/banner_hero-DHYDqbF8.jpg"}
+            ]
         },
         "about": {
             "label": "About Us",

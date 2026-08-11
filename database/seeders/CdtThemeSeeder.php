@@ -197,15 +197,24 @@ class CdtThemeSeeder extends Seeder
             ]
         );
 
-        // Seed page blocks
         PageBlock::updateOrCreate(
             ['page_id' => $homePage->id, 'name' => 'hero_title'],
-            ['value' => 'Trusted IT Consultant for Scalable and Secure Growth', 'order' => 0]
+            ['type' => 'wysiwyg', 'label' => 'Hero Title', 'value' => 'Transformation Journey', 'order' => 0]
         );
 
         PageBlock::updateOrCreate(
             ['page_id' => $homePage->id, 'name' => 'hero_subtitle'],
-            ['value' => 'Empowering business transformation through world-class IT solutions and strategic technology alliances.', 'order' => 1]
+            ['type' => 'textarea', 'label' => 'Hero Subtitle', 'value' => 'Accelerate IT transformation journey with our end-to-end expertise, from strategy to execution across cloud, security, and observability.', 'order' => 1]
+        );
+
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'name' => 'hero_cta_text'],
+            ['type' => 'text', 'label' => 'Learn More Button Text', 'value' => 'Learn More', 'order' => 2]
+        );
+
+        PageBlock::updateOrCreate(
+            ['page_id' => $homePage->id, 'name' => 'hero_cta_url'],
+            ['type' => 'text', 'label' => 'Learn More Button Link', 'value' => '#areas-of-expertise', 'order' => 3]
         );
     }
 }

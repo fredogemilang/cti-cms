@@ -41,11 +41,11 @@
             class="inline-flex items-center justify-center whitespace-nowrap bg-white text-primary px-5 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm font-bold uppercase tracking-wider hover:bg-zinc-100 transition rounded-full">
             {{ $page?->block('hero_cta_text') ?? t('home.learn_more', 'Learn More') }}
           </a>
-          <a href="#" @click.prevent="catalogueOpen = true"
+          <button type="button" @click="catalogueOpen = true"
             class="group inline-flex items-center gap-2 whitespace-nowrap text-white text-xs sm:text-sm font-semibold hover:text-white/80 transition-colors cursor-pointer">
-            {{ $page?->block('hero_catalogue_text') ?? t('home.access_solutions_catalogue', 'Access Solutions Catalogue') }} <span
+            {{ t('home.access_solutions_catalogue', 'Access Solutions Catalogue') }} <span
               class="text-base sm:text-lg transition-transform duration-300 group-hover:translate-x-1">→</span>
-          </a>
+          </button>
         </div>
       </div>
     </div>
