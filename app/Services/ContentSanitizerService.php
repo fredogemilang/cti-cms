@@ -57,6 +57,16 @@ class ContentSanitizerService
         // 8. Collapse excessive empty paragraphs (<p>&nbsp;</p> or <p></p>)
         $clean = preg_replace('/(<p>\s*(&nbsp;|\s)*\s*<\/p>\s*){3,}/i', '<p>&nbsp;</p>', $clean) ?? $clean;
 
+        // 9. Auto-linkify: add Tailwind classes to <a> tags that don't already have a class
+        $clean = preg_replace_callback('/<a\s+([^>]*?)>/i', function ($matches) {
+            $attrs = $matches[1];
+            // Skip if already has a class attribute
+            if (preg_match('/\bclass\s*=/i', $attrs)) {
+                return $matches[0];
+            }
+            return '<a '.$attrs.' class="text-primary hover:underline font-semibold">';
+        }, $clean) ?? $clean;
+
         return trim($clean);
     }
 }
