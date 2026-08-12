@@ -44,6 +44,7 @@
 
     $badges = $entry->getMeta('badges', []);
     $badgeImages = $entry->getMeta('hero_badge_images', []);
+    $logoTitle = trim((string) $entry->getMeta('logo_title'));
 @endphp
 
 <!-- Hero -->
@@ -70,7 +71,9 @@
     @if($entry->featured_image)
     <div class="lg:hidden mb-8 bg-zinc-50/50 border border-zinc-200/80 rounded-3xl p-8 flex flex-col items-center shadow-sm">
       <img src="{{ asset('storage/' . $entry->featured_image) }}" alt="{{ $entry->title }}" class="h-24 w-auto object-contain" />
-      <div class="mt-6 text-[10px] font-bold tracking-widest text-zinc-400 uppercase">{{ t('alliance.official_partner', 'Official Technology Partner') }}</div>
+      @if($logoTitle !== '')
+        <div class="mt-6 text-[10px] font-bold tracking-widest text-zinc-400 uppercase">{{ $logoTitle }}</div>
+      @endif
     </div>
     @endif
 
@@ -144,7 +147,9 @@
         @if($entry->featured_image)
         <div data-gsap="fade-up" class="hidden lg:flex bg-zinc-50/50 border border-zinc-200/80 rounded-3xl p-8 flex-col items-center shadow-sm">
           <img src="{{ asset('storage/' . $entry->featured_image) }}" alt="{{ $entry->title }}" class="max-w-[200px] h-auto object-contain" />
-          <div class="mt-6 text-[10px] font-bold tracking-widest text-zinc-400 uppercase">{{ t('alliance.official_partner', 'Official Technology Partner') }}</div>
+          @if($logoTitle !== '')
+            <div class="mt-6 text-[10px] font-bold tracking-widest text-zinc-400 uppercase">{{ $logoTitle }}</div>
+          @endif
         </div>
         @endif
 
