@@ -427,7 +427,7 @@
                 {!! render_icon($ds['icon'] ?? 'shield-check', 'w-6 h-6') !!}
               </div>
               <h3 class="font-bold text-zinc-900 text-base mb-2 group-hover:text-primary transition-colors">{{ $ds['title'] }}</h3>
-              <p class="text-zinc-500 text-xs md:text-sm leading-relaxed mb-4">{{ \Illuminate\Support\Str::limit(strip_tags($ds['description'] ?? ''), 110) }}</p>
+              <p class="text-zinc-500 text-xs md:text-sm leading-relaxed mb-4">{{ strip_tags($ds['description'] ?? '') }}</p>
             </div>
             @if(!empty($ds['link']) && $ds['link'] !== '#')
             <a href="{{ $ds['link'] }}" class="inline-flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider hover:underline">
