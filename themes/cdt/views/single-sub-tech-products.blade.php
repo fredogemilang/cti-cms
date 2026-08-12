@@ -223,7 +223,7 @@
         </h2>
           <div class="h-1 w-16 bg-primary mt-4 mb-8"></div>
 
-          <div class="space-y-6 text-zinc-600 text-base md:text-lg font-light leading-relaxed mb-10 prose rich-content max-w-none">
+          <div class="space-y-4 text-zinc-600 text-base md:text-lg font-light leading-relaxed mb-10 prose rich-content max-w-none">
             {!! preg_replace('/<h[1-6][^>]*>.*?<\/h[1-6]>/i', '', $entry->getMeta('about_content') ?: $entry->content) !!}
           </div>
 

@@ -16,28 +16,36 @@
   <style>
     .prose ul, .rich-content ul {
       list-style-type: disc !important;
-      padding-left: 1.5rem !important;
-      margin-top: 1rem !important;
-      margin-bottom: 1rem !important;
+      padding-left: 1.25rem !important;
+      margin-top: 0.75rem !important;
+      margin-bottom: 0.75rem !important;
     }
     .prose ul > li, .rich-content ul > li {
-      margin-top: 0.375rem !important;
-      margin-bottom: 0.375rem !important;
+      margin-top: 0.125rem !important;
+      margin-bottom: 0.125rem !important;
       padding-left: 0.25rem !important;
+    }
+    .prose ul > li > p, .rich-content ul > li > p {
+      margin-top: 0 !important;
+      margin-bottom: 0.125rem !important;
     }
     .prose ul > li::marker, .rich-content ul > li::marker {
       color: #e30613 !important;
     }
     .prose ol, .rich-content ol {
       list-style-type: decimal !important;
-      padding-left: 1.5rem !important;
-      margin-top: 1rem !important;
-      margin-bottom: 1rem !important;
+      padding-left: 1.25rem !important;
+      margin-top: 0.75rem !important;
+      margin-bottom: 0.75rem !important;
     }
     .prose ol > li, .rich-content ol > li {
-      margin-top: 0.375rem !important;
-      margin-bottom: 0.375rem !important;
+      margin-top: 0.125rem !important;
+      margin-bottom: 0.125rem !important;
       padding-left: 0.25rem !important;
+    }
+    .prose ol > li > p, .rich-content ol > li > p {
+      margin-top: 0 !important;
+      margin-bottom: 0.125rem !important;
     }
     .prose ol > li::marker, .rich-content ol > li::marker {
       color: #e30613 !important;
