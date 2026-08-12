@@ -403,11 +403,11 @@
                     <!-- Main Primary Submit / Action Button (Top Highlight) -->
                     <button 
                         type="button" 
-                        wire:click="save"
+                        wire:click="{{ $status === 'draft' ? 'publish' : 'save' }}"
                         wire:loading.attr="disabled"
                         class="w-full py-3 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                     >
-                        <span wire:loading.remove wire:target="save" class="flex items-center gap-2">
+                        <span wire:loading.remove wire:target="{{ $status === 'draft' ? 'publish' : 'save' }}" class="flex items-center gap-2">
                             @if($status === 'scheduled')
                                 <span class="material-symbols-outlined text-lg">event</span>
                                 <span>Schedule Entry</span>
@@ -422,7 +422,7 @@
                                 <span>Publish Entry</span>
                             @endif
                         </span>
-                        <span wire:loading wire:target="save" class="flex items-center gap-2">
+                        <span wire:loading wire:target="{{ $status === 'draft' ? 'publish' : 'save' }}" class="flex items-center gap-2">
                             <span class="material-symbols-outlined text-lg animate-spin">sync</span>
                             <span>Saving...</span>
                         </span>
