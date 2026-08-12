@@ -1083,10 +1083,23 @@ class EntryForm extends Component
         foreach ($this->postType->metaFields as $field) {
             /** @var MetaField $field */
             if ($field->type === 'relationship') {
-                $targetCptId = $field->options['target_post_type_id'] ?? null;
-                if (! $targetCptId && ! empty($field->options['target_cpt'])) {
+                $targetCptIds = [];
+
+                if (! empty($field->options['target_post_type_ids']) && is_array($field->options['target_post_type_ids'])) {
+                    $targetCptIds = array_map('intval', $field->options['target_post_type_ids']);
+                } elseif (! empty($field->options['target_cpt_ids']) && is_array($field->options['target_cpt_ids'])) {
+                    $targetCptIds = array_map('intval', $field->options['target_cpt_ids']);
+                } elseif (! empty($field->options['target_cpt']) && is_array($field->options['target_cpt'])) {
+                    $targetCptIds = CustomPostType::whereIn('slug', $field->options['target_cpt'])->pluck('id')->toArray();
+                } elseif (! empty($field->options['target_post_type_id'])) {
+                    $targetCptIds = is_array($field->options['target_post_type_id']) 
+                        ? array_map('intval', $field->options['target_post_type_id']) 
+                        : [(int) $field->options['target_post_type_id']];
+                } elseif (! empty($field->options['target_cpt'])) {
                     $targetCpt = CustomPostType::where('slug', $field->options['target_cpt'])->first();
-                    $targetCptId = $targetCpt?->id;
+                    if ($targetCpt) {
+                        $targetCptIds = [$targetCpt->id];
+                    }
                 }
 
                 $selectedValue = $this->meta[$field->name] ?? [];
@@ -1103,9 +1116,9 @@ class EntryForm extends Component
                     ->where('status', 'published')
                     ->where('id', '!=', $this->entryId ?? 0);
 
-                if ($targetCptId) {
-                    $query->where(function ($q) use ($targetCptId, $selectedIds) {
-                        $q->where('post_type_id', $targetCptId);
+                if (! empty($targetCptIds)) {
+                    $query->where(function ($q) use ($targetCptIds, $selectedIds) {
+                        $q->whereIn('post_type_id', $targetCptIds);
                         if (! empty($selectedIds)) {
                             $q->orWhereIn('id', $selectedIds);
                         }
