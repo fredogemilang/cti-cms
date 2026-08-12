@@ -358,15 +358,52 @@
             <div class="h-1 bg-primary mt-4 w-16" data-gsap="line-grow"></div>
           </div>
   
+          @php
+            $currentLocale = app()->getLocale();
+            $allianceName = isset($parentProduct) && $parentProduct ? ($parentProduct->getTranslation('title', $currentLocale) ?: $parentProduct->title) : ($entry->getTranslation('title', $currentLocale) ?: $entry->title);
+            $allianceSlug = isset($parentProduct) && $parentProduct ? $parentProduct->slug : $entry->slug;
+            $allianceLower = strtolower($allianceName . ' ' . $allianceSlug);
+
+            $isAws = str_contains($allianceLower, 'amazon web services') || str_contains($allianceLower, 'aws');
+            $isNebula = str_contains($allianceLower, 'nebula') || str_contains($allianceLower, 'ncc');
+
+            if ($isNebula) {
+                $feature1Title = $currentLocale === 'id' ? 'Mitra Tepercaya Anda' : 'Your Trustworthy Partner';
+                $feature1Desc = $currentLocale === 'id' 
+                    ? 'Kami adalah PT Central Data Technology, anak perusahaan CTI Group. Produk andalan kami yaitu NCC, dirancang untuk meningkatkan produktivitas bisnis Anda dan membantu memudahkan pengelolaan ekosistem cloud Anda.'
+                    : 'We are PT Central Data Technology, a subsidiary of CTI Group. Our flagship product, NCC, is designed to improve your business productivity and help to ease managing your cloud ecosystem.';
+            } elseif ($isAws) {
+                $feature1Title = 'Authorized Premier Partner';
+                $feature1Desc = $currentLocale === 'id'
+                    ? "PT Central Data Technology (CDT) adalah anak perusahaan dari CTI Group telah resmi sebagai Authorized Premier Partner {$allianceName} di Indonesia"
+                    : "PT Central Data Technology (CDT) is a subsidiary of the CTI Group has been authorized as an {$allianceName} Authorized Premier Partner in Indonesia.";
+            } else {
+                $feature1Title = 'Advanced Authorized Partner';
+                $feature1Desc = $currentLocale === 'id'
+                    ? "PT Central Data Technology (CDT) adalah anak perusahaan dari CTI Group telah resmi sebagai advanced authorized {$allianceName} Partner di Indonesia"
+                    : "PT Central Data Technology (CDT) is a subsidiary of the CTI Group has been authorized as an {$allianceName} advanced authorized partner in Indonesia.";
+            }
+
+            $feature2Title = $currentLocale === 'id' ? 'Ahli IT Profesional' : 'Professional IT Expert';
+            $feature2Desc = $currentLocale === 'id'
+                ? 'Ahli TI profesional CDT telah membantu lebih dari 280 pelanggan dari berbagai industri di Indonesia, Myanmar, Inggris, dan negara lain di seluruh dunia dalam menerapkan solusi untuk mendukung operasi bisnis.'
+                : 'Professional IT experts have assisted 280++ customers from variety of industries in Indonesia, Myanmar, UK, and other countries in the world in deploying solutions to support business operations.';
+
+            $feature3Title = $currentLocale === 'id' ? 'Bersertifikat' : 'Certified';
+            $feature3Desc = $currentLocale === 'id'
+                ? 'Ahli IT CDT telah tersertifikasi untuk memastikan kualitas dan pengalaman terbaik sebelum, sesudah, bahkan setelah implementasi.'
+                : 'CDT IT specialists are certified to assure solution quality before and after implementation.';
+          @endphp
+
           <div class="space-y-8">
             <!-- Feature 1 -->
             <div class="flex items-start gap-5 group" data-gsap="fade-up" data-gsap-delay="0.1">
               <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
-                <x-icon name="lucide:book-open" class="w-7 h-7 text-primary" />
+                <x-icon name="lucide:handshake" class="w-7 h-7 text-primary" />
               </div>
               <div>
-                <h3 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.advanced_action_title', 'Advanced Action and Review') }}</h3>
-                <p class="text-base text-zinc-500 font-light leading-relaxed">{{ t('product.advanced_action_desc', 'PT Central Data Technology (CDT) is a subsidiary of the CTI Group that focuses on distributing IT infrastructure solutions to customers.') }}</p>
+                <h3 class="text-lg font-bold text-zinc-900 mb-1">{{ $feature1Title }}</h3>
+                <p class="text-base text-zinc-500 font-light leading-relaxed">{{ $feature1Desc }}</p>
               </div>
             </div>
   
@@ -376,8 +413,8 @@
                 <x-icon name="lucide:users" class="w-7 h-7 text-primary" />
               </div>
               <div>
-                <h3 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.professional_it_expert_title', 'Professional IT Expert') }}</h3>
-                <p class="text-base text-zinc-500 font-light leading-relaxed">{{ t('product.professional_it_expert_desc', 'By providing IT experts, we have secured CDT\'s presence in a variety of industries in Indonesia, Malaysia, and other countries in the world to overcome challenges related to digital operations.') }}</p>
+                <h3 class="text-lg font-bold text-zinc-900 mb-1">{{ $feature2Title }}</h3>
+                <p class="text-base text-zinc-500 font-light leading-relaxed">{{ $feature2Desc }}</p>
               </div>
             </div>
   
@@ -387,8 +424,8 @@
                 <x-icon name="lucide:award" class="w-7 h-7 text-primary" />
               </div>
               <div>
-                <h3 class="text-lg font-bold text-zinc-900 mb-1">{{ t('product.certified_specialist_title', 'Certified Specialist') }}</h3>
-                <p class="text-base text-zinc-500 font-light leading-relaxed">{{ t('product.certified_specialist_desc', 'CDT IT specialists are certified to ensure solution quality follows with strict implementation standards.') }}</p>
+                <h3 class="text-lg font-bold text-zinc-900 mb-1">{{ $feature3Title }}</h3>
+                <p class="text-base text-zinc-500 font-light leading-relaxed">{{ $feature3Desc }}</p>
               </div>
             </div>
           </div>
