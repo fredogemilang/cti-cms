@@ -159,6 +159,18 @@
           <a href="#explore" class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition-colors shadow-sm mt-8">
             {{ t('alliance.consult_with_expert', 'Consult with Expert') }} <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </a>
+
+          @php
+            $promoBtnName = trim((string) ($entry->getMeta('promo_button_name') ?: $entry->getMeta('promo_button_text')));
+            $promoBtnLink = trim((string) ($entry->getMeta('promo_button_link') ?: $entry->getMeta('promo_button_url')));
+          @endphp
+          @if(!empty($promoBtnName))
+          <div class="mt-4" data-gsap="fade-up" data-gsap-delay="0.15">
+            <a href="{{ $promoBtnLink ?: '#explore' }}" class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition-colors shadow-sm">
+              {{ $promoBtnName }} <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
+          </div>
+          @endif
         </div>
       </div>
       <div class="lg:w-2/3 flex flex-col gap-12 pb-16">
