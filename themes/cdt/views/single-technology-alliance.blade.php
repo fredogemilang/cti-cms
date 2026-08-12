@@ -453,7 +453,7 @@
             <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center shrink-0">
               <x-icon name="lucide:users" class="w-7 h-7 text-primary" />
             </div>
-            <div><h3 class="text-lg font-bold text-zinc-900">{{ t('alliance.understand_it_expert_title', 'Understand IT Expert') }}</h3><p class="text-base text-zinc-500">{{ t('alliance.understand_it_expert_desc', 'By providing IT experts, we have secured CDT\'s presence in a variety of industries.') }}</p></div>
+            <div><h3 class="text-lg font-bold text-zinc-900">{{ t('alliance.professional_it_expert_title', 'Professional IT Expert') }}</h3><p class="text-base text-zinc-500">{{ t('alliance.professional_it_expert_desc', 'By providing IT experts, we have secured CDT\'s presence in a variety of industries.') }}</p></div>
           </div>
           <div class="flex items-start gap-5" data-gsap="fade-up" data-gsap-delay="0.3">
             <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center shrink-0">
