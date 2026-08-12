@@ -43,7 +43,7 @@
     }
 
     $badges = $entry->getMeta('badges', []);
-    $badgeImages = $entry->getMeta('hero_badge_images', []);
+    $badgeImages = $entry->getMeta('hero_badge_images') ?: ($entry->getMeta('badge_images') ?: []);
     $logoTitle = trim((string) $entry->getMeta('logo_title'));
 @endphp
 
