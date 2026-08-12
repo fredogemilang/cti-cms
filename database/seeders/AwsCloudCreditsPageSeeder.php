@@ -10,14 +10,18 @@ class AwsCloudCreditsPageSeeder extends Seeder
 {
     public function run(): void
     {
-        $page = Page::updateOrCreate(
-            ['slug' => 'amazon-web-services-cloud-credits'],
-            [
-                'title' => 'Get Up to 6 Months Free AWS Cloud Credits',
-                'template' => 'aws-cloud-credits',
-                'status' => 'published',
-            ]
-        );
+        $page = Page::whereIn('slug', ['amazon-web-services-cloud-credits', 'aws-cloud-credits'])->first();
+        
+        if (!$page) {
+            $page = new Page();
+            $page->slug = 'amazon-web-services-cloud-credits';
+            $page->author_id = 1;
+        }
+
+        $page->title = 'Get Up to 6 Months Free AWS Cloud Credits';
+        $page->template = 'aws-cloud-credits';
+        $page->status = 'published';
+        $page->save();
 
         $page->setTranslation('title', 'en', 'Get Up to 6 Months Free AWS Cloud Credits');
         $page->setTranslation('title', 'id', 'Amazon Web Services Cloud Credits');
