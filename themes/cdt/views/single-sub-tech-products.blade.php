@@ -118,14 +118,11 @@
 
   <!-- Section 2: Sub-Product Promo Banner -->
   @php
-      $bannerHeadline = trim((string) ($entry->getMeta('banner_headline') ?: ($entry->getMeta('banner')['headline'] ?? '')));
-      $bannerDescription = trim((string) ($entry->getMeta('banner_description') ?: ($entry->getMeta('banner')['description'] ?? '')));
-      $bannerCta = trim((string) ($entry->getMeta('banner_cta') ?: ($entry->getMeta('banner')['cta'] ?? '')));
+      $bannerHeadline = trim((string) $entry->getMeta('banner_headline'));
+      $bannerDescription = trim((string) $entry->getMeta('banner_description'));
+      $bannerCta = trim((string) $entry->getMeta('banner_cta'));
 
       $rawBannerLogo = $entry->getMeta('banner_logo') ?: $entry->getMeta('banner_image');
-      if (! $rawBannerLogo && is_array($entry->getMeta('banner'))) {
-          $rawBannerLogo = $entry->getMeta('banner')['logo'] ?? $entry->getMeta('banner')['image'] ?? null;
-      }
       
       // Only fallback to featured_image if explicit banner headline/description is provided
       $hasExplicitBannerLogo = !empty($rawBannerLogo);
