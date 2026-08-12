@@ -13,6 +13,37 @@
   {{-- Theme CSS & JS Assets --}}
   <script type="module" crossorigin src="{{ asset('themes/cdt/assets/main-DY6Zr0uY.js') }}"></script>
   <link rel="stylesheet" crossorigin href="{{ asset('themes/cdt/assets/main-V6bxgVBt.css') }}">
+  <style>
+    .prose ul, .rich-content ul {
+      list-style-type: disc !important;
+      padding-left: 1.5rem !important;
+      margin-top: 1rem !important;
+      margin-bottom: 1rem !important;
+    }
+    .prose ul > li, .rich-content ul > li {
+      margin-top: 0.375rem !important;
+      margin-bottom: 0.375rem !important;
+      padding-left: 0.25rem !important;
+    }
+    .prose ul > li::marker, .rich-content ul > li::marker {
+      color: #e30613 !important;
+    }
+    .prose ol, .rich-content ol {
+      list-style-type: decimal !important;
+      padding-left: 1.5rem !important;
+      margin-top: 1rem !important;
+      margin-bottom: 1rem !important;
+    }
+    .prose ol > li, .rich-content ol > li {
+      margin-top: 0.375rem !important;
+      margin-bottom: 0.375rem !important;
+      padding-left: 0.25rem !important;
+    }
+    .prose ol > li::marker, .rich-content ol > li::marker {
+      color: #e30613 !important;
+      font-weight: bold !important;
+    }
+  </style>
 
   @livewireStyles
   @stack('head')
