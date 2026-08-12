@@ -173,7 +173,7 @@
                     {{ t('nav.technology_alliance_desc', 'Explore our comprehensive ecosystem of global technology partners designed to empower your business transformation.') }}</p>
                 </div>
               </div>
-              <div class="w-2/3 p-8">
+              <div class="w-2/3 p-8 normal-case tracking-normal">
                 <div class="grid grid-cols-2 gap-y-2 gap-x-6">
                   @forelse($allianceProducts as $prod)
                     @php
@@ -246,7 +246,7 @@
                   <p class="text-sm text-white/80 leading-relaxed relative z-10 normal-case font-normal tracking-normal">{{ t('nav.solutions_desc', 'Discover our comprehensive range of IT solutions tailored to drive your business forward.') }}</p>
                 </div>
               </div>
-              <div class="w-3/5 p-8">
+              <div class="w-3/5 p-8 normal-case tracking-normal">
                 <div class="flex flex-col gap-y-2">
                   @forelse($solutionCategories as $sol)
                     @php
@@ -315,7 +315,7 @@
                   <p class="text-sm text-white/80 leading-relaxed relative z-10 normal-case font-normal tracking-normal">{{ t('nav.industry_desc', 'Explore tailored IT solutions designed to meet the unique challenges of your specific industry.') }}</p>
                 </div>
               </div>
-              <div class="w-2/3 p-8">
+              <div class="w-2/3 p-8 normal-case tracking-normal">
                 <div class="grid grid-cols-2 gap-y-2 gap-x-6">
                   @forelse($industryItems as $ind)
                     @php
