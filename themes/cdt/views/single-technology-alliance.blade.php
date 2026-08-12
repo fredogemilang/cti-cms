@@ -156,21 +156,25 @@
           <h2 data-gsap="fade-up" class="text-4xl font-light text-zinc-500 leading-tight">{{ $entry->title }} <br><span class="font-bold text-dark">{{ t('alliance.solutions_suffix', 'Solutions') }}</span></h2>
           <div class="h-1 bg-primary mt-4 w-16" data-gsap="line-grow"></div>
           <p data-gsap="fade-up" data-gsap-delay="0.1" class="text-lg text-zinc-600 leading-relaxed mt-8">{{ $solutionsDescription }}</p>
-          <a href="#explore" class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition-colors shadow-sm mt-8">
-            {{ t('alliance.consult_with_expert', 'Consult with Expert') }} <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-          </a>
-
           @php
             $promoBtnName = trim((string) ($entry->getMeta('promo_button_name') ?: $entry->getMeta('promo_button_text')));
             $promoBtnLink = trim((string) ($entry->getMeta('promo_button_link') ?: $entry->getMeta('promo_button_url')));
+            $hasPromoBtn = !empty($promoBtnName);
           @endphp
-          @if(!empty($promoBtnName))
-          <div class="mt-4" data-gsap="fade-up" data-gsap-delay="0.15">
-            <a href="{{ $promoBtnLink ?: '#explore' }}" class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition-colors shadow-sm">
-              {{ $promoBtnName }} <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+
+          <div class="flex flex-col items-start gap-4 mt-8">
+            <a href="#explore" class="inline-flex items-center gap-2 {{ $hasPromoBtn ? 'bg-white border border-zinc-200 text-zinc-800 hover:bg-zinc-50 hover:border-zinc-300' : 'bg-primary text-white hover:bg-red-700' }} px-6 py-3 rounded-full font-bold transition-all shadow-sm">
+              {{ t('alliance.consult_with_expert', 'Consult with Expert') }} <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>
+
+            @if($hasPromoBtn)
+            <div data-gsap="fade-up" data-gsap-delay="0.15">
+              <a href="{{ $promoBtnLink ?: '#explore' }}" class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition-all shadow-sm">
+                {{ $promoBtnName }} <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </a>
+            </div>
+            @endif
           </div>
-          @endif
         </div>
       </div>
       <div class="lg:w-2/3 flex flex-col gap-12 pb-16">
