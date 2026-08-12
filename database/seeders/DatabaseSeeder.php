@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
             MenuItemSeeder::class,
             EmailTemplateSeeder::class,
             AwsCloudCreditsPageSeeder::class,
+            FormsSeeder::class,
         ]);
 
         $this->command->info('');
