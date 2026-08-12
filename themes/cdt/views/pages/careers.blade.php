@@ -525,74 +525,96 @@
               x-transition:enter="transition ease-out duration-300"
               x-transition:enter-start="opacity-0 translate-y-4"
               x-transition:enter-end="opacity-100 translate-y-0"
-              x-transition:leave="transition ease-in duration-200"
-              x-transition:leave-start="opacity-100 translate-y-0"
-              x-transition:leave-end="opacity-0 translate-y-4"
               :id="'job-card-' + job.id"
-              class="group bg-white rounded-3xl p-8 border border-zinc-200/80 shadow-sm hover:shadow-xl hover:border-primary/50 transition-all duration-500 flex flex-col justify-between"
-              :class="{ 'md:col-span-2 lg:col-span-3 border-primary/50 ring-2 ring-primary/20 shadow-2xl bg-gradient-to-b from-white to-red-50/20': expandedJobId === job.id }">
+              :class="expandedJobId === job.id ? 'lg:col-span-3 md:col-span-2 bg-zinc-50/80 border-primary shadow-lg' : 'col-span-1 bg-white hover:shadow-xl hover:-translate-y-1 border-zinc-200/60'"
+              class="border rounded-3xl p-8 flex flex-col justify-between transition-all duration-500 ease-in-out group relative overflow-hidden">
 
-              <div>
-                <!-- Category Badge & Type -->
-                <div class="flex items-center justify-between gap-2 mb-6">
-                  <span x-text="job.categoryLabel" class="px-3.5 py-1 rounded-full bg-red-50 text-primary text-xs font-bold uppercase tracking-wider border border-red-100"></span>
-                  <div class="flex items-center gap-3 text-xs text-zinc-400 font-medium">
-                    <span class="flex items-center gap-1.5">
-                      <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              <div x-show="expandedJobId === job.id" class="absolute top-0 left-0 w-full h-1.5 bg-primary"></div>
+
+              <!-- LAYOUT A: Collapsed Card Content -->
+              <div
+                x-show="expandedJobId !== job.id"
+                x-transition:enter="transition ease-out duration-300 delay-100"
+                x-transition:enter-start="opacity-0 scale-98"
+                x-transition:enter-end="opacity-100 scale-100"
+                class="flex flex-col justify-between h-full">
+                <div>
+                  <div class="flex items-center gap-2.5 mb-6">
+                    <span x-text="job.categoryLabel" class="px-3 py-1 bg-red-50 text-primary text-[10px] font-bold uppercase tracking-wider rounded-lg"></span>
+                    <span x-text="job.type" class="px-3 py-1 bg-zinc-100 text-zinc-500 text-[10px] font-bold uppercase tracking-wider rounded-lg"></span>
+                  </div>
+
+                  <h3 x-text="job.title" class="text-xl md:text-2xl font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors duration-300"></h3>
+
+                  <div class="flex items-center gap-2 text-zinc-400 mb-6 text-sm">
+                    <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    <span x-text="job.location" class="font-medium text-zinc-500"></span>
+                  </div>
+
+                  <p x-text="job.shortDesc" class="text-zinc-500 font-light leading-relaxed mb-8 text-sm"></p>
+                </div>
+
+                <div class="pt-6 border-t border-zinc-100">
+                  <button
+                    @click="toggleExpand(job.id)"
+                    class="w-full px-4 py-3 border border-zinc-200 text-zinc-700 hover:border-primary hover:bg-primary/5 hover:text-primary transition-all duration-300 rounded-xl text-xs font-bold uppercase tracking-wider text-center cursor-pointer flex items-center justify-center gap-2 group/btn">
+                    <span>See Details</span>
+                    <svg class="w-4 h-4 group-hover/btn:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- LAYOUT B: Expanded Card Content -->
+              <div
+                x-show="expandedJobId === job.id"
+                x-transition:enter="transition ease-out duration-400 delay-200"
+                x-transition:enter-start="opacity-0 translate-y-4"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
+
+                <div class="lg:col-span-5 flex flex-col justify-between h-full">
+                  <div>
+                    <div class="flex items-center gap-2.5 mb-6">
+                      <span x-text="job.categoryLabel" class="px-3 py-1 bg-red-100 text-primary text-[10px] font-bold uppercase tracking-wider rounded-lg"></span>
+                      <span x-text="job.type" class="px-3 py-1 bg-zinc-200 text-zinc-700 text-[10px] font-bold uppercase tracking-wider rounded-lg"></span>
+                    </div>
+
+                    <h3 x-text="job.title" class="text-2xl md:text-3xl font-bold text-gray-900 mb-4"></h3>
+
+                    <div class="flex items-center gap-2 text-zinc-500 mb-6 text-sm">
+                      <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                       </svg>
-                      <span x-text="job.location"></span>
-                    </span>
-                    <span>•</span>
-                    <span class="flex items-center gap-1.5">
-                      <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      <span x-text="job.location" class="font-medium"></span>
+                    </div>
+
+                    <p x-text="job.shortDesc" class="text-zinc-600 font-light leading-relaxed mb-8"></p>
+                  </div>
+
+                  <div class="flex flex-wrap items-center gap-4 pt-6 border-t border-zinc-200/80">
+                    <button
+                      @click="openApply(job)"
+                      class="px-8 py-3.5 bg-primary text-white hover:bg-red-700 shadow-md hover:shadow-lg transition-all duration-300 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer">
+                      Apply for this position
+                    </button>
+                    <button
+                      @click="toggleExpand(job.id)"
+                      class="px-6 py-3.5 border border-zinc-300 text-zinc-600 hover:bg-zinc-100 hover:text-zinc-800 transition-all duration-300 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer flex items-center gap-2">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path>
                       </svg>
-                      <span x-text="job.type"></span>
-                    </span>
+                      Collapse
+                    </button>
                   </div>
                 </div>
 
-                <!-- Job Title -->
-                <h3 x-text="job.title" class="text-2xl font-bold text-zinc-900 group-hover:text-primary transition-colors leading-tight mb-4"></h3>
-
-                <!-- Short Description -->
-                <p x-text="job.shortDesc" class="text-zinc-600 font-light leading-relaxed mb-6 text-base"></p>
-              </div>
-
-              <!-- Card Action Row -->
-              <div>
-                <div class="pt-6 border-t border-zinc-100 flex items-center justify-between gap-4">
-                  <button
-                    @click="toggleExpand(job.id)"
-                    class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-primary transition-colors cursor-pointer">
-                    <span x-text="expandedJobId === job.id ? 'Hide Details' : 'See Details'"></span>
-                    <svg class="w-4 h-4 transition-transform duration-300" :class="{ 'rotate-180': expandedJobId === job.id }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                  </button>
-
-                  <button
-                    x-show="expandedJobId === job.id"
-                    x-transition
-                    @click="openApply(job)"
-                    class="px-6 py-2.5 rounded-full bg-primary text-white text-xs font-bold uppercase tracking-wider hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 cursor-pointer">
-                    Apply for Position
-                  </button>
-                </div>
-
-                <!-- Expanded Details Container -->
-                <div
-                  x-show="expandedJobId === job.id"
-                  x-transition:enter="transition ease-out duration-300"
-                  x-transition:enter-start="opacity-0 max-h-0"
-                  x-transition:enter-end="opacity-100 max-h-[1000px]"
-                  x-transition:leave="transition ease-in duration-200"
-                  x-transition:leave-start="opacity-100 max-h-[1000px]"
-                  x-transition:leave-end="opacity-0 max-h-0"
-                  class="mt-8 pt-8 border-t border-zinc-200/80 space-y-8 overflow-hidden">
-
+                <div class="lg:col-span-7 space-y-6 lg:border-l lg:border-zinc-200 lg:pl-8 pt-6 lg:pt-0">
                   <div>
                     <h3 class="text-xs font-bold uppercase tracking-widest text-primary mb-3">Key Responsibilities</h3>
                     <ul class="space-y-2.5">
