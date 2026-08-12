@@ -459,14 +459,11 @@
           document.body.style.overflow = 'hidden';
 
           this.$nextTick(() => {
-            const inputs = document.querySelectorAll('input[name*="position"], input[id*="position"], input[name*="job"], input[placeholder*="Solution Architect"]');
-            inputs.forEach(input => {
-              if (job && job.title) {
-                input.value = job.title;
-                input.dispatchEvent(new Event('input', { bubbles: true }));
-                input.dispatchEvent(new Event('change', { bubbles: true }));
-              }
-            });
+            const el = document.getElementById('preferred_job_position');
+            if (el && job && job.title) {
+              el.value = job.title;
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+            }
           });
         },
         closeModals() {
