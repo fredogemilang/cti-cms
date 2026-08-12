@@ -135,3 +135,15 @@ CMS has `BreadcrumbService` + `SeoBreadcrumbs` component. Breadcrumbs auto-gener
 
 ## G45. `.gitignore` Theme Blocking on Project Branches & Server Permissions (2026-08-04)
 Rule `/themes/{name}` in `.gitignore` carried from `main` branch makes new partials on server (like `contact-section.blade.php`) ignored by Git. **Fix:** (1) On `project/{name}` branch, REMOVE `/themes/{name}` from `.gitignore` so all partials are tracked. (2) After every `git pull`/`git reset` as `root` on cPanel, run `chown -R <cpanel_user>:<cpanel_user> /home/<cpanel_user>/<domain>/` to prevent Permission Denied.
+
+## G46. Form Multi-Language Architecture & Anti-Redundancy (2026-08-12)
+Form titles, descriptions, submit buttons, confirmation messages, and field labels/placeholders are natively managed via `Form` (`forms.translations` JSON) and `FormField` (`form_fields.translations` JSON) via Form Studio (`/ctrlpanel/forms/{id}/studio`). **Never create duplicate `string_translations` (`t()`)** for form elements — keep all form translations centralized in the Form model.
+
+## G47. Mandatory Form Title & Description Confirmation (2026-08-12)
+When embedding or generating a form on any page, AI agents **MUST NOT ASSUME** where the Form Title and Description come from. AI agents MUST explicitly ask the user to confirm whether to pull from: (A) Form Model (`$form->name` / `$form->description`), (B) Page Block / CPT Meta Fields, or (C) String Translations (`t()`).
+
+## G48. Mandatory Form Assignment Compliance (2026-08-12)
+Forms on the frontend MUST strictly comply with Form Assignments (`/ctrlpanel/forms/assignments`). If a form is not assigned to a slot in `Setting::get("theme_{$theme->slug}_form_assignments")`, it **MUST NOT** render on the frontend. Theme Blade views must resolve the form via `get_assigned_form($slot)` and safely hide the form section if unassigned.
+
+## G49. Card Block Visual Asset & Description Format Options (2026-08-12)
+Page Builder `card` block supports selectable Visual Asset type (`asset_type`: `image` | `icon`) and Description Content Format (`description_type`: `text` | `listing` | `wysiwyg`). When `asset_type` is `icon`, specify Lucide icon name via `icon`. When `description_type` is `listing`, specify `list_icon` and line-separated `list_items`. Access via `$page->cardBlock($name)`.

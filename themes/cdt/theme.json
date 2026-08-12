@@ -45,6 +45,11 @@
             "key": "newsletter_form",
             "label": "Newsletter Subscription Form",
             "description": "Newsletter subscription form displayed in the footer modal."
+        },
+        {
+            "key": "aws_credits_form",
+            "label": "AWS Cloud Credits Assessment Form",
+            "description": "Assessment request form for AWS Cloud Credits landing page."
         }
     ],
     "page_templates": {
@@ -52,6 +57,52 @@
             "label": "Default",
             "description": "Standard page layout",
             "blocks": []
+        },
+        "aws-cloud-credits": {
+            "label": "AWS Cloud Credits Landing Page",
+            "description": "Landing page layout for Get Up to 6 Months Free AWS Cloud Credits program.",
+            "blocks": [
+                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "Get Up to", "main": "6 Months of Free AWS Cloud Credits"}},
+                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "Accelerate your AI and cloud transformation with AWS credits managed by Central Data Technology, an official AWS Consulting Partner. No migration required. Open to all industries."},
+                {"name": "hero_cta", "type": "button", "label": "Hero Primary CTA Button", "default": {"text": "Claim Your Credits", "url": "#formaws"}},
+                {"name": "hero_secondary_cta", "type": "button", "label": "Hero Secondary CTA Link", "default": {"text": "Request Free Assessment", "url": "#formaws"}},
+                {"name": "hero_features", "type": "repeater", "label": "Hero Feature Highlights", "children": [
+                    {"name": "text", "type": "text", "label": "Feature Text"},
+                    {"name": "icon", "type": "icon", "label": "Feature Icon"}
+                ], "default": []},
+                {"name": "zero_cost_heading", "type": "text", "label": "Zero Upfront Cost Heading", "default": "Up to 6 Months Free on AWS"},
+                {"name": "zero_cost_text", "type": "textarea", "label": "Zero Upfront Cost Subtitle", "default": "Use AWS credits to run workloads, AI experiments, and migrations. Credit amount is based on your assessment and project scope. Available to new and existing AWS customers."},
+                {"name": "zero_cost_stats", "type": "repeater", "label": "Zero Upfront Cost Stat Cards", "children": [
+                    {"name": "stat", "type": "text", "label": "Big Stat / Number (e.g. 6, $2K)"},
+                    {"name": "description", "type": "textarea", "label": "Stat Description"},
+                    {"name": "icon", "type": "icon", "label": "Card Icon"}
+                ], "default": []},
+                {"name": "what_you_get_header", "type": "title", "label": "What You Get Header", "default": {"prefix": "PROGRAM BENEFITS", "main": "What You Get"}},
+                {"name": "what_you_get_desc", "type": "textarea", "label": "What You Get Subtitle", "default": "Reduce financial risk while you explore, build, and scale on AWS."},
+                {"name": "what_you_get_cards", "type": "repeater", "label": "What You Get Cards", "children": [
+                    {"name": "title", "type": "text", "label": "Card Title"},
+                    {"name": "icon", "type": "icon", "label": "Card Icon"},
+                    {"name": "description", "type": "textarea", "label": "Card Description"}
+                ], "default": []},
+                {"name": "qualifies_ai_header", "type": "title", "label": "What Qualifies AI Header", "default": {"prefix": "AI INITIATIVES", "main": "What Qualifies as an AI Project?"}},
+                {"name": "qualifies_ai_desc", "type": "textarea", "label": "What Qualifies AI Subtitle", "default": "The 6-month credit window is reserved for AI initiatives using these services."},
+                {"name": "qualifies_ai_cards", "type": "repeater", "label": "What Qualifies AI Cards", "children": [
+                    {"name": "title", "type": "text", "label": "Card Title"},
+                    {"name": "icon", "type": "icon", "label": "Card Icon"},
+                    {"name": "description", "type": "textarea", "label": "Card Description"}
+                ], "default": []},
+                {"name": "support_workload_header", "type": "title", "label": "Support Workload Header", "default": {"prefix": "SUPPORTED WORKLOADS", "main": "Support Workload"}},
+                {"name": "support_workload_desc", "type": "textarea", "label": "Support Workload Subtitle", "default": "Credits applicable to these AWS service categories."},
+                {"name": "eligibility_header", "type": "title", "label": "Who Can Apply Header", "default": {"prefix": "ELIGIBILITY", "main": "Who Can Apply?"}},
+                {"name": "eligibility_cards", "type": "repeater", "label": "Eligibility Cards", "children": [
+                    {"name": "title", "type": "text", "label": "Card Title"},
+                    {"name": "icon", "type": "icon", "label": "Card Icon"},
+                    {"name": "list_icon", "type": "icon", "label": "List Bullet Icon"},
+                    {"name": "list_items", "type": "textarea", "label": "List Items (one per line)"}
+                ], "default": []},
+                {"name": "program_terms_header", "type": "title", "label": "Program Terms Header", "default": {"prefix": "TRANSPARENCY", "main": "Program Terms"}},
+                {"name": "program_terms_card", "type": "card", "label": "Program Key Terms Box", "default": {"title": "AWS CDT CLOUD CREDIT PROGRAM - KEY TERMS", "asset_type": "icon", "icon": "lucide:file-text", "description_type": "listing", "list_icon": "lucide:info", "list_items": ""}}
+            ]
         },
         "home": {
             "label": "Homepage",

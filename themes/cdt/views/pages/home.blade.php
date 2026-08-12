@@ -95,11 +95,7 @@
           </p>
   
           @php
-            $tTheme = active_theme();
-            $guideFormId = setting("theme_{$tTheme->slug}_form_assignments", [])['solution_guide_form'] ?? null;
-            $guideForm = $guideFormId
-              ? \App\Models\Form::where('id', $guideFormId)->where('is_active', true)->with('fields')->first()
-              : \App\Models\Form::where('slug', 'digital-solution-guide')->where('is_active', true)->with('fields')->first();
+            $guideForm = get_assigned_form('solution_guide_form');
           @endphp
           @if($guideForm)
             @include('cdt::partials.tailwind-form', ['form' => $guideForm, 'variant' => 'dark'])

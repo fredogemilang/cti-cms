@@ -406,10 +406,7 @@
             </div>
 
             @php
-              $theme = active_theme();
-              $assignments = setting("theme_{$theme->slug}_form_assignments", []);
-              $formId = $assignments['alliance_form'] ?? $assignments['consultation_form'] ?? $assignments['gated_content_form'] ?? $assignments['contact_form'] ?? null;
-              $formModel = $formId ? \App\Models\Form::where('id', $formId)->where('is_active', true)->with('fields')->first() : null;
+              $formModel = get_assigned_form('consultation_form') ?? get_assigned_form('contact_form');
             @endphp
 
             @if($formModel)

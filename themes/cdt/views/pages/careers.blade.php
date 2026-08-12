@@ -661,11 +661,7 @@
             </div>
 
             @php
-              $tTheme = active_theme();
-              $jobAppFormId = setting("theme_{$tTheme->slug}_form_assignments", [])['job_application_form'] ?? null;
-              $jobAppForm = $jobAppFormId
-                ? \App\Models\Form::where('id', $jobAppFormId)->where('is_active', true)->with('fields')->first()
-                : \App\Models\Form::where('slug', 'job-application-form')->where('is_active', true)->with('fields')->first();
+              $jobAppForm = get_assigned_form('job_application_form');
             @endphp
 
             @if($jobAppForm)

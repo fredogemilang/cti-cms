@@ -8,9 +8,7 @@
     <h2 class="text-3xl font-light mb-12">{{ t('home.contact_title_prefix', 'Have some') }} <span class="font-bold">{{ t('home.contact_title_main', 'Question?') }}</span></h2>
     
     @php
-      $t = active_theme();
-      $contactFormId = setting("theme_{$t->slug}_form_assignments", [])['contact_form'] ?? null;
-      $contactForm = $contactFormId ? \App\Models\Form::where('id', $contactFormId)->where('is_active', true)->with('fields')->first() : null;
+      $contactForm = get_assigned_form('contact_form');
     @endphp
     @if($contactForm)
       @include('cdt::partials.tailwind-form', ['form' => $contactForm, 'variant' => 'dark'])

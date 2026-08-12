@@ -12,9 +12,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
+use App\Traits\HasTranslations;
+
 class Form extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, HasTranslations, SoftDeletes;
+
+    protected array $translatable = [
+        'name',
+        'description',
+        'submit_button_text',
+    ];
 
     protected $fillable = [
         'name',
@@ -31,6 +39,7 @@ class Form extends Model
         'total_entries',
         'submit_button_text',
         'styling',
+        'translations',
         'updated_by',
     ];
 
@@ -43,7 +52,40 @@ class Form extends Model
         'confirmations' => 'array',
         'spam_protection' => 'array',
         'styling' => 'array',
+        'translations' => 'array',
     ];
+
+    /**
+     * Get localized confirmation message based on active locale.
+     */
+    public function getConfirmationMessage(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $translations = $this->translations ?? [];
+        $transMessage = $translations[$locale]['confirmations']['message'] ?? null;
+
+        if (! empty($transMessage)) {
+            return $transMessage;
+        }
+
+        return $this->confirmations['message'] ?? 'Thank you for your submission. We will get back to you soon.';
+    }
+
+    /**
+     * Get localized redirect URL based on active locale.
+     */
+    public function getConfirmationRedirectUrl(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $translations = $this->translations ?? [];
+        $transUrl = $translations[$locale]['confirmations']['redirect_url'] ?? null;
+
+        if (! empty($transUrl)) {
+            return $transUrl;
+        }
+
+        return $this->confirmations['redirect_url'] ?? url('/');
+    }
 
     /**
      * Boot the model.

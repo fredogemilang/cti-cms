@@ -253,7 +253,20 @@ class Page extends Model
     public function cardBlock(string $name, array $default = []): array
     {
         $value = $this->block($name);
-        $defaults = ['title' => '', 'description' => '', 'image' => '', 'button_text' => '', 'button_url' => '#'];
+        $defaults = [
+            'title' => '',
+            'description' => '',
+            'asset_type' => 'image',
+            'image' => '',
+            'icon' => 'lucide:sparkles',
+            'description_type' => 'text',
+            'list_icon' => 'lucide:check-circle',
+            'list_items' => '',
+            'wysiwyg_content' => '',
+            'button_text' => '',
+            'button_url' => '#',
+            'button_target' => '_self',
+        ];
         if (is_array($value)) {
             return array_merge($defaults, $value);
         }

@@ -15,11 +15,12 @@
   <link rel="stylesheet" crossorigin href="{{ asset('themes/cdt/assets/main-V6bxgVBt.css') }}">
 
   @livewireStyles
+  @stack('head')
   @stack('styles')
 </head>
 <body class="font-body text-dark antialiased bg-white overflow-x-hidden">
   
-  <div x-data="{ activeSheet: null, showMenu: false }" x-effect="const isSheetOpen = activeSheet !== null; document.documentElement.style.overflow = isSheetOpen ? 'hidden' : ''; document.body.style.overflow = isSheetOpen ? 'hidden' : '';">
+  <div x-data="{ activeSheet: null, showMenu: true }" x-effect="const isSheetOpen = activeSheet !== null; document.documentElement.style.overflow = isSheetOpen ? 'hidden' : ''; document.body.style.overflow = isSheetOpen ? 'hidden' : '';">
     
     {{-- Header Partial --}}
     @include('cdt::partials.header')
@@ -31,6 +32,9 @@
 
     {{-- Footer Partial --}}
     @include('cdt::partials.footer')
+
+    {{-- Mobile Navigation & Bottom Sheets --}}
+    @include('cdt::partials.mobile-nav')
 
   </div>
 

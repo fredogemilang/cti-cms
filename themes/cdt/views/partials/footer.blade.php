@@ -112,9 +112,7 @@
           <p class="text-sm text-zinc-500 mb-6">{{ t('newsletter.modal_subtitle', 'Receive the latest insights and digital technology trends directly in your inbox.') }}</p>
 
           @php
-            $tTheme = active_theme();
-            $newsletterFormId = setting("theme_{$tTheme->slug}_form_assignments", [])['newsletter_form'] ?? null;
-            $newsletterForm = $newsletterFormId ? \App\Models\Form::where('id', $newsletterFormId)->where('is_active', true)->with('fields')->first() : \App\Models\Form::where('slug', 'newsletter-subscription')->where('is_active', true)->with('fields')->first();
+            $newsletterForm = get_assigned_form('newsletter_form');
           @endphp
 
           @if($newsletterForm)

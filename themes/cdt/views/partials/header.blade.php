@@ -46,32 +46,42 @@
 @endphp
 
 <!-- Mobile Top Header Bar -->
-<div class="lg:hidden bg-white border-b border-zinc-100">
+<div class="lg:hidden bg-white border-b border-zinc-100 sticky top-0 z-[100]">
   <div class="flex items-center justify-between px-4 py-3">
     <!-- Logo -->
     <a href="{{ localized_url('/') }}" title="Central Data Technology - Home" aria-label="Home" class="flex-shrink-0">
       <img src="{{ $siteLogoUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }}" title="{{ setting('site_name', 'Central Data Technology') }}" class="h-12 w-auto object-contain">
     </a>
-    <!-- Language Switcher -->
-    @if(is_locale_available_for_current_page('id'))
-    <div class="flex items-center gap-2 text-[13px] font-bold">
-      @if($currentLocale === 'en')
+    <!-- Right Actions: Language Switcher & Hamburger Toggle -->
+    <div class="flex items-center gap-3">
+      @if(is_locale_available_for_current_page('id'))
+      <div class="flex items-center gap-2 text-[13px] font-bold">
+        @if($currentLocale === 'en')
+          <span class="text-primary border-b-2 border-primary cursor-default">EN</span>
+        @else
+          <a href="{{ current_page_localized_url('en') }}" title="Switch to English" aria-label="Switch to English" class="text-zinc-400 hover:text-zinc-800 transition-colors">EN</a>
+        @endif
+        <span class="text-zinc-300">|</span>
+        @if($currentLocale === 'id')
+          <span class="text-primary border-b-2 border-primary cursor-default">ID</span>
+        @else
+          <a href="{{ current_page_localized_url('id') }}" title="Beralih ke Bahasa Indonesia" aria-label="Beralih ke Bahasa Indonesia" class="text-zinc-400 hover:text-zinc-800 transition-colors">ID</a>
+        @endif
+      </div>
+      @else
+      <div class="flex items-center gap-2 text-[13px] font-bold">
         <span class="text-primary border-b-2 border-primary cursor-default">EN</span>
-      @else
-        <a href="{{ current_page_localized_url('en') }}" title="Switch to English" aria-label="Switch to English" class="text-zinc-400 hover:text-zinc-800 transition-colors">EN</a>
+      </div>
       @endif
-      <span class="text-zinc-300">|</span>
-      @if($currentLocale === 'id')
-        <span class="text-primary border-b-2 border-primary cursor-default">ID</span>
-      @else
-        <a href="{{ current_page_localized_url('id') }}" title="Beralih ke Bahasa Indonesia" aria-label="Beralih ke Bahasa Indonesia" class="text-zinc-400 hover:text-zinc-800 transition-colors">ID</a>
-      @endif
+
+      <!-- Hamburger Menu Button -->
+      <button @click="showMenu = !showMenu" title="Toggle Menu" aria-label="Toggle Menu" class="p-2 rounded-lg text-gray-700 hover:text-primary hover:bg-gray-100 transition-colors focus:outline-none">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path x-show="!showMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          <path x-show="showMenu" style="display:none;" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
-    @else
-    <div class="flex items-center gap-2 text-[13px] font-bold">
-      <span class="text-primary border-b-2 border-primary cursor-default">EN</span>
-    </div>
-    @endif
   </div>
 </div>
 
@@ -85,10 +95,10 @@
         if (currentScrollY <= 20) {
           this.visible = true;
         } else if (currentScrollY > this.lastScrollY && currentScrollY > 60) {
-          // Scroll DOWN -> Hide header
+          /* Scroll DOWN -> Hide header */
           this.visible = false;
         } else if (currentScrollY < this.lastScrollY) {
-          // Scroll UP -> Show header
+          /* Scroll UP -> Show header */
           this.visible = true;
         }
         this.lastScrollY = currentScrollY;

@@ -187,7 +187,7 @@ class PageForm extends Component
                     $value = ['prefix' => '', 'main' => ''];
                 }
                 if ($block->type === 'card' && ! is_array($value)) {
-                    $value = ['title' => '', 'description' => '', 'image' => '', 'button_text' => '', 'button_url' => '#'];
+                    $value = ['title' => '', 'description' => '', 'asset_type' => 'image', 'image' => '', 'icon' => 'lucide:sparkles', 'description_type' => 'text', 'list_icon' => 'lucide:check-circle', 'list_items' => '', 'wysiwyg_content' => '', 'button_text' => '', 'button_url' => '#', 'button_target' => '_self'];
                 }
             }
 
@@ -247,14 +247,16 @@ class PageForm extends Component
         $defaultLocale = Page::defaultLocale();
 
         // Seed default locale block values from current loaded blocks
-        foreach ($this->blocks as $bi => $block) {
-            if ($this->isTranslatableBlockType($block['type'] ?? '')) {
-                $this->localizedBlockValues[$defaultLocale][$bi]['value'] = $block['value'] ?? null;
+        foreach ($this->blocks as $block) {
+            $name = $block['name'] ?? null;
+            if ($name && $this->isTranslatableBlockType($block['type'] ?? '')) {
+                $this->localizedBlockValues[$defaultLocale][$name]['value'] = $block['value'] ?? null;
             }
         }
 
-        foreach ($this->blocks as $bi => $block) {
-            if (empty($block['id']) || ! isset($blockRows[$block['id']])) {
+        foreach ($this->blocks as $block) {
+            $name = $block['name'] ?? null;
+            if (empty($block['id']) || ! $name || ! isset($blockRows[$block['id']])) {
                 continue;
             }
 
@@ -268,7 +270,7 @@ class PageForm extends Component
                 if (in_array($block['type'], ['repeater', 'button', 'title', 'card', 'checkbox', 'gallery', 'posts'], true) && is_string($value)) {
                     $value = json_decode($value, true) ?: $value;
                 }
-                $this->localizedBlockValues[$locale][$bi]['value'] = $value;
+                $this->localizedBlockValues[$locale][$name]['value'] = $value;
             }
         }
     }
@@ -313,11 +315,12 @@ class PageForm extends Component
 
     protected function snapshotBlocksToLocale(string $locale): void
     {
-        foreach ($this->blocks as $bi => $block) {
-            if (! $this->isTranslatableBlockType($block['type'] ?? '')) {
+        foreach ($this->blocks as $block) {
+            $name = $block['name'] ?? null;
+            if (! $name || ! $this->isTranslatableBlockType($block['type'] ?? '')) {
                 continue;
             }
-            $this->localizedBlockValues[$locale][$bi]['value'] = $block['value'] ?? null;
+            $this->localizedBlockValues[$locale][$name]['value'] = $block['value'] ?? null;
         }
     }
 
@@ -326,12 +329,13 @@ class PageForm extends Component
         $defaultLocale = Page::defaultLocale();
 
         foreach ($this->blocks as $bi => $block) {
-            if (! $this->isTranslatableBlockType($block['type'] ?? '')) {
+            $name = $block['name'] ?? null;
+            if (! $name || ! $this->isTranslatableBlockType($block['type'] ?? '')) {
                 continue;
             }
 
             $type = $block['type'] ?? '';
-            $snap = $this->localizedBlockValues[$locale][$bi]['value'] ?? null;
+            $snap = $this->localizedBlockValues[$locale][$name]['value'] ?? null;
 
             if ($snap !== null) {
                 if (in_array($type, ['button', 'title', 'card', 'repeater', 'checkbox', 'gallery', 'posts'], true) && is_string($snap)) {
@@ -344,7 +348,8 @@ class PageForm extends Component
                 } elseif ($type === 'title') {
                     $snap = is_array($snap) ? array_merge(['prefix' => '', 'main' => ''], $snap) : ['prefix' => '', 'main' => ''];
                 } elseif ($type === 'card') {
-                    $snap = is_array($snap) ? array_merge(['title' => '', 'description' => '', 'image' => '', 'button_text' => '', 'button_url' => '#'], $snap) : ['title' => '', 'description' => '', 'image' => '', 'button_text' => '', 'button_url' => '#'];
+                    $cardDefaults = ['title' => '', 'description' => '', 'asset_type' => 'image', 'image' => '', 'icon' => 'lucide:sparkles', 'description_type' => 'text', 'list_icon' => 'lucide:check-circle', 'list_items' => '', 'wysiwyg_content' => '', 'button_text' => '', 'button_url' => '#', 'button_target' => '_self'];
+                    $snap = is_array($snap) ? array_merge($cardDefaults, $snap) : $cardDefaults;
                 }
 
                 $this->blocks[$bi]['value'] = $snap;
@@ -356,7 +361,7 @@ class PageForm extends Component
                     'repeater', 'checkbox', 'gallery', 'posts' => [],
                     'button' => ['text' => '', 'url' => '#', 'target' => '_self'],
                     'title' => ['prefix' => '', 'main' => ''],
-                    'card' => ['title' => '', 'description' => '', 'image' => '', 'button_text' => '', 'button_url' => '#'],
+                    'card' => ['title' => '', 'description' => '', 'asset_type' => 'image', 'image' => '', 'icon' => 'lucide:sparkles', 'description_type' => 'text', 'list_icon' => 'lucide:check-circle', 'list_items' => '', 'wysiwyg_content' => '', 'button_text' => '', 'button_url' => '#', 'button_target' => '_self'],
                     default => '',
                 };
             }
@@ -992,9 +997,10 @@ class PageForm extends Component
             //   from the snapshot stashed when they switched away from default.
             // - Atomic types: always use $blockData['value'] — they're identical across locales,
             //   so whatever's currently in the form is canonical.
+            $name = $blockData['name'] ?? '';
             $isTranslatable = $this->isTranslatableBlockType($blockData['type'] ?? '');
-            if ($isTranslatable && $this->editingLocale !== $defaultLocale) {
-                $defaultValue = $this->localizedBlockValues[$defaultLocale][$index]['value']
+            if ($isTranslatable && $name && $this->editingLocale !== $defaultLocale) {
+                $defaultValue = $this->localizedBlockValues[$defaultLocale][$name]['value']
                     ?? $blockData['value'] ?? '';
             } else {
                 $defaultValue = $blockData['value'] ?? '';
@@ -1006,12 +1012,12 @@ class PageForm extends Component
             }
 
             $blockTranslations = [];
-            if ($this->isTranslatableBlockType($blockData['type'] ?? '')) {
+            if ($isTranslatable && $name) {
                 foreach ($this->localizedBlockValues as $locale => $snaps) {
                     if ($locale === $defaultLocale) {
                         continue;
                     }
-                    $v = $snaps[$index]['value'] ?? null;
+                    $v = $snaps[$name]['value'] ?? null;
                     if ($v === null || $v === '') {
                         continue;
                     }
@@ -1210,6 +1216,26 @@ class PageForm extends Component
             if (! $this->page->isLockedByOther(auth()->id())) {
                 $this->page->unlock();
             }
+        }
+    }
+
+    #[On('icon-selected')]
+    public function handleIconSelected(string $field, ?string $value): void
+    {
+        if (str_starts_with($field, 'blocks.')) {
+            $path = substr($field, 7);
+            data_set($this->blocks, $path, $value);
+            $this->hasUnsavedChanges = true;
+        }
+    }
+
+    #[On('set-value')]
+    public function handleSetValue(string $path, mixed $value): void
+    {
+        if (str_starts_with($path, 'blocks.')) {
+            $cleanPath = substr($path, 7);
+            data_set($this->blocks, $cleanPath, $value);
+            $this->hasUnsavedChanges = true;
         }
     }
 

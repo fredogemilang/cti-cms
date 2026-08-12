@@ -31,18 +31,66 @@ setting("theme_{$theme->slug}_form_assignments")
 
 Features: Alpine.js validation, captcha-aware, locale-aware labels, `*` for required fields, inline errors.
 
-## Multi-Language
+## Multi-Language & Anti-Redundancy Architecture
 
-`FormField.translations` JSON:
+Both `Form` and `FormField` models natively use the `HasTranslations` trait (storing locale translations in JSON columns):
+
+### 1. `Form` Model Translations (`forms.translations`)
+Stores translatable attributes for `name`, `description`, `submit_button_text`, and `confirmations`:
 ```json
 {
   "id": {
-    "label": "Nama",
-    "placeholder": "Masukkan nama",
+    "name": "Form Pengajuan AWS Cloud Credits",
+    "description": "Spesialis AWS kami akan menghubungi Anda dalam 1 hari kerja.",
+    "submit_button_text": "Kirim",
+    "confirmations": {
+      "message": "Terima kasih atas pengajuan Anda. Spesialis AWS kami akan menghubungi Anda dalam 1 hari kerja."
+    }
+  }
+}
+```
+
+### 2. `FormField` Model Translations (`form_fields.translations`)
+Stores translatable attributes for field labels, placeholders, consent text, and terms:
+```json
+{
+  "id": {
+    "label": "Nama Lengkap",
+    "placeholder": "Masukkan nama lengkap Anda",
     "consent_text": "Saya setuju dengan <a href='/id/privacy'>kebijakan privasi</a>"
   }
 }
 ```
+
+### ⚠️ MANDATORY RULE: No Duplicate String Translations for Forms
+When creating or editing form translations:
+- AI agents **MUST** manage form translations directly inside the `Form` model (`forms.translations`) and `FormField` model (`form_fields.translations`) via Form Studio UI (`/ctrlpanel/forms/{id}/studio`).
+- AI agents **MUST NEVER** create duplicate `string_translations` (`t()`) keys for form names, descriptions, submit buttons, or field labels.
+
+---
+
+## 🛑 MANDATORY RULE: Form Title & Description Disambiguation
+When generating or implementing a form on any page, the AI agent **MUST NOT ASSUME** where the Form Title and Description originate.
+
+Before writing code or seeding database records, the AI **MUST ask for user confirmation** with the following options:
+1. **Pull directly from Form Model** (`$form->name` & `$form->description`) — Managed globally via Form Studio.
+2. **Use Page Blocks / CPT Meta Fields** — Custom per page/entry.
+3. **Use String Translations (`t()`)** — Static locale translation key.
+
+---
+
+## 🔒 MANDATORY RULE: Strict Form Assignment Compliance
+ALL forms on the frontend **MUST strictly comply with Form Assignments** (`/ctrlpanel/forms/assignments`).
+
+1. Form-to-slot mapping is stored in `settings`: `Setting::get("theme_{$theme->slug}_form_assignments")`.
+2. **If a form is NOT assigned to a theme slot in Form Assignments, it MUST NOT render on the frontend.**
+3. Theme Blade views must fetch the assigned form via:
+   ```php
+   $assignedForm = get_assigned_form('slot_name'); // Returns Form model or null
+   ```
+   If `$assignedForm` is null or inactive, the frontend template MUST safely hide/omit the form.
+
+---
 
 ## Submission Flow
 
@@ -74,9 +122,9 @@ Configure in Admin → Settings → Forms:
 
 | File | Purpose |
 |------|---------|
-| `app/Models/Form.php` | Form model |
-| `app/Models/FormField.php` | Field definitions |
+| `app/Models/Form.php` | Form model (`HasTranslations`) |
+| `app/Models/FormField.php` | Field definitions (`HasTranslations`) |
 | `app/Models/FormEntry.php` | Submissions |
 | `app/Http/Controllers/FormSubmissionController.php` | Public submit handler |
-| `app/Livewire/Admin/Forms/` | Admin form builder Livewire components |
+| `resources/views/admin/forms/studio.blade.php` | Form Studio UI with unified `[ 🇬🇧 EN \| 🇮🇩 ID ]` switcher |
 | `themes/cdt/views/partials/tailwind-form.blade.php` | Reusable Tailwind form renderer |

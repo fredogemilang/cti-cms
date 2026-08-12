@@ -360,10 +360,7 @@
             <p class="text-sm text-zinc-400 mt-1 font-light">{{ t('alliance.fill_out_fields_desc', 'Fill out the fields below, and our :title solutions team will connect with you.', ['title' => $entry->title]) }}</p>
           </div>
           @php
-            $theme = active_theme();
-            $assignments = setting("theme_{$theme->slug}_form_assignments", []);
-            $formId = $assignments['alliance_form'] ?? $assignments['consultation_form'] ?? $assignments['contact_form'] ?? null;
-            $allianceForm = $formId ? \App\Models\Form::where('id', $formId)->where('is_active', true)->with('fields')->first() : null;
+            $allianceForm = get_assigned_form('consultation_form') ?? get_assigned_form('contact_form');
           @endphp
 
           @if($allianceForm)

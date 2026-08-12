@@ -371,7 +371,9 @@
     {{-- Submit --}}
     <div class="{{ $isDark ? 'flex flex-col items-center' : 'pt-4 flex justify-end' }}">
         <?php
-            $btnText = !empty($form->submit_button_text) ? $form->submit_button_text : t('form.submit_' . $form->slug, 'Send Message');
+            $modelTransBtn = method_exists($form, 'getTranslation') ? $form->getTranslation('submit_button_text') : null;
+            $fallbackBtnText = !empty($form->submit_button_text) ? $form->submit_button_text : 'Send Message';
+            $btnText = $modelTransBtn ?: t('form.submit_' . $form->slug, t('aws_credits.form_cta', $fallbackBtnText));
         ?>
         <button type="submit" :disabled="submitting" class="{{ $btnClass }} inline-flex items-center justify-center gap-2 text-center transition-all duration-300">
             <template x-if="submitting">

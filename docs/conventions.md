@@ -106,6 +106,25 @@ class PageForm extends Component
 
 ---
 
+## Form Engine & Multi-Language Rules
+
+### 1. Form Multi-Language & Anti-Redundancy Rule
+- Edit form translations directly on the `Form` model (`forms.translations` JSON) and `FormField` model (`form_fields.translations` JSON) via Form Studio (`/ctrlpanel/forms/{id}/studio`).
+- **NEVER create duplicate `string_translations` (`t()`)** for form titles, descriptions, submit buttons, or field labels.
+
+### 2. Mandatory Form Title & Description Confirmation Rule
+- When generating or adding a form to a page, **DO NOT ASSUME** where the title and description come from.
+- **ALWAYS confirm with the user first**:
+  - Option A: Form Model (`$form->name` / `$form->description`)
+  - Option B: Page Blocks / CPT Meta Fields
+  - Option C: String Translations (`t()`)
+
+### 3. Strict Form Assignment Compliance Rule
+- All forms MUST strictly comply with Form Assignments (`/ctrlpanel/forms/assignments`).
+- If a form is NOT assigned to a slot in `Setting::get("theme_{$theme->slug}_form_assignments")`, it **MUST NOT** render on the frontend.
+
+---
+
 ## Branching Strategy
 
 ```

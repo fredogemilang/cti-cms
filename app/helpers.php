@@ -184,6 +184,32 @@ if (! function_exists('theme_path')) {
     }
 }
 
+if (! function_exists('get_assigned_form')) {
+    /**
+     * Get the Form model assigned to the active theme's placeholder slot.
+     * Returns null if unassigned or if the assigned form is inactive/deleted.
+     */
+    function get_assigned_form(string $placeholder): ?\App\Models\Form
+    {
+        $theme = active_theme();
+        if (! $theme) {
+            return null;
+        }
+
+        $assignments = setting("theme_{$theme->slug}_form_assignments", []);
+        $formId = $assignments[$placeholder] ?? null;
+
+        if (! $formId) {
+            return null;
+        }
+
+        return \App\Models\Form::where('id', $formId)
+            ->where('is_active', true)
+            ->with('fields')
+            ->first();
+    }
+}
+
 if (! function_exists('render_theme_form')) {
     /**
      * Render the form assigned to the active theme's placeholder.
