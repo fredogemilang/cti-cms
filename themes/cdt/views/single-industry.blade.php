@@ -62,7 +62,7 @@
 <section class="relative py-24 bg-white text-gray-900 overflow-hidden border-t border-zinc-100">
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
     <div class="text-center mb-16 lg:mb-24">
-      <h2 class="text-3xl md:text-5xl font-light mb-6 text-zinc-500">Infrastructure</h2>
+      <h2 class="text-3xl md:text-5xl font-light mb-6 text-zinc-500">{{ t('industry.infrastructure', 'Infrastructure') }}</h2>
       <div class="w-24 h-1 bg-primary mx-auto"></div>
     </div>
 
@@ -104,7 +104,7 @@
 <section class="relative py-24 bg-white text-gray-900 overflow-hidden border-t border-zinc-100">
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
     <div class="text-center mb-16 lg:mb-24">
-      <h2 class="text-3xl md:text-5xl font-light mb-6 text-zinc-500">Cloud</h2>
+      <h2 class="text-3xl md:text-5xl font-light mb-6 text-zinc-500">{{ t('industry.cloud', 'Cloud') }}</h2>
       <div class="w-24 h-1 bg-primary mx-auto"></div>
     </div>
 
@@ -146,7 +146,7 @@
 <section class="relative py-24 bg-zinc-50 text-gray-900 overflow-hidden border-t border-zinc-100">
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
     <div class="text-center mb-16 lg:mb-24">
-      <h2 class="text-3xl md:text-5xl font-light mb-6 text-zinc-500">Security</h2>
+      <h2 class="text-3xl md:text-5xl font-light mb-6 text-zinc-500">{{ t('industry.security', 'Security') }}</h2>
       <div class="w-24 h-1 bg-primary mx-auto"></div>
     </div>
 

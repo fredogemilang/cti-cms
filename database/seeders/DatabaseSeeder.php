@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
             EmailTemplateSeeder::class,
             AwsCloudCreditsPageSeeder::class,
             FormsSeeder::class,
+            StringTranslationsSeeder::class,
         ]);
 
         $this->command->info('');
