@@ -77,15 +77,6 @@
 
   </div>
 
-  <style>
-    /* Prevent Flash of Unstyled Content for GSAP Animated Elements */
-    [data-gsap="fade-up"] { opacity: 0; transform: translate3d(0, 45px, 0); }
-    [data-gsap="fade-in"] { opacity: 0; }
-    [data-gsap="fade-left"] { opacity: 0; transform: translate3d(-45px, 0, 0); }
-    [data-gsap="fade-right"] { opacity: 0; transform: translate3d(45px, 0, 0); }
-    [data-gsap="line-grow"] { width: 0 !important; }
-  </style>
-
   @livewireScripts
   @stack('scripts')
   <script>
@@ -93,70 +84,25 @@
     // This init runs after DOM ready, reading data-gsap attributes.
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-
-      // Store initial line-grow widths before GSAP initialization
-      document.querySelectorAll('[data-gsap="line-grow"]').forEach(el => {
-        const computedWidth = window.getComputedStyle(el).width;
-        if (computedWidth && computedWidth !== '0px') {
-          el.setAttribute('data-target-width', computedWidth);
-        }
-      });
-
       document.querySelectorAll('[data-gsap]').forEach(el => {
         const type = el.getAttribute('data-gsap');
         const delay = parseFloat(el.getAttribute('data-gsap-delay') || '0');
-        const duration = parseFloat(el.getAttribute('data-gsap-duration') || '0.9');
-
-        if (type === 'line-grow') {
-          const targetWidth = el.getAttribute('data-target-width') || '4rem';
-          gsap.fromTo(el, 
-            { width: 0 }, 
-            { 
-              width: targetWidth, 
-              duration: 0.8, 
-              ease: 'power3.out', 
-              delay,
-              scrollTrigger: { 
-                trigger: el.parentElement || el, 
-                start: 'top 88%',
-                toggleActions: 'play none none none' 
-              } 
-            }
-          );
-          return;
-        }
-
+        const defaults = { duration: 0.8, ease: 'power2.out', delay };
         let from = {};
         switch(type) {
-          case 'fade-up': from = { y: 45, opacity: 0 }; break;
-          case 'fade-in': from = { opacity: 0 }; break;
-          case 'fade-left': from = { x: -45, opacity: 0 }; break;
-          case 'fade-right': from = { x: 45, opacity: 0 }; break;
+          case 'fade-up': from = { y: 40, opacity: 0 }; break;
+          case 'fade-in': from = { opacity: 0 }; defaults.duration = 0.6; break;
+          case 'fade-left': from = { x: -40, opacity: 0 }; break;
+          case 'fade-right': from = { x: 40, opacity: 0 }; break;
+          case 'line-grow':
+            gsap.fromTo(el, { width: 0 }, { width: '3rem', duration: 0.6, ease: 'power2.out', delay,
+              scrollTrigger: { trigger: el.parentElement, start: 'top 85%' } });
+            return;
           default: return;
         }
-
-        gsap.fromTo(el, from, {
-          x: 0,
-          y: 0,
-          opacity: 1,
-          duration,
-          ease: 'power3.out',
-          delay,
-          scrollTrigger: { 
-            trigger: el, 
-            start: 'top 88%', 
-            toggleActions: 'play none none none' 
-          }
+        gsap.fromTo(el, from, { x: 0, y: 0, opacity: 1, ...defaults,
+          scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' }
         });
-      });
-
-      // Refresh ScrollTrigger positions after all media finishes loading
-      window.addEventListener('load', () => {
-        setTimeout(() => {
-          if (typeof ScrollTrigger !== 'undefined') {
-            ScrollTrigger.refresh();
-          }
-        }, 200);
       });
     });
   </script>
