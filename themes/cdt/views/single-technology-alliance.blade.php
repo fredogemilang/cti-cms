@@ -373,10 +373,71 @@
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
     <div class="flex flex-col lg:flex-row gap-12 lg:gap-20">
       <div class="w-full lg:w-1/2 flex flex-col justify-center">
+        @php
+          $duplicateToProduct = (bool) ($entry->getMeta('duplicate_to_product') ?? false);
+
+          $dupSolutions = [];
+          if ($duplicateToProduct) {
+              $relProductsList = $entry->relatedEntries('product_id')->get();
+              if ($relProductsList->isNotEmpty()) {
+                  foreach ($relProductsList as $rp) {
+                      $rpLocale = app()->getLocale();
+                      $dupSolutions[] = [
+                          'title' => $rp->getTranslation('title', $rpLocale, false) ?: $rp->title,
+                          'description' => $rp->getTranslation('excerpt', $rpLocale, false)
+                              ?: ($rp->getTranslation('content', $rpLocale, false)
+                              ?: ($rp->getMeta('hero_description') ?: ($rp->excerpt ?: $rp->content))),
+                          'icon' => $rp->getMeta('icon', 'shield-check'),
+                          'link' => $rp->getUrl(),
+                      ];
+                  }
+              } else {
+                  $allMetaSol = array_merge($solutionsFeatured ?? [], $solutionsOther ?? []);
+                  foreach ($allMetaSol as $ms) {
+                      $dupSolutions[] = [
+                          'title' => $ms['title'] ?? '',
+                          'description' => $ms['description'] ?? '',
+                          'icon' => $ms['icon'] ?? 'shield-check',
+                          'link' => resolve_solution_url($ms['link'] ?? '#', $entry->slug),
+                      ];
+                  }
+              }
+          }
+        @endphp
+
         <div class="mb-10">
-          <h2 data-gsap="fade-up" class="text-4xl font-light text-zinc-500 leading-tight">{{ t('alliance.explore_prefix', 'Explore') }} {{ $entry->title }} <br><span class="font-bold text-zinc-900">{{ t('alliance.with_cdt', 'with CDT') }}</span></h2>
+          @if($duplicateToProduct)
+            @if(app()->getLocale() === 'id')
+              <h2 data-gsap="fade-up" class="text-4xl font-light text-zinc-500 leading-tight">Produk <br><span class="font-bold text-zinc-900">{{ $entry->title }}</span></h2>
+            @else
+              <h2 data-gsap="fade-up" class="text-4xl font-light text-zinc-500 leading-tight">{{ $entry->title }} <br><span class="font-bold text-zinc-900">Product</span></h2>
+            @endif
+          @else
+            <h2 data-gsap="fade-up" class="text-4xl font-light text-zinc-500 leading-tight">{{ t('alliance.explore_prefix', 'Explore') }} {{ $entry->title }} <br><span class="font-bold text-zinc-900">{{ t('alliance.with_cdt', 'with CDT') }}</span></h2>
+          @endif
           <div class="h-1 bg-primary mt-4 w-16" data-gsap="line-grow"></div>
         </div>
+
+        @if($duplicateToProduct && !empty($dupSolutions))
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+          @foreach($dupSolutions as $ds)
+          <div data-gsap="fade-up" data-gsap-delay="{{ $loop->index * 0.1 }}" class="group bg-white rounded-2xl p-6 border border-zinc-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
+                {!! render_icon($ds['icon'] ?? 'shield-check', 'w-6 h-6') !!}
+              </div>
+              <h3 class="font-bold text-zinc-900 text-base mb-2 group-hover:text-primary transition-colors">{{ $ds['title'] }}</h3>
+              <p class="text-zinc-500 text-xs md:text-sm leading-relaxed mb-4">{{ \Illuminate\Support\Str::limit(strip_tags($ds['description'] ?? ''), 110) }}</p>
+            </div>
+            @if(!empty($ds['link']) && $ds['link'] !== '#')
+            <a href="{{ $ds['link'] }}" class="inline-flex items-center gap-1 text-xs font-bold text-primary uppercase tracking-wider hover:underline">
+              {{ t('common.explore_more', 'Explore More') }} <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </a>
+            @endif
+          </div>
+          @endforeach
+        </div>
+        @else
         <div class="space-y-8 mt-12">
           <div class="flex items-start gap-5" data-gsap="fade-up" data-gsap-delay="0.1">
             <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center shrink-0">
@@ -397,6 +458,7 @@
             <div><h3 class="text-lg font-bold text-zinc-900">{{ t('alliance.certified_specialist_title', 'Certified Specialist') }}</h3><p class="text-base text-zinc-500">{{ t('alliance.certified_specialist_desc', 'CDT IT specialists are certified to ensure solution quality follows with strict implementation standards.') }}</p></div>
           </div>
         </div>
+        @endif
 
       </div>
       <div class="w-full lg:w-1/2" data-gsap="fade-up" data-gsap-delay="0.2">
