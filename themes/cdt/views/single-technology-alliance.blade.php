@@ -15,7 +15,33 @@
         'cta' => $entry->getMeta('banner_cta', ''),
     ];
     $videos = $entry->getMeta('videos', []);
-    $articles = $entry->getMeta('related_articles', []);
+    
+    $articles = [];
+    if (is_plugin_active('posts') && class_exists(\Plugins\Posts\Models\Post::class)) {
+        $relatedPosts = \Plugins\Posts\Models\Post::published()
+            ->whereHas('cptEntries', function ($q) use ($entry) {
+                $q->where('cpt_entries.id', $entry->id);
+            })
+            ->with('categories')
+            ->latest('published_at')
+            ->take(5)
+            ->get();
+
+        foreach ($relatedPosts as $p) {
+            $cat = $p->categories->first()?->getTranslation('name', app()->getLocale()) 
+                ?: ($p->categories->first()?->name ?? 'Insight');
+            $articles[] = [
+                'link' => $p->getUrl(),
+                'category' => $cat,
+                'title' => $p->getTranslation('title', app()->getLocale()) ?: $p->title,
+            ];
+        }
+    }
+
+    if (empty($articles)) {
+        $articles = $entry->getMeta('related_articles', []);
+    }
+
     $badges = $entry->getMeta('badges', []);
     $badgeImages = $entry->getMeta('hero_badge_images', []);
 @endphp
