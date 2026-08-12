@@ -530,16 +530,14 @@
                   <p x-text="job.shortDesc" class="text-zinc-500 font-light leading-relaxed mb-8 text-sm"></p>
                 </div>
 
-                <div class="flex items-center gap-4 pt-6 border-t border-zinc-100">
+                <div class="pt-6 border-t border-zinc-100">
                   <button
                     @click="toggleExpand(job.id)"
-                    class="flex-1 px-4 py-3 border border-zinc-200 text-zinc-700 hover:border-primary hover:text-primary transition-all duration-300 rounded-xl text-xs font-bold uppercase tracking-wider text-center cursor-pointer">
-                    See Details
-                  </button>
-                  <button
-                    @click="openApply(job)"
-                    class="flex-1 px-4 py-3 bg-primary text-white hover:bg-red-700 shadow-sm hover:shadow-md transition-all duration-300 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer">
-                    Apply Now
+                    class="w-full px-4 py-3 border border-zinc-200 text-zinc-700 hover:border-primary hover:bg-primary/5 hover:text-primary transition-all duration-300 rounded-xl text-xs font-bold uppercase tracking-wider text-center cursor-pointer flex items-center justify-center gap-2 group/btn">
+                    <span>See Details</span>
+                    <svg class="w-4 h-4 group-hover/btn:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                    </svg>
                   </button>
                 </div>
               </div>
