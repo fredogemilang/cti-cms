@@ -47,8 +47,8 @@
         <div class="group flex flex-col bg-white rounded-3xl border border-zinc-200 overflow-hidden shadow-sm hover:shadow-2xl hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 relative" data-gsap="fade-up">
           <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
           <div class="p-8 md:p-10 flex-grow flex flex-col relative z-10">
-            <div class="h-16 flex items-center justify-start mb-6">
-              <x-image :src="$logoUrl" alt="{{ $title }}" class="max-h-full max-w-[160px] object-contain" />
+            <div class="w-32 h-32 flex items-center justify-start mb-6 shrink-0">
+              <x-image :src="$logoUrl" alt="{{ $title }}" class="w-32 h-32 object-contain object-left" pictureClass="w-32 h-32 flex items-center justify-start" />
             </div>
             <h2 class="text-xl font-bold text-gray-900 mb-4 line-clamp-2">{{ $title }}</h2>
             <p class="text-gray-600 font-light leading-relaxed mb-10 flex-grow line-clamp-4">
