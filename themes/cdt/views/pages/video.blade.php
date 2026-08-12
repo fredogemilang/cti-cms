@@ -349,19 +349,19 @@
 
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
     <!-- Breadcrumb Component -->
-    <x-seo-breadcrumbs :entity="$page" class="text-zinc-400 mb-10 text-left" />
+    <x-seo-breadcrumbs :entity="$page" class="text-zinc-400 mb-10 text-left" data-gsap="fade-in" />
 
     <div class="mx-auto max-w-[1200px] relative">
 
       <!-- Centered Title -->
       <div class="overflow-hidden text-center mb-10">
-        <h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold text-gray-900 leading-tight">
+        <h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold text-gray-900 leading-tight" data-gsap="fade-up">
           {{ isset($page) && $page ? ($page->getTranslation('title', $currentLocale) ?: $page->title) : t('video.title', 'Video Library') }}
         </h1>
       </div>
 
       <!-- Main Player -->
-      <div class="player-glow mb-6">
+      <div class="player-glow mb-6" data-gsap="fade-up" data-gsap-delay="0.1">
         <div class="relative w-full bg-black rounded-2xl overflow-hidden shadow-xl aspect-video z-10" id="player-aspect-wrap">
           <iframe id="main-player" class="w-full h-full relative z-10" src="about:blank" title="Video Player"
             frameborder="0"
@@ -371,7 +371,7 @@
       </div>
 
       <!-- Video Details -->
-      <div id="details-container-col" class="mb-4">
+      <div id="details-container-col" class="mb-4" data-gsap="fade-up" data-gsap-delay="0.2">
         <h2 id="main-title" class="text-xl md:text-2xl font-bold text-gray-900 leading-snug">
           Transformasi Digital Enterprise
         </h2>
@@ -390,7 +390,7 @@
 </section>
 
 <!-- All Videos Section -->
-<section class="pb-20 bg-gray-50/60">
+<section class="pb-20 bg-gray-50/60" data-gsap="fade-up">
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
 
     <!-- Section Header + Filters -->

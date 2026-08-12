@@ -74,7 +74,7 @@
     @endphp
     <div class="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 w-full">
       <!-- Breadcrumbs -->
-      <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-10" aria-label="Breadcrumb">
+      <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-10" aria-label="Breadcrumb" data-gsap="fade-in">
         <a href="{{ localized_url('/') }}" class="hover:text-primary transition-colors">{{ t('common.home', 'Home') }}</a>
         @if($hasAllianceArchive)
           <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
@@ -89,24 +89,24 @@
       </nav>
   
       <div class="max-w-5xl mx-auto flex flex-col items-center text-center">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100 border border-zinc-200 text-sm font-bold uppercase tracking-widest text-primary mb-8">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100 border border-zinc-200 text-sm font-bold uppercase tracking-widest text-primary mb-8" data-gsap="fade-up">
           <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span> 
           {{ $entry->getMeta('hero_badge') ?: ($parentProduct ? $parentProduct->title . ' Solutions' : 'Akamai Solutions') }}
         </div>
   
         <div class="overflow-hidden mb-6">
-          <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-zinc-900 leading-[1.1] tracking-tight">
+          <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-zinc-900 leading-[1.1] tracking-tight" data-gsap="fade-up" data-gsap-delay="0.1">
             {{ $entry->getMeta('hero_title') ?: $entry->title }}
           </h1>
         </div>
   
         <div class="overflow-hidden mb-12 max-w-3xl">
-          <p class="text-lg md:text-xl text-zinc-600 font-light leading-relaxed">
+          <p class="text-lg md:text-xl text-zinc-600 font-light leading-relaxed" data-gsap="fade-up" data-gsap-delay="0.2">
             {{ $entry->content ? strip_tags($entry->content) : $entry->excerpt }}
           </p>
         </div>
   
-        <div>
+        <div data-gsap="fade-up" data-gsap-delay="0.3">
           <a href="#explore" class="inline-flex items-center justify-center px-10 py-4 font-bold text-white uppercase tracking-wider transition-all duration-300 bg-primary rounded-full shadow-lg shadow-primary/30 hover:bg-red-700 hover:shadow-xl hover:-translate-y-1 gap-3 group">
             {{ $entry->getMeta('hero_cta') ?: 'Call Us for FREE Consultation!' }}
             <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
@@ -147,7 +147,7 @@
   @endphp
 
   @if($hasBannerContent)
-  <section id="banner" class="py-10 md:py-14 bg-gradient-to-r from-red-800 via-primary to-red-700 relative overflow-hidden z-20 shadow-inner">
+  <section id="banner" class="py-10 md:py-14 bg-gradient-to-r from-red-800 via-primary to-red-700 relative overflow-hidden z-20 shadow-inner" data-gsap="fade-up">
     <div class="absolute inset-0 pointer-events-none">
       <div class="absolute top-1/2 left-0 w-64 h-64 bg-white/10 rounded-full blur-[60px] -translate-y-1/2 -translate-x-1/2"></div>
       <div class="absolute top-1/2 right-0 w-96 h-96 bg-black/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
@@ -157,14 +157,14 @@
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
       <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
         @if($bannerLogo)
-        <div class="flex-shrink-0">
+        <div class="flex-shrink-0" data-gsap="fade-up">
           <div class="w-24 h-24 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center p-4 shadow-[0_10px_25px_rgba(0,0,0,0.3)] ring-4 ring-white/20 transform hover:scale-105 transition-transform duration-500">
             <img src="{{ resolve_block_asset($bannerLogo) }}" alt="{{ $entry->title }} Logo" class="w-full h-auto object-contain drop-shadow-sm" />
           </div>
         </div>
         @endif
 
-        <div class="flex-1 text-center md:text-left">
+        <div class="flex-1 text-center md:text-left" data-gsap="fade-up" data-gsap-delay="0.1">
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/20 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white mb-3 backdrop-blur-md">
             <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span> {{ t('product.limited_offer', 'Limited Time Offer') }}
           </div>
@@ -176,7 +176,7 @@
           </p>
         </div>
 
-        <div class="flex-shrink-0 mt-4 md:mt-0">
+        <div class="flex-shrink-0 mt-4 md:mt-0" data-gsap="fade-up" data-gsap-delay="0.2">
           <a href="#explore" class="inline-flex items-center justify-center px-8 py-4 font-bold text-primary transition-all duration-300 bg-white rounded-full hover:bg-zinc-100 hover:scale-105 shadow-[0_10px_30px_rgba(0,0,0,0.2)] group/btn relative overflow-hidden">
             <span class="relative z-10 flex items-center gap-2 text-base tracking-wide uppercase">
               {{ $bannerCta ?: 'Get Started Today' }}
@@ -200,14 +200,14 @@
             }
         @endphp
         @if($aboutImg)
-        <div class="w-full lg:w-1/2 lg:sticky lg:top-32">
+        <div class="w-full lg:w-1/2 lg:sticky lg:top-32" data-gsap="fade-up">
           <div class="relative w-full aspect-square md:aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-zinc-200/80 bg-gradient-to-br from-primary/5 to-zinc-100 flex items-center justify-center">
             <img src="{{ resolve_block_asset($aboutImg) }}" alt="{{ $entry->title }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
           </div>
         </div>
         @endif
 
-        <div class="w-full {{ $aboutImg ? 'lg:w-1/2' : 'w-full' }} flex flex-col justify-center">
+        <div class="w-full {{ $aboutImg ? 'lg:w-1/2' : 'w-full' }} flex flex-col justify-center" data-gsap="fade-up" data-gsap-delay="0.1">
         @php
           $rawAboutTitle = $entry->getMeta('about_title') ?: $entry->title;
           if (preg_match('/^(About|Mengenal|Tentang|What is|What Are|What Can|Apa Itu|Apa|Mengapa|Why|How)\s+(.+)$/i', trim($rawAboutTitle), $aboutMatches)) {
@@ -218,22 +218,23 @@
               $aboutMainTitle = $rawAboutTitle;
           }
         @endphp
-        <h2 class="text-4xl font-light text-zinc-500 leading-tight">{{ $aboutPrefix }} <br>
+        <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">{{ $aboutPrefix }} <br>
           <span class="font-bold text-zinc-900">{{ $aboutMainTitle }}</span>
         </h2>
-          <div class="h-1 w-16 bg-primary mt-4 mb-8"></div>
+          <div class="h-1 w-16 bg-primary mt-4 mb-8" data-gsap="line-grow"></div>
 
-          <div class="space-y-4 text-zinc-600 text-base md:text-lg font-light leading-relaxed mb-10 prose rich-content max-w-none">
+          <div class="space-y-4 text-zinc-600 text-base md:text-lg font-light leading-relaxed mb-10 prose rich-content max-w-none" data-gsap="fade-up" data-gsap-delay="0.1">
             {!! preg_replace('/<h[1-6][^>]*>.*?<\/h[1-6]>/i', '', $entry->getMeta('about_content') ?: $entry->content) !!}
           </div>
 
-          <div>
+          <div data-gsap="fade-up" data-gsap-delay="0.2">
             <a href="#explore" class="inline-flex items-center justify-center bg-primary hover:bg-red-700 text-white px-8 py-4 font-bold uppercase tracking-wide transition-colors rounded-full shadow-lg shadow-primary/30 hover:shadow-xl group">
               {{ $entry->getMeta('about_cta') ?: 'Talk to Our Experts' }}
               <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
             </a>
           </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -243,21 +244,21 @@
     <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjMDAwMDAwIiBzdHJva2Utb3BhY2l0eT0iMC4wMiIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIj48cGF0aCBkPSJNMCAwdjYwaDYwIi8+PC9nPjwvc3ZnPg==')] mix-blend-multiply opacity-50"></div>
   
     <div class="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
-      <div class="mb-16 text-center">
+      <div class="mb-16 text-center" data-gsap="fade-up">
         @php
           $rawBenefitsTitle = $entry->getMeta('benefits_title') ?: $entry->title;
           $cleanBenefitsTitle = trim(preg_replace('/^(Benefits\s+of|Manfaat)\s+/i', '', $rawBenefitsTitle));
           $prefix = app()->getLocale() === 'id' ? t('product.benefits_of_id', 'Manfaat') : t('product.benefits_of_en', 'Benefits of');
         @endphp
-        <h2 class="text-4xl font-light text-zinc-500 leading-tight">{{ $prefix }} <br>
+        <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">{{ $prefix }} <br>
           <span class="font-bold text-gray-900">{{ $cleanBenefitsTitle }}</span>
         </h2>
-        <div class="h-1 w-16 bg-primary mt-4 mx-auto"></div>
+        <div class="h-1 w-16 bg-primary mt-4 mx-auto" data-gsap="line-grow"></div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         @foreach($benefitsCards as $card)
-        <div class="group bg-zinc-50 border border-zinc-200/80 p-8 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <div class="group bg-zinc-50 border border-zinc-200/80 p-8 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300" data-gsap="fade-up" data-gsap-delay="{{ ($loop->index % 3) * 0.1 }}">
           @if(!empty($card['icon']))
           @php
             $cardIcon = $card['icon'];
@@ -284,11 +285,11 @@
   <!-- Section 5: Customer Success Section -->
   <section class="py-24 md:py-32 bg-zinc-50 relative border-t border-zinc-100">
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
-      <div class="mb-16">
-        <h2 class="text-4xl font-light text-zinc-500 leading-tight">{{ t('product.customer_success_prefix', 'Customer') }} <br>
+      <div class="mb-16" data-gsap="fade-up">
+        <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">{{ t('product.customer_success_prefix', 'Customer') }} <br>
           <span class="font-bold text-gray-900">{{ t('product.customer_success_suffix', 'Success') }}</span>
         </h2>
-        <div class="h-1 w-16 bg-primary mt-4"></div>
+        <div class="h-1 w-16 bg-primary mt-4" data-gsap="line-grow"></div>
       </div>
 
       <div class="space-y-12">
@@ -305,7 +306,7 @@
               ? $storyOutcomes 
               : array_filter(array_map('trim', explode("\n", (string)$storyOutcomes)));
         @endphp
-        <div class="flex flex-col lg:flex-row items-center gap-10 p-10 bg-white rounded-3xl border border-zinc-200/80 hover:shadow-xl transition-shadow duration-300">
+        <div class="flex flex-col lg:flex-row items-center gap-10 p-10 bg-white rounded-3xl border border-zinc-200/80 hover:shadow-xl transition-shadow duration-300" data-gsap="fade-up" data-gsap-delay="{{ ($loop->index % 2) * 0.1 }}">
           <div class="w-full lg:w-3/5">
             @if($storyLogo)
             <img src="{{ resolve_block_asset($storyLogo) }}" alt="{{ $storyTitle }}" class="h-10 object-contain mb-6" />
@@ -348,18 +349,18 @@
       <div class="flex flex-col lg:flex-row gap-12 lg:gap-20">
   
         <!-- Left Column: Explore Features -->
-        <div class="w-full lg:w-1/2 flex flex-col justify-center">
+        <div class="w-full lg:w-1/2 flex flex-col justify-center" data-gsap="fade-up">
           <div class="mb-10">
-            <h2 class="text-4xl font-light text-zinc-500 leading-tight">
+            <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">
               {{ t('product.explore_prefix', 'Explore') }} {{ $parentProduct ? $parentProduct->title : 'Akamai' }}<br>
               <span class="font-bold text-zinc-900">{{ t('product.with_cdt', 'with CDT') }}</span>
             </h2>
-            <div class="h-1 bg-primary mt-4 w-16"></div>
+            <div class="h-1 bg-primary mt-4 w-16" data-gsap="line-grow"></div>
           </div>
   
           <div class="space-y-8">
             <!-- Feature 1 -->
-            <div class="flex items-start gap-5 group">
+            <div class="flex items-start gap-5 group" data-gsap="fade-up" data-gsap-delay="0.1">
               <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
                 <x-icon name="lucide:book-open" class="w-7 h-7 text-primary" />
               </div>
@@ -370,7 +371,7 @@
             </div>
   
             <!-- Feature 2 -->
-            <div class="flex items-start gap-5 group">
+            <div class="flex items-start gap-5 group" data-gsap="fade-up" data-gsap-delay="0.2">
               <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
                 <x-icon name="lucide:users" class="w-7 h-7 text-primary" />
               </div>
@@ -381,7 +382,7 @@
             </div>
   
             <!-- Feature 3 -->
-            <div class="flex items-start gap-5 group">
+            <div class="flex items-start gap-5 group" data-gsap="fade-up" data-gsap-delay="0.3">
               <div class="w-14 h-14 bg-red-50 text-primary rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
                 <x-icon name="lucide:award" class="w-7 h-7 text-primary" />
               </div>
@@ -391,10 +392,11 @@
               </div>
             </div>
           </div>
+  
         </div>
   
         <!-- Right Column: Form Card -->
-        <div class="w-full lg:w-1/2">
+        <div class="w-full lg:w-1/2" data-gsap="fade-up" data-gsap-delay="0.2">
           <div class="bg-white rounded-3xl border border-zinc-200/60 p-8 md:p-12 shadow-sm">
             <div class="mb-8">
               <span class="text-xs font-bold text-primary uppercase tracking-widest block mb-2">{{ t('product.request_consultation', 'Request Consultation') }}</span>
@@ -436,7 +438,7 @@
     <div class="absolute inset-0 bg-testimonial-image opacity-[0.5] bg-cover bg-center blur-sm pointer-events-none" style="background-image: url('{{ asset('themes/cdt/assets/bg-testimonial-CvlJnS23.webp') }}');"></div>
 
     <div class="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
-      <div class="mb-16 text-center md:text-left">
+      <div class="mb-16 text-center md:text-left" data-gsap="fade-up">
         @php
           $vendorName = $parentProduct ? $parentProduct->title : '';
           if (app()->getLocale() === 'id') {
@@ -447,10 +449,10 @@
               $seeMoreMain = $vendorName ? "{$vendorName} Solutions" : t('product.solutions_suffix_en', 'Solutions');
           }
         @endphp
-        <h2 class="text-4xl font-light text-zinc-500 leading-tight">{{ $seeMorePrefix }} <br>
+        <h2 class="text-4xl font-light text-zinc-500 leading-tight" data-gsap="fade-up">{{ $seeMorePrefix }} <br>
           <span class="font-bold text-gray-900">{{ $seeMoreMain }}</span>
         </h2>
-        <div class="h-1 w-16 bg-primary mt-4"></div>
+        <div class="h-1 w-16 bg-primary mt-4" data-gsap="line-grow"></div>
       </div>
 
       <div class="{{ $gridColsClass }}">
@@ -463,7 +465,7 @@
           $sHeroDesc = $sibling->getMeta('hero_description');
           $sDesc = $sExcerpt ?: ($sContent ?: ($sHeroDesc ?: ($sibling->excerpt ?: $sibling->content)));
         @endphp
-        <div onclick="window.location.href='{{ $sibling->getUrl() }}'" class="bg-white {{ $cardPaddingClass }} rounded-3xl border border-zinc-200/80 shadow-sm flex flex-col items-center text-center group hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer">
+        <div onclick="window.location.href='{{ $sibling->getUrl() }}'" class="bg-white {{ $cardPaddingClass }} rounded-3xl border border-zinc-200/80 shadow-sm flex flex-col items-center text-center group hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer" data-gsap="fade-up" data-gsap-delay="{{ ($loop->index % 4) * 0.1 }}">
           <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
             @if($sIcon && (str_contains($sIcon, '/') || str_contains($sIcon, '.')))
               <img src="{{ resolve_block_asset($sIcon) }}" alt="{{ $sibling->title }}" class="w-7 h-7 object-contain">
