@@ -824,11 +824,8 @@
                 </div>
                 <div class="flex flex-wrap gap-2.5">
                   @foreach($exploreProducts as $pItem)
-                    <a href="{{ $pItem->getUrl() }}" target="_blank" class="group/item inline-flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-zinc-100/90 hover:bg-primary text-zinc-800 hover:text-white border border-zinc-200/80 hover:border-primary text-xs font-semibold shadow-2xs transition-all duration-200">
+                    <a href="{{ $pItem->getUrl() }}" target="_blank" class="group/item inline-block px-6 py-2.5 rounded-xl bg-red-50/80 hover:bg-primary text-red-700 hover:text-white border border-red-100 hover:border-primary text-xs font-semibold shadow-2xs transition-all duration-200">
                       <span class="group-hover/item:text-white transition-colors">{{ $pItem->getTranslation('title', $currentLocale) ?: $pItem->title }}</span>
-                      <svg class="w-3.5 h-3.5 text-zinc-400 group-hover/item:text-white group-hover/item:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
-                      </svg>
                     </a>
                   @endforeach
                 </div>
@@ -846,11 +843,8 @@
                 </div>
                 <div class="flex flex-wrap gap-2.5">
                   @foreach($exploreSolutions as $sItem)
-                    <a href="{{ $sItem->getUrl() }}" target="_blank" class="group/item inline-flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-zinc-100/90 hover:bg-primary text-zinc-800 hover:text-white border border-zinc-200/80 hover:border-primary text-xs font-semibold shadow-2xs transition-all duration-200">
+                    <a href="{{ $sItem->getUrl() }}" target="_blank" class="group/item inline-block px-6 py-2.5 rounded-xl bg-red-50/80 hover:bg-primary text-red-700 hover:text-white border border-red-100 hover:border-primary text-xs font-semibold shadow-2xs transition-all duration-200">
                       <span class="group-hover/item:text-white transition-colors">{{ $sItem->getTranslation('title', $currentLocale) ?: $sItem->title }}</span>
-                      <svg class="w-3.5 h-3.5 text-zinc-400 group-hover/item:text-white group-hover/item:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
-                      </svg>
                     </a>
                   @endforeach
                 </div>
