@@ -43,7 +43,11 @@
     }
 
     $badges = $entry->getMeta('badges', []);
-    $badgeImages = $entry->getMeta('hero_badge_images') ?: ($entry->getMeta('badge_images') ?: []);
+    $heroBadgeImages = $entry->getMeta('hero_badge_images', []);
+    $badgeImagesList = $entry->getMeta('badge_images', []);
+    
+    $badgeImages = !empty($heroBadgeImages) ? $heroBadgeImages : $badgeImagesList;
+    $badgeHeightClass = !empty($heroBadgeImages) ? 'h-20' : 'h-40';
     $logoTitle = trim((string) $entry->getMeta('logo_title'));
 @endphp
 
@@ -103,7 +107,7 @@
           @foreach($badgeImages as $img)
             @php $imgUrl = resolve_block_asset($img); @endphp
             @if($imgUrl)
-            <img src="{{ $imgUrl }}" alt="Certification Badge" class="h-20 w-auto object-contain" loading="lazy" />
+            <img src="{{ $imgUrl }}" alt="Certification Badge" class="{{ $badgeHeightClass }} w-auto object-contain" loading="lazy" />
             @endif
           @endforeach
         </div>
