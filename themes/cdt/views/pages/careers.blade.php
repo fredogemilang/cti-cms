@@ -777,7 +777,7 @@
           <!-- Header Section -->
           <div class="px-8 pt-8 pb-6 border-b border-zinc-100/80 flex items-start justify-between gap-4">
             <div>
-              <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-emerald-50 border border-emerald-200/80 rounded-full text-emerald-700 text-xs font-bold uppercase tracking-wider mb-2.5 shadow-2xs">
+              <div class="inline-flex items-center gap-2 px-5 py-2 bg-emerald-50 border border-emerald-200/80 rounded-full text-emerald-700 text-xs font-bold uppercase tracking-wider mb-2.5 shadow-2xs">
                 <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
                 </svg>
@@ -794,10 +794,15 @@
           </div>
 
           <div class="p-8 md:p-10 overflow-y-auto flex-1 space-y-8">
-            <!-- Welcome Message Box -->
-            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-50/60 via-zinc-50 to-white border border-red-100/80 p-6 shadow-2xs">
-              <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-red-100/40 rounded-full blur-xl pointer-events-none"></div>
-              <p class="text-sm md:text-base text-zinc-700 font-light leading-relaxed relative z-10">
+            <!-- Highlighted Welcome Message Box -->
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-50/90 via-rose-50/50 to-zinc-50 border-l-4 border-primary border-y border-r border-red-100/80 p-6 shadow-sm">
+              <div class="flex items-center gap-2 mb-2 text-primary font-bold text-xs uppercase tracking-wider">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"></path>
+                </svg>
+                <span>A Message From CDT</span>
+              </div>
+              <p class="text-sm md:text-base text-zinc-800 font-normal leading-relaxed relative z-10">
                 @if($currentLocale === 'id')
                   Terima kasih telah mempertimbangkan untuk berkarier di CDT. Kami menyarankan Anda untuk mengenal lebih jauh tentang CDT melalui produk, solusi, artikel, dan perjalanan perusahaan kami. Hal ini dapat membantu Anda memahami lebih jauh mengenai bisnis, nilai, dan budaya kerja CDT.
                 @else
@@ -819,9 +824,9 @@
                 </div>
                 <div class="flex flex-wrap gap-2.5">
                   @foreach($exploreProducts as $pItem)
-                    <a href="{{ $pItem->getUrl() }}" class="group/item inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-50 hover:bg-red-600 text-zinc-700 hover:text-white border border-zinc-200/80 hover:border-red-600 text-xs font-semibold shadow-2xs transition-all duration-200">
-                      <span>{{ $pItem->getTranslation('title', $currentLocale) ?: $pItem->title }}</span>
-                      <svg class="w-3 h-3 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <a href="{{ $pItem->getUrl() }}" target="_blank" class="group/item inline-flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-zinc-100/90 hover:bg-primary text-zinc-800 hover:text-white border border-zinc-200/80 hover:border-primary text-xs font-semibold shadow-2xs transition-all duration-200">
+                      <span class="group-hover/item:text-white transition-colors">{{ $pItem->getTranslation('title', $currentLocale) ?: $pItem->title }}</span>
+                      <svg class="w-3.5 h-3.5 text-zinc-400 group-hover/item:text-white group-hover/item:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
                       </svg>
                     </a>
@@ -841,9 +846,9 @@
                 </div>
                 <div class="flex flex-wrap gap-2.5">
                   @foreach($exploreSolutions as $sItem)
-                    <a href="{{ $sItem->getUrl() }}" class="group/item inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-50 hover:bg-red-600 text-zinc-700 hover:text-white border border-zinc-200/80 hover:border-red-600 text-xs font-semibold shadow-2xs transition-all duration-200">
-                      <span>{{ $sItem->getTranslation('title', $currentLocale) ?: $sItem->title }}</span>
-                      <svg class="w-3 h-3 opacity-0 -translate-x-1 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                    <a href="{{ $sItem->getUrl() }}" target="_blank" class="group/item inline-flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-zinc-100/90 hover:bg-primary text-zinc-800 hover:text-white border border-zinc-200/80 hover:border-primary text-xs font-semibold shadow-2xs transition-all duration-200">
+                      <span class="group-hover/item:text-white transition-colors">{{ $sItem->getTranslation('title', $currentLocale) ?: $sItem->title }}</span>
+                      <svg class="w-3.5 h-3.5 text-zinc-400 group-hover/item:text-white group-hover/item:translate-x-0.5 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
                       </svg>
                     </a>
@@ -855,7 +860,7 @@
               <!-- Quick Link Feature Cards (Insights & About Us) -->
               <div class="pt-2">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <a href="{{ $blogUrl }}" class="group p-4.5 rounded-2xl bg-zinc-50 hover:bg-red-50/50 border border-zinc-200/80 hover:border-red-300 transition-all duration-300 flex items-center justify-between shadow-2xs">
+                  <a href="{{ $blogUrl }}" target="_blank" class="group p-4.5 rounded-2xl bg-zinc-50 hover:bg-red-50/50 border border-zinc-200/80 hover:border-red-300 transition-all duration-300 flex items-center justify-between shadow-2xs">
                     <div class="flex items-center gap-3.5">
                       <div class="w-10 h-10 rounded-xl bg-white border border-zinc-200/80 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 shadow-2xs">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
@@ -874,7 +879,7 @@
                     </svg>
                   </a>
 
-                  <a href="{{ $aboutUrl }}" class="group p-4.5 rounded-2xl bg-zinc-50 hover:bg-red-50/50 border border-zinc-200/80 hover:border-red-300 transition-all duration-300 flex items-center justify-between shadow-2xs">
+                  <a href="{{ $aboutUrl }}" target="_blank" class="group p-4.5 rounded-2xl bg-zinc-50 hover:bg-red-50/50 border border-zinc-200/80 hover:border-red-300 transition-all duration-300 flex items-center justify-between shadow-2xs">
                     <div class="flex items-center gap-3.5">
                       <div class="w-10 h-10 rounded-xl bg-white border border-zinc-200/80 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 shadow-2xs">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
@@ -900,7 +905,7 @@
           <!-- Modal Footer -->
           <div class="px-8 py-5 bg-zinc-50/80 border-t border-zinc-100 flex items-center justify-between">
             <p class="text-xs text-zinc-400 font-light hidden sm:block">PT Central Data Technology</p>
-            <button @click="closeModals()" class="w-full sm:w-auto px-8 py-3 bg-primary text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-red-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 cursor-pointer">
+            <button @click="closeModals()" class="w-full sm:w-auto px-7 py-2.5 bg-zinc-900 hover:bg-primary text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer">
               {{ t('common.done', 'Done') }}
             </button>
           </div>
