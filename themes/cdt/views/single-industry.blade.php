@@ -74,11 +74,16 @@
           $itemLink = is_array($item) ? ($item['link'] ?? '#') : '#';
           $itemIcon = is_array($item) ? ($item['icon'] ?? 'database') : 'database';
           if (empty($itemIcon)) $itemIcon = 'database';
+          $iconName = (str_starts_with($itemIcon, 'lucide:') || str_starts_with($itemIcon, 'heroicon:')) ? $itemIcon : 'lucide:' . $itemIcon;
         @endphp
         <div class="group relative rounded-3xl bg-white border border-zinc-100 p-8 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col items-center text-center">
           <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
           <div class="relative z-10 w-20 h-20 rounded-2xl bg-red-50 flex items-center justify-center text-primary mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-            <x-icon name="lucide:{{ $itemIcon }}" class="w-10 h-10" />
+            @if(str_starts_with($itemIcon, '<svg') || str_starts_with($itemIcon, 'http') || str_contains($itemIcon, '/'))
+              {!! render_icon($itemIcon, 'w-10 h-10') !!}
+            @else
+              <x-icon :name="$iconName" class="w-10 h-10" />
+            @endif
           </div>
           @if(!empty($itemLink) && $itemLink !== '#')
             <a href="{{ $itemLink }}" target="_blank" rel="noopener noreferrer" class="relative z-10 text-xl font-bold text-gray-900 leading-snug hover:text-primary transition-colors">
@@ -111,11 +116,16 @@
           $itemLink = is_array($item) ? ($item['link'] ?? '#') : '#';
           $itemIcon = is_array($item) ? ($item['icon'] ?? 'cloud') : 'cloud';
           if (empty($itemIcon)) $itemIcon = 'cloud';
+          $iconName = (str_starts_with($itemIcon, 'lucide:') || str_starts_with($itemIcon, 'heroicon:')) ? $itemIcon : 'lucide:' . $itemIcon;
         @endphp
         <div class="group relative rounded-3xl bg-white border border-zinc-100 p-8 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col items-center text-center">
           <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
           <div class="relative z-10 w-20 h-20 rounded-2xl bg-red-50 flex items-center justify-center text-primary mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-            <x-icon name="lucide:{{ $itemIcon }}" class="w-10 h-10" />
+            @if(str_starts_with($itemIcon, '<svg') || str_starts_with($itemIcon, 'http') || str_contains($itemIcon, '/'))
+              {!! render_icon($itemIcon, 'w-10 h-10') !!}
+            @else
+              <x-icon :name="$iconName" class="w-10 h-10" />
+            @endif
           </div>
           @if(!empty($itemLink) && $itemLink !== '#')
             <a href="{{ $itemLink }}" target="_blank" rel="noopener noreferrer" class="relative z-10 text-xl font-bold text-gray-900 leading-snug hover:text-primary transition-colors">
@@ -133,7 +143,7 @@
 
 <!-- Security Section -->
 @if(!empty($securityList) && is_array($securityList))
-<section class="relative py-24 bg-zinc-50 text-gray-900 overflow-hidden">
+<section class="relative py-24 bg-zinc-50 text-gray-900 overflow-hidden border-t border-zinc-100">
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
     <div class="text-center mb-16 lg:mb-24">
       <h2 class="text-3xl md:text-5xl font-light mb-6 text-zinc-500">Security</h2>
@@ -141,25 +151,30 @@
     </div>
 
     <!-- Features Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
       @foreach($securityList as $idx => $item)
         @php
           $itemTitle = is_array($item) ? ($item['title'] ?? '') : (string)$item;
           $itemLink = is_array($item) ? ($item['link'] ?? '#') : '#';
           $itemIcon = is_array($item) ? ($item['icon'] ?? 'shield-check') : 'shield-check';
           if (empty($itemIcon)) $itemIcon = 'shield-check';
+          $iconName = (str_starts_with($itemIcon, 'lucide:') || str_starts_with($itemIcon, 'heroicon:')) ? $itemIcon : 'lucide:' . $itemIcon;
         @endphp
         <div class="group relative rounded-3xl bg-white border border-zinc-100 p-8 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col items-center text-center">
           <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
           <div class="relative z-10 w-20 h-20 rounded-2xl bg-red-50 flex items-center justify-center text-primary mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-            <x-icon name="lucide:{{ $itemIcon }}" class="w-10 h-10" />
+            @if(str_starts_with($itemIcon, '<svg') || str_starts_with($itemIcon, 'http') || str_contains($itemIcon, '/'))
+              {!! render_icon($itemIcon, 'w-10 h-10') !!}
+            @else
+              <x-icon :name="$iconName" class="w-10 h-10" />
+            @endif
           </div>
           @if(!empty($itemLink) && $itemLink !== '#')
-            <a href="{{ $itemLink }}" target="_blank" rel="noopener noreferrer" class="relative z-10 text-xl lg:text-2xl font-bold text-gray-900 leading-tight hover:text-primary transition-colors">
+            <a href="{{ $itemLink }}" target="_blank" rel="noopener noreferrer" class="relative z-10 text-xl font-bold text-gray-900 leading-snug hover:text-primary transition-colors">
               {{ $itemTitle }}
             </a>
           @else
-            <h3 class="relative z-10 text-xl lg:text-2xl font-bold text-gray-900 leading-tight">{{ $itemTitle }}</h3>
+            <h3 class="relative z-10 text-xl font-bold text-gray-900 leading-snug">{{ $itemTitle }}</h3>
           @endif
         </div>
       @endforeach
