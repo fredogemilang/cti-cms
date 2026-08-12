@@ -62,7 +62,7 @@ class HomeController extends Controller
         $entries = CptEntry::with('author')
             ->where('post_type_id', $cpt->id)
             ->where('status', 'published')
-            ->orderByDesc('updated_at')
+            ->orderByRaw('COALESCE(published_at, created_at) DESC')
             ->orderByDesc('id')
             ->get();
 
