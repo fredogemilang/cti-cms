@@ -178,7 +178,7 @@
 </section>
 
 <!-- Solutions -->
-@if($solutionsFeatured || $solutionsOther)
+@if($solutionsFeatured || $solutionsOther || $entry->relatedEntries('product_id')->exists())
 <section id="solutions" class="py-16 md:py-32 bg-zinc-50 relative">
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col lg:flex-row gap-16 lg:gap-24">
