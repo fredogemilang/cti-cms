@@ -55,20 +55,7 @@
 
       <!-- Title & Intro -->
       <div class="max-w-4xl" data-gsap="fade-up" data-gsap-delay="0.1">
-        <!-- Industry Category Badge -->
-        @if(!empty($industry))
-          <span class="inline-block px-3.5 py-1 bg-white/15 backdrop-blur-md border border-white/20 text-white text-xs font-bold rounded-full uppercase tracking-wider mb-4">
-            {{ $industry }}
-          </span>
-        @endif
-
         <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-6 tracking-tight leading-tight">{{ $title }}</h1>
-        
-        @if(!empty($excerpt))
-          <div class="text-lg md:text-xl text-white/90 font-light leading-relaxed">
-            {!! $excerpt !!}
-          </div>
-        @endif
       </div>
     </div>
   </div>
@@ -82,44 +69,10 @@
 
       <!-- Left Column: Main Story -->
       <div class="w-full lg:w-2/3 space-y-8 order-2 lg:order-1" data-gsap="fade-up">
-        <!-- Key Impact Card -->
-        @if(!empty($impact))
-          <div class="p-6 md:p-8 bg-zinc-50 rounded-3xl border border-zinc-200/80 shadow-sm relative overflow-hidden group hover:border-primary/40 transition-all duration-300">
-            <div class="absolute top-0 left-0 w-2 h-full bg-primary"></div>
-            <span class="text-xs font-bold uppercase tracking-widest text-primary block mb-2">{{ t('cs.impact_heading', 'Key Impact') }}</span>
-            <p class="text-xl md:text-2xl font-bold text-gray-900 leading-snug">
-              {{ $impact }}
-            </p>
-          </div>
-        @endif
-
         @if(!empty($content))
-          <div class="prose prose-lg prose-zinc max-w-none text-gray-700 font-light leading-loose text-lg md:text-xl space-y-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-gray-900 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-gray-800 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_ul]:list-disc [&_ul]:pl-6">
+          <div class="prose prose-lg prose-zinc rich-content max-w-none text-gray-700 font-light leading-loose text-lg md:text-xl space-y-6 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-gray-900 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-gray-800 [&_strong]:font-semibold [&_strong]:text-gray-900 [&_ul]:list-disc [&_ul]:pl-6">
             {!! $content !!}
           </div>
-        @endif
-
-        <!-- Client Quote Block -->
-        @if(!empty($quote))
-          <blockquote class="relative p-8 md:p-12 bg-zinc-50 rounded-3xl border border-zinc-100 mt-12 overflow-hidden group hover:border-primary/30 transition-colors duration-300 pl-12 md:pl-16">
-            <div class="absolute top-0 left-0 w-2 h-full bg-primary"></div>
-            <svg class="w-12 h-12 text-zinc-300 mb-6" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-            </svg>
-            <p class="relative z-10 text-xl md:text-2xl font-light text-gray-800 leading-relaxed italic mb-8">
-              "{!! trim($quote) !!}"
-            </p>
-            @if(!empty($quoteAuthor))
-              <footer>
-                <p class="font-bold text-gray-900 text-lg">{{ $quoteAuthor }}</p>
-                @if(!empty($quoteRole))
-                  <p class="text-sm text-gray-500 uppercase tracking-widest mt-1">{{ $quoteRole }}</p>
-                @else
-                  <p class="text-sm text-gray-500 uppercase tracking-widest mt-1">{{ t('cs.valued_customer', 'Valued Customer') }}</p>
-                @endif
-              </footer>
-            @endif
-          </blockquote>
         @endif
 
         <div class="pt-8 border-t border-gray-100">
