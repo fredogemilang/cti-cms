@@ -61,7 +61,7 @@ class MergeCustomerSuccessContent extends Command
                 // 3. Quote Pelanggan
                 $cleanQuote = trim(strip_tags((string) $quote));
                 if (! empty($cleanQuote) && ! str_contains($cleanContent, $cleanQuote)) {
-                    $quoteHtml = '<blockquote><p>&ldquo;' . $cleanQuote . '&rdquo;</p>';
+                    $quoteHtml = '<blockquote><p>' . $cleanQuote . '</p>';
                     if (! empty($quoteAuthor)) {
                         $authorText = $quoteAuthor . (! empty($quoteRole) ? ' &mdash; ' . $quoteRole : '');
                         $quoteHtml .= '<footer><strong>' . $authorText . '</strong></footer>';

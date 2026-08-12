@@ -115,7 +115,7 @@
                       </p>
                     @endif
                     <a href="{{ $prod->getUrl($prodLocale) }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider hover:text-red-700 transition-colors group/link">
-                      {{ t('common.learn_more', 'Learn More') }}
+                      {{ $prodLocale === 'id' ? 'Selengkapnya' : 'Learn More' }}
                       <svg class="w-3.5 h-3.5 transform group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
                       </svg>
