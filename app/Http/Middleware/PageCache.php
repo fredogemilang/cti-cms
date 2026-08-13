@@ -54,6 +54,11 @@ class PageCache
 
     protected function shouldCache(Request $request): bool
     {
+        // When running on LiteSpeed, server-level LSCache handles caching — bypass PHP-level cache
+        if (\App\Services\CacheManager::isLiteSpeed()) {
+            return false;
+        }
+
         if (! setting('page_cache_enabled', false)) {
             return false;
         }

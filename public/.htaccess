@@ -1,4 +1,11 @@
 # ==========================================
+# LiteSpeed Web Server Cache Module
+# ==========================================
+<IfModule LiteSpeed>
+    CacheLookup on
+</IfModule>
+
+# ==========================================
 # Browser Caching (mod_expires)
 # ==========================================
 <IfModule mod_expires.c>

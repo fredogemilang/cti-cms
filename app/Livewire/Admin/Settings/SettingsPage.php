@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin\Settings;
 
-use App\Http\Middleware\PageCache;
 use App\Models\Setting;
+use App\Services\CacheManager;
 use App\Services\SettingsRegistry;
 use App\Settings\Contracts\SettingsAction;
 use Illuminate\Validation\ValidationException;
@@ -94,12 +94,15 @@ class SettingsPage extends Component
 
         $types = [];
         foreach ($registry->fields($this->group) as $field) {
+            if (($field['type'] ?? '') === 'info') {
+                continue;
+            }
             $types[$field['key']] = $this->fieldStorageType($field['type'] ?? 'string');
         }
 
         Setting::setMany($validated, $this->group, $types);
         Setting::flushMemo();
-        PageCache::purgeAll();
+        CacheManager::purgeAll();
 
         $this->dispatch('notify', ['type' => 'success', 'message' => 'Settings saved and cache cleared.']);
     }
