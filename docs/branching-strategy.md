@@ -104,4 +104,7 @@ cd /home/<cpanel_user>/<domain>/
 git fetch origin
 git reset --hard origin/project/<name>
 chown -R <cpanel_user>:<cpanel_user> /home/<cpanel_user>/<domain>/
+# Purge the full-page cache so visitors get freshly-rendered HTML
+# (also re-renders any cached pages containing forms/captcha from the old build).
+runuser -u <cpanel_user> -- php artisan page-cache:purge
 ```
