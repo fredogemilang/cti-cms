@@ -356,16 +356,28 @@
                 <div class="mb-3">
                     <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
                 </div>
+                @once
+                @push('scripts')
                 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                @endpush
+                @endonce
             @else
                 <input type="hidden" name="g-recaptcha-response" id="g-recaptcha-response">
+                @once
+                @push('scripts')
                 <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+                @endpush
+                @endonce
             @endif
         @elseif($captchaProvider === 'turnstile' && !empty(config('services.turnstile.site_key')))
             <div class="mb-3">
                 <div class="cf-turnstile" data-sitekey="{{ config('services.turnstile.site_key') }}" data-theme="auto"></div>
             </div>
+            @once
+            @push('scripts')
             <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+            @endpush
+            @endonce
         @endif
 
         {{-- Show captcha not completed error --}}
@@ -459,6 +471,22 @@ document.addEventListener('alpine:init', () => {
             this.errors = {};
             let valid = true;
             const formEl = e.target;
+
+            // Cached pages embed the cache-writer's `_token`. Re-stamp the hidden
+            // input with THIS visitor's token (XSRF-TOKEN cookie is re-issued raw
+            // per visitor, even on cache hits) so both the fetch FormData path and
+            // the native formEl.submit() fallback submit a token matching this
+            // visitor's session.
+            let xsrfToken = '';
+            try {
+                const cookieMatch = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+                if (cookieMatch) xsrfToken = decodeURIComponent(cookieMatch[1]);
+            } catch (err) { /* malformed cookie — keep the cached token as-is */ }
+
+            const tokenInput = formEl.querySelector('input[name="_token"]');
+            if (xsrfToken && tokenInput) {
+                tokenInput.value = xsrfToken;
+            }
 
             // Validate form fields
             config.fields.forEach(f => {
