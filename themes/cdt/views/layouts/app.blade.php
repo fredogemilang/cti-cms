@@ -10,38 +10,9 @@
     <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
   @endif
 
-  @if(file_exists(public_path('hot')))
-    {{-- Dev mode: standard Vite HMR --}}
-    @vite(['themes/cdt/assets/css/theme.css', 'themes/cdt/assets/js/theme.js'])
-  @else
-    {{-- Production: inline critical CSS + async full stylesheets --}}
-    @include('cdt::partials.critical-css')
-
-    @php
-      $manifest = json_decode((string) file_get_contents(public_path('build/manifest.json')), true);
-      $themeJs  = $manifest['themes/cdt/assets/js/theme.js'] ?? null;
-      $cssFiles = array_filter(array_merge(
-        [$manifest['themes/cdt/assets/css/theme.css']['file'] ?? null],
-        $themeJs['css'] ?? [],
-      ));
-    @endphp
-    @foreach($cssFiles as $cssFile)
-      <link rel="preload" href="{{ asset('build/'.$cssFile) }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-      <noscript><link rel="stylesheet" href="{{ asset('build/'.$cssFile) }}"></noscript>
-    @endforeach
-    @if($themeJs)
-      <script type="module" crossorigin src="{{ asset('build/'.$themeJs['file']) }}"></script>
-    @endif
-
-    {{-- Preload LCP hero image so download starts immediately --}}
-    @php
-      $heroImg = isset($page) ? $page->block('hero_image') : null;
-      $heroPreload = $heroImg
-        ? (str_starts_with($heroImg, 'http') || str_starts_with($heroImg, 'themes/') || str_starts_with($heroImg, 'assets/') ? asset($heroImg) : asset('storage/' . $heroImg))
-        : asset('themes/cdt/assets/banner_hero-DHYDqbF8.webp');
-    @endphp
-    <link rel="preload" href="{{ $heroPreload }}" as="image" fetchpriority="high">
-  @endif
+  {{-- Theme assets via Vite: built from themes/cdt/assets/{css/js} sources.
+       Prod reads public/build/manifest.json (committed), dev uses the Vite server. --}}
+  @vite(['themes/cdt/assets/css/theme.css', 'themes/cdt/assets/js/theme.js'])
   <style>
     .prose ul, .rich-content ul {
       list-style-type: disc !important;

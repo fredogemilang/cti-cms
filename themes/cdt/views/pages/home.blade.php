@@ -15,7 +15,7 @@
         $heroImg = $page?->block('hero_image');
         $heroImgUrl = $heroImg ? (str_starts_with($heroImg, 'http') || str_starts_with($heroImg, 'themes/') || str_starts_with($heroImg, 'assets/') ? asset($heroImg) : asset('storage/' . $heroImg)) : asset('themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
       @endphp
-      <x-image :src="$heroImgUrl" alt="{{ setting('site_name', 'Central Data Technology') }} Hero Banner" title="{{ setting('site_name', 'Central Data Technology') }}" class="hero-bg-img w-full h-full object-cover origin-center" sizes="100vw" loading="eager" decoding="sync" fetchpriority="high" onerror="this.src='{{ asset('themes/cdt/assets/photo-1451187580459-43490279c0fa-w2072-DWLGXPRP.jpg') }}'" />
+      <x-image :src="$heroImgUrl" alt="{{ setting('site_name', 'Central Data Technology') }} Hero Banner" title="{{ setting('site_name', 'Central Data Technology') }}" class="hero-bg-img w-full h-full object-cover origin-center" loading="eager" decoding="sync" fetchpriority="high" onerror="this.src='{{ asset('themes/cdt/assets/photo-1451187580459-43490279c0fa-w2072-DWLGXPRP.jpg') }}'" />
     </div>
   
     <!-- Red Gradient Overlay -->
