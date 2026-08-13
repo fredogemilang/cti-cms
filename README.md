@@ -286,10 +286,13 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# 4. Setup cron (required for scheduled tasks)
+# 4. Purge the full-page cache (always run after every deploy)
+php artisan page-cache:purge
+
+# 5. Setup cron (required for scheduled tasks)
 * * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1
 
-# 5. Start queue worker (required for async mail/jobs)
+# 6. Start queue worker (required for async mail/jobs)
 php artisan queue:work --daemon
 ```
 
@@ -305,6 +308,7 @@ php artisan queue:work --daemon
 - [ ] `php artisan storage:link` executed
 - [ ] HTTPS enforced at web server level
 - [ ] `.env` file not readable by web (chmod 600)
+- [ ] `php artisan page-cache:purge` included in deploy routine
 
 ---
 
