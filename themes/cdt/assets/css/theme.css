@@ -1,0 +1,84 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Self-hosted fonts (replaces Google Fonts CDN). Variable Inter covers all
+   weights 100-900 in a single file; Prompt is non-variable so each weight is
+   imported separately to match what the design uses (300-800 + 400/700 italics). */
+@import "@fontsource-variable/inter";
+@import "@fontsource/prompt/300.css";
+@import "@fontsource/prompt/400.css";
+@import "@fontsource/prompt/500.css";
+@import "@fontsource/prompt/600.css";
+@import "@fontsource/prompt/700.css";
+@import "@fontsource/prompt/800.css";
+@import "@fontsource/prompt/400-italic.css";
+@import "@fontsource/prompt/700-italic.css";
+
+@theme {
+  --color-primary: #e30613;
+  --color-secondary: #000000;
+  --color-dark: #1a1a1a;
+  --color-muted: #6b7280;
+  --font-heading: "Prompt", sans-serif;
+  --font-body: "Inter Variable", "Inter", sans-serif;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  /* Global custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f4f4f5; /* zinc-100 */
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #d4d4d8; /* zinc-300 */
+    border-radius: 9999px;
+    border: 2px solid #f4f4f5;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a1a1aa; /* zinc-400 */
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #d4d4d8 #f4f4f5;
+  }
+}
+
+/* Fix: Lenis smooth scroll breaks position:sticky by applying transform to html.
+   This override restores sticky behavior. */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* Custom Background Image Utilities to resolve assets at build time */
+.bg-footer-image {
+  background-image: url('../assets/images/bg-footer.webp');
+}
+.bg-form-image {
+  background-image: url('../assets/images/bg-form.webp');
+}
+.bg-testimonial-image {
+  background-image: url('../assets/images/bg-testimonial.webp');
+}
+
