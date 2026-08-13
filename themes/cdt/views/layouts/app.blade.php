@@ -10,9 +10,28 @@
     <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
   @endif
 
-  {{-- Theme assets via Vite: built from themes/cdt/assets/{css/js} sources.
-       Prod reads public/build/manifest.json (committed), dev uses the Vite server. --}}
-  @vite(['themes/cdt/assets/css/theme.css', 'themes/cdt/assets/js/theme.js'])
+  {{-- Critical above-the-fold CSS inline (hero + header) so first paint never
+       waits on stylesheets. See partials/critical-css.blade.php. --}}
+  @include('cdt::partials.critical-css')
+
+  {{-- Theme CSS: deferred (preload + swap) — not render-blocking. Full CSS
+       loads in parallel and applies as soon as ready; noscript keeps a
+       blocking fallback for no-JS visitors. --}}
+  @php
+    $manifest = json_decode((string) file_get_contents(public_path('build/manifest.json')), true);
+    $themeJs = $manifest['themes/cdt/assets/js/theme.js'] ?? null;
+    $themeCssFiles = array_merge(
+      [$manifest['themes/cdt/assets/css/theme.css']['file'] ?? null],
+      $themeJs['css'] ?? [],
+    );
+  @endphp
+  @foreach(array_filter($themeCssFiles) as $cssFile)
+    <link rel="preload" as="style" href="{{ asset('build/'.$cssFile) }}" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ asset('build/'.$cssFile) }}"></noscript>
+  @endforeach
+  @if($themeJs)
+    <script type="module" crossorigin src="{{ asset('build/'.$themeJs['file']) }}"></script>
+  @endif
   <style>
     .prose ul, .rich-content ul {
       list-style-type: disc !important;
