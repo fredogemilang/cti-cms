@@ -237,7 +237,7 @@
           <!-- Button for Popular Tags Modal -->
           @if(isset($tags) && $tags->isNotEmpty())
           <div class="ml-2">
-            <button type="button" onclick="document.getElementById('tagsModal').classList.remove('hidden')" class="px-5 py-2 rounded-full bg-zinc-50 text-gray-600 hover:bg-zinc-100 text-sm font-medium transition-colors flex items-center gap-2 border border-zinc-200 cursor-pointer">
+            <button type="button" @click="tagsModalOpen = true" class="px-5 py-2 rounded-full bg-zinc-50 text-gray-600 hover:bg-zinc-100 text-sm font-medium transition-colors flex items-center gap-2 border border-zinc-200 cursor-pointer">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
               {{ t('blog.popular_tags', 'Popular Tags') }}
               <span x-show="tag" class="w-2 h-2 rounded-full bg-primary inline-block"></span>
@@ -311,43 +311,61 @@
     </div>
   </div>
 
-  <!-- Popular Tags Modal -->
+  <!-- Popular Tags Modal (Alpine Bottom Sheet) -->
   @if(isset($tags) && $tags->isNotEmpty())
-  <div id="tagsModal" class="fixed inset-0 z-[100] hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="document.getElementById('tagsModal').classList.add('hidden')"></div>
-    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0 relative">
-      <div class="relative bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg w-full p-6" role="dialog" aria-modal="true">
-        <div class="flex justify-between items-center mb-5">
-          <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-            {{ t('blog.popular_tags', 'Popular Tags') }}
-          </h3>
-          <button type="button" onclick="document.getElementById('tagsModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-500 hover:bg-gray-100 rounded-full p-1 transition-colors">
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+  <!-- Backdrop -->
+  <div x-show="tagsModalOpen"
+    x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+    class="modal-sheet-backdrop fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm" style="display: none;"
+    @click="tagsModalOpen = false"></div>
+
+  <!-- Content -->
+  <div x-show="tagsModalOpen"
+    x-transition:enter="transition ease-out duration-300 transform"
+    x-transition:enter-start="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
+    x-transition:enter-end="opacity-100 translate-y-0 lg:scale-100"
+    x-transition:leave="transition ease-in duration-200 transform"
+    x-transition:leave-start="opacity-100 translate-y-0 lg:scale-100"
+    x-transition:leave-end="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
+    class="modal-sheet-content fixed inset-0 z-[101] flex items-end lg:items-center justify-center lg:p-6"
+    style="display: none;" role="dialog" aria-modal="true">
+
+    <div class="bg-white rounded-t-3xl lg:rounded-2xl w-full lg:max-w-lg shadow-2xl p-6 relative">
+      <!-- Drag Handle (mobile only) -->
+      <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto -mt-2 mb-4 lg:hidden"></div>
+
+      <div class="flex justify-between items-center mb-5">
+        <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+          {{ t('blog.popular_tags', 'Popular Tags') }}
+        </h3>
+        <button type="button" @click="tagsModalOpen = false" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <p class="text-sm text-gray-500 mb-6">{{ t('blog.modal_tags_desc', 'Discover trending topics across our blog. Select a tag to filter articles.') }}</p>
+
+      <div class="flex flex-wrap gap-3">
+        @foreach($tags as $tItem)
+          @php
+            $tName = $tItem->getTranslation('name', $currentLocale) ?: $tItem->name;
+            $tSlug = $tItem->getTranslation('slug', $currentLocale) ?: $tItem->slug;
+            $tCount = $tItem->posts_count ?? 0;
+          @endphp
+          <button type="button"
+            @click="setTag('{{ $tSlug }}')"
+            :class="tag === '{{ $tSlug }}' ? 'bg-primary text-white' : 'bg-zinc-50 text-gray-700 hover:bg-primary hover:text-white'"
+            class="px-4 py-2 text-sm font-medium rounded-xl transition-all border border-zinc-200 shadow-sm hover:shadow-md cursor-pointer">
+            #{{ $tName }} <span class="ml-1 text-xs opacity-60">({{ $tCount }})</span>
           </button>
-        </div>
-        
-        <p class="text-sm text-gray-500 mb-6">{{ t('blog.modal_tags_desc', 'Discover trending topics across our blog. Select a tag to filter articles.') }}</p>
-        
-        <div class="flex flex-wrap gap-3">
-          @foreach($tags as $tItem)
-            @php
-              $tName = $tItem->getTranslation('name', $currentLocale) ?: $tItem->name;
-              $tSlug = $tItem->getTranslation('slug', $currentLocale) ?: $tItem->slug;
-              $tCount = $tItem->posts_count ?? 0;
-            @endphp
-            <button type="button"
-              @click="setTag('{{ $tSlug }}')"
-              :class="tag === '{{ $tSlug }}' ? 'bg-primary text-white' : 'bg-zinc-50 text-gray-700 hover:bg-primary hover:text-white'"
-              class="px-4 py-2 text-sm font-medium rounded-xl transition-all border border-zinc-200 shadow-sm hover:shadow-md cursor-pointer">
-              #{{ $tName }} <span class="ml-1 text-xs opacity-60">({{ $tCount }})</span>
-            </button>
-          @endforeach
-        </div>
-        
-        <div class="mt-8 pt-5 border-t border-gray-100 flex justify-end">
-          <button type="button" onclick="document.getElementById('tagsModal').classList.add('hidden')" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg text-sm transition-colors cursor-pointer">{{ t('common.close', 'Close') }}</button>
-        </div>
+        @endforeach
+      </div>
+
+      <div class="mt-8 pt-5 border-t border-gray-100 flex justify-end">
+        <button type="button" @click="tagsModalOpen = false" class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium rounded-lg text-sm transition-colors cursor-pointer">{{ t('common.close', 'Close') }}</button>
       </div>
     </div>
   </div>
@@ -363,6 +381,7 @@
       tag: config.tag || '',
       search: config.search || '',
       loading: false,
+      tagsModalOpen: false,
 
       init() {
         window.addEventListener('popstate', () => {
@@ -426,8 +445,7 @@
       setTag(tagSlug) {
         this.tag = (this.tag === tagSlug) ? '' : tagSlug;
         if (this.tag) this.category = '';
-        const modal = document.getElementById('tagsModal');
-        if (modal) modal.classList.add('hidden');
+        this.tagsModalOpen = false;
         this.fetchPosts(true);
       },
 

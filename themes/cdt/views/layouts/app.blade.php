@@ -50,6 +50,36 @@
       color: #e30613 !important;
       font-weight: bold !important;
     }
+
+    /* ── Mobile Bottom Sheet Modals ── */
+    @media (max-width: 1023px) {
+      .modal-sheet-backdrop {
+        z-index: 10003 !important;
+      }
+      .modal-sheet-content {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        top: auto !important;
+        max-height: 90vh;
+        border-radius: 1.5rem 1.5rem 0 0 !important;
+        margin: 0 !important;
+        padding-bottom: 120px;
+        overflow-y: auto;
+        overscroll-behavior-y: contain;
+        z-index: 10004 !important;
+      }
+      .modal-sheet-fullscreen {
+        position: fixed !important;
+        inset: 0 !important;
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        padding-bottom: 0 !important;
+        z-index: 10004 !important;
+      }
+    }
   </style>
 
 

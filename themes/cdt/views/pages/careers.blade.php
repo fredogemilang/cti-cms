@@ -656,37 +656,43 @@
 
       </div>
 
-      <!-- Candidate Application Modal (job_application_form) -->
+      <!-- Candidate Application Modal (Full-screen on mobile) -->
+      <!-- Backdrop -->
       <div
         x-show="showApplyModal"
-        class="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
+        x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+        class="modal-sheet-backdrop fixed inset-0 z-[150] bg-black/60 backdrop-blur-sm"
         style="display: none;"
-        @click.self="closeModals()">
+        @click="closeModals()"></div>
 
-        <div
-          x-show="showApplyModal"
-          x-transition:enter="transition ease-out duration-300 transform"
-          x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-          x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-          x-transition:leave="transition ease-in duration-200 transform"
-          x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-          x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-          class="bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden relative max-h-[90vh] flex flex-col"
-          @keydown.escape.window="closeModals()">
+      <!-- Content -->
+      <div
+        x-show="showApplyModal"
+        x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 lg:scale-100"
+        x-transition:leave="transition ease-in duration-200 transform"
+        x-transition:leave-start="opacity-100 translate-y-0 lg:scale-100"
+        x-transition:leave-end="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
+        class="modal-sheet-fullscreen fixed inset-0 z-[151] flex items-end lg:items-center justify-center lg:p-4"
+        style="display: none;"
+        @keydown.escape.window="closeModals()">
 
-          <button @click="closeModals()" class="absolute top-6 right-6 p-2 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 rounded-full transition-colors z-20">
+        <div class="bg-white lg:rounded-3xl shadow-2xl w-full lg:max-w-xl overflow-hidden relative max-h-screen lg:max-h-[90vh] flex flex-col">
+
+          <!-- Close button - highlighted (red bg, always visible) -->
+          <button @click="closeModals()" class="absolute top-4 right-4 lg:top-6 lg:right-6 p-2.5 bg-primary text-white hover:bg-red-700 rounded-full transition-colors z-20 shadow-lg">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
           </button>
 
-          <div class="p-8 overflow-y-auto flex-1">
+          <div class="p-6 lg:p-8 overflow-y-auto flex-1">
+            <!-- Drag Handle (mobile only) -->
+            <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-4 lg:hidden"></div>
+
             <div class="mb-8">
               <span class="text-xs font-bold text-primary uppercase tracking-wider block mb-1">Applying For</span>
               <h3 x-text="selectedJob ? selectedJob.title : ''" class="text-2xl font-bold text-gray-900"></h3>
@@ -747,35 +753,39 @@
         </div>
       </div>
 
-      <!-- Explore CDT Modal (Appears after job application submission) -->
+      <!-- Explore CDT Modal (Bottom sheet on mobile, centered on desktop) -->
+      <!-- Backdrop -->
       <div
         x-show="showExploreModal"
-        class="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-slate-950/70 backdrop-blur-md"
-        x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
+        x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+        class="modal-sheet-backdrop fixed inset-0 z-[200] bg-slate-950/70 backdrop-blur-md"
         style="display: none;"
-        @click.self="closeModals()">
+        @click="closeModals()"></div>
 
-        <div
-          x-show="showExploreModal"
-          x-transition:enter="transition ease-out duration-300 transform"
-          x-transition:enter-start="opacity-0 scale-95 translate-y-4"
-          x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-          x-transition:leave="transition ease-in duration-200 transform"
-          x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-          x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-          class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl overflow-hidden relative max-h-[92vh] flex flex-col border border-zinc-100"
-          @keydown.escape.window="closeModals()">
+      <!-- Content -->
+      <div
+        x-show="showExploreModal"
+        x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 lg:scale-100"
+        x-transition:leave="transition ease-in duration-200 transform"
+        x-transition:leave-start="opacity-100 translate-y-0 lg:scale-100"
+        x-transition:leave-end="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
+        class="modal-sheet-content fixed inset-0 z-[201] flex items-end lg:items-center justify-center lg:p-6"
+        style="display: none;"
+        @keydown.escape.window="closeModals()">
+
+        <div class="bg-white rounded-t-3xl lg:rounded-3xl shadow-2xl w-full lg:max-w-3xl overflow-hidden relative max-h-[92vh] flex flex-col border border-zinc-100">
+          <!-- Drag Handle (mobile only) -->
+          <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mt-3 mb-1 lg:hidden"></div>
 
           <!-- Top Gradient Accent Line -->
           <div class="h-2 w-full bg-gradient-to-r from-red-600 via-primary to-rose-500"></div>
 
           <!-- Header Section -->
-          <div class="px-8 pt-8 pb-6 border-b border-zinc-100/80 flex items-start justify-between gap-4">
+          <div class="px-6 lg:px-8 pt-6 lg:pt-8 pb-6 border-b border-zinc-100/80 flex items-start justify-between gap-4">
             <div>
               <div class="inline-flex items-center gap-2 px-5 py-2 bg-emerald-50 border border-emerald-200/80 rounded-full text-emerald-700 text-xs font-bold uppercase tracking-wider mb-2.5 shadow-2xs">
                 <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -793,7 +803,7 @@
             </button>
           </div>
 
-          <div class="p-8 md:p-10 overflow-y-auto flex-1 space-y-8">
+          <div class="p-6 lg:p-8 md:p-10 overflow-y-auto flex-1 space-y-8">
             <!-- Highlighted Welcome Message Box -->
             <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-50/90 via-rose-50/50 to-zinc-50 border-l-4 border-primary border-y border-r border-red-100/80 p-6 shadow-sm">
               <div class="flex items-center gap-2 mb-2 text-primary font-bold text-xs uppercase tracking-wider">
@@ -897,7 +907,7 @@
           </div>
 
           <!-- Modal Footer -->
-          <div class="px-8 py-5 bg-zinc-50/80 border-t border-zinc-100 flex items-center justify-between">
+          <div class="px-6 lg:px-8 py-5 bg-zinc-50/80 border-t border-zinc-100 flex items-center justify-between">
             <p class="text-xs text-zinc-400 font-light hidden sm:block">PT Central Data Technology</p>
             <button @click="closeModals()" class="w-full sm:w-auto px-7 py-2.5 bg-zinc-900 hover:bg-primary text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer">
               {{ t('common.done', 'Done') }}

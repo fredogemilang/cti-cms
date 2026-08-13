@@ -76,7 +76,7 @@
             {{ t('footer.social_desc', 'Keep up to date with all the latest digital technology news and trends.') }}
           </p>
 
-          <a href="#" id="footer-subscribe-link" title="{{ t('newsletter.modal_title', 'Subscribe to Newsletter') }}" aria-label="{{ t('newsletter.modal_title', 'Subscribe to Newsletter') }}" class="text-white text-sm font-bold italic underline hover:text-gray-300">{{ t('newsletter.footer_link', 'Subscribe') }}</a>
+          <a href="#" @click.prevent="$dispatch('open-subscribe')" title="{{ t('newsletter.modal_title', 'Subscribe to Newsletter') }}" aria-label="{{ t('newsletter.modal_title', 'Subscribe to Newsletter') }}" class="text-white text-sm font-bold italic underline hover:text-gray-300">{{ t('newsletter.footer_link', 'Subscribe') }}</a>
         </div>
 
         <!-- Column 3: Quick Link -->
@@ -98,111 +98,81 @@
       </div>
     </div>
 
-    <!-- Subscription Modal -->
-    <div id="subscribe-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" id="subscribe-modal-backdrop"></div>
+    <!-- Subscription Modal (Alpine) -->
+    <div x-data="{ subscribeOpen: false, subscribeSuccess: false }" @open-subscribe.window="subscribeOpen = true"
+      x-on:keydown.escape.window="subscribeOpen = false"
+      x-effect="if (subscribeOpen) { document.body.style.overflow = 'hidden'; } else { document.body.style.overflow = ''; }">
 
-      <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl relative z-10 transform scale-95 opacity-0 transition-all duration-300" id="subscribe-modal-card">
-        <button id="close-subscribe-modal" class="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600 transition-colors">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
+      <!-- Backdrop -->
+      <div x-show="subscribeOpen"
+        x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+        class="modal-sheet-backdrop fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm" style="display: none;"
+        @click="subscribeOpen = false; subscribeSuccess = false"></div>
 
-        <div id="subscribe-form-container">
-          <p class="text-2xl font-bold text-zinc-900 mb-2 font-prompt">{{ t('newsletter.modal_title', 'Subscribe to our Newsletter') }}</p>
-          <p class="text-sm text-zinc-500 mb-6">{{ t('newsletter.modal_subtitle', 'Receive the latest insights and digital technology trends directly in your inbox.') }}</p>
+      <!-- Content -->
+      <div x-show="subscribeOpen"
+        x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 lg:scale-100"
+        x-transition:leave="transition ease-in duration-200 transform"
+        x-transition:leave-start="opacity-100 translate-y-0 lg:scale-100"
+        x-transition:leave-end="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
+        class="modal-sheet-content fixed inset-0 z-[101] flex items-end lg:items-center justify-center lg:p-6"
+        style="display: none;">
 
-          @php
-            $newsletterForm = get_assigned_form('newsletter_form');
-          @endphp
+        <div class="bg-white rounded-t-3xl lg:rounded-2xl p-8 w-full lg:max-w-md shadow-2xl relative">
+          <!-- Drag Handle (mobile only) -->
+          <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto -mt-4 mb-4 lg:hidden"></div>
 
-          @if($newsletterForm)
-            @include('cdt::partials.tailwind-form', ['form' => $newsletterForm, 'variant' => 'light'])
-          @else
-            <form id="subscribe-modal-form" class="space-y-4 text-left">
-              <div>
-                <label for="subscribe-name" class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Full Name</label>
-                <input type="text" id="subscribe-name" required placeholder="John Doe"
-                  class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
-              </div>
-              <div>
-                <label for="subscribe-email" class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Email Address</label>
-                <input type="email" id="subscribe-email" required placeholder="john@example.com"
-                  class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
-              </div>
-              <button type="submit"
-                class="w-full py-3 bg-gradient-to-r from-[#b82d25] to-red-600 text-white font-bold rounded-xl shadow-lg hover:shadow-red-500/20 hover:from-red-600 hover:to-red-700 transition duration-300 mt-2">
-                Subscribe Now
-              </button>
-            </form>
-          @endif
-        </div>
+          <!-- Close button -->
+          <button @click="subscribeOpen = false; subscribeSuccess = false"
+            class="absolute top-4 right-4 p-2 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 rounded-full transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
 
-        <div id="subscribe-success-container" class="hidden text-center py-6">
-          <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-[#b82d25] mx-auto mb-4">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          <!-- Form -->
+          <div x-show="!subscribeSuccess">
+            <p class="text-2xl font-bold text-zinc-900 mb-2 font-prompt">{{ t('newsletter.modal_title', 'Subscribe to our Newsletter') }}</p>
+            <p class="text-sm text-zinc-500 mb-6">{{ t('newsletter.modal_subtitle', 'Receive the latest insights and digital technology trends directly in your inbox.') }}</p>
+
+            @php
+              $newsletterForm = get_assigned_form('newsletter_form');
+            @endphp
+
+            @if($newsletterForm)
+              @include('cdt::partials.tailwind-form', ['form' => $newsletterForm, 'variant' => 'light'])
+            @else
+              <form @submit.prevent="subscribeSuccess = true" class="space-y-4 text-left">
+                <div>
+                  <label class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Full Name</label>
+                  <input type="text" required placeholder="John Doe"
+                    class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Email Address</label>
+                  <input type="email" required placeholder="john@example.com"
+                    class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
+                </div>
+                <button type="submit"
+                  class="w-full py-3 bg-gradient-to-r from-[#b82d25] to-red-600 text-white font-bold rounded-xl shadow-lg hover:shadow-red-500/20 hover:from-red-600 hover:to-red-700 transition duration-300 mt-2">
+                  Subscribe Now
+                </button>
+              </form>
+            @endif
           </div>
-          <p class="text-2xl font-bold text-zinc-900 mb-2 font-prompt">Subscription Successful!</p>
-          <p class="text-sm text-zinc-500">Thank you for subscribing. We will keep you updated with our latest news.</p>
+
+          <!-- Success State -->
+          <div x-show="subscribeSuccess" class="text-center py-6" style="display: none;">
+            <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-[#b82d25] mx-auto mb-4">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <p class="text-2xl font-bold text-zinc-900 mb-2 font-prompt">Subscription Successful!</p>
+            <p class="text-sm text-zinc-500">Thank you for subscribing. We will keep you updated with our latest news.</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function() {
-        const subscribeLink = document.getElementById("footer-subscribe-link");
-        const modal = document.getElementById("subscribe-modal");
-        const backdrop = document.getElementById("subscribe-modal-backdrop");
-        const card = document.getElementById("subscribe-modal-card");
-        const closeBtn = document.getElementById("close-subscribe-modal");
-        const form = document.getElementById("subscribe-modal-form");
-        const formContainer = document.getElementById("subscribe-form-container");
-        const successContainer = document.getElementById("subscribe-success-container");
-
-        function openModal(e) {
-          if (e) e.preventDefault();
-          if (!modal) return;
-          modal.classList.remove("hidden");
-          modal.offsetWidth;
-          modal.classList.add("opacity-100");
-          modal.classList.remove("opacity-0");
-          card.classList.add("scale-100", "opacity-100");
-          card.classList.remove("scale-95", "opacity-0");
-          document.body.style.overflow = "hidden";
-
-          // Re-render Turnstile widget if present inside the unhidden modal
-          if (window.turnstile && card.querySelector(".cf-turnstile")) {
-            try { window.turnstile.render(card.querySelector(".cf-turnstile")); } catch(err){}
-          }
-        }
-
-        function closeModal() {
-          if (!modal) return;
-          modal.classList.add("opacity-0");
-          modal.classList.remove("opacity-100");
-          card.classList.add("scale-95", "opacity-0");
-          card.classList.remove("scale-100", "opacity-100");
-          setTimeout(function() {
-            modal.classList.add("hidden");
-            document.body.style.overflow = "";
-            if (form) form.reset();
-            if (formContainer) formContainer.classList.remove("hidden");
-            if (successContainer) successContainer.classList.add("hidden");
-          }, 300);
-        }
-
-        if (subscribeLink) subscribeLink.addEventListener("click", openModal);
-        if (closeBtn) closeBtn.addEventListener("click", closeModal);
-        if (backdrop) backdrop.addEventListener("click", closeModal);
-        document.addEventListener("keydown", function(e) {
-          if (e.key === "Escape" && modal && !modal.classList.contains("hidden")) closeModal();
-        });
-        if (form) {
-          form.addEventListener("submit", function(e) {
-            e.preventDefault();
-            if (formContainer) formContainer.classList.add("hidden");
-            if (successContainer) successContainer.classList.remove("hidden");
-          });
-        }
-      });
-    </script>
 </footer>
