@@ -86,3 +86,8 @@ html.lenis, html.lenis body {
   background-image: url('/themes/cdt/assets/images/bg-testimonial.webp');
 }
 
+/* Deferred sections: skip rendering until near viewport */
+.deferred-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}

@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\DeferredSectionController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FormSubmissionController;
 use App\Http\Controllers\HomeController;
@@ -43,6 +44,9 @@ $adminPath = config('admin.path', 'admin');
 
 // Public homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Deferred AJAX sections (loaded after initial page paint)
+Route::get('/_deferred/{section}', [DeferredSectionController::class, 'show'])->name('deferred.section');
 
 // Localized homepage (e.g. /id)
 try {
