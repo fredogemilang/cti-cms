@@ -193,8 +193,11 @@ gsapElements.forEach((el) => {
 });
 
 // ==========================================
-// 2. CUSTOM SECTION TIMELINES
+// 2. DEFERRED SECTION ANIMATIONS
+//    Wrapped in requestIdleCallback so they run after first paint,
+//    avoiding forced-reflow penalty on mobile Lighthouse.
 // ==========================================
+const deferAnimations = () => {
 
 // A. Hero Section — animations REMOVED (2026-08-13).
 // The gsap.from() load animation (bg scale 1.15 over 2s + text stagger) delayed
@@ -302,6 +305,15 @@ allianceLinks.forEach((link) => {
     }
   });
 });
+
+}; // end deferAnimations
+
+// Schedule deferred animations after main thread is idle
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(deferAnimations, { timeout: 2000 });
+} else {
+  setTimeout(deferAnimations, 200);
+}
 
 // ==========================================
 // 4. SWIPER JS INITIALIZATION
