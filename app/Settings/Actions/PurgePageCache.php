@@ -2,15 +2,17 @@
 
 namespace App\Settings\Actions;
 
-use App\Http\Middleware\PageCache;
+use App\Services\CacheManager;
 use App\Settings\Contracts\SettingsAction;
 
 class PurgePageCache implements SettingsAction
 {
     public function handle(array $values): array
     {
-        PageCache::purgeAll();
+        CacheManager::purgeAll();
 
-        return ['type' => 'success', 'message' => 'Page cache purged. Next anonymous visits will be re-rendered.'];
+        $mode = CacheManager::isLiteSpeed() ? 'LiteSpeed Cache + Page Cache' : 'Page cache';
+
+        return ['type' => 'success', 'message' => "{$mode} purged. Next anonymous visits will be re-rendered."];
     }
 }

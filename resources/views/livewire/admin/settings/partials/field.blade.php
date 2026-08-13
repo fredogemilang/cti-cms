@@ -9,13 +9,36 @@
 @endphp
 
 <div>
-    @if($type !== 'boolean')
+    @if($type !== 'boolean' && $type !== 'info')
         <label for="{{ $key }}" class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-2">
             {{ $label }}
         </label>
     @endif
 
     @switch($type)
+        @case('info')
+            @php
+                $isLiteSpeed = \App\Services\CacheManager::isLiteSpeed();
+                $icon = $field['icon'] ?? ($isLiteSpeed ? 'verified' : 'info');
+                $isSuccess = ($field['variant'] ?? '') === 'success' || ($isLiteSpeed && !isset($field['variant']));
+                $boxCls = $isSuccess
+                    ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-300'
+                    : 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20 text-blue-800 dark:text-blue-300';
+                $iconCls = $isSuccess ? 'text-emerald-600 dark:text-emerald-400' : 'text-[#2563EB] dark:text-blue-400';
+            @endphp
+            <div class="rounded-2xl border p-4 text-xs flex items-start gap-3.5 {{ $boxCls }}">
+                <span class="material-symbols-outlined text-[22px] shrink-0 mt-0.5 {{ $iconCls }}">{{ $icon }}</span>
+                <div class="space-y-1 min-w-0 flex-1">
+                    @if($label && $label !== $key)
+                        <div class="font-bold text-sm text-[#111827] dark:text-[#FCFCFC]">{{ $label }}</div>
+                    @endif
+                    <div class="text-xs leading-relaxed text-[#4B5563] dark:text-[#9CA3AF]">
+                        {!! $field['content'] ?? ($field['help'] ?? '') !!}
+                    </div>
+                </div>
+            </div>
+            @break
+
         @case('textarea')
             <textarea
                 id="{{ $key }}"
@@ -111,7 +134,7 @@
             />
     @endswitch
 
-    @if($help && $type !== 'boolean')
+    @if($help && $type !== 'boolean' && $type !== 'info')
         <p class="text-xs text-[#6F767E] mt-1.5">{{ $help }}</p>
     @endif
 

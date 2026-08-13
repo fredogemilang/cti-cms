@@ -2,20 +2,26 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Middleware\PageCache;
+use App\Services\CacheManager;
 use Illuminate\Console\Command;
 
 class PurgePageCacheCommand extends Command
 {
-    protected $signature = 'page-cache:purge';
+    protected $signature = 'page-cache:purge {--warm : Automatically preload and warm cache after purging}';
 
-    protected $description = 'Bump the page cache version, invalidating all cached anonymous pages.';
+    protected $description = 'Purge all cached anonymous pages across LiteSpeed Cache and PageCache.';
 
     public function handle(): int
     {
-        PageCache::purgeAll();
+        CacheManager::purgeAll();
 
-        $this->info('Page cache purged.');
+        $mode = CacheManager::isLiteSpeed() ? 'LiteSpeed Cache + Page Cache' : 'Page cache';
+
+        $this->info("{$mode} purged successfully.");
+
+        if ($this->option('warm')) {
+            $this->call('page-cache:warm');
+        }
 
         return self::SUCCESS;
     }

@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Http\Middleware\PageCache;
 use App\Jobs\PingSitemap;
 use App\Listeners\LogAuthEvents;
 use App\Listeners\UpdateLastLoginAt;
@@ -14,6 +13,7 @@ use App\Models\User;
 use App\Observers\CptEntryObserver;
 use App\Observers\PageObserver;
 use App\Observers\UserObserver;
+use App\Services\CacheManager;
 use App\Services\WebhookDispatcher;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
@@ -57,10 +57,38 @@ class CmsEventServiceProvider extends ServiceProvider
      */
     protected function registerCacheInvalidation(): void
     {
-        // Page cache invalidation
-        foreach ([Page::class, CptEntry::class] as $contentModel) {
-            $contentModel::saved(fn () => PageCache::purgeAll());
-            $contentModel::deleted(fn () => PageCache::purgeAll());
+        $contentModels = [Page::class, CptEntry::class];
+        if (class_exists(\Plugins\Posts\Models\Post::class)) {
+            $contentModels[] = \Plugins\Posts\Models\Post::class;
+        }
+
+        // Page cache invalidation + targeted cache warming
+        foreach ($contentModels as $contentModel) {
+            $contentModel::saved(function ($model) {
+                CacheManager::purgeAll();
+
+                // Targeted cache warming on content publish/save
+                if (setting('page_cache_enabled', false) && setting('page_cache_warm_on_save', true) && ($model->status ?? null) === 'published') {
+                    $urls = ['/'];
+                    $locales = function_exists('available_locales') ? available_locales() : [config('app.locale', 'en')];
+
+                    if (method_exists($model, 'getUrl')) {
+                        foreach ($locales as $loc) {
+                            try {
+                                $u = $model->getUrl($loc);
+                                if (! empty($u)) {
+                                    $urls[] = $u;
+                                }
+                            } catch (\Throwable) {
+                            }
+                        }
+                    }
+
+                    \App\Jobs\WarmCacheJob::dispatch(array_values(array_unique($urls)));
+                }
+            });
+
+            $contentModel::deleted(fn () => CacheManager::purgeAll());
         }
 
         // Sitemap invalidation + search engine ping
@@ -71,10 +99,10 @@ class CmsEventServiceProvider extends ServiceProvider
             }
         };
 
-        Page::saved($invalidateSitemap);
-        Page::deleted($invalidateSitemap);
-        CptEntry::saved($invalidateSitemap);
-        CptEntry::deleted($invalidateSitemap);
+        foreach ($contentModels as $contentModel) {
+            $contentModel::saved($invalidateSitemap);
+            $contentModel::deleted($invalidateSitemap);
+        }
     }
 
     /**
