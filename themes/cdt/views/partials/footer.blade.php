@@ -103,76 +103,79 @@
       x-on:keydown.escape.window="subscribeOpen = false"
       x-effect="if (subscribeOpen) { document.body.style.overflow = 'hidden'; } else { document.body.style.overflow = ''; }">
 
-      <!-- Backdrop -->
-      <div x-show="subscribeOpen"
-        x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-        class="modal-sheet-backdrop fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm" style="display: none;"
-        @click="subscribeOpen = false; subscribeSuccess = false"></div>
+      <template x-teleport="body">
+        <div x-show="subscribeOpen" style="display: none;">
+          <!-- Backdrop -->
+          <div x-show="subscribeOpen"
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            class="modal-sheet-backdrop fixed inset-0 z-[10003] bg-black/60 backdrop-blur-sm"
+            @click="subscribeOpen = false; subscribeSuccess = false"></div>
 
-      <!-- Content -->
-      <div x-show="subscribeOpen"
-        x-transition:enter="transition ease-out duration-300 transform"
-        x-transition:enter-start="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
-        x-transition:enter-end="opacity-100 translate-y-0 lg:scale-100"
-        x-transition:leave="transition ease-in duration-200 transform"
-        x-transition:leave-start="opacity-100 translate-y-0 lg:scale-100"
-        x-transition:leave-end="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
-        class="modal-sheet-content fixed inset-0 z-[101] flex items-end lg:items-center justify-center lg:p-6"
-        style="display: none;">
+          <!-- Content -->
+          <div x-show="subscribeOpen"
+            x-transition:enter="transition ease-out duration-300 transform"
+            x-transition:enter-start="opacity-0 translate-y-full md:translate-y-0 md:scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 md:scale-100"
+            x-transition:leave="transition ease-in duration-200 transform"
+            x-transition:leave-start="opacity-100 translate-y-0 md:scale-100"
+            x-transition:leave-end="opacity-0 translate-y-full md:translate-y-0 md:scale-95"
+            class="modal-sheet-wrapper fixed inset-0 z-[10004] flex items-end md:items-center justify-center md:p-6">
 
-        <div class="bg-white rounded-t-3xl lg:rounded-2xl p-8 w-full lg:max-w-md shadow-2xl relative">
-          <!-- Drag Handle (mobile only) -->
-          <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto -mt-4 mb-4 lg:hidden"></div>
+            <div class="modal-sheet-card bg-white rounded-t-3xl md:rounded-2xl p-8 w-full md:max-w-md shadow-2xl relative">
+              <!-- Drag Handle (mobile only) -->
+              <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto -mt-4 mb-4 md:hidden"></div>
 
-          <!-- Close button -->
-          <button @click="subscribeOpen = false; subscribeSuccess = false"
-            class="absolute top-4 right-4 p-2 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 rounded-full transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-          </button>
+              <!-- Close button -->
+              <button @click="subscribeOpen = false; subscribeSuccess = false"
+                class="absolute top-4 right-4 p-2 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 rounded-full transition-colors cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
 
-          <!-- Form -->
-          <div x-show="!subscribeSuccess">
-            <p class="text-2xl font-bold text-zinc-900 mb-2 font-prompt">{{ t('newsletter.modal_title', 'Subscribe to our Newsletter') }}</p>
-            <p class="text-sm text-zinc-500 mb-6">{{ t('newsletter.modal_subtitle', 'Receive the latest insights and digital technology trends directly in your inbox.') }}</p>
+              <!-- Form -->
+              <div x-show="!subscribeSuccess" class="modal-sheet-body">
+                <p class="text-2xl font-bold text-zinc-900 mb-2 font-prompt">{{ t('newsletter.modal_title', 'Subscribe to our Newsletter') }}</p>
+                <p class="text-sm text-zinc-500 mb-6">{{ t('newsletter.modal_subtitle', 'Receive the latest insights and digital technology trends directly in your inbox.') }}</p>
 
-            @php
-              $newsletterForm = get_assigned_form('newsletter_form');
-            @endphp
+                @php
+                  $newsletterForm = get_assigned_form('newsletter_form');
+                @endphp
 
-            @if($newsletterForm)
-              @include('cdt::partials.tailwind-form', ['form' => $newsletterForm, 'variant' => 'light'])
-            @else
-              <form @submit.prevent="subscribeSuccess = true" class="space-y-4 text-left">
-                <div>
-                  <label class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Full Name</label>
-                  <input type="text" required placeholder="John Doe"
-                    class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
+                @if($newsletterForm)
+                  @include('cdt::partials.tailwind-form', ['form' => $newsletterForm, 'variant' => 'light'])
+                @else
+                  <form @submit.prevent="subscribeSuccess = true" class="space-y-4 text-left">
+                    <div>
+                      <label class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Full Name</label>
+                      <input type="text" required placeholder="John Doe"
+                        class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Email Address</label>
+                      <input type="email" required placeholder="john@example.com"
+                        class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
+                    </div>
+                    <button type="submit"
+                      class="w-full py-3 bg-gradient-to-r from-[#b82d25] to-red-600 text-white font-bold rounded-xl shadow-lg hover:shadow-red-500/20 hover:from-red-600 hover:to-red-700 transition duration-300 mt-2">
+                      Subscribe Now
+                    </button>
+                  </form>
+                @endif
+              </div>
+
+              <!-- Success State -->
+              <div x-show="subscribeSuccess" class="text-center py-6" style="display: none;">
+                <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-[#b82d25] mx-auto mb-4">
+                  <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                 </div>
-                <div>
-                  <label class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-2">Email Address</label>
-                  <input type="email" required placeholder="john@example.com"
-                    class="w-full px-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-zinc-900 text-sm focus:outline-none focus:border-[#b82d25] focus:bg-white focus:ring-4 focus:ring-red-500/10 transition-all">
-                </div>
-                <button type="submit"
-                  class="w-full py-3 bg-gradient-to-r from-[#b82d25] to-red-600 text-white font-bold rounded-xl shadow-lg hover:shadow-red-500/20 hover:from-red-600 hover:to-red-700 transition duration-300 mt-2">
-                  Subscribe Now
-                </button>
-              </form>
-            @endif
-          </div>
-
-          <!-- Success State -->
-          <div x-show="subscribeSuccess" class="text-center py-6" style="display: none;">
-            <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-[#b82d25] mx-auto mb-4">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                <p class="text-2xl font-bold text-zinc-900 mb-2 font-prompt">Subscription Successful!</p>
+                <p class="text-sm text-zinc-500">Thank you for subscribing. We will keep you updated with our latest news.</p>
+              </div>
             </div>
-            <p class="text-2xl font-bold text-zinc-900 mb-2 font-prompt">Subscription Successful!</p>
-            <p class="text-sm text-zinc-500">Thank you for subscribing. We will keep you updated with our latest news.</p>
           </div>
         </div>
-      </div>
+      </template>
     </div>
 
 </footer>

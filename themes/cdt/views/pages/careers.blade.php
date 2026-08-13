@@ -656,266 +656,277 @@
 
       </div>
 
-      <!-- Candidate Application Modal (Full-screen on mobile) -->
-      <!-- Backdrop -->
-      <div
-        x-show="showApplyModal"
-        x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-        class="modal-sheet-backdrop fixed inset-0 z-[150] bg-black/60 backdrop-blur-sm"
-        style="display: none;"
-        @click="closeModals()"></div>
+      <!-- Candidate Application Modal (job_application_form) -->
+      <template x-teleport="body">
+        <div x-show="showApplyModal" style="display: none;">
+          <!-- Backdrop -->
+          <div
+            x-show="showApplyModal"
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            class="modal-sheet-backdrop fixed inset-0 z-[10003] bg-black/60 backdrop-blur-sm"
+            @click="closeModals()"></div>
 
-      <!-- Content -->
-      <div
-        x-show="showApplyModal"
-        x-transition:enter="transition ease-out duration-300 transform"
-        x-transition:enter-start="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
-        x-transition:enter-end="opacity-100 translate-y-0 lg:scale-100"
-        x-transition:leave="transition ease-in duration-200 transform"
-        x-transition:leave-start="opacity-100 translate-y-0 lg:scale-100"
-        x-transition:leave-end="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
-        class="modal-sheet-fullscreen fixed inset-0 z-[151] flex items-end lg:items-center justify-center lg:p-4"
-        style="display: none;"
-        @keydown.escape.window="closeModals()">
+          <!-- Content -->
+          <div
+            x-show="showApplyModal"
+            x-transition:enter="transition ease-out duration-300 transform"
+            x-transition:enter-start="opacity-0 translate-y-full md:translate-y-0 md:scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 md:scale-100"
+            x-transition:leave="transition ease-in duration-200 transform"
+            x-transition:leave-start="opacity-100 translate-y-0 md:scale-100"
+            x-transition:leave-end="opacity-0 translate-y-full md:translate-y-0 md:scale-95"
+            class="modal-sheet-wrapper fixed inset-0 z-[10004] flex items-end md:items-center justify-center md:p-4">
 
-        <div class="bg-white lg:rounded-3xl shadow-2xl w-full lg:max-w-xl overflow-hidden relative max-h-screen lg:max-h-[90vh] flex flex-col">
+            <div class="modal-sheet-card bg-white rounded-t-3xl md:rounded-3xl shadow-2xl w-full md:max-w-xl overflow-hidden relative max-h-[85vh] flex flex-col">
 
-          <!-- Close button - highlighted (red bg, always visible) -->
-          <button @click="closeModals()" class="absolute top-4 right-4 lg:top-6 lg:right-6 p-2.5 bg-primary text-white hover:bg-red-700 rounded-full transition-colors z-20 shadow-lg">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-          </button>
+              <!-- Close button - highlighted (red bg, always visible) -->
+              <button @click="closeModals()" class="absolute top-4 right-4 md:top-6 md:right-6 p-2.5 bg-primary text-white hover:bg-red-700 rounded-full transition-colors z-30 shadow-lg cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
 
-          <div class="p-6 lg:p-8 overflow-y-auto flex-1">
-            <!-- Drag Handle (mobile only) -->
-            <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-4 lg:hidden"></div>
+              <!-- Modal Header (Fixed at top) -->
+              <div class="px-6 md:px-8 pt-6 pb-4 border-b border-zinc-100/80 shrink-0 bg-white">
+                <!-- Drag Handle (mobile only) -->
+                <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-3 md:hidden"></div>
 
-            <div class="mb-8">
-              <span class="text-xs font-bold text-primary uppercase tracking-wider block mb-1">Applying For</span>
-              <h3 x-text="selectedJob ? selectedJob.title : ''" class="text-2xl font-bold text-gray-900"></h3>
-              <p class="text-xs text-zinc-400 mt-1 uppercase font-semibold tracking-wider">PT Central Data Technology</p>
+                <div class="pr-12">
+                  <span class="text-xs font-bold text-primary uppercase tracking-wider block mb-1">Applying For</span>
+                  <h3 x-text="selectedJob ? selectedJob.title : ''" class="text-xl md:text-2xl font-bold text-gray-900 leading-tight"></h3>
+                  <p class="text-xs text-zinc-400 mt-1 uppercase font-semibold tracking-wider">PT Central Data Technology</p>
+                </div>
+              </div>
+
+              <!-- Modal Body (Scrollable in middle) -->
+              <div class="modal-sheet-body p-6 md:p-8 flex-1 overflow-y-auto">
+                @php
+                  $jobAppForm = get_assigned_form('job_application_form');
+                @endphp
+
+                @if($jobAppForm)
+                  @include('cdt::partials.tailwind-form', ['form' => $jobAppForm, 'variant' => 'light', 'hideSubmit' => true])
+                @else
+                  <form id="job-app-form-fallback" @submit.prevent="submitApplication()" class="space-y-5">
+                    <div>
+                      <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Full Name *</label>
+                      <input type="text" required x-model="formName" placeholder="e.g. John Doe" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Preferred Job Position *</label>
+                      <input type="text" required name="preferred_job_position" id="preferred_job_position" x-model="formPosition" :value="formPosition" placeholder="e.g. Solution Architect" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Phone Number *</label>
+                        <input type="tel" required x-model="formPhone" placeholder="+62 812-3456-7890" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
+                      </div>
+                      <div>
+                        <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Email Address *</label>
+                        <input type="email" required x-model="formEmail" placeholder="johndoe@email.com" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
+                      </div>
+                    </div>
+
+                    <div>
+                      <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">LinkedIn Profile URL <span class="text-primary font-normal">(Optional - Will Be Prioritized)</span></label>
+                      <input type="url" x-model="formLinkedin" placeholder="https://linkedin.com/in/username" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
+                    </div>
+
+                    <div class="space-y-4 pt-2">
+                      <div class="flex items-start gap-3">
+                        <input type="checkbox" required id="privacy-consent-jobs-modal" x-model="formConsent" class="mt-1 h-4 w-4 rounded border-zinc-300 text-primary focus:ring-primary cursor-pointer">
+                        <label for="privacy-consent-jobs-modal" class="text-sm font-semibold text-red-600 cursor-pointer select-none leading-relaxed">
+                          By ticking this box, I agree that my personal information will be given to Central Data Technology (CDT)
+                        </label>
+                      </div>
+                    </div>
+                  </form>
+                @endif
+              </div>
+
+              <!-- Fixed Submit Footer (At absolute bottom edge of card) -->
+              <div class="px-6 md:px-8 py-3.5 bg-white border-t border-zinc-200/80 shrink-0 flex items-center justify-end gap-3 z-20">
+                <button type="button" @click="closeModals()" class="px-5 py-3 border border-zinc-200 text-zinc-600 hover:bg-zinc-100 transition-colors rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer">
+                  Cancel
+                </button>
+                <button type="button" @click="document.querySelector('.modal-sheet-card form').requestSubmit()" class="w-full sm:w-auto px-8 py-3.5 bg-primary text-white hover:bg-red-700 shadow-md hover:shadow-lg transition-all rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer">
+                  Submit Application
+                </button>
+              </div>
             </div>
-
-            @php
-              $jobAppForm = get_assigned_form('job_application_form');
-            @endphp
-
-            @if($jobAppForm)
-              @include('cdt::partials.tailwind-form', ['form' => $jobAppForm, 'variant' => 'light'])
-            @else
-              <form x-show="!formSuccess" @submit.prevent="submitApplication()" class="space-y-5">
-              <div>
-                <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Full Name *</label>
-                <input type="text" required x-model="formName" placeholder="e.g. John Doe" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Preferred Job Position *</label>
-                <input type="text" required name="preferred_job_position" id="preferred_job_position" x-model="formPosition" :value="formPosition" placeholder="e.g. Solution Architect" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Phone Number *</label>
-                  <input type="tel" required x-model="formPhone" placeholder="+62 812-3456-7890" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Email Address *</label>
-                  <input type="email" required x-model="formEmail" placeholder="johndoe@email.com" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-                </div>
-              </div>
-
-              <div>
-                <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">LinkedIn Profile URL <span class="text-primary font-normal">(Optional - Will Be Prioritized)</span></label>
-                <input type="url" x-model="formLinkedin" placeholder="https://linkedin.com/in/username" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-              </div>
-
-              <div class="space-y-4 pt-2">
-                <div class="flex items-start gap-3">
-                  <input type="checkbox" required id="privacy-consent-jobs-modal" x-model="formConsent" class="mt-1 h-4 w-4 rounded border-zinc-300 text-primary focus:ring-primary cursor-pointer">
-                  <label for="privacy-consent-jobs-modal" class="text-sm font-semibold text-red-600 cursor-pointer select-none leading-relaxed">
-                    By ticking this box, I agree that my personal information will be given to Central Data Technology (CDT)
-                  </label>
-                </div>
-              </div>
-
-              <div class="flex items-center justify-end gap-4 pt-4">
-                <button type="button" @click="closeModals()" class="px-5 py-3 border border-zinc-200 text-zinc-600 hover:bg-zinc-100 transition-colors rounded-xl text-xs font-bold uppercase tracking-wider">Cancel</button>
-                <button type="submit" class="px-8 py-3 bg-primary text-white hover:bg-red-700 shadow-md hover:shadow-lg transition-all rounded-xl text-xs font-bold uppercase tracking-wider">Submit Application</button>
-              </div>
-            </form>
-            @endif
-
           </div>
         </div>
-      </div>
+      </template>
 
       <!-- Explore CDT Modal (Bottom sheet on mobile, centered on desktop) -->
-      <!-- Backdrop -->
-      <div
-        x-show="showExploreModal"
-        x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-        class="modal-sheet-backdrop fixed inset-0 z-[200] bg-slate-950/70 backdrop-blur-md"
-        style="display: none;"
-        @click="closeModals()"></div>
+      <template x-teleport="body">
+        <div x-show="showExploreModal" style="display: none;">
+          <!-- Backdrop -->
+          <div
+            x-show="showExploreModal"
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            class="modal-sheet-backdrop fixed inset-0 z-[10003] bg-slate-950/70 backdrop-blur-md"
+            @click="closeModals()"></div>
 
-      <!-- Content -->
-      <div
-        x-show="showExploreModal"
-        x-transition:enter="transition ease-out duration-300 transform"
-        x-transition:enter-start="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
-        x-transition:enter-end="opacity-100 translate-y-0 lg:scale-100"
-        x-transition:leave="transition ease-in duration-200 transform"
-        x-transition:leave-start="opacity-100 translate-y-0 lg:scale-100"
-        x-transition:leave-end="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
-        class="modal-sheet-content fixed inset-0 z-[201] flex items-end lg:items-center justify-center lg:p-6"
-        style="display: none;"
-        @keydown.escape.window="closeModals()">
+          <!-- Content -->
+          <div
+            x-show="showExploreModal"
+            x-transition:enter="transition ease-out duration-300 transform"
+            x-transition:enter-start="opacity-0 translate-y-full md:translate-y-0 md:scale-95"
+            x-transition:enter-end="opacity-100 translate-y-0 md:scale-100"
+            x-transition:leave="transition ease-in duration-200 transform"
+            x-transition:leave-start="opacity-100 translate-y-0 md:scale-100"
+            x-transition:leave-end="opacity-0 translate-y-full md:translate-y-0 md:scale-95"
+            class="modal-sheet-wrapper fixed inset-0 z-[10004] flex items-end md:items-center justify-center md:p-6"
+            @keydown.escape.window="closeModals()">
 
-        <div class="bg-white rounded-t-3xl lg:rounded-3xl shadow-2xl w-full lg:max-w-3xl overflow-hidden relative max-h-[92vh] flex flex-col border border-zinc-100">
-          <!-- Drag Handle (mobile only) -->
-          <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mt-3 mb-1 lg:hidden"></div>
+            <div class="modal-sheet-card bg-white rounded-t-3xl md:rounded-3xl shadow-2xl w-full md:max-w-3xl overflow-hidden relative max-h-[85vh] flex flex-col border border-zinc-100">
+              <!-- Drag Handle (mobile only) -->
+              <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mt-3 mb-1 md:hidden"></div>
 
-          <!-- Top Gradient Accent Line -->
-          <div class="h-2 w-full bg-gradient-to-r from-red-600 via-primary to-rose-500"></div>
+              <!-- Top Gradient Accent Line -->
+              <div class="h-2 w-full bg-gradient-to-r from-red-600 via-primary to-rose-500"></div>
 
-          <!-- Header Section -->
-          <div class="px-6 lg:px-8 pt-6 lg:pt-8 pb-6 border-b border-zinc-100/80 flex items-start justify-between gap-4">
-            <div>
-              <div class="inline-flex items-center gap-2 px-5 py-2 bg-emerald-50 border border-emerald-200/80 rounded-full text-emerald-700 text-xs font-bold uppercase tracking-wider mb-2.5 shadow-2xs">
-                <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
-                </svg>
-                {{ t('careers.application_submitted', 'Application Submitted') }}
-              </div>
-              <h3 class="text-3xl font-extrabold text-zinc-900 tracking-tight">Explore CDT</h3>
-            </div>
-
-            <button @click="closeModals()" class="p-2.5 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 rounded-full transition-all duration-200 cursor-pointer">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-
-          <div class="p-6 lg:p-8 md:p-10 overflow-y-auto flex-1 space-y-8">
-            <!-- Highlighted Welcome Message Box -->
-            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-50/90 via-rose-50/50 to-zinc-50 border-l-4 border-primary border-y border-r border-red-100/80 p-6 shadow-sm">
-              <div class="flex items-center gap-2 mb-2 text-primary font-bold text-xs uppercase tracking-wider">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"></path>
-                </svg>
-                <span>A Message From CDT</span>
-              </div>
-              <p class="text-sm md:text-base text-zinc-800 font-normal leading-relaxed relative z-10">
-                @if($currentLocale === 'id')
-                  Terima kasih telah mempertimbangkan untuk berkarier di CDT. Kami menyarankan Anda untuk mengenal lebih jauh tentang CDT melalui produk, solusi, artikel, dan perjalanan perusahaan kami. Hal ini dapat membantu Anda memahami lebih jauh mengenai bisnis, nilai, dan budaya kerja CDT.
-                @else
-                  Thank you for considering a career at CDT. We encourage you to get to know CDT better through our products, solutions, articles, and company journey. This will help you gain deeper insights into CDT's business, values, and work culture.
-                @endif
-              </p>
-            </div>
-
-            <!-- Content Grid Section -->
-            <div class="space-y-6">
-              <!-- Our Products -->
-              @if($exploreProducts->isNotEmpty())
-              <div>
-                <div class="flex items-center gap-2 mb-3.5">
-                  <span class="w-2 h-2 rounded-full bg-primary"></span>
-                  <h4 class="text-xs font-bold uppercase tracking-widest text-zinc-800">
-                    {{ t('nav.our_products', 'Our Products') }}
-                  </h4>
-                </div>
-                <div class="flex flex-wrap gap-2.5">
-                  @foreach($exploreProducts as $pItem)
-                    <a href="{{ $pItem->getUrl() }}" target="_blank" class="group/item inline-block px-6 py-2.5 rounded-xl bg-red-50/80 hover:bg-primary text-red-700 hover:text-white border border-red-100 hover:border-primary text-xs font-semibold shadow-2xs transition-all duration-200">
-                      <span class="group-hover/item:text-white transition-colors">{{ $pItem->getTranslation('title', $currentLocale) ?: $pItem->title }}</span>
-                    </a>
-                  @endforeach
-                </div>
-              </div>
-              @endif
-
-              <!-- Our Solutions -->
-              @if($exploreSolutions->isNotEmpty())
-              <div>
-                <div class="flex items-center gap-2 mb-3.5">
-                  <span class="w-2 h-2 rounded-full bg-primary"></span>
-                  <h4 class="text-xs font-bold uppercase tracking-widest text-zinc-800">
-                    {{ t('nav.our_solutions', 'Our Solutions') }}
-                  </h4>
-                </div>
-                <div class="flex flex-wrap gap-2.5">
-                  @foreach($exploreSolutions as $sItem)
-                    <a href="{{ $sItem->getUrl() }}" target="_blank" class="group/item inline-block px-6 py-2.5 rounded-xl bg-red-50/80 hover:bg-primary text-red-700 hover:text-white border border-red-100 hover:border-primary text-xs font-semibold shadow-2xs transition-all duration-200">
-                      <span class="group-hover/item:text-white transition-colors">{{ $sItem->getTranslation('title', $currentLocale) ?: $sItem->title }}</span>
-                    </a>
-                  @endforeach
-                </div>
-              </div>
-              @endif
-
-              <!-- Quick Link Feature Cards (Insights & About Us) -->
-              <div class="pt-2">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <a href="{{ $blogUrl }}" target="_blank" class="group p-4.5 rounded-2xl bg-zinc-50 hover:bg-red-50/50 border border-zinc-200/80 hover:border-red-300 transition-all duration-300 flex items-center justify-between shadow-2xs">
-                    <div class="flex items-center gap-3.5">
-                      <div class="w-10 h-10 rounded-xl bg-white border border-zinc-200/80 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 shadow-2xs">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-3.375M16.5 7.5V18a2.25 2.25 0 002.25 2.25h.375a2.25 2.25 0 002.25-2.25V9a2.25 2.25 0 00-2.25-2.25h-.375A2.25 2.25 0 0016.5 7.5z"></path>
-                        </svg>
-                      </div>
-                      <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-primary transition-colors block">
-                          {{ t('nav.insights', 'Insights') }}
-                        </span>
-                        <span class="text-[11px] text-zinc-500 font-light">Explore news & tech articles</span>
-                      </div>
-                    </div>
-                    <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
+              <!-- Header Section -->
+              <div class="px-6 lg:px-8 pt-6 lg:pt-8 pb-6 border-b border-zinc-100/80 flex items-start justify-between gap-4">
+                <div>
+                  <div class="inline-flex items-center gap-2 px-5 py-2 bg-emerald-50 border border-emerald-200/80 rounded-full text-emerald-700 text-xs font-bold uppercase tracking-wider mb-2.5 shadow-2xs">
+                    <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
                     </svg>
-                  </a>
+                    {{ t('careers.application_submitted', 'Application Submitted') }}
+                  </div>
+                  <h3 class="text-3xl font-extrabold text-zinc-900 tracking-tight">Explore CDT</h3>
+                </div>
 
-                  <a href="{{ $aboutUrl }}" target="_blank" class="group p-4.5 rounded-2xl bg-zinc-50 hover:bg-red-50/50 border border-zinc-200/80 hover:border-red-300 transition-all duration-300 flex items-center justify-between shadow-2xs">
-                    <div class="flex items-center gap-3.5">
-                      <div class="w-10 h-10 rounded-xl bg-white border border-zinc-200/80 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 shadow-2xs">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6h1.5m-1.5 3h1.5m-1.5 3h1.5M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"></path>
-                        </svg>
-                      </div>
-                      <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-primary transition-colors block">
-                          {{ t('nav.about_us', 'About Us') }}
-                        </span>
-                        <span class="text-[11px] text-zinc-500 font-light">Learn about CDT journey & values</span>
-                      </div>
-                    </div>
-                    <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
+                <button @click="closeModals()" class="p-2.5 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 rounded-full transition-all duration-200 cursor-pointer">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="modal-sheet-body p-6 lg:p-8 md:p-10 flex-1 space-y-8">
+                <!-- Highlighted Welcome Message Box -->
+                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-50/90 via-rose-50/50 to-zinc-50 border-l-4 border-primary border-y border-r border-red-100/80 p-6 shadow-sm">
+                  <div class="flex items-center gap-2 mb-2 text-primary font-bold text-xs uppercase tracking-wider">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"></path>
                     </svg>
-                  </a>
+                    <span>A Message From CDT</span>
+                  </div>
+                  <p class="text-sm md:text-base text-zinc-800 font-normal leading-relaxed relative z-10">
+                    @if($currentLocale === 'id')
+                      Terima kasih telah mempertimbangkan untuk berkarier di CDT. Kami menyarankan Anda untuk mengenal lebih jauh tentang CDT melalui produk, solusi, artikel, dan perjalanan perusahaan kami. Hal ini dapat membantu Anda memahami lebih jauh mengenai bisnis, nilai, dan budaya kerja CDT.
+                    @else
+                      Thank you for considering a career at CDT. We encourage you to get to know CDT better through our products, solutions, articles, and company journey. This will help you gain deeper insights into CDT's business, values, and work culture.
+                    @endif
+                  </p>
+                </div>
+
+                <!-- Content Grid Section -->
+                <div class="space-y-6">
+                  <!-- Our Products -->
+                  @if($exploreProducts->isNotEmpty())
+                  <div>
+                    <div class="flex items-center gap-2 mb-3.5">
+                      <span class="w-2 h-2 rounded-full bg-primary"></span>
+                      <h4 class="text-xs font-bold uppercase tracking-widest text-zinc-800">
+                        {{ t('nav.our_products', 'Our Products') }}
+                      </h4>
+                    </div>
+                    <div class="flex flex-wrap gap-2.5">
+                      @foreach($exploreProducts as $pItem)
+                        <a href="{{ $pItem->getUrl() }}" target="_blank" class="group/item inline-block px-6 py-2.5 rounded-xl bg-red-50/80 hover:bg-primary text-red-700 hover:text-white border border-red-100 hover:border-primary text-xs font-semibold shadow-2xs transition-all duration-200">
+                          <span class="group-hover/item:text-white transition-colors">{{ $pItem->getTranslation('title', $currentLocale) ?: $pItem->title }}</span>
+                        </a>
+                      @endforeach
+                    </div>
+                  </div>
+                  @endif
+
+                  <!-- Our Solutions -->
+                  @if($exploreSolutions->isNotEmpty())
+                  <div>
+                    <div class="flex items-center gap-2 mb-3.5">
+                      <span class="w-2 h-2 rounded-full bg-primary"></span>
+                      <h4 class="text-xs font-bold uppercase tracking-widest text-zinc-800">
+                        {{ t('nav.our_solutions', 'Our Solutions') }}
+                      </h4>
+                    </div>
+                    <div class="flex flex-wrap gap-2.5">
+                      @foreach($exploreSolutions as $sItem)
+                        <a href="{{ $sItem->getUrl() }}" target="_blank" class="group/item inline-block px-6 py-2.5 rounded-xl bg-red-50/80 hover:bg-primary text-red-700 hover:text-white border border-red-100 hover:border-primary text-xs font-semibold shadow-2xs transition-all duration-200">
+                          <span class="group-hover/item:text-white transition-colors">{{ $sItem->getTranslation('title', $currentLocale) ?: $sItem->title }}</span>
+                        </a>
+                      @endforeach
+                    </div>
+                  </div>
+                  @endif
+
+                  <!-- Quick Link Feature Cards (Insights & About Us) -->
+                  <div class="pt-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <a href="{{ $blogUrl }}" target="_blank" class="group p-4.5 rounded-2xl bg-zinc-50 hover:bg-red-50/50 border border-zinc-200/80 hover:border-red-300 transition-all duration-300 flex items-center justify-between shadow-2xs">
+                        <div class="flex items-center gap-3.5">
+                          <div class="w-10 h-10 rounded-xl bg-white border border-zinc-200/80 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 shadow-2xs">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-3.375M16.5 7.5V18a2.25 2.25 0 002.25 2.25h.375a2.25 2.25 0 002.25-2.25V9a2.25 2.25 0 00-2.25-2.25h-.375A2.25 2.25 0 0016.5 7.5z"></path>
+                            </svg>
+                          </div>
+                          <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-primary transition-colors block">
+                              {{ t('nav.insights', 'Insights') }}
+                            </span>
+                            <span class="text-[11px] text-zinc-500 font-light">Explore news & tech articles</span>
+                          </div>
+                        </div>
+                        <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
+                        </svg>
+                      </a>
+
+                      <a href="{{ $aboutUrl }}" target="_blank" class="group p-4.5 rounded-2xl bg-zinc-50 hover:bg-red-50/50 border border-zinc-200/80 hover:border-red-300 transition-all duration-300 flex items-center justify-between shadow-2xs">
+                        <div class="flex items-center gap-3.5">
+                          <div class="w-10 h-10 rounded-xl bg-white border border-zinc-200/80 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 shadow-2xs">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6h1.5m-1.5 3h1.5m-1.5 3h1.5M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"></path>
+                            </svg>
+                          </div>
+                          <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-zinc-900 group-hover:text-primary transition-colors block">
+                              {{ t('nav.about_us', 'About Us') }}
+                            </span>
+                            <span class="text-[11px] text-zinc-500 font-light">Learn about CDT journey & values</span>
+                          </div>
+                        </div>
+                        <svg class="w-4 h-4 text-zinc-400 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              <!-- Modal Footer -->
+              <div class="px-6 lg:px-8 py-5 bg-zinc-50/80 border-t border-zinc-100 flex items-center justify-between">
+                <p class="text-xs text-zinc-400 font-light hidden sm:block">PT Central Data Technology</p>
+                <button @click="closeModals()" class="w-full sm:w-auto px-7 py-2.5 bg-zinc-900 hover:bg-primary text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer">
+                  {{ t('common.done', 'Done') }}
+                </button>
+              </div>
+
             </div>
           </div>
-
-          <!-- Modal Footer -->
-          <div class="px-6 lg:px-8 py-5 bg-zinc-50/80 border-t border-zinc-100 flex items-center justify-between">
-            <p class="text-xs text-zinc-400 font-light hidden sm:block">PT Central Data Technology</p>
-            <button @click="closeModals()" class="w-full sm:w-auto px-7 py-2.5 bg-zinc-900 hover:bg-primary text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all duration-200 shadow-md hover:shadow-lg cursor-pointer">
-              {{ t('common.done', 'Done') }}
-            </button>
-          </div>
-
         </div>
-      </div>
+      </template>
     </section>
 
     <!-- Contact Form Section -->

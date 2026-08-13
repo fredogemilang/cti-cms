@@ -369,7 +369,8 @@
     @endif
 
     {{-- Submit --}}
-    <div class="{{ $isDark ? 'flex flex-col items-center' : 'pt-4 flex justify-end' }}">
+    @if(empty($hideSubmit))
+    <div class="{{ $isDark ? 'flex flex-col items-center' : 'pt-4 flex justify-end' }} {{ !empty($stickySubmit) ? 'sticky bottom-0 bg-white pt-4 pb-4 border-t border-zinc-100 z-20' : '' }}">
         <?php
             $modelTransBtn = method_exists($form, 'getTranslation') ? $form->getTranslation('submit_button_text') : null;
             $fallbackBtnText = !empty($form->submit_button_text) ? $form->submit_button_text : 'Send Message';
@@ -390,6 +391,7 @@
             <span x-text="submitting ? 'Submitting...' : (justSubmitted ? 'Submitted!' : '{{ addslashes($btnText) }}')">{{ $btnText }}</span>
         </button>
     </div>
+    @endif
 </form>
 </div>
 

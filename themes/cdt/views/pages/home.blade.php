@@ -58,60 +58,64 @@
     </div>
   
     <!-- Access Solutions Catalogue: Download Modal -->
-    <!-- Backdrop -->
-    <div x-show="catalogueOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
-      x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
-      x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-      class="modal-sheet-backdrop fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm" style="display: none;"
-      @click="catalogueOpen = false"></div>
+    <template x-teleport="body">
+      <div x-show="catalogueOpen" style="display: none;">
+        <!-- Backdrop -->
+        <div x-show="catalogueOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
+          x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+          x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+          class="modal-sheet-backdrop fixed inset-0 z-[10003] bg-black/60 backdrop-blur-sm"
+          @click="catalogueOpen = false"></div>
 
-    <!-- Content -->
-    <div x-show="catalogueOpen"
-      x-transition:enter="transition ease-out duration-300 transform"
-      x-transition:enter-start="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
-      x-transition:enter-end="opacity-100 translate-y-0 lg:scale-100"
-      x-transition:leave="transition ease-in duration-200 transform"
-      x-transition:leave-start="opacity-100 translate-y-0 lg:scale-100"
-      x-transition:leave-end="opacity-0 translate-y-full lg:translate-y-0 lg:scale-95"
-      class="modal-sheet-content fixed inset-0 z-[101] flex items-end lg:items-center justify-center lg:p-6"
-      style="display: none;" role="dialog" aria-modal="true" aria-labelledby="catalogue-modal-title">
+        <!-- Content -->
+        <div x-show="catalogueOpen"
+          x-transition:enter="transition ease-out duration-300 transform"
+          x-transition:enter-start="opacity-0 translate-y-full md:translate-y-0 md:scale-95"
+          x-transition:enter-end="opacity-100 translate-y-0 md:scale-100"
+          x-transition:leave="transition ease-in duration-200 transform"
+          x-transition:leave-start="opacity-100 translate-y-0 md:scale-100"
+          x-transition:leave-end="opacity-0 translate-y-full md:translate-y-0 md:scale-95"
+          class="modal-sheet-wrapper fixed inset-0 z-[10004] flex items-end md:items-center justify-center md:p-6"
+          role="dialog" aria-modal="true" aria-labelledby="catalogue-modal-title">
 
-      <div class="relative w-full lg:max-w-2xl rounded-t-3xl lg:rounded-2xl shadow-2xl overflow-hidden text-white max-h-[90vh] lg:max-h-[90vh] overflow-y-auto">
-        <!-- Drag Handle (mobile only) -->
-        <div class="w-12 h-1 bg-white/30 rounded-full mx-auto mt-3 mb-1 lg:hidden"></div>
+          <div class="modal-sheet-card relative w-full md:max-w-2xl rounded-t-3xl md:rounded-2xl shadow-2xl overflow-hidden text-white md:max-h-[90vh] overflow-y-auto">
+            <!-- Drag Handle (mobile only) -->
+            <div class="w-12 h-1 bg-white/30 rounded-full mx-auto mt-3 mb-1 md:hidden"></div>
 
-        <!-- Background image + red overlay -->
-        <div class="absolute inset-0 bg-form-image bg-cover bg-center pointer-events-none" aria-hidden="true"></div>
-        <div class="absolute inset-0 bg-primary/90 pointer-events-none" aria-hidden="true"></div>
+            <!-- Background image + red overlay -->
+            <div class="absolute inset-0 bg-form-image bg-cover bg-center pointer-events-none" aria-hidden="true"></div>
+            <div class="absolute inset-0 bg-primary/90 pointer-events-none" aria-hidden="true"></div>
 
-        <!-- Close -->
-        <button type="button" @click.stop="catalogueOpen = false"
-          class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-9 h-9 flex items-center justify-center rounded-full text-white/90 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
-          aria-label="Close">
-          <svg class="w-5 h-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-            stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+            <!-- Close -->
+            <button type="button" @click.stop="catalogueOpen = false"
+              class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-9 h-9 flex items-center justify-center rounded-full text-white/90 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
+              aria-label="Close">
+              <svg class="w-5 h-5 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
 
-        <!-- Form -->
-        <div class="relative z-10 px-6 py-10 sm:px-10 sm:py-12">
-          <p id="catalogue-modal-title"
-            class="text-center text-lg sm:text-xl font-bold leading-snug mb-6 sm:mb-8 max-w-md mx-auto">
-            {{ t('home.catalogue_modal_title', 'Please fill out the form below to be able to download our Digital Solution Guide') }}
-          </p>
+            <!-- Form -->
+            <div class="modal-sheet-body relative z-10 px-6 py-10 sm:px-10 sm:py-12 flex-1">
+              <p id="catalogue-modal-title"
+                class="text-center text-lg sm:text-xl font-bold leading-snug mb-6 sm:mb-8 max-w-md mx-auto">
+                {{ t('home.catalogue_modal_title', 'Please fill out the form below to be able to download our Digital Solution Guide') }}
+              </p>
 
-          @php
-            $guideForm = get_assigned_form('solution_guide_form');
-          @endphp
-          @if($guideForm)
-            @include('cdt::partials.tailwind-form', ['form' => $guideForm, 'variant' => 'dark'])
-          @else
-            <p class="text-white/60 text-sm text-center">Download form is being configured.</p>
-          @endif
+              @php
+                $guideForm = get_assigned_form('solution_guide_form');
+              @endphp
+              @if($guideForm)
+                @include('cdt::partials.tailwind-form', ['form' => $guideForm, 'variant' => 'dark'])
+              @else
+                <p class="text-white/60 text-sm text-center">Download form is being configured.</p>
+              @endif
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
   </section>
 
   <!-- Area of Expertise Section -->

@@ -52,32 +52,43 @@
     }
 
     /* ── Mobile Bottom Sheet Modals ── */
-    @media (max-width: 1023px) {
+    @media (max-width: 767px) {
       .modal-sheet-backdrop {
         z-index: 10003 !important;
+        touch-action: none;
       }
-      .modal-sheet-content {
+      .modal-sheet-wrapper {
+        z-index: 10004 !important;
+      }
+      .modal-sheet-card {
         position: fixed !important;
         bottom: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        top: auto !important;
-        max-height: 90vh;
+        width: 100% !important;
+        max-height: 85vh !important;
         border-radius: 1.5rem 1.5rem 0 0 !important;
+        overflow: hidden !important;
         margin: 0 !important;
-        padding-bottom: 120px;
-        overflow-y: auto;
-        overscroll-behavior-y: contain;
-        z-index: 10004 !important;
+        display: flex !important;
+        flex-direction: column !important;
       }
-      .modal-sheet-fullscreen {
+      .modal-sheet-card-full {
         position: fixed !important;
         inset: 0 !important;
+        width: 100% !important;
+        height: 100vh !important;
         max-height: 100vh !important;
         border-radius: 0 !important;
+        overflow: hidden !important;
         margin: 0 !important;
-        padding-bottom: 0 !important;
-        z-index: 10004 !important;
+        display: flex !important;
+        flex-direction: column !important;
+      }
+      .modal-sheet-body {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior: contain !important;
       }
     }
   </style>
