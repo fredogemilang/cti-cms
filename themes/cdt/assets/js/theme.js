@@ -2,8 +2,17 @@ import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Alpine from 'alpinejs';
-import Swiper from 'swiper/bundle';
-import 'swiper/css/bundle';
+// Tree-shaken Swiper: core + only the modules this theme actually uses
+// (Autoplay on posts featured-slider, Navigation + Pagination on testimonials).
+import { Swiper } from 'swiper';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+// Register modules globally so inline `new Swiper(...)` calls in Blade views
+// (e.g. posts/index featured-slider) work without passing a modules array.
+Swiper.use([Autoplay, Navigation, Pagination]);
 
 // Expose Swiper globally for inline scripts in partials that do `new Swiper(...)`.
 window.Swiper = Swiper;
