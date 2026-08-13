@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\SettingsRegistry;
 use App\Settings\Actions\BrevoTestEmailAction;
+use App\Settings\Actions\PurgePageCache;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -307,6 +308,9 @@ class CmsSettingsServiceProvider extends ServiceProvider
                     'default' => "/forms/*\n/cart\n/checkout",
                     'rules' => ['nullable', 'string', 'max:4000'],
                     'help' => 'One pattern per line. Supports `*` wildcards.'],
+            ],
+            'actions' => [
+                ['label' => 'Purge page cache', 'handler' => PurgePageCache::class, 'icon' => 'delete_sweep', 'color' => 'red'],
             ],
         ]);
     }
