@@ -1,8 +1,20 @@
-{{-- Lean critical CSS: ~2KB inlined to unblock first paint.
+{{-- Lean critical CSS: ~3KB inlined to unblock first paint.
      Contains ONLY what's needed for the mobile above-the-fold skeleton:
-     box model reset, body defaults, hero layout, gradient, header bar.
+     font-face (Inter+Prompt latin), box model reset, body defaults,
+     hero layout, gradient, header bar.
      Full Tailwind CSS loads async (non-blocking) alongside this. --}}
+@php
+  $buildBase = asset('build/assets');
+@endphp
+{{-- Preload critical fonts to avoid CLS from font swap --}}
+<link rel="preload" href="{{ $buildBase }}/inter-latin-wght-normal-Dx4kXJAl.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ $buildBase }}/prompt-latin-700-normal-I2gc831J.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ $buildBase }}/prompt-latin-300-normal-CW7rmI5T.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* Critical font-face: Inter (variable, latin) + Prompt (300/700 latin) */
+@font-face{font-family:'Inter Variable';font-style:normal;font-display:swap;font-weight:100 900;src:url('{{ $buildBase }}/inter-latin-wght-normal-Dx4kXJAl.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Prompt';font-style:normal;font-display:swap;font-weight:300;src:url('{{ $buildBase }}/prompt-latin-300-normal-CW7rmI5T.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Prompt';font-style:normal;font-display:swap;font-weight:700;src:url('{{ $buildBase }}/prompt-latin-700-normal-I2gc831J.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 /* Box model + base reset */
 *,*::before,*::after,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%;line-height:1.5;tab-size:4;-webkit-tap-highlight-color:transparent}
