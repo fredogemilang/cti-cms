@@ -700,6 +700,10 @@
                 </div>
               </div>
 
+              @php
+                $jobAppForm = get_assigned_form('job_application_form');
+              @endphp
+
                 @if($jobAppForm)
                   @include('cdt::partials.tailwind-form', ['form' => $jobAppForm, 'variant' => 'light', 'modalFooter' => true, 'cancelClick' => 'closeModals()'])
                 @else
