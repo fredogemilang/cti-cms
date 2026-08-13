@@ -169,7 +169,7 @@
         </a>
 
         <!-- Management -->
-        <a href="{{ localized_url('/about-us/management') }}" class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-red-50/50 border border-gray-100 hover:border-red-100 transition-all group">
+        <a href="{{ localized_url('/about-management') }}" class="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 hover:bg-red-50/50 border border-gray-100 hover:border-red-100 transition-all group">
           <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
             <x-icon name="lucide:users" class="w-5 h-5 text-primary" />
           </div>
