@@ -10,8 +10,9 @@
     <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
   @endif
 
-  {{-- Theme CSS --}}
-  <link rel="stylesheet" crossorigin href="{{ asset('themes/cdt/assets/main-V6bxgVBt.css') }}">
+  {{-- Theme assets via Vite: built from themes/cdt/assets/{css/js} sources.
+       Prod reads public/build/manifest.json (committed), dev uses the Vite server. --}}
+  @vite(['themes/cdt/assets/css/theme.css', 'themes/cdt/assets/js/theme.js'])
   <style>
     .prose ul, .rich-content ul {
       list-style-type: disc !important;
@@ -117,37 +118,6 @@
 
   </div>
 
-  {{-- Theme JS (ES module): loads Alpine, GSAP, Swiper, Lenis and starts them --}}
-  {{-- v2 = hero load animation removed (LCP fix, 2026-08-13); renamed to bust immutable cache --}}
-  <script type="module" crossorigin src="{{ asset('themes/cdt/assets/main-DY6Zr0uYv2.js') }}"></script>
-
   @stack('scripts')
-  <script>
-    // GSAP is already loaded & registered by theme JS (main-DY6Zr0uYv2.js).
-    // This init runs after DOM ready, reading data-gsap attributes.
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-      document.querySelectorAll('[data-gsap]').forEach(el => {
-        const type = el.getAttribute('data-gsap');
-        const delay = parseFloat(el.getAttribute('data-gsap-delay') || '0');
-        const defaults = { duration: 0.8, ease: 'power2.out', delay };
-        let from = {};
-        switch(type) {
-          case 'fade-up': from = { y: 40, opacity: 0 }; break;
-          case 'fade-in': from = { opacity: 0 }; defaults.duration = 0.6; break;
-          case 'fade-left': from = { x: -40, opacity: 0 }; break;
-          case 'fade-right': from = { x: 40, opacity: 0 }; break;
-          case 'line-grow':
-            gsap.fromTo(el, { width: 0 }, { width: '3rem', duration: 0.6, ease: 'power2.out', delay,
-              scrollTrigger: { trigger: el.parentElement, start: 'top 85%' } });
-            return;
-          default: return;
-        }
-        gsap.fromTo(el, from, { x: 0, y: 0, opacity: 1, ...defaults,
-          scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none none' }
-        });
-      });
-    });
-  </script>
 </body>
 </html>
