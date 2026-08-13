@@ -25,7 +25,7 @@
 <section class="relative h-[400px] md:h-[500px] flex items-center pt-20 overflow-hidden bg-gray-900 text-white">
   <!-- Immersive background -->
   <div class="absolute inset-0 z-0">
-    <img src="{{ $bannerImageUrl }}" class="w-full h-full object-cover object-left" alt="{{ $title }}">
+    <img src="{{ $bannerImageUrl }}" class="w-full h-full object-cover object-right" alt="{{ $title }}">
     <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-transparent w-full lg:w-3/4"></div>
   </div>
 
