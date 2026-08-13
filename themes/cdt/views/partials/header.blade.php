@@ -59,13 +59,13 @@
         @if($currentLocale === 'en')
           <span class="text-primary border-b-2 border-primary cursor-default">EN</span>
         @else
-          <a href="{{ current_page_localized_url('en') }}" title="Switch to English" aria-label="Switch to English" class="text-zinc-400 hover:text-zinc-800 transition-colors">EN</a>
+          <a href="{{ current_page_localized_url('en') }}" title="Switch to English" aria-label="Switch to English" class="text-zinc-600 hover:text-zinc-800 transition-colors">EN</a>
         @endif
         <span class="text-zinc-300">|</span>
         @if($currentLocale === 'id')
           <span class="text-primary border-b-2 border-primary cursor-default">ID</span>
         @else
-          <a href="{{ current_page_localized_url('id') }}" title="Beralih ke Bahasa Indonesia" aria-label="Beralih ke Bahasa Indonesia" class="text-zinc-400 hover:text-zinc-800 transition-colors">ID</a>
+          <a href="{{ current_page_localized_url('id') }}" title="Beralih ke Bahasa Indonesia" aria-label="Beralih ke Bahasa Indonesia" class="text-zinc-600 hover:text-zinc-800 transition-colors">ID</a>
         @endif
       </div>
       @else
@@ -412,13 +412,13 @@
           @if($currentLocale === 'en')
             <span class="text-primary border-b-2 border-primary cursor-default">EN</span>
           @else
-            <a href="{{ current_page_localized_url('en') }}" title="Switch to English" aria-label="Switch to English" class="text-zinc-400 hover:text-zinc-800 transition-colors">EN</a>
+            <a href="{{ current_page_localized_url('en') }}" title="Switch to English" aria-label="Switch to English" class="text-zinc-600 hover:text-zinc-800 transition-colors">EN</a>
           @endif
           <span class="text-zinc-300">|</span>
           @if($currentLocale === 'id')
             <span class="text-primary border-b-2 border-primary cursor-default">ID</span>
           @else
-            <a href="{{ current_page_localized_url('id') }}" title="Beralih ke Bahasa Indonesia" aria-label="Beralih ke Bahasa Indonesia" class="text-zinc-400 hover:text-zinc-800 transition-colors">ID</a>
+            <a href="{{ current_page_localized_url('id') }}" title="Beralih ke Bahasa Indonesia" aria-label="Beralih ke Bahasa Indonesia" class="text-zinc-600 hover:text-zinc-800 transition-colors">ID</a>
           @endif
         </div>
         @else

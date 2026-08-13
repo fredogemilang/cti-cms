@@ -34,7 +34,7 @@
 @endphp
 
 <!-- Mobile Bottom Navigation Bar & Bottom Sheets -->
-<div class="lg:hidden fixed bottom-0 left-0 right-0 pointer-events-none" style="z-index: 9999;">
+<div id="mobile-bottom-nav" class="lg:hidden fixed bottom-0 left-0 right-0 pointer-events-none" style="z-index: 9999;">
   <div class="w-full h-[100px] relative transition-transform duration-300 ease-out pointer-events-auto"
     :style="showMenu ? 'transform: translateY(0px);' : 'transform: translateY(100%);'">
 
@@ -113,14 +113,15 @@
     </div>
 
     <!-- Floating Red Hamburger Menu Button -->
-    <button @click="showMenu = !showMenu"
+    <button @click="showMenu = !showMenu" aria-label="{{ t('a11y.toggle_menu', 'Toggle navigation menu') }}" title="{{ t('a11y.toggle_menu', 'Toggle navigation menu') }}"
+      :aria-expanded="showMenu" aria-controls="mobile-bottom-nav"
       class="absolute bottom-full mb-[-12px] left-1/2 -translate-x-1/2 w-[56px] h-[56px] bg-[#bd2a2a] rounded-[18px] text-white flex items-center justify-center shadow-[0_8px_16px_rgba(189,42,42,0.4)] hover:bg-red-800 transition-all duration-300 border-[3px] border-white box-content cursor-pointer" style="z-index: 10000;"
       :style="showMenu ? 'transform: translateY(0px) scale(1);' : 'transform: translateY(3px) scale(0.95);'">
-      <svg x-show="showMenu" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg x-show="showMenu" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
       </svg>
       <svg x-show="!showMenu" style="display: none;" class="w-7 h-7" fill="none" viewBox="0 0 24 24"
-        stroke="currentColor">
+        stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     </button>

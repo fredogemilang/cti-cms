@@ -379,15 +379,15 @@
             class="swiper-pagination-custom text-zinc-400 font-medium tracking-widest uppercase text-xl [&_.swiper-pagination-current]:text-dark [&_.swiper-pagination-current]:font-bold [&_.swiper-pagination-current]:text-3xl">
           </div>
           <div class="flex gap-4">
-            <button
+            <button aria-label="{{ t('a11y.prev_testimonial', 'Previous testimonial') }}" title="{{ t('a11y.prev_testimonial', 'Previous testimonial') }}"
               class="swiper-button-prev-custom w-12 h-12 rounded-full border border-zinc-200 bg-white flex items-center justify-center text-dark hover:bg-primary hover:border-primary hover:text-white transition-colors shadow-sm">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <button
+            <button aria-label="{{ t('a11y.next_testimonial', 'Next testimonial') }}" title="{{ t('a11y.next_testimonial', 'Next testimonial') }}"
               class="swiper-button-next-custom w-12 h-12 rounded-full border border-zinc-200 bg-white flex items-center justify-center text-dark hover:bg-primary hover:border-primary hover:text-white transition-colors shadow-sm">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
             </button>
