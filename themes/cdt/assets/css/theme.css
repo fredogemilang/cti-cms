@@ -1,3 +1,7 @@
+/* NOTE: Copied from cdt-gemini/src/style.css. One intentional divergence:
+   background-image url() paths below are ABSOLUTE (/themes/cdt/assets/images/...)
+   instead of the original relative ../assets/images/... so the CMS Vite build
+   leaves them untouched — the files live in public/themes/cdt/assets/images/. */
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
@@ -73,12 +77,12 @@ html.lenis, html.lenis body {
 
 /* Custom Background Image Utilities to resolve assets at build time */
 .bg-footer-image {
-  background-image: url('../assets/images/bg-footer.webp');
+  background-image: url('/themes/cdt/assets/images/bg-footer.webp');
 }
 .bg-form-image {
-  background-image: url('../assets/images/bg-form.webp');
+  background-image: url('/themes/cdt/assets/images/bg-form.webp');
 }
 .bg-testimonial-image {
-  background-image: url('../assets/images/bg-testimonial.webp');
+  background-image: url('/themes/cdt/assets/images/bg-testimonial.webp');
 }
 
