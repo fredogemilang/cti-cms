@@ -81,13 +81,17 @@
         'serverErrors' => $fieldErrors,
         'captcha'      => $captchaProvider,
         'ajaxUrl'      => route('forms.submit.ajax', $form->slug),
-    ]) }})">
+    ]) }})" class="{{ !empty($modalFooter) ? 'flex flex-col flex-1 min-h-0 overflow-hidden' : '' }}">
 
-    <form method="POST" action="{{ route('forms.submit', $form->slug) }}" class="elementor-form space-y-8 {{ $formTextAlign }}"
+    <form method="POST" action="{{ route('forms.submit', $form->slug) }}" class="elementor-form {{ !empty($modalFooter) ? 'flex flex-col flex-1 min-h-0 overflow-hidden' : 'space-y-8' }} {{ $formTextAlign }}"
           novalidate
           @submit.prevent="validateAndSubmit">
 
     @csrf
+
+    @if(!empty($modalFooter))
+    <div class="modal-sheet-body p-6 md:p-8 flex-1 overflow-y-auto space-y-6">
+    @endif
 
     {{-- Form Success Alert --}}
     <div x-show="isSubmitted" x-transition
@@ -368,8 +372,38 @@
         <p class="text-xs text-red-500" x-show="errors['captcha']" x-text="errors['captcha']"></p>
     @endif
 
-    {{-- Submit --}}
-    @if(empty($hideSubmit))
+    @if(!empty($modalFooter))
+    </div> {{-- Close modal-sheet-body --}}
+
+    <!-- Fixed Bottom Footer for Modal -->
+    <div class="px-6 md:px-8 py-3.5 bg-white border-t border-zinc-200/80 shrink-0 flex items-center justify-end gap-3 z-20">
+        <?php
+            $modelTransBtn = method_exists($form, 'getTranslation') ? $form->getTranslation('submit_button_text') : null;
+            $fallbackBtnText = !empty($form->submit_button_text) ? $form->submit_button_text : 'Submit Application';
+            $btnText = $modelTransBtn ?: t('form.submit_' . $form->slug, t('aws_credits.form_cta', $fallbackBtnText));
+        ?>
+        @if(!empty($cancelClick))
+          <button type="button" @click="{{ $cancelClick }}" class="px-5 py-3 border border-zinc-200 text-zinc-600 hover:bg-zinc-100 transition-colors rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer">
+            Cancel
+          </button>
+        @endif
+        <button type="submit" :disabled="submitting" class="{{ $btnClass }} inline-flex items-center justify-center gap-2 text-center transition-all duration-300 cursor-pointer">
+            <template x-if="submitting">
+                <svg class="h-4 w-4 text-current shrink-0 animate-spin" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3.5"></circle>
+                    <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </template>
+            <template x-if="justSubmitted && !submitting">
+                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </template>
+            <span x-text="submitting ? 'Submitting...' : (justSubmitted ? 'Submitted!' : '{{ addslashes($btnText) }}')">{{ $btnText }}</span>
+        </button>
+    </div>
+    @elseif(empty($hideSubmit))
+    {{-- Standard Submit --}}
     <div class="{{ $isDark ? 'flex flex-col items-center' : 'pt-4 flex justify-end' }} {{ !empty($stickySubmit) ? 'sticky bottom-0 bg-white pt-4 pb-4 border-t border-zinc-100 z-20' : '' }}">
         <?php
             $modelTransBtn = method_exists($form, 'getTranslation') ? $form->getTranslation('submit_button_text') : null;

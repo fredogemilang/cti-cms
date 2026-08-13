@@ -700,63 +700,70 @@
                 </div>
               </div>
 
-              <!-- Modal Body (Scrollable in middle) -->
-              <div class="modal-sheet-body p-6 md:p-8 flex-1 overflow-y-auto">
-                @php
-                  $jobAppForm = get_assigned_form('job_application_form');
-                @endphp
-
                 @if($jobAppForm)
-                  @include('cdt::partials.tailwind-form', ['form' => $jobAppForm, 'variant' => 'light', 'hideSubmit' => true])
+                  @include('cdt::partials.tailwind-form', ['form' => $jobAppForm, 'variant' => 'light', 'modalFooter' => true, 'cancelClick' => 'closeModals()'])
                 @else
-                  <form id="job-app-form-fallback" @submit.prevent="submitApplication()" class="space-y-5">
-                    <div>
-                      <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Full Name *</label>
-                      <input type="text" required x-model="formName" placeholder="e.g. John Doe" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-                    </div>
-
-                    <div>
-                      <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Preferred Job Position *</label>
-                      <input type="text" required name="preferred_job_position" id="preferred_job_position" x-model="formPosition" :value="formPosition" placeholder="e.g. Solution Architect" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <!-- Modal Body (Scrollable in middle) -->
+                  <form id="job-app-form-fallback" @submit.prevent="submitApplication()" class="flex flex-col flex-1 min-h-0 overflow-hidden">
+                    <div class="modal-sheet-body p-6 md:p-8 flex-1 overflow-y-auto space-y-5">
                       <div>
-                        <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Phone Number *</label>
-                        <input type="tel" required x-model="formPhone" placeholder="+62 812-3456-7890" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
+                        <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Full Name *</label>
+                        <input type="text" required x-model="formName" placeholder="e.g. John Doe" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
                       </div>
+
                       <div>
-                        <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Email Address *</label>
-                        <input type="email" required x-model="formEmail" placeholder="johndoe@email.com" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
+                        <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Preferred Job Position *</label>
+                        <input type="text" required name="preferred_job_position" id="preferred_job_position" x-model="formPosition" :value="formPosition" placeholder="e.g. Solution Architect" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
+                      </div>
+
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Phone Number *</label>
+                          <input type="tel" required x-model="formPhone" placeholder="+62 812-3456-7890" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
+                        </div>
+                        <div>
+                          <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">Email Address *</label>
+                          <input type="email" required x-model="formEmail" placeholder="johndoe@email.com" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
+                        </div>
+                      </div>
+
+                      <div>
+                        <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">LinkedIn Profile URL <span class="text-primary font-normal">(Optional - Will Be Prioritized)</span></label>
+                        <input type="url" x-model="formLinkedin" placeholder="https://linkedin.com/in/username" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
+                      </div>
+
+                      <div class="space-y-4 pt-2">
+                        <div class="flex items-start gap-3">
+                          <input type="checkbox" required id="privacy-consent-jobs-modal" x-model="formConsent" class="mt-1 h-4 w-4 rounded border-zinc-300 text-primary focus:ring-primary cursor-pointer">
+                          <label for="privacy-consent-jobs-modal" class="text-sm font-semibold text-red-600 cursor-pointer select-none leading-relaxed">
+                            By ticking this box, I agree that my personal information will be given to Central Data Technology (CDT)
+                          </label>
+                        </div>
                       </div>
                     </div>
 
-                    <div>
-                      <label class="block text-xs font-bold text-zinc-600 uppercase tracking-wider mb-2">LinkedIn Profile URL <span class="text-primary font-normal">(Optional - Will Be Prioritized)</span></label>
-                      <input type="url" x-model="formLinkedin" placeholder="https://linkedin.com/in/username" class="w-full px-4 py-3 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:border-primary transition-all">
-                    </div>
-
-                    <div class="space-y-4 pt-2">
-                      <div class="flex items-start gap-3">
-                        <input type="checkbox" required id="privacy-consent-jobs-modal" x-model="formConsent" class="mt-1 h-4 w-4 rounded border-zinc-300 text-primary focus:ring-primary cursor-pointer">
-                        <label for="privacy-consent-jobs-modal" class="text-sm font-semibold text-red-600 cursor-pointer select-none leading-relaxed">
-                          By ticking this box, I agree that my personal information will be given to Central Data Technology (CDT)
-                        </label>
-                      </div>
+                    <!-- Fixed Bottom Footer for Fallback Form -->
+                    <div class="px-6 md:px-8 py-3.5 bg-white border-t border-zinc-200/80 shrink-0 flex items-center justify-end gap-3 z-20">
+                      <button type="button" @click="closeModals()" class="px-5 py-3 border border-zinc-200 text-zinc-600 hover:bg-zinc-100 transition-colors rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer">
+                        Cancel
+                      </button>
+                      <button type="submit" :disabled="formSubmitting" class="w-full sm:w-auto px-8 py-3.5 bg-primary text-white hover:bg-red-700 shadow-md hover:shadow-lg transition-all rounded-xl text-xs font-bold uppercase tracking-wider inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50">
+                        <template x-if="formSubmitting">
+                          <svg class="h-4 w-4 text-current shrink-0 animate-spin" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3.5"></circle>
+                            <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        </template>
+                        <template x-if="formSuccess && !formSubmitting">
+                          <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                          </svg>
+                        </template>
+                        <span x-text="formSubmitting ? 'Submitting...' : (formSuccess ? 'Submitted!' : 'Submit Application')">Submit Application</span>
+                      </button>
                     </div>
                   </form>
                 @endif
-              </div>
-
-              <!-- Fixed Submit Footer (At absolute bottom edge of card) -->
-              <div class="px-6 md:px-8 py-3.5 bg-white border-t border-zinc-200/80 shrink-0 flex items-center justify-end gap-3 z-20">
-                <button type="button" @click="closeModals()" class="px-5 py-3 border border-zinc-200 text-zinc-600 hover:bg-zinc-100 transition-colors rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer">
-                  Cancel
-                </button>
-                <button type="button" @click="document.querySelector('.modal-sheet-card form').requestSubmit()" class="w-full sm:w-auto px-8 py-3.5 bg-primary text-white hover:bg-red-700 shadow-md hover:shadow-lg transition-all rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer">
-                  Submit Application
-                </button>
-              </div>
             </div>
           </div>
         </div>
