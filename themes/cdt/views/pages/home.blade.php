@@ -3,13 +3,12 @@
 @section('title', isset($page) && $page->title ? $page->getMetaTitle() : setting('site_name', 'Trusted IT Consultant for Scalable and Secure Growth - Central Data Technology'))
 
 @section('content')
+
   <!-- From index.html: full width background image, red gradient overlay on the left -->
   <section class="hero-section relative h-screen flex items-center overflow-hidden" x-data="{ catalogueOpen: false }"
     x-on:keydown.escape.window="catalogueOpen = false"
-    x-effect="
-      document.documentElement.style.overflow = catalogueOpen ? 'hidden' : '';
-      document.body.style.overflow = catalogueOpen ? 'hidden' : '';
-    ">
+    x-init="$watch('catalogueOpen', val => { if (val) { document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; } else { document.documentElement.style.overflow = ''; document.body.style.overflow = ''; } })"
+    >
     <!-- Background Image -->
     <div class="absolute inset-0">
       @php
@@ -436,7 +435,6 @@
           </div>
         </div>
       </div>
-      </div>
     </div>
   </section>
 
@@ -494,3 +492,4 @@
   <!-- Contact Form Section -->
   @include('cdt::partials.contact-section')
 @endsection
+

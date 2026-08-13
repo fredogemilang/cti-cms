@@ -10,8 +10,7 @@
     <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
   @endif
 
-  {{-- Theme CSS & JS Assets --}}
-  <script type="module" crossorigin src="{{ asset('themes/cdt/assets/main-DY6Zr0uY.js') }}"></script>
+  {{-- Theme CSS --}}
   <link rel="stylesheet" crossorigin href="{{ asset('themes/cdt/assets/main-V6bxgVBt.css') }}">
   <style>
     .prose ul, .rich-content ul {
@@ -53,13 +52,13 @@
     }
   </style>
 
-  @livewireStyles
+
   @stack('head')
   @stack('styles')
 </head>
 <body class="font-body text-dark antialiased bg-white overflow-x-hidden">
   
-  <div x-data="{ activeSheet: null, showMenu: true }" x-effect="const isSheetOpen = activeSheet !== null; document.documentElement.style.overflow = isSheetOpen ? 'hidden' : ''; document.body.style.overflow = isSheetOpen ? 'hidden' : '';">
+  <div x-data="{ activeSheet: null, showMenu: false }" x-effect="const isSheetOpen = activeSheet !== null; document.documentElement.style.overflow = isSheetOpen ? 'hidden' : ''; document.body.style.overflow = isSheetOpen ? 'hidden' : '';">
     
     {{-- Header Partial --}}
     @include('cdt::partials.header')
@@ -77,7 +76,9 @@
 
   </div>
 
-  @livewireScripts
+  {{-- Theme JS (ES module): loads Alpine, GSAP, Swiper, Lenis and starts them --}}
+  <script type="module" crossorigin src="{{ asset('themes/cdt/assets/main-DY6Zr0uY.js') }}"></script>
+
   @stack('scripts')
   <script>
     // GSAP is already loaded & registered by theme JS (main-DY6Zr0uY.js).

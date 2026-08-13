@@ -74,13 +74,7 @@
       </div>
       @endif
 
-      <!-- Hamburger Menu Button -->
-      <button @click="showMenu = !showMenu" title="Toggle Menu" aria-label="Toggle Menu" class="p-2 rounded-lg text-gray-700 hover:text-primary hover:bg-gray-100 transition-colors focus:outline-none">
-        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path x-show="!showMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          <path x-show="showMenu" style="display:none;" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+
     </div>
   </div>
 </div>
