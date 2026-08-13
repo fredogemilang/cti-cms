@@ -5,6 +5,7 @@
     'sizes' => '100vw',
     'alt' => null,
     'loading' => 'lazy',
+    'decoding' => 'async',
     'class' => '',
     'pictureClass' => '',
     'placeholder' => true,
@@ -52,7 +53,7 @@
         @if (!empty($data['height'])) height="{{ $data['height'] }}" @endif
         alt="{{ $alt }}"
         loading="{{ $loading }}"
-        decoding="async"
+        decoding="{{ $decoding }}"
         class="{{ $finalClass }}"
         @if ($usePlaceholder) style="background-image:url('{{ $data['placeholder'] }}');background-size:cover;background-position:{{ $objectPosition }};object-position:{{ $objectPosition }}" onload="this.style.backgroundImage='none'" @endif
         {{ $attributes->except(['style']) }}

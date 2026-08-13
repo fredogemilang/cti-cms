@@ -11,7 +11,7 @@
         $heroBg = $page->getBlockValue('hero_bg_image', 'themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
         $heroBgUrl = resolve_block_asset($heroBg);
       @endphp
-      <x-image :src="$heroBgUrl" alt="{{ $page->getBlockValue('hero_title', 'Management') }} Banner" title="{{ $page->getBlockValue('hero_title', 'Management') }}" class="w-full h-full object-cover" loading="eager" fetchpriority="high" />
+      <x-image :src="$heroBgUrl" alt="{{ $page->getBlockValue('hero_title', 'Management') }} Banner" title="{{ $page->getBlockValue('hero_title', 'Management') }}" class="w-full h-full object-cover" loading="eager" decoding="sync" fetchpriority="high" />
       <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-transparent w-full lg:w-3/4" /></div>
     </div>
     
