@@ -118,11 +118,12 @@
   </div>
 
   {{-- Theme JS (ES module): loads Alpine, GSAP, Swiper, Lenis and starts them --}}
-  <script type="module" crossorigin src="{{ asset('themes/cdt/assets/main-DY6Zr0uY.js') }}"></script>
+  {{-- v2 = hero load animation removed (LCP fix, 2026-08-13); renamed to bust immutable cache --}}
+  <script type="module" crossorigin src="{{ asset('themes/cdt/assets/main-DY6Zr0uYv2.js') }}"></script>
 
   @stack('scripts')
   <script>
-    // GSAP is already loaded & registered by theme JS (main-DY6Zr0uY.js).
+    // GSAP is already loaded & registered by theme JS (main-DY6Zr0uYv2.js).
     // This init runs after DOM ready, reading data-gsap attributes.
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
