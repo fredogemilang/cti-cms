@@ -45,6 +45,7 @@
         @endphp
         <div class="hero-text-anim flex items-center gap-3 sm:gap-6">
           <a href="{{ $heroCta['url'] ?? '#areas-of-expertise' }}" x-link
+            aria-label="{{ ($heroCta['text'] ?? t('home.learn_more', 'Learn More')) }}: {{ setting('site_name', 'Central Data Technology') }}"
             class="inline-flex items-center justify-center whitespace-nowrap bg-white text-primary px-5 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm font-bold uppercase tracking-wider hover:bg-zinc-100 transition rounded-full">
             {{ $heroCta['text'] ?? t('home.learn_more', 'Learn More') }}
           </a>
@@ -478,7 +479,7 @@
           @if(!empty($blogCard['description']))
             <p class="text-sm text-white/80 mb-4 max-w-sm">{!! $blogCard['description'] !!}</p>
           @endif
-          <a href="{{ url($blogCard['button_url'] ?: '/insights') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
+          <a href="{{ url($blogCard['button_url'] ?: '/insights') }}" aria-label="{{ $blogCard['title'] }}: {{ $blogCard['button_text'] ?: t('home.explore', 'Explore') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
             {{ $blogCard['button_text'] ?: t('home.explore', 'Explore') }}
           </a>
         </div>
@@ -493,7 +494,7 @@
           @if(!empty($lifeCard['description']))
             <p class="text-sm text-white/80 mb-4 max-w-sm">{!! $lifeCard['description'] !!}</p>
           @endif
-          <a href="{{ url($lifeCard['button_url'] ?: '/careers') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
+          <a href="{{ url($lifeCard['button_url'] ?: '/careers') }}" aria-label="{{ $lifeCard['title'] }}: {{ $lifeCard['button_text'] ?: t('home.learn_more', 'Learn More') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
             {{ $lifeCard['button_text'] ?: t('home.learn_more', 'Learn More') }}
           </a>
         </div>
