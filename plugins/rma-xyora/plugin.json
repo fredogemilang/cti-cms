@@ -1,0 +1,27 @@
+{
+    "name": "RMA Xyora",
+    "slug": "rma-xyora",
+    "version": "1.0.0",
+    "description": "RMA Xyora plugin for managing customer product return requests (RMA).",
+    "author": "Xyora Team",
+    "namespace": "Plugins\\RmaXyora",
+    "provider": "Plugins\\RmaXyora\\Providers\\RmaXyoraServiceProvider",
+    "permissions": {
+        "resources": [
+            {
+                "module": "rma-xyora",
+                "actions": [
+                    "view",
+                    "edit",
+                    "delete"
+                ],
+                "icon": "build",
+                "description": "Manage RMA requests"
+            }
+        ]
+    },
+    "requires": {
+        "php": ">=8.2",
+        "cms": ">=1.0"
+    }
+}

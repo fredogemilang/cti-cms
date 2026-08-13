@@ -15,7 +15,7 @@
           })
           ->first();
         if ($entry) {
-          $formData = json_decode($entry->data, true);
+          $formData = is_array($entry->data) ? $entry->data : json_decode($entry->data ?? '[]', true);
           $rmaStatusResult = [
             'id' => $entry->id,
             'serial_number' => $formData['serial_number_produk'] ?? '-',
