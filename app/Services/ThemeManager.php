@@ -200,8 +200,8 @@ class ThemeManager
         ]);
 
         // Dynamically refresh active theme in singleton registry
-        if (class_exists(\App\Services\ThemeLoader::class)) {
-            app(\App\Services\ThemeLoader::class)->setActiveTheme($theme);
+        if (class_exists(ThemeLoader::class)) {
+            app(ThemeLoader::class)->setActiveTheme($theme);
         }
 
         // Publish assets

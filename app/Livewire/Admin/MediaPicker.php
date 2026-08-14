@@ -115,7 +115,7 @@ class MediaPicker extends Component
         } else {
             // Fallback for custom asset path or external URL
             $url = resolve_block_asset($this->value);
-            
+
             $this->selectedMediaId = null;
             $this->selectedMedia = [
                 'id' => null,

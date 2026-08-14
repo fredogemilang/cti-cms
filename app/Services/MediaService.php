@@ -95,6 +95,7 @@ class MediaService
         try {
             if (! function_exists('imagewebp')) {
                 \Log::warning('imagewebp() is not available on this server.');
+
                 return null;
             }
 
