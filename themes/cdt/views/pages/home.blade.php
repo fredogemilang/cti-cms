@@ -379,7 +379,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Callout 1 -->
       <div class="relative h-64 overflow-hidden group" data-gsap="curtain-reveal" data-gsap-delay="0">
-        <img src="{{ resolve_block_asset($blogCard['image'] ?: 'themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg') }}" alt="{{ $blogCard['title'] }}" title="{{ $blogCard['title'] }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
+        <x-image :src="resolve_block_asset($blogCard['image'] ?: 'themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg')" alt="{{ $blogCard['title'] }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700" pictureClass="absolute inset-0 w-full h-full" sizes="(max-width: 768px) 100vw, 50vw" />
         <div class="absolute inset-0 bg-zinc-900/60"></div>
         <div class="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-6">
           <h2 class="text-3xl font-bold mb-3">{!! $blogCard['title'] !!}</h2>
@@ -394,7 +394,7 @@
       
       <!-- Callout 2 -->
       <div class="relative h-64 overflow-hidden group" data-gsap="curtain-reveal" data-gsap-delay="0.2">
-        <img src="{{ resolve_block_asset($lifeCard['image'] ?: 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg') }}" alt="{{ $lifeCard['title'] }}" title="{{ $lifeCard['title'] }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700">
+        <x-image :src="resolve_block_asset($lifeCard['image'] ?: 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg')" alt="{{ $lifeCard['title'] }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-700" pictureClass="absolute inset-0 w-full h-full" sizes="(max-width: 768px) 100vw, 50vw" />
         <div class="absolute inset-0 bg-zinc-900/60"></div>
         <div class="absolute inset-0 flex flex-col items-center justify-center text-white text-center p-6">
           <h2 class="text-3xl font-bold mb-3">{!! $lifeCard['title'] !!}</h2>
