@@ -9,7 +9,7 @@
 ## Menu System
 
 - **Registration:** Via `AdminMenuBuilder` + `RenderAdminMenu` event — never seed menus to DB
-- **Hierarchy:** `MenuItem` model with parent/child, order, icons (Lucide), route patterns
+- **Hierarchy:** `MenuItem` model with parent/child, order, icons (Material Symbols — content/CPT icons use the `lucide:` prefix instead), route patterns
 - **Active detection:** Pattern-based with child fallback
 - **Gotcha G27/G28:** Parent menu must check children's active state; wildcard patterns cause collision
 

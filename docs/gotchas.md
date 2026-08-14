@@ -155,3 +155,25 @@ When integrating static HTML (Vite/Handlebars) into CMS theme, content images (h
 - `<x-image>` renders single-size `<img>` → mobile downloads desktop-sized images (e.g., 143KB hero)
 
 **Rule:** Content images MUST be uploaded through `MediaService` (Admin Panel or `app(MediaService::class)->upload()`) during integration. Only brand logos, icons, SVGs, and build artifacts (CSS/JS/fonts) belong in `themes/{slug}/assets/`. **Telltale sign:** block fallback path starts with `themes/` instead of `uploads/` or `media/`. See `docs/theme-development.md` §2E.
+
+## G51. Mandatory `<x-image>` for Responsive Images (2026-08-14)
+Raw `<img src="{{ resolve_block_asset(...) }}">` tags bypass the responsive image pipeline — no srcset, no WebP source, no size variants served. Mobile users download desktop-sized images (e.g., 143KB hero instead of 25KB sm variant). PageSpeed flags these as "Improve image delivery".
+
+**Rule:** ALL user-uploaded content images MUST use the `<x-image>` Blade component. It auto-generates `<picture>` with WebP `<source>`, `srcset` from variants (sm/md/lg/xl), `sizes` attribute, `loading="lazy"`, and LQIP blur placeholder.
+
+```blade
+{{-- ✅ CORRECT --}}
+<x-image :src="$path" alt="..." sizes="(max-width: 768px) 100vw, 50vw" />
+
+{{-- ❌ FORBIDDEN --}}
+<img src="{{ resolve_block_asset($path) }}" alt="...">
+```
+
+Raw `<img>` is only allowed for static theme assets (SVG icons, decorative images from `themes/{slug}/assets/`). Ref: `docs/theme-development.md` §2B.
+
+## G52. Critical CSS Homepage Only + FOUC Prevention (2026-08-14)
+Settings → Page Optimization has a **"Homepage Only"** toggle for Critical CSS. When ON, critical CSS inlining + stylesheet deferring only apply to the homepage (`/`, `/en`, `/id`). Other pages load stylesheets normally.
+
+**FOUC Prevention:** `body{opacity:0}` is injected with critical CSS; a tiny inline JS at `</body>` adds a `css-loaded` class when preloaded stylesheets finish loading (150ms fade-in, 2s failsafe).
+
+**Failed experiment (do not repeat without a new strategy):** auto-extracted 50KB inline critical CSS + deferred stylesheet swap made scores DROP (TBT +150ms from parsing inline at throttle, CLS up from the swap) and was reverted (commit c124522). If retried: curate critical manually, ≤8KB.

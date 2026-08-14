@@ -67,6 +67,6 @@ Backup (spatie/laravel-backup) — database/filesystem backups
 
 | Trait | Models | Purpose |
 |-------|--------|---------|
-| `HasTranslations` | Page, PageBlock, CptEntry, FormField | Multi-locale JSON translations |
+| `HasTranslations` | Page, PageBlock, CptEntry, Form, FormField | Multi-locale JSON translations |
 | `HasSeoMeta` | Page, CptEntry | Polymorphic SEO data |
 | `SoftDeletes` | Form, CptEntry, Media, Redirect | Trash/recycle bin |

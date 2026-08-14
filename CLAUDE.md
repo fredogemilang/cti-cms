@@ -74,10 +74,11 @@ app/
 ├── Services/               ← PluginLoader, ThemeLoader, SettingsRegistry, etc.
 ├── Traits/                 ← HasTranslations, HasSeoMeta, HasRoles
 ├── Providers/              ← App, Auth, Plugin, Theme service providers
-├── Http/Middleware/        ← 13 middleware layers
+├── Http/Middleware/        ← 14 middleware layers
 └── Support/                ← Filter, helpers
 plugins/
 ├── posts/                  ← Blog with categories/tags
+├── youtube/                ← YouTube channel sync (CDT-specific)
 └── google-site-kit/        ← Analytics integration
 themes/cdt/                 ← Active theme
 ├── theme.json              ← Templates, blocks, form_placeholders
@@ -95,10 +96,11 @@ themes/cdt/                 ← Active theme
 | 3 | `OptimizeHtml` | Minify HTML |
 | 4 | `CompressResponse` | Gzip/Brotli |
 | 5 | `SecurityHeaders` | CSP, X-Frame, HSTS |
-| 6 | `PageCache` | Full-page cache for static pages |
-| 7 | `Log404` | Passive 404 logging (terminable) |
+| 6 | `LSCacheHeaders` | LiteSpeed cache headers (ESI/TTL) |
+| 7 | `PageCache` | Full-page cache for static pages |
+| 8 | `Log404` | Passive 404 logging (terminable) |
 
-## Key Models (36 total)
+## Key Models (35 total)
 
 | Model | Table | Purpose |
 |-------|-------|---------|
@@ -149,18 +151,24 @@ REST API v1 at `/api/v1/`. 98 endpoints total — see `docs/api-reference.md`.
 ```
 * * * * * php artisan schedule:run
 ```
-- `events:complete-expired` (daily 00:01)
-- `activity:prune` (daily 03:00, 90d)
+- `events:complete-expired` (daily 00:01 — no-ops if Events plugin absent)
+- `backup:run` (daily 02:00)
 - `content:purge-trash` (daily 02:30, 30d)
+- `activity:prune` (daily 03:00, 90d)
+- `prune-404-logs` (daily 03:15, 90d)
+- `page-cache:warm` (daily 03:30)
+- `queue:prune-failed` (daily 03:30, 14d)
 - `content:publish-scheduled` (every minute)
-- `media:optimize` (backfill WebP)
+- `queue:work --stop-when-empty --max-time=55` (every minute — cron-driven queue worker)
+- `youtube:sync` (daily 00:00, from youtube plugin)
+- Manual: `media:optimize` (backfill WebP)
 
 ## Documentation
 
 | File | Content |
 |------|---------|
 | `docs/branching-strategy.md` | Git branching, core vs project, server deploy protocol |
-| `docs/gotchas.md` | All 45 gotchas & lessons learned |
+| `docs/gotchas.md` | All 52 gotchas & lessons learned (G1–G52) |
 | `docs/conventions.md` | Patterns, deployment, branching |
 | `docs/architecture/` | Per-subsystem architecture deep dives |
 | `docs/api-reference.md` | 98 REST API endpoints |

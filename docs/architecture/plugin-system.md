@@ -41,12 +41,14 @@ plugins/{slug}/
 
 Use the `RenderAdminMenu` event — never seed menus to DB:
 ```php
-Event::listen(RenderAdminMenu::class, function ($menu) {
-    $menu->add([
+Event::listen(RenderAdminMenu::class, function ($event) {
+    $event->addMenuItem([
         'title' => 'Posts',
         'route' => 'admin.posts.index',
-        'icon' => 'lucide:newspaper',
+        'url' => route('admin.posts.index'),
+        'icon' => 'rss_feed', // Material Symbols name — NOT the 'lucide:' prefix
         'permission' => 'posts.view',
+        'is_active' => true,
     ]);
 });
 ```

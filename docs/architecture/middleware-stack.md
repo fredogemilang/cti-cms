@@ -12,8 +12,9 @@ Registered in `bootstrap/app.php`:
 | 3 | `OptimizeHtml` | `app/Http/Middleware/OptimizeHtml.php` | Minify HTML output (collapse whitespace, remove comments) |
 | 4 | `CompressResponse` | `app/Http/Middleware/CompressResponse.php` | Gzip/Brotli compression based on Accept-Encoding |
 | 5 | `SecurityHeaders` | `app/Http/Middleware/SecurityHeaders.php` | CSP, X-Frame-Options, X-Content-Type-Options, HSTS |
-| 6 | `PageCache` | `app/Http/Middleware/PageCache.php` | Full-page cache for anonymous GET requests. Auto-purged on Page/CPT save |
-| 7 | `Log404` | `app/Http/Middleware/Log404.php` | Passive 404 logging via terminable callback. Throttled 5min, static assets skipped |
+| 6 | `LSCacheHeaders` | `app/Http/Middleware/LSCacheHeaders.php` | LiteSpeed cache headers (ESI/TTL/cacheability) — from litespeed/lscache-laravel |
+| 7 | `PageCache` | `app/Http/Middleware/PageCache.php` | Full-page cache for anonymous GET requests. Auto-purged on Page/CPT save |
+| 8 | `Log404` | `app/Http/Middleware/Log404.php` | Passive 404 logging via terminable callback. Throttled 5min, static assets skipped |
 
 ## Named Middleware (Aliases)
 
