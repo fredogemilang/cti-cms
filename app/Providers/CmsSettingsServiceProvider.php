@@ -412,6 +412,11 @@ class CmsSettingsServiceProvider extends ServiceProvider
                     'rules' => ['nullable', 'string', 'max:50000'],
                     'help' => 'Inlined into <head> as <style>. Use a tool like https://www.sitelocity.com/critical-path-css-generator or `npx critical` to extract.'],
 
+                ['key' => 'pageopt_critical_css_homepage_only', 'label' => 'Homepage Only', 'type' => 'boolean', 'section' => 'Critical CSS', 'order' => 65,
+                    'default' => false,
+                    'rules' => ['boolean'],
+                    'help' => 'When enabled, critical CSS and stylesheet deferring are applied only on the homepage. Other pages load stylesheets normally.'],
+
                 ['key' => 'pageopt_deferred_stylesheets', 'label' => 'Deferred Stylesheet Patterns', 'type' => 'code', 'section' => 'Critical CSS', 'order' => 70,
                     'default' => '',
                     'rules' => ['nullable', 'string', 'max:2000'],
