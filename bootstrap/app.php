@@ -19,7 +19,6 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Plugins\Events\Models\Event;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -62,12 +61,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
     })
     ->withSchedule(function (Schedule $schedule): void {
-        // Auto-complete events that have ended
-        $schedule->call(function () {
-            Event::where('status', 'published')
-                ->where('end_date', '<', now())
-                ->update(['status' => 'completed']);
-        })->daily()->at('00:01');
+        // Auto-complete events that have ended.
+        // The Events plugin was removed as client-specific (commit a5bf328) — the
+        // command no-ops safely when the plugin is absent, so the schedule never
+        // crashes if a client installs/uninstalls it.
+        $schedule->command('events:complete-expired')->dailyAt('00:01')->onOneServer();
 
         // Prune old audit log entries (default 90 days, configurable via setting)
         $schedule->command('activity:prune')->dailyAt('03:00')->onOneServer();
