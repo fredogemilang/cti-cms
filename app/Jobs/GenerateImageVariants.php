@@ -57,12 +57,16 @@ class GenerateImageVariants implements ShouldQueue
         $webpQ = (int) (setting('img_webp_quality', 80));
         $emitWebp = (bool) setting('img_auto_webp', true);
 
+        if (! function_exists('imagewebp')) {
+            $emitWebp = false;
+        }
+
         // Pick encoder + extension based on the source mime so PNG keeps alpha
         // and bytes match the filename suffix (otherwise CDNs/browsers serve
         // the wrong Content-Type and transparency is silently lost).
         [$encoder, $variantExt] = match ($media->mime_type) {
             'image/png' => ['png',  'png'],
-            'image/webp' => ['webp', 'webp'],
+            'image/webp' => function_exists('imagewebp') ? ['webp', 'webp'] : ['png', 'png'],
             default => ['jpeg', 'jpg'],
         };
 

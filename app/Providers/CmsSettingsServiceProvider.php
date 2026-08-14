@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Services\CacheManager;
 use App\Services\SettingsRegistry;
 use App\Settings\Actions\BrevoTestEmailAction;
+use App\Settings\Actions\PurgePageCache;
+use App\Settings\Actions\WarmPageCache;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -292,12 +295,18 @@ class CmsSettingsServiceProvider extends ServiceProvider
             'label' => 'Cache',
             'icon' => 'bolt',
             'order' => 60,
-            'description' => 'Full-page HTML cache for anonymous visitors. Auto-purged when pages or CPT entries are saved.',
+            'description' => 'Full-page cache for anonymous visitors. Automatically leverages LiteSpeed Cache (server-level) in production or Laravel PageCache in development. Auto-purged when pages, posts, or CPT entries change.',
             'fields' => [
+                ['key' => '_cache_mode_info', 'label' => 'Active Engine', 'type' => 'info', 'section' => 'Page Cache', 'order' => 5,
+                    'icon' => CacheManager::isLiteSpeed() ? 'verified' : 'info',
+                    'content' => CacheManager::isLiteSpeed()
+                        ? '<span class="font-semibold text-emerald-700 dark:text-emerald-300">LiteSpeed Cache Engine Active:</span> Server-level full-page cache is running. Cached responses are served directly by LiteSpeed Web Server from memory (~5-20ms TTFB), completely bypassing PHP and Laravel framework overhead.'
+                        : '<span class="font-semibold text-blue-700 dark:text-blue-300">Application Cache Engine (Fallback):</span> Running on a non-LiteSpeed web server. Caching is handled at the PHP/Laravel application layer. Deploy to a LiteSpeed server for native web-server-level caching.'],
+
                 ['key' => 'page_cache_enabled', 'label' => 'Enable Page Cache', 'type' => 'boolean', 'section' => 'Page Cache', 'order' => 10,
                     'default' => false,
                     'rules' => ['boolean'],
-                    'help' => 'Caches GET responses for anonymous visitors. Authenticated users always bypass.'],
+                    'help' => 'Caches GET responses for anonymous visitors. Authenticated users always bypass. On LiteSpeed servers, responses are cached at the web server level for instant TTFB.'],
 
                 ['key' => 'page_cache_ttl', 'label' => 'TTL (seconds)', 'type' => 'number', 'section' => 'Page Cache', 'order' => 20,
                     'default' => 3600,
@@ -307,6 +316,20 @@ class CmsSettingsServiceProvider extends ServiceProvider
                     'default' => "/forms/*\n/cart\n/checkout",
                     'rules' => ['nullable', 'string', 'max:4000'],
                     'help' => 'One pattern per line. Supports `*` wildcards.'],
+
+                ['key' => 'page_cache_warm_on_save', 'label' => 'Auto-Warm on Content Save', 'type' => 'boolean', 'section' => 'Cache Preloading (Warming)', 'order' => 40,
+                    'default' => true,
+                    'rules' => ['boolean'],
+                    'help' => 'Automatically preloads modified pages into cache in the background right after saving.'],
+
+                ['key' => 'page_cache_warm_concurrency', 'label' => 'Crawler Concurrency', 'type' => 'number', 'section' => 'Cache Preloading (Warming)', 'order' => 50,
+                    'default' => 5,
+                    'rules' => ['required', 'integer', 'min:1', 'max:20'],
+                    'help' => 'Number of simultaneous HTTP requests when preloading the sitemap (default: 5).'],
+            ],
+            'actions' => [
+                ['label' => 'Warm Cache', 'handler' => WarmPageCache::class, 'icon' => 'offline_bolt', 'color' => 'blue'],
+                ['label' => 'Purge Cache', 'handler' => PurgePageCache::class, 'icon' => 'delete_sweep', 'color' => 'red'],
             ],
         ]);
     }

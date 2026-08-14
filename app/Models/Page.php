@@ -194,14 +194,14 @@ class Page extends Model
     public function setBlock(string $name, $value, string $type = 'media', ?string $label = null): PageBlock
     {
         $block = $this->allBlocks()->where('name', $name)->first();
-        if ($block) {
+        if ($block instanceof PageBlock) {
             $block->value = $value;
             $block->save();
 
             return $block;
         }
 
-        return $this->blocks()->create([
+        $created = $this->blocks()->create([
             'name' => $name,
             'type' => $type,
             'label' => $label ?? Str::headline($name),
@@ -209,6 +209,12 @@ class Page extends Model
             'order' => ($this->blocks()->max('order') ?? 0) + 1,
             'is_active' => true,
         ]);
+
+        if (! $created instanceof PageBlock) {
+            throw new \RuntimeException('Failed to create PageBlock.');
+        }
+
+        return $created;
     }
 
     /**

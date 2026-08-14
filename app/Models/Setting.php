@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Http\Middleware\PageCache;
+use App\Services\CacheManager;
 use App\Services\SettingsRegistry;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Model;
@@ -35,7 +35,7 @@ class Setting extends Model
         static::saved(function (self $s) {
             static::flushMemo();
             static::forgetCache($s->key, $s->group);
-            PageCache::purgeAll();
+            CacheManager::purgeAll();
 
             // Audit log: record setting changes when an authenticated user is acting
             // (skip system/cli bootstraps where no user context exists)
