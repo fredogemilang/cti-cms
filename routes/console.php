@@ -8,5 +8,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('content:publish-scheduled')->everyMinute();
+// content:publish-scheduled is already scheduled in bootstrap/app.php
+// (with ->withoutOverlapping()); scheduling it here too would run it twice
+// per minute.
 Schedule::command('backup:run')->dailyAt('02:00');
