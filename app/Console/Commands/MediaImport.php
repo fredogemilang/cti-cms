@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Media;
+use App\Models\Page;
 use App\Services\MediaService;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -179,8 +180,8 @@ class MediaImport extends Command
         $blockName = $this->option('block');
 
         $page = is_numeric($pageRef)
-            ? \App\Models\Page::find($pageRef)
-            : \App\Models\Page::where('slug', $pageRef)->first();
+            ? Page::find($pageRef)
+            : Page::where('slug', $pageRef)->first();
 
         if (! $page) {
             $this->warn("Page '{$pageRef}' not found. Skipping block assignment.");
