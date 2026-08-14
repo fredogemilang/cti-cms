@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\CacheManager;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -55,7 +56,7 @@ class PageCache
     protected function shouldCache(Request $request): bool
     {
         // When running on LiteSpeed, server-level LSCache handles caching — bypass PHP-level cache
-        if (\App\Services\CacheManager::isLiteSpeed()) {
+        if (CacheManager::isLiteSpeed()) {
             return false;
         }
 

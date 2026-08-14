@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Services\SeoRenderer;
 use App\Services\ThemeLoader;
-use App\Traits\HasSanitizedContent;
 use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +16,7 @@ use Illuminate\Support\Str;
 
 class Page extends Model
 {
-    use HasSanitizedContent, HasSeoMeta, HasTranslations, SoftDeletes;
+    use HasSeoMeta, HasTranslations, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -195,14 +194,14 @@ class Page extends Model
     public function setBlock(string $name, $value, string $type = 'media', ?string $label = null): PageBlock
     {
         $block = $this->allBlocks()->where('name', $name)->first();
-        if ($block) {
+        if ($block instanceof PageBlock) {
             $block->value = $value;
             $block->save();
 
             return $block;
         }
 
-        return $this->blocks()->create([
+        $created = $this->blocks()->create([
             'name' => $name,
             'type' => $type,
             'label' => $label ?? Str::headline($name),
@@ -210,6 +209,12 @@ class Page extends Model
             'order' => ($this->blocks()->max('order') ?? 0) + 1,
             'is_active' => true,
         ]);
+
+        if (! $created instanceof PageBlock) {
+            throw new \RuntimeException('Failed to create PageBlock.');
+        }
+
+        return $created;
     }
 
     /**
@@ -229,79 +234,6 @@ class Page extends Model
         }
 
         return $default;
-    }
-
-    /**
-     * Get array payload of a button block ['text' => '...', 'url' => '...', 'target' => '...'].
-     */
-    public function buttonBlock(string $name, array $default = []): array
-    {
-        $value = $this->block($name);
-        if (is_array($value)) {
-            return array_merge(['text' => '', 'url' => '#', 'target' => '_self'], $value);
-        }
-        if (is_string($value) && ! empty($value)) {
-            $decoded = json_decode($value, true);
-            if (is_array($decoded)) {
-                return array_merge(['text' => '', 'url' => '#', 'target' => '_self'], $decoded);
-            }
-        }
-
-        return $default;
-    }
-
-    /**
-     * Get array payload of a title block ['prefix' => '...', 'main' => '...'].
-     */
-    public function titleBlock(string $name, array $default = []): array
-    {
-        $value = $this->block($name);
-        if (is_array($value)) {
-            return array_merge(['prefix' => '', 'main' => ''], $value);
-        }
-        if (is_string($value) && ! empty($value)) {
-            $decoded = json_decode($value, true);
-            if (is_array($decoded)) {
-                return array_merge(['prefix' => '', 'main' => ''], $decoded);
-            }
-            return ['prefix' => '', 'main' => $value];
-        }
-
-        return $default;
-    }
-
-    /**
-     * Get array payload of a card block ['title' => '...', 'description' => '...', 'image' => '...', 'button_text' => '...', 'button_url' => '...'].
-     */
-    public function cardBlock(string $name, array $default = []): array
-    {
-        $value = $this->block($name);
-        $defaults = [
-            'title' => '',
-            'description' => '',
-            'asset_type' => 'image',
-            'image' => '',
-            'icon' => 'lucide:sparkles',
-            'description_type' => 'text',
-            'list_icon' => 'lucide:check-circle',
-            'list_items' => '',
-            'wysiwyg_content' => '',
-            'button_text' => '',
-            'button_url' => '#',
-            'button_target' => '_self',
-        ];
-        if (is_array($value)) {
-            return array_merge($defaults, $value);
-        }
-        if (is_string($value) && ! empty($value)) {
-            $decoded = json_decode($value, true);
-            if (is_array($decoded)) {
-                return array_merge($defaults, $decoded);
-            }
-            return array_merge($defaults, ['title' => $value]);
-        }
-
-        return array_merge($defaults, $default);
     }
 
     public function isSystem(): bool
@@ -473,8 +405,6 @@ class Page extends Model
 
         return null;
     }
-
-
 
     /**
      * Return a URL for this page in the given locale (uses that locale's slug if defined).

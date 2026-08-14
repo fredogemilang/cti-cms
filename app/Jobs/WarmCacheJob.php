@@ -18,11 +18,12 @@ class WarmCacheJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 1;
+
     public int $timeout = 120;
 
     /**
-     * @param array<string>|null $urls Specific URLs to warm (targeted mode), or null for full sitemap.
-     * @param int|null $concurrency Number of concurrent requests (defaults to setting or 5).
+     * @param  array<string>|null  $urls  Specific URLs to warm (targeted mode), or null for full sitemap.
+     * @param  int|null  $concurrency  Number of concurrent requests (defaults to setting or 5).
      */
     public function __construct(
         public ?array $urls = null,
@@ -33,6 +34,7 @@ class WarmCacheJob implements ShouldQueue
     {
         if (! setting('page_cache_enabled', false)) {
             Log::info('WarmCacheJob: Page cache is disabled in settings. Skipping warm.');
+
             return ['warmed' => 0, 'failed' => 0, 'total' => 0];
         }
 
@@ -64,7 +66,7 @@ class WarmCacheJob implements ShouldQueue
             foreach ($responses as $url => $response) {
                 if ($response instanceof \Throwable) {
                     $failedCount++;
-                    Log::warning("WarmCacheJob: Failed to warm {$url}: " . $response->getMessage());
+                    Log::warning("WarmCacheJob: Failed to warm {$url}: ".$response->getMessage());
                 } elseif ($response->successful()) {
                     $warmedCount++;
                 } else {
@@ -73,7 +75,7 @@ class WarmCacheJob implements ShouldQueue
             }
         }
 
-        Log::info("WarmCacheJob: Completed warming. Warmed: {$warmedCount}, Failed: {$failedCount}, Total: " . count($targetUrls));
+        Log::info("WarmCacheJob: Completed warming. Warmed: {$warmedCount}, Failed: {$failedCount}, Total: ".count($targetUrls));
 
         return [
             'warmed' => $warmedCount,
@@ -116,7 +118,7 @@ class WarmCacheJob implements ShouldQueue
     protected function shouldWarmUrl(string $fullUrl): bool
     {
         $path = parse_url($fullUrl, PHP_URL_PATH) ?? '/';
-        $path = '/' . ltrim($path, '/');
+        $path = '/'.ltrim($path, '/');
         $trimmedPath = ltrim($path, '/');
 
         // Skip admin paths
@@ -130,11 +132,11 @@ class WarmCacheJob implements ShouldQueue
 
         // Skip excluded patterns from settings
         $excludedSetting = (string) setting('page_cache_excluded_paths', '');
-        $excludedLines = array_filter(array_map('trim', explode("\n", str_replace("\r", "", $excludedSetting))));
+        $excludedLines = array_filter(array_map('trim', explode("\n", str_replace("\r", '', $excludedSetting))));
 
         foreach ($excludedLines as $pattern) {
-            $pattern = '/' . ltrim($pattern, '/');
-            $regex = '#^' . str_replace(['\*', '\?'], ['.*', '.'], preg_quote($pattern, '#')) . '$#i';
+            $pattern = '/'.ltrim($pattern, '/');
+            $regex = '#^'.str_replace(['\*', '\?'], ['.*', '.'], preg_quote($pattern, '#')).'$#i';
             if (preg_match($regex, $path) === 1) {
                 return false;
             }
@@ -157,7 +159,7 @@ class WarmCacheJob implements ShouldQueue
             $defaultLocale = setting('default_locale', config('app.locale', 'en'));
             foreach (available_locales() as $loc) {
                 if ($loc !== $defaultLocale) {
-                    $urls[] = url('/' . $loc);
+                    $urls[] = url('/'.$loc);
                 }
             }
         }

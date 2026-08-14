@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Jobs\PingSitemap;
+use App\Jobs\WarmCacheJob;
 use App\Listeners\LogAuthEvents;
 use App\Listeners\UpdateLastLoginAt;
 use App\Models\CptEntry;
@@ -21,6 +22,7 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Plugins\Posts\Models\Post;
 
 /**
  * Registers all core CMS event listeners, model observers,
@@ -58,8 +60,8 @@ class CmsEventServiceProvider extends ServiceProvider
     protected function registerCacheInvalidation(): void
     {
         $contentModels = [Page::class, CptEntry::class];
-        if (class_exists(\Plugins\Posts\Models\Post::class)) {
-            $contentModels[] = \Plugins\Posts\Models\Post::class;
+        if (class_exists(Post::class)) {
+            $contentModels[] = Post::class;
         }
 
         // Page cache invalidation + targeted cache warming
@@ -84,7 +86,7 @@ class CmsEventServiceProvider extends ServiceProvider
                         }
                     }
 
-                    \App\Jobs\WarmCacheJob::dispatch(array_values(array_unique($urls)));
+                    WarmCacheJob::dispatch(array_values(array_unique($urls)));
                 }
             });
 

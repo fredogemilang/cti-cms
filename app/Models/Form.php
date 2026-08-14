@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Jobs\SendFormNotificationJob;
 use App\Services\CaptchaService;
 use App\Services\FormConditionalLogic;
+use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -244,6 +245,26 @@ class Form extends Model
             // Skip validation for hidden fields
             if (! $isVisible) {
                 continue;
+            }
+
+            // Handle file upload fields if the request has a file
+            if (($field->type === 'file' || $field->type === 'image') && $request && $request->hasFile($field->field_id)) {
+                $file = $request->file($field->field_id);
+                // Custom upload via MediaService or local fallback
+                if (class_exists(MediaService::class)) {
+                    try {
+                        $media = app(MediaService::class)->upload($file, [
+                            'title' => 'Form Upload - '.$file->getClientOriginalName(),
+                            'folder' => 'form-submissions',
+                        ]);
+                        $value = $media->path; // Store relative path
+                    } catch (\Throwable $e) {
+                        // Fallback to storing original filename / basic upload
+                        $value = $file->store('form-submissions', 'public');
+                    }
+                } else {
+                    $value = $file->store('form-submissions', 'public');
+                }
             }
 
             // Validate field

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\CacheManager;
 use App\Services\SettingsRegistry;
 use App\Settings\Actions\BrevoTestEmailAction;
 use App\Settings\Actions\PurgePageCache;
@@ -297,8 +298,8 @@ class CmsSettingsServiceProvider extends ServiceProvider
             'description' => 'Full-page cache for anonymous visitors. Automatically leverages LiteSpeed Cache (server-level) in production or Laravel PageCache in development. Auto-purged when pages, posts, or CPT entries change.',
             'fields' => [
                 ['key' => '_cache_mode_info', 'label' => 'Active Engine', 'type' => 'info', 'section' => 'Page Cache', 'order' => 5,
-                    'icon' => \App\Services\CacheManager::isLiteSpeed() ? 'verified' : 'info',
-                    'content' => \App\Services\CacheManager::isLiteSpeed()
+                    'icon' => CacheManager::isLiteSpeed() ? 'verified' : 'info',
+                    'content' => CacheManager::isLiteSpeed()
                         ? '<span class="font-semibold text-emerald-700 dark:text-emerald-300">LiteSpeed Cache Engine Active:</span> Server-level full-page cache is running. Cached responses are served directly by LiteSpeed Web Server from memory (~5-20ms TTFB), completely bypassing PHP and Laravel framework overhead.'
                         : '<span class="font-semibold text-blue-700 dark:text-blue-300">Application Cache Engine (Fallback):</span> Running on a non-LiteSpeed web server. Caching is handled at the PHP/Laravel application layer. Deploy to a LiteSpeed server for native web-server-level caching.'],
 

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\CacheManager;
+use App\Services\SettingsRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
@@ -113,7 +114,7 @@ class LSCacheTest extends TestCase
     #[Test]
     public function cache_settings_group_registers_info_field_without_validation_rules(): void
     {
-        $registry = app(\App\Services\SettingsRegistry::class);
+        $registry = app(SettingsRegistry::class);
         $fields = $registry->fields('cache');
 
         $infoField = collect($fields)->firstWhere('key', '_cache_mode_info');

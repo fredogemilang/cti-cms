@@ -1,6 +1,9 @@
 <?php
 
 use App\Models\FormField;
+use Tests\TestCase;
+
+uses(TestCase::class);
 
 test('form field validates corporate email rule via validation config', function () {
     $field = new FormField([

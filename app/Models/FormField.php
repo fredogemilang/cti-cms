@@ -6,6 +6,7 @@ use App\Rules\CorporateEmail;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 class FormField extends Model
 {
@@ -744,8 +745,10 @@ class FormField extends Model
             if (is_string($value) && ($this->validation['rule'] ?? null) === 'corporate_email') {
                 $failed = null;
                 (new CorporateEmail(null, $this->validation['rule_message'] ?? null))
-                    ->validate($this->field_id, $value, function ($message) use (&$failed) {
+                    ->validate($this->field_id, $value, function (string $message) use (&$failed): PotentiallyTranslatedString {
                         $failed = $message;
+
+                        return new PotentiallyTranslatedString($message, app('translator'));
                     });
 
                 if ($failed !== null) {
