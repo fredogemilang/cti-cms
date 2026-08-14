@@ -147,3 +147,11 @@ Forms on the frontend MUST strictly comply with Form Assignments (`/ctrlpanel/fo
 
 ## G49. Card Block Visual Asset & Description Format Options (2026-08-12)
 Page Builder `card` block supports selectable Visual Asset type (`asset_type`: `image` | `icon`) and Description Content Format (`description_type`: `text` | `listing` | `wysiwyg`). When `asset_type` is `icon`, specify Lucide icon name via `icon`. When `description_type` is `listing`, specify `list_icon` and line-separated `list_items`. Access via `$page->cardBlock($name)`.
+
+## G50. Static-to-CMS Image Pipeline Bypass (2026-08-14)
+When integrating static HTML (Vite/Handlebars) into CMS theme, content images (hero banners, stock photos, section backgrounds) were copied directly to `themes/{slug}/assets/` and hardcoded as block fallback values. This bypasses the entire responsive image pipeline:
+- `GenerateImageVariants` never runs → no sm/md/lg/xl variants
+- `ResponsiveImageService` cannot find them in `media` table → no srcset
+- `<x-image>` renders single-size `<img>` → mobile downloads desktop-sized images (e.g., 143KB hero)
+
+**Rule:** Content images MUST be uploaded through `MediaService` (Admin Panel or `app(MediaService::class)->upload()`) during integration. Only brand logos, icons, SVGs, and build artifacts (CSS/JS/fonts) belong in `themes/{slug}/assets/`. **Telltale sign:** block fallback path starts with `themes/` instead of `uploads/` or `media/`. See `docs/theme-development.md` §2E.

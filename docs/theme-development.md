@@ -126,6 +126,53 @@ These settings in Settings → Media control compression quality:
 | `img_auto_webp` | true | Auto-generate WebP companions |
 | `img_optimize_original` | true | Compress original on upload |
 
+### E. Static-to-CMS Migration — Image Pipeline ⚠️ CRITICAL
+
+> **RULE**: When integrating a static HTML site (Vite/Handlebars/Next.js/etc.) into a CMS theme, **content images** (hero banners, stock photos, section backgrounds) **MUST be uploaded through `MediaService`** — either via Admin Panel or via `php artisan media:import`. They MUST NOT be placed directly in `themes/{slug}/assets/`.
+
+**Why this matters:**
+- Images placed in `themes/{slug}/assets/` are treated as static build artifacts
+- `GenerateImageVariants` job never runs on them → no sm/md/lg/xl variants
+- `ResponsiveImageService` cannot find them in the `media` table → no srcset
+- `<x-image>` renders them as a single-size `<img>` with no responsive delivery
+- Mobile users download desktop-sized images (e.g., 143KB instead of 25KB)
+
+**What goes WHERE:**
+
+| Asset Type | Location | Rationale |
+|------------|----------|-----------|
+| Brand logos, icons, SVGs | `themes/{slug}/assets/` | Small, vector, no variants needed |
+| CSS, JS, fonts | `themes/{slug}/assets/` | Build artifacts |
+| Hero banners, stock photos | **Media Library** (`media:import`) | Need responsive variants |
+| Section background images | **Media Library** (`media:import`) | Need responsive variants |
+| Blog/content thumbnails | **Media Library** (`media:import`) | Need responsive variants |
+
+**Standard import command (`media:import`):**
+
+```bash
+# Import a single image + assign to homepage block
+php artisan media:import public/themes/cdt/assets/banner_hero.jpg \
+    --page=home --block=hero_image
+
+# Import entire directory of content images
+php artisan media:import public/themes/cdt/assets/ --skip-existing
+
+# Dry run to preview what will be imported
+php artisan media:import public/themes/cdt/assets/ --dry-run
+```
+
+The command automatically:
+1. Uploads through `MediaService` → compression + WebP conversion
+2. Dispatches `GenerateImageVariants` → sm/md/lg/xl + WebP companions + LQIP
+3. Creates `media` DB record with proper alt text (derived from filename)
+4. Optionally assigns to a page block value (`--page` + `--block`)
+
+**Telltale signs of violation** (audit checklist):
+- ❌ Block fallback value contains `themes/{slug}/assets/photo-*.jpg`
+- ❌ `resolve_block_asset()` returns a path starting with `themes/`
+- ❌ `<x-image>` renders without `srcset` attribute in HTML output
+- ✅ Block value contains `uploads/` or `media/` path → from Media Library
+
 
 ## 3. SEO Heading Hierarchy & HTML Standards
 
