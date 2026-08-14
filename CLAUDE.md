@@ -100,7 +100,7 @@ themes/cdt/                 ← Active theme
 | 7 | `PageCache` | Full-page cache for static pages |
 | 8 | `Log404` | Passive 404 logging (terminable) |
 
-## Key Models (35 total)
+## Key Models (36 total)
 
 | Model | Table | Purpose |
 |-------|-------|---------|
