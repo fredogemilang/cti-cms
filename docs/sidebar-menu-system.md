@@ -40,6 +40,11 @@ The admin sidebar uses a **unified, auto-discoverable menu registration system**
 
 ## Data Contract
 
+> **Icon systems (dua sistem, jangan dicampur):** icon sidebar menu memakai
+> Material Symbols **bare name** (`dynamic_form`, `build`, `dashboard`).
+> Content icons (CPT meta, Page Builder blocks) memakai prefix `lucide:<name>`.
+> Lihat `theme-development.md` §2C.
+
 Every menu item follows this standardized structure:
 
 ```php

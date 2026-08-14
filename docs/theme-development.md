@@ -114,6 +114,14 @@ Raw `<img>` tags are ONLY allowed for:
 <x-image :src="resolve_block_asset($block->image)" alt="..." sizes="(max-width: 768px) 100vw, 50vw" />
 ```
 
+> **Icon systems (dua sistem, jangan dicampur):** content icons (CPT meta, Page
+> Builder blocks, tombol UI konten) memakai prefix `lucide:<name>` — contoh
+> `<x-icon name="lucide:shield-check" class="w-5 h-5" />` atau
+> `render_icon('lucide:shield-check', 'w-5 h-5')`. Icon **admin sidebar menu**
+> memakai Material Symbols bare name (`build`, `dashboard`, `dynamic_form`) —
+> lihat `sidebar-menu-system.md`. Jangan hardcode inline `<svg>` untuk icon
+> konten.
+
 ### D. Image Quality Settings (Admin Panel)
 
 These settings in Settings → Media control compression quality:

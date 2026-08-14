@@ -175,3 +175,4 @@ REST API v1 at `/api/v1/`. 98 endpoints total — see `docs/api-reference.md`.
 | `docs/theme-development.md` | Theme creation guide |
 | `docs/plugin-development.md` | Plugin creation guide |
 | `docs/sidebar-menu-system.md` | Admin menu system |
+| `docs/contributing.md` | PR workflow, fork sync, pre-PR checklist |
