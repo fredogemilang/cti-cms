@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Rules\CorporateEmail;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +47,19 @@ class FormField extends Model
         'is_required' => 'boolean',
         'is_hidden' => 'boolean',
     ];
+
+    /**
+     * Store validation config as raw JSON — the array cast decodes on read.
+     * Accepts an array (API) or an already-encoded JSON string (Form Studio
+     * serializes via JSON.stringify before POST); both would otherwise be
+     * double-encoded by the automatic array cast on write.
+     */
+    public function setValidationAttribute(mixed $value): void
+    {
+        $this->attributes['validation'] = $value === null
+            ? null
+            : (is_string($value) ? $value : json_encode($value));
+    }
 
     /**
      * Get the localized label. Falls back to the English column value.
@@ -720,6 +734,22 @@ class FormField extends Model
                 }
                 if (isset($this->validation['pattern']) && ! preg_match($this->validation['pattern'], $value)) {
                     return "{$this->label} format is invalid.";
+                }
+            }
+
+            // Named rule classes (App\Rules\*) — reusable across the form
+            // builder, CPT, and plugins. Configure via `validation.rule` in
+            // Form Studio JSON; optional `validation.rule_message` overrides
+            // the rule's default message (e.g. translated text).
+            if (is_string($value) && ($this->validation['rule'] ?? null) === 'corporate_email') {
+                $failed = null;
+                (new CorporateEmail(null, $this->validation['rule_message'] ?? null))
+                    ->validate($this->field_id, $value, function ($message) use (&$failed) {
+                        $failed = $message;
+                    });
+
+                if ($failed !== null) {
+                    return $failed;
                 }
             }
         }

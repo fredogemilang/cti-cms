@@ -81,6 +81,14 @@
             $f['translations_id_label'] = $trans['id']['label'] ?? '';
             $f['translations_id_placeholder'] = $trans['id']['placeholder'] ?? '';
             $f['translations_id_consent_text'] = $trans['id']['consent_text'] ?? '';
+            // Normalize validation + flatten named rule state for the Alpine UI
+            $validation = $f['validation'] ?? [];
+            if (is_string($validation)) {
+                $validation = json_decode($validation, true) ?? [];
+            }
+            $f['validation'] = $validation;
+            $f['validation_corporate_email'] = ($validation['rule'] ?? null) === 'corporate_email';
+            $f['validation_rule_message'] = $validation['rule_message'] ?? '';
             return $f;
         }, $form->fields ? $form->fields->toArray() : [])) }},
         selectedFieldIndex: null,
@@ -119,6 +127,24 @@
             }
         },
 
+        // Serialize per-field validation JSON (preserves min/max/pattern,
+        // adds or removes the corporate_email named rule from the toggle)
+        serializeValidation(field) {
+            const v = Object.assign({}, field.validation || {});
+            if (field.validation_corporate_email) {
+                v.rule = 'corporate_email';
+                if (field.validation_rule_message) {
+                    v.rule_message = field.validation_rule_message;
+                } else {
+                    delete v.rule_message;
+                }
+            } else {
+                delete v.rule;
+                delete v.rule_message;
+            }
+            return JSON.stringify(v);
+        },
+
         // Builder actions
         addField(type) {
             const fieldId = 'field_' + Math.random().toString(36).substr(2, 6);
@@ -139,6 +165,9 @@
                 options_text: ['select', 'radio', 'checkbox'].includes(type) ? 'Option 1|value_1\nOption 2|value_2' : '',
                 conditional_logic: { enabled: false, conditions: [] },
                 advanced_settings: {},
+                validation: {},
+                validation_corporate_email: false,
+                validation_rule_message: '',
                 consent_text: type === 'gdpr' ? defaultConsent : '',
                 terms_text: type === 'terms' ? defaultTerms : '',
             });
@@ -424,6 +453,7 @@
                                 <input type="hidden" :name="`fields[${index}][column_width]`" x-model="field.column_width">
                                 <input type="hidden" :name="`fields[${index}][placeholder]`" x-model="field.placeholder">
                                 <input type="hidden" :name="`fields[${index}][help_text]`" x-model="field.help_text">
+                                <input type="hidden" :name="`fields[${index}][validation]`" :value="serializeValidation(field)">
                                 <input type="hidden" :name="`fields[${index}][options]`" x-model="field.options_text">
                                 <input type="hidden" :name="`fields[${index}][consent_text]`" x-model="field.consent_text">
                                 <input type="hidden" :name="`fields[${index}][terms_text]`" x-model="field.terms_text">
@@ -523,6 +553,20 @@
                                 <input type="checkbox" x-model="fields[selectedFieldIndex].is_required" class="rounded border-gray-300 text-primary focus:ring-primary">
                                 <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Required Field</span>
                             </label>
+
+                            {{-- Corporate email validation (email fields only) --}}
+                            <template x-if="fields[selectedFieldIndex].type === 'email'">
+                                <div class="space-y-3 pt-3 border-t border-gray-100 dark:border-[#272B30]">
+                                    <label class="block text-xs font-bold text-[#6F767E]">Corporate Email Validation</label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" x-model="fields[selectedFieldIndex].validation_corporate_email" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                        <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Reject free email providers (Gmail, Yahoo, etc.)</span>
+                                    </label>
+                                    <input x-show="fields[selectedFieldIndex].validation_corporate_email" type="text" x-model="fields[selectedFieldIndex].validation_rule_message"
+                                        class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs px-3 text-[#111827] dark:text-[#FCFCFC]"
+                                        placeholder="Custom error message (optional)">
+                                </div>
+                            </template>
 
                             {{-- GDPR consent text --}}
                             <template x-if="fields[selectedFieldIndex].type === 'gdpr'">
