@@ -85,9 +85,13 @@ class MediaOptimize extends Command
                             imagedestroy($img);
                             $img = $canvas;
                         }
-                        imagewebp($img, $webpPath, 85);
+                        if (function_exists('imagewebp')) {
+                            imagewebp($img, $webpPath, 85);
+                            $ok++;
+                        } else {
+                            $fail++;
+                        }
                         imagedestroy($img);
-                        $ok++;
                     }
                 }
             }

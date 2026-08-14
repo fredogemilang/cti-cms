@@ -204,6 +204,26 @@ class Form extends Model
                 continue;
             }
 
+            // Handle file upload fields if the request has a file
+            if (($field->type === 'file' || $field->type === 'image') && $request && $request->hasFile($field->field_id)) {
+                $file = $request->file($field->field_id);
+                // Custom upload via MediaService or local fallback
+                if (class_exists(\App\Services\MediaService::class)) {
+                    try {
+                        $media = app(\App\Services\MediaService::class)->upload($file, [
+                            'title' => 'Form Upload - ' . $file->getClientOriginalName(),
+                            'folder' => 'form-submissions'
+                        ]);
+                        $value = $media->path; // Store relative path
+                    } catch (\Throwable $e) {
+                        // Fallback to storing original filename / basic upload
+                        $value = $file->store('form-submissions', 'public');
+                    }
+                } else {
+                    $value = $file->store('form-submissions', 'public');
+                }
+            }
+
             // Validate field
             $validation = $field->validateValue($value);
             if ($validation !== true) {

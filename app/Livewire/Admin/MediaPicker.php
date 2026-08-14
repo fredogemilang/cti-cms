@@ -114,10 +114,8 @@ class MediaPicker extends Component
             ];
         } else {
             // Fallback for custom asset path or external URL
-            $url = str_starts_with($this->value, 'http') || str_starts_with($this->value, 'themes/') || str_starts_with($this->value, 'assets/')
-                ? asset($this->value)
-                : asset('storage/'.$this->value);
-
+            $url = resolve_block_asset($this->value);
+            
             $this->selectedMediaId = null;
             $this->selectedMedia = [
                 'id' => null,
