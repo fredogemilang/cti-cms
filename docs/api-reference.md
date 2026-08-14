@@ -127,7 +127,7 @@ All admin routes are prefixed with `/api/v1/admin/`.
 
 ### 10. Site Settings
 - `GET /api/v1/admin/settings` — List all registered setting groups, field schemas, and current values
-- `GET /api/v1/admin/settings/{group}` — Get settings for group (`general`, `seo`, `languages`, `auth`, `cache`, `brevo`)
+- `GET /api/v1/admin/settings/{group}` — Get settings for group (`general`, `content`, `auth`, `brevo`, `languages`, `string-translations`, `cache`, `cdn`, `imgopt`, `pageopt`, `api`, `permalinks`, `icons`)
 - `PUT /api/v1/admin/settings/{group}` — Update settings for group
 
 ### 11. Redirect Rules
