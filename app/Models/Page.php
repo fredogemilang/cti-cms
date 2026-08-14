@@ -190,6 +190,29 @@ class Page extends Model
     }
 
     /**
+     * Set or update a block value on this page.
+     */
+    public function setBlock(string $name, $value, string $type = 'media', ?string $label = null): PageBlock
+    {
+        $block = $this->allBlocks()->where('name', $name)->first();
+        if ($block) {
+            $block->value = $value;
+            $block->save();
+
+            return $block;
+        }
+
+        return $this->blocks()->create([
+            'name' => $name,
+            'type' => $type,
+            'label' => $label ?? Str::headline($name),
+            'value' => $value,
+            'order' => ($this->blocks()->max('order') ?? 0) + 1,
+            'is_active' => true,
+        ]);
+    }
+
+    /**
      * Get array payload of a repeater block.
      */
     public function repeaterBlock(string $name, array $default = []): array
