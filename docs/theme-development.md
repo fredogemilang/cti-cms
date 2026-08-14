@@ -34,14 +34,98 @@ Never use raw `asset('storage/'.$path)` for user-uploaded block media. Always us
 <img src="{{ resolve_block_asset($block->image, 'sm') }}" alt="{{ $block->title }}">
 ```
 
-### B. Responsive Image Component (`<x-image>`)
-For primary image elements, prefer using the `<x-image>` Blade component. It automatically renders a modern `<picture>` element with WebP sources, `srcset`, `sizes`, `loading="lazy"`, and `decoding="async"`:
+### B. Responsive Image Component (`<x-image>`) — ⚠️ MANDATORY
+
+> **RULE**: All user-uploaded content images (from Media Library / block fields / CPT meta) **MUST** use `<x-image>`. Raw `<img>` tags for uploaded content are **strictly forbidden** — they bypass srcset, serve oversized images to mobile, and trigger PageSpeed "Improve image delivery" warnings.
+
+`<x-image>` automatically renders a modern `<picture>` element with WebP `<source>`, responsive `srcset`, `sizes`, `loading="lazy"`, `decoding="async"`, LQIP blur placeholder, and focal-point object-position.
 
 ```blade
+<!-- Basic usage -->
 <x-image :src="$page->hero_image" alt="Hero Image" class="w-full h-auto rounded-2xl" />
+
+<!-- With explicit sizes for layout context -->
+<x-image :src="$entry->featured_image" alt="{{ $entry->title }}"
+    class="w-full h-full object-cover"
+    sizes="(max-width: 768px) 100vw, 50vw" />
+
+<!-- With Media model directly (preferred when available) -->
+<x-image :media="$mediaModel" alt="{{ $mediaModel->alt_text }}" size="lg" />
+
+<!-- Disable placeholder for transparent images -->
+<x-image :src="$logo" alt="Logo" :placeholder="false" class="h-12 w-auto" />
 ```
 
----
+#### Props Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | `null` | Image path (resolved via `resolve_block_asset`) |
+| `media` | `Media` | `null` | Media model instance (preferred, skips DB lookup) |
+| `size` | `string` | `'lg'` | Preferred variant for `src` (`thumb`, `sm`, `md`, `lg`, `xl`) |
+| `sizes` | `string` | `'100vw'` | HTML `sizes` attribute — **critical for performance** |
+| `alt` | `string` | `null` | Alt text (falls back to Media record) |
+| `loading` | `string` | `'lazy'` | Set `'eager'` for above-the-fold hero images |
+| `decoding` | `string` | `'async'` | Image decoding strategy |
+| `class` | `string` | `''` | CSS classes for `<img>` element |
+| `pictureClass` | `string` | `''` | CSS classes for `<picture>` wrapper |
+| `placeholder` | `bool` | `true` | Show LQIP blur placeholder (auto-disabled for PNG/WebP/SVG) |
+
+#### `sizes` Attribute Cheat Sheet
+
+The `sizes` attribute tells the browser which variant to download **before CSS loads**. Without it, the browser always downloads the largest image.
+
+| Layout Context | `sizes` Value |
+|----------------|---------------|
+| Full-width hero | `100vw` (default) |
+| 2-column grid | `(max-width: 768px) 100vw, 50vw` |
+| 3-column grid | `(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw` |
+| Sidebar card | `(max-width: 768px) 100vw, 400px` |
+| Thumbnail / avatar | `80px` or `150px` |
+| Logo | `200px` |
+
+#### Generated Variants (automatic on upload)
+
+| Variant | Max Width | Use Case |
+|---------|-----------|----------|
+| `thumb` | 150px | Admin thumbnails |
+| `sm` | 480px | Mobile viewport |
+| `md` | 768px | Tablet viewport |
+| `lg` | 1280px | Desktop viewport |
+| `xl` | 1920px | Large/retina screens |
+| WebP | per variant | Auto-generated alongside each variant |
+| LQIP | 16px blur | Base64 inline placeholder |
+
+### C. When Raw `<img>` is Acceptable
+
+Raw `<img>` tags are ONLY allowed for:
+- **Static theme assets** (icons, logos, decorative SVGs from `themes/{slug}/assets/`)
+- **Tiny icons** under 5KB
+- **SVG files** (vector, no variants needed)
+
+```blade
+<!-- ✅ OK: Static theme asset -->
+<img src="{{ theme_asset('assets/icons/arrow.svg') }}" alt="Arrow" class="w-4 h-4">
+
+<!-- ❌ FORBIDDEN: User-uploaded image without srcset -->
+<img src="{{ resolve_block_asset($block->image) }}" alt="...">
+
+<!-- ✅ CORRECT: User-uploaded image with <x-image> -->
+<x-image :src="resolve_block_asset($block->image)" alt="..." sizes="(max-width: 768px) 100vw, 50vw" />
+```
+
+### D. Image Quality Settings (Admin Panel)
+
+These settings in Settings → Media control compression quality:
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `img_jpg_quality` | 85 | JPEG compression (1-100) |
+| `img_webp_quality` | 80 | WebP compression (1-100) |
+| `img_max_dimension` | 2560px | Max width/height for uploaded originals |
+| `img_auto_webp` | true | Auto-generate WebP companions |
+| `img_optimize_original` | true | Compress original on upload |
+
 
 ## 3. SEO Heading Hierarchy & HTML Standards
 

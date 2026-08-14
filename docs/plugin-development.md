@@ -146,3 +146,21 @@ class PostsServiceProvider extends CmsPluginServiceProvider
 - **Themes (`themes/`)**: Contains client-specific templates and views (e.g. CDT theme).
 
 Never add client-specific or plugin-specific code directly into core controllers or models.
+
+---
+
+## 6. Responsive Images in Plugin Views
+
+Plugin views that display user-uploaded images **MUST** use the core `<x-image>` Blade component. This ensures automatic `srcset`, WebP serving, and proper `sizes` attributes across all themes.
+
+```blade
+{{-- ✅ CORRECT: Plugin view using <x-image> --}}
+<x-image :src="$post->featured_image" alt="{{ $post->title }}"
+    class="w-full h-64 object-cover rounded-lg"
+    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+
+{{-- ❌ FORBIDDEN: Raw <img> with user-uploaded content --}}
+<img src="{{ resolve_block_asset($post->featured_image) }}" alt="...">
+```
+
+See **Theme Development → Section 2B** for the full `<x-image>` props reference and `sizes` cheat sheet.
