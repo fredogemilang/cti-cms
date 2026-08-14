@@ -49,8 +49,22 @@ class OptimizeHtml
         }
 
         if ($critical = trim((string) setting('pageopt_critical_css', ''))) {
-            $html = $this->inlineCriticalCss($html, $critical);
-            $html = $this->deferStylesheets($html);
+            // When "Homepage Only" is on, skip critical CSS injection for non-homepage paths
+            if (setting('pageopt_critical_css_homepage_only', false)) {
+                $path = ltrim($request->path(), '/');
+                $isHomepage = $path === ''
+                    || $path === '/'
+                    || (function_exists('available_locales') && in_array($path, available_locales(), true));
+
+                if (! $isHomepage) {
+                    $critical = null;
+                }
+            }
+
+            if ($critical) {
+                $html = $this->inlineCriticalCss($html, $critical);
+                $html = $this->deferStylesheets($html);
+            }
         }
 
         if (setting('pageopt_dns_prefetch', false)) {
