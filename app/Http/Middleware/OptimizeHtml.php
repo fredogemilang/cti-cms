@@ -114,15 +114,36 @@ class OptimizeHtml
 
     protected function inlineCriticalCss(string $html, string $css): string
     {
-        // Strip line comments from CSS to keep payload lean, but preserve /* ... */ for safety
-        $tag = '<style data-critical>'.$css.'</style>';
+        // Prepend body hiding rule to prevent FOUC during stylesheet swap
+        $hideBody = 'body{opacity:0;transition:opacity .15s ease-in}body.css-loaded{opacity:1}';
+        $tag = '<style data-critical>'.$hideBody.$css.'</style>';
 
-        // Insert just before </head>; fall back to prepend if no </head>
+        // Tiny JS: reveal page once deferred stylesheets finish loading (2s failsafe)
+        $reveal = '<script>'.
+            '(function(){'.
+                'function r(){document.body.classList.add("css-loaded")}'.
+                'var s=document.querySelectorAll("link[rel=preload][as=style]");'.
+                'if(!s.length){r();return}'.
+                'var n=s.length;'.
+                's.forEach(function(l){l.addEventListener("load",function(){if(--n<=0)r()})});'.
+                'setTimeout(r,2000)'.
+            '})();'.
+        '</script>';
+
+        // Insert critical style before </head>, reveal script before </body>
         if (stripos($html, '</head>') !== false) {
-            return preg_replace('/<\/head>/i', $tag.'</head>', $html, 1) ?? $html;
+            $html = preg_replace('/<\/head>/i', $tag.'</head>', $html, 1) ?? $html;
+        } else {
+            $html = $tag.$html;
         }
 
-        return $tag.$html;
+        if (stripos($html, '</body>') !== false) {
+            $html = preg_replace('/<\/body>/i', $reveal.'</body>', $html, 1) ?? $html;
+        } else {
+            $html .= $reveal;
+        }
+
+        return $html;
     }
 
     protected function deferStylesheets(string $html): string
