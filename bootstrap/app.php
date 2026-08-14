@@ -9,6 +9,7 @@ use App\Http\Middleware\EnforceTwoFactor;
 use App\Http\Middleware\HandleRedirects;
 use App\Http\Middleware\InjectSeoTags;
 use App\Http\Middleware\Log404;
+use App\Http\Middleware\LSCacheHeaders;
 use App\Http\Middleware\OptimizeHtml;
 use App\Http\Middleware\PageCache;
 use App\Http\Middleware\SecurityHeaders;
@@ -36,6 +37,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'api.cors' => ApiCors::class,
         ]);
 
+        // Raw XSRF-TOKEN cookie so cached pages can double-submit the CSRF token.
+        // Full-page cache serves one shared HTML; the cookie is re-issued per
+        // visitor (even on cache HITs), so the theme JS can re-stamp the hidden
+        // _token input with the visitor's own session token before submitting.
+        $middleware->encryptCookies(['XSRF-TOKEN']);
+
         // Run redirect rules before route matching (so 404 paths can still redirect).
         $middleware->prepend(HandleRedirects::class);
 
@@ -46,6 +53,7 @@ return Application::configure(basePath: dirname(__DIR__))
             OptimizeHtml::class,
             CompressResponse::class,
             SecurityHeaders::class,
+            LSCacheHeaders::class,
             PageCache::class,
             Log404::class,
         ]);
@@ -70,6 +78,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Purge trash older than retention window (default 30 days).
         $schedule->command('content:purge-trash')->dailyAt('02:30')->onOneServer();
+
+        // Preload and warm full-page cache before morning traffic peaks.
+        $schedule->command('page-cache:warm')->dailyAt('03:30')->onOneServer();
 
         // Cron-driven queue worker for shared hosting (no daemon allowed).
         // Each minute we drain pending jobs and exit before the next tick.

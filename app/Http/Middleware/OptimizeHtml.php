@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
  * - Removes ?ver= query strings from asset URLs
  * - Rewrites configured local paths to a CDN base URL
  * - Adds loading="lazy" to <img> tags
+ * - DNS prefetch injection for external domains
+ * - Elide redundant boolean HTML attributes
  */
 class OptimizeHtml
 {
@@ -63,6 +65,14 @@ class OptimizeHtml
                 $html = $this->inlineCriticalCss($html, $critical);
                 $html = $this->deferStylesheets($html);
             }
+        }
+
+        if (setting('pageopt_dns_prefetch', false)) {
+            $html = $this->insertDnsPrefetch($html);
+        }
+
+        if (setting('pageopt_elide_attributes', false)) {
+            $html = $this->elideAttributes($html);
         }
 
         if (setting('pageopt_minify_html', false)) {
@@ -245,10 +255,19 @@ class OptimizeHtml
             return $key;
         }, $html) ?? $html;
 
-        // Strip HTML comments (preserve IE conditionals)
-        $html = preg_replace('/<!--(?!\[if).*?-->/s', '', $html) ?? $html;
-        // Collapse whitespace between tags
-        $html = preg_replace('/>\s+</', '><', $html) ?? $html;
+        // Protect Livewire/Alpine directive attributes from whitespace damage
+        $html = preg_replace_callback('/\b(wire:snapshot|wire:effects|x-data|x-init)\s*=\s*(["\'])(.*?)\2/is', function ($m) use (&$placeholders) {
+            $key = '___PROTECTED_TAG_'.count($placeholders).'___';
+            $placeholders[$key] = $m[0];
+
+            return $key;
+        }, $html) ?? $html;
+
+        // Strip HTML comments (preserve IE conditionals and Livewire markers)
+        $html = preg_replace('/<!--(?!\[if|\s*\[if|\s*wire:).*?-->/s', '', $html) ?? $html;
+        // Collapse whitespace between tags — keep ONE space for Livewire/Alpine.js compatibility
+        $html = preg_replace('/> +</', '> <', $html) ?? $html;
+        $html = preg_replace('/>\s*\n\s*</', '> <', $html) ?? $html;
         // Collapse runs of whitespace inside text nodes
         $html = preg_replace('/\s{2,}/', ' ', $html) ?? $html;
 
@@ -258,5 +277,80 @@ class OptimizeHtml
         }
 
         return trim($html);
+    }
+
+    /**
+     * Inject <link rel="dns-prefetch"> for external domains found in the HTML.
+     * Reduces DNS lookup latency for external resources.
+     */
+    protected function insertDnsPrefetch(string $html): string
+    {
+        // Extract URLs from HTML tag attributes (src, href)
+        preg_match_all(
+            '#<(?:link|img|a|iframe|video|audio|source|script)\s[^>]*\b(?:src|href)=["\']([^"\']+)["\']#i',
+            $html,
+            $matches
+        );
+
+        if (empty($matches[1])) {
+            return $html;
+        }
+
+        // Filter to keep only external URLs (http:// or https://)
+        $externalUrls = array_filter($matches[1], fn ($url) => preg_match('#^https?://#i', $url));
+
+        if (empty($externalUrls)) {
+            return $html;
+        }
+
+        // Extract unique domains and build prefetch links
+        $appHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+        $domains = [];
+        foreach ($externalUrls as $url) {
+            $host = parse_url($url, PHP_URL_HOST);
+            if ($host && $host !== $appHost && ! isset($domains[$host])) {
+                $domains[$host] = true;
+            }
+        }
+
+        if (empty($domains)) {
+            return $html;
+        }
+
+        $prefetchTags = implode("\n", array_map(
+            fn ($domain) => '<link rel="dns-prefetch" href="//'.$domain.'">',
+            array_keys($domains)
+        ));
+
+        // Inject right after <head>
+        if (stripos($html, '<head>') !== false) {
+            return preg_replace('/<head>/i', '<head>'."\n".$prefetchTags, $html, 1) ?? $html;
+        }
+
+        return $html;
+    }
+
+    /**
+     * Shorten redundant boolean HTML attributes and remove default method="get".
+     * E.g.: disabled="disabled" → disabled, selected="selected" → selected
+     */
+    protected function elideAttributes(string $html): string
+    {
+        $replace = [
+            '/ method=("get"|get)/i' => '',
+            '/ disabled=[^ >]*/i' => ' disabled',
+            '/ selected=[^ >]*/i' => ' selected',
+            '/ readonly=[^ >]*/i' => ' readonly',
+            '/ checked=[^ >]*/i' => ' checked',
+            '/ required=[^ >]*/i' => ' required',
+            '/ autofocus=[^ >]*/i' => ' autofocus',
+            '/ autoplay=[^ >]*/i' => ' autoplay',
+            '/ muted=[^ >]*/i' => ' muted',
+            '/ loop=[^ >]*/i' => ' loop',
+            '/ novalidate=[^ >]*/i' => ' novalidate',
+            '/ multiple=[^ >]*/i' => ' multiple',
+        ];
+
+        return preg_replace(array_keys($replace), array_values($replace), $html) ?? $html;
     }
 }
