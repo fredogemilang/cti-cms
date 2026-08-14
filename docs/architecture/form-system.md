@@ -112,6 +112,26 @@ redirect back with success message
 
 Failure at any step → redirect back with `$errors` and old input.
 
+## Custom Validation Rule Classes
+
+Beyond the built-in type checks, `FormField::validateValue()` supports named rule classes from `App\Rules\` — configured per field via the `validation` JSON in Form Studio:
+
+```json
+{
+  "rule": "corporate_email",
+  "rule_message": "Gunakan email perusahaan."
+}
+```
+
+- `validation.rule` — registered rule name (currently: `corporate_email`)
+- `validation.rule_message` — optional custom/translated message (falls back to the rule's default English message)
+
+**`corporate_email`** (`App\Rules\CorporateEmail`): rejects free/disposable email providers. Blocked-domain list resolution order: rule constructor param → `validation.free_email_domains` setting (JSON array) → built-in defaults. The same rule class is reusable from any plugin or custom code:
+
+```php
+'email' => [new \App\Rules\CorporateEmail(['gmail.com'], __('validation.corporate_email'))]
+```
+
 ## CAPTCHA Configuration
 
 Configure in Admin → Settings → Forms:

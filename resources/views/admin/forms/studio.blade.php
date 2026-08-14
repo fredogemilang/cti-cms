@@ -41,12 +41,14 @@
     x-init="initSortable()"
     x-data="{
         activeTab: '{{ $activeTab ?? 'fields' }}',
+        editingLocale: 'en',
         name: {{ json_encode($form->name) }},
         slug: {{ json_encode($form->slug) }},
         description: {{ json_encode($form->description ?? '') }},
         isActive: {{ json_encode($form->is_active ? '1' : '0') }},
         submitButtonText: {{ json_encode($form->submit_button_text ?? 'Submit') }},
         themeSlot: {{ json_encode($assignedSlot) }},
+        translations: {{ json_encode($form->translations ?? ['id' => ['name' => '', 'description' => '', 'submit_button_text' => 'Kirim', 'confirmations' => ['message' => 'Terima kasih atas pengajuan Anda. Tim kami akan segera menghubungi Anda.']]]) }},
         
         // Confirmations & Spam
         confirmationType: {{ json_encode($confirmationType) }},
@@ -79,6 +81,14 @@
             $f['translations_id_label'] = $trans['id']['label'] ?? '';
             $f['translations_id_placeholder'] = $trans['id']['placeholder'] ?? '';
             $f['translations_id_consent_text'] = $trans['id']['consent_text'] ?? '';
+            // Normalize validation + flatten named rule state for the Alpine UI
+            $validation = $f['validation'] ?? [];
+            if (is_string($validation)) {
+                $validation = json_decode($validation, true) ?? [];
+            }
+            $f['validation'] = $validation;
+            $f['validation_corporate_email'] = ($validation['rule'] ?? null) === 'corporate_email';
+            $f['validation_rule_message'] = $validation['rule_message'] ?? '';
             return $f;
         }, $form->fields ? $form->fields->toArray() : [])) }},
         selectedFieldIndex: null,
@@ -117,10 +127,28 @@
             }
         },
 
+        // Serialize per-field validation JSON (preserves min/max/pattern,
+        // adds or removes the corporate_email named rule from the toggle)
+        serializeValidation(field) {
+            const v = Object.assign({}, field.validation || {});
+            if (field.validation_corporate_email) {
+                v.rule = 'corporate_email';
+                if (field.validation_rule_message) {
+                    v.rule_message = field.validation_rule_message;
+                } else {
+                    delete v.rule_message;
+                }
+            } else {
+                delete v.rule;
+                delete v.rule_message;
+            }
+            return JSON.stringify(v);
+        },
+
         // Builder actions
         addField(type) {
             const fieldId = 'field_' + Math.random().toString(36).substr(2, 6);
-            const labelMap = { gdpr: 'Privacy Consent', terms: 'Terms & Conditions', vendor_solutions: 'Solution Needed' };
+            const labelMap = { gdpr: 'Privacy Consent', terms: 'Terms & Conditions', vendor_solutions: 'Solution Needed', solution_needed: 'Solution Needed' };
             const label = labelMap[type] || (type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' '));
 
             const defaultConsent = 'I consent to having my personal data processed and agree to the Privacy Policy.';
@@ -137,6 +165,9 @@
                 options_text: ['select', 'radio', 'checkbox'].includes(type) ? 'Option 1|value_1\nOption 2|value_2' : '',
                 conditional_logic: { enabled: false, conditions: [] },
                 advanced_settings: {},
+                validation: {},
+                validation_corporate_email: false,
+                validation_rule_message: '',
                 consent_text: type === 'gdpr' ? defaultConsent : '',
                 terms_text: type === 'terms' ? defaultTerms : '',
             });
@@ -230,73 +261,127 @@
             } finally {
                 this.sendingTest = false;
             }
+        },
+
+        // AJAX Save
+        saving: false,
+        saveMessage: '',
+        async saveForm() {
+            this.saving = true;
+            this.saveMessage = '';
+            try {
+                const formData = new FormData(this.$refs.studioForm);
+                const res = await fetch(this.$refs.studioForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: formData,
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.saveMessage = '✓ Saved';
+                    setTimeout(() => this.saveMessage = '', 2500);
+                } else {
+                    this.saveMessage = '✗ Error';
+                    setTimeout(() => this.saveMessage = '', 4000);
+                }
+            } catch(e) {
+                this.saveMessage = '✗ ' + e.message;
+                setTimeout(() => this.saveMessage = '', 4000);
+            } finally {
+                this.saving = false;
+            }
         }
     }">
 
     {{-- Persistent Workspace Top Bar --}}
-    <div class="h-16 px-6 bg-white dark:bg-[#1A1A1A] border-b border-gray-200 dark:border-[#272B30] flex items-center justify-between shrink-0 shadow-sm z-30">
-        <div class="flex items-center gap-4 min-w-0">
+    <div class="h-16 px-4 md:px-6 bg-white dark:bg-[#1A1A1A] border-b border-gray-200 dark:border-[#272B30] flex items-center justify-between shrink-0 shadow-sm z-30 gap-4 overflow-x-auto no-scrollbar">
+        {{-- Left Section: Navigation & Form Meta --}}
+        <div class="flex items-center gap-3 shrink-0">
             <a href="{{ route('admin.forms.index') }}" 
-                class="p-2 rounded-xl text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all">
+                class="p-2 rounded-xl text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#272B30] transition-all" title="Back to Forms list">
                 <span class="material-symbols-outlined text-[20px]">arrow_back</span>
             </a>
 
-            <div class="flex items-center gap-3">
-                <input x-model="name" type="text"
-                    class="text-base font-bold text-[#111827] dark:text-[#FCFCFC] bg-transparent border-none focus:ring-0 p-0 w-auto min-w-[200px]"
-                    placeholder="Form Name">
+            <div class="flex items-center gap-2.5">
+                <div class="text-sm md:text-base font-bold text-[#111827] dark:text-[#FCFCFC] truncate max-w-[220px]"
+                     x-text="editingLocale === 'id' && translations.id.name ? translations.id.name : name"></div>
 
                 <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider shrink-0"
                     :class="isActive == '1' ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : 'bg-gray-100 dark:bg-gray-500/10 text-gray-600 dark:text-gray-400'">
                     <span class="w-1.5 h-1.5 rounded-full" :class="isActive == '1' ? 'bg-emerald-500' : 'bg-gray-500'"></span>
                     <span x-text="isActive == '1' ? 'Active' : 'Inactive'"></span>
                 </span>
+
+                {{-- Unified Language Switcher --}}
+                <div class="flex items-center p-0.5 bg-gray-100 dark:bg-[#0B0B0B] rounded-xl border border-gray-200 dark:border-[#272B30] text-xs font-bold shrink-0">
+                    <button type="button" @click="editingLocale = 'en'"
+                        :class="editingLocale === 'en' ? 'bg-white dark:bg-[#1A1A1A] text-primary shadow-sm font-black' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white'"
+                        class="px-2.5 py-1 rounded-lg transition-all flex items-center gap-1" title="Switch editor context to English">
+                        <span>🇬🇧</span> <span class="text-[11px]">EN</span>
+                    </button>
+                    <button type="button" @click="editingLocale = 'id'"
+                        :class="editingLocale === 'id' ? 'bg-white dark:bg-[#1A1A1A] text-primary shadow-sm font-black' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white'"
+                        class="px-2.5 py-1 rounded-lg transition-all flex items-center gap-1" title="Switch editor context to Bahasa Indonesia">
+                        <span>🇮🇩</span> <span class="text-[11px]">ID</span>
+                    </button>
+                </div>
             </div>
         </div>
 
-        {{-- 4 Primary Studio Tabs --}}
-        <div class="flex items-center gap-1 p-1 bg-[#F4F5F6] dark:bg-[#0B0B0B] rounded-2xl border border-gray-200 dark:border-[#272B30]">
-            <button @click="activeTab = 'fields'" 
-                :class="activeTab === 'fields' ? 'bg-white dark:bg-[#1A1A1A] text-primary font-bold shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white font-medium'"
-                class="px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px]">build</span>
-                <span>Fields</span>
-            </button>
+        {{-- Right Section: Navigation Tabs & Studio Action Buttons --}}
+        <div class="flex items-center gap-3 shrink-0">
+            {{-- 4 Primary Studio Tabs --}}
+            <div class="flex items-center gap-1 p-1 bg-[#F4F5F6] dark:bg-[#0B0B0B] rounded-2xl border border-gray-200 dark:border-[#272B30]">
+                <button type="button" @click="activeTab = 'fields'" 
+                    :class="activeTab === 'fields' ? 'bg-white dark:bg-[#1A1A1A] text-primary font-bold shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white font-medium'"
+                    class="px-3.5 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[17px]">build</span>
+                    <span>Fields</span>
+                </button>
 
-            <button @click="activeTab = 'settings'" 
-                :class="activeTab === 'settings' ? 'bg-white dark:bg-[#1A1A1A] text-primary font-bold shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white font-medium'"
-                class="px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px]">settings</span>
-                <span>Settings</span>
-            </button>
+                <button type="button" @click="activeTab = 'settings'" 
+                    :class="activeTab === 'settings' ? 'bg-white dark:bg-[#1A1A1A] text-primary font-bold shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white font-medium'"
+                    class="px-3.5 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[17px]">settings</span>
+                    <span>Settings</span>
+                </button>
 
-            <button @click="activeTab = 'emails'" 
-                :class="activeTab === 'emails' ? 'bg-white dark:bg-[#1A1A1A] text-primary font-bold shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white font-medium'"
-                class="px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px]">mail</span>
-                <span>Email Notifications</span>
-            </button>
+                <button type="button" @click="activeTab = 'emails'" 
+                    :class="activeTab === 'emails' ? 'bg-white dark:bg-[#1A1A1A] text-primary font-bold shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white font-medium'"
+                    class="px-3.5 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[17px]">mail</span>
+                    <span class="hidden lg:inline">Email Notifications</span>
+                    <span class="inline lg:hidden">Emails</span>
+                </button>
 
-            <button @click="activeTab = 'entries'" 
-                :class="activeTab === 'entries' ? 'bg-white dark:bg-[#1A1A1A] text-primary font-bold shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white font-medium'"
-                class="px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px]">inbox</span>
-                <span>Submissions ({{ $form->entries()->count() }})</span>
-            </button>
-        </div>
+                <button type="button" @click="activeTab = 'entries'" 
+                    :class="activeTab === 'entries' ? 'bg-white dark:bg-[#1A1A1A] text-primary font-bold shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white font-medium'"
+                    class="px-3.5 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[17px]">inbox</span>
+                    <span>Submissions ({{ $form->entries()->count() }})</span>
+                </button>
+            </div>
 
-        {{-- Action Buttons --}}
-        <div class="flex items-center gap-3">
-            <a href="https://cdt.devs/" target="_blank" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all flex items-center gap-1.5">
+            {{-- Action Buttons --}}
+            <a href="https://cdt.devs/" target="_blank" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all flex items-center gap-1.5" title="Frontend Preview">
                 <span class="material-symbols-outlined text-sm">open_in_new</span>
-                <span>Frontend Preview</span>
+                <span class="hidden lg:inline">Preview</span>
             </a>
 
-            <button type="button" @click="$refs.studioForm.submit()"
-                class="px-5 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-red-700 transition-all shadow-md flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm">save</span>
-                <span>Save Studio Changes</span>
+            <button type="button" @click="saveForm()" :disabled="saving"
+                class="px-4 py-1.5 rounded-xl text-xs font-bold bg-primary text-white hover:bg-red-700 transition-all shadow-md flex items-center gap-1.5 disabled:opacity-60">
+                <span class="material-symbols-outlined text-sm" x-show="!saving">save</span>
+                <svg x-show="saving" class="animate-spin h-3.5 w-3.5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+                <span x-text="saving ? 'Saving...' : 'Save'"></span>
             </button>
+
+            {{-- Save status toast --}}
+            <span x-show="saveMessage" x-transition.opacity.duration.300ms
+                class="text-[11px] font-bold px-2.5 py-1 rounded-lg shrink-0"
+                :class="saveMessage.startsWith('✓') ? 'text-emerald-700 bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-500/10' : 'text-red-700 bg-red-100 dark:text-red-400 dark:bg-red-500/10'"
+                x-text="saveMessage"></span>
         </div>
     </div>
 
@@ -306,6 +391,7 @@
         <input type="hidden" name="tab" x-model="activeTab">
         <input type="hidden" name="name" x-model="name">
         <input type="hidden" name="slug" x-model="slug">
+        <input type="hidden" name="translations[id][name]" x-model="translations.id.name">
 
         {{-- TAB 1: 🛠️ FIELDS BUILDER --}}
         <div x-show="activeTab === 'fields'" class="flex-1 flex w-full overflow-hidden">
@@ -340,7 +426,7 @@
                                             <span class="material-symbols-outlined text-lg" x-text="getFieldIcon(field.type)"></span>
                                         </div>
                                         <div>
-                                            <div class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]" x-text="field.label || 'Untitled Field'"></div>
+                                            <div class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]" x-text="(editingLocale === 'id' && field.translations_id_label) ? field.translations_id_label : (field.label || 'Untitled Field')"></div>
                                             <div class="text-xs text-[#6F767E] font-mono" x-text="field.field_id"></div>
                                         </div>
                                     </div>
@@ -367,6 +453,7 @@
                                 <input type="hidden" :name="`fields[${index}][column_width]`" x-model="field.column_width">
                                 <input type="hidden" :name="`fields[${index}][placeholder]`" x-model="field.placeholder">
                                 <input type="hidden" :name="`fields[${index}][help_text]`" x-model="field.help_text">
+                                <input type="hidden" :name="`fields[${index}][validation]`" :value="serializeValidation(field)">
                                 <input type="hidden" :name="`fields[${index}][options]`" x-model="field.options_text">
                                 <input type="hidden" :name="`fields[${index}][consent_text]`" x-model="field.consent_text">
                                 <input type="hidden" :name="`fields[${index}][terms_text]`" x-model="field.terms_text">
@@ -388,22 +475,51 @@
                 </div>
             </div>
 
-            {{-- Right Field Inspector Drawer --}}
-            <aside class="w-[360px] border-l border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] p-6 shrink-0 overflow-y-auto">
+            {{-- Right Field Inspector Off-Canvas Drawer --}}
+            <!-- Drawer Backdrop -->
+            <div x-show="selectedFieldIndex !== null" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 @click="selectedFieldIndex = null"
+                 class="fixed inset-0 bg-black/40 backdrop-blur-xs z-40"
+                 style="display: none;"></div>
+
+            <!-- Off-Canvas Drawer Panel -->
+            <aside x-show="selectedFieldIndex !== null" 
+                   x-transition:enter="transition transform ease-out duration-300"
+                   x-transition:enter-start="translate-x-full"
+                   x-transition:enter-end="translate-x-0"
+                   x-transition:leave="transition transform ease-in duration-200"
+                   x-transition:leave-start="translate-x-0"
+                   x-transition:leave-end="translate-x-full"
+                   class="fixed inset-y-0 right-0 z-50 w-full max-w-[400px] bg-white dark:bg-[#1A1A1A] border-l border-gray-200 dark:border-[#272B30] shadow-2xl p-6 overflow-y-auto"
+                   style="display: none;">
                 <template x-if="selectedFieldIndex !== null && fields[selectedFieldIndex]">
                     <div class="space-y-6">
                         <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-[#272B30]">
-                            <h4 class="text-xs font-bold text-[#6F767E] uppercase tracking-widest">Field Inspector</h4>
-                            <button type="button" @click="selectedFieldIndex = null" class="text-gray-400 hover:text-gray-600">
-                                <span class="material-symbols-outlined text-lg">close</span>
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-xl">tune</span>
+                                <h4 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-widest">Field Inspector</h4>
+                            </div>
+                            <button type="button" @click="selectedFieldIndex = null" class="p-1.5 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-[#272B30] transition-colors" title="Close inspector">
+                                <span class="material-symbols-outlined text-xl block">close</span>
                             </button>
                         </div>
 
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-xs font-bold text-[#6F767E] mb-1">Field Label</label>
-                                <input type="text" x-model="fields[selectedFieldIndex].label"
-                                    class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium px-3 text-[#111827] dark:text-[#FCFCFC]">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-xs font-bold text-[#6F767E]">Field Label</label>
+                                    <span class="text-[10px] font-black text-primary px-2 py-0.5 rounded-md bg-primary/10 uppercase" x-text="editingLocale === 'en' ? '🇬🇧 English' : '🇮🇩 Indonesia'"></span>
+                                </div>
+                                <input x-show="editingLocale === 'en'" type="text" x-model="fields[selectedFieldIndex].label"
+                                    class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium px-3 text-[#111827] dark:text-[#FCFCFC]" placeholder="Field Label (EN)">
+                                <input x-show="editingLocale === 'id'" type="text" x-model="fields[selectedFieldIndex].translations_id_label"
+                                    class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium px-3 text-[#111827] dark:text-[#FCFCFC]" :placeholder="fields[selectedFieldIndex].label || 'Field Label (ID)'">
                             </div>
 
                             <div>
@@ -413,9 +529,14 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-[#6F767E] mb-1">Placeholder Text</label>
-                                <input type="text" x-model="fields[selectedFieldIndex].placeholder"
-                                    class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium px-3 text-[#111827] dark:text-[#FCFCFC]">
+                                <div class="flex items-center justify-between mb-1">
+                                    <label class="block text-xs font-bold text-[#6F767E]">Placeholder Text</label>
+                                    <span class="text-[10px] font-black text-primary px-2 py-0.5 rounded-md bg-primary/10 uppercase" x-text="editingLocale === 'en' ? '🇬🇧 English' : '🇮🇩 Indonesia'"></span>
+                                </div>
+                                <input x-show="editingLocale === 'en'" type="text" x-model="fields[selectedFieldIndex].placeholder"
+                                    class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium px-3 text-[#111827] dark:text-[#FCFCFC]" placeholder="Placeholder (EN)">
+                                <input x-show="editingLocale === 'id'" type="text" x-model="fields[selectedFieldIndex].translations_id_placeholder"
+                                    class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium px-3 text-[#111827] dark:text-[#FCFCFC]" :placeholder="fields[selectedFieldIndex].placeholder || 'Placeholder (ID)'">
                             </div>
 
                             <div>
@@ -433,58 +554,45 @@
                                 <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Required Field</span>
                             </label>
 
-                            {{-- Translations (ID) --}}
-                            <div class="pt-4 border-t border-gray-200 dark:border-[#272B30] space-y-3" x-data="{ showTranslations: false }">
-                                <button type="button" @click="showTranslations = !showTranslations"
-                                    class="flex items-center justify-between w-full text-left">
-                                    <span class="text-xs font-bold text-[#6F767E] uppercase tracking-widest flex items-center gap-1.5">
-                                        <span class="material-symbols-outlined text-sm">translate</span>
-                                        Translation (ID)
-                                    </span>
-                                    <span class="material-symbols-outlined text-sm text-[#6F767E] transition-transform" :class="showTranslations && 'rotate-180'">expand_more</span>
-                                </button>
-                                <div x-show="showTranslations" x-collapse class="space-y-3">
-                                    <div>
-                                        <label class="block text-xs font-bold text-[#6F767E] mb-1">Label (ID)</label>
-                                        <input type="text" x-model="fields[selectedFieldIndex].translations_id_label"
-                                            :placeholder="fields[selectedFieldIndex].label"
-                                            class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium px-3 text-[#111827] dark:text-[#FCFCFC]">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-bold text-[#6F767E] mb-1">Placeholder (ID)</label>
-                                        <input type="text" x-model="fields[selectedFieldIndex].translations_id_placeholder"
-                                            :placeholder="fields[selectedFieldIndex].placeholder || 'Enter placeholder in Indonesian...'"
-                                            class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium px-3 text-[#111827] dark:text-[#FCFCFC]">
-                                    </div>
-                                    <template x-if="['gdpr', 'terms'].includes(fields[selectedFieldIndex].type)">
-                                        <div>
-                                            <label class="block text-xs font-bold text-[#6F767E] mb-1">Consent Text (ID) <span class="font-normal text-[#6F767E]/50">(HTML supported)</span></label>
-                                            <textarea x-model="fields[selectedFieldIndex].translations_id_consent_text" rows="3"
-                                                class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs p-3 text-[#111827] dark:text-[#FCFCFC] resize-none"
-                                                placeholder="Masukkan teks persetujuan dalam Bahasa Indonesia..."></textarea>
-                                        </div>
-                                    </template>
-                                    <p class="text-[10px] text-[#6F767E] italic">Leave empty to use the English value as fallback.</p>
+                            {{-- Corporate email validation (email fields only) --}}
+                            <template x-if="fields[selectedFieldIndex].type === 'email'">
+                                <div class="space-y-3 pt-3 border-t border-gray-100 dark:border-[#272B30]">
+                                    <label class="block text-xs font-bold text-[#6F767E]">Corporate Email Validation</label>
+                                    <label class="flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" x-model="fields[selectedFieldIndex].validation_corporate_email" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                        <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Reject free email providers (Gmail, Yahoo, etc.)</span>
+                                    </label>
+                                    <input x-show="fields[selectedFieldIndex].validation_corporate_email" type="text" x-model="fields[selectedFieldIndex].validation_rule_message"
+                                        class="w-full h-10 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs px-3 text-[#111827] dark:text-[#FCFCFC]"
+                                        placeholder="Custom error message (optional)">
                                 </div>
-                            </div>
+                            </template>
 
                             {{-- GDPR consent text --}}
                             <template x-if="fields[selectedFieldIndex].type === 'gdpr'">
                                 <div class="space-y-1 pt-2">
-                                    <label class="block text-xs font-bold text-[#6F767E]">Consent Text <span class="font-normal text-[#6F767E]/50">(HTML links supported)</span></label>
-                                    <textarea x-model="fields[selectedFieldIndex].consent_text" rows="3"
-                                        class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs p-3 text-[#111827] dark:text-[#FCFCFC] resize-none"
-                                        placeholder="I consent to having my personal data processed..."></textarea>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-xs font-bold text-[#6F767E]">Consent Text <span class="font-normal text-[#6F767E]/50">(HTML supported)</span></label>
+                                        <span class="text-[10px] font-black text-primary px-2 py-0.5 rounded-md bg-primary/10 uppercase" x-text="editingLocale === 'en' ? '🇬🇧 English' : '🇮🇩 Indonesia'"></span>
+                                    </div>
+                                    <textarea x-show="editingLocale === 'en'" x-model="fields[selectedFieldIndex].consent_text" rows="3"
+                                        class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs p-3 text-[#111827] dark:text-[#FCFCFC] resize-none" placeholder="I consent to having my personal data processed..."></textarea>
+                                    <textarea x-show="editingLocale === 'id'" x-model="fields[selectedFieldIndex].translations_id_consent_text" rows="3"
+                                        class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs p-3 text-[#111827] dark:text-[#FCFCFC] resize-none" placeholder="Masukkan teks persetujuan dalam Bahasa Indonesia..."></textarea>
                                 </div>
                             </template>
 
                             {{-- Terms text --}}
                             <template x-if="fields[selectedFieldIndex].type === 'terms'">
                                 <div class="space-y-1 pt-2">
-                                    <label class="block text-xs font-bold text-[#6F767E]">Terms Text <span class="font-normal text-[#6F767E]/50">(HTML links supported)</span></label>
-                                    <textarea x-model="fields[selectedFieldIndex].terms_text" rows="3"
-                                        class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs p-3 text-[#111827] dark:text-[#FCFCFC] resize-none"
-                                        placeholder="I agree to the Terms and Conditions."></textarea>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <label class="block text-xs font-bold text-[#6F767E]">Terms Text <span class="font-normal text-[#6F767E]/50">(HTML supported)</span></label>
+                                        <span class="text-[10px] font-black text-primary px-2 py-0.5 rounded-md bg-primary/10 uppercase" x-text="editingLocale === 'en' ? '🇬🇧 English' : '🇮🇩 Indonesia'"></span>
+                                    </div>
+                                    <textarea x-show="editingLocale === 'en'" x-model="fields[selectedFieldIndex].terms_text" rows="3"
+                                        class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs p-3 text-[#111827] dark:text-[#FCFCFC] resize-none" placeholder="I agree to the Terms and Conditions."></textarea>
+                                    <textarea x-show="editingLocale === 'id'" x-model="fields[selectedFieldIndex].translations_id_terms_text" rows="3"
+                                        class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-xs p-3 text-[#111827] dark:text-[#FCFCFC] resize-none" placeholder="Teks Syarat & Ketentuan dalam Bahasa Indonesia"></textarea>
                                 </div>
                             </template>
 
@@ -496,13 +604,6 @@
                                 </div>
                             </template>
                         </div>
-                    </div>
-                </template>
-
-                <template x-if="selectedFieldIndex === null">
-                    <div class="text-center py-20 text-[#6F767E]">
-                        <span class="material-symbols-outlined text-4xl mb-2 block opacity-30">touch_app</span>
-                        <p class="text-xs font-medium">Click any field in the canvas to inspect and edit its properties.</p>
                     </div>
                 </template>
             </aside>
@@ -540,14 +641,31 @@
                         </div>
 
                         <div class="space-y-2">
-                            <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Submit Button Label</label>
-                            <input type="text" name="submit_button_text" x-model="submitButtonText" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Submit Button Label</label>
+                                <span class="text-[10px] font-black text-primary px-2 py-0.5 rounded-md bg-primary/10 uppercase" x-text="editingLocale === 'en' ? '🇬🇧 English' : '🇮🇩 Indonesia'"></span>
+                            </div>
+                            <input x-show="editingLocale === 'en'" type="text" name="submit_button_text" x-model="submitButtonText" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]">
+                            <input x-show="editingLocale === 'id'" type="text" name="translations[id][submit_button_text]" x-model="translations.id.submit_button_text" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]" placeholder="Kirim">
                         </div>
                     </div>
 
                     <div class="space-y-2">
-                        <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Form Description</label>
-                        <textarea name="description" x-model="description" rows="3" class="w-full bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl p-4 text-[#111827] dark:text-[#FCFCFC] resize-none"></textarea>
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Form Title / Name</label>
+                            <span class="text-[10px] font-black text-primary px-2 py-0.5 rounded-md bg-primary/10 uppercase" x-text="editingLocale === 'en' ? '🇬🇧 English' : '🇮🇩 Indonesia'"></span>
+                        </div>
+                        <input x-show="editingLocale === 'en'" type="text" name="name" x-model="name" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]" placeholder="Form Title in English">
+                        <input x-show="editingLocale === 'id'" type="text" name="translations[id][name]" x-model="translations.id.name" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]" placeholder="Judul Form dalam Bahasa Indonesia">
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Form Description</label>
+                            <span class="text-[10px] font-black text-primary px-2 py-0.5 rounded-md bg-primary/10 uppercase" x-text="editingLocale === 'en' ? '🇬🇧 English' : '🇮🇩 Indonesia'"></span>
+                        </div>
+                        <textarea x-show="editingLocale === 'en'" name="description" x-model="description" rows="3" class="w-full bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl p-4 text-[#111827] dark:text-[#FCFCFC] resize-none"></textarea>
+                        <textarea x-show="editingLocale === 'id'" name="translations[id][description]" x-model="translations.id.description" rows="3" class="w-full bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl p-4 text-[#111827] dark:text-[#FCFCFC] resize-none" placeholder="Deskripsi form dalam Bahasa Indonesia"></textarea>
                     </div>
 
                     {{-- Theme Location Assignment --}}
@@ -594,8 +712,12 @@
                     </div>
 
                     <div x-show="confirmationType === 'message'" class="space-y-2">
-                        <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Success Message</label>
-                        <textarea name="confirmations[message]" x-model="confirmationMessage" rows="4" class="w-full bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl p-4 text-[#111827] dark:text-[#FCFCFC] resize-none"></textarea>
+                        <div class="flex items-center justify-between">
+                            <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Success Message</label>
+                            <span class="text-[10px] font-black text-primary px-2 py-0.5 rounded-md bg-primary/10 uppercase" x-text="editingLocale === 'en' ? '🇬🇧 English' : '🇮🇩 Indonesia'"></span>
+                        </div>
+                        <textarea x-show="editingLocale === 'en'" name="confirmations[message]" x-model="confirmationMessage" rows="4" class="w-full bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl p-4 text-[#111827] dark:text-[#FCFCFC] resize-none"></textarea>
+                        <textarea x-show="editingLocale === 'id'" name="translations[id][confirmations][message]" x-model="translations.id.confirmations.message" rows="4" class="w-full bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl p-4 text-[#111827] dark:text-[#FCFCFC] resize-none" placeholder="Terima kasih atas pengajuan Anda. Tim spesialis kami akan segera menghubungi Anda."></textarea>
                     </div>
 
                     <div x-show="confirmationType === 'redirect'" class="space-y-2">
