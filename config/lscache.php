@@ -20,5 +20,5 @@ return [
     /**
      * Guest only mode (Do not cache logged in users)
      */
-     'guest_only' => env('LSCACHE_GUEST_ONLY', false),
+    'guest_only' => env('LSCACHE_GUEST_ONLY', false),
 ];

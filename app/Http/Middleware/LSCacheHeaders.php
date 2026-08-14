@@ -18,6 +18,7 @@ class LSCacheHeaders
 
         if (! $this->shouldCache($request, $response)) {
             $response->headers->set('X-LiteSpeed-Cache-Control', 'no-cache');
+
             return $response;
         }
 
@@ -63,9 +64,9 @@ class LSCacheHeaders
 
         // Skip excluded paths from settings
         $excluded = array_filter(array_map('trim', explode("\n", (string) setting('page_cache_excluded_paths', ''))));
-        $path = '/' . ltrim($request->path(), '/');
+        $path = '/'.ltrim($request->path(), '/');
         foreach ($excluded as $pattern) {
-            $regex = '#^' . str_replace(['\*', '\?'], ['.*', '.'], preg_quote($pattern, '#')) . '$#';
+            $regex = '#^'.str_replace(['\*', '\?'], ['.*', '.'], preg_quote($pattern, '#')).'$#';
             if (preg_match($regex, $path) === 1) {
                 return false;
             }
@@ -84,7 +85,7 @@ class LSCacheHeaders
         } else {
             $firstSegment = explode('/', $path)[0];
             if ($firstSegment !== '') {
-                $tags[] = 'route:' . $firstSegment;
+                $tags[] = 'route:'.$firstSegment;
             }
         }
 

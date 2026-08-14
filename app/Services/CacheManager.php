@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Middleware\PageCache;
 use Illuminate\Support\Facades\Log;
+use Litespeed\LSCache\LSCache;
 
 class CacheManager
 {
@@ -23,11 +24,11 @@ class CacheManager
     public static function purgeAll(): void
     {
         // 1. Purge LiteSpeed Cache if package class exists
-        if (class_exists(\Litespeed\LSCache\LSCache::class)) {
+        if (class_exists(LSCache::class)) {
             try {
-                \Litespeed\LSCache\LSCache::purge('*');
+                LSCache::purge('*');
             } catch (\Throwable $e) {
-                Log::warning('LSCache::purgeAll failed: ' . $e->getMessage());
+                Log::warning('LSCache::purgeAll failed: '.$e->getMessage());
             }
         }
 
@@ -40,12 +41,13 @@ class CacheManager
      */
     public static function purgeTag(string $tag): void
     {
-        if (static::isLiteSpeed() && class_exists(\Litespeed\LSCache\LSCache::class)) {
+        if (static::isLiteSpeed() && class_exists(LSCache::class)) {
             try {
-                \Litespeed\LSCache\LSCache::purge($tag);
+                LSCache::purge($tag);
+
                 return;
             } catch (\Throwable $e) {
-                Log::warning("LSCache::purge tag '{$tag}' failed: " . $e->getMessage());
+                Log::warning("LSCache::purge tag '{$tag}' failed: ".$e->getMessage());
             }
         }
 

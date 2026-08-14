@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Settings\Actions\WarmPageCache;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use PHPUnit\Framework\Attributes\Test;
@@ -53,7 +54,7 @@ class CacheWarmingTest extends TestCase
     {
         Setting::set('page_cache_excluded_paths', "/forms/*\n/cart", 'cache', 'string');
         Setting::flushMemo();
-        \Illuminate\Support\Facades\Cache::flush();
+        Cache::flush();
 
         Http::fake([
             url('/allowed-page') => Http::response('<html>OK</html>', 200),
@@ -122,7 +123,7 @@ class CacheWarmingTest extends TestCase
             url('/') => Http::response('<html>OK</html>', 200),
         ]);
 
-        $action = new WarmPageCache();
+        $action = new WarmPageCache;
         $response = $action->handle(['page_cache_warm_concurrency' => 3]);
 
         $this->assertSame('success', $response['type']);
