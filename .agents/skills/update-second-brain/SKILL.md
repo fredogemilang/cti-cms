@@ -6,7 +6,7 @@ description: Update the Obsidian second brain vault with new knowledge from the 
 # Update Second Brain
 
 ## Vault Location
-`C:\Users\fredo\Documents\Obsidian Vault\altia\CTI-CMS\`
+`C:\Users\fredo\Documents\Obsidian Vault\altia\Migration\` (subfolders: `CMS Core/`, `CDT/`, `Playbook/`)
 
 ## When to Trigger
 1. **End of significant session** — multiple files changed, new features built, bugs fixed
@@ -71,6 +71,6 @@ tags: [session, {relevant-tags}]
 1. **Be terse** — tables > paragraphs, code > prose
 2. **Don't duplicate** — if info is in AGENTS.md, don't repeat in vault
 3. **Date everything** — every entry should have a date
-4. **Flat structure** — no subdirectories, use prefixed filenames
+4. **Subdirectories per area** — `CMS Core/`, `CDT/`, `Playbook/`; prefix filenames by system (e.g. `Arch - ...`, `Pattern - ...`)
 5. **Token-efficient** — an AI reading this should get max context in min tokens
 6. **Indonesian OK** — mixed Bahasa/English is fine, match the user's style
