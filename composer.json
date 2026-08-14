@@ -40,6 +40,7 @@
             "Plugins\\GoogleSiteKit\\": "plugins/google-site-kit/src/",
             "Plugins\\Posts\\": "plugins/posts/src/",
             "Plugins\\": "plugins/",
+            "Themes\\Xyora\\": "themes/xyora/src/",
             "Themes\\": "themes/"
         },
         "files": [
