@@ -504,9 +504,9 @@ class EntryForm extends Component
             if (is_array($val) && isset($defaultMeta[$key]) && is_array($defaultMeta[$key])) {
                 foreach ($val as $idx => &$item) {
                     if (is_array($item) && isset($defaultMeta[$key][$idx]) && is_array($defaultMeta[$key][$idx])) {
-                        foreach (['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'] as $mediaKey) {
-                            if (isset($defaultMeta[$key][$idx][$mediaKey])) {
-                                $item[$mediaKey] = $defaultMeta[$key][$idx][$mediaKey];
+                        foreach ($defaultMeta[$key][$idx] as $subKey => $subVal) {
+                            if (CptEntry::isMediaKey($subKey)) {
+                                $item[$subKey] = $subVal;
                             }
                         }
                     }
@@ -524,21 +524,19 @@ class EntryForm extends Component
      */
     protected function pushMediaKeysToDefault(array $sourceMeta, array &$defaultMeta): void
     {
-        $mediaKeyList = ['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'];
-
         foreach ($sourceMeta as $key => $val) {
             // Top-level media keys
-            if (in_array($key, $mediaKeyList, true) && ! empty($val)) {
+            if (CptEntry::isMediaKey($key) && ! empty($val)) {
                 $defaultMeta[$key] = $val;
             }
 
-            // Array media keys (e.g. benefits_cards, features)
+            // Array media keys (e.g. benefits_cards, features, key_features_list)
             if (is_array($val) && isset($defaultMeta[$key]) && is_array($defaultMeta[$key])) {
                 foreach ($val as $idx => $item) {
                     if (is_array($item) && isset($defaultMeta[$key][$idx]) && is_array($defaultMeta[$key][$idx])) {
-                        foreach ($mediaKeyList as $mKey) {
-                            if (isset($item[$mKey]) && ! empty($item[$mKey])) {
-                                $defaultMeta[$key][$idx][$mKey] = $item[$mKey];
+                        foreach ($item as $subKey => $subVal) {
+                            if (CptEntry::isMediaKey($subKey) && ! empty($subVal)) {
+                                $defaultMeta[$key][$idx][$subKey] = $subVal;
                             }
                         }
                     }
@@ -1092,8 +1090,8 @@ class EntryForm extends Component
                 } elseif (! empty($field->options['target_cpt']) && is_array($field->options['target_cpt'])) {
                     $targetCptIds = CustomPostType::whereIn('slug', $field->options['target_cpt'])->pluck('id')->toArray();
                 } elseif (! empty($field->options['target_post_type_id'])) {
-                    $targetCptIds = is_array($field->options['target_post_type_id']) 
-                        ? array_map('intval', $field->options['target_post_type_id']) 
+                    $targetCptIds = is_array($field->options['target_post_type_id'])
+                        ? array_map('intval', $field->options['target_post_type_id'])
                         : [(int) $field->options['target_post_type_id']];
                 } elseif (! empty($field->options['target_cpt'])) {
                     $targetCpt = CustomPostType::where('slug', $field->options['target_cpt'])->first();
