@@ -236,6 +236,83 @@ class Page extends Model
         return $default;
     }
 
+    /**
+     * Get array payload of a compound title block (prefix + main).
+     *
+     * @param  array<string, mixed>  $default
+     * @return array<string, mixed>
+     */
+    public function titleBlock(string $name, array $default = []): array
+    {
+        $value = $this->block($name);
+        if (is_string($value) && ! empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                $value = $decoded;
+            }
+        }
+
+        if (is_array($value)) {
+            return array_merge($default, array_filter($value, fn ($v) => $v !== null && $v !== ''));
+        }
+
+        if (is_string($value) && ! empty($value)) {
+            return array_merge($default, ['main' => $value]);
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get array payload of a compound button block (text + url + target).
+     *
+     * @param  array<string, mixed>  $default
+     * @return array<string, mixed>
+     */
+    public function buttonBlock(string $name, array $default = []): array
+    {
+        $value = $this->block($name);
+        if (is_string($value) && ! empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                $value = $decoded;
+            }
+        }
+
+        if (is_array($value)) {
+            return array_merge(['target' => '_self'], $default, array_filter($value, fn ($v) => $v !== null && $v !== ''));
+        }
+
+        if (! empty($default)) {
+            return array_merge(['target' => '_self'], $default);
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get array payload of a compound card block.
+     *
+     * @param  array<string, mixed>  $default
+     * @return array<string, mixed>
+     */
+    public function cardBlock(string $name, array $default = []): array
+    {
+        $value = $this->block($name);
+        if (is_string($value) && ! empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                $value = $decoded;
+            }
+        }
+
+        if (is_array($value)) {
+            return array_merge($default, array_filter($value, fn ($v) => $v !== null && $v !== ''));
+        }
+
+        return $default;
+    }
+
     public function isSystem(): bool
     {
         return (bool) $this->is_system;
