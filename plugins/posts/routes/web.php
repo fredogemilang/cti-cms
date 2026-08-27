@@ -41,6 +41,11 @@ Route::middleware(['web', 'auth', 'permission:posts.view'])->prefix("{$adminPath
         return view('posts::tags.index');
     })->name('tags')->middleware('permission:tags.view');
 
+    // Search & Replace
+    Route::get('/search-replace', function () {
+        return view('posts::search-replace');
+    })->name('search-replace')->middleware('permission:posts.edit');
+
     // Settings
     Route::get('/settings', function () {
         return view('posts::settings');
