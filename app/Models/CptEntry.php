@@ -184,7 +184,9 @@ class CptEntry extends Model
      */
     public function children(): HasMany
     {
-        return $this->hasMany(CptEntry::class, 'parent_id')->orderBy('menu_order');
+        return $this->hasMany(CptEntry::class, 'parent_id')
+            ->orderBy('menu_order')
+            ->orderBy('title');
     }
 
     /**
