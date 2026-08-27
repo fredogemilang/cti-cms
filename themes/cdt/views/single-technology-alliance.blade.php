@@ -150,7 +150,7 @@
       <div class="lg:col-span-4 flex flex-col gap-8 lg:sticky lg:top-24 self-start">
         @if($entry->featured_image)
         <div data-gsap="fade-up" class="hidden lg:flex bg-zinc-50/50 border border-zinc-200/80 rounded-3xl p-8 flex-col items-center shadow-sm">
-          <img src="{{ asset('storage/' . $entry->featured_image) }}" alt="{{ $entry->title }}" class="max-w-[200px] h-auto object-contain" />
+          <img src="{{ resolve_block_asset($entry->featured_image) }}" alt="{{ $entry->title }}" class="max-w-[200px] h-auto object-contain" />
           @if($logoTitle !== '')
             <div class="mt-6 text-[10px] font-bold tracking-widest text-zinc-400 uppercase">{{ $logoTitle }}</div>
           @endif
@@ -185,12 +185,12 @@
 @if($solutionsFeatured || $solutionsOther || $entry->relatedEntries('product_id')->exists())
 <section id="solutions" class="py-16 md:py-32 bg-zinc-50 relative">
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-col lg:flex-row gap-16 lg:gap-24">
-      <div class="lg:w-1/3">
-        <div class="sticky top-32">
-          <h2 data-gsap="fade-up" class="text-4xl font-light text-zinc-500 leading-tight">{{ $entry->title }} <br><span class="font-bold text-dark">{{ t('alliance.solutions_suffix', 'Solutions') }}</span></h2>
-          <div class="h-1 bg-primary mt-4 w-16" data-gsap="line-grow"></div>
-          <p data-gsap="fade-up" data-gsap-delay="0.1" class="text-lg text-zinc-600 leading-relaxed mt-8">{{ $solutionsDescription }}</p>
+    <div class="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+      <div class="lg:w-1/3 lg:sticky lg:top-28 lg:self-start z-10">
+        <div>
+          <h2 class="text-4xl font-light text-zinc-500 leading-tight">{{ $entry->title }} <br><span class="font-bold text-dark">{{ t('alliance.solutions_suffix', 'Solutions') }}</span></h2>
+          <div class="h-1 bg-primary mt-4 w-16"></div>
+          <p class="text-lg text-zinc-600 leading-relaxed mt-8">{{ $solutionsDescription }}</p>
           @php
             $promoBtnName = trim((string) ($entry->getMeta('promo_button_name') ?: $entry->getMeta('promo_button_text')));
             $promoBtnLink = trim((string) ($entry->getMeta('promo_button_link') ?: $entry->getMeta('promo_button_url')));
@@ -203,7 +203,7 @@
             </a>
 
             @if($hasPromoBtn)
-            <div data-gsap="fade-up" data-gsap-delay="0.15">
+            <div>
               <a href="{{ $promoBtnLink ?: '#explore' }}" class="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition-all shadow-sm">
                 {{ $promoBtnName }} <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
               </a>
