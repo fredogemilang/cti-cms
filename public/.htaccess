@@ -3,6 +3,10 @@
 # ==========================================
 <IfModule LiteSpeed>
     CacheLookup on
+    RewriteEngine On
+    # Bypass LiteSpeed cache for logged-in users / admins (ensures Admin Bar renders)
+    RewriteCond %{HTTP_COOKIE} cms_logged_in [NC]
+    RewriteRule .* - [E=Cache-Control:no-cache]
 </IfModule>
 
 # ==========================================

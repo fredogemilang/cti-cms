@@ -14,6 +14,16 @@ class LSCacheHeaders
 {
     public function handle(Request $request, Closure $next): Response
     {
+        $isLoggedIn = auth()->check();
+
+        if ($isLoggedIn) {
+            // Keep unencrypted cms_logged_in cookie active so LiteSpeed bypasses cache
+            cookie()->queue('cms_logged_in', '1', 60 * 24 * 7, '/', null, null, false);
+        } elseif ($request->hasCookie('cms_logged_in')) {
+            // Clear the logged-in cookie if user is no longer authenticated
+            cookie()->queue(cookie()->forget('cms_logged_in', '/', null));
+        }
+
         $response = $next($request);
 
         if (! $this->shouldCache($request, $response)) {
