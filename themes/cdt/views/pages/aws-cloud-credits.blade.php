@@ -140,7 +140,7 @@
 @endphp
 
 <!-- Section 1: Hero Section with Form Above the Fold -->
-<section class="relative text-zinc-900 overflow-hidden pt-28 lg:pt-36 pb-20" style="background-color: #f4f4f5;">
+<section class="relative text-zinc-900 overflow-hidden pt-24 lg:pt-28 pb-20" style="background-color: #f4f4f5;">
   <!-- Subtle Background Glows & Grid -->
   <div class="absolute inset-0 pointer-events-none overflow-hidden">
     <div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(227,6,19,0.12)_0%,transparent_70%)] rounded-full blur-3xl"></div>
@@ -148,7 +148,7 @@
     <div class="absolute inset-0 opacity-40 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px]"></div>
   </div>
 
-  <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 pt-12 relative z-10">
+  <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
     
     <!-- SEO Breadcrumbs -->
     @if(isset($page))

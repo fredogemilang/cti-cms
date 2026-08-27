@@ -306,8 +306,10 @@ allianceLinks.forEach((link) => {
 // ==========================================
 // 4. SWIPER JS INITIALIZATION
 // ==========================================
-if (typeof Swiper !== 'undefined') {
-  new Swiper('.testimonials-swiper', {
+function initTestimonialsSwiper() {
+  const el = document.querySelector('.testimonials-swiper');
+  if (!el || typeof Swiper === 'undefined') return;
+  new Swiper(el, {
     slidesPerView: 1,
     spaceBetween: 30,
     loop: true,
@@ -320,7 +322,12 @@ if (typeof Swiper !== 'undefined') {
       type: 'fraction'
     }
   });
+}
 
+// Init on page load (will no-op if testimonials is deferred)
+initTestimonialsSwiper();
+
+if (typeof Swiper !== 'undefined') {
   new Swiper('.product-testimonials-swiper', {
     slidesPerView: 1,
     spaceBetween: 30,
@@ -335,3 +342,50 @@ if (typeof Swiper !== 'undefined') {
     }
   });
 }
+
+// ==========================================
+// 5. DEFERRED AJAX SECTIONS
+// ==========================================
+// Loads below-fold sections (testimonials: 97KB, contact: 68KB) on demand
+// via IntersectionObserver to reduce initial HTML from ~239KB to ~74KB.
+document.querySelectorAll('.deferred-ajax').forEach(placeholder => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        observer.unobserve(placeholder);
+        const section = placeholder.dataset.section;
+        fetch(`/_deferred/${section}`)
+          .then(r => r.ok ? r.text() : Promise.reject(r.status))
+          .then(html => {
+            // Create a temporary container to hold the new DOM
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            // Replace placeholder with actual content
+            while (temp.firstChild) {
+              placeholder.parentNode.insertBefore(temp.firstChild, placeholder);
+            }
+            placeholder.remove();
+
+            // Re-initialize components on injected DOM
+            if (section === 'testimonials') {
+              initTestimonialsSwiper();
+              // Re-trigger GSAP ScrollTrigger for new elements
+              ScrollTrigger.refresh();
+            }
+            if (section === 'contact') {
+              // Re-init Alpine on the new contact form DOM
+              if (window.Alpine) {
+                window.Alpine.initTree(document.getElementById('contact'));
+              }
+            }
+          })
+          .catch(err => {
+            console.warn(`[deferred] Failed to load section "${section}":`, err);
+          });
+      }
+    });
+  }, {
+    rootMargin: '600px' // Start loading 600px before section enters viewport
+  });
+  observer.observe(placeholder);
+});
