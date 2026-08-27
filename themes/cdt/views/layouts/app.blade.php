@@ -98,7 +98,7 @@
   @stack('head')
   @stack('styles')
 </head>
-<body class="font-body text-dark antialiased bg-white overflow-x-hidden">
+<body class="font-body text-dark antialiased bg-white overflow-x-clip">
   
   <div x-data="{ activeSheet: null, showMenu: false }" x-effect="const isSheetOpen = activeSheet !== null; document.documentElement.style.overflow = isSheetOpen ? 'hidden' : ''; document.body.style.overflow = isSheetOpen ? 'hidden' : '';">
     
@@ -106,7 +106,7 @@
     @include('cdt::partials.header')
 
     {{-- Main Content --}}
-    <main class="overflow-x-hidden" @auth style="margin-top: 100px;" @endauth>
+    <main class="overflow-x-clip" @auth style="margin-top: 100px;" @endauth>
       @yield('content')
     </main>
 

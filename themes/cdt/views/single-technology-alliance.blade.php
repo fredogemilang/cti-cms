@@ -147,7 +147,7 @@
         </div>
       </div>
 
-      <div class="lg:col-span-4 flex flex-col gap-8 lg:sticky lg:top-24 self-start">
+      <div class="lg:col-span-4 flex flex-col gap-8 lg:sticky lg:top-24 self-start" style="top: 100px;">
         @if($entry->featured_image)
         <div data-gsap="fade-up" class="hidden lg:flex bg-zinc-50/50 border border-zinc-200/80 rounded-3xl p-8 flex-col items-center shadow-sm">
           <img src="{{ resolve_block_asset($entry->featured_image) }}" alt="{{ $entry->title }}" class="max-w-[200px] h-auto object-contain" />
@@ -186,7 +186,7 @@
 <section id="solutions" class="py-16 md:py-32 bg-zinc-50 relative">
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
-      <div class="lg:w-1/3 lg:sticky lg:top-28 lg:self-start z-10">
+      <div class="lg:w-1/3 lg:sticky lg:top-24 lg:self-start z-10" style="top: 100px;">
         <div>
           <h2 class="text-4xl font-light text-zinc-500 leading-tight">{{ $entry->title }} <br><span class="font-bold text-dark">{{ t('alliance.solutions_suffix', 'Solutions') }}</span></h2>
           <div class="h-1 bg-primary mt-4 w-16"></div>
