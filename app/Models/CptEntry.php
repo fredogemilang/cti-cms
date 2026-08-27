@@ -321,7 +321,7 @@ class CptEntry extends Model
         return in_array($k, [
             'icon', 'icon_type', 'image', 'img', 'logo', 'media',
             'banner_logo', 'about_image', 'featured_image', 'loop_image',
-            'kf_icon', 'kf_image', 'icon_key', 'badge_icon',
+            'kf_icon', 'kf_image', 'kf_img', 'kf_logo', 'icon_key', 'badge_icon',
         ], true)
             || str_ends_with($k, '_icon')
             || str_ends_with($k, '_image')
@@ -331,8 +331,7 @@ class CptEntry extends Model
             || str_ends_with($k, '_photo')
             || str_starts_with($k, 'icon_')
             || str_starts_with($k, 'image_')
-            || str_starts_with($k, 'img_')
-            || str_starts_with($k, 'kf_');
+            || str_starts_with($k, 'img_');
     }
 
     /**
