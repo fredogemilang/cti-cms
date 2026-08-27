@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\CacheManager;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +26,10 @@ class LSCacheHeaders
         }
 
         $response = $next($request);
+
+        if (CacheManager::isPurgeRequested()) {
+            $response->headers->set('X-LiteSpeed-Purge', '*');
+        }
 
         if (! $this->shouldCache($request, $response)) {
             $response->headers->set('X-LiteSpeed-Cache-Control', 'no-cache');
