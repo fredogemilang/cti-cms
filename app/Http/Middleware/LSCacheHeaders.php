@@ -56,6 +56,16 @@ class LSCacheHeaders
             return false;
         }
 
+        // If response already has an explicit no-cache directive, respect it
+        if (strtolower((string) $response->headers->get('X-LiteSpeed-Cache-Control')) === 'no-cache') {
+            return false;
+        }
+
+        // Skip deferred AJAX fragment paths
+        if (str_starts_with(ltrim($request->path(), '/'), '_deferred')) {
+            return false;
+        }
+
         // Skip admin paths
         $adminPath = trim((string) config('admin.path', 'admin'), '/');
         if ($adminPath !== '' && str_starts_with(ltrim($request->path(), '/'), $adminPath)) {
