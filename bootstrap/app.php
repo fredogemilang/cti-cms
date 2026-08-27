@@ -37,11 +37,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'api.cors' => ApiCors::class,
         ]);
 
-        // Raw XSRF-TOKEN cookie so cached pages can double-submit the CSRF token.
-        // Full-page cache serves one shared HTML; the cookie is re-issued per
-        // visitor (even on cache HITs), so the theme JS can re-stamp the hidden
-        // _token input with the visitor's own session token before submitting.
-        $middleware->encryptCookies(['XSRF-TOKEN']);
+        // Raw cookies so web servers (LiteSpeed) can inspect them directly:
+        // - XSRF-TOKEN: CSRF token for full-page cache forms
+        // - cms_logged_in: Tells LiteSpeed to bypass cache for logged-in admins
+        $middleware->encryptCookies(['XSRF-TOKEN', 'cms_logged_in']);
 
         // Run redirect rules before route matching (so 404 paths can still redirect).
         $middleware->prepend(HandleRedirects::class);
