@@ -47,7 +47,7 @@
       <x-seo-breadcrumbs :entity="$entry" />
     </div>
 
-    <div class="flex flex-col md:flex-row gap-8 lg:gap-12 items-start">
+    <div class="flex flex-col md:flex-row gap-8 lg:gap-12 items-start md:items-center">
       <!-- Client Logo -->
       <div class="w-32 h-32 md:w-40 md:h-40 bg-white rounded-3xl p-6 shadow-xl flex-shrink-0 flex items-center justify-center" data-gsap="fade-up">
         <x-image :src="$logoUrl" alt="{{ $title }}" class="max-w-full max-h-full object-contain" />
@@ -55,7 +55,7 @@
 
       <!-- Title & Intro -->
       <div class="max-w-4xl" data-gsap="fade-up" data-gsap-delay="0.1">
-        <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-6 tracking-tight leading-tight">{{ $title }}</h1>
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-0 tracking-tight leading-tight">{{ $title }}</h1>
       </div>
     </div>
   </div>
