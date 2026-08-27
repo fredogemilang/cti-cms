@@ -50,8 +50,8 @@
 <section class="py-16 md:py-24 bg-white relative">
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl border-l-4 border-primary pl-8" data-gsap="fade-up">
-      <div class="space-y-6 text-gray-700 text-lg md:text-xl font-light leading-relaxed">
-        {!! nl2br(e($content)) !!}
+      <div class="space-y-6 text-gray-700 text-lg md:text-xl font-light leading-relaxed prose max-w-none">
+        {!! $content !!}
       </div>
     </div>
   </div>
