@@ -51,7 +51,7 @@
 
 @section('content')
 <!-- Article Header & Hero Section -->
-<section class="pt-12 pb-10 md:pt-32 md:pb-16 bg-white relative overflow-hidden">
+<section class="pt-6 lg:pt-8 pb-10 md:pb-16 bg-white relative overflow-hidden">
   <!-- Subtle Red Gradient Orbs -->
   <div class="absolute -top-10 left-0 md:left-1/4 w-[500px] h-[500px] bg-primary/8 rounded-full blur-[80px] pointer-events-none mix-blend-multiply"></div>
   <div class="absolute top-40 right-0 md:right-1/6 w-[600px] h-[600px] bg-red-500/6 rounded-full blur-[100px] pointer-events-none mix-blend-multiply"></div>
@@ -60,7 +60,7 @@
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
     
     <!-- Breadcrumb Component (Integrated with SEO & Structured Data) -->
-    <x-seo-breadcrumbs :entity="$post" class="text-zinc-400 mb-6 md:mb-10 text-left whitespace-nowrap overflow-hidden" />
+    <x-seo-breadcrumbs :entity="$post" class="text-zinc-400 mb-6 text-left whitespace-nowrap overflow-hidden" />
 
     <!-- Header Meta & Title -->
     <div class="max-w-4xl mx-auto text-center">

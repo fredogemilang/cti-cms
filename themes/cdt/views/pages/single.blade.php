@@ -25,7 +25,7 @@
     </section>
   @else
     <!-- Clean Page Header (No Featured Image) -->
-    <section class="relative pt-32 pb-12 md:pt-40 md:pb-16 bg-zinc-50 border-b border-zinc-200/80">
+    <section class="relative pt-6 lg:pt-8 pb-12 md:pb-16 bg-zinc-50 border-b border-zinc-200/80">
       <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div class="max-w-4xl">
           @if(isset($page))

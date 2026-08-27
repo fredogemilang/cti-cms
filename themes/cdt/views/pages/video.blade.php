@@ -341,7 +341,7 @@
 </style>
 
 <!-- Hero Section (Video Player & Header) -->
-<section class="pt-8 lg:pt-28 pb-20 bg-white relative overflow-hidden">
+<section class="pt-6 lg:pt-8 pb-20 bg-white relative overflow-hidden">
   <!-- Strong Red Gradient Orbs -->
   <div class="absolute -top-10 left-0 md:left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[80px] pointer-events-none mix-blend-multiply"></div>
   <div class="absolute top-40 right-0 md:right-1/6 w-[600px] h-[600px] bg-red-500/15 rounded-full blur-[100px] pointer-events-none mix-blend-multiply"></div>
@@ -349,7 +349,7 @@
 
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
     <!-- Breadcrumb Component -->
-    <x-seo-breadcrumbs :entity="$page" class="text-zinc-400 mb-10 text-left" data-gsap="fade-in" />
+    <x-seo-breadcrumbs :entity="$page" class="text-zinc-400 mb-6 text-left" data-gsap="fade-in" />
 
     <div class="mx-auto max-w-[1200px] relative">
 

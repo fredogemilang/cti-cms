@@ -7,7 +7,7 @@
   <main class="min-h-screen bg-white">
 
     <!-- ═══════════════ SECTION 1: CAREER HERO ═══════════════ -->
-    <section class="relative w-full pt-8 lg:pt-28 pb-20 flex items-center justify-center overflow-hidden bg-white">
+    <section class="relative w-full pt-6 lg:pt-8 pb-20 flex items-center justify-center overflow-hidden bg-white">
       <!-- Clean light background with subtle gradient -->
       <div class="absolute inset-0 z-0 pointer-events-none">
         <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-zinc-50 to-white"></div>
@@ -18,7 +18,7 @@
       <div class="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 w-full">
 
         <!-- Breadcrumbs -->
-        <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-10" aria-label="Breadcrumb" data-gsap="fade-in">
+        <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-6" aria-label="Breadcrumb" data-gsap="fade-in">
           <a href="{{ localized_url('/') }}" class="hover:text-primary transition-colors" title="Home" aria-label="Home">Home</a>
           <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />

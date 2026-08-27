@@ -61,7 +61,7 @@
 
 @section('content')
 <!-- Minimal Page Header & Featured Section -->
-<section class="pt-32 pb-16 bg-white relative overflow-hidden">
+<section class="pt-6 lg:pt-8 pb-16 bg-white relative overflow-hidden">
   <!-- Strong Red Gradient Orbs -->
   <div class="absolute -top-10 left-0 md:left-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[80px] pointer-events-none mix-blend-multiply"></div>
   <div class="absolute top-40 right-0 md:right-1/6 w-[600px] h-[600px] bg-red-500/15 rounded-full blur-[100px] pointer-events-none mix-blend-multiply"></div>
@@ -69,7 +69,7 @@
 
   <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10 text-center">
     <!-- Breadcrumb Component (Integrated with SEO & Structured Data) -->
-    <x-seo-breadcrumbs class="text-zinc-400 mb-10 text-left" />
+    <x-seo-breadcrumbs class="text-zinc-400 mb-6 text-left" />
 
     <div class="overflow-hidden">
       <h1 class="text-4xl md:text-5xl lg:text-[54px] font-bold text-gray-900 leading-tight">
@@ -79,7 +79,7 @@
 
     <!-- Featured Articles Swiper Hero Slider -->
     @if($featuredPosts->isNotEmpty())
-    <div class="swiper featured-slider mt-16 relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-white to-red-50 border border-zinc-100 shadow-2xl w-full h-auto md:aspect-[16/9]">
+    <div class="swiper featured-slider mt-10 md:mt-12 relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-white to-red-50 border border-zinc-100 shadow-2xl w-full h-auto md:aspect-[16/9]">
       <div class="swiper-wrapper">
         @foreach($featuredPosts as $feat)
           @php

@@ -52,7 +52,7 @@
 @endphp
 
 <!-- Hero -->
-<section class="bg-gradient-to-br from-red-50/20 via-white to-zinc-50/50 pt-8 lg:pt-28 pb-20 relative overflow-hidden">
+<section class="bg-gradient-to-br from-red-50/20 via-white to-zinc-50/50 pt-6 lg:pt-8 pb-20 relative overflow-hidden">
   <div class="absolute inset-0 pointer-events-none overflow-hidden">
     <div class="absolute -top-48 -left-48 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(227,6,19,0.18)_0%,rgba(227,6,19,0)_70%)] rounded-full blur-3xl"></div>
     <div class="absolute top-[20%] -right-48 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(227,6,19,0.10)_0%,rgba(227,6,19,0)_70%)] rounded-full blur-3xl"></div>
@@ -62,7 +62,7 @@
       $cptPostType = $entry->postType;
       $hasCptArchive = $cptPostType && $cptPostType->has_archive;
     @endphp
-    <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-10" data-gsap="fade-in">
+    <nav class="flex items-center space-x-2 text-xs font-semibold tracking-wide text-zinc-400 mb-6" data-gsap="fade-in">
       <a href="{{ localized_url('/') }}" class="hover:text-primary transition-colors">{{ t('common.home', 'Home') }}</a>
       @if($hasCptArchive)
         <svg class="w-3 h-3 text-zinc-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
