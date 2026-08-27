@@ -140,7 +140,7 @@
 @endphp
 
 <!-- Section 1: Hero Section with Form Above the Fold -->
-<section class="relative text-zinc-900 overflow-hidden pt-24 lg:pt-28 pb-20" style="background-color: #f4f4f5;">
+<section class="relative text-zinc-900 overflow-hidden pt-6 lg:pt-8 pb-20" style="background-color: #f4f4f5;">
   <!-- Subtle Background Glows & Grid -->
   <div class="absolute inset-0 pointer-events-none overflow-hidden">
     <div class="absolute -top-40 -left-40 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(227,6,19,0.12)_0%,transparent_70%)] rounded-full blur-3xl"></div>
