@@ -354,7 +354,7 @@ document.querySelectorAll('.deferred-ajax').forEach(placeholder => {
       if (entry.isIntersecting) {
         observer.unobserve(placeholder);
         const section = placeholder.dataset.section;
-        fetch(`/_deferred/${section}`)
+        fetch(`/_deferred/${section}?_t=${Date.now()}`, { cache: 'no-store' })
           .then(r => r.ok ? r.text() : Promise.reject(r.status))
           .then(html => {
             // Create a temporary container to hold the new DOM

@@ -38,8 +38,12 @@ class DeferredSectionController extends Controller
             $data['testimonials'] = $this->loadTestimonials();
         }
 
-        return view("{$themeNs}::partials.deferred.{$section}", $data)
-            ->render();
+        return response(view("{$themeNs}::partials.deferred.{$section}", $data)->render())
+            ->header('Content-Type', 'text/html; charset=utf-8')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0')
+            ->header('X-LiteSpeed-Cache-Control', 'no-cache');
     }
 
     private function loadTestimonials()
