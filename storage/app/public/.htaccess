@@ -18,3 +18,11 @@
 <IfModule mod_php8.c>
     php_flag engine off
 </IfModule>
+
+# Direct SVG navigation hardening: force CSP sandbox and nosniff
+<FilesMatch "\.svg$">
+    <IfModule mod_headers.c>
+        Header set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+        Header set X-Content-Type-Options "nosniff"
+    </IfModule>
+</FilesMatch>
