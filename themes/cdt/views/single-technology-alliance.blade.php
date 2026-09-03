@@ -541,8 +541,7 @@
     ->orderByDesc('id')
     ->get()
     ->filter(fn ($story) => $story->hasContentForLocale($currentLocale))
-    ->values()
-    ->take(20);
+    ->values();
 @endphp
 @if($clientStories->isNotEmpty())
 <section class="py-24 relative overflow-hidden bg-white" id="client-story">

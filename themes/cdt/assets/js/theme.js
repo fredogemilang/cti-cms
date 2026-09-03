@@ -354,7 +354,12 @@ document.querySelectorAll('.deferred-ajax').forEach(placeholder => {
       if (entry.isIntersecting) {
         observer.unobserve(placeholder);
         const section = placeholder.dataset.section;
-        fetch(`/_deferred/${section}?_t=${Date.now()}`, { cache: 'no-store' })
+        // Detect current locale from URL prefix (e.g. /id/...) or <html lang>
+        const pathLocale = location.pathname.split('/').filter(Boolean)[0];
+        const htmlLang = document.documentElement.lang;
+        const locale = (pathLocale && /^[a-z]{2}$/.test(pathLocale) ? pathLocale : htmlLang) || '';
+        const localeParam = locale ? `&locale=${locale}` : '';
+        fetch(`/_deferred/${section}?_t=${Date.now()}${localeParam}`, { cache: 'no-store' })
           .then(r => r.ok ? r.text() : Promise.reject(r.status))
           .then(html => {
             // Create a temporary container to hold the new DOM

@@ -19,10 +19,19 @@ class DeferredSectionController extends Controller
 {
     private const ALLOWED_SECTIONS = ['testimonials', 'contact'];
 
-    public function show(string $section)
+    public function show(Request $request, string $section)
     {
         if (! in_array($section, self::ALLOWED_SECTIONS, true)) {
             abort(404);
+        }
+
+        // The AJAX URL /_deferred/{section} has no locale prefix, so the
+        // SetLocale middleware falls back to the default locale.  Accept an
+        // explicit ?locale= parameter from the JS caller so the correct
+        // language is used when rendering testimonials & contact form.
+        $locale = $request->query('locale');
+        if ($locale && in_array($locale, available_locales(), true)) {
+            app()->setLocale($locale);
         }
 
         $theme = app(ThemeLoader::class)->getActiveTheme();
