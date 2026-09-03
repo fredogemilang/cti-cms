@@ -76,7 +76,11 @@
           if (empty($itemIcon)) $itemIcon = 'database';
           $iconName = (str_starts_with($itemIcon, 'lucide:') || str_starts_with($itemIcon, 'heroicon:')) ? $itemIcon : 'lucide:' . $itemIcon;
         @endphp
+        @if(!empty($itemLink) && $itemLink !== '#')
+        <a href="{{ $itemLink }}" target="_blank" rel="noopener noreferrer" class="group relative rounded-3xl bg-white border border-zinc-100 p-8 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col items-center text-center cursor-pointer" data-gsap="fade-up" data-gsap-delay="{{ ($loop->index % 4) * 0.1 }}">
+        @else
         <div class="group relative rounded-3xl bg-white border border-zinc-100 p-8 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col items-center text-center" data-gsap="fade-up" data-gsap-delay="{{ ($loop->index % 4) * 0.1 }}">
+        @endif
           <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
           <div class="relative z-10 w-20 h-20 rounded-2xl bg-red-50 flex items-center justify-center text-primary mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
             @if(str_starts_with($itemIcon, '<svg') || str_starts_with($itemIcon, 'http') || str_contains($itemIcon, '/'))
@@ -85,14 +89,12 @@
               <x-icon :name="$iconName" class="w-10 h-10" />
             @endif
           </div>
-          @if(!empty($itemLink) && $itemLink !== '#')
-            <a href="{{ $itemLink }}" target="_blank" rel="noopener noreferrer" class="relative z-10 text-xl font-bold text-gray-900 leading-snug hover:text-primary transition-colors">
-              {{ $itemTitle }}
-            </a>
-          @else
-            <h3 class="relative z-10 text-xl font-bold text-gray-900 leading-snug">{{ $itemTitle }}</h3>
-          @endif
+          <h3 class="relative z-10 text-xl font-bold text-gray-900 leading-snug group-hover:text-primary transition-colors">{{ $itemTitle }}</h3>
+        @if(!empty($itemLink) && $itemLink !== '#')
+        </a>
+        @else
         </div>
+        @endif
       @endforeach
     </div>
   </div>
@@ -118,7 +120,11 @@
           if (empty($itemIcon)) $itemIcon = 'cloud';
           $iconName = (str_starts_with($itemIcon, 'lucide:') || str_starts_with($itemIcon, 'heroicon:')) ? $itemIcon : 'lucide:' . $itemIcon;
         @endphp
+        @if(!empty($itemLink) && $itemLink !== '#')
+        <a href="{{ $itemLink }}" target="_blank" rel="noopener noreferrer" class="group relative rounded-3xl bg-white border border-zinc-100 p-8 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col items-center text-center cursor-pointer" data-gsap="fade-up" data-gsap-delay="{{ ($loop->index % 4) * 0.1 }}">
+        @else
         <div class="group relative rounded-3xl bg-white border border-zinc-100 p-8 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col items-center text-center" data-gsap="fade-up" data-gsap-delay="{{ ($loop->index % 4) * 0.1 }}">
+        @endif
           <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
           <div class="relative z-10 w-20 h-20 rounded-2xl bg-red-50 flex items-center justify-center text-primary mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
             @if(str_starts_with($itemIcon, '<svg') || str_starts_with($itemIcon, 'http') || str_contains($itemIcon, '/'))
@@ -127,14 +133,12 @@
               <x-icon :name="$iconName" class="w-10 h-10" />
             @endif
           </div>
-          @if(!empty($itemLink) && $itemLink !== '#')
-            <a href="{{ $itemLink }}" target="_blank" rel="noopener noreferrer" class="relative z-10 text-xl font-bold text-gray-900 leading-snug hover:text-primary transition-colors">
-              {{ $itemTitle }}
-            </a>
-          @else
-            <h3 class="relative z-10 text-xl font-bold text-gray-900 leading-snug">{{ $itemTitle }}</h3>
-          @endif
+          <h3 class="relative z-10 text-xl font-bold text-gray-900 leading-snug group-hover:text-primary transition-colors">{{ $itemTitle }}</h3>
+        @if(!empty($itemLink) && $itemLink !== '#')
+        </a>
+        @else
         </div>
+        @endif
       @endforeach
     </div>
   </div>
@@ -160,7 +164,11 @@
           if (empty($itemIcon)) $itemIcon = 'shield-check';
           $iconName = (str_starts_with($itemIcon, 'lucide:') || str_starts_with($itemIcon, 'heroicon:')) ? $itemIcon : 'lucide:' . $itemIcon;
         @endphp
+        @if(!empty($itemLink) && $itemLink !== '#')
+        <a href="{{ $itemLink }}" target="_blank" rel="noopener noreferrer" class="group relative rounded-3xl bg-white border border-zinc-100 p-8 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col items-center text-center cursor-pointer" data-gsap="fade-up" data-gsap-delay="{{ ($loop->index % 4) * 0.1 }}">
+        @else
         <div class="group relative rounded-3xl bg-white border border-zinc-100 p-8 hover:border-primary/50 transition-all duration-300 transform hover:-translate-y-2 overflow-hidden shadow-sm hover:shadow-2xl flex flex-col items-center text-center" data-gsap="fade-up" data-gsap-delay="{{ ($loop->index % 4) * 0.1 }}">
+        @endif
           <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
           <div class="relative z-10 w-20 h-20 rounded-2xl bg-red-50 flex items-center justify-center text-primary mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
             @if(str_starts_with($itemIcon, '<svg') || str_starts_with($itemIcon, 'http') || str_contains($itemIcon, '/'))
@@ -169,14 +177,12 @@
               <x-icon :name="$iconName" class="w-10 h-10" />
             @endif
           </div>
-          @if(!empty($itemLink) && $itemLink !== '#')
-            <a href="{{ $itemLink }}" target="_blank" rel="noopener noreferrer" class="relative z-10 text-xl font-bold text-gray-900 leading-snug hover:text-primary transition-colors">
-              {{ $itemTitle }}
-            </a>
-          @else
-            <h3 class="relative z-10 text-xl font-bold text-gray-900 leading-snug">{{ $itemTitle }}</h3>
-          @endif
+          <h3 class="relative z-10 text-xl font-bold text-gray-900 leading-snug group-hover:text-primary transition-colors">{{ $itemTitle }}</h3>
+        @if(!empty($itemLink) && $itemLink !== '#')
+        </a>
+        @else
         </div>
+        @endif
       @endforeach
     </div>
   </div>
