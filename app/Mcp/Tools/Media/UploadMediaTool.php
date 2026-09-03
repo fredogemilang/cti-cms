@@ -136,6 +136,11 @@ class UploadMediaTool extends Tool
                 ],
                 'instruction' => 'Use "path" (e.g. "'.$media->path.'") when assigning this image to page blocks or CPT meta fields. Never store absolute or external URLs in database.',
             ]);
+        } catch (\RuntimeException $e) {
+            // MediaService rejects unsalvageable files (e.g. an SVG that cannot be
+            // sanitized). Surface it as a tool-level error like every other
+            // rejection path here, instead of letting it escape as a protocol error.
+            return Response::error($e->getMessage());
         } finally {
             if (file_exists($tmpPath)) {
                 @unlink($tmpPath);
