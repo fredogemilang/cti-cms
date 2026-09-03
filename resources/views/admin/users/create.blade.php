@@ -43,7 +43,7 @@
                             Password <span class="text-red-500">*</span>
                         </label>
                         <div class="relative" x-data="{ show: false }">
-                            <input name="password" :type="show ? 'text' : 'password'" 
+                            <input name="password" type="password" :type="show ? 'text' : 'password'" 
                                 class="w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#0B0B0B] text-gray-900 dark:text-[#FCFCFC] focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900/30 transition pr-12 @error('password') border-red-500 dark:border-red-500 focus:ring-red-500 @enderror" 
                                 placeholder="••••••••" required />
                             <button type="button" @click="show = !show"
