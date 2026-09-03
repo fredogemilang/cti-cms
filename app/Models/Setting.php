@@ -166,7 +166,7 @@ class Setting extends Model
     }
 
     /** Lazily computed set of setting keys whose values must be encrypted at rest. */
-    protected static function isEncryptedKey(string $key): bool
+    public static function isEncryptedKey(string $key): bool
     {
         if (static::$encryptedKeys === null) {
             static::$encryptedKeys = [];
@@ -187,6 +187,29 @@ class Setting extends Model
         }
 
         return isset(static::$encryptedKeys[$key]);
+    }
+
+    /** Determine if a setting key contains sensitive/secret data (passwords, secrets, keys, credentials). */
+    public static function isSensitiveKey(string $key): bool
+    {
+        if (static::isEncryptedKey($key)) {
+            return true;
+        }
+
+        $lower = strtolower($key);
+        $sensitiveTerms = [
+            'password', 'secret', 'private_key', 'api_key', 'signing_key',
+            'mail_host', 'mail_port', 'mail_username', 'mail_password',
+            'brevo', 'token',
+        ];
+
+        foreach ($sensitiveTerms as $term) {
+            if (str_contains($lower, $term)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** For tests or after registry mutation, force reload of encrypted-key cache. */

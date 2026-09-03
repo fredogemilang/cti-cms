@@ -49,6 +49,11 @@ Route::middleware('api.cors')->prefix('v1')->group(function () {
     Route::get('/settings/public', [SettingsPublicController::class, 'index']);
     Route::get('/redirects', [RedirectAdminController::class, 'publicList']);
 
+    // Content Feed — LLM-friendly flat JSON for AI chatbot consumption (auth required)
+    Route::get('/content-feed/{locale?}', \App\Http\Controllers\Api\V1\ContentFeedController::class)
+        ->middleware('api.auth')
+        ->name('api.content-feed');
+
     // Media — public read, authenticated write only
     Route::get('/media', [MediaController::class, 'index']);
     Route::get('/media/{id}', [MediaController::class, 'show']);

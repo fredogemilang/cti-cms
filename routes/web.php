@@ -377,6 +377,13 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
         })->name('api-tokens.index');
     });
 
+    // AI & MCP Integration Settings
+    Route::middleware('permission:settings.view')->group(function () {
+        Route::get('/ai-settings', function () {
+            return view('admin.ai.mcp-settings');
+        })->name('ai-settings.index');
+    });
+
     // Webhooks
     Route::middleware('permission:webhooks.view')->group(function () {
         Route::get('/webhooks', function () {
@@ -418,6 +425,9 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
             }
             if ($group === 'api-tokens' || $group === 'tokens') {
                 return redirect()->route('admin.api-tokens.index');
+            }
+            if ($group === 'ai' || $group === 'mcp') {
+                return redirect()->route('admin.ai-settings.index');
             }
             if ($group === 'webhooks') {
                 return redirect()->route('admin.webhooks.index');
