@@ -43,7 +43,7 @@
 
     // Dark variant styles
     $isDark = $variant === 'dark';
-    $labelClass = $isDark ? 'text-white font-medium' : 'text-primary';
+    $labelClass = $isDark ? 'text-white font-medium' : 'text-zinc-900';
     $inputClass = $isDark
         ? 'w-full bg-white text-zinc-900 border-none px-4 py-3 rounded-md text-sm focus:ring-2 focus:ring-white/50 focus:outline-none placeholder-zinc-400'
         : 'w-full bg-transparent border-t-0 border-x-0 py-2.5 text-sm focus:outline-none transition-all text-zinc-800 placeholder-zinc-400/70';
@@ -58,7 +58,7 @@
         : 'w-full md:w-auto px-10 py-4 bg-primary text-white hover:bg-red-700 shadow-md hover:shadow-lg transition-all duration-300 rounded-xl text-xs font-bold uppercase tracking-wider';
 
     $errorBorderClass = $isDark ? 'ring-2 ring-yellow-300 border-yellow-300 shadow-lg' : 'border-b-2 border-red-500';
-    $errorLabelClass = $isDark ? 'text-yellow-300 font-bold' : 'text-red-500';
+    $errorLabelClass = $isDark ? 'text-yellow-300 font-bold' : 'text-red-600 font-bold';
     $errorTextClass = $isDark
         ? 'mt-2 text-xs font-semibold text-amber-200 bg-zinc-950/90 border border-amber-400/50 px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-xl w-fit'
         : 'mt-1.5 text-xs text-red-500 font-medium';
@@ -131,7 +131,7 @@
       <svg class="{{ $isDark ? 'w-5 h-5 text-amber-400' : 'w-5 h-5 text-red-500' }} shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
       </svg>
-      <span class="font-medium">Please fill in all required fields marked below.</span>
+      <span class="font-medium">{{ t('form.validation_error_summary', 'Please check and correct the highlighted fields below.') }}</span>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 {{ $gridGap }}">
@@ -490,13 +490,12 @@ document.addEventListener('alpine:init', () => {
 
             // Validate form fields
             config.fields.forEach(f => {
-                if (!f.is_required) return;
                 const el = formEl.querySelector(`[name="${f.field_id}"]`) || document.getElementById(f.field_id);
                 if (!el) return;
 
                 // Checkbox fields (gdpr, terms, checkbox) — check .checked
                 if (el.type === 'checkbox') {
-                    if (!el.checked) {
+                    if (f.is_required && !el.checked) {
                         this.errors[f.field_id] = `${f.label} is required.`;
                         valid = false;
                     }
@@ -504,15 +503,20 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 const value = el.value?.trim() || '';
-                if (!value) {
+                if (f.is_required && !value) {
                     this.errors[f.field_id] = `${f.label} is required.`;
                     valid = false;
-                } else if (f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                    this.errors[f.field_id] = 'Please enter a valid email address.';
-                    valid = false;
-                } else if (f.type === 'tel' && !/^[0-9\-\+\(\)\s]+$/.test(value)) {
-                    this.errors[f.field_id] = 'Please enter a valid phone number.';
-                    valid = false;
+                } else if (value) {
+                    if (f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                        this.errors[f.field_id] = 'Please enter a valid email address.';
+                        valid = false;
+                    } else if (f.type === 'tel' && !/^[0-9\-\+\(\)\s]+$/.test(value)) {
+                        this.errors[f.field_id] = 'Please enter a valid phone number.';
+                        valid = false;
+                    } else if (f.type === 'url' && !/^(https?:\/\/)?[\w.-]+\.[a-z]{2,}(\/.*)?$/i.test(value)) {
+                        this.errors[f.field_id] = `${f.label} must be a valid URL.`;
+                        valid = false;
+                    }
                 }
             });
 
