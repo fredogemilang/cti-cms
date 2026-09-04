@@ -11,9 +11,9 @@ class AwsCloudCreditsPageSeeder extends Seeder
     public function run(): void
     {
         $page = Page::whereIn('slug', ['amazon-web-services-cloud-credits', 'aws-cloud-credits'])->first();
-        
-        if (!$page) {
-            $page = new Page();
+
+        if (! $page) {
+            $page = new Page;
             $page->slug = 'amazon-web-services-cloud-credits';
             $page->author_id = 1;
         }
@@ -175,7 +175,7 @@ class AwsCloudCreditsPageSeeder extends Seeder
         ];
 
         foreach ($blocksData as $item) {
-            $block = PageBlock::where('page_id', $page->id)->where('name', $item['name'])->whereNull('parent_block_id')->first() ?: new PageBlock();
+            $block = PageBlock::where('page_id', $page->id)->where('name', $item['name'])->whereNull('parent_block_id')->first() ?: new PageBlock;
             $block->page_id = $page->id;
             $block->name = $item['name'];
             $block->type = $item['type'];

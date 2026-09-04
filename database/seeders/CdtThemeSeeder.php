@@ -203,7 +203,7 @@ class CdtThemeSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Hero Title',
                 'value' => json_encode(['prefix' => 'Speed Up Your', 'main' => 'Transformation Journey']),
-                'order' => 0
+                'order' => 0,
             ]
         );
 
@@ -218,7 +218,7 @@ class CdtThemeSeeder extends Seeder
                 'type' => 'button',
                 'label' => 'Learn More Button',
                 'value' => json_encode(['text' => 'Learn More', 'url' => '#areas-of-expertise', 'target' => '_self']),
-                'order' => 2
+                'order' => 2,
             ]
         );
 
@@ -228,7 +228,7 @@ class CdtThemeSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Area of Expertise Title',
                 'value' => json_encode(['prefix' => 'Area Of', 'main' => 'Expertise']),
-                'order' => 3
+                'order' => 3,
             ]
         );
 
@@ -241,27 +241,27 @@ class CdtThemeSeeder extends Seeder
                     [
                         'image' => 'themes/cdt/assets/security-DrNRARC-.webp',
                         'title' => 'Security',
-                        'description' => "In the modern environment, it's essential for businesses to work together to ensure applications are secure. CDT's security solutions allow you to take a preventative approach against cyber threats by helping you keep tabs on potential weak spots, reduce impact in the event of an attack, and build a more powerful defense to keep your most critical assets secure. Additionally, you can tailor our security solutions to fit your specific requirements."
+                        'description' => "In the modern environment, it's essential for businesses to work together to ensure applications are secure. CDT's security solutions allow you to take a preventative approach against cyber threats by helping you keep tabs on potential weak spots, reduce impact in the event of an attack, and build a more powerful defense to keep your most critical assets secure. Additionally, you can tailor our security solutions to fit your specific requirements.",
                     ],
                     [
                         'image' => 'themes/cdt/assets/clouds.png-Doka7eSJ.webp',
                         'title' => 'Cloud',
-                        'description' => "Cloud technology opens the door to new innovations, promoting emerging markets like cloud-native development. CDT is a cloud expert with certified teams, so we see this as an opportunity to help businesses reap the benefits of the cloud by providing a variety of cloud-based solutions. Our competence has also earned the reputation of AWS Advanced Consulting Partner of the year 2022, AWS Security Expert, AWS Migration consultant, AWS Infrastructure provider, AWS Analytics, and AWS DevOps specialty."
+                        'description' => 'Cloud technology opens the door to new innovations, promoting emerging markets like cloud-native development. CDT is a cloud expert with certified teams, so we see this as an opportunity to help businesses reap the benefits of the cloud by providing a variety of cloud-based solutions. Our competence has also earned the reputation of AWS Advanced Consulting Partner of the year 2022, AWS Security Expert, AWS Migration consultant, AWS Infrastructure provider, AWS Analytics, and AWS DevOps specialty.',
                     ],
                     [
                         'image' => 'themes/cdt/assets/analytics.png-Bdc2CvaB.webp',
                         'title' => 'Observability',
-                        'description' => "Observability in IT refers to the practice of monitoring and analyzing system and application performance in real-time. It provides insight into the behavior and health of software systems, helping organizations detect and resolve issues quickly and effectively. CDT can help using observability in business and can ensure yours IT systems are performing optimally, identify and resolve problems before they impact customers, and improve overall reliability and customer satisfaction."
-                    ]
+                        'description' => 'Observability in IT refers to the practice of monitoring and analyzing system and application performance in real-time. It provides insight into the behavior and health of software systems, helping organizations detect and resolve issues quickly and effectively. CDT can help using observability in business and can ensure yours IT systems are performing optimally, identify and resolve problems before they impact customers, and improve overall reliability and customer satisfaction.',
+                    ],
                 ]),
                 'options' => [
                     'children' => [
                         ['name' => 'image', 'type' => 'media', 'label' => 'Card Image'],
                         ['name' => 'title', 'type' => 'text', 'label' => 'Card Title'],
-                        ['name' => 'description', 'type' => 'textarea', 'label' => 'Card Description']
-                    ]
+                        ['name' => 'description', 'type' => 'textarea', 'label' => 'Card Description'],
+                    ],
                 ],
-                'order' => 4
+                'order' => 4,
             ]
         );
 
@@ -284,7 +284,7 @@ class CdtThemeSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Technology Alliance Title',
                 'value' => json_encode(['prefix' => 'Technology', 'main' => 'Alliance']),
-                'order' => 5
+                'order' => 5,
             ]
         );
 
@@ -294,7 +294,7 @@ class CdtThemeSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'AWS Section Title',
                 'value' => json_encode(['prefix' => 'AWS', 'main' => 'Private Offers']),
-                'order' => 6
+                'order' => 6,
             ]
         );
 
@@ -309,9 +309,9 @@ class CdtThemeSeeder extends Seeder
                     'themes/cdt/assets/PT-Urun-Bangun-Negeri-BLb9ARg2.png',
                     'themes/cdt/assets/GitLab-logo-BBxYVl-u.svg',
                     'themes/cdt/assets/Mongo-DB-Logo-0iY8tsMG.svg',
-                    'themes/cdt/assets/tapway-logo-hd--DjdHTKHP.png'
+                    'themes/cdt/assets/tapway-logo-hd--DjdHTKHP.png',
                 ]),
-                'order' => 7
+                'order' => 7,
             ]
         );
 
@@ -321,7 +321,7 @@ class CdtThemeSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Why CDT Title',
                 'value' => json_encode(['prefix' => 'Why', 'main' => 'CDT?']),
-                'order' => 8
+                'order' => 8,
             ]
         );
 
@@ -334,27 +334,27 @@ class CdtThemeSeeder extends Seeder
                     [
                         'image' => 'themes/cdt/assets/photo-1573164713988-8665fc963095-w800-e1IoyY61.jpg',
                         'title' => 'NUMBER ONE IT SERVICE DELIVERY',
-                        'description' => "Guarantee the best quality of IT service delivery with every stage delivery involves many IT experts' role and ensure that service-level agreement (SLA) is applied."
+                        'description' => "Guarantee the best quality of IT service delivery with every stage delivery involves many IT experts' role and ensure that service-level agreement (SLA) is applied.",
                     ],
                     [
                         'image' => 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w800-D1mgrB8h.jpg',
                         'title' => 'EXCELLENT CUSTOMER SERVICES',
-                        'description' => "24/7 customer response center, and many other convenient services were given fulfill customer requirement in today's digital era."
+                        'description' => "24/7 customer response center, and many other convenient services were given fulfill customer requirement in today's digital era.",
                     ],
                     [
                         'image' => 'themes/cdt/assets/photo-1552664730-d307ca884978-w800-DNfMnljE.jpg',
                         'title' => 'YEARS OF EXPERIENCE EXPERTS',
-                        'description' => "With years of experience and numerous of project portfolios, professional IT experts will measure and manage risk to ensure accuracy in implementing solutions into customer's IT environment."
-                    ]
+                        'description' => "With years of experience and numerous of project portfolios, professional IT experts will measure and manage risk to ensure accuracy in implementing solutions into customer's IT environment.",
+                    ],
                 ]),
                 'options' => [
                     'children' => [
                         ['name' => 'image', 'type' => 'media', 'label' => 'Box Background Image'],
                         ['name' => 'title', 'type' => 'text', 'label' => 'Box Title'],
-                        ['name' => 'description', 'type' => 'textarea', 'label' => 'Box Description']
-                    ]
+                        ['name' => 'description', 'type' => 'textarea', 'label' => 'Box Description'],
+                    ],
                 ],
-                'order' => 9
+                'order' => 9,
             ]
         );
 
@@ -377,7 +377,7 @@ class CdtThemeSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Testimonials Title',
                 'value' => json_encode(['prefix' => 'What Our', 'main' => 'Client Says']),
-                'order' => 10
+                'order' => 10,
             ]
         );
 
@@ -391,9 +391,9 @@ class CdtThemeSeeder extends Seeder
                     'description' => 'Explore our latest insights and news.',
                     'image' => 'themes/cdt/assets/photo-1551288049-bebda4e38f71-w1000-CbVNUoo0.jpg',
                     'button_text' => 'Explore',
-                    'button_url' => '/insights'
+                    'button_url' => '/insights',
                 ]),
-                'order' => 11
+                'order' => 11,
             ]
         );
 
@@ -407,9 +407,9 @@ class CdtThemeSeeder extends Seeder
                     'description' => 'Discover life and opportunities at CDT.',
                     'image' => 'themes/cdt/assets/photo-1522071820081-009f0129c71c-w1000-CEqXLUmA.jpg',
                     'button_text' => 'Learn More',
-                    'button_url' => '/careers'
+                    'button_url' => '/careers',
                 ]),
-                'order' => 12
+                'order' => 12,
             ]
         );
     }

@@ -29,8 +29,9 @@ class BulkUpdateAllianceLogoTitle extends Command
     {
         $cpt = CustomPostType::whereIn('slug', ['technology-alliance', 'products'])->first();
 
-        if (!$cpt) {
+        if (! $cpt) {
             $this->error('Technology Alliance CPT not found!');
+
             return Command::FAILURE;
         }
 
@@ -38,6 +39,7 @@ class BulkUpdateAllianceLogoTitle extends Command
 
         if ($entries->isEmpty()) {
             $this->warn('No Technology Alliance entries found.');
+
             return Command::SUCCESS;
         }
 
@@ -48,10 +50,10 @@ class BulkUpdateAllianceLogoTitle extends Command
             $meta = $entry->meta ?? [];
             $meta['logo_title'] = 'Official Technology Partner';
 
-            if (!isset($meta['_translations'])) {
+            if (! isset($meta['_translations'])) {
                 $meta['_translations'] = [];
             }
-            if (!isset($meta['_translations']['id'])) {
+            if (! isset($meta['_translations']['id'])) {
                 $meta['_translations']['id'] = [];
             }
 
@@ -65,6 +67,7 @@ class BulkUpdateAllianceLogoTitle extends Command
         }
 
         $this->info("SUCCESS: Successfully updated logo_title for {$count} Technology Alliance entries!");
+
         return Command::SUCCESS;
     }
 }

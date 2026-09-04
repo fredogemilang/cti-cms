@@ -7,6 +7,7 @@ use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
 use App\Models\TaxonomyTerm;
 use App\Services\ThemeLoader;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\View;
 
 class ArchiveController extends Controller
@@ -127,7 +128,7 @@ class ArchiveController extends Controller
                 ->values();
 
             $page = (int) request()->get('page', 1);
-            $entries = new \Illuminate\Pagination\LengthAwarePaginator(
+            $entries = new LengthAwarePaginator(
                 $allEntries->forPage($page, $perPage)->values(),
                 $allEntries->count(),
                 $perPage,

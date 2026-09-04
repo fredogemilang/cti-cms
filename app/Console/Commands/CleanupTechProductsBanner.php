@@ -29,8 +29,9 @@ class CleanupTechProductsBanner extends Command
     {
         $techProductsCpt = CustomPostType::where('slug', 'tech-products')->first();
 
-        if (!$techProductsCpt) {
+        if (! $techProductsCpt) {
             $this->error('tech-products CPT not found!');
+
             return Command::FAILURE;
         }
 
@@ -38,6 +39,7 @@ class CleanupTechProductsBanner extends Command
 
         if ($entries->isEmpty()) {
             $this->warn('No tech-products entries found.');
+
             return Command::SUCCESS;
         }
 
@@ -79,6 +81,7 @@ class CleanupTechProductsBanner extends Command
         }
 
         $this->info("SUCCESS: Cleaned up banner fields for {$cleanedCount} tech-products entries!");
+
         return Command::SUCCESS;
     }
 }

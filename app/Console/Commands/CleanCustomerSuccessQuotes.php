@@ -31,6 +31,7 @@ class CleanCustomerSuccessQuotes extends Command
 
         if (! $cpt) {
             $this->error('customer-success CPT not found!');
+
             return Command::FAILURE;
         }
 
@@ -54,10 +55,10 @@ class CleanCustomerSuccessQuotes extends Command
                     // Remove trailing quote entities/chars
                     $text = preg_replace('/(?:&ldquo;|&rdquo;|&quot;|""|“|”|")+$/u', '', $text);
 
-                    return '<p>' . trim($text) . '</p>';
+                    return '<p>'.trim($text).'</p>';
                 }, $inner);
 
-                return '<blockquote>' . $inner . '</blockquote>';
+                return '<blockquote>'.$inner.'</blockquote>';
             }, $html);
         };
 
@@ -96,6 +97,7 @@ class CleanCustomerSuccessQuotes extends Command
         }
 
         $this->info("SUCCESS: Cleaned up quote marks for {$updatedCount} Customer Success entries!");
+
         return Command::SUCCESS;
     }
 }

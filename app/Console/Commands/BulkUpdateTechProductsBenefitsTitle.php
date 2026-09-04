@@ -29,8 +29,9 @@ class BulkUpdateTechProductsBenefitsTitle extends Command
     {
         $techProductsCpt = CustomPostType::whereIn('slug', ['tech-products', 'tech_products'])->first();
 
-        if (!$techProductsCpt) {
+        if (! $techProductsCpt) {
             $this->error('CustomPostType tech-products not found!');
+
             return Command::FAILURE;
         }
 
@@ -38,6 +39,7 @@ class BulkUpdateTechProductsBenefitsTitle extends Command
 
         if ($entries->isEmpty()) {
             $this->warn('No tech-products entries found.');
+
             return Command::SUCCESS;
         }
 
@@ -51,10 +53,10 @@ class BulkUpdateTechProductsBenefitsTitle extends Command
             $meta = $entry->meta ?? [];
             $meta['benefits_title'] = $titleEn;
 
-            if (!isset($meta['_translations'])) {
+            if (! isset($meta['_translations'])) {
                 $meta['_translations'] = [];
             }
-            if (!isset($meta['_translations']['id'])) {
+            if (! isset($meta['_translations']['id'])) {
                 $meta['_translations']['id'] = [];
             }
 
@@ -68,6 +70,7 @@ class BulkUpdateTechProductsBenefitsTitle extends Command
         }
 
         $this->info("SUCCESS: Successfully bulk updated benefits_title for {$count} tech-products entries!");
+
         return Command::SUCCESS;
     }
 }

@@ -32,6 +32,7 @@ class UpdateCustomerSuccessMetaField extends Command
 
         if (! $cpt || ! $alliance || ! $techProd) {
             $this->error('One or more required CPTs not found!');
+
             return Command::FAILURE;
         }
 
@@ -39,6 +40,7 @@ class UpdateCustomerSuccessMetaField extends Command
 
         if (! $field) {
             $this->error('related_products field not found in Customer Success CPT!');
+
             return Command::FAILURE;
         }
 
@@ -51,6 +53,7 @@ class UpdateCustomerSuccessMetaField extends Command
         $field->save();
 
         $this->info('SUCCESS: Updated related_products field options for Customer Success CPT!');
+
         return Command::SUCCESS;
     }
 }

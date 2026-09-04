@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\V1\Admin\TaxonomyAdminController;
 use App\Http\Controllers\Api\V1\Admin\UserAdminController;
 use App\Http\Controllers\Api\V1\Admin\WebhookAdminController;
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\ContentFeedController;
 use App\Http\Controllers\Api\V1\CptController;
 use App\Http\Controllers\Api\V1\FormController;
 use App\Http\Controllers\Api\V1\MediaController;
@@ -50,7 +51,7 @@ Route::middleware('api.cors')->prefix('v1')->group(function () {
     Route::get('/redirects', [RedirectAdminController::class, 'publicList']);
 
     // Content Feed — LLM-friendly flat JSON for AI chatbot consumption (auth required)
-    Route::get('/content-feed/{locale?}', \App\Http\Controllers\Api\V1\ContentFeedController::class)
+    Route::get('/content-feed/{locale?}', ContentFeedController::class)
         ->middleware('api.auth')
         ->name('api.content-feed');
 

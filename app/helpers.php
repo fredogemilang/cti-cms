@@ -189,7 +189,7 @@ if (! function_exists('get_assigned_form')) {
      * Get the Form model assigned to the active theme's placeholder slot.
      * Returns null if unassigned or if the assigned form is inactive/deleted.
      */
-    function get_assigned_form(string $placeholder): ?\App\Models\Form
+    function get_assigned_form(string $placeholder): ?Form
     {
         $theme = active_theme();
         if (! $theme) {
@@ -203,7 +203,7 @@ if (! function_exists('get_assigned_form')) {
             return null;
         }
 
-        return \App\Models\Form::where('id', $formId)
+        return Form::where('id', $formId)
             ->where('is_active', true)
             ->with('fields')
             ->first();

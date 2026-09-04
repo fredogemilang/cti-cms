@@ -64,6 +64,7 @@ class ContentSanitizerService
             if (preg_match('/\bclass\s*=/i', $attrs)) {
                 return $matches[0];
             }
+
             return '<a '.$attrs.' class="text-primary hover:underline font-semibold">';
         }, $clean) ?? $clean;
 

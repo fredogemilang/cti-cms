@@ -32,6 +32,7 @@ class MergeCustomerSuccessContent extends Command
 
         if (! $cpt) {
             $this->error('customer-success CPT not found!');
+
             return Command::FAILURE;
         }
 
@@ -55,16 +56,16 @@ class MergeCustomerSuccessContent extends Command
                 // 2. Excerpt Awal
                 $cleanExcerpt = trim(strip_tags((string) $excerpt));
                 if (! empty($cleanExcerpt) && ! str_contains($cleanContent, $cleanExcerpt)) {
-                    $parts[] = '<p>' . $cleanExcerpt . '</p>';
+                    $parts[] = '<p>'.$cleanExcerpt.'</p>';
                 }
 
                 // 3. Quote Pelanggan
                 $cleanQuote = trim(strip_tags((string) $quote));
                 if (! empty($cleanQuote) && ! str_contains($cleanContent, $cleanQuote)) {
-                    $quoteHtml = '<blockquote><p>' . $cleanQuote . '</p>';
+                    $quoteHtml = '<blockquote><p>'.$cleanQuote.'</p>';
                     if (! empty($quoteAuthor)) {
-                        $authorText = $quoteAuthor . (! empty($quoteRole) ? ' &mdash; ' . $quoteRole : '');
-                        $quoteHtml .= '<footer><strong>' . $authorText . '</strong></footer>';
+                        $authorText = $quoteAuthor.(! empty($quoteRole) ? ' &mdash; '.$quoteRole : '');
+                        $quoteHtml .= '<footer><strong>'.$authorText.'</strong></footer>';
                     }
                     $quoteHtml .= '</blockquote>';
                     $parts[] = $quoteHtml;
@@ -161,6 +162,7 @@ class MergeCustomerSuccessContent extends Command
         $cpt->save();
 
         $this->info('SUCCESS: Customer Success content merged and admin tabs updated to ONLY Related Products & Alliances!');
+
         return Command::SUCCESS;
     }
 }
