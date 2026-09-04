@@ -7,6 +7,7 @@
                 $statuses = [
                     '' => ['label' => 'All', 'count' => $statusCounts['all']],
                     'published' => ['label' => 'Published', 'count' => $statusCounts['published']],
+                    'pending_review' => ['label' => 'Pending Review', 'count' => $statusCounts['pending_review']],
                     'draft' => ['label' => 'Draft', 'count' => $statusCounts['draft']],
                     'scheduled' => ['label' => 'Scheduled', 'count' => $statusCounts['scheduled']],
                     'private' => ['label' => 'Private', 'count' => $statusCounts['private']],

@@ -5,6 +5,7 @@ namespace App\Mcp\Tools\Content;
 use App\Mcp\Guards\McpAbilityGuard;
 use App\Models\Activity;
 use App\Models\Page;
+use App\Services\EditorialWorkflowService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -30,9 +31,12 @@ class CreatePageTool extends Tool
                 ->default('default'),
 
             'status' => $schema->string()
-                ->enum(['draft', 'published', 'scheduled', 'private'])
-                ->description('Page status. Defaults to "draft". Publishing requires mcp.content.publish ability.')
+                ->enum(['draft', 'pending_review', 'published', 'scheduled', 'private'])
+                ->description('Page status. Defaults to "draft". Publishing requires the mcp.content.publish ability AND the content.approve permission on the token owner; without it the status is downgraded to pending_review.')
                 ->default('draft'),
+
+            'published_at' => $schema->string()
+                ->description('ISO-8601 date/time. Required when status is "scheduled" — scheduled content without it never publishes.'),
 
             'parent_id' => $schema->integer()
                 ->description('Parent page ID for hierarchical pages.'),
@@ -57,9 +61,29 @@ class CreatePageTool extends Tool
         McpAbilityGuard::authorize('mcp.write');
 
         $status = $request->get('status') ?? 'draft';
+        $notice = null;
+        $publishedAt = null;
 
-        if ($status === 'published') {
+        // Resolved unconditionally so every transition — including an explicit
+        // `pending_review` submission — reaches handleTransition().
+        $workflow = app(EditorialWorkflowService::class);
+        $tokenUser = McpAbilityGuard::resolveToken()?->tokenable;
+
+        if (in_array($status, ['published', 'scheduled'], true)) {
             McpAbilityGuard::authorize('mcp.content.publish');
+            if (! $workflow->canApprove($tokenUser)) {
+                $status = 'pending_review';
+                $notice = 'Status automatically set to pending_review: token user lacks content.approve permission.';
+            } elseif ($status === 'scheduled') {
+                // content:publish-scheduled filters on whereNotNull('published_at'),
+                // so a scheduled page without one would never publish.
+                $publishedAt = $request->get('published_at');
+                if (! $publishedAt) {
+                    return Response::error('Status "scheduled" requires "published_at" — without it the page would never publish.');
+                }
+            } else {
+                $publishedAt = $request->get('published_at') ?: now();
+            }
         }
 
         $token = McpAbilityGuard::resolveToken();
@@ -74,7 +98,7 @@ class CreatePageTool extends Tool
             'seo' => $request->get('seo') ?? [],
             'translations' => $request->get('translations') ?? [],
             'author_id' => $token?->tokenable_id,
-            'published_at' => $status === 'published' ? now() : null,
+            'published_at' => $publishedAt,
         ]);
 
         // Create blocks
@@ -105,7 +129,9 @@ class CreatePageTool extends Tool
             'created_at' => now(),
         ]);
 
-        return Response::structured([
+        $workflow->handleTransition($page, $page->status, null, $tokenUser);
+
+        $res = [
             'success' => true,
             'page' => [
                 'id' => $page->id,
@@ -116,7 +142,13 @@ class CreatePageTool extends Tool
                 'url' => $page->getUrl(),
                 'blocks_created' => count($blocks),
             ],
-        ]);
+        ];
+
+        if ($notice) {
+            $res['notice'] = $notice;
+        }
+
+        return Response::structured($res);
     }
 
     private function inferBlockType(mixed $value): string

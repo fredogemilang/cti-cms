@@ -5,6 +5,7 @@ namespace App\Mcp\Tools\Content;
 use App\Mcp\Guards\McpAbilityGuard;
 use App\Models\Activity;
 use App\Models\Page;
+use App\Services\EditorialWorkflowService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -32,8 +33,11 @@ class UpdatePageTool extends Tool
                 ->description('New page template. System pages cannot have template changed.'),
 
             'status' => $schema->string()
-                ->enum(['draft', 'published', 'scheduled', 'private'])
-                ->description('New status. Publishing requires mcp.content.publish ability.'),
+                ->enum(['draft', 'pending_review', 'published', 'scheduled', 'private'])
+                ->description('New status. Publishing requires the mcp.content.publish ability AND the content.approve permission on the token owner; without it the status is downgraded to pending_review.'),
+
+            'published_at' => $schema->string()
+                ->description('ISO-8601 date/time. Required when status is "scheduled" — scheduled content without it never publishes.'),
 
             'menu_order' => $schema->integer()
                 ->description('New sort order.'),
@@ -74,11 +78,32 @@ class UpdatePageTool extends Tool
             }
         }
 
-        // Status change
+        // Status change. The workflow service is resolved unconditionally so that every
+        // transition — including an author explicitly submitting `pending_review`, or a
+        // reviewer sending it back to `draft` — fires handleTransition(). Resolving it
+        // only inside the publish branch silently skipped notifications for those paths.
+        $notice = null;
+        $oldStatus = $page->status;
+        $workflow = app(EditorialWorkflowService::class);
+        $tokenUser = McpAbilityGuard::resolveToken()?->tokenable;
+
         if ($status = $request->get('status')) {
-            if ($status === 'published') {
+            if (in_array($status, ['published', 'scheduled'], true)) {
                 McpAbilityGuard::authorize('mcp.content.publish');
-                $changes['published_at'] = $page->published_at ?? now();
+                if (! $workflow->canApprove($tokenUser)) {
+                    $status = 'pending_review';
+                    $notice = 'Status automatically set to pending_review: token user lacks content.approve permission.';
+                } elseif ($status === 'published') {
+                    $changes['published_at'] = $request->get('published_at') ?: ($page->published_at ?? now());
+                } elseif ($status === 'scheduled') {
+                    // content:publish-scheduled filters on whereNotNull('published_at'),
+                    // so a scheduled page without one would never publish.
+                    $scheduledFor = $request->get('published_at') ?: $page->published_at;
+                    if (! $scheduledFor) {
+                        return Response::error('Status "scheduled" requires "published_at" — without it the page would never publish.');
+                    }
+                    $changes['published_at'] = $scheduledFor;
+                }
             }
             $changes['status'] = $status;
         }
@@ -154,7 +179,11 @@ class UpdatePageTool extends Tool
 
         $page->refresh();
 
-        return Response::structured([
+        if (isset($changes['status'])) {
+            $workflow->handleTransition($page, $page->status, $oldStatus, $tokenUser);
+        }
+
+        $res = [
             'success' => true,
             'page' => [
                 'id' => $page->id,
@@ -169,6 +198,12 @@ class UpdatePageTool extends Tool
                 'blocks_updated' => $blocksUpdated,
                 'blocks_created' => $blocksCreated,
             ],
-        ]);
+        ];
+
+        if ($notice) {
+            $res['notice'] = $notice;
+        }
+
+        return Response::structured($res);
     }
 }

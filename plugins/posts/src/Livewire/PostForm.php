@@ -3,6 +3,7 @@
 namespace Plugins\Posts\Livewire;
 
 use App\Models\CptEntry;
+use App\Services\EditorialWorkflowService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -68,6 +69,15 @@ class PostForm extends Component
 
     public $newAuthorName = '';
 
+    // Editorial Workflow
+    public bool $canApprove = false;
+
+    public array $allowedStatuses = [];
+
+    public bool $showChangeRequestModal = false;
+
+    public string $changeRequestNote = '';
+
     public $addingAuthor = false;
 
     // Relationships
@@ -103,6 +113,10 @@ class PostForm extends Component
     {
         $this->availableLocales = available_locales();
         $this->editingLocale = Post::defaultLocale();
+
+        $workflow = app(EditorialWorkflowService::class);
+        $this->canApprove = $workflow->canApprove();
+        $this->allowedStatuses = $workflow->allowedStatuses();
 
         $requestedLocale = request()->query('lang');
         if ($postId) {
@@ -281,7 +295,7 @@ class PostForm extends Component
             $this->validate([
                 'title' => $isDefault ? 'required|min:3' : 'nullable|min:3',
                 'slug' => $isDefault ? 'required' : 'nullable',
-                'status' => 'required|in:draft,published,scheduled,archived',
+                'status' => 'required|in:draft,pending_review,published,scheduled,archived',
                 'visibility' => 'required|in:public,private,password',
                 'password' => 'required_if:visibility,password',
                 'author_id' => 'required|exists:post_authors,id',
@@ -298,6 +312,11 @@ class PostForm extends Component
         if ($status) {
             $this->status = $status;
         }
+
+        $workflow = app(EditorialWorkflowService::class);
+        $resolved = $workflow->resolveStatus($this->status);
+        $this->status = $resolved['status'];
+        $oldStatus = $this->postId && $this->post ? $this->post->getOriginal('status') : null;
 
         // Auto-generate excerpt if empty
         if (empty($this->excerpt) && ! empty($this->content)) {
@@ -417,15 +436,83 @@ class PostForm extends Component
             'lang' => $this->editingLocale !== Post::defaultLocale() ? $this->editingLocale : null,
         ]);
 
+        $workflow->handleTransition($post, $post->status, $oldStatus);
+
         if ($isNew) {
-            session()->flash('success', 'Post created successfully.');
+            $msg = $resolved['downgraded'] ? $resolved['message'] : 'Post created successfully.';
+            session()->flash($resolved['downgraded'] ? 'info' : 'success', $msg);
 
             return redirect()->route('admin.posts.edit', array_merge(['id' => $post->id], $queryParams));
         } else {
-            $this->dispatch('notify', ['type' => 'success', 'message' => 'Post updated successfully.']);
+            $msg = $resolved['downgraded'] ? $resolved['message'] : 'Post updated successfully.';
+            $this->dispatch('notify', ['type' => $resolved['downgraded'] ? 'info' : 'success', 'message' => $msg]);
 
             return redirect()->route('admin.posts.edit', array_merge(['id' => $post->id], $queryParams));
         }
+    }
+
+    public function approveAndPublish()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        if (! $this->postId || ! $this->post) {
+            return;
+        }
+
+        $oldStatus = $this->post->status;
+        $this->post->update([
+            'status' => 'published',
+            'published_at' => $this->post->published_at ?? now(),
+        ]);
+        $this->status = 'published';
+        $this->published_at = $this->post->published_at?->format('Y-m-d\TH:i');
+
+        $workflow->handleTransition($this->post, 'published', $oldStatus);
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => "'{$this->post->title}' approved and published successfully.",
+        ]);
+    }
+
+    public function openChangeRequestModal()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+        $this->changeRequestNote = '';
+        $this->showChangeRequestModal = true;
+    }
+
+    public function closeChangeRequestModal()
+    {
+        $this->showChangeRequestModal = false;
+    }
+
+    public function submitChangeRequest()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        $this->validate([
+            'changeRequestNote' => 'required|string|min:3|max:1000',
+        ]);
+
+        if (! $this->postId || ! $this->post) {
+            return;
+        }
+
+        $oldStatus = $this->post->status;
+        $this->post->update([
+            'status' => 'draft',
+        ]);
+        $this->status = 'draft';
+
+        $workflow->handleTransition($this->post, 'draft', $oldStatus, auth()->user(), $this->changeRequestNote);
+        $this->showChangeRequestModal = false;
+        $this->dispatch('notify', [
+            'type' => 'warning',
+            'message' => "Changes requested on '{$this->post->title}'. Post moved to draft.",
+        ]);
     }
 
     public function openCptModal()

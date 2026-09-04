@@ -126,6 +126,7 @@ class PostsTable extends Component
         return [
             'all' => (clone $baseQuery)->count(),
             'published' => (clone $baseQuery)->where('status', 'published')->count(),
+            'pending_review' => (clone $baseQuery)->where('status', 'pending_review')->count(),
             'draft' => (clone $baseQuery)->where('status', 'draft')->count(),
             'scheduled' => (clone $baseQuery)->where('status', 'scheduled')->count(),
             'archived' => (clone $baseQuery)->where('status', 'archived')->count(),

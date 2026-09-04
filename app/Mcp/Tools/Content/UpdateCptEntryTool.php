@@ -6,6 +6,7 @@ use App\Mcp\Guards\McpAbilityGuard;
 use App\Models\Activity;
 use App\Models\CptEntry;
 use App\Models\CustomPostType;
+use App\Services\EditorialWorkflowService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -43,8 +44,11 @@ class UpdateCptEntryTool extends Tool
                 ->description('New featured image path.'),
 
             'status' => $schema->string()
-                ->enum(['draft', 'published', 'scheduled', 'archived'])
-                ->description('New status. Publishing requires mcp.content.publish.'),
+                ->enum(['draft', 'pending_review', 'published', 'scheduled', 'archived'])
+                ->description('New status. Publishing requires the mcp.content.publish ability AND the content.approve permission on the token owner; without it the status is downgraded to pending_review.'),
+
+            'published_at' => $schema->string()
+                ->description('ISO-8601 date/time. Required when status is "scheduled" — scheduled content without it never publishes.'),
 
             'meta' => $schema->object()
                 ->description('Meta field values to update. Merged with existing meta (not replaced).'),
@@ -93,11 +97,30 @@ class UpdateCptEntryTool extends Tool
             }
         }
 
-        // Status
+        // Status. The workflow service is resolved unconditionally so every transition —
+        // including an explicit `pending_review` submission or a send-back to `draft` —
+        // reaches handleTransition().
+        $notice = null;
+        $oldStatus = $entry->status;
+        $workflow = app(EditorialWorkflowService::class);
+        $tokenUser = McpAbilityGuard::resolveToken()?->tokenable;
+
         if ($status = $request->get('status')) {
-            if ($status === 'published') {
+            if (in_array($status, ['published', 'scheduled'], true)) {
                 McpAbilityGuard::authorize('mcp.content.publish');
-                $changes['published_at'] = $entry->published_at ?? now();
+                if (! $workflow->canApprove($tokenUser)) {
+                    $status = 'pending_review';
+                    $notice = 'Status automatically set to pending_review: token user lacks content.approve permission.';
+                } elseif ($status === 'published') {
+                    $changes['published_at'] = $request->get('published_at') ?: ($entry->published_at ?? now());
+                } elseif ($status === 'scheduled') {
+                    // content:publish-scheduled filters on whereNotNull('published_at').
+                    $scheduledFor = $request->get('published_at') ?: $entry->published_at;
+                    if (! $scheduledFor) {
+                        return Response::error('Status "scheduled" requires "published_at" — without it the entry would never publish.');
+                    }
+                    $changes['published_at'] = $scheduledFor;
+                }
             }
             $changes['status'] = $status;
         }
@@ -146,7 +169,11 @@ class UpdateCptEntryTool extends Tool
 
         $entry->refresh();
 
-        return Response::structured([
+        if (isset($changes['status'])) {
+            $workflow->handleTransition($entry, $entry->status, $oldStatus, $tokenUser);
+        }
+
+        $res = [
             'success' => true,
             'entry' => [
                 'id' => $entry->id,
@@ -157,6 +184,12 @@ class UpdateCptEntryTool extends Tool
                 'url' => $entry->getUrl(),
             ],
             'changes' => array_keys($changes),
-        ]);
+        ];
+
+        if ($notice) {
+            $res['notice'] = $notice;
+        }
+
+        return Response::structured($res);
     }
 }

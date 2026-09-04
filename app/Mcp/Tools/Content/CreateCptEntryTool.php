@@ -6,6 +6,7 @@ use App\Mcp\Guards\McpAbilityGuard;
 use App\Models\Activity;
 use App\Models\CptEntry;
 use App\Models\CustomPostType;
+use App\Services\EditorialWorkflowService;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -40,9 +41,12 @@ class CreateCptEntryTool extends Tool
                 ->description('Featured image path (relative, from media library). Use list-media to find available images.'),
 
             'status' => $schema->string()
-                ->enum(['draft', 'published', 'scheduled', 'archived'])
-                ->description('Entry status. Default: "draft". Publishing requires mcp.content.publish.')
+                ->enum(['draft', 'pending_review', 'published', 'scheduled', 'archived'])
+                ->description('Entry status. Default: "draft". Publishing requires the mcp.content.publish ability AND the content.approve permission on the token owner; without it the status is downgraded to pending_review.')
                 ->default('draft'),
+
+            'published_at' => $schema->string()
+                ->description('ISO-8601 date/time. Required when status is "scheduled" — scheduled content without it never publishes.'),
 
             'meta' => $schema->object()
                 ->description('Meta field values as key-value pairs. Keys must match CPT meta field names. Use get-cpt-schema to discover available fields.'),
@@ -69,8 +73,28 @@ class CreateCptEntryTool extends Tool
         }
 
         $status = $request->get('status') ?? 'draft';
-        if ($status === 'published') {
+        $notice = null;
+        $publishedAt = null;
+
+        // Resolved unconditionally so every transition — including an explicit
+        // `pending_review` submission — reaches handleTransition().
+        $workflow = app(EditorialWorkflowService::class);
+        $tokenUser = McpAbilityGuard::resolveToken()?->tokenable;
+
+        if (in_array($status, ['published', 'scheduled'], true)) {
             McpAbilityGuard::authorize('mcp.content.publish');
+            if (! $workflow->canApprove($tokenUser)) {
+                $status = 'pending_review';
+                $notice = 'Status automatically set to pending_review: token user lacks content.approve permission.';
+            } elseif ($status === 'scheduled') {
+                // content:publish-scheduled filters on whereNotNull('published_at').
+                $publishedAt = $request->get('published_at');
+                if (! $publishedAt) {
+                    return Response::error('Status "scheduled" requires "published_at" — without it the entry would never publish.');
+                }
+            } else {
+                $publishedAt = $request->get('published_at') ?: now();
+            }
         }
 
         $token = McpAbilityGuard::resolveToken();
@@ -90,7 +114,7 @@ class CreateCptEntryTool extends Tool
             'menu_order' => $request->get('menu_order') ?? 0,
             'translations' => $request->get('translations') ?? [],
             'author_id' => $token?->tokenable_id,
-            'published_at' => $status === 'published' ? now() : null,
+            'published_at' => $publishedAt,
         ]);
 
         // Attach taxonomy terms
@@ -111,7 +135,9 @@ class CreateCptEntryTool extends Tool
             'created_at' => now(),
         ]);
 
-        return Response::structured([
+        $workflow->handleTransition($entry, $entry->status, null, $tokenUser);
+
+        $res = [
             'success' => true,
             'entry' => [
                 'id' => $entry->id,
@@ -122,6 +148,12 @@ class CreateCptEntryTool extends Tool
                 'url' => $entry->getUrl(),
                 'meta_keys' => array_keys($meta),
             ],
-        ]);
+        ];
+
+        if ($notice) {
+            $res['notice'] = $notice;
+        }
+
+        return Response::structured($res);
     }
 }

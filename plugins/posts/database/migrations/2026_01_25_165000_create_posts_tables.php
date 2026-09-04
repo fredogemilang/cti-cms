@@ -19,7 +19,7 @@ return new class extends Migration
             $table->longText('content')->nullable();
             $table->string('featured_image')->nullable();
             $table->foreignId('author_id')->constrained('users')->onDelete('cascade');
-            $table->enum('status', ['draft', 'published', 'scheduled', 'archived'])->default('draft');
+            $table->string('status', 30)->default('draft');
             $table->timestamp('published_at')->nullable();
             $table->boolean('is_featured')->default(false);
             $table->unsignedInteger('views_count')->default(0);

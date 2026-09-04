@@ -270,11 +270,77 @@
                                 class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all"
                             >
                                 <option value="draft">Draft</option>
-                                <option value="published">Published</option>
-                                <option value="scheduled">Scheduled</option>
+                                <option value="pending_review">Pending Review</option>
+                                @if($canApprove)
+                                    <option value="published">Published</option>
+                                    <option value="scheduled">Scheduled</option>
+                                @endif
                                 <option value="private">Private</option>
                             </select>
                         </div>
+
+                        {{-- Pending Review Notice & Approver Actions --}}
+                        @if($status === 'pending_review' || ($isEdit && $page?->status === 'pending_review'))
+                        <div class="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 space-y-2.5">
+                            <div class="flex items-center gap-2 text-amber-800 dark:text-amber-400 font-bold text-xs">
+                                <span class="material-symbols-outlined text-base">rate_review</span>
+                                <span>Pending Editorial Review</span>
+                            </div>
+                            <p class="text-[11px] text-amber-700 dark:text-amber-400/80 leading-relaxed">
+                                This content has been submitted for review and requires editorial approval to be published.
+                            </p>
+                            @if($canApprove && $isEdit)
+                            <div class="pt-2 border-t border-amber-200/60 dark:border-amber-800/40 flex flex-col gap-1.5">
+                                <button
+                                    type="button"
+                                    wire:click="approveAndPublish"
+                                    class="w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-colors"
+                                >
+                                    <span class="material-symbols-outlined text-base">check_circle</span>
+                                    <span>Approve & Publish</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    wire:click="openChangeRequestModal"
+                                    class="w-full py-1.5 px-3 rounded-xl bg-amber-100 dark:bg-amber-900/40 hover:bg-amber-200 text-amber-900 dark:text-amber-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                                >
+                                    <span class="material-symbols-outlined text-base">assignment_late</span>
+                                    <span>Request Changes</span>
+                                </button>
+                            </div>
+                            @endif
+                        </div>
+                        @endif
+
+                        @if($isEdit && $pageId)
+                        @php
+                            $editorialNotes = \App\Models\EditorialNote::where('noteable_type', 'App\Models\Page')
+                                ->where('noteable_id', $pageId)
+                                ->with('user')
+                                ->latest()
+                                ->take(5)
+                                ->get();
+                        @endphp
+                        @if($editorialNotes->isNotEmpty())
+                        <div class="pt-3 border-t border-gray-100 dark:border-white/5 space-y-2">
+                            <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-base text-gray-400">notes</span>
+                                <span>Editorial Feedback ({{ $editorialNotes->count() }})</span>
+                            </label>
+                            <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                                @foreach($editorialNotes as $enote)
+                                <div class="p-2.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs">
+                                    <div class="flex items-center justify-between text-[10px] text-gray-400 mb-1">
+                                        <span class="font-bold text-gray-700 dark:text-gray-300">{{ $enote->user?->name ?? 'Approver' }}</span>
+                                        <span>{{ $enote->created_at->diffForHumans() }}</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-400 leading-snug">{{ $enote->note }}</p>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+                        @endif
 
                         <!-- Schedule / Publish Date & Time (2-Line Layout Matching Status) -->
                         <div class="space-y-1.5 pt-3 border-t border-gray-100 dark:border-white/5" x-data="{ editingDate: false }">
@@ -492,5 +558,56 @@
     {{-- Media Picker Modal --}}
     @if($showMediaPicker)
         <livewire:admin.media-picker :field="$mediaPickerField" :show-modal="true" :key="'page-media-picker-'.$mediaPickerField" />
+    @endif
+
+    {{-- Change Request Modal --}}
+    @if($showChangeRequestModal)
+    <div class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
+            <div class="fixed inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-sm transition-opacity" wire:click="closeChangeRequestModal"></div>
+            <div class="inline-block bg-white dark:bg-[#1A1A1A] rounded-3xl px-6 pt-6 pb-6 text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full border border-gray-200 dark:border-[#272B30] relative z-10">
+                <div class="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-white/5">
+                    <h3 class="text-base font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-2">
+                        <span class="material-symbols-outlined text-amber-500">assignment_late</span>
+                        Request Changes
+                    </h3>
+                    <button wire:click="closeChangeRequestModal" class="h-8 w-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#272B30] transition-colors">
+                        <span class="material-symbols-outlined text-base">close</span>
+                    </button>
+                </div>
+                <div class="mt-4 space-y-3">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Explain clearly what revisions or corrections are needed before this content can be approved. The page will return to <strong>Draft</strong> status and the author will receive a notification alert.
+                    </p>
+                    <textarea
+                        wire:model="changeRequestNote"
+                        rows="4"
+                        placeholder="e.g. Please update the enterprise stats section and check broken links..."
+                        class="w-full rounded-2xl p-3.5 bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent resize-none font-medium"
+                    ></textarea>
+                    @error('changeRequestNote')
+                        <p class="text-xs text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="mt-6 flex items-center justify-end gap-2.5">
+                    <button
+                        type="button"
+                        wire:click="closeChangeRequestModal"
+                        class="px-5 py-2.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#272B30] transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="button"
+                        wire:click="submitChangeRequest"
+                        class="px-5 py-2.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-sm transition-colors flex items-center gap-1.5"
+                    >
+                        <span class="material-symbols-outlined text-sm">send</span>
+                        <span>Submit Feedback</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
 </div>
