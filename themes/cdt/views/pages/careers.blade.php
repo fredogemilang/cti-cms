@@ -401,28 +401,25 @@
           ['title' => 'NetGain Systems', 'slug' => 'netgain-systems', 'match' => 'netgain'],
       ];
 
-      $modalProducts = collect($targetModalProducts)->map(function ($item) use ($exploreProducts, $currentLocale) {
-          $match = $exploreProducts->first(function ($p) use ($item) {
-              $slug = strtolower($p->slug);
-              $title = strtolower($p->title);
-              $targetSlug = strtolower($item['slug']);
-              $targetTitle = strtolower($item['title']);
-              $keyword = strtolower($item['match'] ?? $item['slug']);
+      $modalProducts = collect($targetModalProducts)->map(function ($item) use ($exploreProducts) {
+          $targetSlug = strtolower($item['slug']);
+          $targetTitle = strtolower($item['title']);
 
-              return $slug === $targetSlug
-                  || $title === $targetTitle
-                  || str_contains($slug, $keyword)
-                  || str_contains($title, $keyword);
+          $match = $exploreProducts->first(function ($p) use ($targetSlug, $targetTitle) {
+              return strtolower($p->slug) === $targetSlug
+                  || strtolower($p->title) === $targetTitle;
           });
 
-          $displayTitle = $match ? ($match->getTranslation('title', $currentLocale) ?: $match->title) : $item['title'];
-          $url = $match ? $match->getUrl() : localized_url('/' . $item['slug']);
+          // Pengecekan status: Hanya tampilkan jika produk ditemukan dan berstatus published
+          if (! $match) {
+              return null;
+          }
 
           return [
-              'title' => $displayTitle,
-              'url'   => $url,
+              'title' => $item['title'],
+              'url'   => $match->getUrl(),
           ];
-      });
+      })->filter()->values();
 
       // Specific solutions requested for Explore CDT modal
       $targetModalSolutions = [
@@ -900,9 +897,9 @@
                   </div>
                   <p class="text-sm md:text-base text-zinc-800 font-normal leading-relaxed relative z-10">
                     @if($currentLocale === 'id')
-                      Terima kasih telah mempertimbangkan untuk berkarier di CDT. Kami menyarankan Anda untuk mengenal lebih jauh tentang CDT melalui produk, solusi, artikel, dan perjalanan perusahaan kami. Hal ini dapat membantu Anda memahami lebih jauh mengenai bisnis, nilai, dan budaya kerja CDT.
+                      {{ t('careers.explore_message_id', 'Terima kasih telah mempertimbangkan karier di CDT. Jelajahi website, produk, solusi, artikel, dan perjalanan perusahaan kami untuk mengenal CDT lebih dekat serta memahami budaya dan nilai-nilai kami.') }}
                     @else
-                      Thank you for considering a career at CDT. We encourage you to get to know CDT better through our products, solutions, articles, and company journey. This will help you gain deeper insights into CDT's business, values, and work culture.
+                      {{ t('careers.explore_message_en', 'Thank you for considering a career at CDT. Explore our website, products, solutions, articles, and company journey to get to know us better and gain insight into our culture and values.') }}
                     @endif
                   </p>
                 </div>

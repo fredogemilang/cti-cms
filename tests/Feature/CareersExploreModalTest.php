@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\CptEntry;
+use App\Models\CustomPostType;
 use App\Models\Page;
 use App\Models\Theme;
 use App\Models\User;
@@ -42,6 +44,46 @@ class CareersExploreModalTest extends TestCase
             'slug' => 'careers',
             'template' => 'careers',
             'status' => 'published',
+            'author_id' => $user->id,
+        ]);
+
+        $cpt = CustomPostType::create([
+            'name' => 'Technology Alliance',
+            'slug' => 'technology-alliance',
+            'singular_label' => 'Technology Alliance',
+            'plural_label' => 'Technology Alliances',
+            'description' => 'Partners',
+            'is_active' => true,
+        ]);
+
+        $publishedSlugs = [
+            ['title' => 'Akamai', 'slug' => 'akamai'],
+            ['title' => 'Amazon Web Services', 'slug' => 'amazon-web-services'],
+            ['title' => 'Dynatrace', 'slug' => 'dynatrace'],
+            ['title' => 'F5', 'slug' => 'f5'],
+            ['title' => 'TiDB', 'slug' => 'tidb'],
+            ['title' => 'Hitachi Vantara', 'slug' => 'hitachi-vantara'],
+            ['title' => 'Zscaler', 'slug' => 'zscaler'],
+            ['title' => 'Nebula Cloud Console', 'slug' => 'nebula-cloud-console'],
+            ['title' => 'NetGain Systems', 'slug' => 'netgain-systems'],
+        ];
+
+        foreach ($publishedSlugs as $p) {
+            CptEntry::create([
+                'post_type_id' => $cpt->id,
+                'title' => $p['title'],
+                'slug' => $p['slug'],
+                'status' => 'published',
+                'author_id' => $user->id,
+            ]);
+        }
+
+        // Create a draft product that should NOT be displayed
+        $draftProduct = CptEntry::create([
+            'post_type_id' => $cpt->id,
+            'title' => 'Unpublished Partner',
+            'slug' => 'unpublished-partner',
+            'status' => 'draft',
             'author_id' => $user->id,
         ]);
 
@@ -90,5 +132,9 @@ class CareersExploreModalTest extends TestCase
         $this->assertStringContainsString('INSIGHTS', $rendered);
         $this->assertStringContainsString('ABOUT US', $rendered);
         $this->assertStringContainsString('HOMEPAGE', $rendered);
+
+        // 8. Published Status check & updated copy
+        $this->assertStringContainsString('Explore our website, products, solutions, articles, and company journey to get to know us better and gain insight into our culture and values.', $rendered);
+        $this->assertStringNotContainsString('Unpublished Partner', $rendered);
     }
 }
