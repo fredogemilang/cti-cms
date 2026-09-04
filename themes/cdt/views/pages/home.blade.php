@@ -191,7 +191,8 @@
   </section>
 
   <!-- Technology Alliance Section -->
-  <section class="alliance-section deferred-section py-24 bg-white">
+  <section id="technology-alliance" class="alliance-section deferred-section py-24 bg-white scroll-mt-20">
+    <span id="alliance" class="sr-only"></span>
     <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col lg:flex-row gap-12">
         <!-- Left Column -->
