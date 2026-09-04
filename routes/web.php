@@ -26,6 +26,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SchemaAggregatorController;
 use App\Http\Controllers\SchemaManifestController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SitemapStyleController;
 use App\Livewire\Admin\Redirects\RedirectTable;
@@ -63,6 +64,14 @@ if (! empty($nonDefaultLocales)) {
     Route::get('/{locale}', [HomeController::class, 'index'])
         ->where('locale', $localePattern)
         ->name('locale.home');
+}
+
+// Public Site Search
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+if (! empty($nonDefaultLocales)) {
+    Route::get('/{locale}/search', [SearchController::class, 'index'])
+        ->where('locale', $localePattern)
+        ->name('locale.search');
 }
 
 // Public Language Switcher

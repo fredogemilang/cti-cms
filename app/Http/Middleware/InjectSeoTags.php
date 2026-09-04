@@ -62,6 +62,13 @@ class InjectSeoTags
         $entity = $this->resolveEntity($response, $request);
         $seo = $this->seoRenderer->resolve($entity);
 
+        // Search result pages must always be noindex, follow
+        if ($request->routeIs('search', 'locale.search')) {
+            $seo['robots'] = 'noindex, follow';
+            $seo['title'] = 'Search Results — '.setting('site_name', config('app.name'));
+            $response->headers->set('X-Robots-Tag', 'noindex, follow');
+        }
+
         // Replace existing <title> tag only if entity was resolved or if existing <title> is generic
         if ($entity && preg_match('/<title\b[^>]*>(.*?)<\/title>/is', $content)) {
             $content = (string) preg_replace('/<title\b[^>]*>(.*?)<\/title>/is', '<title>'.e($seo['title']).'</title>', $content);
