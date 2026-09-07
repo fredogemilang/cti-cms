@@ -376,7 +376,8 @@
 
       $currentLocale = app()->getLocale();
       $exploreProducts = \App\Models\CptEntry::published()
-          ->whereHas('postType', fn($q) => $q->whereIn('slug', ['technology-alliance', 'technology_alliance', 'products', 'tech-products']))
+          ->whereHas('postType', fn($q) => $q->whereIn('slug', ['technology-alliance', 'technology_alliance', 'products']))
+          ->where(fn($q) => $q->whereNull('parent_id')->orWhere('parent_id', 0))
           ->orderBy('menu_order')
           ->orderBy('title')
           ->get();
@@ -388,38 +389,51 @@
           ->orderBy('title')
           ->get();
 
-      // Specific products requested for Explore CDT modal
-      $targetModalProducts = [
-          ['title' => 'Akamai', 'slug' => 'akamai'],
-          ['title' => 'Amazon Web Services', 'slug' => 'amazon-web-services', 'match' => 'aws'],
-          ['title' => 'Dynatrace', 'slug' => 'dynatrace'],
-          ['title' => 'F5', 'slug' => 'f5'],
-          ['title' => 'TiDB', 'slug' => 'tidb'],
-          ['title' => 'Hitachi Vantara', 'slug' => 'hitachi-vantara', 'match' => 'hitachi'],
-          ['title' => 'Zscaler', 'slug' => 'zscaler'],
-          ['title' => 'Nebula Cloud Console', 'slug' => 'nebula-cloud-console', 'match' => 'nebula'],
-          ['title' => 'NetGain Systems', 'slug' => 'netgain-systems', 'match' => 'netgain'],
+      $defaultFeaturedSlugs = [
+          'akamai',
+          'amazon-web-services',
+          'dynatrace',
+          'f5',
+          'tidb',
+          'hitachi-vantara',
+          'zscaler',
+          'nebula-cloud-console',
+          'netgain-systems',
       ];
 
-      $modalProducts = collect($targetModalProducts)->map(function ($item) use ($exploreProducts) {
-          $targetSlug = strtolower($item['slug']);
-          $targetTitle = strtolower($item['title']);
+      // Check if any product has explicit is_featured meta flag set to true
+      $hasExplicitFeatured = $exploreProducts->contains(function ($p) {
+          $val = $p->getMeta('is_featured', null);
+          return $val === true || $val === 1 || $val === '1';
+      });
 
-          $match = $exploreProducts->first(function ($p) use ($targetSlug, $targetTitle) {
-              return strtolower($p->slug) === $targetSlug
-                  || strtolower($p->title) === $targetTitle;
-          });
-
-          // Pengecekan status: Hanya tampilkan jika produk ditemukan dan berstatus published
-          if (! $match) {
-              return null;
+      $modalProducts = $exploreProducts->filter(function ($p) use ($hasExplicitFeatured, $defaultFeaturedSlugs) {
+          if ($hasExplicitFeatured) {
+              $val = $p->getMeta('is_featured', false);
+              return $val === true || $val === 1 || $val === '1';
           }
-
+          return in_array(strtolower($p->slug), $defaultFeaturedSlugs, true);
+      })->map(function ($p) {
           return [
-              'title' => $item['title'],
-              'url'   => $match->getUrl(),
+              'title' => $p->title,
+              'url'   => $p->getUrl(),
+              'slug'  => $p->slug,
           ];
-      })->filter()->values();
+      })->values();
+
+      $modalOtherProducts = $exploreProducts->reject(function ($p) use ($hasExplicitFeatured, $defaultFeaturedSlugs) {
+          if ($hasExplicitFeatured) {
+              $val = $p->getMeta('is_featured', false);
+              return $val === true || $val === 1 || $val === '1';
+          }
+          return in_array(strtolower($p->slug), $defaultFeaturedSlugs, true);
+      })->map(function ($p) {
+          return [
+              'title' => $p->title,
+              'url'   => $p->getUrl(),
+              'slug'  => $p->slug,
+          ];
+      })->values();
 
       // Specific solutions requested for Explore CDT modal
       $targetModalSolutions = [
@@ -923,13 +937,71 @@
                         </a>
                       @endforeach
 
-                      <!-- Others button pointing to homepage Technology Alliance section -->
-                      <a href="{{ $othersAllianceUrl }}" @click="closeModals()" class="group/others inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl sm:rounded-2xl bg-white hover:bg-primary text-primary hover:text-white border-2 border-primary/25 hover:border-primary text-xs font-bold shadow-2xs hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 text-center leading-snug">
-                        <span>{{ t('common.others', 'Others') }}</span>
-                        <svg class="w-3.5 h-3.5 group-hover/others:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
-                        </svg>
-                      </a>
+                      @if(isset($modalOtherProducts) && $modalOtherProducts->isNotEmpty())
+                        <!-- Others Dropdown for non-featured / additional products -->
+                        <div class="relative inline-block text-left" x-data="{ othersDropdownOpen: false }" @click.outside="othersDropdownOpen = false">
+                          <button 
+                            type="button" 
+                            @click="othersDropdownOpen = !othersDropdownOpen"
+                            :class="othersDropdownOpen ? 'bg-primary text-white border-primary shadow-md ring-2 ring-primary/20' : 'bg-white hover:bg-primary text-primary hover:text-white border-primary/25 hover:border-primary shadow-2xs hover:shadow-sm hover:-translate-y-0.5'"
+                            class="group/others inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl sm:rounded-2xl border-2 text-xs font-bold transition-all duration-200 text-center leading-snug cursor-pointer"
+                            aria-haspopup="true"
+                            :aria-expanded="othersDropdownOpen">
+                            <span>{{ t('common.others', 'Others') }}</span>
+                            <span class="px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-red-100 text-primary group-hover/others:bg-white group-hover/others:text-primary transition-colors" :class="othersDropdownOpen ? '!bg-white !text-primary' : ''">
+                              +{{ $modalOtherProducts->count() }}
+                            </span>
+                            <svg class="w-3.5 h-3.5 transition-transform duration-200" :class="othersDropdownOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
+                            </svg>
+                          </button>
+
+                          <!-- Dropdown Menu -->
+                          <div 
+                            x-show="othersDropdownOpen"
+                            x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 scale-95 -translate-y-1"
+                            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 scale-95 -translate-y-1"
+                            class="absolute left-0 sm:left-auto sm:right-0 bottom-full mb-2 sm:bottom-auto sm:top-full sm:mt-2 w-64 max-w-[85vw] max-h-60 overflow-y-auto z-50 bg-white border border-zinc-200 rounded-2xl shadow-xl p-2 divide-y divide-zinc-100 focus:outline-none"
+                            style="display: none;">
+                            
+                            <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                              {{ t('careers.other_alliances', 'Other Partners & Alliances') }}
+                            </div>
+
+                            <div class="py-1 space-y-0.5">
+                              @foreach($modalOtherProducts as $otherP)
+                                <a href="{{ $otherP['url'] }}" @click="closeModals(); othersDropdownOpen = false" class="group/item flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-zinc-700 hover:text-white hover:bg-primary transition-colors">
+                                  <span>{{ $otherP['title'] }}</span>
+                                  <svg class="w-3.5 h-3.5 opacity-0 group-hover/item:opacity-100 transition-opacity text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"></path>
+                                  </svg>
+                                </a>
+                              @endforeach
+                            </div>
+
+                            <div class="pt-1.5">
+                              <a href="{{ $othersAllianceUrl }}" @click="closeModals(); othersDropdownOpen = false" class="flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold text-primary hover:bg-red-50 transition-colors">
+                                <span>{{ t('careers.view_all_on_home', 'View All on Homepage') }}</span>
+                                <svg class="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+                                </svg>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      @else
+                        <!-- Others button pointing to homepage Technology Alliance section -->
+                        <a href="{{ $othersAllianceUrl }}" @click="closeModals()" class="group/others inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl sm:rounded-2xl bg-white hover:bg-primary text-primary hover:text-white border-2 border-primary/25 hover:border-primary text-xs font-bold shadow-2xs hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 text-center leading-snug">
+                          <span>{{ t('common.others', 'Others') }}</span>
+                          <svg class="w-3.5 h-3.5 group-hover/others:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
+                          </svg>
+                        </a>
+                      @endif
                     </div>
                   </div>
 

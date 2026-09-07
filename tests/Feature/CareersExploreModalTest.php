@@ -137,4 +137,62 @@ class CareersExploreModalTest extends TestCase
         $this->assertStringContainsString('Explore our website, products, solutions, articles, and company journey to get to know us better and gain insight into our culture and values.', $rendered);
         $this->assertStringNotContainsString('Unpublished Partner', $rendered);
     }
+
+    #[Test]
+    public function careers_page_renders_others_dropdown_when_products_have_is_featured_flag(): void
+    {
+        $user = User::factory()->create();
+
+        $page = Page::create([
+            'title' => 'Careers',
+            'slug' => 'careers',
+            'template' => 'careers',
+            'status' => 'published',
+            'author_id' => $user->id,
+        ]);
+
+        $cpt = CustomPostType::create([
+            'name' => 'Technology Alliance',
+            'slug' => 'technology-alliance',
+            'singular_label' => 'Technology Alliance',
+            'plural_label' => 'Technology Alliances',
+            'is_active' => true,
+        ]);
+
+        // Create a featured product
+        CptEntry::create([
+            'post_type_id' => $cpt->id,
+            'title' => 'Akamai Cloud',
+            'slug' => 'akamai-cloud',
+            'status' => 'published',
+            'author_id' => $user->id,
+            'meta' => ['is_featured' => true],
+        ]);
+
+        // Create a non-featured product
+        CptEntry::create([
+            'post_type_id' => $cpt->id,
+            'title' => 'Entrust Security',
+            'slug' => 'entrust-security',
+            'status' => 'published',
+            'author_id' => $user->id,
+            'meta' => ['is_featured' => false],
+        ]);
+
+        $rendered = view('cdt::pages.careers', [
+            'page' => $page,
+            'title' => $page->title,
+            'meta_title' => $page->title,
+        ])->render();
+
+        // Featured product is rendered
+        $this->assertStringContainsString('Akamai Cloud', $rendered);
+
+        // Non-featured product is rendered inside Others dropdown
+        $this->assertStringContainsString('Entrust Security', $rendered);
+        $this->assertStringContainsString('othersDropdownOpen', $rendered);
+        $this->assertStringContainsString('+1', $rendered);
+        $this->assertStringContainsString('Other Partners &amp; Alliances', $rendered);
+        $this->assertStringContainsString('#technology-alliance', $rendered);
+    }
 }
