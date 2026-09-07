@@ -193,6 +193,5 @@ class CareersExploreModalTest extends TestCase
         $this->assertStringContainsString('othersDropdownOpen', $rendered);
         $this->assertStringContainsString('+1', $rendered);
         $this->assertStringContainsString('Other Partners &amp; Alliances', $rendered);
-        $this->assertStringContainsString('#technology-alliance', $rendered);
     }
 }

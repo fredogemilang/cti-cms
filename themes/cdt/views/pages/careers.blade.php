@@ -982,15 +982,6 @@
                                 </a>
                               @endforeach
                             </div>
-
-                            <div class="pt-1.5">
-                              <a href="{{ $othersAllianceUrl }}" @click="closeModals(); othersDropdownOpen = false" class="flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold text-primary hover:bg-red-50 transition-colors">
-                                <span>{{ t('careers.view_all_on_home', 'View All on Homepage') }}</span>
-                                <svg class="w-3 h-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"></path>
-                                </svg>
-                              </a>
-                            </div>
                           </div>
                         </div>
                       @else
