@@ -4,6 +4,9 @@
    leaves them untouched — the files live in public/themes/cdt/assets/images/. */
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@source "../../views";
+@source "../../../../resources/views";
+@source "../../../../plugins";
 
 /* Self-hosted fonts (replaces Google Fonts CDN). Variable Inter covers all
    weights 100-900 in a single file; Prompt is non-variable so each weight is

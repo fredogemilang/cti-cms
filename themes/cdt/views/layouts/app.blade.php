@@ -101,6 +101,27 @@
         overscroll-behavior: contain !important;
       }
     }
+
+    /* ── Responsive Header & Layout Utilities ── */
+    @media (min-width: 1024px) {
+      #main-header {
+        display: block !important;
+      }
+      .lg\:hidden {
+        display: none !important;
+      }
+      .lg\:block {
+        display: block !important;
+      }
+      .lg\:flex {
+        display: flex !important;
+      }
+    }
+    @media (max-width: 1023px) {
+      #main-header {
+        display: none !important;
+      }
+    }
   </style>
 
 
