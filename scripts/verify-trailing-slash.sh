@@ -92,7 +92,7 @@ check_status "$BASE/careers/cloud-engineer" "301" "Career cloud-engineer redirec
 check_redirect_target "$BASE/careers/cloud-engineer" "/careers/" "Career to modal listing"
 
 check_status "$BASE/netgain-security-analytics-siem" "301" "Legacy NetGain flat URL"
-check_redirect_target "$BASE/netgain-security-analytics-siem" "/netgain-systems/netgain-security-analytics-siem/" "NetGain redirect"
+check_redirect_target "$BASE/netgain-security-analytics-siem" "/netgain-systems/netgain-systems-netgain-siem/" "NetGain redirect"
 
 echo ""
 echo "--- 5. Checking Canonical Tag Trailing Slashes ---"
