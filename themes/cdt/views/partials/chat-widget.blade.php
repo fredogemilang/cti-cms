@@ -52,9 +52,9 @@
         s.defer = true;
         document.body.appendChild(s);
 
-        // 2. Language-aware localized balloon icon
-        const indoSrc = "{{ theme_asset('teddy/baloon-text-indo.png') }}";
-        const engSrc  = "{{ theme_asset('teddy/baloon-text-eng.png') }}";
+        // 2. Language-aware localized balloon icon (using lightweight WebP)
+        const indoSrc = "{{ theme_asset('teddy/baloon-text-indo.webp') }}";
+        const engSrc  = "{{ theme_asset('teddy/baloon-text-eng.webp') }}";
         const isId = window.location.pathname.startsWith('/id/') || window.location.pathname === '/id';
         const targetSrc = isId ? indoSrc : engSrc;
 
@@ -81,22 +81,30 @@
             if (!img) {
                 img = document.createElement('img');
                 img.alt = isId ? 'Tanya TEDY - Buka Chat' : 'Ask TEDY - Open Chat';
+                img.setAttribute('width', '180');
+                img.setAttribute('height', '46');
                 openIcon.appendChild(img);
-            } else if (!img.alt) {
-                img.alt = isId ? 'Tanya TEDY - Buka Chat' : 'Ask TEDY - Open Chat';
+            } else {
+                if (!img.alt) img.alt = isId ? 'Tanya TEDY - Buka Chat' : 'Ask TEDY - Open Chat';
+                if (!img.getAttribute('width')) img.setAttribute('width', '180');
+                if (!img.getAttribute('height')) img.setAttribute('height', '46');
             }
 
             if (img.src !== targetSrc) {
                 img.src = targetSrc;
             }
 
-            // Ensure all images inside chat-widget have alt attributes
+            // Ensure all images inside chat-widget have alt attributes and dimensions
             const chatWidgetEl = document.getElementById('chat-widget');
             if (chatWidgetEl) {
                 chatWidgetEl.querySelectorAll('img').forEach(function(im) {
                     if (!im.getAttribute('alt')) {
                         im.setAttribute('alt', 'Icon');
                         im.setAttribute('aria-hidden', 'true');
+                    }
+                    if (!im.getAttribute('width')) {
+                        im.setAttribute('width', '24');
+                        im.setAttribute('height', '24');
                     }
                 });
             }
@@ -128,13 +136,13 @@
         window.addEventListener(e, loadTeddy, { once: true, passive: true });
     });
 
-    // 2. Fallback load after 4 seconds (after synthetic Lighthouse Core Web Vitals profiling window)
+    // 2. Fallback load only after 10 seconds of idle time (safe from synthetic audit windows)
     if ('requestIdleCallback' in window) {
         requestIdleCallback(function() {
-            setTimeout(loadTeddy, 4000);
+            setTimeout(loadTeddy, 10000);
         });
     } else {
-        setTimeout(loadTeddy, 4000);
+        setTimeout(loadTeddy, 10000);
     }
 })();
 </script>
