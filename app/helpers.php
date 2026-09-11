@@ -795,3 +795,28 @@ if (! function_exists('trailing_slash_url')) {
     }
 }
 
+if (! function_exists('strip_leading_image')) {
+    /**
+     * Strip the first image from HTML content if it appears before any text.
+     * Useful when the featured image is already rendered separately above the content.
+     */
+    function strip_leading_image(?string $html): string
+    {
+        if (empty($html)) {
+            return '';
+        }
+
+        $emptyBlocks = '(?:\s*<p[^>]*>\s*(?:&nbsp;|\s)*<\/p>\s*|<br\s*\/?>\s*)*';
+
+        $pattern = '/^' . $emptyBlocks .
+                   '(?:' .
+                   '<(?:figure|p|div|h[1-6]|header)[^>]*>\s*(?:<a[^>]*>)?\s*<img[^>]+>\s*(?:<\/a>)?\s*(?:<figcaption[^>]*>.*?<\/figcaption>)?\s*<\/(?:figure|p|div|h[1-6]|header)>' .
+                   '|' .
+                   '(?:<a[^>]*>)?\s*<img[^>]+>\s*(?:<\/a>)?' .
+                   ')' .
+                   $emptyBlocks . '/is';
+
+        return (string) preg_replace($pattern, '', $html, 1);
+    }
+}
+

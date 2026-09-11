@@ -218,6 +218,13 @@ class SyncWordPressPosts extends Command
                 }
             }
 
+            if ($featuredImagePath) {
+                $primaryContent = strip_leading_image($primaryContent);
+                if (isset($translations['id']['content'])) {
+                    $translations['id']['content'] = strip_leading_image($translations['id']['content']);
+                }
+            }
+
             // Create Post model
             $post = Post::create([
                 'title' => $primaryTitle,

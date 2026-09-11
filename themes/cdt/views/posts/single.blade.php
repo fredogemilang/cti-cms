@@ -11,6 +11,9 @@
     $date = $post->published_at ? $post->published_at->format($dateFormat) : $post->created_at->format($dateFormat);
     $readTime = method_exists($post, 'getReadingTime') ? $post->getReadingTime($currentLocale) : 1;
     $featImg = $post->featured_image ? resolve_block_asset($post->featured_image) : null;
+    if ($featImg) {
+        $content = strip_leading_image($content);
+    }
     $blogSlug = class_exists(\Plugins\Posts\Models\Setting::class) ? \Plugins\Posts\Models\Setting::getArchiveSlug($currentLocale) : 'blog-news';
     $blogUrl = localized_url('/' . $blogSlug);
     
