@@ -3,6 +3,7 @@
 namespace Plugins\Posts\Models;
 
 use App\Traits\FindsByLocalizedSlug;
+use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Illuminate\Support\Str;
 
 class Category extends Model
 {
-    use FindsByLocalizedSlug, HasTranslations;
+    use FindsByLocalizedSlug, HasSeoMeta, HasTranslations;
 
     protected $fillable = [
         'name',

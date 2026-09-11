@@ -92,12 +92,18 @@ class SeoRenderer
             $typePatternDesc = (string) setting("seo_taxonomy_{$taxSlug}_description_pattern");
         }
 
+        $currentLocale = app()->getLocale();
+        $defaultSiteDesc = (string) (setting("seo_default_description_{$currentLocale}") ?: setting('seo_default_description'));
+        if (trim($defaultSiteDesc) === '') {
+            $defaultSiteDesc = (string) setting('site_description');
+        }
+
         $metaDesc = ($meta && ! empty($meta->description) && trim((string) $meta->description) !== '') ? $meta->description : null;
         $description = $overrides['description']
             ?? $metaDesc
             ?? $this->autoDescription($entity)
             ?? $typePatternDesc
-            ?? setting('seo_default_description');
+            ?? (! empty($defaultSiteDesc) ? $defaultSiteDesc : null);
 
         $canonical = $overrides['canonical']
             ?? $meta?->canonical_url
@@ -416,6 +422,12 @@ class SeoRenderer
             $excerpt = $entity->getBlockValue('hero_subtitle')
                 ?: ($entity->getBlockValue('subtitle') ?: ($entity->getBlockValue('description') ?: $entity->getBlockValue('intro')));
         }
+        if (empty($excerpt) && method_exists($entity, 'getTranslation')) {
+            $excerpt = $entity->getTranslation('description', $currentLocale);
+        }
+        if (empty($excerpt) && ! empty($entity->description)) {
+            $excerpt = (string) $entity->description;
+        }
 
         if (! empty($excerpt)) {
             $text = strip_tags((string) $excerpt);
@@ -427,7 +439,7 @@ class SeoRenderer
             }
         }
 
-        // 2. Fallback to Content (Localized, Direct Attribute, or Meta)
+        // 2. Fallback to Content (Localized, Direct Attribute, Meta, or Page Blocks)
         $content = null;
         if (method_exists($entity, 'getTranslation')) {
             $content = $entity->getTranslation('content', $currentLocale);
@@ -437,6 +449,12 @@ class SeoRenderer
         }
         if (empty($content) && method_exists($entity, 'getMeta')) {
             $content = $entity->getMeta('content') ?: $entity->getMeta('overview');
+        }
+        if (empty($content) && method_exists($entity, 'blocks')) {
+            $block = $entity->blocks()->where('is_active', true)->whereNotNull('value')->where('value', '!=', '')->orderBy('order')->first();
+            if ($block) {
+                $content = $block->value;
+            }
         }
 
         if (! empty($content)) {

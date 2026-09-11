@@ -3,6 +3,7 @@
 namespace Plugins\Posts\Models;
 
 use App\Traits\FindsByLocalizedSlug;
+use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,7 +11,7 @@ use Illuminate\Support\Str;
 
 class Tag extends Model
 {
-    use FindsByLocalizedSlug, HasTranslations;
+    use FindsByLocalizedSlug, HasSeoMeta, HasTranslations;
 
     protected $fillable = [
         'name',
