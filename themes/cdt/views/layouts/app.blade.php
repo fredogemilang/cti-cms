@@ -125,6 +125,9 @@
     {{-- Mobile Navigation & Bottom Sheets --}}
     @include('cdt::partials.mobile-nav')
 
+    {{-- Teddy Chatbot Widget --}}
+    @include('cdt::partials.chat-widget')
+
   </div>
 
   @stack('scripts')
