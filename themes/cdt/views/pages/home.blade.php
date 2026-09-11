@@ -2,6 +2,19 @@
 
 @section('title', isset($page) && $page->title ? $page->getMetaTitle() : setting('site_name', 'Trusted IT Consultant for Scalable and Secure Growth - Central Data Technology'))
 
+@php
+  $heroImg = $page?->block('hero_image');
+  $heroImgUrl = $heroImg ? (str_starts_with($heroImg, 'http') || str_starts_with($heroImg, 'themes/') || str_starts_with($heroImg, 'assets/') ? asset($heroImg) : asset('storage/' . $heroImg)) : asset('themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
+  $heroData = app(\App\Services\ResponsiveImageService::class)->build($heroImgUrl, 'lg', '100vw');
+@endphp
+@push('head')
+  @if(!empty($heroData['webp_srcset']))
+    <link rel="preload" as="image" href="{{ $heroData['src'] }}" imagesrcset="{{ $heroData['webp_srcset'] }}" imagesizes="100vw" type="image/webp" fetchpriority="high">
+  @else
+    <link rel="preload" as="image" href="{{ $heroData['src'] ?: $heroImgUrl }}" fetchpriority="high">
+  @endif
+@endpush
+
 @section('content')
 
   <!-- From index.html: full width background image, red gradient overlay on the left -->
@@ -11,18 +24,6 @@
     >
     <!-- Background Image -->
     <div class="absolute inset-0">
-      @php
-        $heroImg = $page?->block('hero_image');
-        $heroImgUrl = $heroImg ? (str_starts_with($heroImg, 'http') || str_starts_with($heroImg, 'themes/') || str_starts_with($heroImg, 'assets/') ? asset($heroImg) : asset('storage/' . $heroImg)) : asset('themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
-        $heroData = app(\App\Services\ResponsiveImageService::class)->build($heroImgUrl, 'lg', '100vw');
-      @endphp
-      @push('head')
-        @if(!empty($heroData['webp_srcset']))
-          <link rel="preload" as="image" href="{{ $heroData['src'] }}" imagesrcset="{{ $heroData['webp_srcset'] }}" imagesizes="100vw" type="image/webp" fetchpriority="high">
-        @else
-          <link rel="preload" as="image" href="{{ $heroData['src'] ?: $heroImgUrl }}" fetchpriority="high">
-        @endif
-      @endpush
       <x-image :src="$heroImgUrl" alt="{{ setting('site_name', 'Central Data Technology') }} Hero Banner" title="{{ setting('site_name', 'Central Data Technology') }}" sizes="100vw" class="hero-bg-img w-full h-full object-cover origin-center" loading="eager" decoding="sync" fetchpriority="high" onerror="this.src='{{ asset('themes/cdt/assets/photo-1451187580459-43490279c0fa-w2072-DWLGXPRP.jpg') }}'" />
 
     </div>
