@@ -2,6 +2,7 @@
 
 namespace Plugins\GoogleSiteKit\Livewire;
 
+use App\Models\Setting;
 use Livewire\Component;
 use Plugins\GoogleSiteKit\Services\GoogleApiService;
 
@@ -56,15 +57,7 @@ class Dashboard extends Component
 
     protected function saveSetting(string $key, $value): void
     {
-        \DB::table('settings')->updateOrInsert(
-            ['key' => $key],
-            [
-                'value' => json_encode($value),
-                'group' => 'google-site-kit',
-                'type' => 'string',
-                'updated_at' => now(),
-            ]
-        );
+        Setting::set($key, $value, 'google-site-kit');
     }
 
     public function render()

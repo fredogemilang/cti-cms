@@ -2,6 +2,7 @@
 
 namespace Plugins\GoogleSiteKit\Services;
 
+use App\Models\Setting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -390,15 +391,7 @@ class GoogleApiService
      */
     protected function saveSetting(string $key, $value): void
     {
-        \DB::table('settings')->updateOrInsert(
-            ['key' => $key],
-            [
-                'value' => json_encode($value),
-                'group' => 'google-site-kit',
-                'type' => 'string',
-                'updated_at' => now(),
-            ]
-        );
+        Setting::set($key, $value, 'google-site-kit');
     }
 
     /**
