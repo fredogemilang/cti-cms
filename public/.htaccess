@@ -99,6 +99,19 @@ FileETag None
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
     # ==========================================
+    # Enforce Canonical WWW & HTTPS
+    # Redirect non-www (centraldatatech.com) to https://www.centraldatatech.com/
+    # ==========================================
+    RewriteCond %{REQUEST_URI} !^/\.well-known/
+    RewriteCond %{HTTP_HOST} ^centraldatatech\.com$ [NC]
+    RewriteRule ^(.*)$ https://www.centraldatatech.com/$1 [L,R=301]
+
+    RewriteCond %{REQUEST_URI} !^/\.well-known/
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP_HOST} ^www\.centraldatatech\.com$ [NC]
+    RewriteRule ^(.*)$ https://www.centraldatatech.com/$1 [L,R=301]
+
+    # ==========================================
     # 301 Redirect Map — Legacy URL WordPress → Laravel
     # WAJIB berada SEBELUM blok "Tambahkan trailing slash".
     # Pola ^xxx/?$ mencocokkan versi dengan dan tanpa trailing slash sekaligus.
