@@ -42,12 +42,20 @@
         </div>
         @php
           $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Learn More', 'url' => '#areas-of-expertise']);
+          $heroCtaUrl = $heroCta['url'] ?? '#areas-of-expertise';
+          $heroCtaText = $heroCta['text'] ?? t('home.learn_more', 'Learn More');
+          $siteName = setting('site_name', 'Central Data Technology');
+          $heroCtaDesc = app()->getLocale() === 'id'
+              ? "Pelajari lebih lanjut tentang {$siteName}"
+              : "Learn more about {$siteName}";
         @endphp
         <div class="hero-text-anim flex items-center gap-3 sm:gap-6">
-          <a href="{{ $heroCta['url'] ?? '#areas-of-expertise' }}" x-link
-            aria-label="{{ ($heroCta['text'] ?? t('home.learn_more', 'Learn More')) }}: {{ setting('site_name', 'Central Data Technology') }}"
+          <a href="{{ $heroCtaUrl }}" x-link
+            aria-label="{{ $heroCtaDesc }}"
+            title="{{ $heroCtaDesc }}"
             class="inline-flex items-center justify-center whitespace-nowrap bg-white text-primary px-5 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm font-bold uppercase tracking-wider hover:bg-zinc-100 transition rounded-full">
-            {{ $heroCta['text'] ?? t('home.learn_more', 'Learn More') }}
+            <span>{{ $heroCtaText }}</span>
+            <span class="sr-only"> about {{ $siteName }}</span>
           </a>
           <button type="button" @click="catalogueOpen = true"
             class="group inline-flex items-center gap-2 whitespace-nowrap text-white text-xs sm:text-sm font-semibold hover:text-white/80 transition-colors cursor-pointer">
@@ -402,8 +410,12 @@
           @if(!empty($lifeCard['description']))
             <p class="text-sm text-white/80 mb-4 max-w-sm">{!! $lifeCard['description'] !!}</p>
           @endif
-          <a href="{{ url($lifeCard['button_url'] ?: '/careers') }}" aria-label="{{ $lifeCard['title'] }}: {{ $lifeCard['button_text'] ?: t('home.learn_more', 'Learn More') }}" class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
-            {{ $lifeCard['button_text'] ?: t('home.learn_more', 'Learn More') }}
+          <a href="{{ url($lifeCard['button_url'] ?: '/careers') }}" 
+            aria-label="Learn more about {{ $lifeCard['title'] }}" 
+            title="Learn more about {{ $lifeCard['title'] }}"
+            class="bg-primary text-white px-8 py-2.5 text-[13px] font-bold uppercase tracking-wider hover:bg-red-700 transition rounded-full">
+            <span>{{ $lifeCard['button_text'] ?: t('home.learn_more', 'Learn More') }}</span>
+            <span class="sr-only"> about {{ $lifeCard['title'] }}</span>
           </a>
         </div>
       </div>

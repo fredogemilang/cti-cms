@@ -89,6 +89,18 @@
             if (img.src !== targetSrc) {
                 img.src = targetSrc;
             }
+
+            // Ensure all images inside chat-widget have alt attributes
+            const chatWidgetEl = document.getElementById('chat-widget');
+            if (chatWidgetEl) {
+                chatWidgetEl.querySelectorAll('img').forEach(function(im) {
+                    if (!im.getAttribute('alt')) {
+                        im.setAttribute('alt', 'Icon');
+                        im.setAttribute('aria-hidden', 'true');
+                    }
+                });
+            }
+
             return true;
         }
 

@@ -373,15 +373,15 @@ function getParameters() {
 }
 
 function initImages(appUrl) {
-  checkMarkSVG = `<img src="${appUrl}${checkMarkSVG}">`;
-  crossMarkSVG = `<img src="${appUrl}${crossMarkSVG}">`;
-  paperPlaneSVG = `<img src="${appUrl}${paperPlaneSVG}">`;
-  sendChatSVG = `<img src="${appUrl}${sendChatSVG}">`;
-  timesSVG = `<img src="${appUrl}${timesSVG}">`;
-  attachChatSVG = `<img src="${appUrl}${attachChatSVG}">`;
-  emoticonSVG = `<img src="${appUrl}${emoticonSVG}">`;
-  bubbleChatSVG = `<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E">`;
-  closeChatSVG = `<img src="${appUrl}${closeChatSVG}">`;
+  checkMarkSVG = `<img src="${appUrl}${checkMarkSVG}" alt="Success" aria-hidden="true">`;
+  crossMarkSVG = `<img src="${appUrl}${crossMarkSVG}" alt="Error" aria-hidden="true">`;
+  paperPlaneSVG = `<img src="${appUrl}${paperPlaneSVG}" alt="Send" aria-hidden="true">`;
+  sendChatSVG = `<img src="${appUrl}${sendChatSVG}" alt="Send message" aria-hidden="true">`;
+  timesSVG = `<img src="${appUrl}${timesSVG}" alt="Close" aria-hidden="true">`;
+  attachChatSVG = `<img src="${appUrl}${attachChatSVG}" alt="Attach file" aria-hidden="true">`;
+  emoticonSVG = `<img src="${appUrl}${emoticonSVG}" alt="Insert emoji" aria-hidden="true">`;
+  bubbleChatSVG = `<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E" alt="Chat icon" aria-hidden="true">`;
+  closeChatSVG = `<img src="${appUrl}${closeChatSVG}" alt="Close chat" aria-hidden="true">`;
   wavesSVG = `url("${appUrl}${wavesSVG}")`;
 } 
 
