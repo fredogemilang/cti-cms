@@ -375,7 +375,66 @@
             </div>
             @once
             @push('scripts')
-            <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+            <script>
+                (function() {
+                    window.loadTurnstileScript = function() {
+                        if (window._turnstileLoading) {
+                            if (window.turnstile && typeof window.turnstile.implicitRender === 'function') {
+                                try { window.turnstile.implicitRender(); } catch(e) {}
+                            }
+                            return;
+                        }
+                        window._turnstileLoading = true;
+                        var s = document.createElement('script');
+                        s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+                        s.async = true;
+                        s.defer = true;
+                        s.onload = function() {
+                            if (window.turnstile && typeof window.turnstile.implicitRender === 'function') {
+                                try { window.turnstile.implicitRender(); } catch(e) {}
+                            }
+                        };
+                        document.head.appendChild(s);
+                    };
+
+                    // Automatically load on user interaction
+                    var formEvents = ['focusin', 'touchstart', 'mousedown'];
+                    var onFormInteract = function() {
+                        window.loadTurnstileScript();
+                        formEvents.forEach(function(evt) {
+                            document.removeEventListener(evt, onFormInteract);
+                        });
+                    };
+                    formEvents.forEach(function(evt) {
+                        document.addEventListener(evt, onFormInteract, { passive: true, once: true });
+                    });
+
+                    // Observe on-page form visibility
+                    if ('IntersectionObserver' in window) {
+                        var observer = new IntersectionObserver(function(entries) {
+                            entries.forEach(function(entry) {
+                                if (entry.isIntersecting) {
+                                    var parentModal = entry.target.closest('[x-show], [style*="display: none"], template');
+                                    if (!parentModal) {
+                                        window.loadTurnstileScript();
+                                        observer.disconnect();
+                                    }
+                                }
+                            });
+                        }, { rootMargin: '100px' });
+                        document.querySelectorAll('.cf-turnstile').forEach(function(el) {
+                            observer.observe(el);
+                        });
+                    }
+
+                    // Window events that reveal modals
+                    ['open-subscribe', 'open-catalogue'].forEach(function(evName) {
+                        window.addEventListener(evName, function() {
+                            window.loadTurnstileScript();
+                        }, { passive: true, once: true });
+                    });
+                })();
+            </script>
             @endpush
             @endonce
         @endif

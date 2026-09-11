@@ -14,7 +14,15 @@
       @php
         $heroImg = $page?->block('hero_image');
         $heroImgUrl = $heroImg ? (str_starts_with($heroImg, 'http') || str_starts_with($heroImg, 'themes/') || str_starts_with($heroImg, 'assets/') ? asset($heroImg) : asset('storage/' . $heroImg)) : asset('themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
+        $heroData = app(\App\Services\ResponsiveImageService::class)->build($heroImgUrl, 'lg', '100vw');
       @endphp
+      @push('head')
+        @if(!empty($heroData['webp_srcset']))
+          <link rel="preload" as="image" href="{{ $heroData['src'] }}" imagesrcset="{{ $heroData['webp_srcset'] }}" imagesizes="100vw" type="image/webp" fetchpriority="high">
+        @else
+          <link rel="preload" as="image" href="{{ $heroData['src'] ?: $heroImgUrl }}" fetchpriority="high">
+        @endif
+      @endpush
       <x-image :src="$heroImgUrl" alt="{{ setting('site_name', 'Central Data Technology') }} Hero Banner" title="{{ setting('site_name', 'Central Data Technology') }}" sizes="100vw" class="hero-bg-img w-full h-full object-cover origin-center" loading="eager" decoding="sync" fetchpriority="high" onerror="this.src='{{ asset('themes/cdt/assets/photo-1451187580459-43490279c0fa-w2072-DWLGXPRP.jpg') }}'" />
 
     </div>
@@ -58,7 +66,7 @@
             <span>{{ $heroCtaText }}</span>
             <span class="sr-only"> about {{ $siteName }}</span>
           </a>
-          <button type="button" @click="catalogueOpen = true"
+          <button type="button" @click="catalogueOpen = true; window.loadTurnstileScript && window.loadTurnstileScript();"
             class="group inline-flex items-center gap-2 whitespace-nowrap text-white text-xs sm:text-sm font-semibold hover:text-white/80 transition-colors cursor-pointer">
             {{ t('home.access_solutions_catalogue', 'Access Solutions Catalogue') }} <span
               class="text-base sm:text-lg transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -268,12 +276,12 @@
           }
           if (empty($awsLogos) || !is_array($awsLogos)) {
               $awsLogos = [
-                  'themes/cdt/assets/confluent-logo-1024x562-BFo8llUh.png',
-                  'themes/cdt/assets/datadog-logo-1024x1024-BBaPl4Qq.png',
-                  'themes/cdt/assets/PT-Urun-Bangun-Negeri-BLb9ARg2.png',
+                  'themes/cdt/assets/confluent-logo-1024x562-BFo8llUh.webp',
+                  'themes/cdt/assets/datadog-logo-1024x1024-BBaPl4Qq.webp',
+                  'themes/cdt/assets/PT-Urun-Bangun-Negeri-BLb9ARg2.webp',
                   'themes/cdt/assets/GitLab-logo-BBxYVl-u.svg',
                   'themes/cdt/assets/Mongo-DB-Logo-0iY8tsMG.svg',
-                  'themes/cdt/assets/tapway-logo-hd--DjdHTKHP.png'
+                  'themes/cdt/assets/tapway-logo-hd--DjdHTKHP.webp'
               ];
           }
         @endphp
@@ -283,7 +291,7 @@
           <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12 items-center [&:hover_div.aws-item]:opacity-20">
             @foreach($awsLogos as $logo)
               <div class="aws-item flex items-center justify-center aspect-[27/17] p-6 bg-white relative transition-opacity duration-500 hover:!opacity-100 rounded-2xl">
-                <img src="{{ resolve_block_asset($logo) }}" alt="AWS Private Offer Partner" class="aws-logo w-full h-full object-contain">
+                <x-image :src="resolve_block_asset($logo)" alt="AWS Private Offer Partner" class="aws-logo w-full h-full object-contain" sizes="(max-width: 768px) 50vw, 200px" />
               </div>
             @endforeach
           </div>

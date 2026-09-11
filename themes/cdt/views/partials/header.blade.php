@@ -50,8 +50,9 @@
   <div class="flex items-center justify-between px-4 py-3">
     <!-- Logo -->
     <a href="{{ localized_url('/') }}" title="Central Data Technology - Home" aria-label="Home" class="flex-shrink-0">
-      <img src="{{ $siteLogoUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }}" title="{{ setting('site_name', 'Central Data Technology') }}" class="h-12 w-auto object-contain">
+      <img src="{{ $siteLogoUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }}" title="{{ setting('site_name', 'Central Data Technology') }}" width="83" height="48" class="h-12 w-auto object-contain">
     </a>
+
     <!-- Right Actions: Language Switcher & Hamburger Toggle -->
     <div class="flex items-center gap-3">
       @if(is_locale_available_for_current_page('id'))
@@ -111,7 +112,7 @@
     <nav class="flex items-center justify-between h-20">
       <!-- Logo -->
       <a href="{{ localized_url('/') }}" title="Central Data Technology - Home" aria-label="Home" class="flex-shrink-0">
-        <img src="{{ $siteLogoUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }}" title="{{ setting('site_name', 'Central Data Technology') }}" class="h-16 w-auto object-contain">
+        <img src="{{ $siteLogoUrl }}" alt="{{ setting('site_name', 'Central Data Technology') }}" title="{{ setting('site_name', 'Central Data Technology') }}" width="111" height="64" class="h-16 w-auto object-contain">
       </a>
 
       <!-- Desktop Menu -->

@@ -99,7 +99,7 @@
     </div>
 
     <!-- Subscription Modal (Alpine) -->
-    <div x-data="{ subscribeOpen: false, subscribeSuccess: false }" @open-subscribe.window="subscribeOpen = true"
+    <div x-data="{ subscribeOpen: false, subscribeSuccess: false }" @open-subscribe.window="subscribeOpen = true; window.loadTurnstileScript && window.loadTurnstileScript();"
       x-on:keydown.escape.window="subscribeOpen = false"
       x-effect="if (subscribeOpen) { document.body.style.overflow = 'hidden'; } else { document.body.style.overflow = ''; }">
 

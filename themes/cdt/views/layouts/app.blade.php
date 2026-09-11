@@ -19,9 +19,15 @@
     <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
   @endif
 
+  {{-- Preload Critical Above-The-Fold Fonts --}}
+  <link rel="preload" href="{{ Vite::asset('node_modules/@fontsource/prompt/files/prompt-latin-700-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ Vite::asset('node_modules/@fontsource/prompt/files/prompt-latin-300-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ Vite::asset('node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+
   {{-- Theme assets via Vite: built from themes/cdt/assets/{css/js} sources.
        Prod reads public/build/manifest.json (committed), dev uses the Vite server. --}}
   @vite(['themes/cdt/assets/css/theme.css', 'themes/cdt/assets/js/theme.js'])
+
   <style>
     .prose ul, .rich-content ul {
       list-style-type: disc !important;

@@ -44,10 +44,11 @@
         <!-- Logo -->
         <a href="{{ localized_url('/') }}" class="flex-shrink-0 px-2 self-center">
           @if(setting('site_logo'))
-            <img src="{{ resolve_block_asset(setting('site_logo')) }}" alt="{{ setting('site_name', 'CDT') }}" class="h-6 w-auto">
+            <img src="{{ resolve_block_asset(setting('site_logo')) }}" alt="{{ setting('site_name', 'CDT') }}" width="41" height="24" class="h-6 w-auto">
           @else
-            <img src="{{ asset('themes/cdt/assets/images/cropped-logo-cdt.png') }}" alt="CDT" class="h-6 w-auto">
+            <img src="{{ asset('themes/cdt/assets/images/cropped-logo-cdt.png') }}" alt="CDT" width="41" height="24" class="h-6 w-auto">
           @endif
+
         </a>
 
         <!-- About Us -->
