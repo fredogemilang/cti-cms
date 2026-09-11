@@ -488,14 +488,7 @@ class Page extends Model
      */
     public function localizedUrl(string $locale): string
     {
-        $defaultLocale = static::defaultLocale();
-        $prefix = ($locale !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix')
-            ? '/'.$locale
-            : '';
-
-        $slug = $this->getTranslation('slug', $locale) ?? $this->slug;
-
-        return url($prefix.'/'.ltrim($slug, '/'));
+        return $this->getUrl($locale);
     }
 
     public function getMetaTitle(): string

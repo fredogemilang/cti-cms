@@ -529,28 +529,28 @@ if (! function_exists('current_page_localized_url')) {
         }
 
         if ($page instanceof Page) {
-            return $page->localizedUrl($targetLocale);
+            return $page->getUrl($targetLocale);
         }
 
         // Home page
-        if ($cleanPath === '') {
+        if ($cleanPath === '' || $cleanPath === 'home') {
             if ($targetLocale === $defaultLocale && $hideDefault) {
-                return url('/');
+                return trailing_slash_url(url('/'));
             }
 
-            return url('/'.$targetLocale);
+            return trailing_slash_url(url('/'.$targetLocale));
         }
 
         // Prefix structure
         if ($urlStructure === 'prefix') {
             if ($targetLocale === $defaultLocale && $hideDefault) {
-                return url('/'.$cleanPath);
+                return trailing_slash_url(url('/'.$cleanPath));
             }
 
-            return url('/'.$targetLocale.'/'.$cleanPath);
+            return trailing_slash_url(url('/'.$targetLocale.'/'.$cleanPath));
         }
 
-        return url('/'.$cleanPath);
+        return trailing_slash_url(url('/'.$cleanPath));
     }
 }
 
