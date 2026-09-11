@@ -20,33 +20,33 @@
     // Sidebar Recent Posts
     $recentPosts = \Plugins\Posts\Models\Post::published()
         ->where('id', '!=', $post->id)
-        ->latest()
+        ->latest('published_at')
         ->take(3)
         ->get();
 
     // Previous & Next Posts
     $prevPost = \Plugins\Posts\Models\Post::published()
-        ->where('id', '<', $post->id)
-        ->latest('id')
+        ->where('published_at', '<', $post->published_at)
+        ->latest('published_at')
         ->first();
 
     $nextPost = \Plugins\Posts\Models\Post::published()
-        ->where('id', '>', $post->id)
-        ->oldest('id')
+        ->where('published_at', '>', $post->published_at)
+        ->oldest('published_at')
         ->first();
 
     // Related Posts (3 items)
     $relatedPosts = \Plugins\Posts\Models\Post::published()
         ->where('id', '!=', $post->id)
         ->when($catObj, fn($q) => $q->whereHas('categories', fn($c) => $c->where('categories.id', $catObj->id)))
-        ->latest()
+        ->latest('published_at')
         ->take(3)
         ->get();
 
     if ($relatedPosts->count() < 3) {
         $relatedPosts = \Plugins\Posts\Models\Post::published()
             ->where('id', '!=', $post->id)
-            ->latest()
+            ->latest('published_at')
             ->take(3)
             ->get();
     }

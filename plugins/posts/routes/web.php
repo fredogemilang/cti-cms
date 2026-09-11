@@ -130,11 +130,11 @@ Route::middleware(['web'])->group(function () {
 
         $featuredPosts = Post::where('status', 'published')
             ->where('is_featured', true)
-            ->latest()
+            ->latest('published_at')
             ->take(4)
             ->get();
 
-        $postsQuery = Post::published()->latest();
+        $postsQuery = Post::published()->latest('published_at');
 
         if ($selectedCategory) {
             $postsQuery->whereHas('categories', function ($q) use ($selectedCategory) {

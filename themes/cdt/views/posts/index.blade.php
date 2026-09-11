@@ -11,13 +11,13 @@
     if (!isset($featuredPosts) || $featuredPosts->count() < 3) {
         $featuredPosts = \Plugins\Posts\Models\Post::published()
             ->where('is_featured', true)
-            ->latest()
+            ->latest('published_at')
             ->take(3)
             ->get();
             
         if ($featuredPosts->count() < 3) {
             $featuredPosts = \Plugins\Posts\Models\Post::published()
-                ->latest()
+                ->latest('published_at')
                 ->take(3)
                 ->get();
         }
@@ -32,7 +32,7 @@
     $searchQuery = request('q');
 
     // Build Posts Query
-    $postsQuery = \Plugins\Posts\Models\Post::published()->with(['categories', 'author', 'tags'])->latest();
+    $postsQuery = \Plugins\Posts\Models\Post::published()->with(['categories', 'author', 'tags'])->latest('published_at');
 
     if ($selectedCategory) {
         $postsQuery->whereHas('categories', function ($q) use ($selectedCategory) {

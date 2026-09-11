@@ -21,7 +21,7 @@ class PostsTable extends Component
     public $perPage = 10;
 
     // Sorting
-    public $sortField = 'created_at';
+    public $sortField = 'published_at';
 
     public $sortDirection = 'desc';
 
@@ -34,7 +34,7 @@ class PostsTable extends Component
         'statusFilter' => ['except' => ''],
         'categoryFilter' => ['except' => ''],
         'perPage' => ['except' => 10],
-        'sortField' => ['except' => 'created_at'],
+        'sortField' => ['except' => 'published_at'],
         'sortDirection' => ['except' => 'desc'],
     ];
 
