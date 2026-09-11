@@ -4,7 +4,7 @@
 
 @section('content')
 <article class="bg-white text-zinc-900 min-h-screen py-12 md:py-20" x-data="{ copied: false }">
-  <div class="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
 
     {{-- Breadcrumb Navigation --}}
     <nav aria-label="Breadcrumb" class="mb-8 font-medium text-xs text-zinc-500">
