@@ -1,28 +1,28 @@
 {{-- Teddy Chatbot Widget --}}
 <style data-no-optimize="1">
 	#chat-button {
-		width: 150px;
-		height: 71px;
-		background-color: transparent;
-		box-shadow: none;
-		bottom: 30px;
-		transform: scale(1.3);
-		right: 50px;
+		width: 150px !important;
+		height: 71px !important;
+		background-color: transparent !important;
+		box-shadow: none !important;
+		bottom: 30px !important;
+		transform: scale(1.3) !important;
+		right: 50px !important;
 	}
 	#chat-button:hover {
-		background-color: transparent;
+		background-color: transparent !important;
 	}
 	.chat-widget {
-		bottom: 100px;
+		bottom: 100px !important;
 	}	
 	.close-icon {
-		background: rgb(28, 142, 249);
-		border-radius: 50%;
+		background: rgb(28, 142, 249) !important;
+		border-radius: 50% !important;
 	}
 	#chat-button .close-icon img {
-		width: 120px;
-		height: auto;
-		padding: 3px;
+		width: 120px !important;
+		height: auto !important;
+		padding: 3px !important;
 	}
 </style>
 
@@ -63,8 +63,16 @@
         pre.src = targetSrc;
 
         function applyIcon() {
-            const img = document.querySelector('#chat-button .open-icon img');
-            if (!img) return false;
+            const openIcon = document.querySelector('#chat-button .open-icon');
+            if (!openIcon) return false;
+
+            let img = openIcon.querySelector('img');
+            if (!img) {
+                img = document.createElement('img');
+                img.alt = 'Open Chat';
+                openIcon.appendChild(img);
+            }
+
             if (img.src !== targetSrc) {
                 img.src = targetSrc;
             }

@@ -470,12 +470,6 @@ const observer = new MutationObserver(function (mutations) {
     }
   };
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initWidgetOnReady);
-  } else {
-    initWidgetOnReady();
-  }
-
   // Mengambil variabel yang didefinisikan di luar (misalnya di dalam tag <script>)
 
   const scriptParams = getParameters();
@@ -1284,6 +1278,7 @@ const observer = new MutationObserver(function (mutations) {
       </div>
     `;
   document.body.insertAdjacentHTML("beforeend", chatWidgetHTML);
+  initWidgetOnReady();
 
   // Fungsi untuk menangani pilihan pengguna
 
