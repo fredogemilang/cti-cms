@@ -88,6 +88,12 @@ class InjectSeoTags
         // Inject just before </head>, after any existing @stack('meta') content
         $content = str_replace('</head>', $seoHtml."\n</head>", $content);
 
+        // Inject GTM noscript right after opening <body>
+        if (setting('gsk_enabled', true) && ($gtmId = setting('gsk_gtm_id'))) {
+            $noscript = '<!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id='.e($gtmId).'" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) -->';
+            $content = (string) preg_replace('/(<body\b[^>]*>)/i', '$1'."\n  ".$noscript, $content, 1);
+        }
+
         $response->setContent($content);
 
         return $response;
@@ -318,16 +324,14 @@ class InjectSeoTags
         if ($ahrefs = setting('seo_ahrefs_verification')) {
             $lines[] = '<meta name="ahrefs-site-verification" content="'.e($ahrefs).'">';
         }
-        // Google Site Kit Tracking Snippets (GA4, GTM, Ads)
+        // Google Site Kit Tracking Snippets (GA4, GTM, Ads - Optimized Smart Delayed Loading)
         if (setting('gsk_enabled', true)) {
-            if ($ga4Id = setting('gsk_ga4_tag_id')) {
-                $lines[] = '<!-- Google Analytics (gtag.js) -->';
-                $lines[] = '<script async src="https://www.googletagmanager.com/gtag/js?id='.e($ga4Id).'"></script>';
-                $lines[] = '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","'.e($ga4Id).'");</script>';
-            }
             if ($gtmId = setting('gsk_gtm_id')) {
-                $lines[] = '<!-- Google Tag Manager -->';
-                $lines[] = '<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src="https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);})(window,document,"script","dataLayer","'.e($gtmId).'");</script>';
+                $lines[] = '<!-- Google Tag Manager (Smart Delayed Load) -->';
+                $lines[] = '<script data-no-optimize="1">window.dataLayer=window.dataLayer||[];(function(){var l=false;function g(){if(l)return;l=true;["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.removeEventListener(e,g,{passive:true})});(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src="https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);})(window,document,"script","dataLayer","'.e($gtmId).'");}["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.addEventListener(e,g,{once:true,passive:true})});if("requestIdleCallback" in window){requestIdleCallback(function(){setTimeout(g,4000);});}else if(document.readyState==="complete"){setTimeout(g,4000);}else{window.addEventListener("load",function(){setTimeout(g,4000);},{once:true,passive:true});}})();</script>';
+            } elseif ($ga4Id = setting('gsk_ga4_tag_id')) {
+                $lines[] = '<!-- Google Analytics (gtag.js - Smart Delayed Load) -->';
+                $lines[] = '<script data-no-optimize="1">window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","'.e($ga4Id).'");(function(){var l=false;function g(){if(l)return;l=true;["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.removeEventListener(e,g,{passive:true})});var s=document.createElement("script");s.async=true;s.src="https://www.googletagmanager.com/gtag/js?id='.e($ga4Id).'";document.head.appendChild(s);}["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.addEventListener(e,g,{once:true,passive:true})});if("requestIdleCallback" in window){requestIdleCallback(function(){setTimeout(g,4000);});}else if(document.readyState==="complete"){setTimeout(g,4000);}else{window.addEventListener("load",function(){setTimeout(g,4000);},{once:true,passive:true});}})();</script>';
             }
             if ($adsId = setting('gsk_ads_id')) {
                 $lines[] = '<!-- Google Ads -->';
