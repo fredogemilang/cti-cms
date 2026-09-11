@@ -70,6 +70,8 @@ class SeoRenderer
 
         if (strtolower(trim((string) $rawTitle)) === strtolower(trim((string) $siteName))) {
             $title = $siteName.($tagline ? " {$titleSeparator} {$tagline}" : '');
+        } elseif (str_ends_with(strtolower(trim((string) $rawTitle)), strtolower(trim((string) $siteName)))) {
+            $title = $rawTitle;
         } else {
             $title = strtr($titleTemplate, [
                 '{page}' => $rawTitle,
@@ -330,12 +332,29 @@ class SeoRenderer
             ->where('locale', $currentLocale)
             ->first();
 
-        // Fallback to default locale
-        if (! $meta) {
-            $meta = SeoMeta::where('seoable_type', $seoableType)
-                ->where('seoable_id', $seoableId)
-                ->where('locale', '')
-                ->first();
+        // Fallback or merge from default locale ('')
+        $fallbackMeta = SeoMeta::where('seoable_type', $seoableType)
+            ->where('seoable_id', $seoableId)
+            ->where('locale', '')
+            ->first();
+
+        if ($fallbackMeta) {
+            if (! $meta) {
+                $meta = $fallbackMeta;
+            } else {
+                if (empty($meta->title) && ! empty($fallbackMeta->title)) {
+                    $meta->title = $fallbackMeta->title;
+                }
+                if (empty($meta->description) && ! empty($fallbackMeta->description)) {
+                    $meta->description = $fallbackMeta->description;
+                }
+                if (empty($meta->og_title) && ! empty($fallbackMeta->og_title)) {
+                    $meta->og_title = $fallbackMeta->og_title;
+                }
+                if (empty($meta->og_description) && ! empty($fallbackMeta->og_description)) {
+                    $meta->og_description = $fallbackMeta->og_description;
+                }
+            }
         }
 
         // Fallback to legacy JSON seo column (backward compat — pages/cpt_entries)

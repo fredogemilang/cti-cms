@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\CptEntry;
+use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
 use App\Models\Page;
 use App\Models\TaxonomyTerm;
@@ -12,6 +14,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\View;
 use Plugins\Posts\Models\Category;
 use Plugins\Posts\Models\Tag;
 
@@ -96,24 +99,55 @@ class InjectSeoTags
      */
     protected function resolveEntity(Response $response, Request $request): ?Model
     {
+        // 1. Check original view response data (most specific to this action)
         $original = $response->getOriginalContent();
 
         if (is_object($original) && method_exists($original, 'getData')) {
             $data = $original->getData();
-            foreach (['page', 'entry', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm', 'postType', 'cpt'] as $key) {
+            foreach (['entry', 'cpt_entry', 'page', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm', 'postType', 'cpt'] as $key) {
                 if (isset($data[$key]) && $data[$key] instanceof Model) {
                     return $data[$key];
                 }
             }
         }
 
-        // Fallback 1: Route parameters
+        // 2. Check request attributes (populated by controllers like ArchiveController::shareEntry or PageController)
+        foreach (['entry', 'cpt_entry', 'page', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm', 'postType', 'cpt'] as $key) {
+            $val = $request->attributes->get($key);
+            if ($val instanceof Model) {
+                return $val;
+            }
+        }
+
+        // 3. Check route parameters (e.g. CDT short CPT routes)
         $route = $request->route();
         if ($route) {
-            foreach (['page', 'entry', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm', 'postType', 'cpt'] as $param) {
+            foreach (['entry', 'cpt_entry', 'page', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm', 'postType', 'cpt'] as $param) {
                 $val = $route->parameter($param);
                 if ($val instanceof Model) {
                     return $val;
+                }
+            }
+
+            // CDT Theme short CPT routes: {vendorSlug}/{productSlug} or {vendorSlug}
+            $productSlug = $route->parameter('productSlug');
+            $vendorSlug = $route->parameter('vendorSlug');
+            if ($productSlug && class_exists(CustomPostType::class) && class_exists(CptEntry::class)) {
+                $prodCpt = CustomPostType::whereIn('slug', ['tech-products', 'products'])->where('is_active', true)->first();
+                if ($prodCpt) {
+                    $entry = CptEntry::findByLocalizedSlug($prodCpt, $productSlug);
+                    if ($entry) {
+                        return $entry;
+                    }
+                }
+            }
+            if ($vendorSlug && class_exists(CustomPostType::class) && class_exists(CptEntry::class)) {
+                $allianceCpt = CustomPostType::whereIn('slug', ['technology-alliance', 'technology_alliance'])->where('is_active', true)->first();
+                if ($allianceCpt) {
+                    $entry = CptEntry::findByLocalizedSlug($allianceCpt, $vendorSlug);
+                    if ($entry) {
+                        return $entry;
+                    }
                 }
             }
 
@@ -172,9 +206,20 @@ class InjectSeoTags
             }
         }
 
-        // Fallback 3: Single page path
+        // Fallback 3: Single page path or single CPT entry path
         if ($cleanPath && ! str_contains($cleanPath, '/')) {
-            return Page::findByLocalizedSlug($cleanPath);
+            $page = Page::findByLocalizedSlug($cleanPath);
+            if ($page) {
+                return $page;
+            }
+            if (class_exists(CptEntry::class)) {
+                $entry = CptEntry::where('slug', $cleanPath)
+                    ->orWhereRaw('JSON_UNQUOTE(JSON_EXTRACT(translations, "$.id.slug")) = ?', [$cleanPath])
+                    ->first();
+                if ($entry) {
+                    return $entry;
+                }
+            }
         }
 
         return null;

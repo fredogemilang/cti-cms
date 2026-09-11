@@ -75,12 +75,16 @@ check_desc "/knowledgetedy/" "Comprehensive enterprise IT solutions catalog"
 
 echo ""
 echo "--- 4. Checking for Staging Leaks (ctizen.id) ---"
-LEAK_COUNT=$(curl -k -sL "$BASE/" | grep -c "ctizen\.id")
-if [ "$LEAK_COUNT" -eq 0 ]; then
-    echo " [OK] Zero leaks of ctizen.id in frontend responses"
+if [[ "$BASE" == *"ctizen.id"* ]]; then
+    echo " [INFO] Skipped staging leak check (testing directly against staging domain $BASE)"
 else
-    echo " [FAIL] Found $LEAK_COUNT occurrences of ctizen.id in homepage!"
-    FAILED=$((FAILED + 1))
+    LEAK_COUNT=$(curl -k -sL "$BASE/" | grep -c "ctizen\.id")
+    if [ "$LEAK_COUNT" -eq 0 ]; then
+        echo " [OK] Zero leaks of ctizen.id in frontend responses"
+    else
+        echo " [FAIL] Found $LEAK_COUNT occurrences of ctizen.id in homepage!"
+        FAILED=$((FAILED + 1))
+    fi
 fi
 
 echo ""
