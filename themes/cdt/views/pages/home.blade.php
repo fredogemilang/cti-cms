@@ -2,12 +2,12 @@
 
 @section('title', isset($page) && $page->title ? $page->getMetaTitle() : setting('site_name', 'Trusted IT Consultant for Scalable and Secure Growth - Central Data Technology'))
 
+@push('head')
 @php
   $heroImg = $page?->block('hero_image');
   $heroImgUrl = $heroImg ? (str_starts_with($heroImg, 'http') || str_starts_with($heroImg, 'themes/') || str_starts_with($heroImg, 'assets/') ? asset($heroImg) : asset('storage/' . $heroImg)) : asset('themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
   $heroData = app(\App\Services\ResponsiveImageService::class)->build($heroImgUrl, 'lg', '100vw');
 @endphp
-@push('head')
   @if(!empty($heroData['webp_srcset']))
     <link rel="preload" as="image" href="{{ $heroData['src'] }}" imagesrcset="{{ $heroData['webp_srcset'] }}" imagesizes="100vw" type="image/webp" fetchpriority="high">
   @else
