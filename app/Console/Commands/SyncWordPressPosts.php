@@ -205,6 +205,14 @@ class SyncWordPressPosts extends Command
                 $featuredImageUrl = $enPost['_embedded']['wp:featuredmedia'][0]['source_url']
                     ?? ($idPost['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null);
 
+                // Fallback: extract first image from content if no wp:featuredmedia
+                if (! $featuredImageUrl) {
+                    $combinedContent = ($primaryContent ?? '') . ' ' . ($idPost['content']['rendered'] ?? '');
+                    if (preg_match('/<img[^>]+src=["\']([^"\']+)["\']/i', $combinedContent, $imgMatch)) {
+                        $featuredImageUrl = $imgMatch[1];
+                    }
+                }
+
                 if ($featuredImageUrl) {
                     $featuredImagePath = $this->resolveMedia($featuredImageUrl, $mediaService);
                 }
