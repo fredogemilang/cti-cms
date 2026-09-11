@@ -3,7 +3,7 @@
 @php
     /** @var \App\Services\SeoRenderer $renderer */
     $renderer = app(\App\Services\SeoRenderer::class);
-    $targetEntity = $entity ?? null;
+    $targetEntity = ($entity instanceof \Illuminate\Database\Eloquent\Model) ? $entity : null;
     $seo = $renderer->resolve($targetEntity, $overrides);
 @endphp
 

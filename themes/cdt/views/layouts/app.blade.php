@@ -4,7 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google" content="notranslate">
-  <x-seo.head :entity="$postType ?? $cpt ?? $entity ?? $page ?? $category ?? $tag ?? $term ?? $taxonomyTerm ?? $entry ?? null" />
+  @php
+    $seoCandidate = null;
+    foreach ([$post ?? null, $entry ?? null, $page ?? null, $cpt ?? null, $postType ?? null, $entity ?? null, $taxonomyTerm ?? null, $term ?? null, $category ?? null, $tag ?? null] as $candidate) {
+        if ($candidate instanceof \Illuminate\Database\Eloquent\Model) {
+            $seoCandidate = $candidate;
+            break;
+        }
+    }
+  @endphp
+  <x-seo.head :entity="$seoCandidate" />
 
   @if(setting('site_favicon'))
     <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
