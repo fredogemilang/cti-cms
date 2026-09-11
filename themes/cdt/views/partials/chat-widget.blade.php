@@ -63,14 +63,27 @@
         pre.src = targetSrc;
 
         function applyIcon() {
+            const chatBtn = document.getElementById('chat-button');
+            if (chatBtn) {
+                const label = isId ? 'Tanya TEDY - Buka Chat' : 'Ask TEDY - Open Chat';
+                if (!chatBtn.getAttribute('aria-label')) {
+                    chatBtn.setAttribute('aria-label', label);
+                }
+                if (!chatBtn.getAttribute('title')) {
+                    chatBtn.setAttribute('title', label);
+                }
+            }
+
             const openIcon = document.querySelector('#chat-button .open-icon');
             if (!openIcon) return false;
 
             let img = openIcon.querySelector('img');
             if (!img) {
                 img = document.createElement('img');
-                img.alt = 'Open Chat';
+                img.alt = isId ? 'Tanya TEDY - Buka Chat' : 'Ask TEDY - Open Chat';
                 openIcon.appendChild(img);
+            } else if (!img.alt) {
+                img.alt = isId ? 'Tanya TEDY - Buka Chat' : 'Ask TEDY - Open Chat';
             }
 
             if (img.src !== targetSrc) {

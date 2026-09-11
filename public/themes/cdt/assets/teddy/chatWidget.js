@@ -192,7 +192,7 @@ function showWAForm() {
   popupForm.innerHTML = `
       <div class="d-flex justify-content-center align-items-center w-100">
         <div class="wa-form-container">
-            <button id="close-wa-form" class="close-button">${timesSVG}</button>
+            <button id="close-wa-form" class="close-button" aria-label="Close" title="Close">${timesSVG}</button>
             <form id="wa-form">
               <h3>${whatsAppFormLabel.title}</h3>
               <div class="dot-separator">
@@ -1240,7 +1240,8 @@ const observer = new MutationObserver(function (mutations) {
 
   // Menambahkan HTML widget ke halaman
   const chatWidgetHTML = `
-      <button class="chat-button" id="chat-button">
+      <button class="chat-button" id="chat-button" aria-label="Open Chat" title="Open Chat">
+        <span style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0;">Open Chat</span>
         <div src="" alt="Open Chat" class="open-icon"></div>
         <div src="" alt="Close" class="close-icon"></div>
       </button>
@@ -1264,7 +1265,7 @@ const observer = new MutationObserver(function (mutations) {
   
         <div class="chat-footer">
           <div class="d-flex w-100 align-items-center">
-            <button id="emoticon-btn" class="icon-button">
+            <button id="emoticon-btn" class="icon-button" aria-label="Insert Emoji" title="Insert Emoji">
               <img src="" alt="Emoticon" class="icon"> 
             </button>
             <input type="text" id="user-input" placeholder="${whatsAppFormLabel.message_input}">
