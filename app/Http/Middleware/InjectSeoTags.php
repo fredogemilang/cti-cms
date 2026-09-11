@@ -104,28 +104,40 @@ class InjectSeoTags
 
         if (is_object($original) && method_exists($original, 'getData')) {
             $data = $original->getData();
-            foreach (['entry', 'cpt_entry', 'page', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm', 'postType', 'cpt'] as $key) {
+            foreach (['postType', 'cpt', 'category', 'tag', 'term', 'taxonomyTerm', 'page', 'entry', 'cpt_entry', 'post', 'event'] as $key) {
                 if (isset($data[$key]) && $data[$key] instanceof Model) {
                     return $data[$key];
                 }
             }
         }
 
-        // 2. Check request attributes (populated by controllers like ArchiveController::shareEntry or PageController)
-        foreach (['entry', 'cpt_entry', 'page', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm', 'postType', 'cpt'] as $key) {
+        // 2. Check request attributes (populated by controllers like ArchiveController or PageController)
+        foreach (['postType', 'cpt', 'category', 'tag', 'term', 'taxonomyTerm', 'page', 'entry', 'cpt_entry', 'post', 'event'] as $key) {
             $val = $request->attributes->get($key);
             if ($val instanceof Model) {
                 return $val;
             }
         }
 
-        // 3. Check route parameters (e.g. CDT short CPT routes)
+        // 3. Check route parameters (e.g. CDT short CPT routes or CPT archives)
         $route = $request->route();
         if ($route) {
-            foreach (['entry', 'cpt_entry', 'page', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm', 'postType', 'cpt'] as $param) {
+            foreach (['postType', 'cpt', 'category', 'tag', 'term', 'taxonomyTerm', 'page', 'entry', 'cpt_entry', 'post', 'event'] as $param) {
                 $val = $route->parameter($param);
                 if ($val instanceof Model) {
                     return $val;
+                }
+            }
+
+            // CPT Archive route parameter
+            $cptSlug = $route->parameter('cptSlug');
+            if ($cptSlug && class_exists(CustomPostType::class)) {
+                $cptModel = CustomPostType::where('slug', $cptSlug)
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$cptSlug])
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$cptSlug])
+                    ->first();
+                if ($cptModel) {
+                    return $cptModel;
                 }
             }
 
@@ -206,11 +218,20 @@ class InjectSeoTags
             }
         }
 
-        // Fallback 3: Single page path or single CPT entry path
+        // Fallback 3: Single page path, CPT archive path, or single CPT entry path
         if ($cleanPath && ! str_contains($cleanPath, '/')) {
             $page = Page::findByLocalizedSlug($cleanPath);
             if ($page) {
                 return $page;
+            }
+            if (class_exists(CustomPostType::class)) {
+                $cpt = CustomPostType::where('slug', $cleanPath)
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$cleanPath])
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$cleanPath])
+                    ->first();
+                if ($cpt) {
+                    return $cpt;
+                }
             }
             if (class_exists(CptEntry::class)) {
                 $entry = CptEntry::where('slug', $cleanPath)

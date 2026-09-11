@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google" content="notranslate">
-  <x-seo.head :entity="$entity ?? $entry ?? $page ?? $category ?? $tag ?? $term ?? $taxonomyTerm ?? null" />
+  <x-seo.head :entity="$postType ?? $cpt ?? $entity ?? $page ?? $category ?? $tag ?? $term ?? $taxonomyTerm ?? $entry ?? null" />
 
   @if(setting('site_favicon'))
     <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">

@@ -141,6 +141,11 @@ class ArchiveController extends Controller
 
         $taxonomies = $postType->taxonomies();
 
+        request()->attributes->set('postType', $postType);
+        request()->attributes->set('cpt', $postType);
+        View::share('postType', $postType);
+        View::share('cpt', $postType);
+
         $viewName = $this->resolveArchiveView($postType->slug);
 
         return view($viewName, [

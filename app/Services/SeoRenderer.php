@@ -101,7 +101,8 @@ class SeoRenderer
 
         $canonical = $overrides['canonical']
             ?? $meta?->canonical_url
-            ?? ($entity && method_exists($entity, 'getUrl') ? $entity->getUrl() : request()->fullUrl());
+            ?? ($entity && method_exists($entity, 'getUrl') ? $entity->getUrl() : null)
+            ?? ($entity && method_exists($entity, 'getArchiveUrl') ? $entity->getArchiveUrl() : request()->fullUrl());
 
         if ($canonical) {
             $canonical = trailing_slash_url($canonical);
@@ -239,6 +240,11 @@ class SeoRenderer
                 $hreflangs[$loc] = $entity->getUrl($loc);
             }
             $hreflangs['x-default'] = $entity->getUrl($defaultLocale);
+        } elseif (method_exists($entity, 'getArchiveUrl')) {
+            foreach ($availableLocales as $loc) {
+                $hreflangs[$loc] = $entity->getArchiveUrl($loc);
+            }
+            $hreflangs['x-default'] = $entity->getArchiveUrl($defaultLocale);
         }
 
         return array_filter($hreflangs);
