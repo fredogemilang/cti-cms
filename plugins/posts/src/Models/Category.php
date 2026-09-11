@@ -82,6 +82,6 @@ class Category extends Model
             $categoryBase = \App\Models\Setting::get('permalink_category_base', 'category');
         }
 
-        return url($prefix.'/'.$archiveSlug.'/'.$categoryBase.'/'.$slug);
+        return trailing_slash_url(url($prefix.'/'.$archiveSlug.'/'.$categoryBase.'/'.$slug));
     }
 }

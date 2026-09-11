@@ -173,7 +173,7 @@ class ArchiveController extends Controller
 
         $canonicalUrl = $entry->getUrl($currentLocale);
         $currentUrl = request()->url();
-        if ($currentUrl !== $canonicalUrl) {
+        if (rtrim($currentUrl, '/') !== rtrim($canonicalUrl, '/')) {
             $queryString = request()->getQueryString();
 
             return redirect($canonicalUrl.($queryString ? "?{$queryString}" : ''), 301);

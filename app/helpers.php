@@ -693,18 +693,18 @@ if (! function_exists('localized_url')) {
         if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
             $base = $cleanPath !== '' ? "/{$locale}/{$cleanPath}" : "/{$locale}";
 
-            return url($base).$query.$fragment;
+            return trailing_slash_url(url($base)).$query.$fragment;
         }
 
         if (! $hideDefault && $urlStructure === 'prefix') {
             $base = $cleanPath !== '' ? "/{$defaultLocale}/{$cleanPath}" : "/{$defaultLocale}";
 
-            return url($base).$query.$fragment;
+            return trailing_slash_url(url($base)).$query.$fragment;
         }
 
         $base = $cleanPath !== '' ? "/{$cleanPath}" : '/';
 
-        return url($base).$query.$fragment;
+        return trailing_slash_url(url($base)).$query.$fragment;
     }
 }
 
@@ -754,3 +754,44 @@ if (! function_exists('is_plugin_active')) {
         return Plugin::where('slug', $slug)->where('is_active', true)->exists();
     }
 }
+
+if (! function_exists('trailing_slash_url')) {
+    /**
+     * Pastikan URL publik berakhiran '/', kecuali file, query string, fragment, dan endpoint sistem.
+     */
+    function trailing_slash_url(string $url): string
+    {
+        // Punya query string atau fragment → biarkan
+        if (str_contains($url, '?') || str_contains($url, '#')) {
+            return $url;
+        }
+
+        $path = parse_url($url, PHP_URL_PATH) ?? '';
+
+        // Root domain
+        if ($path === '' || $path === '/') {
+            return rtrim($url, '/').'/';
+        }
+
+        // Sudah berakhiran slash
+        if (str_ends_with($url, '/')) {
+            return $url;
+        }
+
+        // Berakhiran ekstensi file → biarkan
+        if (preg_match('#\.[a-zA-Z0-9]{1,6}$#', $path)) {
+            return $url;
+        }
+
+        // Endpoint sistem → biarkan
+        $excluded = ['/ctrlpanel', '/feed', '/search', '/lang/', '/forms/', '/api/', '/livewire/', '/_deferred/'];
+        foreach ($excluded as $prefix) {
+            if (str_starts_with($path, $prefix)) {
+                return $url;
+            }
+        }
+
+        return $url.'/';
+    }
+}
+

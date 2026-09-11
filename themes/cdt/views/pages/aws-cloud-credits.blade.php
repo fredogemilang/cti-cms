@@ -41,7 +41,7 @@
       'publisher' => [
         '@type' => 'Organization',
         'name' => 'Central Data Technology',
-        'url' => 'https://centraldatatech.com',
+        'url' => config('app.url'),
         'logo' => asset('storage/media/logo-premier-tier.webp'),
       ],
       'mainEntity' => [

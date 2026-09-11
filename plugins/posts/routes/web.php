@@ -255,7 +255,7 @@ Route::middleware(['web'])->group(function () {
         $canonicalUrl = $post->getUrl($currentLocale);
         $currentFullUrl = request()->url();
 
-        if ($currentFullUrl !== $canonicalUrl) {
+        if (rtrim($currentFullUrl, '/') !== rtrim($canonicalUrl, '/')) {
             $queryString = request()->getQueryString();
             $targetUrl = $canonicalUrl.($queryString ? "?{$queryString}" : '');
 

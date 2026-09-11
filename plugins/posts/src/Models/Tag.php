@@ -61,6 +61,6 @@ class Tag extends Model
             $tagBase = \App\Models\Setting::get('permalink_tag_base', 'tag');
         }
 
-        return url($prefix.'/'.$archiveSlug.'/'.$tagBase.'/'.$slug);
+        return trailing_slash_url(url($prefix.'/'.$archiveSlug.'/'.$tagBase.'/'.$slug));
     }
 }

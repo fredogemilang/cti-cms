@@ -100,7 +100,7 @@ class InjectSeoTags
 
         if (is_object($original) && method_exists($original, 'getData')) {
             $data = $original->getData();
-            foreach (['page', 'entry', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm'] as $key) {
+            foreach (['page', 'entry', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm', 'postType', 'cpt'] as $key) {
                 if (isset($data[$key]) && $data[$key] instanceof Model) {
                     return $data[$key];
                 }
@@ -110,7 +110,7 @@ class InjectSeoTags
         // Fallback 1: Route parameters
         $route = $request->route();
         if ($route) {
-            foreach (['page', 'entry', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm'] as $param) {
+            foreach (['page', 'entry', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm', 'postType', 'cpt'] as $param) {
                 $val = $route->parameter($param);
                 if ($val instanceof Model) {
                     return $val;
@@ -156,15 +156,25 @@ class InjectSeoTags
             }
         }
 
-        // Fallback 2: Homepage
+        // Fallback 2: Homepage (including localized homepage like /id)
         $path = trim($request->path(), '/');
-        if ($path === '' || $path === '/') {
+        $locales = function_exists('available_locales') ? available_locales() : ['en', 'id'];
+        if ($path === '' || $path === '/' || in_array($path, $locales, true)) {
             return Page::where('slug', 'home')->first();
         }
 
+        // Strip locale prefix if present
+        $cleanPath = $path;
+        foreach ($locales as $loc) {
+            if (str_starts_with($cleanPath, $loc.'/')) {
+                $cleanPath = substr($cleanPath, strlen($loc) + 1);
+                break;
+            }
+        }
+
         // Fallback 3: Single page path
-        if ($path && ! str_contains($path, '/')) {
-            return Page::findByLocalizedSlug($path);
+        if ($cleanPath && ! str_contains($cleanPath, '/')) {
+            return Page::findByLocalizedSlug($cleanPath);
         }
 
         return null;

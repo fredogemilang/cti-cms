@@ -101,6 +101,10 @@ class SeoRenderer
             ?? $meta?->canonical_url
             ?? ($entity && method_exists($entity, 'getUrl') ? $entity->getUrl() : request()->fullUrl());
 
+        if ($canonical) {
+            $canonical = trailing_slash_url($canonical);
+        }
+
         // Robots Indexing Check (Content Type toggle / Taxonomy toggle / Global toggle)
         $isIndexed = true;
         if ($ctSlug) {

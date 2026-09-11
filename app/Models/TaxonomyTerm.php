@@ -130,6 +130,6 @@ class TaxonomyTerm extends Model
             ? $this->taxonomy->slug
             : (string) CustomTaxonomy::where('id', $this->taxonomy_id)->value('slug');
 
-        return url('/'.$taxonomySlug.'/'.$this->slug);
+        return trailing_slash_url(url('/'.$taxonomySlug.'/'.$this->slug));
     }
 }

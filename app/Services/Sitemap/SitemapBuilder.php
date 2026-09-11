@@ -163,8 +163,8 @@ class SitemapBuilder
                 : (string) Setting::get('permalink_post_base', Setting::get('archive_slug', 'blog'));
 
             $archiveUrl = ($loc !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix')
-                ? url('/'.$loc.'/'.$archiveSlug)
-                : url('/'.$archiveSlug);
+                ? trailing_slash_url(url('/'.$loc.'/'.$archiveSlug))
+                : trailing_slash_url(url('/'.$archiveSlug));
 
             $urls[] = [
                 'loc' => $archiveUrl,
@@ -287,7 +287,7 @@ class SitemapBuilder
                     $prefix = ($loc !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix') ? '/'.$loc : '';
                     $tSlug = method_exists($term, 'getTranslation') ? ($term->getTranslation('slug', $loc, fallback: true) ?? $term->slug) : $term->slug;
                     $urls[] = [
-                        'loc' => url($prefix.'/'.$term->taxonomy->slug.'/'.$tSlug),
+                        'loc' => trailing_slash_url(url($prefix.'/'.$term->taxonomy->slug.'/'.$tSlug)),
                         'lastmod' => $term->updated_at ? $term->updated_at->toAtomString() : null,
                         'changefreq' => 'monthly',
                         'priority' => 0.4,
@@ -317,7 +317,7 @@ class SitemapBuilder
                     }
 
                     $urls[] = [
-                        'loc' => url($prefix.'/'.$archiveSlug.'/'.$categoryBase.'/'.$catSlug),
+                        'loc' => trailing_slash_url(url($prefix.'/'.$archiveSlug.'/'.$categoryBase.'/'.$catSlug)),
                         'lastmod' => $category->updated_at ? Carbon::parse($category->updated_at)->toAtomString() : null,
                         'changefreq' => 'weekly',
                         'priority' => 0.4,
@@ -347,7 +347,7 @@ class SitemapBuilder
                     }
 
                     $urls[] = [
-                        'loc' => url($prefix.'/'.$archiveSlug.'/'.$tagBase.'/'.$tSlug),
+                        'loc' => trailing_slash_url(url($prefix.'/'.$archiveSlug.'/'.$tagBase.'/'.$tSlug)),
                         'lastmod' => $tag->updated_at ? Carbon::parse($tag->updated_at)->toAtomString() : null,
                         'changefreq' => 'weekly',
                         'priority' => 0.3,

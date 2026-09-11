@@ -19,7 +19,7 @@
 
     $sendToUser = $notifications['send_to_user'] ?? false;
     $userSubject = $notifications['user_subject'] ?? "Thank you for your submission - {$form->name}";
-    $userEmailBody = $notifications['user_email_body'] ?? "<p>Hi {name},</p><p>Thank you for submitting <strong>{form_name}</strong>. We have received your details and will get back to you shortly.</p><p><a href=\"https://cdt.devs/themes/cdt/assets/banner_hero-DHYDqbF8.jpg\" style=\"display: inline-block; background-color: #b82d25; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 9999px; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;\">Download Digital Solution Guide</a></p><p>Best regards,<br>Central Data Technology Team</p>";
+    $userEmailBody = $notifications['user_email_body'] ?? ("<p>Hi {name},</p><p>Thank you for submitting <strong>{form_name}</strong>. We have received your details and will get back to you shortly.</p><p><a href=\"".url('themes/cdt/assets/banner_hero-DHYDqbF8.jpg')."\" style=\"display: inline-block; background-color: #b82d25; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 9999px; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;\">Download Digital Solution Guide</a></p><p>Best regards,<br>Central Data Technology Team</p>");
 @endphp
 
 <div class="space-y-6" x-data="{
@@ -193,7 +193,7 @@
 
                         <button type="button"
                             @click="
-                                const url = prompt('Enter File Download URL:', 'https://cdt.devs/themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
+                                const url = prompt('Enter File Download URL:', '{{ url('themes/cdt/assets/banner_hero-DHYDqbF8.jpg') }}');
                                 const text = prompt('Enter Button Label:', 'Download Digital Solution Guide');
                                 if (url && text) insertDownloadBtn(url, text);
                             "

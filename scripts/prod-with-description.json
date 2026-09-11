@@ -1,0 +1,278 @@
+{
+    "/": {
+        "url": "https://www.centraldatatech.com/",
+        "path": "/",
+        "title": "Trusted IT Consultant for Scalable and Secure Growth - Central Data Technology",
+        "description": "Drive business growth faster with Central Data Technology’s expert IT consultants and end-to-end IT solutions."
+    },
+    "/f5/distributed-cloud-services/": {
+        "url": "https://www.centraldatatech.com/f5/distributed-cloud-services/",
+        "path": "/f5/distributed-cloud-services/",
+        "title": "Distributed Cloud Services - Central Data Technology",
+        "description": "F5 Distributed Cloud Services secures, connects, and manages apps across any cloud with one unified platform. Simplify, protect, and accelerate with CDT."
+    },
+    "/id/f5/distributed-cloud-services/": {
+        "url": "https://www.centraldatatech.com/id/f5/distributed-cloud-services/",
+        "path": "/id/f5/distributed-cloud-services/",
+        "title": "Distributed Cloud Services - Central Data Technology",
+        "description": "F5 Distributed Cloud Services membantu bisnis mengamankan, menghubungkan, dan mengelola aplikasi di berbagai cloud melalui satu platform terpadu. Sederhanakan deployment, kurangi biaya, dan tingkatkan keamanan dengan solusi dari CDT."
+    },
+    "/id/f5/aplikasi-delivery-and-security-platform/": {
+        "url": "https://www.centraldatatech.com/id/f5/aplikasi-delivery-and-security-platform/",
+        "path": "/id/f5/aplikasi-delivery-and-security-platform/",
+        "title": "Application Delivery dan Security Platform untuk Solusi Keamanan AI - Central Data Technology",
+        "description": "F5 Application Delivery and Security Platform (ADSP) merupakan Solusi Keamanan AI yang menghadirkan platform lengkap untuk Application Delivery dan AI Security dengan performa tinggi, otomasi, dan perlindungan aplikasi menyeluruh."
+    },
+    "/f5/application-delivery-and-security-platform/": {
+        "url": "https://www.centraldatatech.com/f5/application-delivery-and-security-platform/",
+        "path": "/f5/application-delivery-and-security-platform/",
+        "title": "Application Delivery and Security Platform For AI Security Solution - Central Data Technology",
+        "description": "F5 Application Delivery and Security Platform (ADSP) is the AI Security Solution that delivers a complete platform for Application Delivery and AI Security with high performance, automation, and comprehensive application protection."
+    },
+    "/f5/": {
+        "url": "https://www.centraldatatech.com/f5/",
+        "path": "/f5/",
+        "title": "F5 - Central Data Technology",
+        "description": "Secure and optimize your apps with F5 solutions. CDT, Indonesia's authorized distributor, delivers smarter apps with top security, API management, and cloud support."
+    },
+    "/id/f5/": {
+        "url": "https://www.centraldatatech.com/id/f5/",
+        "path": "/id/f5/",
+        "title": "F5 - Central Data Technology",
+        "description": "Amankan dan optimalkan aplikasi Anda dengan solusi F5. CDT, authorized distributor di Indonesia, menghadirkan aplikasi cerdas dengan keamanan tinggi, manajemen API, dan dukungan cloud."
+    },
+    "/tidb-cloud-essentials/": {
+        "url": "https://www.centraldatatech.com/tidb-cloud-essentials/",
+        "path": "/tidb-cloud-essentials/",
+        "title": "TiDB Cloud Essentials - Central Data Technology",
+        "description": "TiDB Cloud Essentials is a fully managed, serverless DBaaS with autoscaling and strong security for production-grade workloads."
+    },
+    "/id/tidb/tidb-cloud-essentials/": {
+        "url": "https://www.centraldatatech.com/id/tidb/tidb-cloud-essentials/",
+        "path": "/id/tidb/tidb-cloud-essentials/",
+        "title": "TiDB Cloud Essentials - Central Data Technology",
+        "description": "TiDB Cloud Essentials adalah DBaaS serverless fully managed dengan autoscaling dan keamanan tinggi untuk workload produksi."
+    },
+    "/tidb-enterprise-self-managed/": {
+        "url": "https://www.centraldatatech.com/tidb-enterprise-self-managed/",
+        "path": "/tidb-enterprise-self-managed/",
+        "title": "TiDB Enterprise (Self-managed) - Central Data Technology",
+        "description": "TiDB Enterprise enables self-managed deployment across cloud or on-prem with full control and distributed scalability."
+    },
+    "/id/tidb/tidb-enterprise-self-managed/": {
+        "url": "https://www.centraldatatech.com/id/tidb/tidb-enterprise-self-managed/",
+        "path": "/id/tidb/tidb-enterprise-self-managed/",
+        "title": "TiDB Enterprise (Self-managed) - Central Data Technology",
+        "description": "TiDB Enterprise memungkinkan deployment mandiri di cloud atau on-prem dengan kontrol penuh dan skalabilitas terdistribusi."
+    },
+    "/tidb/tidb-cloud-dedicated/": {
+        "url": "https://www.centraldatatech.com/tidb/tidb-cloud-dedicated/",
+        "path": "/tidb/tidb-cloud-dedicated/",
+        "title": "TiDB Cloud Dedicated - Central Data Technology",
+        "description": "TiDB Cloud Dedicated delivers enterprise-grade scale, isolated resources, and advanced security for mission-critical deployments."
+    },
+    "/id/tidb/tidb-cloud-dedicated/": {
+        "url": "https://www.centraldatatech.com/id/tidb/tidb-cloud-dedicated/",
+        "path": "/id/tidb/tidb-cloud-dedicated/",
+        "title": "TiDB Cloud Dedicated - Central Data Technology",
+        "description": "TiDB Cloud Dedicated delivers enterprise-grade scale, isolated resources, and advanced security for mission-critical deployments."
+    },
+    "/entrust/": {
+        "url": "https://www.centraldatatech.com/entrust/",
+        "path": "/entrust/",
+        "title": "Entrust - Central Data Technology",
+        "description": "Strengthen your digital trust environment. Explore Entrust public key infrastructure, hardware-based security systems, and digital identity solutions delivered by Central Data Technology."
+    },
+    "/id/entrust/": {
+        "url": "https://www.centraldatatech.com/id/entrust/",
+        "path": "/id/entrust/",
+        "title": "Entrust - Central Data Technology",
+        "description": "Tingkatkan lingkungan kepercayaan digital Anda. Jelajahi solusi infrastruktur kunci publik, sistem keamanan berbasis perangkat keras, dan identitas digital dari Entrust melalui Central Data Technology."
+    },
+    "/dynatrace/": {
+        "url": "https://www.centraldatatech.com/dynatrace/",
+        "path": "/dynatrace/",
+        "title": "Dynatrace - Central Data Technology",
+        "description": "Simplify IT operations with Dynatrace. CDT, Indonesia's authorized partner, delivers expert implementation and managed services for advanced observability."
+    },
+    "/id/dynatrace/": {
+        "url": "https://www.centraldatatech.com/id/dynatrace/",
+        "path": "/id/dynatrace/",
+        "title": "Dynatrace - Central Data Technology",
+        "description": "Sederhanakan operasional IT Anda dengan Dynatrace. CDT, Authorized Partner Dynatrace di Indonesia, menyediakan implementasi dan layanan pengelolaan ahli untuk observabilitas canggih."
+    },
+    "/microstrategy/": {
+        "url": "https://www.centraldatatech.com/microstrategy/",
+        "path": "/microstrategy/",
+        "title": "MicroStrategy - Central Data Technology",
+        "description": "Unlock actionable insights. Implement MicroStrategy scalable data analytics and mobile business intelligence platforms with expert support from Central Data Technology."
+    },
+    "/id/microstrategy/": {
+        "url": "https://www.centraldatatech.com/id/microstrategy/",
+        "path": "/id/microstrategy/",
+        "title": "MicroStrategy - Central Data Technology",
+        "description": "Manfaatkan wawasan yang dapat ditindaklanjuti. Gunakan platform analitik data dan business intelligence mobile dari MicroStrategy yang skalabel dengan dukungan ahli dari Central Data Technology."
+    },
+    "/nodeflux/": {
+        "url": "https://www.centraldatatech.com/nodeflux/",
+        "path": "/nodeflux/",
+        "title": "Nodeflux - Central Data Technology",
+        "description": "Transform vision into insight. Leverage Nodeflux artificial intelligence-powered video analytics for smarter and more secure operations with Central Data Technology."
+    },
+    "/id/nodeflux/": {
+        "url": "https://www.centraldatatech.com/id/nodeflux/",
+        "path": "/id/nodeflux/",
+        "title": "Nodeflux - Central Data Technology",
+        "description": "Ubah visi menjadi wawasan. Optimalkan operasi yang lebih cerdas dan aman dengan video analytics berbasis kecerdasan buatan dari Nodeflux melalui Central Data Technology."
+    },
+    "/pentaho/": {
+        "url": "https://www.centraldatatech.com/pentaho/",
+        "path": "/pentaho/",
+        "title": "Pentaho - Central Data Technology",
+        "description": "Fast track your data strategy. Use Pentaho visual data integration and analytics tools to accelerate insights with seamless support from Central Data Technology."
+    },
+    "/id/pentaho/": {
+        "url": "https://www.centraldatatech.com/id/pentaho/",
+        "path": "/id/pentaho/",
+        "title": "Pentaho - Central Data Technology",
+        "description": "Percepat strategi data Anda. Gunakan alat integrasi data visual dan analitik dari Pentaho untuk mempercepat insight dengan dukungan lancar dari Central Data Technology."
+    },
+    "/akamai/": {
+        "url": "https://www.centraldatatech.com/akamai/",
+        "path": "/akamai/",
+        "title": "Akamai - Central Data Technology",
+        "description": "Enhance performance and security with Akamai’s cloud, security, and content delivery solutions. CDT, an Advanced Authorized Partner in Indonesia, offers expert local support."
+    },
+    "/id/akamai/": {
+        "url": "https://www.centraldatatech.com/id/akamai/",
+        "path": "/id/akamai/",
+        "title": "Akamai - Central Data Technology",
+        "description": "Tingkatkan kinerja dan keamanan dengan solusi cloud, keamanan, dan pengiriman konten Akamai. CDT, Authorized Partner Akamai di Indonesia, menyediakan dukungan lokal ahli."
+    },
+    "/nebula-cloud-console/": {
+        "url": "https://www.centraldatatech.com/nebula-cloud-console/",
+        "path": "/nebula-cloud-console/",
+        "title": "Nebula Cloud Console (NCC) | Cloud Management Platform - Central Data Technology",
+        "description": "Simplify cloud management with CDT's Nebula Cloud Console (NCC). Get a single dashboard for multi-cloud control, cost optimization, and expert support."
+    },
+    "/id/nebula-cloud-console/": {
+        "url": "https://www.centraldatatech.com/id/nebula-cloud-console/",
+        "path": "/id/nebula-cloud-console/",
+        "title": "Nebula Cloud Console (NCC) | Platform Manajemen Cloud - Central Data Technology",
+        "description": "Sederhanakan manajemen cloud Anda dengan Nebula Cloud Console (NCC) dari CDT. Dapatkan satu dashboard untuk kontrol multi-cloud, optimasi biaya, dan dukungan ahli."
+    },
+    "/id/netgain-systems/": {
+        "url": "https://www.centraldatatech.com/id/netgain-systems/",
+        "path": "/id/netgain-systems/",
+        "title": "NetGain Systems - Central Data Technology",
+        "description": "Optimalkan kinerja bisnis Anda dengan solusi pemantauan IT berbasis AI dari NetGain Systems. Dapatkan insight mendalam dan tingkatkan efisiensi operasional secara real-time."
+    },
+    "/id/netgain-application-performance-management-apm/": {
+        "url": "https://www.centraldatatech.com/id/netgain-application-performance-management-apm/",
+        "path": "/id/netgain-application-performance-management-apm/",
+        "title": "NetGain Application Performance Management (APM) - Central Data Technology",
+        "description": "Tingkatkan kinerja aplikasi dan perbaiki operasional bisnis dengan insights dan data analytics terbaik dari NetGain APM."
+    },
+    "/id/netgain-network-traffic-analytics-nta/": {
+        "url": "https://www.centraldatatech.com/id/netgain-network-traffic-analytics-nta/",
+        "path": "/id/netgain-network-traffic-analytics-nta/",
+        "title": "NetGain Network Traffic Analytics (NTA) - Central Data Technology",
+        "description": "Lacak lalu lintas jaringan secara real-time dengan NetGain, deteksi anomali, optimalkan kinerja, dan dapatkan peringatan langsung untuk meningkatkan kinerja jaringan."
+    },
+    "/id/netgain-network-configuration-monitoring-ncm/": {
+        "url": "https://www.centraldatatech.com/id/netgain-network-configuration-monitoring-ncm/",
+        "path": "/id/netgain-network-configuration-monitoring-ncm/",
+        "title": "NetGain Network Configuration Monitoring (NCM) - Central Data Technology",
+        "description": "Kendalikan konfigurasi jaringan Anda dengan solusi monitoring NetGain yang otomatis, aman, dan siap untuk kepatuhan."
+    },
+    "/id/netgain-security-analytics-siem/": {
+        "url": "https://www.centraldatatech.com/id/netgain-security-analytics-siem/",
+        "path": "/id/netgain-security-analytics-siem/",
+        "title": "NetGain Security Analytics (SIEM) - Central Data Technology",
+        "description": "NetGain SIEM meningkatkan keamanan siber organisasi Anda dengan mendeteksi ancaman, memberikan peringatan real-time, dan memastikan kemudahan penggunaan."
+    },
+    "/id/okta/": {
+        "url": "https://www.centraldatatech.com/id/okta/",
+        "path": "/id/okta/",
+        "title": "Okta - Central Data Technology",
+        "description": "Central Data Technology (CDT) sebagai authorized partner Okta di Indonesia, resmi hadirkan solusi Okta sebagai Employee dan Customer Identity Solution atau sering dikenal Identity and Access Management (IAM), yang berfungsi menambah layer perlindungan data yang diperkuat untuk semua customers atau partner kami."
+    },
+    "/zscaler/": {
+        "url": "https://www.centraldatatech.com/zscaler/",
+        "path": "/zscaler/",
+        "title": "Zscaler - Central Data Technology",
+        "description": "Zscaler security solutions is now even stronger with CDT, the first Delivery Services Authorized (DSA) certified partner in Indonesia. Get reliable and efficient Zscaler deployment services tailored for your organization."
+    },
+    "/id/zscaler/": {
+        "url": "https://www.centraldatatech.com/id/zscaler/",
+        "path": "/id/zscaler/",
+        "title": "Zscaler - Central Data Technology",
+        "description": "Solusi keamanan dari Zscaler kini lebih optimal dengan CDT, partner pertama di Indonesia yang tersertifikasi Delivery Services Authorized (DSA). Dapatkan zscaler deployment services Indonesia yang aman dan efisien."
+    },
+    "/id/": {
+        "url": "https://www.centraldatatech.com/id/",
+        "path": "/id/",
+        "title": "Konsultan IT Tepercaya untuk Pertumbuhan Bisnis yang Aman dan Berkelanjutan - Central Data Technology",
+        "description": "Tingkatkan pertumbuhan bisnis lebih cepat bersama konsultan IT andal dan solusi IT lengkap dari Central Data Technology."
+    },
+    "/netgain-systems/": {
+        "url": "https://www.centraldatatech.com/netgain-systems/",
+        "path": "/netgain-systems/",
+        "title": "NetGain Systems - Central Data Technology",
+        "description": "Discover AI-driven IT monitoring solutions by NetGain Systems. Enhance operational efficiency, gain real-time insights, and optimize business performance with advanced monitoring tools."
+    },
+    "/netgain-application-performance-management-apm/": {
+        "url": "https://www.centraldatatech.com/netgain-application-performance-management-apm/",
+        "path": "/netgain-application-performance-management-apm/",
+        "title": "NetGain Application Performance Management (APM) - Central Data Technology",
+        "description": "Improve application performance and streamline business operations with NetGain APM's powerful insights and data analytics."
+    },
+    "/netgain-network-traffic-analytics-nta/": {
+        "url": "https://www.centraldatatech.com/netgain-network-traffic-analytics-nta/",
+        "path": "/netgain-network-traffic-analytics-nta/",
+        "title": "NetGain Network Traffic Analytics (NTA) - Central Data Technology",
+        "description": "Track and analyze network traffic with NetGain, real-time alerts, reports, and insights to detect anomalies and optimize performance."
+    },
+    "/netgain-network-configuration-monitoring-ncm/": {
+        "url": "https://www.centraldatatech.com/netgain-network-configuration-monitoring-ncm/",
+        "path": "/netgain-network-configuration-monitoring-ncm/",
+        "title": "NetGain Network Configuration Monitoring (NCM) - Central Data Technology",
+        "description": "Take control of your network configurations with NetGain’s automated, secure, and compliance-ready monitoring solution."
+    },
+    "/netgain-security-analytics-siem/": {
+        "url": "https://www.centraldatatech.com/netgain-security-analytics-siem/",
+        "path": "/netgain-security-analytics-siem/",
+        "title": "NetGain Security Analytics (SIEM) - Central Data Technology",
+        "description": "Strengthen your organization's cybersecurity with NetGain's SIEM—advanced threat detection, real-time alerts, and simplified deployment."
+    },
+    "/okta/": {
+        "url": "https://www.centraldatatech.com/okta/",
+        "path": "/okta/",
+        "title": "Okta - Central Data Technology",
+        "description": "As the authorized partner of Okta in the region, Central Data Technology (CDT) provides access to the world’s leading Identity solutions. Okta focuses on Customer and Workforce Identity, enabling secure access and seamless experiences for customers, employees, and partners."
+    },
+    "/hitachi-vantara/": {
+        "url": "https://www.centraldatatech.com/hitachi-vantara/",
+        "path": "/hitachi-vantara/",
+        "title": "Hitachi Vantara - Central Data Technology",
+        "description": "Transform your business with Hitachi Vantara solutions by CDT, Indonesia's authorized distributor. Discover advanced storage, analytics, IoT, cloud, and more."
+    },
+    "/id/hitachi-vantara/": {
+        "url": "https://www.centraldatatech.com/id/hitachi-vantara/",
+        "path": "/id/hitachi-vantara/",
+        "title": "Hitachi Vantara - Central Data Technology",
+        "description": "Transformasi bisnis Anda dengan solusi Hitachi Vantara dari CDT, authorized distributor di Indonesia. Temukan teknologi storage, analitik, IoT, cloud, dan lainnya."
+    },
+    "/amazon-web-services/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/",
+        "path": "/amazon-web-services/",
+        "title": "Amazon Web Services - Central Data Technology",
+        "description": "CDT, an Advanced AWS Partner in Indonesia, delivers secure, scalable, and cost-effective AWS cloud solutions. Optimize your business with expert support, implementation, and managed services."
+    },
+    "/id/amazon-web-services-2/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services-2/",
+        "path": "/id/amazon-web-services-2/",
+        "title": "Amazon Web Services - Central Data Technology",
+        "description": "CDT, Advanced AWS Partner di Indonesia, menghadirkan solusi cloud AWS yang aman, skalabel, dan hemat biaya. Optimalkan bisnis Anda dengan dukungan ahli, implementasi, dan layanan terkelola."
+    }
+}

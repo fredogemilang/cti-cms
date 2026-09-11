@@ -445,10 +445,10 @@ class Page extends Model
 
         // Homepage resolves to root URL, not /home
         if ($slug === 'home' || $this->slug === 'home') {
-            return url($prefix ?: '/');
+            return trailing_slash_url(url($prefix ?: '/'));
         }
 
-        return url($prefix.'/'.$slug);
+        return trailing_slash_url(url($prefix.'/'.$slug));
     }
 
     /**

@@ -133,7 +133,7 @@ class AppServiceProvider extends ServiceProvider
             if ($cptSlug === 'technology-alliance' || $cptSlug === 'tech-products' || $cptSlug === 'products') {
                 $shortUrl = $entry->getUrl();
                 $currentUrl = request()->url();
-                if ($shortUrl !== $currentUrl && ! str_ends_with($currentUrl, '/preview')) {
+                if (rtrim($shortUrl, '/') !== rtrim($currentUrl, '/') && ! str_ends_with($currentUrl, '/preview')) {
                     return $shortUrl;
                 }
             }

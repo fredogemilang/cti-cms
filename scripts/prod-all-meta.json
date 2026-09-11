@@ -1,0 +1,1670 @@
+{
+    "/": {
+        "url": "https://www.centraldatatech.com/",
+        "path": "/",
+        "title": "Trusted IT Consultant for Scalable and Secure Growth - Central Data Technology",
+        "description": "Drive business growth faster with Central Data Technology’s expert IT consultants and end-to-end IT solutions."
+    },
+    "/thank-you-for-subscribing/": {
+        "url": "https://www.centraldatatech.com/thank-you-for-subscribing/",
+        "path": "/thank-you-for-subscribing/",
+        "title": "Thank You for subscribing - Central Data Technology",
+        "description": ""
+    },
+    "/id/blog-news/": {
+        "url": "https://www.centraldatatech.com/id/blog-news/",
+        "path": "/id/blog-news/",
+        "title": "Blog & News - Central Data Technology",
+        "description": ""
+    },
+    "/dynatrace/infrastructure-observability/": {
+        "url": "https://www.centraldatatech.com/dynatrace/infrastructure-observability/",
+        "path": "/dynatrace/infrastructure-observability/",
+        "title": "Infrastructure Observability - Central Data Technology",
+        "description": ""
+    },
+    "/dynatrace/application-observability/": {
+        "url": "https://www.centraldatatech.com/dynatrace/application-observability/",
+        "path": "/dynatrace/application-observability/",
+        "title": "Application Observability - Central Data Technology",
+        "description": ""
+    },
+    "/dynatrace/security-analytics/": {
+        "url": "https://www.centraldatatech.com/dynatrace/security-analytics/",
+        "path": "/dynatrace/security-analytics/",
+        "title": "Security Analytics - Central Data Technology",
+        "description": ""
+    },
+    "/dynatrace/digital-experience/": {
+        "url": "https://www.centraldatatech.com/dynatrace/digital-experience/",
+        "path": "/dynatrace/digital-experience/",
+        "title": "Digital Experience - Central Data Technology",
+        "description": ""
+    },
+    "/dynatrace/business-analytics/": {
+        "url": "https://www.centraldatatech.com/dynatrace/business-analytics/",
+        "path": "/dynatrace/business-analytics/",
+        "title": "Business Analytics - Central Data Technology",
+        "description": ""
+    },
+    "/dynatrace/automations/": {
+        "url": "https://www.centraldatatech.com/dynatrace/automations/",
+        "path": "/dynatrace/automations/",
+        "title": "Automations - Central Data Technology",
+        "description": ""
+    },
+    "/id/dynatrace/analisis-bisnis/": {
+        "url": "https://www.centraldatatech.com/id/dynatrace/analisis-bisnis/",
+        "path": "/id/dynatrace/analisis-bisnis/",
+        "title": "Analisis Bisnis - Central Data Technology",
+        "description": ""
+    },
+    "/id/dynatrace/pengalaman-digital/": {
+        "url": "https://www.centraldatatech.com/id/dynatrace/pengalaman-digital/",
+        "path": "/id/dynatrace/pengalaman-digital/",
+        "title": "Pengalaman Digital - Central Data Technology",
+        "description": ""
+    },
+    "/id/dynatrace/observabilitas-infrastruktur/": {
+        "url": "https://www.centraldatatech.com/id/dynatrace/observabilitas-infrastruktur/",
+        "path": "/id/dynatrace/observabilitas-infrastruktur/",
+        "title": "Observabilitas Infrastruktur - Central Data Technology",
+        "description": ""
+    },
+    "/id/dynatrace/keamanan-aplikasi/": {
+        "url": "https://www.centraldatatech.com/id/dynatrace/keamanan-aplikasi/",
+        "path": "/id/dynatrace/keamanan-aplikasi/",
+        "title": "Keamanan Aplikasi - Central Data Technology",
+        "description": ""
+    },
+    "/id/dynatrace/pemantauan-kinerja-aplikasi/": {
+        "url": "https://www.centraldatatech.com/id/dynatrace/pemantauan-kinerja-aplikasi/",
+        "path": "/id/dynatrace/pemantauan-kinerja-aplikasi/",
+        "title": "Pemantauan Kinerja Aplikasi - Central Data Technology",
+        "description": ""
+    },
+    "/id/dynatrace/otomatisasi/": {
+        "url": "https://www.centraldatatech.com/id/dynatrace/otomatisasi/",
+        "path": "/id/dynatrace/otomatisasi/",
+        "title": "Otomatisasi - Central Data Technology",
+        "description": ""
+    },
+    "/id/terima-kasih/": {
+        "url": "https://www.centraldatatech.com/id/terima-kasih/",
+        "path": "/id/terima-kasih/",
+        "title": "Terima Kasih - Central Data Technology",
+        "description": ""
+    },
+    "/thank-you-submission/": {
+        "url": "https://www.centraldatatech.com/thank-you-submission/",
+        "path": "/thank-you-submission/",
+        "title": "Thank You Submission - Central Data Technology",
+        "description": ""
+    },
+    "/id/privacy-policy/": {
+        "url": "https://www.centraldatatech.com/id/privacy-policy/",
+        "path": "/id/privacy-policy/",
+        "title": "Privacy Policy - Central Data Technology",
+        "description": ""
+    },
+    "/whatsapp-privacy-policy/": {
+        "url": "https://www.centraldatatech.com/whatsapp-privacy-policy/",
+        "path": "/whatsapp-privacy-policy/",
+        "title": "WhatsApp Privacy Policy - Central Data Technology",
+        "description": ""
+    },
+    "/privacy-policy/": {
+        "url": "https://www.centraldatatech.com/privacy-policy/",
+        "path": "/privacy-policy/",
+        "title": "Privacy Policy - Central Data Technology",
+        "description": ""
+    },
+    "/video/": {
+        "url": "https://www.centraldatatech.com/video/",
+        "path": "/video/",
+        "title": "Video - Central Data Technology",
+        "description": ""
+    },
+    "/id/video/": {
+        "url": "https://www.centraldatatech.com/id/video/",
+        "path": "/id/video/",
+        "title": "Video - Central Data Technology",
+        "description": ""
+    },
+    "/contact-us/": {
+        "url": "https://www.centraldatatech.com/contact-us/",
+        "path": "/contact-us/",
+        "title": "Contact Us - Central Data Technology",
+        "description": ""
+    },
+    "/id/kontak-kami/": {
+        "url": "https://www.centraldatatech.com/id/kontak-kami/",
+        "path": "/id/kontak-kami/",
+        "title": "Kontak Kami - Central Data Technology",
+        "description": ""
+    },
+    "/f5/advanced-web-application-firewall/": {
+        "url": "https://www.centraldatatech.com/f5/advanced-web-application-firewall/",
+        "path": "/f5/advanced-web-application-firewall/",
+        "title": "Advanced Web Application Firewall (WAF) - Central Data Technology",
+        "description": ""
+    },
+    "/f5/domain-name-system/": {
+        "url": "https://www.centraldatatech.com/f5/domain-name-system/",
+        "path": "/f5/domain-name-system/",
+        "title": "Domain Name System - Central Data Technology",
+        "description": ""
+    },
+    "/f5/access-policy-manager/": {
+        "url": "https://www.centraldatatech.com/f5/access-policy-manager/",
+        "path": "/f5/access-policy-manager/",
+        "title": "Access Policy Manager - Central Data Technology",
+        "description": ""
+    },
+    "/f5/ssl-orchestrator/": {
+        "url": "https://www.centraldatatech.com/f5/ssl-orchestrator/",
+        "path": "/f5/ssl-orchestrator/",
+        "title": "SSL Orchestrator - Central Data Technology",
+        "description": ""
+    },
+    "/id/f5/local-traffic-manager-ltm/": {
+        "url": "https://www.centraldatatech.com/id/f5/local-traffic-manager-ltm/",
+        "path": "/id/f5/local-traffic-manager-ltm/",
+        "title": "Local Traffic Manager (LTM) - Central Data Technology",
+        "description": ""
+    },
+    "/id/f5/advanced-web-application-firewall-waf/": {
+        "url": "https://www.centraldatatech.com/id/f5/advanced-web-application-firewall-waf/",
+        "path": "/id/f5/advanced-web-application-firewall-waf/",
+        "title": "Advanced Web Application Firewall (WAF) - Central Data Technology",
+        "description": ""
+    },
+    "/id/f5/domain-name-system/": {
+        "url": "https://www.centraldatatech.com/id/f5/domain-name-system/",
+        "path": "/id/f5/domain-name-system/",
+        "title": "Domain Name System - Central Data Technology",
+        "description": ""
+    },
+    "/id/f5/access-policy-manager/": {
+        "url": "https://www.centraldatatech.com/id/f5/access-policy-manager/",
+        "path": "/id/f5/access-policy-manager/",
+        "title": "Access Policy Manager - Central Data Technology",
+        "description": ""
+    },
+    "/id/f5/ssl-orchestrator/": {
+        "url": "https://www.centraldatatech.com/id/f5/ssl-orchestrator/",
+        "path": "/id/f5/ssl-orchestrator/",
+        "title": "SSL Orchestrator - Central Data Technology",
+        "description": ""
+    },
+    "/f5/distributed-cloud-services/": {
+        "url": "https://www.centraldatatech.com/f5/distributed-cloud-services/",
+        "path": "/f5/distributed-cloud-services/",
+        "title": "Distributed Cloud Services - Central Data Technology",
+        "description": "F5 Distributed Cloud Services secures, connects, and manages apps across any cloud with one unified platform. Simplify, protect, and accelerate with CDT."
+    },
+    "/id/f5/distributed-cloud-services/": {
+        "url": "https://www.centraldatatech.com/id/f5/distributed-cloud-services/",
+        "path": "/id/f5/distributed-cloud-services/",
+        "title": "Distributed Cloud Services - Central Data Technology",
+        "description": "F5 Distributed Cloud Services membantu bisnis mengamankan, menghubungkan, dan mengelola aplikasi di berbagai cloud melalui satu platform terpadu. Sederhanakan deployment, kurangi biaya, dan tingkatkan keamanan dengan solusi dari CDT."
+    },
+    "/f5/local-traffic-manager/": {
+        "url": "https://www.centraldatatech.com/f5/local-traffic-manager/",
+        "path": "/f5/local-traffic-manager/",
+        "title": "Local Traffic Manager (LTM) - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/": {
+        "url": "https://www.centraldatatech.com/customer-success/",
+        "path": "/customer-success/",
+        "title": "Customer Success Archive - Central Data Technology",
+        "description": ""
+    },
+    "/id/keberhasilan-pelanggan/": {
+        "url": "https://www.centraldatatech.com/id/keberhasilan-pelanggan/",
+        "path": "/id/keberhasilan-pelanggan/",
+        "title": "Keberhasilan Pelanggan - Central Data Technology",
+        "description": ""
+    },
+    "/id/tentang-kami/": {
+        "url": "https://www.centraldatatech.com/id/tentang-kami/",
+        "path": "/id/tentang-kami/",
+        "title": "Tentang Kami - Central Data Technology",
+        "description": ""
+    },
+    "/about-us/": {
+        "url": "https://www.centraldatatech.com/about-us/",
+        "path": "/about-us/",
+        "title": "About Us - Central Data Technology",
+        "description": ""
+    },
+    "/cloud/cloud-platform/": {
+        "url": "https://www.centraldatatech.com/cloud/cloud-platform/",
+        "path": "/cloud/cloud-platform/",
+        "title": "Cloud Platform - Central Data Technology",
+        "description": ""
+    },
+    "/cloud/": {
+        "url": "https://www.centraldatatech.com/cloud/",
+        "path": "/cloud/",
+        "title": "Cloud - Central Data Technology",
+        "description": ""
+    },
+    "/id/knowledgetedy/": {
+        "url": "https://www.centraldatatech.com/id/knowledgetedy/",
+        "path": "/id/knowledgetedy/",
+        "title": "Knowledge Tedy - Central Data Technology",
+        "description": ""
+    },
+    "/knowledgetedy/": {
+        "url": "https://www.centraldatatech.com/knowledgetedy/",
+        "path": "/knowledgetedy/",
+        "title": "Knowledge Tedy - Central Data Technology",
+        "description": ""
+    },
+    "/id/f5/aplikasi-delivery-and-security-platform/": {
+        "url": "https://www.centraldatatech.com/id/f5/aplikasi-delivery-and-security-platform/",
+        "path": "/id/f5/aplikasi-delivery-and-security-platform/",
+        "title": "Application Delivery dan Security Platform untuk Solusi Keamanan AI - Central Data Technology",
+        "description": "F5 Application Delivery and Security Platform (ADSP) merupakan Solusi Keamanan AI yang menghadirkan platform lengkap untuk Application Delivery dan AI Security dengan performa tinggi, otomasi, dan perlindungan aplikasi menyeluruh."
+    },
+    "/f5/application-delivery-and-security-platform/": {
+        "url": "https://www.centraldatatech.com/f5/application-delivery-and-security-platform/",
+        "path": "/f5/application-delivery-and-security-platform/",
+        "title": "Application Delivery and Security Platform For AI Security Solution - Central Data Technology",
+        "description": "F5 Application Delivery and Security Platform (ADSP) is the AI Security Solution that delivers a complete platform for Application Delivery and AI Security with high performance, automation, and comprehensive application protection."
+    },
+    "/f5/": {
+        "url": "https://www.centraldatatech.com/f5/",
+        "path": "/f5/",
+        "title": "F5 - Central Data Technology",
+        "description": "Secure and optimize your apps with F5 solutions. CDT, Indonesia's authorized distributor, delivers smarter apps with top security, API management, and cloud support."
+    },
+    "/id/f5/": {
+        "url": "https://www.centraldatatech.com/id/f5/",
+        "path": "/id/f5/",
+        "title": "F5 - Central Data Technology",
+        "description": "Amankan dan optimalkan aplikasi Anda dengan solusi F5. CDT, authorized distributor di Indonesia, menghadirkan aplikasi cerdas dengan keamanan tinggi, manajemen API, dan dukungan cloud."
+    },
+    "/tidb-cloud-essentials/": {
+        "url": "https://www.centraldatatech.com/tidb-cloud-essentials/",
+        "path": "/tidb-cloud-essentials/",
+        "title": "TiDB Cloud Essentials - Central Data Technology",
+        "description": "TiDB Cloud Essentials is a fully managed, serverless DBaaS with autoscaling and strong security for production-grade workloads."
+    },
+    "/id/tidb/tidb-cloud-essentials/": {
+        "url": "https://www.centraldatatech.com/id/tidb/tidb-cloud-essentials/",
+        "path": "/id/tidb/tidb-cloud-essentials/",
+        "title": "TiDB Cloud Essentials - Central Data Technology",
+        "description": "TiDB Cloud Essentials adalah DBaaS serverless fully managed dengan autoscaling dan keamanan tinggi untuk workload produksi."
+    },
+    "/tidb-enterprise-self-managed/": {
+        "url": "https://www.centraldatatech.com/tidb-enterprise-self-managed/",
+        "path": "/tidb-enterprise-self-managed/",
+        "title": "TiDB Enterprise (Self-managed) - Central Data Technology",
+        "description": "TiDB Enterprise enables self-managed deployment across cloud or on-prem with full control and distributed scalability."
+    },
+    "/id/tidb/tidb-enterprise-self-managed/": {
+        "url": "https://www.centraldatatech.com/id/tidb/tidb-enterprise-self-managed/",
+        "path": "/id/tidb/tidb-enterprise-self-managed/",
+        "title": "TiDB Enterprise (Self-managed) - Central Data Technology",
+        "description": "TiDB Enterprise memungkinkan deployment mandiri di cloud atau on-prem dengan kontrol penuh dan skalabilitas terdistribusi."
+    },
+    "/tidb/tidb-cloud-dedicated/": {
+        "url": "https://www.centraldatatech.com/tidb/tidb-cloud-dedicated/",
+        "path": "/tidb/tidb-cloud-dedicated/",
+        "title": "TiDB Cloud Dedicated - Central Data Technology",
+        "description": "TiDB Cloud Dedicated delivers enterprise-grade scale, isolated resources, and advanced security for mission-critical deployments."
+    },
+    "/id/tidb/tidb-cloud-dedicated/": {
+        "url": "https://www.centraldatatech.com/id/tidb/tidb-cloud-dedicated/",
+        "path": "/id/tidb/tidb-cloud-dedicated/",
+        "title": "TiDB Cloud Dedicated - Central Data Technology",
+        "description": "TiDB Cloud Dedicated delivers enterprise-grade scale, isolated resources, and advanced security for mission-critical deployments."
+    },
+    "/hitachi/": {
+        "url": "https://www.centraldatatech.com/hitachi/",
+        "path": "/hitachi/",
+        "title": "Hitachi - Central Data Technology",
+        "description": ""
+    },
+    "/id/tidb/": {
+        "url": "https://www.centraldatatech.com/id/tidb/",
+        "path": "/id/tidb/",
+        "title": "TiDB - Central Data Technology",
+        "description": ""
+    },
+    "/tidb/": {
+        "url": "https://www.centraldatatech.com/tidb/",
+        "path": "/tidb/",
+        "title": "TiDB - Central Data Technology",
+        "description": ""
+    },
+    "/entrust/": {
+        "url": "https://www.centraldatatech.com/entrust/",
+        "path": "/entrust/",
+        "title": "Entrust - Central Data Technology",
+        "description": "Strengthen your digital trust environment. Explore Entrust public key infrastructure, hardware-based security systems, and digital identity solutions delivered by Central Data Technology."
+    },
+    "/id/entrust/": {
+        "url": "https://www.centraldatatech.com/id/entrust/",
+        "path": "/id/entrust/",
+        "title": "Entrust - Central Data Technology",
+        "description": "Tingkatkan lingkungan kepercayaan digital Anda. Jelajahi solusi infrastruktur kunci publik, sistem keamanan berbasis perangkat keras, dan identitas digital dari Entrust melalui Central Data Technology."
+    },
+    "/dynatrace/": {
+        "url": "https://www.centraldatatech.com/dynatrace/",
+        "path": "/dynatrace/",
+        "title": "Dynatrace - Central Data Technology",
+        "description": "Simplify IT operations with Dynatrace. CDT, Indonesia's authorized partner, delivers expert implementation and managed services for advanced observability."
+    },
+    "/id/dynatrace/": {
+        "url": "https://www.centraldatatech.com/id/dynatrace/",
+        "path": "/id/dynatrace/",
+        "title": "Dynatrace - Central Data Technology",
+        "description": "Sederhanakan operasional IT Anda dengan Dynatrace. CDT, Authorized Partner Dynatrace di Indonesia, menyediakan implementasi dan layanan pengelolaan ahli untuk observabilitas canggih."
+    },
+    "/microstrategy/": {
+        "url": "https://www.centraldatatech.com/microstrategy/",
+        "path": "/microstrategy/",
+        "title": "MicroStrategy - Central Data Technology",
+        "description": "Unlock actionable insights. Implement MicroStrategy scalable data analytics and mobile business intelligence platforms with expert support from Central Data Technology."
+    },
+    "/id/microstrategy/": {
+        "url": "https://www.centraldatatech.com/id/microstrategy/",
+        "path": "/id/microstrategy/",
+        "title": "MicroStrategy - Central Data Technology",
+        "description": "Manfaatkan wawasan yang dapat ditindaklanjuti. Gunakan platform analitik data dan business intelligence mobile dari MicroStrategy yang skalabel dengan dukungan ahli dari Central Data Technology."
+    },
+    "/nodeflux/": {
+        "url": "https://www.centraldatatech.com/nodeflux/",
+        "path": "/nodeflux/",
+        "title": "Nodeflux - Central Data Technology",
+        "description": "Transform vision into insight. Leverage Nodeflux artificial intelligence-powered video analytics for smarter and more secure operations with Central Data Technology."
+    },
+    "/id/nodeflux/": {
+        "url": "https://www.centraldatatech.com/id/nodeflux/",
+        "path": "/id/nodeflux/",
+        "title": "Nodeflux - Central Data Technology",
+        "description": "Ubah visi menjadi wawasan. Optimalkan operasi yang lebih cerdas dan aman dengan video analytics berbasis kecerdasan buatan dari Nodeflux melalui Central Data Technology."
+    },
+    "/pentaho/": {
+        "url": "https://www.centraldatatech.com/pentaho/",
+        "path": "/pentaho/",
+        "title": "Pentaho - Central Data Technology",
+        "description": "Fast track your data strategy. Use Pentaho visual data integration and analytics tools to accelerate insights with seamless support from Central Data Technology."
+    },
+    "/id/pentaho/": {
+        "url": "https://www.centraldatatech.com/id/pentaho/",
+        "path": "/id/pentaho/",
+        "title": "Pentaho - Central Data Technology",
+        "description": "Percepat strategi data Anda. Gunakan alat integrasi data visual dan analitik dari Pentaho untuk mempercepat insight dengan dukungan lancar dari Central Data Technology."
+    },
+    "/career/": {
+        "url": "https://www.centraldatatech.com/career/",
+        "path": "/career/",
+        "title": "Career - Central Data Technology",
+        "description": ""
+    },
+    "/id/karir/": {
+        "url": "https://www.centraldatatech.com/id/karir/",
+        "path": "/id/karir/",
+        "title": "Karir - Central Data Technology",
+        "description": ""
+    },
+    "/akamai/": {
+        "url": "https://www.centraldatatech.com/akamai/",
+        "path": "/akamai/",
+        "title": "Akamai - Central Data Technology",
+        "description": "Enhance performance and security with Akamai’s cloud, security, and content delivery solutions. CDT, an Advanced Authorized Partner in Indonesia, offers expert local support."
+    },
+    "/akamai/api-application-security/": {
+        "url": "https://www.centraldatatech.com/akamai/api-application-security/",
+        "path": "/akamai/api-application-security/",
+        "title": "API & Application Security - Central Data Technology",
+        "description": ""
+    },
+    "/akamai/akamai-connected-cloud/": {
+        "url": "https://www.centraldatatech.com/akamai/akamai-connected-cloud/",
+        "path": "/akamai/akamai-connected-cloud/",
+        "title": "Akamai Connected Cloud - Central Data Technology",
+        "description": ""
+    },
+    "/id/akamai/": {
+        "url": "https://www.centraldatatech.com/id/akamai/",
+        "path": "/id/akamai/",
+        "title": "Akamai - Central Data Technology",
+        "description": "Tingkatkan kinerja dan keamanan dengan solusi cloud, keamanan, dan pengiriman konten Akamai. CDT, Authorized Partner Akamai di Indonesia, menyediakan dukungan lokal ahli."
+    },
+    "/id/akamai/api-keamanan-aplikasi/": {
+        "url": "https://www.centraldatatech.com/id/akamai/api-keamanan-aplikasi/",
+        "path": "/id/akamai/api-keamanan-aplikasi/",
+        "title": "API & Keamanan Aplikasi - Central Data Technology",
+        "description": ""
+    },
+    "/id/akamai/akamai-connected-cloud/": {
+        "url": "https://www.centraldatatech.com/id/akamai/akamai-connected-cloud/",
+        "path": "/id/akamai/akamai-connected-cloud/",
+        "title": "Akamai Connected Cloud - Central Data Technology",
+        "description": ""
+    },
+    "/hitachi-vantara/disaster-recovery-data-backup-and-data-protection/": {
+        "url": "https://www.centraldatatech.com/hitachi-vantara/disaster-recovery-data-backup-and-data-protection/",
+        "path": "/hitachi-vantara/disaster-recovery-data-backup-and-data-protection/",
+        "title": "Disaster Recovery, Data Backup, and Data Protection - Central Data Technology",
+        "description": ""
+    },
+    "/hitachi-vantara/storage-2/": {
+        "url": "https://www.centraldatatech.com/hitachi-vantara/storage-2/",
+        "path": "/hitachi-vantara/storage-2/",
+        "title": "Storage - Central Data Technology",
+        "description": ""
+    },
+    "/hitachi-vantara/object-storage/": {
+        "url": "https://www.centraldatatech.com/hitachi-vantara/object-storage/",
+        "path": "/hitachi-vantara/object-storage/",
+        "title": "Object Storage - Central Data Technology",
+        "description": ""
+    },
+    "/hitachi-vantara/data-management-and-analytics/": {
+        "url": "https://www.centraldatatech.com/hitachi-vantara/data-management-and-analytics/",
+        "path": "/hitachi-vantara/data-management-and-analytics/",
+        "title": "Data Management and Analytics - Central Data Technology",
+        "description": ""
+    },
+    "/hitachi-vantara/converged-and-hyperconverged-infrastructure/": {
+        "url": "https://www.centraldatatech.com/hitachi-vantara/converged-and-hyperconverged-infrastructure/",
+        "path": "/hitachi-vantara/converged-and-hyperconverged-infrastructure/",
+        "title": "Converged and Hyperconverged Infrastructure - Central Data Technology",
+        "description": ""
+    },
+    "/hitachi-vantara/iot-2/": {
+        "url": "https://www.centraldatatech.com/hitachi-vantara/iot-2/",
+        "path": "/hitachi-vantara/iot-2/",
+        "title": "IoT - Central Data Technology",
+        "description": ""
+    },
+    "/id/hitachi-vantara/perencanaan-pemulihan-bencana/": {
+        "url": "https://www.centraldatatech.com/id/hitachi-vantara/perencanaan-pemulihan-bencana/",
+        "path": "/id/hitachi-vantara/perencanaan-pemulihan-bencana/",
+        "title": "Perencanaan Pemulihan Bencana - Central Data Technology",
+        "description": ""
+    },
+    "/id/hitachi-vantara/keamanan-data/": {
+        "url": "https://www.centraldatatech.com/id/hitachi-vantara/keamanan-data/",
+        "path": "/id/hitachi-vantara/keamanan-data/",
+        "title": "Keamanan Data - Central Data Technology",
+        "description": ""
+    },
+    "/id/hitachi-vantara/object-storage/": {
+        "url": "https://www.centraldatatech.com/id/hitachi-vantara/object-storage/",
+        "path": "/id/hitachi-vantara/object-storage/",
+        "title": "Object Storage - Central Data Technology",
+        "description": ""
+    },
+    "/id/hitachi-vantara/layanan-pengaturan-data/": {
+        "url": "https://www.centraldatatech.com/id/hitachi-vantara/layanan-pengaturan-data/",
+        "path": "/id/hitachi-vantara/layanan-pengaturan-data/",
+        "title": "Layanan Pengaturan Data - Central Data Technology",
+        "description": ""
+    },
+    "/id/hitachi-vantara/hyperconverged-infrastructure/": {
+        "url": "https://www.centraldatatech.com/id/hitachi-vantara/hyperconverged-infrastructure/",
+        "path": "/id/hitachi-vantara/hyperconverged-infrastructure/",
+        "title": "Hyperconverged Infrastructure - Central Data Technology",
+        "description": ""
+    },
+    "/id/hitachi-vantara/manajemen-perangkat-internet-of-things-iot/": {
+        "url": "https://www.centraldatatech.com/id/hitachi-vantara/manajemen-perangkat-internet-of-things-iot/",
+        "path": "/id/hitachi-vantara/manajemen-perangkat-internet-of-things-iot/",
+        "title": "Manajemen Perangkat Internet of Things (IoT) - Central Data Technology",
+        "description": ""
+    },
+    "/nebula-cloud-console/": {
+        "url": "https://www.centraldatatech.com/nebula-cloud-console/",
+        "path": "/nebula-cloud-console/",
+        "title": "Nebula Cloud Console (NCC) | Cloud Management Platform - Central Data Technology",
+        "description": "Simplify cloud management with CDT's Nebula Cloud Console (NCC). Get a single dashboard for multi-cloud control, cost optimization, and expert support."
+    },
+    "/nebula-cloud-console/integrated-notification-alarm-center/": {
+        "url": "https://www.centraldatatech.com/nebula-cloud-console/integrated-notification-alarm-center/",
+        "path": "/nebula-cloud-console/integrated-notification-alarm-center/",
+        "title": "Integrated Notification & Alarm Center - Central Data Technology",
+        "description": ""
+    },
+    "/nebula-cloud-console/cloud-centralized-billing/": {
+        "url": "https://www.centraldatatech.com/nebula-cloud-console/cloud-centralized-billing/",
+        "path": "/nebula-cloud-console/cloud-centralized-billing/",
+        "title": "Cloud Centralized Billing - Central Data Technology",
+        "description": ""
+    },
+    "/nebula-cloud-console/single-dashboard-for-cloud-health-check/": {
+        "url": "https://www.centraldatatech.com/nebula-cloud-console/single-dashboard-for-cloud-health-check/",
+        "path": "/nebula-cloud-console/single-dashboard-for-cloud-health-check/",
+        "title": "Single Dashboard for Cloud Health Check - Central Data Technology",
+        "description": ""
+    },
+    "/nebula-cloud-console/single-dashboard-untuk-support-ticket/": {
+        "url": "https://www.centraldatatech.com/nebula-cloud-console/single-dashboard-untuk-support-ticket/",
+        "path": "/nebula-cloud-console/single-dashboard-untuk-support-ticket/",
+        "title": "Single Dashboard untuk Support Ticket - Central Data Technology",
+        "description": ""
+    },
+    "/nebula-cloud-console/managing-multiple-accounts/": {
+        "url": "https://www.centraldatatech.com/nebula-cloud-console/managing-multiple-accounts/",
+        "path": "/nebula-cloud-console/managing-multiple-accounts/",
+        "title": "Managing Multiple Accounts - Central Data Technology",
+        "description": ""
+    },
+    "/nebula-cloud-console/cost-management-center/": {
+        "url": "https://www.centraldatatech.com/nebula-cloud-console/cost-management-center/",
+        "path": "/nebula-cloud-console/cost-management-center/",
+        "title": "Cost Management​ Center - Central Data Technology",
+        "description": ""
+    },
+    "/nebula-cloud-console/backup-management/": {
+        "url": "https://www.centraldatatech.com/nebula-cloud-console/backup-management/",
+        "path": "/nebula-cloud-console/backup-management/",
+        "title": "Backup Management - Central Data Technology",
+        "description": ""
+    },
+    "/nebula-cloud-console/ease-of-opening-ticket-via-whatsapp/": {
+        "url": "https://www.centraldatatech.com/nebula-cloud-console/ease-of-opening-ticket-via-whatsapp/",
+        "path": "/nebula-cloud-console/ease-of-opening-ticket-via-whatsapp/",
+        "title": "Ease of Opening​ Ticket via Whatsapp​ - Central Data Technology",
+        "description": ""
+    },
+    "/id/nebula-cloud-console/": {
+        "url": "https://www.centraldatatech.com/id/nebula-cloud-console/",
+        "path": "/id/nebula-cloud-console/",
+        "title": "Nebula Cloud Console (NCC) | Platform Manajemen Cloud - Central Data Technology",
+        "description": "Sederhanakan manajemen cloud Anda dengan Nebula Cloud Console (NCC) dari CDT. Dapatkan satu dashboard untuk kontrol multi-cloud, optimasi biaya, dan dukungan ahli."
+    },
+    "/id/nebula-cloud-console/sistem-notifikasi-alarm-terintegrasi/": {
+        "url": "https://www.centraldatatech.com/id/nebula-cloud-console/sistem-notifikasi-alarm-terintegrasi/",
+        "path": "/id/nebula-cloud-console/sistem-notifikasi-alarm-terintegrasi/",
+        "title": "Sistem Notifikasi & Alarm Terintegrasi - Central Data Technology",
+        "description": ""
+    },
+    "/id/nebula-cloud-console/dashboard-pengelolaan-anggaran-cloud-terpusat/": {
+        "url": "https://www.centraldatatech.com/id/nebula-cloud-console/dashboard-pengelolaan-anggaran-cloud-terpusat/",
+        "path": "/id/nebula-cloud-console/dashboard-pengelolaan-anggaran-cloud-terpusat/",
+        "title": "Dashboard Pengelolaan Anggaran Cloud Terpusat - Central Data Technology",
+        "description": ""
+    },
+    "/id/nebula-cloud-console/pusat-bantuan-pemeliharaan-dalam-single-dashboard/": {
+        "url": "https://www.centraldatatech.com/id/nebula-cloud-console/pusat-bantuan-pemeliharaan-dalam-single-dashboard/",
+        "path": "/id/nebula-cloud-console/pusat-bantuan-pemeliharaan-dalam-single-dashboard/",
+        "title": "Pusat Bantuan Pemeliharaan dalam Single Dashboard - Central Data Technology",
+        "description": ""
+    },
+    "/id/nebula-cloud-console/single-dashboard-untuk-pemeriksaan-kesehatan-cloud/": {
+        "url": "https://www.centraldatatech.com/id/nebula-cloud-console/single-dashboard-untuk-pemeriksaan-kesehatan-cloud/",
+        "path": "/id/nebula-cloud-console/single-dashboard-untuk-pemeriksaan-kesehatan-cloud/",
+        "title": "Single Dashboard untuk Pemeriksaan Kesehatan Cloud - Central Data Technology",
+        "description": ""
+    },
+    "/id/nebula-cloud-console/manajemen-pengelolaan-banyak-akun-cloud/": {
+        "url": "https://www.centraldatatech.com/id/nebula-cloud-console/manajemen-pengelolaan-banyak-akun-cloud/",
+        "path": "/id/nebula-cloud-console/manajemen-pengelolaan-banyak-akun-cloud/",
+        "title": "Manajemen Pengelolaan Banyak Akun Cloud - Central Data Technology",
+        "description": ""
+    },
+    "/id/nebula-cloud-console/pusat-manajemen-biaya/": {
+        "url": "https://www.centraldatatech.com/id/nebula-cloud-console/pusat-manajemen-biaya/",
+        "path": "/id/nebula-cloud-console/pusat-manajemen-biaya/",
+        "title": "Pusat Manajemen Biaya - Central Data Technology",
+        "description": ""
+    },
+    "/id/nebula-cloud-console/manajemen-cadangan/": {
+        "url": "https://www.centraldatatech.com/id/nebula-cloud-console/manajemen-cadangan/",
+        "path": "/id/nebula-cloud-console/manajemen-cadangan/",
+        "title": "Manajemen Cadangan - Central Data Technology",
+        "description": ""
+    },
+    "/id/nebula-cloud-console/kemudahan-pembukaan-tiket-melalui-whatsapp/": {
+        "url": "https://www.centraldatatech.com/id/nebula-cloud-console/kemudahan-pembukaan-tiket-melalui-whatsapp/",
+        "path": "/id/nebula-cloud-console/kemudahan-pembukaan-tiket-melalui-whatsapp/",
+        "title": "Kemudahan Pembukaan Tiket melalui Whatsapp - Central Data Technology",
+        "description": ""
+    },
+    "/id/netgain-systems/": {
+        "url": "https://www.centraldatatech.com/id/netgain-systems/",
+        "path": "/id/netgain-systems/",
+        "title": "NetGain Systems - Central Data Technology",
+        "description": "Optimalkan kinerja bisnis Anda dengan solusi pemantauan IT berbasis AI dari NetGain Systems. Dapatkan insight mendalam dan tingkatkan efisiensi operasional secara real-time."
+    },
+    "/id/netgain-application-performance-management-apm/": {
+        "url": "https://www.centraldatatech.com/id/netgain-application-performance-management-apm/",
+        "path": "/id/netgain-application-performance-management-apm/",
+        "title": "NetGain Application Performance Management (APM) - Central Data Technology",
+        "description": "Tingkatkan kinerja aplikasi dan perbaiki operasional bisnis dengan insights dan data analytics terbaik dari NetGain APM."
+    },
+    "/id/netgain-network-traffic-analytics-nta/": {
+        "url": "https://www.centraldatatech.com/id/netgain-network-traffic-analytics-nta/",
+        "path": "/id/netgain-network-traffic-analytics-nta/",
+        "title": "NetGain Network Traffic Analytics (NTA) - Central Data Technology",
+        "description": "Lacak lalu lintas jaringan secara real-time dengan NetGain, deteksi anomali, optimalkan kinerja, dan dapatkan peringatan langsung untuk meningkatkan kinerja jaringan."
+    },
+    "/id/netgain-network-configuration-monitoring-ncm/": {
+        "url": "https://www.centraldatatech.com/id/netgain-network-configuration-monitoring-ncm/",
+        "path": "/id/netgain-network-configuration-monitoring-ncm/",
+        "title": "NetGain Network Configuration Monitoring (NCM) - Central Data Technology",
+        "description": "Kendalikan konfigurasi jaringan Anda dengan solusi monitoring NetGain yang otomatis, aman, dan siap untuk kepatuhan."
+    },
+    "/id/netgain-security-analytics-siem/": {
+        "url": "https://www.centraldatatech.com/id/netgain-security-analytics-siem/",
+        "path": "/id/netgain-security-analytics-siem/",
+        "title": "NetGain Security Analytics (SIEM) - Central Data Technology",
+        "description": "NetGain SIEM meningkatkan keamanan siber organisasi Anda dengan mendeteksi ancaman, memberikan peringatan real-time, dan memastikan kemudahan penggunaan."
+    },
+    "/id/okta/": {
+        "url": "https://www.centraldatatech.com/id/okta/",
+        "path": "/id/okta/",
+        "title": "Okta - Central Data Technology",
+        "description": "Central Data Technology (CDT) sebagai authorized partner Okta di Indonesia, resmi hadirkan solusi Okta sebagai Employee dan Customer Identity Solution atau sering dikenal Identity and Access Management (IAM), yang berfungsi menambah layer perlindungan data yang diperkuat untuk semua customers atau partner kami."
+    },
+    "/id/okta/okta-lifecycle-management/": {
+        "url": "https://www.centraldatatech.com/id/okta/okta-lifecycle-management/",
+        "path": "/id/okta/okta-lifecycle-management/",
+        "title": "Okta Lifecycle Management - Central Data Technology",
+        "description": ""
+    },
+    "/id/okta/okta-access-gateway/": {
+        "url": "https://www.centraldatatech.com/id/okta/okta-access-gateway/",
+        "path": "/id/okta/okta-access-gateway/",
+        "title": "Okta Access Gateway - Central Data Technology",
+        "description": ""
+    },
+    "/id/okta/okta-api-access-management/": {
+        "url": "https://www.centraldatatech.com/id/okta/okta-api-access-management/",
+        "path": "/id/okta/okta-api-access-management/",
+        "title": "Okta API Access Management - Central Data Technology",
+        "description": ""
+    },
+    "/id/okta/okta-identity-governance/": {
+        "url": "https://www.centraldatatech.com/id/okta/okta-identity-governance/",
+        "path": "/id/okta/okta-identity-governance/",
+        "title": "Okta Identity Governance - Central Data Technology",
+        "description": ""
+    },
+    "/id/okta/okta-multi-factor-authentication-mfa/": {
+        "url": "https://www.centraldatatech.com/id/okta/okta-multi-factor-authentication-mfa/",
+        "path": "/id/okta/okta-multi-factor-authentication-mfa/",
+        "title": "Okta Multi-Factor Authentication (MFA) - Central Data Technology",
+        "description": ""
+    },
+    "/id/okta/okta-privileged-access/": {
+        "url": "https://www.centraldatatech.com/id/okta/okta-privileged-access/",
+        "path": "/id/okta/okta-privileged-access/",
+        "title": "Okta Privileged Access - Central Data Technology",
+        "description": ""
+    },
+    "/id/okta/okta-single-sign-on-sso/": {
+        "url": "https://www.centraldatatech.com/id/okta/okta-single-sign-on-sso/",
+        "path": "/id/okta/okta-single-sign-on-sso/",
+        "title": "Okta Single Sign-On (SSO) - Central Data Technology",
+        "description": ""
+    },
+    "/id/okta/okta-universal-directory/": {
+        "url": "https://www.centraldatatech.com/id/okta/okta-universal-directory/",
+        "path": "/id/okta/okta-universal-directory/",
+        "title": "Okta Universal Directory - Central Data Technology",
+        "description": ""
+    },
+    "/id/okta/okta-workflows/": {
+        "url": "https://www.centraldatatech.com/id/okta/okta-workflows/",
+        "path": "/id/okta/okta-workflows/",
+        "title": "Okta Workflows - Central Data Technology",
+        "description": ""
+    },
+    "/zscaler/": {
+        "url": "https://www.centraldatatech.com/zscaler/",
+        "path": "/zscaler/",
+        "title": "Zscaler - Central Data Technology",
+        "description": "Zscaler security solutions is now even stronger with CDT, the first Delivery Services Authorized (DSA) certified partner in Indonesia. Get reliable and efficient Zscaler deployment services tailored for your organization."
+    },
+    "/zscaler/secure-internet-access/": {
+        "url": "https://www.centraldatatech.com/zscaler/secure-internet-access/",
+        "path": "/zscaler/secure-internet-access/",
+        "title": "Secure Internet Access - Central Data Technology",
+        "description": ""
+    },
+    "/zscaler/secure-private-access/": {
+        "url": "https://www.centraldatatech.com/zscaler/secure-private-access/",
+        "path": "/zscaler/secure-private-access/",
+        "title": "Secure Private Access - Central Data Technology",
+        "description": ""
+    },
+    "/zscaler/digital-experience/": {
+        "url": "https://www.centraldatatech.com/zscaler/digital-experience/",
+        "path": "/zscaler/digital-experience/",
+        "title": "Digital Experience - Central Data Technology",
+        "description": ""
+    },
+    "/zscaler/zscaler-cloud-protection/": {
+        "url": "https://www.centraldatatech.com/zscaler/zscaler-cloud-protection/",
+        "path": "/zscaler/zscaler-cloud-protection/",
+        "title": "Zscaler Cloud Protection - Central Data Technology",
+        "description": ""
+    },
+    "/id/zscaler/": {
+        "url": "https://www.centraldatatech.com/id/zscaler/",
+        "path": "/id/zscaler/",
+        "title": "Zscaler - Central Data Technology",
+        "description": "Solusi keamanan dari Zscaler kini lebih optimal dengan CDT, partner pertama di Indonesia yang tersertifikasi Delivery Services Authorized (DSA). Dapatkan zscaler deployment services Indonesia yang aman dan efisien."
+    },
+    "/id/zscaler/akses-internet-aman-zia/": {
+        "url": "https://www.centraldatatech.com/id/zscaler/akses-internet-aman-zia/",
+        "path": "/id/zscaler/akses-internet-aman-zia/",
+        "title": "Akses Internet Aman (ZIA) - Central Data Technology",
+        "description": ""
+    },
+    "/id/zscaler/akses-pribadi-aman-zpa/": {
+        "url": "https://www.centraldatatech.com/id/zscaler/akses-pribadi-aman-zpa/",
+        "path": "/id/zscaler/akses-pribadi-aman-zpa/",
+        "title": "Akses Pribadi Aman (ZPA) - Central Data Technology",
+        "description": ""
+    },
+    "/id/zscaler/pengalaman-digital-zdx/": {
+        "url": "https://www.centraldatatech.com/id/zscaler/pengalaman-digital-zdx/",
+        "path": "/id/zscaler/pengalaman-digital-zdx/",
+        "title": "Pengalaman Digital (ZDX) - Central Data Technology",
+        "description": ""
+    },
+    "/id/zscaler/zscaler-cloud-protection-zcp/": {
+        "url": "https://www.centraldatatech.com/id/zscaler/zscaler-cloud-protection-zcp/",
+        "path": "/id/zscaler/zscaler-cloud-protection-zcp/",
+        "title": "Zscaler Cloud Protection (ZCP) - Central Data Technology",
+        "description": ""
+    },
+    "/id/": {
+        "url": "https://www.centraldatatech.com/id/",
+        "path": "/id/",
+        "title": "Konsultan IT Tepercaya untuk Pertumbuhan Bisnis yang Aman dan Berkelanjutan - Central Data Technology",
+        "description": "Tingkatkan pertumbuhan bisnis lebih cepat bersama konsultan IT andal dan solusi IT lengkap dari Central Data Technology."
+    },
+    "/netgain-systems/": {
+        "url": "https://www.centraldatatech.com/netgain-systems/",
+        "path": "/netgain-systems/",
+        "title": "NetGain Systems - Central Data Technology",
+        "description": "Discover AI-driven IT monitoring solutions by NetGain Systems. Enhance operational efficiency, gain real-time insights, and optimize business performance with advanced monitoring tools."
+    },
+    "/netgain-application-performance-management-apm/": {
+        "url": "https://www.centraldatatech.com/netgain-application-performance-management-apm/",
+        "path": "/netgain-application-performance-management-apm/",
+        "title": "NetGain Application Performance Management (APM) - Central Data Technology",
+        "description": "Improve application performance and streamline business operations with NetGain APM's powerful insights and data analytics."
+    },
+    "/netgain-network-traffic-analytics-nta/": {
+        "url": "https://www.centraldatatech.com/netgain-network-traffic-analytics-nta/",
+        "path": "/netgain-network-traffic-analytics-nta/",
+        "title": "NetGain Network Traffic Analytics (NTA) - Central Data Technology",
+        "description": "Track and analyze network traffic with NetGain, real-time alerts, reports, and insights to detect anomalies and optimize performance."
+    },
+    "/netgain-network-configuration-monitoring-ncm/": {
+        "url": "https://www.centraldatatech.com/netgain-network-configuration-monitoring-ncm/",
+        "path": "/netgain-network-configuration-monitoring-ncm/",
+        "title": "NetGain Network Configuration Monitoring (NCM) - Central Data Technology",
+        "description": "Take control of your network configurations with NetGain’s automated, secure, and compliance-ready monitoring solution."
+    },
+    "/netgain-security-analytics-siem/": {
+        "url": "https://www.centraldatatech.com/netgain-security-analytics-siem/",
+        "path": "/netgain-security-analytics-siem/",
+        "title": "NetGain Security Analytics (SIEM) - Central Data Technology",
+        "description": "Strengthen your organization's cybersecurity with NetGain's SIEM—advanced threat detection, real-time alerts, and simplified deployment."
+    },
+    "/okta/": {
+        "url": "https://www.centraldatatech.com/okta/",
+        "path": "/okta/",
+        "title": "Okta - Central Data Technology",
+        "description": "As the authorized partner of Okta in the region, Central Data Technology (CDT) provides access to the world’s leading Identity solutions. Okta focuses on Customer and Workforce Identity, enabling secure access and seamless experiences for customers, employees, and partners."
+    },
+    "/okta/okta-lifecycle-management/": {
+        "url": "https://www.centraldatatech.com/okta/okta-lifecycle-management/",
+        "path": "/okta/okta-lifecycle-management/",
+        "title": "Okta Lifecycle Management - Central Data Technology",
+        "description": ""
+    },
+    "/okta/okta-access-gateway/": {
+        "url": "https://www.centraldatatech.com/okta/okta-access-gateway/",
+        "path": "/okta/okta-access-gateway/",
+        "title": "Okta Access Gateway - Central Data Technology",
+        "description": ""
+    },
+    "/okta/okta-api-access-management/": {
+        "url": "https://www.centraldatatech.com/okta/okta-api-access-management/",
+        "path": "/okta/okta-api-access-management/",
+        "title": "Okta API Access Management - Central Data Technology",
+        "description": ""
+    },
+    "/okta/okta-identity-governance/": {
+        "url": "https://www.centraldatatech.com/okta/okta-identity-governance/",
+        "path": "/okta/okta-identity-governance/",
+        "title": "Okta Identity Governance - Central Data Technology",
+        "description": ""
+    },
+    "/okta/okta-multi-factor-authentication-mfa/": {
+        "url": "https://www.centraldatatech.com/okta/okta-multi-factor-authentication-mfa/",
+        "path": "/okta/okta-multi-factor-authentication-mfa/",
+        "title": "Okta Multi-Factor Authentication (MFA) - Central Data Technology",
+        "description": ""
+    },
+    "/okta/okta-privileged-access/": {
+        "url": "https://www.centraldatatech.com/okta/okta-privileged-access/",
+        "path": "/okta/okta-privileged-access/",
+        "title": "Okta Privileged Access - Central Data Technology",
+        "description": ""
+    },
+    "/okta/okta-single-sign-on-sso/": {
+        "url": "https://www.centraldatatech.com/okta/okta-single-sign-on-sso/",
+        "path": "/okta/okta-single-sign-on-sso/",
+        "title": "Okta Single Sign-On (SSO) - Central Data Technology",
+        "description": ""
+    },
+    "/okta/universal-directory/": {
+        "url": "https://www.centraldatatech.com/okta/universal-directory/",
+        "path": "/okta/universal-directory/",
+        "title": "Okta Universal Directory - Central Data Technology",
+        "description": ""
+    },
+    "/okta/okta-workflows/": {
+        "url": "https://www.centraldatatech.com/okta/okta-workflows/",
+        "path": "/okta/okta-workflows/",
+        "title": "Okta Workflows - Central Data Technology",
+        "description": ""
+    },
+    "/hitachi-vantara/": {
+        "url": "https://www.centraldatatech.com/hitachi-vantara/",
+        "path": "/hitachi-vantara/",
+        "title": "Hitachi Vantara - Central Data Technology",
+        "description": "Transform your business with Hitachi Vantara solutions by CDT, Indonesia's authorized distributor. Discover advanced storage, analytics, IoT, cloud, and more."
+    },
+    "/id/hitachi-vantara/": {
+        "url": "https://www.centraldatatech.com/id/hitachi-vantara/",
+        "path": "/id/hitachi-vantara/",
+        "title": "Hitachi Vantara - Central Data Technology",
+        "description": "Transformasi bisnis Anda dengan solusi Hitachi Vantara dari CDT, authorized distributor di Indonesia. Temukan teknologi storage, analitik, IoT, cloud, dan lainnya."
+    },
+    "/amazon-web-services/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/",
+        "path": "/amazon-web-services/",
+        "title": "Amazon Web Services - Central Data Technology",
+        "description": "CDT, an Advanced AWS Partner in Indonesia, delivers secure, scalable, and cost-effective AWS cloud solutions. Optimize your business with expert support, implementation, and managed services."
+    },
+    "/id/amazon-web-services-2/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services-2/",
+        "path": "/id/amazon-web-services-2/",
+        "title": "Amazon Web Services - Central Data Technology",
+        "description": "CDT, Advanced AWS Partner di Indonesia, menghadirkan solusi cloud AWS yang aman, skalabel, dan hemat biaya. Optimalkan bisnis Anda dengan dukungan ahli, implementasi, dan layanan terkelola."
+    },
+    "/amazon-web-services/aws-application-database-migration/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/aws-application-database-migration/",
+        "path": "/amazon-web-services/aws-application-database-migration/",
+        "title": "Application & Database Migration - Central Data Technology",
+        "description": ""
+    },
+    "/amazon-web-services/aws-analytics/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/aws-analytics/",
+        "path": "/amazon-web-services/aws-analytics/",
+        "title": "AWS Analytics - Central Data Technology",
+        "description": ""
+    },
+    "/amazon-web-services/aws-artificial-intelligence/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/aws-artificial-intelligence/",
+        "path": "/amazon-web-services/aws-artificial-intelligence/",
+        "title": "AWS Artificial Intelligence - Central Data Technology",
+        "description": ""
+    },
+    "/amazon-web-services/aws-back-up-disaster-recovery/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/aws-back-up-disaster-recovery/",
+        "path": "/amazon-web-services/aws-back-up-disaster-recovery/",
+        "title": "AWS Back Up & Disaster Recovery - Central Data Technology",
+        "description": ""
+    },
+    "/amazon-web-services/aws-big-data/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/aws-big-data/",
+        "path": "/amazon-web-services/aws-big-data/",
+        "title": "AWS Big Data - Central Data Technology",
+        "description": ""
+    },
+    "/amazon-web-services/aws-cloud-security/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/aws-cloud-security/",
+        "path": "/amazon-web-services/aws-cloud-security/",
+        "title": "AWS Cloud Security - Central Data Technology",
+        "description": ""
+    },
+    "/amazon-web-services/aws-container-microservices/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/aws-container-microservices/",
+        "path": "/amazon-web-services/aws-container-microservices/",
+        "title": "AWS Container Microservices - Central Data Technology",
+        "description": ""
+    },
+    "/amazon-web-services/aws-devops/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/aws-devops/",
+        "path": "/amazon-web-services/aws-devops/",
+        "title": "AWS DevOps - Central Data Technology",
+        "description": ""
+    },
+    "/amazon-web-services/aws-sap/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/aws-sap/",
+        "path": "/amazon-web-services/aws-sap/",
+        "title": "AWS SAP - Central Data Technology",
+        "description": ""
+    },
+    "/amazon-web-services/aws-storage-service/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/aws-storage-service/",
+        "path": "/amazon-web-services/aws-storage-service/",
+        "title": "AWS Storage Service - Central Data Technology",
+        "description": ""
+    },
+    "/amazon-web-services/windows-workload/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services/windows-workload/",
+        "path": "/amazon-web-services/windows-workload/",
+        "title": "AWS Windows Workload - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services/application-database-migration/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services/application-database-migration/",
+        "path": "/id/amazon-web-services/application-database-migration/",
+        "title": "Application & Database Migration - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services/aws-analytics/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services/aws-analytics/",
+        "path": "/id/amazon-web-services/aws-analytics/",
+        "title": "AWS Analytics - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services-2/aws-artificial-intelligence/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services-2/aws-artificial-intelligence/",
+        "path": "/id/amazon-web-services-2/aws-artificial-intelligence/",
+        "title": "AWS Artificial Intelligence - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services/aws-back-up-disaster-recovery/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services/aws-back-up-disaster-recovery/",
+        "path": "/id/amazon-web-services/aws-back-up-disaster-recovery/",
+        "title": "AWS Back Up & Disaster Recovery - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services/aws-big-data/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services/aws-big-data/",
+        "path": "/id/amazon-web-services/aws-big-data/",
+        "title": "AWS Big Data - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services-2/aws-cloud-security/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services-2/aws-cloud-security/",
+        "path": "/id/amazon-web-services-2/aws-cloud-security/",
+        "title": "AWS Cloud Security - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services/aws-container-microservices/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services/aws-container-microservices/",
+        "path": "/id/amazon-web-services/aws-container-microservices/",
+        "title": "AWS Container Microservices - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services/aws-devops/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services/aws-devops/",
+        "path": "/id/amazon-web-services/aws-devops/",
+        "title": "AWS DevOps - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services/aws-sap/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services/aws-sap/",
+        "path": "/id/amazon-web-services/aws-sap/",
+        "title": "AWS SAP - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services/aws-storage-service/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services/aws-storage-service/",
+        "path": "/id/amazon-web-services/aws-storage-service/",
+        "title": "AWS Storage Service - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services/aws-windows-workload/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services/aws-windows-workload/",
+        "path": "/id/amazon-web-services/aws-windows-workload/",
+        "title": "AWS Windows Workload - Central Data Technology",
+        "description": ""
+    },
+    "/about-management/": {
+        "url": "https://www.centraldatatech.com/about-management/",
+        "path": "/about-management/",
+        "title": "About Management - Central Data Technology",
+        "description": ""
+    },
+    "/id/tentang-manajemen/": {
+        "url": "https://www.centraldatatech.com/id/tentang-manajemen/",
+        "path": "/id/tentang-manajemen/",
+        "title": "Tentang Manajemen - Central Data Technology",
+        "description": ""
+    },
+    "/amazon-web-services-cloud-credits/": {
+        "url": "https://www.centraldatatech.com/amazon-web-services-cloud-credits/",
+        "path": "/amazon-web-services-cloud-credits/",
+        "title": "Amazon Web Services Cloud Credits - Central Data Technology",
+        "description": ""
+    },
+    "/id/amazon-web-services-cloud-credits/": {
+        "url": "https://www.centraldatatech.com/id/amazon-web-services-cloud-credits/",
+        "path": "/id/amazon-web-services-cloud-credits/",
+        "title": "Amazon Web Services Cloud Credits - Central Data Technology",
+        "description": ""
+    },
+    "/solution/analytics/business-log-analytics/": {
+        "url": "https://www.centraldatatech.com/solution/analytics/business-log-analytics/",
+        "path": "/solution/analytics/business-log-analytics/",
+        "title": "Business & Log Analytics - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/analytics/business-log-analytics/": {
+        "url": "https://www.centraldatatech.com/id/solution/analytics/business-log-analytics/",
+        "path": "/id/solution/analytics/business-log-analytics/",
+        "title": "Business & Log Analytics - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/analytics/digital-experience-insight/": {
+        "url": "https://www.centraldatatech.com/id/solution/analytics/digital-experience-insight/",
+        "path": "/id/solution/analytics/digital-experience-insight/",
+        "title": "Digital Experience Insight - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/analytics/root-cause-threat-analytics/": {
+        "url": "https://www.centraldatatech.com/id/solution/analytics/root-cause-threat-analytics/",
+        "path": "/id/solution/analytics/root-cause-threat-analytics/",
+        "title": "Root Cause & Threat Analytics - Central Data Technology",
+        "description": ""
+    },
+    "/solution/analytics/digital-experience-insight/": {
+        "url": "https://www.centraldatatech.com/solution/analytics/digital-experience-insight/",
+        "path": "/solution/analytics/digital-experience-insight/",
+        "title": "Digital Experience Insight - Central Data Technology",
+        "description": ""
+    },
+    "/solution/analytics/root-cause-threat-analytics/": {
+        "url": "https://www.centraldatatech.com/solution/analytics/root-cause-threat-analytics/",
+        "path": "/solution/analytics/root-cause-threat-analytics/",
+        "title": "Root Cause & Threat Analytics - Central Data Technology",
+        "description": ""
+    },
+    "/solution/cloud/cloud-migration/": {
+        "url": "https://www.centraldatatech.com/solution/cloud/cloud-migration/",
+        "path": "/solution/cloud/cloud-migration/",
+        "title": "Cloud Migration - Central Data Technology",
+        "description": ""
+    },
+    "/solution/cloud/cloud-platform/": {
+        "url": "https://www.centraldatatech.com/solution/cloud/cloud-platform/",
+        "path": "/solution/cloud/cloud-platform/",
+        "title": "Cloud Platform - Central Data Technology",
+        "description": ""
+    },
+    "/solution/cloud/cloud-security-posture/": {
+        "url": "https://www.centraldatatech.com/solution/cloud/cloud-security-posture/",
+        "path": "/solution/cloud/cloud-security-posture/",
+        "title": "Cloud Security Posture - Central Data Technology",
+        "description": ""
+    },
+    "/solution/cloud/fully-managed-services/": {
+        "url": "https://www.centraldatatech.com/solution/cloud/fully-managed-services/",
+        "path": "/solution/cloud/fully-managed-services/",
+        "title": "Fully Managed Services - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/cloud/cloud-platform/": {
+        "url": "https://www.centraldatatech.com/id/solution/cloud/cloud-platform/",
+        "path": "/id/solution/cloud/cloud-platform/",
+        "title": "Cloud Platform - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/cloud/fully-managed-services/": {
+        "url": "https://www.centraldatatech.com/id/solution/cloud/fully-managed-services/",
+        "path": "/id/solution/cloud/fully-managed-services/",
+        "title": "Fully Managed Services - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/cloud/migrasi-cloud/": {
+        "url": "https://www.centraldatatech.com/id/solution/cloud/migrasi-cloud/",
+        "path": "/id/solution/cloud/migrasi-cloud/",
+        "title": "Migrasi Cloud - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/cloud/postur-keamanan-cloud/": {
+        "url": "https://www.centraldatatech.com/id/solution/cloud/postur-keamanan-cloud/",
+        "path": "/id/solution/cloud/postur-keamanan-cloud/",
+        "title": "Postur Keamanan Cloud - Central Data Technology",
+        "description": ""
+    },
+    "/solution/infrastructure/ai-infrastructure/": {
+        "url": "https://www.centraldatatech.com/solution/infrastructure/ai-infrastructure/",
+        "path": "/solution/infrastructure/ai-infrastructure/",
+        "title": "AI Infrastructure - Central Data Technology",
+        "description": ""
+    },
+    "/solution/infrastructure/enterprise-storage/": {
+        "url": "https://www.centraldatatech.com/solution/infrastructure/enterprise-storage/",
+        "path": "/solution/infrastructure/enterprise-storage/",
+        "title": "Enterprise Storage - Central Data Technology",
+        "description": ""
+    },
+    "/solution/infrastructure/fabric-network/": {
+        "url": "https://www.centraldatatech.com/solution/infrastructure/fabric-network/",
+        "path": "/solution/infrastructure/fabric-network/",
+        "title": "Fabric Network - Central Data Technology",
+        "description": ""
+    },
+    "/solution/infrastructure/server/": {
+        "url": "https://www.centraldatatech.com/solution/infrastructure/server/",
+        "path": "/solution/infrastructure/server/",
+        "title": "Server - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/infrastructure/ai-infrastructure/": {
+        "url": "https://www.centraldatatech.com/id/solution/infrastructure/ai-infrastructure/",
+        "path": "/id/solution/infrastructure/ai-infrastructure/",
+        "title": "AI Infrastructure - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/infrastructure/enterprise-storage/": {
+        "url": "https://www.centraldatatech.com/id/solution/infrastructure/enterprise-storage/",
+        "path": "/id/solution/infrastructure/enterprise-storage/",
+        "title": "Enterprise Storage - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/infrastructure/fabric-network/": {
+        "url": "https://www.centraldatatech.com/id/solution/infrastructure/fabric-network/",
+        "path": "/id/solution/infrastructure/fabric-network/",
+        "title": "Fabric Network - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/infrastructure/server/": {
+        "url": "https://www.centraldatatech.com/id/solution/infrastructure/server/",
+        "path": "/id/solution/infrastructure/server/",
+        "title": "Server - Central Data Technology",
+        "description": ""
+    },
+    "/solution/observability/application/": {
+        "url": "https://www.centraldatatech.com/solution/observability/application/",
+        "path": "/solution/observability/application/",
+        "title": "Application - Central Data Technology",
+        "description": ""
+    },
+    "/solution/observability/infrastructure/": {
+        "url": "https://www.centraldatatech.com/solution/observability/infrastructure/",
+        "path": "/solution/observability/infrastructure/",
+        "title": "Infrastructure - Central Data Technology",
+        "description": ""
+    },
+    "/solution/observability/network/": {
+        "url": "https://www.centraldatatech.com/solution/observability/network/",
+        "path": "/solution/observability/network/",
+        "title": "Network - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/observability/application/": {
+        "url": "https://www.centraldatatech.com/id/solution/observability/application/",
+        "path": "/id/solution/observability/application/",
+        "title": "Application - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/observability/infrastructure/": {
+        "url": "https://www.centraldatatech.com/id/solution/observability/infrastructure/",
+        "path": "/id/solution/observability/infrastructure/",
+        "title": "Infrastructure - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/observability/network/": {
+        "url": "https://www.centraldatatech.com/id/solution/observability/network/",
+        "path": "/id/solution/observability/network/",
+        "title": "Network - Central Data Technology",
+        "description": ""
+    },
+    "/solution/security/application-web-security/": {
+        "url": "https://www.centraldatatech.com/solution/security/application-web-security/",
+        "path": "/solution/security/application-web-security/",
+        "title": "Application & Web Security - Central Data Technology",
+        "description": ""
+    },
+    "/solution/security/compliance-siem/": {
+        "url": "https://www.centraldatatech.com/solution/security/compliance-siem/",
+        "path": "/solution/security/compliance-siem/",
+        "title": "Compliance & SIEM - Central Data Technology",
+        "description": ""
+    },
+    "/solution/security/threat-detection-protection/": {
+        "url": "https://www.centraldatatech.com/solution/security/threat-detection-protection/",
+        "path": "/solution/security/threat-detection-protection/",
+        "title": "Threat Detection & Protection - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/security/identity-access-security/": {
+        "url": "https://www.centraldatatech.com/id/solution/security/identity-access-security/",
+        "path": "/id/solution/security/identity-access-security/",
+        "title": "Application & Web Security - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/security/compliance-siem/": {
+        "url": "https://www.centraldatatech.com/id/solution/security/compliance-siem/",
+        "path": "/id/solution/security/compliance-siem/",
+        "title": "Compliance & SIEM - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/security/threat-detection-protection/": {
+        "url": "https://www.centraldatatech.com/id/solution/security/threat-detection-protection/",
+        "path": "/id/solution/security/threat-detection-protection/",
+        "title": "Threat Detection & Protection - Central Data Technology",
+        "description": ""
+    },
+    "/solution/security/identity-access-security/": {
+        "url": "https://www.centraldatatech.com/solution/security/identity-access-security/",
+        "path": "/solution/security/identity-access-security/",
+        "title": "Application & Web Security - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/security/identity-access-security-2/": {
+        "url": "https://www.centraldatatech.com/id/solution/security/identity-access-security-2/",
+        "path": "/id/solution/security/identity-access-security-2/",
+        "title": "Identity & Access Security - Central Data Technology",
+        "description": ""
+    },
+    "/solution/cloud/": {
+        "url": "https://www.centraldatatech.com/solution/cloud/",
+        "path": "/solution/cloud/",
+        "title": "Cloud - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/cloud/": {
+        "url": "https://www.centraldatatech.com/id/solution/cloud/",
+        "path": "/id/solution/cloud/",
+        "title": "Cloud - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/analytics/": {
+        "url": "https://www.centraldatatech.com/id/solution/analytics/",
+        "path": "/id/solution/analytics/",
+        "title": "Analytics - Central Data Technology",
+        "description": ""
+    },
+    "/solution/analytics/": {
+        "url": "https://www.centraldatatech.com/solution/analytics/",
+        "path": "/solution/analytics/",
+        "title": "Analytics - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/infrastructure/": {
+        "url": "https://www.centraldatatech.com/id/solution/infrastructure/",
+        "path": "/id/solution/infrastructure/",
+        "title": "Infrastructure - Central Data Technology",
+        "description": ""
+    },
+    "/solution/infrastructure/": {
+        "url": "https://www.centraldatatech.com/solution/infrastructure/",
+        "path": "/solution/infrastructure/",
+        "title": "Infrastructure - Central Data Technology",
+        "description": ""
+    },
+    "/solution/observability/": {
+        "url": "https://www.centraldatatech.com/solution/observability/",
+        "path": "/solution/observability/",
+        "title": "Observability - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/observability/": {
+        "url": "https://www.centraldatatech.com/id/solution/observability/",
+        "path": "/id/solution/observability/",
+        "title": "Observability - Central Data Technology",
+        "description": ""
+    },
+    "/solution/security/": {
+        "url": "https://www.centraldatatech.com/solution/security/",
+        "path": "/solution/security/",
+        "title": "Security - Central Data Technology",
+        "description": ""
+    },
+    "/id/solution/security/": {
+        "url": "https://www.centraldatatech.com/id/solution/security/",
+        "path": "/id/solution/security/",
+        "title": "Security - Central Data Technology",
+        "description": ""
+    },
+    "/industry/telecomunication-service-provider/": {
+        "url": "https://www.centraldatatech.com/industry/telecomunication-service-provider/",
+        "path": "/industry/telecomunication-service-provider/",
+        "title": "Telecomunication (Service provider) - Central Data Technology",
+        "description": ""
+    },
+    "/industry/educations/": {
+        "url": "https://www.centraldatatech.com/industry/educations/",
+        "path": "/industry/educations/",
+        "title": "Educations - Central Data Technology",
+        "description": ""
+    },
+    "/id/industry/pendidikan/": {
+        "url": "https://www.centraldatatech.com/id/industry/pendidikan/",
+        "path": "/id/industry/pendidikan/",
+        "title": "Pendidikan - Central Data Technology",
+        "description": ""
+    },
+    "/industry/financial-banking/": {
+        "url": "https://www.centraldatatech.com/industry/financial-banking/",
+        "path": "/industry/financial-banking/",
+        "title": "Financial / Banking - Central Data Technology",
+        "description": ""
+    },
+    "/id/industry/keuangan-perbankan/": {
+        "url": "https://www.centraldatatech.com/id/industry/keuangan-perbankan/",
+        "path": "/id/industry/keuangan-perbankan/",
+        "title": "Keuangan / Perbankan - Central Data Technology",
+        "description": ""
+    },
+    "/id/industry/kesehatan/": {
+        "url": "https://www.centraldatatech.com/id/industry/kesehatan/",
+        "path": "/id/industry/kesehatan/",
+        "title": "Kesehatan - Central Data Technology",
+        "description": ""
+    },
+    "/industry/healthcare/": {
+        "url": "https://www.centraldatatech.com/industry/healthcare/",
+        "path": "/industry/healthcare/",
+        "title": "Healthcare - Central Data Technology",
+        "description": ""
+    },
+    "/industry/insurance/": {
+        "url": "https://www.centraldatatech.com/industry/insurance/",
+        "path": "/industry/insurance/",
+        "title": "Insurance - Central Data Technology",
+        "description": ""
+    },
+    "/id/industry/asuransi/": {
+        "url": "https://www.centraldatatech.com/id/industry/asuransi/",
+        "path": "/id/industry/asuransi/",
+        "title": "Asuransi - Central Data Technology",
+        "description": ""
+    },
+    "/id/industry/manufaktur/": {
+        "url": "https://www.centraldatatech.com/id/industry/manufaktur/",
+        "path": "/id/industry/manufaktur/",
+        "title": "Manufaktur - Central Data Technology",
+        "description": ""
+    },
+    "/industry/manufacture/": {
+        "url": "https://www.centraldatatech.com/industry/manufacture/",
+        "path": "/industry/manufacture/",
+        "title": "Manufacture - Central Data Technology",
+        "description": ""
+    },
+    "/industry/media/": {
+        "url": "https://www.centraldatatech.com/industry/media/",
+        "path": "/industry/media/",
+        "title": "Media - Central Data Technology",
+        "description": ""
+    },
+    "/id/industry/media/": {
+        "url": "https://www.centraldatatech.com/id/industry/media/",
+        "path": "/id/industry/media/",
+        "title": "Media - Central Data Technology",
+        "description": ""
+    },
+    "/industry/public-sector/": {
+        "url": "https://www.centraldatatech.com/industry/public-sector/",
+        "path": "/industry/public-sector/",
+        "title": "Public Sector - Central Data Technology",
+        "description": ""
+    },
+    "/id/industry/sektor-publik/": {
+        "url": "https://www.centraldatatech.com/id/industry/sektor-publik/",
+        "path": "/id/industry/sektor-publik/",
+        "title": "Sektor Publik - Central Data Technology",
+        "description": ""
+    },
+    "/id/industry/telekomunikasi-penyedia-layanan/": {
+        "url": "https://www.centraldatatech.com/id/industry/telekomunikasi-penyedia-layanan/",
+        "path": "/id/industry/telekomunikasi-penyedia-layanan/",
+        "title": "Telekomunikasi (Penyedia Layanan) - Central Data Technology",
+        "description": ""
+    },
+    "/industry/ecommerce/": {
+        "url": "https://www.centraldatatech.com/industry/ecommerce/",
+        "path": "/industry/ecommerce/",
+        "title": "Ecommerce - Central Data Technology",
+        "description": ""
+    },
+    "/id/industry/ecommerce/": {
+        "url": "https://www.centraldatatech.com/id/industry/ecommerce/",
+        "path": "/id/industry/ecommerce/",
+        "title": "Ecommerce - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/riors/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/riors/",
+        "path": "/id/customer-success/riors/",
+        "title": "RIORS - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/pt-wagon-dagang-indonesia-wagon/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/pt-wagon-dagang-indonesia-wagon/",
+        "path": "/id/customer-success/pt-wagon-dagang-indonesia-wagon/",
+        "title": "PT Wagon Dagang Indonesia (Wagon) - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/ungu-in/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/ungu-in/",
+        "path": "/id/customer-success/ungu-in/",
+        "title": "Ungu.in - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/pt-cranium-royal-aditama/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/pt-cranium-royal-aditama/",
+        "path": "/id/customer-success/pt-cranium-royal-aditama/",
+        "title": "PT Cranium Royal Aditama - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/enesis-group/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/enesis-group/",
+        "path": "/id/customer-success/enesis-group/",
+        "title": "Enesis Group - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/vanaya-co/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/vanaya-co/",
+        "path": "/id/customer-success/vanaya-co/",
+        "title": "Vanaya & Co - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/pt-kirana-megatara/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/pt-kirana-megatara/",
+        "path": "/id/customer-success/pt-kirana-megatara/",
+        "title": "PT Kirana Megatara - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/landmark-retail-trading-max-fashion/": {
+        "url": "https://www.centraldatatech.com/customer-success/landmark-retail-trading-max-fashion/",
+        "path": "/customer-success/landmark-retail-trading-max-fashion/",
+        "title": "Landmark Retail Trading (MAX Fashion) - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-rapid-infrastruktur/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-rapid-infrastruktur/",
+        "path": "/customer-success/pt-rapid-infrastruktur/",
+        "title": "PT Rapid Infrastruktur - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-mitra-pinasthika-mustika-tbk/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-mitra-pinasthika-mustika-tbk/",
+        "path": "/customer-success/pt-mitra-pinasthika-mustika-tbk/",
+        "title": "PT Mitra Pinasthika Mustika, Tbk - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/riors/": {
+        "url": "https://www.centraldatatech.com/customer-success/riors/",
+        "path": "/customer-success/riors/",
+        "title": "RIORS - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-wagon-dagang-indonesia-wagon/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-wagon-dagang-indonesia-wagon/",
+        "path": "/customer-success/pt-wagon-dagang-indonesia-wagon/",
+        "title": "PT Wagon Dagang Indonesia (Wagon) - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/ungu-in/": {
+        "url": "https://www.centraldatatech.com/customer-success/ungu-in/",
+        "path": "/customer-success/ungu-in/",
+        "title": "Ungu.in - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-cranium-royal-aditama/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-cranium-royal-aditama/",
+        "path": "/customer-success/pt-cranium-royal-aditama/",
+        "title": "PT Cranium Royal Aditama - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/enesis-group/": {
+        "url": "https://www.centraldatatech.com/customer-success/enesis-group/",
+        "path": "/customer-success/enesis-group/",
+        "title": "Enesis Group - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-indo-media-investama-gaspol-by-imi/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-indo-media-investama-gaspol-by-imi/",
+        "path": "/customer-success/pt-indo-media-investama-gaspol-by-imi/",
+        "title": "PT. Indo Media Investama (Gaspol! by IMI) - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/vanaya-co/": {
+        "url": "https://www.centraldatatech.com/customer-success/vanaya-co/",
+        "path": "/customer-success/vanaya-co/",
+        "title": "Vanaya & Co - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-urun-bangun-negeri/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-urun-bangun-negeri/",
+        "path": "/customer-success/pt-urun-bangun-negeri/",
+        "title": "PT URUN BANGUN NEGERI - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/pt-urun-bangun-negeri/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/pt-urun-bangun-negeri/",
+        "path": "/id/customer-success/pt-urun-bangun-negeri/",
+        "title": "PT URUN BANGUN NEGERI - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-gema-graha-sarana-vivere-group/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-gema-graha-sarana-vivere-group/",
+        "path": "/customer-success/pt-gema-graha-sarana-vivere-group/",
+        "title": "PT Gema Graha Sarana (VIVERE Group) - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/pt-gema-graha-sarana-vivere-group/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/pt-gema-graha-sarana-vivere-group/",
+        "path": "/id/customer-success/pt-gema-graha-sarana-vivere-group/",
+        "title": "PT Gema Graha Sarana (VIVERE Group) - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/panorama-hospitality-management/": {
+        "url": "https://www.centraldatatech.com/customer-success/panorama-hospitality-management/",
+        "path": "/customer-success/panorama-hospitality-management/",
+        "title": "Panorama Hospitality Management - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/yayasan-mandalahayu/": {
+        "url": "https://www.centraldatatech.com/customer-success/yayasan-mandalahayu/",
+        "path": "/customer-success/yayasan-mandalahayu/",
+        "title": "Yayasan Mandalahayu - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/yayasan-mandalahayu/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/yayasan-mandalahayu/",
+        "path": "/id/customer-success/yayasan-mandalahayu/",
+        "title": "Yayasan Mandalahayu - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/kpn-corp/": {
+        "url": "https://www.centraldatatech.com/customer-success/kpn-corp/",
+        "path": "/customer-success/kpn-corp/",
+        "title": "KPN-Corp - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/kpn-corp/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/kpn-corp/",
+        "path": "/id/customer-success/kpn-corp/",
+        "title": "KPN-Corp - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/pt-mitra-pinasthika-mustika-tbk/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/pt-mitra-pinasthika-mustika-tbk/",
+        "path": "/id/customer-success/pt-mitra-pinasthika-mustika-tbk/",
+        "title": "PT Mitra Pinasthika Mustika, Tbk - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/pt-logisklik-gemilang-indonesia/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/pt-logisklik-gemilang-indonesia/",
+        "path": "/id/customer-success/pt-logisklik-gemilang-indonesia/",
+        "title": "PT Logisklik Gemilang Indonesia - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/pt-rapid-infrastruktur/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/pt-rapid-infrastruktur/",
+        "path": "/id/customer-success/pt-rapid-infrastruktur/",
+        "title": "PT Rapid Infrastruktur - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/landmark-retail-trading-max-fashion-2/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/landmark-retail-trading-max-fashion-2/",
+        "path": "/id/customer-success/landmark-retail-trading-max-fashion-2/",
+        "title": "Landmark Retail Trading (MAX Fashion) - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-kirana-megatara/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-kirana-megatara/",
+        "path": "/customer-success/pt-kirana-megatara/",
+        "title": "PT Kirana Megatara - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-logisklik-gemilang-indonesia-en/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-logisklik-gemilang-indonesia-en/",
+        "path": "/customer-success/pt-logisklik-gemilang-indonesia-en/",
+        "title": "PT Logisklik Gemilang Indonesia - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/pt-tri-adi-bersama-anteraja/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/pt-tri-adi-bersama-anteraja/",
+        "path": "/id/customer-success/pt-tri-adi-bersama-anteraja/",
+        "title": "PT Tri Adi Bersama (Anteraja) - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-tri-adi-bersama-anteraja/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-tri-adi-bersama-anteraja/",
+        "path": "/customer-success/pt-tri-adi-bersama-anteraja/",
+        "title": "PT Tri Adi Bersama (Anteraja) - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/pt-combiphar/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/pt-combiphar/",
+        "path": "/id/customer-success/pt-combiphar/",
+        "title": "PT Combiphar - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-combiphar/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-combiphar/",
+        "path": "/customer-success/pt-combiphar/",
+        "title": "PT Combiphar - Central Data Technology",
+        "description": ""
+    },
+    "/id/customer-success/pt-egeroo-inovasi-teknologi/": {
+        "url": "https://www.centraldatatech.com/id/customer-success/pt-egeroo-inovasi-teknologi/",
+        "path": "/id/customer-success/pt-egeroo-inovasi-teknologi/",
+        "title": "PT. Egeroo Inovasi Teknologi - Central Data Technology",
+        "description": ""
+    },
+    "/customer-success/pt-egeroo-inovasi-teknologi/": {
+        "url": "https://www.centraldatatech.com/customer-success/pt-egeroo-inovasi-teknologi/",
+        "path": "/customer-success/pt-egeroo-inovasi-teknologi/",
+        "title": "PT. Egeroo Inovasi Teknologi - Central Data Technology",
+        "description": ""
+    }
+}

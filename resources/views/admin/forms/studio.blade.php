@@ -13,7 +13,7 @@
 
     $sendToUser = $notifications['send_to_user'] ?? false;
     $userSubject = $notifications['user_subject'] ?? "Thank you for your submission - {$form->name}";
-    $userEmailBody = $notifications['user_email_body'] ?? "<p>Hi {name},</p><p>Thank you for submitting <strong>{form_name}</strong>. We have received your details and will get back to you shortly.</p><p><a href=\"https://cdt.devs/themes/cdt/assets/banner_hero-DHYDqbF8.jpg\" style=\"display: inline-block; background-color: #b82d25; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 9999px; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;\">Download Digital Solution Guide</a></p><p>Best regards,<br>Central Data Technology Team</p>";
+    $userEmailBody = $notifications['user_email_body'] ?? ("<p>Hi {name},</p><p>Thank you for submitting <strong>{form_name}</strong>. We have received your details and will get back to you shortly.</p><p><a href=\"".url('themes/cdt/assets/banner_hero-DHYDqbF8.jpg')."\" style=\"display: inline-block; background-color: #b82d25; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 9999px; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;\">Download Digital Solution Guide</a></p><p>Best regards,<br>Central Data Technology Team</p>");
 
     $confirmations = $form->confirmations ?? [];
     $confirmationType = $confirmations['type'] ?? 'message';
@@ -365,7 +365,7 @@
             </div>
 
             {{-- Action Buttons --}}
-            <a href="https://cdt.devs/" target="_blank" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all flex items-center gap-1.5" title="Frontend Preview">
+            <a href="{{ url('/') }}" target="_blank" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all flex items-center gap-1.5" title="Frontend Preview">
                 <span class="material-symbols-outlined text-sm">open_in_new</span>
                 <span class="hidden lg:inline">Preview</span>
             </a>
@@ -722,7 +722,7 @@
 
                     <div x-show="confirmationType === 'redirect'" class="space-y-2">
                         <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Redirect URL</label>
-                        <input type="url" name="confirmations[redirect_url]" x-model="redirectUrl" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]" placeholder="https://cdt.devs/thank-you">
+                        <input type="url" name="confirmations[redirect_url]" x-model="redirectUrl" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]" placeholder="{{ url('/thank-you-submission/') }}">
                     </div>
                 </div>
 
@@ -837,7 +837,7 @@
 
                             <button type="button"
                                 @click="
-                                    const url = prompt('Enter File Download URL:', 'https://cdt.devs/themes/cdt/assets/banner_hero-DHYDqbF8.jpg');
+                                    const url = prompt('Enter File Download URL:', '{{ url('themes/cdt/assets/banner_hero-DHYDqbF8.jpg') }}');
                                     const text = prompt('Enter Button Label:', 'Download Digital Solution Guide');
                                     if (url && text) insertDownloadBtn(url, text);
                                 "

@@ -98,10 +98,68 @@ FileETag None
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # Redirect Trailing Slashes If Not A Folder...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
+    # ==========================================
+    # 301 Redirect Map — Legacy URL WordPress → Laravel
+    # WAJIB berada SEBELUM blok "Tambahkan trailing slash".
+    # Pola ^xxx/?$ mencocokkan versi dengan dan tanpa trailing slash sekaligus.
+    # Semua TUJUAN berakhiran '/' sesuai keputusan trailing slash.
+    # ==========================================
+
+    # --- Halaman karier (20 URL, sengaja dihapus — jadi modal) ---
+    RewriteRule ^career/?$ /careers/ [R=301,L]
+    RewriteRule ^careers/(product-specialist-aws|manager-solution-architect|senior-competency-compliance|account-executive|solution-architect-observability|product-specialist-security|solution-architect-aws|cloud-engineer|solution-delivery-infrastructure|team-leader-product)/?$ /careers/ [R=301,L]
+    RewriteRule ^id/careers/(product-specialist-aws|manager-solution-architect|senior-competency-compliance|account-executive|solution-architect-observability|product-specialist-security|solution-architect-aws|cloud-engineer|solution-delivery-infrastructure|team-leader-product)/?$ /id/karir/ [R=301,L]
+
+    # --- Produk NetGain: flat → bersarang ---
+    RewriteRule ^netgain-application-performance-management-apm/?$ /netgain-systems/netgain-systems-netgain-apm/ [R=301,L]
+    RewriteRule ^netgain-network-traffic-analytics-nta/?$ /netgain-systems/netgain-systems-netgain-nta/ [R=301,L]
+    RewriteRule ^netgain-network-configuration-monitoring-ncm/?$ /netgain-systems/netgain-systems-netgain-ncm/ [R=301,L]
+    RewriteRule ^netgain-security-analytics-siem/?$ /netgain-systems/netgain-systems-netgain-siem/ [R=301,L]
+    RewriteRule ^id/netgain-application-performance-management-apm/?$ /id/netgain-systems/netgain-systems-netgain-apm/ [R=301,L]
+    RewriteRule ^id/netgain-network-traffic-analytics-nta/?$ /id/netgain-systems/netgain-systems-netgain-nta/ [R=301,L]
+    RewriteRule ^id/netgain-network-configuration-monitoring-ncm/?$ /id/netgain-systems/netgain-systems-netgain-ncm/ [R=301,L]
+    RewriteRule ^id/netgain-security-analytics-siem/?$ /id/netgain-systems/netgain-systems-netgain-siem/ [R=301,L]
+
+    # --- Produk TiDB: flat → bersarang ---
+    RewriteRule ^tidb-cloud-essentials/?$ /tidb/tidb-cloud-essentials/ [R=301,L]
+    RewriteRule ^tidb-enterprise-self-managed/?$ /tidb/tidb-enterprise-self-managed/ [R=301,L]
+
+    # --- Halaman legacy ---
+    RewriteRule ^cloud/cloud-platform/?$ /solution/cloud/cloud-platform/ [R=301,L]
+    RewriteRule ^cloud/?$ /solution/cloud/ [R=301,L]
+    RewriteRule ^hitachi/?$ /hitachi-vantara/ [R=301,L]
+    # Catatan: /knowledgetedy/ dan /id/knowledgetedy/ TIDAK di-redirect karena dibuat ulang sebagai halaman ramah AI.
+
+    # --- Slug duplikat legacy (suffix -en / -2) ---
+    RewriteRule ^customer-success/pt-logisklik-gemilang-indonesia-en/?$ /customer-success/pt-logisklik-gemilang-indonesia/ [R=301,L]
+    RewriteRule ^id/customer-success/landmark-retail-trading-max-fashion-2/?$ /id/customer-success/landmark-retail-trading-max-fashion/ [R=301,L]
+    RewriteRule ^id/solution/security/identity-access-security-2/?$ /id/solution/security/identity-access-security/ [R=301,L]
+
+    # --- Arsip & slug ID yang berubah ---
+    RewriteRule ^id/keberhasilan-pelanggan/?$ /id/customer-success/ [R=301,L]
+    RewriteRule ^id/amazon-web-services-2/?$ /id/amazon-web-services/ [R=301,L]
+    RewriteRule ^id/dynatrace/pengalaman-digital/?$ /id/dynatrace/digital-experience/ [R=301,L]
+
+    # ==========================================
+    # Tambahkan trailing slash (kebalikan dari bawaan Laravel)
+    # Paritas URL dengan situs WordPress lama: /about-us/ bukan /about-us
+    # ==========================================
+
+    # Jangan sentuh file & direktori fisik (asset, build, storage, dll)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Jangan sentuh endpoint yang memang tidak boleh berakhiran slash
+    RewriteCond %{REQUEST_URI} ^/(ctrlpanel|api|livewire|_deferred|storage|build|themes|vendor)(/|$) [OR]
+    RewriteCond %{REQUEST_URI} ^/(feed|search|lang/|forms/|indexnow-) [OR]
+    RewriteCond %{REQUEST_URI} \.[a-zA-Z0-9]{1,6}$
+    RewriteRule ^ - [L]
+
+    # Sisanya: kalau belum berakhiran '/', tambahkan dengan 301
+    RewriteCond %{REQUEST_URI} !/$
+    RewriteRule ^(.*)$ /$1/ [R=301,L]
+
 
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d

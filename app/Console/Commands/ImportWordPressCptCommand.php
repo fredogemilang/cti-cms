@@ -4,9 +4,11 @@ namespace App\Console\Commands;
 
 use App\Models\CptEntry;
 use App\Models\Media;
+use App\Models\SeoMeta;
 use App\Services\MediaUsageService;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -313,6 +315,8 @@ class ImportWordPressCptCommand extends Command
                     $existing->meta = $meta;
                     $existing->save();
 
+                    $this->syncYoastSeo($existing, $wpPost, $currentLang, $cmsDefaultLocale);
+
                     return 'translated';
                 }
             } else {
@@ -388,6 +392,7 @@ class ImportWordPressCptCommand extends Command
                 $post->forceFill(['created_at' => $publishedAt])->save();
 
                 $this->attachTaxonomies($post, $wpPost);
+                $this->syncYoastSeo($post, $wpPost, $currentLang, $cmsDefaultLocale);
 
                 return 'success';
             }
@@ -426,8 +431,7 @@ class ImportWordPressCptCommand extends Command
             }
 
             $entry->forceFill(['created_at' => $publishedAt])->save();
-
-            return 'success';
+            $this->syncYoastSeo($entry, $wpPost, $currentLang, $cmsDefaultLocale);
 
             return 'success';
 
@@ -578,5 +582,42 @@ class ImportWordPressCptCommand extends Command
                 $post->tags()->syncWithoutDetaching($tagIds);
             }
         }
+    }
+
+    protected function syncYoastSeo(Model $model, array $wpPost, string $lang, string $defaultLocale): void
+    {
+        if (empty($wpPost['yoast_head_json']) || ! is_array($wpPost['yoast_head_json'])) {
+            return;
+        }
+
+        $yoast = $wpPost['yoast_head_json'];
+        $title = isset($yoast['title']) ? html_entity_decode((string) $yoast['title'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : null;
+        $desc = isset($yoast['description']) ? html_entity_decode((string) $yoast['description'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : null;
+        $ogTitle = isset($yoast['og_title']) ? html_entity_decode((string) $yoast['og_title'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : null;
+        $ogDesc = isset($yoast['og_description']) ? html_entity_decode((string) $yoast['og_description'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : null;
+
+        $robots = 'index,follow';
+        if (! empty($yoast['robots']) && is_array($yoast['robots'])) {
+            $index = $yoast['robots']['index'] ?? 'index';
+            $follow = $yoast['robots']['follow'] ?? 'follow';
+            $robots = "{$index},{$follow}";
+        }
+
+        $locale = ($lang === $defaultLocale) ? '' : $lang;
+
+        SeoMeta::updateOrCreate(
+            [
+                'seoable_type' => get_class($model),
+                'seoable_id' => $model->id,
+                'locale' => $locale,
+            ],
+            [
+                'title' => $title,
+                'description' => $desc,
+                'og_title' => $ogTitle,
+                'og_description' => $ogDesc,
+                'robots' => $robots,
+            ]
+        );
     }
 }

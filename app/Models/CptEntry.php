@@ -467,7 +467,7 @@ class CptEntry extends Model
         if ($hierarchicalParent) {
             $parentSlug = $hierarchicalParent->getTranslation('slug', $locale, fallback: true) ?? $hierarchicalParent->slug;
 
-            $url = url($localePrefix.'/'.$cptSlug.'/'.$parentSlug.'/'.$entrySlug);
+            $url = trailing_slash_url(url($localePrefix.'/'.$cptSlug.'/'.$parentSlug.'/'.$entrySlug));
 
             return apply_filters('cpt_entry.url', $url, $this, $locale);
         }
@@ -485,13 +485,13 @@ class CptEntry extends Model
                 $parentCpt = CustomPostType::find($parentRelated->post_type_id);
                 $parentCptSlug = $parentCpt ? $parentCpt->getLocalizedSlug($locale) : $cptSlug;
 
-                $url = url($localePrefix.'/'.$parentCptSlug.'/'.$parentSlug.'/'.$entrySlug);
+                $url = trailing_slash_url(url($localePrefix.'/'.$parentCptSlug.'/'.$parentSlug.'/'.$entrySlug));
 
                 return apply_filters('cpt_entry.url', $url, $this, $locale);
             }
         }
 
-        $url = url($localePrefix.'/'.$cptSlug.'/'.$entrySlug);
+        $url = trailing_slash_url(url($localePrefix.'/'.$cptSlug.'/'.$entrySlug));
 
         return apply_filters('cpt_entry.url', $url, $this, $locale);
     }

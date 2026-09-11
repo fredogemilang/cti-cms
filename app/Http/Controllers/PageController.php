@@ -32,7 +32,7 @@ class PageController extends Controller
         // Enforce canonical localized URL redirect (e.g. /id/about-us -> /id/tentang-kami)
         $canonicalUrl = $page->getUrl(app()->getLocale());
         $currentUrl = request()->url();
-        if ($currentUrl !== $canonicalUrl) {
+        if (rtrim($currentUrl, '/') !== rtrim($canonicalUrl, '/')) {
             $queryString = request()->getQueryString();
 
             return redirect($canonicalUrl.($queryString ? "?{$queryString}" : ''), 301);
