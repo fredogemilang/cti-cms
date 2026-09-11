@@ -144,9 +144,11 @@ FileETag None
     # Tambahkan trailing slash (kebalikan dari bawaan Laravel)
     # Paritas URL dengan situs WordPress lama: /about-us/ bukan /about-us
     # ==========================================
+    # Hanya untuk GET & HEAD agar tidak merusak POST/AJAX/Livewire
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^/(ctrlpanel|api|livewire|_deferred|storage|build|themes|vendor)(/|$)
+    RewriteCond %{REQUEST_URI} !^/(ctrlpanel|api|livewire|_deferred|storage|build|themes|vendor)
     RewriteCond %{REQUEST_URI} !^/(feed|search|lang/|forms/|indexnow-)
     RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]{1,6}$
     RewriteCond %{REQUEST_URI} !/$
