@@ -3,6 +3,7 @@
 namespace Plugins\GoogleSiteKit\Services;
 
 use App\Models\Setting;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -408,113 +409,115 @@ class GoogleApiService
             return $this->getMockSearchFunnel($dateRange);
         }
 
-        $token = $this->getAccessToken();
-        if (! $token) {
-            return $this->getMockSearchFunnel($dateRange);
-        }
-
-        try {
-            $days = $this->getDaysCount($dateRange);
-            $siteUrl = url('/');
-            $encodedSite = urlencode($siteUrl);
-
-            // Fetch Search Console daily points
-            $scRes = Http::withToken($token)
-                ->post("https://www.googleapis.com/webmasters/v3/sites/{$encodedSite}/searchAnalytics/query", [
-                    'startDate' => now()->subDays($days)->toDateString(),
-                    'endDate' => now()->toDateString(),
-                    'dimensions' => ['date'],
-                ]);
-
-            if ($scRes->failed()) {
+        return Cache::remember("gsk_funnel_{$dateRange}", 900, function () use ($dateRange) {
+            $token = $this->getAccessToken();
+            if (! $token) {
                 return $this->getMockSearchFunnel($dateRange);
             }
 
-            $scRows = $scRes->json()['rows'] ?? [];
-            $scDataMap = [];
-            $totalClicks = 0;
-            $totalImpressions = 0;
-            $totalPos = 0;
+            try {
+                $days = $this->getDaysCount($dateRange);
+                $siteUrl = url('/');
+                $encodedSite = urlencode($siteUrl);
 
-            foreach ($scRows as $row) {
-                $d = $row['keys'][0] ?? '';
-                $c = (int) ($row['clicks'] ?? 0);
-                $imp = (int) ($row['impressions'] ?? 0);
-                $pos = (float) ($row['position'] ?? 0);
-
-                $totalClicks += $c;
-                $totalImpressions += $imp;
-                $totalPos += $pos;
-
-                $scDataMap[$d] = [
-                    'clicks' => $c,
-                    'impressions' => $imp,
-                ];
-            }
-
-            // Fetch GA4 active users
-            $propertyId = setting('gsk_ga4_property_id');
-            $gaDataMap = [];
-            $totalVisitors = 0;
-
-            if ($propertyId) {
-                $gaRes = Http::withToken($token)
-                    ->post("https://analyticsdata.googleapis.com/v1beta/properties/{$propertyId}:runReport", [
-                        'dateRanges' => [['startDate' => "{$days}daysAgo", 'endDate' => 'today']],
-                        'metrics' => [['name' => 'activeUsers']],
-                        'dimensions' => [['name' => 'date']],
+                // Fetch Search Console daily points
+                $scRes = Http::withToken($token)
+                    ->post("https://www.googleapis.com/webmasters/v3/sites/{$encodedSite}/searchAnalytics/query", [
+                        'startDate' => now()->subDays($days)->toDateString(),
+                        'endDate' => now()->toDateString(),
+                        'dimensions' => ['date'],
                     ]);
 
-                if ($gaRes->successful()) {
-                    foreach ($gaRes->json()['rows'] ?? [] as $row) {
-                        $rawDate = $row['dimensionValues'][0]['value'] ?? '';
-                        if (strlen($rawDate) === 8) {
-                            $d = substr($rawDate, 0, 4).'-'.substr($rawDate, 4, 2).'-'.substr($rawDate, 6, 2);
-                        } else {
-                            $d = $rawDate;
+                if ($scRes->failed()) {
+                    return $this->getMockSearchFunnel($dateRange);
+                }
+
+                $scRows = $scRes->json()['rows'] ?? [];
+                $scDataMap = [];
+                $totalClicks = 0;
+                $totalImpressions = 0;
+                $totalPos = 0;
+
+                foreach ($scRows as $row) {
+                    $d = $row['keys'][0] ?? '';
+                    $c = (int) ($row['clicks'] ?? 0);
+                    $imp = (int) ($row['impressions'] ?? 0);
+                    $pos = (float) ($row['position'] ?? 0);
+
+                    $totalClicks += $c;
+                    $totalImpressions += $imp;
+                    $totalPos += $pos;
+
+                    $scDataMap[$d] = [
+                        'clicks' => $c,
+                        'impressions' => $imp,
+                    ];
+                }
+
+                // Fetch GA4 active users
+                $propertyId = setting('gsk_ga4_property_id');
+                $gaDataMap = [];
+                $totalVisitors = 0;
+
+                if ($propertyId) {
+                    $gaRes = Http::withToken($token)
+                        ->post("https://analyticsdata.googleapis.com/v1beta/properties/{$propertyId}:runReport", [
+                            'dateRanges' => [['startDate' => "{$days}daysAgo", 'endDate' => 'today']],
+                            'metrics' => [['name' => 'activeUsers']],
+                            'dimensions' => [['name' => 'date']],
+                        ]);
+
+                    if ($gaRes->successful()) {
+                        foreach ($gaRes->json()['rows'] ?? [] as $row) {
+                            $rawDate = $row['dimensionValues'][0]['value'] ?? '';
+                            if (strlen($rawDate) === 8) {
+                                $d = substr($rawDate, 0, 4).'-'.substr($rawDate, 4, 2).'-'.substr($rawDate, 6, 2);
+                            } else {
+                                $d = $rawDate;
+                            }
+                            $u = (int) ($row['metricValues'][0]['value'] ?? 0);
+                            $totalVisitors += $u;
+                            $gaDataMap[$d] = $u;
                         }
-                        $u = (int) ($row['metricValues'][0]['value'] ?? 0);
-                        $totalVisitors += $u;
-                        $gaDataMap[$d] = $u;
                     }
                 }
-            }
 
-            // Build chart points
-            $chart = [];
-            for ($i = $days - 1; $i >= 0; $i--) {
-                $dt = now()->subDays($i);
-                $dStr = $dt->toDateString();
-                $chart[] = [
-                    'date' => $dStr,
-                    'label' => $dt->format('M d'),
-                    'impressions' => $scDataMap[$dStr]['impressions'] ?? 0,
-                    'clicks' => $scDataMap[$dStr]['clicks'] ?? 0,
-                    'visitors' => $gaDataMap[$dStr] ?? 0,
+                // Build chart points
+                $chart = [];
+                for ($i = $days - 1; $i >= 0; $i--) {
+                    $dt = now()->subDays($i);
+                    $dStr = $dt->toDateString();
+                    $chart[] = [
+                        'date' => $dStr,
+                        'label' => $dt->format('M d'),
+                        'impressions' => $scDataMap[$dStr]['impressions'] ?? 0,
+                        'clicks' => $scDataMap[$dStr]['clicks'] ?? 0,
+                        'visitors' => $gaDataMap[$dStr] ?? 0,
+                    ];
+                }
+
+                $ctr = $totalImpressions > 0 ? round(($totalClicks / $totalImpressions) * 100, 2) : 0;
+                $avgPos = count($scRows) > 0 ? round($totalPos / count($scRows), 1) : 0;
+
+                return [
+                    'impressions' => $totalImpressions,
+                    'impressions_change' => 14.5,
+                    'clicks' => $totalClicks,
+                    'clicks_change' => 18.2,
+                    'ctr' => $ctr,
+                    'ctr_change' => 0.5,
+                    'position' => $avgPos ?: 4.2,
+                    'position_change' => -0.4,
+                    'visitors' => $totalVisitors ?: (int) round($totalClicks * 0.75),
+                    'visitors_change' => 12.1,
+                    'chart' => $chart,
                 ];
+            } catch (\Exception $e) {
+                Log::error('SiteKit Search Funnel API error: '.$e->getMessage());
+
+                return $this->getMockSearchFunnel($dateRange);
             }
-
-            $ctr = $totalImpressions > 0 ? round(($totalClicks / $totalImpressions) * 100, 2) : 0;
-            $avgPos = count($scRows) > 0 ? round($totalPos / count($scRows), 1) : 0;
-
-            return [
-                'impressions' => $totalImpressions,
-                'impressions_change' => 14.5,
-                'clicks' => $totalClicks,
-                'clicks_change' => 18.2,
-                'ctr' => $ctr,
-                'ctr_change' => 0.5,
-                'position' => $avgPos ?: 4.2,
-                'position_change' => -0.4,
-                'visitors' => $totalVisitors ?: (int) round($totalClicks * 0.75),
-                'visitors_change' => 12.1,
-                'chart' => $chart,
-            ];
-        } catch (\Exception $e) {
-            Log::error('SiteKit Search Funnel API error: '.$e->getMessage());
-
-            return $this->getMockSearchFunnel($dateRange);
-        }
+        });
     }
 
     /**
@@ -526,61 +529,72 @@ class GoogleApiService
             return $this->getMockTopQueries($dateRange, $limit, $search);
         }
 
-        $token = $this->getAccessToken();
-        if (! $token) {
+        $allQueries = Cache::remember("gsk_queries_raw_{$dateRange}", 900, function () use ($dateRange) {
+            $token = $this->getAccessToken();
+            if (! $token) {
+                return [];
+            }
+
+            try {
+                $days = $this->getDaysCount($dateRange);
+                $siteUrl = url('/');
+                $encodedSite = urlencode($siteUrl);
+
+                $response = Http::withToken($token)
+                    ->post("https://www.googleapis.com/webmasters/v3/sites/{$encodedSite}/searchAnalytics/query", [
+                        'startDate' => now()->subDays($days)->toDateString(),
+                        'endDate' => now()->toDateString(),
+                        'dimensions' => ['query'],
+                        'rowLimit' => 50,
+                    ]);
+
+                if ($response->failed()) {
+                    return [];
+                }
+
+                $rows = $response->json()['rows'] ?? [];
+                $queries = [];
+
+                foreach ($rows as $row) {
+                    $queryStr = $row['keys'][0] ?? '';
+                    $clicks = (int) ($row['clicks'] ?? 0);
+                    $impressions = (int) ($row['impressions'] ?? 0);
+                    $ctr = (float) round(($row['ctr'] ?? 0) * 100, 2);
+                    $position = (float) round($row['position'] ?? 0, 1);
+
+                    $queries[] = [
+                        'query' => $queryStr,
+                        'clicks' => $clicks,
+                        'impressions' => $impressions,
+                        'ctr' => $ctr,
+                        'position' => $position,
+                    ];
+                }
+
+                return $queries;
+            } catch (\Exception $e) {
+                Log::error('Search Console Top Queries error: '.$e->getMessage());
+
+                return [];
+            }
+        });
+
+        if (empty($allQueries)) {
             return $this->getMockTopQueries($dateRange, $limit, $search);
         }
 
-        try {
-            $days = $this->getDaysCount($dateRange);
-            $siteUrl = url('/');
-            $encodedSite = urlencode($siteUrl);
-
-            $response = Http::withToken($token)
-                ->post("https://www.googleapis.com/webmasters/v3/sites/{$encodedSite}/searchAnalytics/query", [
-                    'startDate' => now()->subDays($days)->toDateString(),
-                    'endDate' => now()->toDateString(),
-                    'dimensions' => ['query'],
-                    'rowLimit' => 50,
-                ]);
-
-            if ($response->failed()) {
-                return $this->getMockTopQueries($dateRange, $limit, $search);
+        $results = [];
+        foreach ($allQueries as $row) {
+            if ($search !== '' && stripos($row['query'], $search) === false) {
+                continue;
             }
-
-            $rows = $response->json()['rows'] ?? [];
-            $queries = [];
-
-            foreach ($rows as $row) {
-                $queryStr = $row['keys'][0] ?? '';
-                if ($search !== '' && stripos($queryStr, $search) === false) {
-                    continue;
-                }
-
-                $clicks = (int) ($row['clicks'] ?? 0);
-                $impressions = (int) ($row['impressions'] ?? 0);
-                $ctr = (float) round(($row['ctr'] ?? 0) * 100, 2);
-                $position = (float) round($row['position'] ?? 0, 1);
-
-                $queries[] = [
-                    'query' => $queryStr,
-                    'clicks' => $clicks,
-                    'impressions' => $impressions,
-                    'ctr' => $ctr,
-                    'position' => $position,
-                ];
-
-                if (count($queries) >= $limit) {
-                    break;
-                }
+            $results[] = $row;
+            if (count($results) >= $limit) {
+                break;
             }
-
-            return $queries ?: $this->getMockTopQueries($dateRange, $limit, $search);
-        } catch (\Exception $e) {
-            Log::error('Search Console Top Queries error: '.$e->getMessage());
-
-            return $this->getMockTopQueries($dateRange, $limit, $search);
         }
+
+        return $results ?: $this->getMockTopQueries($dateRange, $limit, $search);
     }
 
     /**
@@ -592,63 +606,65 @@ class GoogleApiService
             return $this->getMockTopPages($dateRange, $limit);
         }
 
-        $token = $this->getAccessToken();
-        $propertyId = setting('gsk_ga4_property_id');
+        return Cache::remember("gsk_pages_{$dateRange}_{$limit}", 900, function () use ($dateRange, $limit) {
+            $token = $this->getAccessToken();
+            $propertyId = setting('gsk_ga4_property_id');
 
-        if (! $token || ! $propertyId) {
-            return $this->getMockTopPages($dateRange, $limit);
-        }
-
-        try {
-            $days = $this->getDaysCount($dateRange);
-            $response = Http::withToken($token)
-                ->post("https://analyticsdata.googleapis.com/v1beta/properties/{$propertyId}:runReport", [
-                    'dateRanges' => [['startDate' => "{$days}daysAgo", 'endDate' => 'today']],
-                    'dimensions' => [
-                        ['name' => 'pageTitle'],
-                        ['name' => 'pagePath'],
-                    ],
-                    'metrics' => [
-                        ['name' => 'screenPageViews'],
-                        ['name' => 'sessions'],
-                        ['name' => 'bounceRate'],
-                    ],
-                    'orderBys' => [
-                        ['metric' => ['metricName' => 'screenPageViews'], 'desc' => true],
-                    ],
-                    'limit' => $limit,
-                ]);
-
-            if ($response->failed()) {
+            if (! $token || ! $propertyId) {
                 return $this->getMockTopPages($dateRange, $limit);
             }
 
-            $rows = $response->json()['rows'] ?? [];
-            $pages = [];
+            try {
+                $days = $this->getDaysCount($dateRange);
+                $response = Http::withToken($token)
+                    ->post("https://analyticsdata.googleapis.com/v1beta/properties/{$propertyId}:runReport", [
+                        'dateRanges' => [['startDate' => "{$days}daysAgo", 'endDate' => 'today']],
+                        'dimensions' => [
+                            ['name' => 'pageTitle'],
+                            ['name' => 'pagePath'],
+                        ],
+                        'metrics' => [
+                            ['name' => 'screenPageViews'],
+                            ['name' => 'sessions'],
+                            ['name' => 'bounceRate'],
+                        ],
+                        'orderBys' => [
+                            ['metric' => ['metricName' => 'screenPageViews'], 'desc' => true],
+                        ],
+                        'limit' => $limit,
+                    ]);
 
-            foreach ($rows as $row) {
-                $title = $row['dimensionValues'][0]['value'] ?? 'Page';
-                $path = $row['dimensionValues'][1]['value'] ?? '/';
-                $views = (int) ($row['metricValues'][0]['value'] ?? 0);
-                $sessions = (int) ($row['metricValues'][1]['value'] ?? 0);
-                $bounceRate = round((float) ($row['metricValues'][2]['value'] ?? 0) * 100, 1);
+                if ($response->failed()) {
+                    return $this->getMockTopPages($dateRange, $limit);
+                }
 
-                $pages[] = [
-                    'title' => $title,
-                    'path' => $path,
-                    'pageviews' => $views,
-                    'sessions' => $sessions,
-                    'bounce_rate' => $bounceRate,
-                    'url' => url($path),
-                ];
+                $rows = $response->json()['rows'] ?? [];
+                $pages = [];
+
+                foreach ($rows as $row) {
+                    $title = $row['dimensionValues'][0]['value'] ?? 'Page';
+                    $path = $row['dimensionValues'][1]['value'] ?? '/';
+                    $views = (int) ($row['metricValues'][0]['value'] ?? 0);
+                    $sessions = (int) ($row['metricValues'][1]['value'] ?? 0);
+                    $bounceRate = round((float) ($row['metricValues'][2]['value'] ?? 0) * 100, 1);
+
+                    $pages[] = [
+                        'title' => $title,
+                        'path' => $path,
+                        'pageviews' => $views,
+                        'sessions' => $sessions,
+                        'bounce_rate' => $bounceRate,
+                        'url' => url($path),
+                    ];
+                }
+
+                return $pages ?: $this->getMockTopPages($dateRange, $limit);
+            } catch (\Exception $e) {
+                Log::error('GA4 Top Pages error: '.$e->getMessage());
+
+                return $this->getMockTopPages($dateRange, $limit);
             }
-
-            return $pages ?: $this->getMockTopPages($dateRange, $limit);
-        } catch (\Exception $e) {
-            Log::error('GA4 Top Pages error: '.$e->getMessage());
-
-            return $this->getMockTopPages($dateRange, $limit);
-        }
+        });
     }
 
     /**
@@ -660,78 +676,80 @@ class GoogleApiService
             return $this->getMockTrafficChannels($dateRange);
         }
 
-        $token = $this->getAccessToken();
-        $propertyId = setting('gsk_ga4_property_id');
+        return Cache::remember("gsk_channels_{$dateRange}", 900, function () use ($dateRange) {
+            $token = $this->getAccessToken();
+            $propertyId = setting('gsk_ga4_property_id');
 
-        if (! $token || ! $propertyId) {
-            return $this->getMockTrafficChannels($dateRange);
-        }
-
-        try {
-            $days = $this->getDaysCount($dateRange);
-            $response = Http::withToken($token)
-                ->post("https://analyticsdata.googleapis.com/v1beta/properties/{$propertyId}:runReport", [
-                    'dateRanges' => [['startDate' => "{$days}daysAgo", 'endDate' => 'today']],
-                    'dimensions' => [['name' => 'sessionDefaultChannelGroup']],
-                    'metrics' => [['name' => 'sessions']],
-                    'orderBys' => [['metric' => ['metricName' => 'sessions'], 'desc' => true]],
-                ]);
-
-            if ($response->failed()) {
+            if (! $token || ! $propertyId) {
                 return $this->getMockTrafficChannels($dateRange);
             }
 
-            $rows = $response->json()['rows'] ?? [];
-            $totalSessions = 0;
-            $rawChannels = [];
+            try {
+                $days = $this->getDaysCount($dateRange);
+                $response = Http::withToken($token)
+                    ->post("https://analyticsdata.googleapis.com/v1beta/properties/{$propertyId}:runReport", [
+                        'dateRanges' => [['startDate' => "{$days}daysAgo", 'endDate' => 'today']],
+                        'dimensions' => [['name' => 'sessionDefaultChannelGroup']],
+                        'metrics' => [['name' => 'sessions']],
+                        'orderBys' => [['metric' => ['metricName' => 'sessions'], 'desc' => true]],
+                    ]);
 
-            foreach ($rows as $row) {
-                $name = $row['dimensionValues'][0]['value'] ?? 'Other';
-                $sessions = (int) ($row['metricValues'][0]['value'] ?? 0);
-                $totalSessions += $sessions;
-                $rawChannels[] = ['name' => $name, 'sessions' => $sessions];
-            }
+                if ($response->failed()) {
+                    return $this->getMockTrafficChannels($dateRange);
+                }
 
-            $colorPalette = [
-                'Organic Search' => '#10B981',
-                'Direct' => '#6366F1',
-                'Referral' => '#F59E0B',
-                'Organic Social' => '#EC4899',
-                'Email' => '#8B5CF6',
-                'Paid Search' => '#06B6D4',
-            ];
+                $rows = $response->json()['rows'] ?? [];
+                $totalSessions = 0;
+                $rawChannels = [];
 
-            $iconPalette = [
-                'Organic Search' => 'travel_explore',
-                'Direct' => 'near_me',
-                'Referral' => 'link',
-                'Organic Social' => 'share',
-                'Email' => 'mail',
-                'Paid Search' => 'paid',
-            ];
+                foreach ($rows as $row) {
+                    $name = $row['dimensionValues'][0]['value'] ?? 'Other';
+                    $sessions = (int) ($row['metricValues'][0]['value'] ?? 0);
+                    $totalSessions += $sessions;
+                    $rawChannels[] = ['name' => $name, 'sessions' => $sessions];
+                }
 
-            $channels = [];
-            foreach ($rawChannels as $c) {
-                $pct = $totalSessions > 0 ? round(($c['sessions'] / $totalSessions) * 100, 1) : 0;
-                $channels[] = [
-                    'name' => $c['name'],
-                    'sessions' => $c['sessions'],
-                    'percentage' => $pct,
-                    'color' => $colorPalette[$c['name']] ?? '#9CA3AF',
-                    'icon' => $iconPalette[$c['name']] ?? 'pie_chart',
-                    'change' => '+'.rand(2, 18).'%',
+                $colorPalette = [
+                    'Organic Search' => '#10B981',
+                    'Direct' => '#6366F1',
+                    'Referral' => '#F59E0B',
+                    'Organic Social' => '#EC4899',
+                    'Email' => '#8B5CF6',
+                    'Paid Search' => '#06B6D4',
                 ];
+
+                $iconPalette = [
+                    'Organic Search' => 'travel_explore',
+                    'Direct' => 'near_me',
+                    'Referral' => 'link',
+                    'Organic Social' => 'share',
+                    'Email' => 'mail',
+                    'Paid Search' => 'paid',
+                ];
+
+                $channels = [];
+                foreach ($rawChannels as $c) {
+                    $pct = $totalSessions > 0 ? round(($c['sessions'] / $totalSessions) * 100, 1) : 0;
+                    $channels[] = [
+                        'name' => $c['name'],
+                        'sessions' => $c['sessions'],
+                        'percentage' => $pct,
+                        'color' => $colorPalette[$c['name']] ?? '#9CA3AF',
+                        'icon' => $iconPalette[$c['name']] ?? 'pie_chart',
+                        'change' => '+'.rand(2, 18).'%',
+                    ];
+                }
+
+                return [
+                    'total_sessions' => $totalSessions,
+                    'channels' => $channels,
+                ];
+            } catch (\Exception $e) {
+                Log::error('GA4 Traffic Channels error: '.$e->getMessage());
+
+                return $this->getMockTrafficChannels($dateRange);
             }
-
-            return [
-                'total_sessions' => $totalSessions,
-                'channels' => $channels,
-            ];
-        } catch (\Exception $e) {
-            Log::error('GA4 Traffic Channels error: '.$e->getMessage());
-
-            return $this->getMockTrafficChannels($dateRange);
-        }
+        });
     }
 
     /**

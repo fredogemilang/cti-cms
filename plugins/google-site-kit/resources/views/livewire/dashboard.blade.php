@@ -46,11 +46,19 @@
                 @foreach (['7days' => '7D', '14days' => '14D', '28days' => '28D', '90days' => '90D'] as $key => $shortLabel)
                     <button wire:key="range-pill-{{ $key }}"
                             wire:click="changeDateRange('{{ $key }}')"
+                            wire:loading.attr="disabled"
+                            wire:target="changeDateRange"
                             type="button"
-                            class="cursor-pointer px-3 py-1.5 rounded-lg transition-all {{ $dateRange === $key ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/30' : 'text-gray-600 dark:text-[#6F767E] hover:text-gray-900 dark:hover:text-white hover:bg-gray-200/60 dark:hover:bg-[#272B30]/50' }}">
+                            class="cursor-pointer px-3 py-1.5 rounded-lg transition-all {{ $dateRange === $key ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/30' : 'text-gray-600 dark:text-[#6F767E] hover:text-gray-900 dark:hover:text-white hover:bg-gray-200/60 dark:hover:bg-[#272B30]/50' }} disabled:opacity-50 disabled:cursor-not-allowed">
                         {{ $shortLabel }}
                     </button>
                 @endforeach
+            </div>
+
+            {{-- Inline loading indicator for date range --}}
+            <div wire:loading wire:target="changeDateRange" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl border border-indigo-200 dark:border-indigo-500/20 animate-pulse">
+                <span class="inline-block animate-spin w-3 h-3 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full"></span>
+                <span>Updating data...</span>
             </div>
 
             <a href="{{ route('admin.google-site-kit.settings') }}"
@@ -76,13 +84,15 @@
         </div>
     @endif
 
-    {{-- 4 Primary KPI Summary Cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {{-- Card 1: Total Visitors --}}
-        <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] hover:border-gray-300 dark:hover:border-[#3a4047] transition rounded-2xl p-5 shadow-sm flex flex-col justify-between">
-            <div class="flex items-center justify-between text-gray-500 dark:text-[#6F767E] mb-3">
-                <span class="text-xs font-bold uppercase tracking-wider">Total Visitors</span>
-                <div class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+    {{-- Active Data Content --}}
+    <div wire:loading.remove wire:target="changeDateRange" class="space-y-8">
+        {{-- 4 Primary KPI Summary Cards --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {{-- Card 1: Total Visitors --}}
+            <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] hover:border-gray-300 dark:hover:border-[#3a4047] transition rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between text-gray-500 dark:text-[#6F767E] mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider">Total Visitors</span>
+                    <div class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
                     <span class="material-symbols-outlined text-[16px]">group</span>
                 </div>
             </div>
@@ -417,7 +427,10 @@
                 <input type="text"
                        wire:model.live.debounce.300ms="searchQuery"
                        placeholder="Filter search queries..."
-                       class="w-full pl-9 pr-3.5 py-2 bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#272B30] focus:border-indigo-500 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-[#6F767E] outline-none transition"/>
+                       class="w-full pl-9 pr-9 py-2 bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-[#272B30] focus:border-indigo-500 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-[#6F767E] outline-none transition"/>
+                <div wire:loading wire:target="searchQuery" class="absolute right-3 top-1/2 -translate-y-1/2">
+                    <span class="inline-block animate-spin w-3.5 h-3.5 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full"></span>
+                </div>
             </div>
         </div>
 
@@ -522,6 +535,170 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+    </div>
+    </div>
+
+    {{-- Skeleton Loading Placeholder during Date Range Transition --}}
+    <div wire:loading wire:target="changeDateRange" class="w-full">
+        <div class="space-y-8 animate-pulse">
+            {{-- 1. Skeleton 4 KPI Summary Cards --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                @for ($i = 0; $i < 4; $i++)
+                    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="h-3.5 w-24 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                            <div class="w-7 h-7 rounded-lg bg-gray-100 dark:bg-[#202020]"></div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-baseline gap-2">
+                                <div class="h-8 w-28 bg-gray-200 dark:bg-[#272B30] rounded-lg"></div>
+                                <div class="h-4 w-12 bg-gray-100 dark:bg-[#202020] rounded-full"></div>
+                            </div>
+                            <div class="h-2.5 w-36 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                        </div>
+                    </div>
+                @endfor
+            </div>
+
+            {{-- 2. Skeleton Search Funnel & Traffic Trend --}}
+            <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-6 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-gray-200 dark:border-[#272B30]">
+                    <div class="space-y-2">
+                        <div class="h-4 w-48 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                        <div class="h-3 w-80 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="h-3 w-20 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                        <div class="h-3 w-20 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                    </div>
+                </div>
+
+                {{-- 4 Stages Funnel Skeleton --}}
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-6">
+                    @for ($i = 0; $i < 4; $i++)
+                        <div class="p-4 rounded-xl border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#111111] space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <div class="h-3 w-20 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                                <div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-[#333]"></div>
+                            </div>
+                            <div class="h-7 w-24 bg-gray-200 dark:bg-[#272B30] rounded-lg"></div>
+                            <div class="h-2.5 w-28 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                        </div>
+                    @endfor
+                </div>
+
+                {{-- Chart Area Skeleton --}}
+                <div class="bg-gray-50/50 dark:bg-[#111111]/60 rounded-xl p-5 border border-gray-200 dark:border-[#272B30] h-64 flex flex-col justify-between">
+                    <div class="flex justify-between items-center w-full">
+                        <div class="h-2.5 w-16 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                        <div class="h-2.5 w-16 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                    </div>
+                    <div class="w-full flex items-end justify-between gap-2 h-36 px-4">
+                        @foreach ([35, 50, 40, 65, 55, 80, 70, 85, 60, 75, 90, 65, 80, 70, 85, 95] as $barHeight)
+                            <div class="w-full bg-gray-200 dark:bg-[#222222] rounded-t-sm transition-all" style="height: {{ $barHeight }}%;"></div>
+                        @endforeach
+                    </div>
+                    <div class="flex justify-between items-center w-full pt-2 border-t border-gray-200 dark:border-[#272B30]">
+                        <div class="h-2.5 w-12 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                        <div class="h-2.5 w-12 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                        <div class="h-2.5 w-12 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                        <div class="h-2.5 w-12 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- 3. Skeleton 2-Column: Channels & Devices --}}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {{-- Traffic Channels Skeleton --}}
+                <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-6 shadow-sm">
+                    <div class="pb-5 border-b border-gray-200 dark:border-[#272B30] space-y-2">
+                        <div class="h-4 w-44 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                        <div class="h-3 w-64 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                    </div>
+                    <div class="space-y-4 mt-6">
+                        @for ($c = 0; $c < 4; $c++)
+                            <div class="p-3.5 rounded-xl border border-gray-200 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#111111] space-y-2.5">
+                                <div class="flex justify-between items-center">
+                                    <div class="h-3 w-28 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                                    <div class="h-3 w-20 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-[#272B30] h-2 rounded-full"></div>
+                            </div>
+                        @endfor
+                    </div>
+                </div>
+
+                {{-- Devices & Audience Skeleton --}}
+                <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-6 shadow-sm">
+                    <div class="pb-5 border-b border-gray-200 dark:border-[#272B30] space-y-2">
+                        <div class="h-4 w-44 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                        <div class="h-3 w-64 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                    </div>
+                    <div class="space-y-5 mt-6">
+                        <div class="p-4 rounded-xl bg-gray-50 dark:bg-[#111111] border border-gray-200 dark:border-[#272B30] space-y-3">
+                            <div class="h-3 w-28 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                            <div class="w-full bg-gray-200 dark:bg-[#272B30] h-3 rounded-full"></div>
+                            <div class="flex justify-between">
+                                <div class="h-2.5 w-16 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                                <div class="h-2.5 w-16 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                                <div class="h-2.5 w-16 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            @for ($d = 0; $d < 4; $d++)
+                                <div class="flex items-center justify-between p-2.5 rounded-lg bg-gray-50 dark:bg-[#111111] border border-gray-200 dark:border-[#272B30]">
+                                    <div class="h-3 w-28 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                                    <div class="h-3 w-16 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                                </div>
+                            @endfor
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- 4. Skeleton Queries Table --}}
+            <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-6 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-gray-200 dark:border-[#272B30]">
+                    <div class="space-y-2">
+                        <div class="h-4 w-40 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                        <div class="h-3 w-72 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                    </div>
+                    <div class="h-9 w-64 bg-gray-100 dark:bg-[#202020] rounded-xl border border-gray-200 dark:border-[#272B30]"></div>
+                </div>
+                <div class="mt-4 divide-y divide-gray-100 dark:divide-[#272B30]">
+                    @for ($r = 0; $r < 5; $r++)
+                        <div class="py-3.5 px-4 flex items-center justify-between gap-4">
+                            <div class="h-3.5 w-1/3 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                            <div class="h-3.5 w-16 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                            <div class="h-3.5 w-16 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                            <div class="h-3.5 w-12 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                            <div class="h-3.5 w-12 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                        </div>
+                    @endfor
+                </div>
+            </div>
+
+            {{-- 5. Skeleton Content Table --}}
+            <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-6 shadow-sm">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-gray-200 dark:border-[#272B30]">
+                    <div class="space-y-2">
+                        <div class="h-4 w-44 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                        <div class="h-3 w-72 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                    </div>
+                </div>
+                <div class="mt-4 divide-y divide-gray-100 dark:divide-[#272B30]">
+                    @for ($r = 0; $r < 5; $r++)
+                        <div class="py-3.5 px-4 flex items-center justify-between gap-4">
+                            <div class="h-3.5 w-2/5 bg-gray-200 dark:bg-[#272B30] rounded"></div>
+                            <div class="h-3.5 w-16 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                            <div class="h-3.5 w-16 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                            <div class="h-3.5 w-12 bg-gray-100 dark:bg-[#202020] rounded"></div>
+                            <div class="h-7 w-7 bg-gray-100 dark:bg-[#202020] rounded-lg"></div>
+                        </div>
+                    @endfor
+                </div>
+            </div>
         </div>
     </div>
 
