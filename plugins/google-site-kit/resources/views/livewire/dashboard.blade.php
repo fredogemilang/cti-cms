@@ -45,7 +45,7 @@
             <div class="inline-flex items-center p-1 bg-[#111111] border border-[#272B30] rounded-xl text-xs font-semibold">
                 @foreach (['7days' => '7D', '14days' => '14D', '28days' => '28D', '90days' => '90D'] as $key => $shortLabel)
                     <button wire:click="changeDateRange('{{ $key }}')"
-                            class="px-3 py-1.5 rounded-lg transition-all {{ $dateRange === $key ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/30' : 'text-[#6F767E] hover:text-white hover:bg-[#272B30]/50' }}">
+                            class="px-3 py-1.5 rounded-lg transition-all {{ $dateRange === $key ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/30' : 'text-[#6F767E] hover:text-white hover:bg-[#272B30]' }}">
                         {{ $shortLabel }}
                     </button>
                 @endforeach
@@ -186,7 +186,7 @@
         {{-- Funnel Stages Steps --}}
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 py-6">
             {{-- Step 1: Impressions --}}
-            <div class="p-4 rounded-xl bg-[#111111] border border-[#272B30]/80 relative overflow-hidden">
+            <div class="p-4 rounded-xl bg-[#111111] border border-[#272B30] relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-16 h-16 bg-purple-500/5 rounded-full -mr-6 -mt-6"></div>
                 <span class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider block mb-1">1. Impressions</span>
                 <span class="text-2xl font-black text-white block">{{ number_format($funnelData['impressions'] ?? 0) }}</span>
@@ -194,7 +194,7 @@
             </div>
 
             {{-- Step 2: Clicks --}}
-            <div class="p-4 rounded-xl bg-[#111111] border border-[#272B30]/80 relative overflow-hidden">
+            <div class="p-4 rounded-xl bg-[#111111] border border-[#272B30] relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-500/5 rounded-full -mr-6 -mt-6"></div>
                 <span class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider block mb-1">2. Clicks</span>
                 <span class="text-2xl font-black text-white block">{{ number_format($funnelData['clicks'] ?? 0) }}</span>
@@ -202,7 +202,7 @@
             </div>
 
             {{-- Step 3: CTR --}}
-            <div class="p-4 rounded-xl bg-[#111111] border border-[#272B30]/80 relative overflow-hidden">
+            <div class="p-4 rounded-xl bg-[#111111] border border-[#272B30] relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-16 h-16 bg-amber-500/5 rounded-full -mr-6 -mt-6"></div>
                 <span class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider block mb-1">3. Click-Through</span>
                 <span class="text-2xl font-black text-white block">{{ $funnelData['ctr'] ?? 0 }}%</span>
@@ -210,7 +210,7 @@
             </div>
 
             {{-- Step 4: Visitors on Site --}}
-            <div class="p-4 rounded-xl bg-[#111111] border border-[#272B30]/80 relative overflow-hidden">
+            <div class="p-4 rounded-xl bg-[#111111] border border-[#272B30] relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-16 h-16 bg-indigo-500/5 rounded-full -mr-6 -mt-6"></div>
                 <span class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider block mb-1">4. Search Visitors</span>
                 <span class="text-2xl font-black text-white block">{{ number_format($funnelData['visitors'] ?? 0) }}</span>
@@ -296,7 +296,7 @@
 
         {{-- Date Ticks along the bottom axis --}}
         @if ($totalPoints > 0)
-            <div class="flex justify-between items-center text-[10px] font-semibold text-[#6F767E] pt-2 border-t border-[#272B30]/60">
+            <div class="flex justify-between items-center text-[10px] font-semibold text-[#6F767E] pt-2 border-t border-[#272B30]">
                 <span>{{ $chartPoints[0]['label'] ?? '' }}</span>
                 @if ($totalPoints > 6)
                     <span>{{ $chartPoints[(int)($totalPoints * 0.25)]['label'] ?? '' }}</span>
@@ -327,7 +327,7 @@
 
             <div class="space-y-4">
                 @foreach ($channelsData['channels'] ?? [] as $channel)
-                    <div class="p-3.5 rounded-xl bg-[#111111] border border-[#272B30]/60 hover:border-[#3a4047] transition">
+                    <div class="p-3.5 rounded-xl bg-[#111111] border border-[#272B30] hover:border-[#3a4047] transition">
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center gap-2.5">
                                 <span class="material-symbols-outlined text-[18px]" style="color: {{ $channel['color'] }}">{{ $channel['icon'] }}</span>
@@ -362,7 +362,7 @@
                 </div>
 
                 {{-- Device Distribution Segmented Bar --}}
-                <div class="mb-6 p-4 rounded-xl bg-[#111] border border-[#272B30]/80">
+                <div class="mb-6 p-4 rounded-xl bg-[#111] border border-[#272B30]">
                     <span class="text-xs font-bold text-[#6F767E] uppercase tracking-wider block mb-3">Device Breakdown</span>
                     <div class="flex h-3 w-full rounded-full overflow-hidden gap-0.5 mb-3 bg-[#272B30]">
                         @foreach ($deviceData['devices'] ?? [] as $dev)
@@ -384,7 +384,7 @@
                 <div class="space-y-2.5">
                     <span class="text-xs font-bold text-[#6F767E] uppercase tracking-wider block mb-1">Top Audience Locations</span>
                     @foreach ($deviceData['countries'] ?? [] as $c)
-                        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#111] border border-[#272B30]/50 text-xs">
+                        <div class="flex items-center justify-between p-2.5 rounded-lg bg-[#111] border border-[#272B30] text-xs">
                             <div class="flex items-center gap-2.5">
                                 <span class="text-base">{{ $c['flag'] }}</span>
                                 <span class="font-bold text-white">{{ $c['country'] }}</span>
@@ -424,7 +424,7 @@
         <div class="overflow-x-auto mt-4">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="text-[#6F767E] uppercase text-[10px] tracking-wider border-b border-[#272B30]/80">
+                    <tr class="text-[#6F767E] uppercase text-[10px] tracking-wider border-b border-[#272B30]">
                         <th class="py-3 px-4 font-bold">Search Query</th>
                         <th class="py-3 px-4 font-bold text-right">Clicks</th>
                         <th class="py-3 px-4 font-bold text-right">Impressions</th>
@@ -432,7 +432,7 @@
                         <th class="py-3 px-4 font-bold text-right">Position</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-[#272B30]/40">
+                <tbody class="divide-y divide-[#272B30]">
                     @forelse ($topQueries as $q)
                         <tr class="hover:bg-[#202020] transition group">
                             <td class="py-3.5 px-4 font-bold text-white group-hover:text-indigo-400 transition flex items-center gap-2">
@@ -481,7 +481,7 @@
         <div class="overflow-x-auto mt-4">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="text-[#6F767E] uppercase text-[10px] tracking-wider border-b border-[#272B30]/80">
+                    <tr class="text-[#6F767E] uppercase text-[10px] tracking-wider border-b border-[#272B30]">
                         <th class="py-3 px-4 font-bold">Page Title & Path</th>
                         <th class="py-3 px-4 font-bold text-right">Pageviews</th>
                         <th class="py-3 px-4 font-bold text-right">Unique Sessions</th>
@@ -489,7 +489,7 @@
                         <th class="py-3 px-4 font-bold text-center">Action</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-[#272B30]/40">
+                <tbody class="divide-y divide-[#272B30]">
                     @forelse ($topPages as $p)
                         <tr class="hover:bg-[#202020] transition group">
                             <td class="py-3.5 px-4">
@@ -617,7 +617,7 @@
             <span class="text-xs font-bold text-[#6F767E] uppercase tracking-wider block mb-3">Core Web Vitals Assessment</span>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
                 @foreach ($speedData['vitals'] ?? [] as $vital)
-                    <div class="p-4 rounded-xl bg-[#111111] border border-[#272B30]/80 flex flex-col justify-between">
+                    <div class="p-4 rounded-xl bg-[#111111] border border-[#272B30] flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between mb-1.5">
                                 <span class="text-xs font-black text-white tracking-wider">{{ $vital['name'] }}</span>

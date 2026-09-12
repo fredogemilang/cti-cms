@@ -284,7 +284,7 @@
     "src": "node_modules/@fontsource/prompt/files/prompt-vietnamese-800-normal.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-D9aBuaDO.css",
+    "file": "assets/app-CyULjSyK.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -299,7 +299,7 @@
     "isEntry": true
   },
   "themes/cdt/assets/css/theme.css": {
-    "file": "assets/theme-DR1JZ22J.css",
+    "file": "assets/theme-BmgFKmyI.css",
     "src": "themes/cdt/assets/css/theme.css",
     "isEntry": true,
     "name": "theme",
