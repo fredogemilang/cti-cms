@@ -138,4 +138,80 @@ class GoogleSiteKitTest extends TestCase
         $this->assertArrayHasKey('chart', $gaData);
         $this->assertGreaterThan(0, $gaData['users']);
     }
+
+    #[Test]
+    public function api_provides_full_dashboard_suite_metrics(): void
+    {
+        $api = app(GoogleApiService::class);
+
+        // 1. Search Funnel
+        $funnel = $api->getSearchFunnel('28days');
+        $this->assertArrayHasKey('impressions', $funnel);
+        $this->assertArrayHasKey('clicks', $funnel);
+        $this->assertArrayHasKey('ctr', $funnel);
+        $this->assertArrayHasKey('position', $funnel);
+        $this->assertArrayHasKey('visitors', $funnel);
+        $this->assertArrayHasKey('chart', $funnel);
+        $this->assertCount(28, $funnel['chart']);
+
+        // 2. 7 days funnel
+        $funnel7 = $api->getSearchFunnel('7days');
+        $this->assertCount(7, $funnel7['chart']);
+
+        // 3. Top Queries & Filtering
+        $queries = $api->getTopQueries('28days', 10);
+        $this->assertNotEmpty($queries);
+        $this->assertArrayHasKey('query', $queries[0]);
+        $this->assertArrayHasKey('clicks', $queries[0]);
+
+        $filteredQueries = $api->getTopQueries('28days', 10, 'oracle');
+        $this->assertNotEmpty($filteredQueries);
+        $this->assertStringContainsStringIgnoringCase('oracle', $filteredQueries[0]['query']);
+
+        // 4. Top Pages
+        $pages = $api->getTopPages('28days', 5);
+        $this->assertCount(5, $pages);
+        $this->assertArrayHasKey('title', $pages[0]);
+        $this->assertArrayHasKey('path', $pages[0]);
+        $this->assertArrayHasKey('pageviews', $pages[0]);
+
+        // 5. Traffic Channels
+        $channels = $api->getTrafficChannels('28days');
+        $this->assertArrayHasKey('channels', $channels);
+        $this->assertNotEmpty($channels['channels']);
+
+        // 6. Devices & Location
+        $devices = $api->getDeviceAndLocationStats('28days');
+        $this->assertArrayHasKey('devices', $devices);
+        $this->assertArrayHasKey('countries', $devices);
+
+        // 7. Detailed PageSpeed & Core Web Vitals
+        $speed = $api->getDetailedPageSpeed();
+        $this->assertArrayHasKey('mobile', $speed);
+        $this->assertArrayHasKey('desktop', $speed);
+        $this->assertArrayHasKey('vitals', $speed);
+        $this->assertArrayHasKey('lcp', $speed['vitals']);
+        $this->assertArrayHasKey('inp', $speed['vitals']);
+        $this->assertArrayHasKey('cls', $speed['vitals']);
+        $this->assertArrayHasKey('fcp', $speed['vitals']);
+        $this->assertArrayHasKey('tbt', $speed['vitals']);
+    }
+
+    #[Test]
+    public function dashboard_livewire_component_renders_and_switches_date_ranges(): void
+    {
+        \Livewire\Livewire::test(\Plugins\GoogleSiteKit\Livewire\Dashboard::class)
+            ->assertSee('Google Site Kit Dashboard')
+            ->assertSee('Search Funnel')
+            ->assertSee('Top Search Queries')
+            ->assertSee('Most Popular Content')
+            ->assertSee('Traffic Acquisition Channels')
+            ->assertSee('Core Web Vitals Assessment')
+            ->call('changeDateRange', '7days')
+            ->assertSet('dateRange', '7days')
+            ->call('changeDateRange', '90days')
+            ->assertSet('dateRange', '90days')
+            ->set('searchQuery', 'cloud')
+            ->assertSee('cloud');
+    }
 }

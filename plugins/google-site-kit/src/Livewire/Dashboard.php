@@ -2,17 +2,24 @@
 
 namespace Plugins\GoogleSiteKit\Livewire;
 
-use App\Models\Setting;
 use Livewire\Component;
 use Plugins\GoogleSiteKit\Services\GoogleApiService;
 
 class Dashboard extends Component
 {
-    public string $activeTab = 'analytics'; // analytics or search-console
+    public string $dateRange = '28days'; // 7days, 14days, 28days, 90days
 
-    public array $scData = [];
+    public string $searchQuery = '';
 
-    public array $gaData = [];
+    public array $funnelData = [];
+
+    public array $topQueries = [];
+
+    public array $topPages = [];
+
+    public array $channelsData = [];
+
+    public array $deviceData = [];
 
     public array $speedData = [];
 
@@ -20,44 +27,41 @@ class Dashboard extends Component
 
     public bool $loadingSpeed = false;
 
-    public function mount(GoogleApiService $api)
+    public function mount(GoogleApiService $api): void
     {
         $this->isConnected = $api->isConnected();
-        $this->scData = $api->getSearchConsoleData();
-        $this->gaData = $api->getAnalyticsData();
-
-        // Initial PageSpeed stats (mockable fallback/saved values)
-        $this->speedData = [
-            'mobile' => (int) setting('gsk_speed_mobile', 84),
-            'desktop' => (int) setting('gsk_speed_desktop', 97),
-        ];
+        $this->loadData($api);
+        $this->speedData = $api->getDetailedPageSpeed(false);
     }
 
-    public function switchTab(string $tab)
+    public function changeDateRange(string $range, GoogleApiService $api): void
     {
-        if (in_array($tab, ['analytics', 'search-console'])) {
-            $this->activeTab = $tab;
+        if (in_array($range, ['7days', '14days', '28days', '90days'])) {
+            $this->dateRange = $range;
+            $this->loadData($api);
         }
     }
 
-    public function refreshSpeed(GoogleApiService $api)
+    public function updatedSearchQuery(GoogleApiService $api): void
     {
-        $this->loadingSpeed = true;
-
-        $res = $api->getPageSpeedData();
-        $this->speedData = $res;
-
-        // Persist values in settings to avoid redundant requests on page load
-        $this->saveSetting('gsk_speed_mobile', $res['mobile']);
-        $this->saveSetting('gsk_speed_desktop', $res['desktop']);
-
-        $this->loadingSpeed = false;
-        session()->flash('speed_success', 'PageSpeed Insights metrics updated.');
+        $this->topQueries = $api->getTopQueries($this->dateRange, 10, $this->searchQuery);
     }
 
-    protected function saveSetting(string $key, $value): void
+    public function refreshSpeed(GoogleApiService $api): void
     {
-        Setting::set($key, $value, 'google-site-kit');
+        $this->loadingSpeed = true;
+        $this->speedData = $api->getDetailedPageSpeed(true);
+        $this->loadingSpeed = false;
+        session()->flash('speed_success', 'PageSpeed Insights & Core Web Vitals metrics re-analyzed successfully.');
+    }
+
+    protected function loadData(GoogleApiService $api): void
+    {
+        $this->funnelData = $api->getSearchFunnel($this->dateRange);
+        $this->topQueries = $api->getTopQueries($this->dateRange, 10, $this->searchQuery);
+        $this->topPages = $api->getTopPages($this->dateRange, 10);
+        $this->channelsData = $api->getTrafficChannels($this->dateRange);
+        $this->deviceData = $api->getDeviceAndLocationStats($this->dateRange);
     }
 
     public function render()
@@ -65,3 +69,4 @@ class Dashboard extends Component
         return view('google-site-kit::livewire.dashboard');
     }
 }
+
