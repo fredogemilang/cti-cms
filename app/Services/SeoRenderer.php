@@ -243,7 +243,9 @@ class SeoRenderer
 
         if (method_exists($entity, 'getUrl')) {
             foreach ($availableLocales as $loc) {
-                $hreflangs[$loc] = $entity->getUrl($loc);
+                if ($loc === $defaultLocale || ! method_exists($entity, 'hasTranslationForLocale') || $entity->hasTranslationForLocale($loc)) {
+                    $hreflangs[$loc] = $entity->getUrl($loc);
+                }
             }
             $hreflangs['x-default'] = $entity->getUrl($defaultLocale);
         } elseif (method_exists($entity, 'getArchiveUrl')) {
@@ -253,7 +255,15 @@ class SeoRenderer
             $hreflangs['x-default'] = $entity->getArchiveUrl($defaultLocale);
         }
 
-        return array_filter($hreflangs);
+        $filtered = array_filter($hreflangs);
+
+        // Only emit hreflangs if there are multiple distinct language versions
+        $localesOnly = array_filter($filtered, fn ($key) => $key !== 'x-default', ARRAY_FILTER_USE_KEY);
+        if (count(array_unique($localesOnly)) <= 1) {
+            return [];
+        }
+
+        return $filtered;
     }
 
     /**

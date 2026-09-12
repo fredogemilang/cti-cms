@@ -288,6 +288,16 @@ class InjectSeoTags
             $lines[] = '<link rel="canonical" href="'.e($seo['canonical']).'">';
         }
 
+        // Hreflang alternates
+        if (! empty($seo['hreflangs']) && is_array($seo['hreflangs'])) {
+            foreach ($seo['hreflangs'] as $lang => $url) {
+                if (! empty($url)) {
+                    $lines[] = '<link rel="alternate" hreflang="'.e($lang).'" href="'.e($url).'">';
+                }
+            }
+        }
+
+
         // Open Graph
         if (setting('seo_opengraph_enabled', true)) {
             $lines[] = '<meta property="og:type" content="'.e($seo['og']['type']).'">';

@@ -665,12 +665,12 @@ if (! function_exists('localized_url')) {
                 $cleanPath = implode('/', $segments);
 
                 if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
-                    return url("/{$locale}/{$cleanPath}").$query.$fragment;
+                    return trailing_slash_url(url("/{$locale}/{$cleanPath}")).$query.$fragment;
                 }
 
                 $base = $hideDefault || $urlStructure !== 'prefix' ? "/{$cleanPath}" : "/{$defaultLocale}/{$cleanPath}";
 
-                return url($base).$query.$fragment;
+                return trailing_slash_url(url($base)).$query.$fragment;
             }
         }
 
@@ -680,14 +680,15 @@ if (! function_exists('localized_url')) {
             if ($page) {
                 $targetSlug = $page->getTranslation('slug', $locale) ?? $page->slug;
                 if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
-                    return url("/{$locale}/{$targetSlug}").$query.$fragment;
+                    return trailing_slash_url(url("/{$locale}/{$targetSlug}")).$query.$fragment;
                 }
 
                 $base = $hideDefault || $urlStructure !== 'prefix' ? "/{$targetSlug}" : "/{$defaultLocale}/{$targetSlug}";
 
-                return url($base).$query.$fragment;
+                return trailing_slash_url(url($base)).$query.$fragment;
             }
         }
+
 
         // 4. Default Fallback
         if ($locale !== $defaultLocale && $urlStructure === 'prefix') {

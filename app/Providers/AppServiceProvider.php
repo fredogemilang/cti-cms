@@ -103,7 +103,7 @@ class AppServiceProvider extends ServiceProvider
             $entrySlug = $entry->getTranslation('slug', $locale, fallback: true) ?? $entry->slug;
 
             if ($cptSlug === 'technology-alliance') {
-                return url($localePrefix.'/'.ltrim($entrySlug, '/'));
+                return trailing_slash_url(url($localePrefix.'/'.ltrim($entrySlug, '/')));
             }
 
             if ($cptSlug === 'tech-products' || $cptSlug === 'products') {
@@ -113,7 +113,7 @@ class AppServiceProvider extends ServiceProvider
                     : ($entry->getMeta('parent_vendor') ?: null);
 
                 if ($parentSlug) {
-                    return url($localePrefix.'/'.ltrim($parentSlug, '/').'/'.ltrim($entrySlug, '/'));
+                    return trailing_slash_url(url($localePrefix.'/'.ltrim($parentSlug, '/').'/'.ltrim($entrySlug, '/')));
                 }
             }
 

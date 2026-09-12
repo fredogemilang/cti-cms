@@ -113,6 +113,12 @@ Route::get('/tag/{slug}', [LegacyRedirectController::class, 'tag']);
 Route::get('/client-says/{slug?}', [LegacyRedirectController::class, 'clientSays']);
 Route::get('/our-clients/{slug?}', [LegacyRedirectController::class, 'clientSays']);
 Route::get('/customer-success/page/{page}', [LegacyRedirectController::class, 'customerSuccessPage'])->where('page', '[0-9]+');
+Route::get('/blog-news/page/{page}', [LegacyRedirectController::class, 'blogNewsPage'])->where('page', '[0-9]+');
+Route::get('/tag/{slug}/page/{page}', [LegacyRedirectController::class, 'tagPage'])->where('page', '[0-9]+');
+Route::get('/blog-news/tag/{slug}/page/{page}', [LegacyRedirectController::class, 'tagPage'])->where('page', '[0-9]+');
+Route::get('/category/{slug}/page/{page}', [LegacyRedirectController::class, 'categoryPage'])->where('page', '[0-9]+');
+Route::get('/blog-news/category/{slug}/page/{page}', [LegacyRedirectController::class, 'categoryPage'])->where('page', '[0-9]+');
+Route::get('/solution/{slug}', [LegacyRedirectController::class, 'legacySolution'])->where('slug', '[a-zA-Z0-9\-]+');
 
 // General legacy path aliases
 Route::redirect('/category', '/blog-news', 301);
@@ -132,9 +138,16 @@ Route::redirect('/technology-alliance', '/technology-alliance/amazon-web-service
 Route::redirect('/contact', '/contact-us', 301);
 Route::redirect('/career', '/careers', 301);
 Route::redirect('/terms-of-use', '/privacy-policy', 301);
-Route::redirect('/amazon-web-services-cloud-credits-preview', '/amazon-web-services-cloud-credits', 301);
+Route::get('/apple', fn () => redirect(trailing_slash_url(url('/amazon-web-services')), 301));
+Route::get('/amazon-web-services-cloud-credits-preview', fn () => redirect(trailing_slash_url(url('/amazon-web-services-cloud-credits')), 301));
+Route::get('/blog-news/transformasi-ke-cloud-dengan-arsitektur-modern-dan-terkoneksi', fn () => redirect(trailing_slash_url(url('/blog-news')), 301));
+Route::get('/blog-news/tingkatkan-keamanan-data-dengan-rubrik-zero-trust-data-security', fn () => redirect(trailing_slash_url(url('/blog-news')), 301));
 Route::redirect('/admin', '/ctrlpanel', 301);
+
+
+
 Route::redirect('/admin/login', '/ctrlpanel/login', 301);
+
 
 if (! empty($nonDefaultLocales)) {
     Route::get('/{locale}/news-detail/{slug}', [LegacyRedirectController::class, 'newsDetail'])
@@ -158,6 +171,27 @@ if (! empty($nonDefaultLocales)) {
     Route::get('/{locale}/customer-success/page/{page}', [LegacyRedirectController::class, 'customerSuccessPage'])
         ->where('locale', $localePattern)->where('page', '[0-9]+');
 
+    Route::get('/{locale}/blog-news/page/{page}', [LegacyRedirectController::class, 'blogNewsPage'])
+        ->where('locale', $localePattern)->where('page', '[0-9]+');
+
+    Route::get('/{locale}/tag/{slug}/page/{page}', [LegacyRedirectController::class, 'tagPage'])
+        ->where('locale', $localePattern)->where('page', '[0-9]+');
+
+    Route::get('/{locale}/blog-news/tag/{slug}/page/{page}', [LegacyRedirectController::class, 'tagPage'])
+        ->where('locale', $localePattern)->where('page', '[0-9]+');
+
+    Route::get('/{locale}/category/{slug}/page/{page}', [LegacyRedirectController::class, 'categoryPage'])
+        ->where('locale', $localePattern)->where('page', '[0-9]+');
+
+    Route::get('/{locale}/blog-news/category/{slug}/page/{page}', [LegacyRedirectController::class, 'categoryPage'])
+        ->where('locale', $localePattern)->where('page', '[0-9]+');
+
+    Route::get('/{locale}/solution/{slug}', [LegacyRedirectController::class, 'legacySolution'])
+        ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-]+');
+
+    Route::get('/{locale}/solusi/{slug}', [LegacyRedirectController::class, 'legacySolution'])
+        ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-]+');
+
     Route::redirect('/id/solution', '/id/solusi/cloud', 301);
     Route::redirect('/id/solusi', '/id/solusi/cloud', 301);
     Route::redirect('/id/industry', '/id/industri/ecommerce', 301);
@@ -168,8 +202,13 @@ if (! empty($nonDefaultLocales)) {
     Route::redirect('/id/career', '/id/karir', 301);
     Route::redirect('/id/terms-of-use', '/id/kebijakan-privasi', 301);
     Route::redirect('/id/syarat-dan-ketentuan', '/id/kebijakan-privasi', 301);
-    Route::redirect('/id/amazon-web-services-cloud-credits-preview', '/id/amazon-web-services-cloud-credits', 301);
+    Route::get('/id/apple', fn () => redirect(trailing_slash_url(url('/id/amazon-web-services')), 301));
+    Route::get('/id/amazon-web-services-cloud-credits-preview', fn () => redirect(trailing_slash_url(url('/id/amazon-web-services-cloud-credits')), 301));
+    Route::get('/id/blog-news/transformasi-ke-cloud-dengan-arsitektur-modern-dan-terkoneksi', fn () => redirect(trailing_slash_url(url('/id/blog-news')), 301));
+    Route::get('/id/blog-news/tingkatkan-keamanan-data-dengan-rubrik-zero-trust-data-security', fn () => redirect(trailing_slash_url(url('/id/blog-news')), 301));
 }
+
+
 
 
 // Public Form Submission
