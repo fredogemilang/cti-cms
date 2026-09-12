@@ -27,36 +27,45 @@ class Dashboard extends Component
 
     public bool $loadingSpeed = false;
 
-    public function mount(GoogleApiService $api): void
+    public function mount(): void
     {
+        $api = app(GoogleApiService::class);
         $this->isConnected = $api->isConnected();
-        $this->loadData($api);
+        $this->loadData();
         $this->speedData = $api->getDetailedPageSpeed(false);
     }
 
-    public function changeDateRange(string $range, GoogleApiService $api): void
+    public function changeDateRange(string $range): void
     {
         if (in_array($range, ['7days', '14days', '28days', '90days'])) {
             $this->dateRange = $range;
-            $this->loadData($api);
+            $this->loadData();
         }
     }
 
-    public function updatedSearchQuery(GoogleApiService $api): void
+    public function updatedDateRange(): void
     {
+        $this->loadData();
+    }
+
+    public function updatedSearchQuery(): void
+    {
+        $api = app(GoogleApiService::class);
         $this->topQueries = $api->getTopQueries($this->dateRange, 10, $this->searchQuery);
     }
 
-    public function refreshSpeed(GoogleApiService $api): void
+    public function refreshSpeed(): void
     {
         $this->loadingSpeed = true;
+        $api = app(GoogleApiService::class);
         $this->speedData = $api->getDetailedPageSpeed(true);
         $this->loadingSpeed = false;
         session()->flash('speed_success', 'PageSpeed Insights & Core Web Vitals metrics re-analyzed successfully.');
     }
 
-    protected function loadData(GoogleApiService $api): void
+    protected function loadData(): void
     {
+        $api = app(GoogleApiService::class);
         $this->funnelData = $api->getSearchFunnel($this->dateRange);
         $this->topQueries = $api->getTopQueries($this->dateRange, 10, $this->searchQuery);
         $this->topPages = $api->getTopPages($this->dateRange, 10);
