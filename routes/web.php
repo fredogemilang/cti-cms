@@ -21,6 +21,7 @@ use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FormSubmissionController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IndexNowController;
+use App\Http\Controllers\LegacyRedirectController;
 use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RobotsController;
@@ -103,6 +104,73 @@ Route::get('/schema-manifest.json', SchemaManifestController::class)->name('sche
 Route::get('/schema.json', [SchemaAggregatorController::class, 'index'])->name('schema-json');
 Route::get('/schema/{type}', [SchemaAggregatorController::class, 'showCollection'])->name('schema-collection');
 Route::get('/indexnow-{key}.txt', [IndexNowController::class, 'showKey'])->name('indexnow.key');
+
+// Legacy WordPress & Elementor 301 Redirects (SEO Protection)
+Route::get('/news-detail/{slug}', [LegacyRedirectController::class, 'newsDetail'])->where('slug', '[a-zA-Z0-9\-]+');
+Route::get('/blog/{slug}', [LegacyRedirectController::class, 'blogSingle'])->where('slug', '[a-zA-Z0-9\-]+');
+Route::get('/category/{slug}', [LegacyRedirectController::class, 'category']);
+Route::get('/tag/{slug}', [LegacyRedirectController::class, 'tag']);
+Route::get('/client-says/{slug?}', [LegacyRedirectController::class, 'clientSays']);
+Route::get('/our-clients/{slug?}', [LegacyRedirectController::class, 'clientSays']);
+Route::get('/customer-success/page/{page}', [LegacyRedirectController::class, 'customerSuccessPage'])->where('page', '[0-9]+');
+
+// General legacy path aliases
+Route::redirect('/category', '/blog-news', 301);
+Route::redirect('/tag', '/blog-news', 301);
+Route::redirect('/blog', '/blog-news', 301);
+Route::redirect('/insight', '/blog-news', 301);
+Route::redirect('/insights', '/blog-news', 301);
+Route::redirect('/articles', '/blog-news', 301);
+Route::redirect('/landing', '/', 301);
+Route::redirect('/videos', '/video', 301);
+Route::redirect('/about-us/management', '/about-management', 301);
+Route::redirect('/nebula', '/nebula-cloud-console', 301);
+Route::redirect('/solution', '/solution/cloud', 301);
+Route::redirect('/solutions', '/solution/cloud', 301);
+Route::redirect('/industry', '/industry/ecommerce', 301);
+Route::redirect('/technology-alliance', '/technology-alliance/amazon-web-services', 301);
+Route::redirect('/contact', '/contact-us', 301);
+Route::redirect('/career', '/careers', 301);
+Route::redirect('/terms-of-use', '/privacy-policy', 301);
+Route::redirect('/amazon-web-services-cloud-credits-preview', '/amazon-web-services-cloud-credits', 301);
+Route::redirect('/admin', '/ctrlpanel', 301);
+Route::redirect('/admin/login', '/ctrlpanel/login', 301);
+
+if (! empty($nonDefaultLocales)) {
+    Route::get('/{locale}/news-detail/{slug}', [LegacyRedirectController::class, 'newsDetail'])
+        ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-]+');
+
+    Route::get('/{locale}/blog/{slug}', [LegacyRedirectController::class, 'blogSingle'])
+        ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-]+');
+
+    Route::get('/{locale}/category/{slug}', [LegacyRedirectController::class, 'category'])
+        ->where('locale', $localePattern);
+
+    Route::get('/{locale}/tag/{slug}', [LegacyRedirectController::class, 'tag'])
+        ->where('locale', $localePattern);
+
+    Route::get('/{locale}/client-says/{slug?}', [LegacyRedirectController::class, 'clientSays'])
+        ->where('locale', $localePattern);
+
+    Route::get('/{locale}/our-clients/{slug?}', [LegacyRedirectController::class, 'clientSays'])
+        ->where('locale', $localePattern);
+
+    Route::get('/{locale}/customer-success/page/{page}', [LegacyRedirectController::class, 'customerSuccessPage'])
+        ->where('locale', $localePattern)->where('page', '[0-9]+');
+
+    Route::redirect('/id/solution', '/id/solusi/cloud', 301);
+    Route::redirect('/id/solusi', '/id/solusi/cloud', 301);
+    Route::redirect('/id/industry', '/id/industri/ecommerce', 301);
+    Route::redirect('/id/industri', '/id/industri/ecommerce', 301);
+    Route::redirect('/id/technology-alliance', '/id/technology-alliance/amazon-web-services', 301);
+    Route::redirect('/id/contact', '/id/kontak-kami', 301);
+    Route::redirect('/id/kontak', '/id/kontak-kami', 301);
+    Route::redirect('/id/career', '/id/karir', 301);
+    Route::redirect('/id/terms-of-use', '/id/kebijakan-privasi', 301);
+    Route::redirect('/id/syarat-dan-ketentuan', '/id/kebijakan-privasi', 301);
+    Route::redirect('/id/amazon-web-services-cloud-credits-preview', '/id/amazon-web-services-cloud-credits', 301);
+}
+
 
 // Public Form Submission
 Route::prefix('forms')->name('forms.')->group(function () {

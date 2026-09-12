@@ -17,6 +17,21 @@ class PageController extends Controller
 
         // Locale-aware slug lookup — auto-switches app locale if matched on a translated slug.
         $page = Page::findByLocalizedSlug($targetSlug);
+
+        // Legacy Fallback: If not a Page, check if it's a legacy WordPress root-level article (%postname% permalink)
+        if (! $page && class_exists(\Plugins\Posts\Models\Post::class)) {
+            $post = \Plugins\Posts\Models\Post::findByLocalizedSlug($targetSlug);
+            if ($post) {
+                $targetLocale = ($slug !== null && in_array($localeOrSlug, available_locales(), true))
+                    ? $localeOrSlug
+                    : app()->getLocale();
+                $canonicalUrl = $post->getUrl($targetLocale);
+                $queryString = request()->getQueryString();
+
+                return redirect($canonicalUrl . ($queryString ? "?{$queryString}" : ''), 301);
+            }
+        }
+
         abort_if(! $page, 404);
 
         // Redirect homepage slug to canonical root URL to avoid duplicate content.
