@@ -77,13 +77,20 @@ class InjectSeoTags
             $content = (string) preg_replace('/<title\b[^>]*>(.*?)<\/title>/is', '<title>'.e($seo['title']).'</title>', $content);
         }
 
-        // Replace existing <meta name="robots"> if present so noindex,follow takes full precedence
-        if ($seo['robots'] !== 'index,follow' && preg_match('/<meta\s+name=["\']robots["\'][^>]*>/is', $content)) {
-            $content = (string) preg_replace('/<meta\s+name=["\']robots["\'][^>]*>/is', '<meta name="robots" content="'.e($seo['robots']).'">', $content);
+        // Robots directive resolution
+        $robotsDirective = $seo['robots'] ?? 'index, follow';
+        $fullRobotsTag = ($robotsDirective === 'index,follow' || $robotsDirective === 'index, follow')
+            ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+            : $robotsDirective;
+
+        // If existing <meta name="robots"> tag is present in HTML, replace it with the resolved directive
+        $hasExistingRobots = (bool) preg_match('/<meta\s+name=["\']robots["\'][^>]*>/is', $content);
+        if ($hasExistingRobots) {
+            $content = (string) preg_replace('/<meta\s+name=["\']robots["\'][^>]*>/is', '<meta name="robots" content="'.e($fullRobotsTag).'">', $content);
         }
 
         // Build SEO tags
-        $seoHtml = $this->buildSeoHtml($seo, $entity);
+        $seoHtml = $this->buildSeoHtml($seo, $entity, $hasExistingRobots);
 
         // Inject just before </head>, after any existing @stack('meta') content
         $content = str_replace('</head>', $seoHtml."\n</head>", $content);
@@ -255,7 +262,7 @@ class InjectSeoTags
     /**
      * Build the full SEO/GEO HTML string to inject.
      */
-    protected function buildSeoHtml(array $seo, ?Model $entity = null): string
+    protected function buildSeoHtml(array $seo, ?Model $entity = null, bool $hasExistingRobots = false): string
     {
         $lines = [];
 
@@ -267,8 +274,13 @@ class InjectSeoTags
         }
 
         // Robots
-        if ($seo['robots'] !== 'index,follow') {
-            $lines[] = '<meta name="robots" content="'.e($seo['robots']).'">';
+        if (! $hasExistingRobots) {
+            $robotsDirective = $seo['robots'] ?? 'index, follow';
+            $fullRobotsTag = ($robotsDirective === 'index,follow' || $robotsDirective === 'index, follow')
+                ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+                : $robotsDirective;
+
+            $lines[] = '<meta name="robots" content="'.e($fullRobotsTag).'">';
         }
 
         // Canonical
