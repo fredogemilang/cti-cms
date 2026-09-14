@@ -197,7 +197,7 @@ if (! empty($nonDefaultLocales)) {
     Route::get('/id/solusi', fn () => redirect(trailing_slash_url(url('/id/solution/cloud')), 301));
     Route::get('/id/industry', fn () => redirect(trailing_slash_url(url('/id/industry/ecommerce')), 301));
     Route::get('/id/industri', fn () => redirect(trailing_slash_url(url('/id/industry/ecommerce')), 301));
-    Route::get('/id/industri/{slug}', fn ($locale, $slug) => redirect(trailing_slash_url(url("/id/industry/{$slug}")), 301));
+    Route::get('/{locale}/industri/{slug}', fn ($locale, $slug) => redirect(trailing_slash_url(url("/{$locale}/industry/{$slug}")), 301))->where('locale', $localePattern);
     Route::get('/id/technology-alliance', fn () => redirect(trailing_slash_url(url('/id/amazon-web-services')), 301));
     Route::get('/id/contact', fn () => redirect(trailing_slash_url(url('/id/kontak-kami')), 301));
     Route::get('/id/kontak', fn () => redirect(trailing_slash_url(url('/id/kontak-kami')), 301));
