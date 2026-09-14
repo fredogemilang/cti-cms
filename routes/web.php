@@ -118,7 +118,8 @@ Route::get('/tag/{slug}/page/{page}', [LegacyRedirectController::class, 'tagPage
 Route::get('/blog-news/tag/{slug}/page/{page}', [LegacyRedirectController::class, 'tagPage'])->where('page', '[0-9]+');
 Route::get('/category/{slug}/page/{page}', [LegacyRedirectController::class, 'categoryPage'])->where('page', '[0-9]+');
 Route::get('/blog-news/category/{slug}/page/{page}', [LegacyRedirectController::class, 'categoryPage'])->where('page', '[0-9]+');
-Route::get('/solution/{slug}', [LegacyRedirectController::class, 'legacySolution'])->where('slug', '[a-zA-Z0-9\-]+');
+$legacyIndustryPattern = 'media|insurance|asuransi|ecommerce|healthcare|kesehatan|education|educations|pendidikan|manufacture|manufaktur|public-sector|sektor-publik|telecommunication|telekomunikasi|telecomunication-service-provider|telekomunikasi-penyedia-layanan|finance|banking|financial-banking|keuangan-perbankan';
+Route::get('/solution/{slug}', [LegacyRedirectController::class, 'legacySolution'])->where('slug', $legacyIndustryPattern);
 
 // General legacy path aliases
 Route::redirect('/category', '/blog-news', 301);
@@ -187,13 +188,13 @@ if (! empty($nonDefaultLocales)) {
         ->where('locale', $localePattern)->where('page', '[0-9]+');
 
     Route::get('/{locale}/solution/{slug}', [LegacyRedirectController::class, 'legacySolution'])
-        ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-]+');
+        ->where('locale', $localePattern)->where('slug', $legacyIndustryPattern);
 
     Route::get('/{locale}/solusi/{slug}', [LegacyRedirectController::class, 'legacySolution'])
         ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-]+');
 
-    Route::redirect('/id/solution', '/id/solusi/cloud', 301);
-    Route::redirect('/id/solusi', '/id/solusi/cloud', 301);
+    Route::redirect('/id/solution', '/id/solution/cloud', 301);
+    Route::redirect('/id/solusi', '/id/solution/cloud', 301);
     Route::redirect('/id/industry', '/id/industri/ecommerce', 301);
     Route::redirect('/id/industri', '/id/industri/ecommerce', 301);
     Route::redirect('/id/technology-alliance', '/id/technology-alliance/amazon-web-services', 301);

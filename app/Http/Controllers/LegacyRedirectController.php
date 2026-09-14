@@ -151,34 +151,53 @@ class LegacyRedirectController extends Controller
         $industryMap = [
             'media' => ['en' => 'media', 'id' => 'media'],
             'insurance' => ['en' => 'insurance', 'id' => 'asuransi'],
+            'asuransi' => ['en' => 'insurance', 'id' => 'asuransi'],
             'ecommerce' => ['en' => 'ecommerce', 'id' => 'ecommerce'],
             'healthcare' => ['en' => 'healthcare', 'id' => 'kesehatan'],
+            'kesehatan' => ['en' => 'healthcare', 'id' => 'kesehatan'],
             'education' => ['en' => 'educations', 'id' => 'pendidikan'],
             'educations' => ['en' => 'educations', 'id' => 'pendidikan'],
+            'pendidikan' => ['en' => 'educations', 'id' => 'pendidikan'],
             'manufacture' => ['en' => 'manufacture', 'id' => 'manufaktur'],
+            'manufaktur' => ['en' => 'manufacture', 'id' => 'manufaktur'],
             'public-sector' => ['en' => 'public-sector', 'id' => 'sektor-publik'],
+            'sektor-publik' => ['en' => 'public-sector', 'id' => 'sektor-publik'],
             'telecommunication' => ['en' => 'telecomunication-service-provider', 'id' => 'telekomunikasi-penyedia-layanan'],
+            'telekomunikasi' => ['en' => 'telecomunication-service-provider', 'id' => 'telekomunikasi-penyedia-layanan'],
             'telecomunication-service-provider' => ['en' => 'telecomunication-service-provider', 'id' => 'telekomunikasi-penyedia-layanan'],
+            'telekomunikasi-penyedia-layanan' => ['en' => 'telecomunication-service-provider', 'id' => 'telekomunikasi-penyedia-layanan'],
             'finance' => ['en' => 'financial-banking', 'id' => 'keuangan-perbankan'],
             'banking' => ['en' => 'financial-banking', 'id' => 'keuangan-perbankan'],
             'financial-banking' => ['en' => 'financial-banking', 'id' => 'keuangan-perbankan'],
+            'keuangan-perbankan' => ['en' => 'financial-banking', 'id' => 'keuangan-perbankan'],
         ];
 
         if ($targetSlug && isset($industryMap[$targetSlug])) {
             $langKey = $locale === 'id' ? 'id' : 'en';
             $industrySlug = $industryMap[$targetSlug][$langKey];
-            return redirect(trailing_slash_url(url("{$prefix}/industry/{$industrySlug}")), 301);
-        }
-
-        // If it matches a solution CPT entry (e.g. cloud), redirect to its canonical URL
-        if ($targetSlug) {
-            $solCpt = CptEntry::where('slug', $targetSlug)->where('post_type_id', 2)->first();
-            if ($solCpt) {
-                return redirect($solCpt->getUrl($locale ?: 'en'), 301);
+            $dest = trailing_slash_url(url("{$prefix}/industry/{$industrySlug}"));
+            if (rtrim($request->url(), '/') !== rtrim($dest, '/')) {
+                return redirect($dest, 301);
             }
         }
 
-        return redirect(trailing_slash_url(url($locale === 'id' ? '/id/solusi/cloud' : '/solution/cloud')), 301);
+        // If it matches a solution CPT entry (e.g. cloud, analytics)
+        if ($targetSlug) {
+            $solCpt = CptEntry::where('slug', $targetSlug)->where('post_type_id', 2)->first();
+            if ($solCpt) {
+                $canonicalUrl = $solCpt->getUrl($locale ?: 'en');
+                if (rtrim($request->url(), '/') !== rtrim($canonicalUrl, '/')) {
+                    return redirect($canonicalUrl, 301);
+                }
+            }
+        }
+
+        $fallbackUrl = trailing_slash_url(url($locale === 'id' ? '/id/solution/cloud' : '/solution/cloud'));
+        if (rtrim($request->url(), '/') !== rtrim($fallbackUrl, '/')) {
+            return redirect($fallbackUrl, 301);
+        }
+
+        abort(404);
     }
 
 }
