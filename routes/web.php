@@ -132,8 +132,8 @@ Route::redirect('/landing', '/', 301);
 Route::redirect('/videos', '/video', 301);
 Route::redirect('/about-us/management', '/about-management', 301);
 Route::redirect('/nebula', '/nebula-cloud-console', 301);
-Route::redirect('/solution', '/solution/cloud', 301);
-Route::redirect('/solutions', '/solution/cloud', 301);
+Route::get('/solution', fn () => redirect(trailing_slash_url(url('/solution/cloud')), 301));
+Route::get('/solutions', fn () => redirect(trailing_slash_url(url('/solution/cloud')), 301));
 Route::redirect('/industry', '/industry/ecommerce', 301);
 Route::redirect('/technology-alliance', '/technology-alliance/amazon-web-services', 301);
 Route::redirect('/contact', '/contact-us', 301);
@@ -193,8 +193,8 @@ if (! empty($nonDefaultLocales)) {
     Route::get('/{locale}/solusi/{slug}', [LegacyRedirectController::class, 'legacySolution'])
         ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-]+');
 
-    Route::redirect('/id/solution', '/id/solution/cloud', 301);
-    Route::redirect('/id/solusi', '/id/solution/cloud', 301);
+    Route::get('/id/solution', fn () => redirect(trailing_slash_url(url('/id/solution/cloud')), 301));
+    Route::get('/id/solusi', fn () => redirect(trailing_slash_url(url('/id/solution/cloud')), 301));
     Route::redirect('/id/industry', '/id/industri/ecommerce', 301);
     Route::redirect('/id/industri', '/id/industri/ecommerce', 301);
     Route::redirect('/id/technology-alliance', '/id/technology-alliance/amazon-web-services', 301);
