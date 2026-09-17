@@ -253,6 +253,41 @@
             'searchable_text' => implode(' ', $searchableParts),
         ];
     })->values()->all();
+
+    $formTranslations = $form->translations ?? [
+        'id' => [
+            'name' => '',
+            'description' => '',
+            'submit_button_text' => 'Kirim',
+            'confirmations' => [
+                'message' => 'Terima kasih atas pengajuan Anda. Tim kami akan segera menghubungi Anda.'
+            ]
+        ]
+    ];
+
+    $formFieldsData = array_map(function($f) {
+        $adv = $f['advanced_settings'] ?? [];
+        if (is_string($adv)) {
+            $adv = json_decode($adv, true) ?? [];
+        }
+        $f['consent_text'] = $f['consent_text'] ?? ($adv['consent_text'] ?? ($adv['privacy_content'] ?? ''));
+        $f['terms_text'] = $f['terms_text'] ?? ($adv['terms_text'] ?? '');
+        $f['html_content'] = $f['html_content'] ?? ($adv['html_content'] ?? '');
+        // Flatten translations for Alpine UI
+        $trans = $f['translations'] ?? [];
+        $f['translations_id_label'] = $trans['id']['label'] ?? '';
+        $f['translations_id_placeholder'] = $trans['id']['placeholder'] ?? '';
+        $f['translations_id_consent_text'] = $trans['id']['consent_text'] ?? '';
+        // Normalize validation + flatten named rule state for the Alpine UI
+        $validation = $f['validation'] ?? [];
+        if (is_string($validation)) {
+            $validation = json_decode($validation, true) ?? [];
+        }
+        $f['validation'] = $validation;
+        $f['validation_corporate_email'] = ($validation['rule'] ?? null) === 'corporate_email';
+        $f['validation_rule_message'] = $validation['rule_message'] ?? '';
+        return $f;
+    }, $form->fields ? $form->fields->toArray() : []);
 @endphp
 
 <script>
@@ -266,7 +301,7 @@ function formStudioController() {
         isActive: @json($form->is_active ? '1' : '0'),
         submitButtonText: @json($form->submit_button_text ?? 'Submit'),
         themeSlot: @json($assignedSlot),
-        translations: @json($form->translations ?? ['id' => ['name' => '', 'description' => '', 'submit_button_text' => 'Kirim', 'confirmations' => ['message' => 'Terima kasih atas pengajuan Anda. Tim kami akan segera menghubungi Anda.']]]),
+        translations: @json($formTranslations),
         
         // Confirmations & Spam
         confirmationType: @json($confirmationType),
@@ -286,29 +321,7 @@ function formStudioController() {
         userBody: @json($userEmailBody),
 
         // Builder State
-        fields: @json(array_map(function($f) {
-            $adv = $f['advanced_settings'] ?? [];
-            if (is_string($adv)) {
-                $adv = json_decode($adv, true) ?? [];
-            }
-            $f['consent_text'] = $f['consent_text'] ?? ($adv['consent_text'] ?? ($adv['privacy_content'] ?? ''));
-            $f['terms_text'] = $f['terms_text'] ?? ($adv['terms_text'] ?? '');
-            $f['html_content'] = $f['html_content'] ?? ($adv['html_content'] ?? '');
-            // Flatten translations for Alpine UI
-            $trans = $f['translations'] ?? [];
-            $f['translations_id_label'] = $trans['id']['label'] ?? '';
-            $f['translations_id_placeholder'] = $trans['id']['placeholder'] ?? '';
-            $f['translations_id_consent_text'] = $trans['id']['consent_text'] ?? '';
-            // Normalize validation + flatten named rule state for the Alpine UI
-            $validation = $f['validation'] ?? [];
-            if (is_string($validation)) {
-                $validation = json_decode($validation, true) ?? [];
-            }
-            $f['validation'] = $validation;
-            $f['validation_corporate_email'] = ($validation['rule'] ?? null) === 'corporate_email';
-            $f['validation_rule_message'] = $validation['rule_message'] ?? '';
-            return $f;
-        }, $form->fields ? $form->fields->toArray() : [])),
+        fields: @json($formFieldsData),
         selectedFieldIndex: null,
         showFieldModal: false,
         settingsSubTab: 'general',
