@@ -88,14 +88,27 @@
                     @if($slug || !empty($postId))
                     <div class="flex items-center gap-2 text-xs font-bold text-[#6F767E] uppercase tracking-wider pl-1">
                         <span>PERMALINK:</span>
-                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}{{ $editingLocale && $editingLocale !== $defaultLocale ? '/' . $editingLocale : '' }}/{{ !empty($archiveSlug) ? trim($archiveSlug, '/') . '/' : '' }}</span>
+                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}{{ $editingLocale && $editingLocale !== ($defaultLocale ?? \Plugins\Posts\Models\Post::defaultLocale()) ? '/' . $editingLocale : '' }}/{{ !empty($archiveSlug) ? trim($archiveSlug, '/') . '/' : '' }}</span>
                         <div x-data="{ editing: false }" class="relative flex items-center gap-2">
-                            <span x-show="!editing" @click="editing = true" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30] cursor-pointer hover:border-[#2563EB] {{ empty($slug) ? 'italic text-gray-400' : '' }}">
-                                {{ !empty($slug) ? $slug : (($post ? $post->slug : '') ?: 'enter-slug') }}
+                            @php
+                                $curDefaultLocale = $defaultLocale ?? \Plugins\Posts\Models\Post::defaultLocale();
+                                $displaySlug = !empty($slug)
+                                    ? $slug
+                                    : ($post
+                                        ? ($editingLocale === $curDefaultLocale
+                                            ? $post->slug
+                                            : ($post->getTranslation('slug', $editingLocale, false) ?: $post->slug))
+                                        : '');
+                            @endphp
+                            <span x-show="!editing" @click="editing = true" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30] cursor-pointer hover:border-[#2563EB] {{ empty($displaySlug) ? 'italic text-gray-400' : '' }}">
+                                {{ !empty($displaySlug) ? $displaySlug : 'enter-slug' }}
                             </span>
-                            <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[120px]" placeholder="{{ $post ? $post->slug : 'slug' }}" x-cloak>
-                            <button @click="editing = !editing; $nextTick(() => $el.previousElementSibling.focus())" class="text-[#6F767E] hover:text-[#FCFCFC] transition-colors">
+                            <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[120px]" placeholder="{{ $displaySlug ?: 'slug' }}" x-cloak>
+                            <button type="button" @click="editing = !editing; $nextTick(() => $el.previousElementSibling.focus())" class="text-[#6F767E] hover:text-[#FCFCFC] transition-colors" title="Edit slug">
                                 <span class="material-symbols-outlined text-[14px]">edit</span>
+                            </button>
+                            <button type="button" wire:click="generateSlug" class="text-[#6F767E] hover:text-[#FCFCFC] transition-colors" title="Regenerate slug from title">
+                                <span class="material-symbols-outlined text-[14px]">refresh</span>
                             </button>
                         </div>
                     </div>
