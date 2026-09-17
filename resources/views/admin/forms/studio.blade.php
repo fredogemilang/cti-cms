@@ -35,6 +35,224 @@
         }
     }
     unset($slot);
+
+    // Prepare fields map for human-readable labels & types
+    $fieldMap = [];
+    if ($form->fields) {
+        foreach ($form->fields as $field) {
+            $fieldMap[$field->field_id] = [
+                'label' => $field->label,
+                'type' => $field->type,
+                'options' => $field->options,
+            ];
+        }
+    }
+
+    // Helper closure to format file URLs safely
+    $resolveFileUrl = function ($path) {
+        if (empty($path) || !is_string($path)) return '';
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) return $path;
+        if (str_starts_with($path, '/storage/') || str_starts_with($path, 'storage/')) return asset(ltrim($path, '/'));
+        if (str_starts_with($path, '/uploads/') || str_starts_with($path, 'uploads/')) return asset('storage/' . ltrim($path, '/'));
+        return asset($path);
+    };
+
+    // Calculate submission statistics
+    $allEntries = $form->entries ?? collect();
+    $totalSubmissions = $allEntries->count();
+    $todaySubmissions = $allEntries->filter(fn($e) => $e->created_at >= now()->startOfDay())->count();
+    $weekSubmissions = $allEntries->filter(fn($e) => $e->created_at >= now()->startOfWeek())->count();
+    $latestSubmission = $allEntries->first()?->created_at?->format('M d, Y H:i') ?? 'No submissions yet';
+
+    // Transform entries into rich structured array
+    $entriesDataList = $allEntries->map(function ($entry) use ($fieldMap, $resolveFileUrl) {
+        $data = is_array($entry->data) ? $entry->data : [];
+        $attr = is_array($entry->data['_attribution'] ?? null) ? $entry->data['_attribution'] : $entry->getAttributionData();
+
+        // 1. Detect Applicant Name
+        $name = null;
+        $nameCandidates = ['full_name', 'name', 'your_name', 'first_name', 'applicant_name', 'contact_name'];
+        foreach ($nameCandidates as $k) {
+            if (!empty($data[$k]) && is_string($data[$k])) {
+                $name = trim($data[$k]);
+                break;
+            }
+        }
+        if (!$name) {
+            foreach ($data as $k => $v) {
+                if (is_string($v) && str_contains(strtolower((string)$k), 'name') && !empty(trim($v))) {
+                    $name = trim($v);
+                    break;
+                }
+            }
+        }
+
+        // 2. Detect Email
+        $email = null;
+        $emailCandidates = ['email', 'corporate_email', 'work_email', 'contact_email', 'user_email'];
+        foreach ($emailCandidates as $k) {
+            if (!empty($data[$k]) && is_string($data[$k]) && filter_var(trim($data[$k]), FILTER_VALIDATE_EMAIL)) {
+                $email = trim($data[$k]);
+                break;
+            }
+        }
+        if (!$email) {
+            foreach ($data as $k => $v) {
+                if (is_string($v) && filter_var(trim($v), FILTER_VALIDATE_EMAIL)) {
+                    $email = trim($v);
+                    break;
+                }
+            }
+        }
+
+        // 3. Detect Phone
+        $phone = null;
+        $phoneCandidates = ['phone', 'phone_number', 'telephone', 'mobile', 'whatsapp', 'wa'];
+        foreach ($phoneCandidates as $k) {
+            if (!empty($data[$k]) && is_string($data[$k])) {
+                $phone = trim($data[$k]);
+                break;
+            }
+        }
+
+        // 4. Detect Company / Position
+        $company = null;
+        $companyCandidates = ['company', 'company_name', 'organization', 'institution'];
+        foreach ($companyCandidates as $k) {
+            if (!empty($data[$k]) && is_string($data[$k])) {
+                $company = trim($data[$k]);
+                break;
+            }
+        }
+
+        $position = null;
+        $posCandidates = ['position', 'job_title', 'applied_position', 'role', 'subject'];
+        foreach ($posCandidates as $k) {
+            if (!empty($data[$k]) && is_string($data[$k])) {
+                $position = trim($data[$k]);
+                break;
+            }
+        }
+
+        // 5. Build Initials
+        $initials = 'AN';
+        if ($name) {
+            $words = preg_split('/\s+/', $name);
+            if (count($words) >= 2) {
+                $initials = strtoupper(substr($words[0], 0, 1) . substr($words[1], 0, 1));
+            } else {
+                $initials = strtoupper(substr($name, 0, 2));
+            }
+        } elseif ($email) {
+            $initials = strtoupper(substr($email, 0, 2));
+        }
+
+        // 6. Parse structured fields
+        $parsedFields = [];
+        $filesList = [];
+        $searchableParts = [
+            (string)$entry->id,
+            (string)$name,
+            (string)$email,
+            (string)$phone,
+            (string)$company,
+            (string)$position,
+            (string)$entry->ip_address,
+        ];
+
+        foreach ($data as $k => $v) {
+            if (in_array($k, ['_attribution', '_token', '_locale', '_honeypot', '_timestamp'])) {
+                continue;
+            }
+
+            $label = $fieldMap[$k]['label'] ?? ucwords(str_replace(['_', '-'], ' ', (string)$k));
+            $fieldType = $fieldMap[$k]['type'] ?? null;
+            $valStr = is_array($v) ? implode(', ', array_filter(array_map('strval', $v))) : (string)$v;
+            $searchableParts[] = $label . ' ' . $valStr;
+
+            $isFile = false;
+            $fileUrl = null;
+            $fileName = null;
+
+            if ($fieldType === 'file' || $fieldType === 'image' || 
+                (is_string($v) && (str_contains($v, 'uploads/') || preg_match('/\.(pdf|docx?|xlsx?|pptx?|txt|zip|jpe?g|png|webp)$/i', $v)))) {
+                $isFile = true;
+                $fieldType = $fieldType ?: 'file';
+                $fileUrl = $resolveFileUrl($v);
+                $fileName = basename($v);
+                $filesList[] = [
+                    'label' => $label,
+                    'key' => $k,
+                    'name' => $fileName,
+                    'url' => $fileUrl,
+                    'ext' => strtolower(pathinfo($fileName, PATHINFO_EXTENSION)),
+                ];
+            } elseif (!$fieldType) {
+                if (filter_var($v, FILTER_VALIDATE_EMAIL)) {
+                    $fieldType = 'email';
+                } elseif (filter_var($v, FILTER_VALIDATE_URL)) {
+                    $fieldType = 'url';
+                } elseif (is_string($v) && strlen($v) > 80) {
+                    $fieldType = 'textarea';
+                } elseif (is_array($v)) {
+                    $fieldType = 'checkbox';
+                } else {
+                    $fieldType = 'text';
+                }
+            }
+
+            $parsedFields[] = [
+                'key' => $k,
+                'label' => $label,
+                'value' => $v,
+                'display_value' => $valStr,
+                'type' => $fieldType,
+                'is_file' => $isFile,
+                'file_url' => $fileUrl,
+                'file_name' => $fileName,
+            ];
+        }
+
+        return [
+            'id' => $entry->id,
+            'name' => $name ?: ($email ?: 'Anonymous Applicant'),
+            'initials' => $initials,
+            'email' => $email,
+            'phone' => $phone,
+            'company' => $company,
+            'position' => $position,
+            'fields' => $parsedFields,
+            'files' => $filesList,
+            'has_file' => count($filesList) > 0,
+            'file_count' => count($filesList),
+            'attribution' => [
+                'os' => $attr['os'] ?? ($attr['device_type'] ?? null),
+                'browser' => $attr['browser'] ?? null,
+                'device_type' => $attr['device_type'] ?? null,
+                'screen_resolution' => $attr['screen_resolution'] ?? null,
+                'browser_language' => $attr['browser_language'] ?? null,
+                'http_referrer' => $attr['http_referrer'] ?? ($attr['initial_referrer'] ?? null),
+                'submission_page' => $attr['submission_page'] ?? null,
+                'initial_landing_page' => $attr['initial_landing_page'] ?? null,
+                'utm_source' => $attr['utm_source'] ?? null,
+                'utm_medium' => $attr['utm_medium'] ?? null,
+                'utm_campaign' => $attr['utm_campaign'] ?? null,
+                'utm_content' => $attr['utm_content'] ?? null,
+                'time_to_convert' => $attr['time_to_convert'] ?? null,
+                'page_views_count' => $attr['page_views_count'] ?? null,
+                'gclid' => $attr['gclid'] ?? null,
+                'fbclid' => $attr['fbclid'] ?? null,
+            ],
+            'ip_address' => $entry->ip_address,
+            'user_agent' => $entry->user_agent,
+            'submitted_at' => $entry->created_at->format('M d, Y H:i'),
+            'submitted_date' => $entry->created_at->format('M d, Y'),
+            'submitted_time' => $entry->created_at->format('H:i'),
+            'time_ago' => $entry->created_at->diffForHumans(),
+            'raw_data' => $data,
+            'searchable_text' => implode(' ', $searchableParts),
+        ];
+    })->values()->all();
 @endphp
 
 <div class="h-full flex flex-col w-full bg-[#F4F5F6] dark:bg-[#0B0B0B]"
@@ -292,6 +510,98 @@
             } finally {
                 this.saving = false;
             }
+        },
+
+        // Submissions & Entries DataGrid State
+        entriesList: @json($entriesDataList),
+        submissionSearch: '',
+        activeEntry: null,
+        showEntryDrawer: false,
+        copiedSummary: false,
+        copiedJson: false,
+
+        get filteredEntries() {
+            if (!this.submissionSearch || !this.submissionSearch.trim()) {
+                return this.entriesList;
+            }
+            const q = this.submissionSearch.toLowerCase().trim();
+            return this.entriesList.filter(entry => {
+                return entry.searchable_text && entry.searchable_text.toLowerCase().includes(q);
+            });
+        },
+
+        openEntry(entry) {
+            this.activeEntry = entry;
+            this.showEntryDrawer = true;
+            this.copiedSummary = false;
+            this.copiedJson = false;
+        },
+
+        closeEntry() {
+            this.showEntryDrawer = false;
+        },
+
+        async copyEntrySummary() {
+            if (!this.activeEntry) return;
+            let text = `Submission #${this.activeEntry.id} - ${this.activeEntry.name}\n`;
+            text += `Submitted: ${this.activeEntry.submitted_at}\n`;
+            if (this.activeEntry.email) text += `Email: ${this.activeEntry.email}\n`;
+            if (this.activeEntry.phone) text += `Phone: ${this.activeEntry.phone}\n`;
+            if (this.activeEntry.company) text += `Company: ${this.activeEntry.company}\n`;
+            text += `\n--- Submitted Fields ---\n`;
+            this.activeEntry.fields.forEach(f => {
+                if (f.is_file) {
+                    text += `${f.label}: ${f.file_url || f.display_value}\n`;
+                } else {
+                    text += `${f.label}: ${f.display_value}\n`;
+                }
+            });
+            try {
+                await navigator.clipboard.writeText(text);
+                this.copiedSummary = true;
+                setTimeout(() => this.copiedSummary = false, 2200);
+            } catch (err) {
+                console.error('Clipboard copy failed', err);
+            }
+        },
+
+        async copyRawJson() {
+            if (!this.activeEntry) return;
+            try {
+                await navigator.clipboard.writeText(JSON.stringify(this.activeEntry.raw_data, null, 2));
+                this.copiedJson = true;
+                setTimeout(() => this.copiedJson = false, 2200);
+            } catch (err) {
+                console.error('Clipboard copy failed', err);
+            }
+        },
+
+        async deleteEntry(entryId) {
+            if (!confirm('Are you sure you want to permanently delete submission #' + entryId + '? This action cannot be undone.')) {
+                return;
+            }
+            try {
+                const url = '{{ url('ctrlpanel/forms/entries') }}/' + entryId;
+                const res = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    this.entriesList = this.entriesList.filter(e => e.id !== entryId);
+                    if (this.activeEntry && this.activeEntry.id === entryId) {
+                        this.closeEntry();
+                    }
+                } else {
+                    alert('Failed to delete entry: ' + (data.message || 'Unknown error'));
+                }
+            } catch(err) {
+                alert('Delete failed: ' + err.message);
+            }
         }
     }">
 
@@ -360,7 +670,7 @@
                     :class="activeTab === 'entries' ? 'bg-white dark:bg-[#1A1A1A] text-primary font-bold shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-white font-medium'"
                     class="px-3.5 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-[17px]">inbox</span>
-                    <span>Submissions ({{ $form->entries()->count() }})</span>
+                    <span>Submissions (<span x-text="entriesList.length"></span>)</span>
                 </button>
             </div>
 
@@ -874,54 +1184,251 @@
         {{-- TAB 4: 📊 SUBMISSIONS & ENTRIES --}}
         <div x-show="activeTab === 'entries'" class="flex-1 overflow-y-auto p-6 md:p-10 no-scrollbar w-full space-y-6">
             <div class="max-w-6xl mx-auto space-y-6">
-                <div class="flex flex-wrap justify-between items-center gap-4">
-                    <h3 class="text-base font-bold text-[#111827] dark:text-[#FCFCFC]">Submissions DataGrid ({{ $form->entries->count() }})</h3>
+
+                {{-- Metric Summary Cards --}}
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-4 shadow-sm relative overflow-hidden group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-[#6F767E]">Total Submissions</p>
+                                <h4 class="text-2xl font-black text-[#111827] dark:text-white mt-1" x-text="entriesList.length"></h4>
+                            </div>
+                            <div class="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-2xl">inbox</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-4 shadow-sm relative overflow-hidden group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-[#6F767E]">Received Today</p>
+                                <h4 class="text-2xl font-black text-[#111827] dark:text-white mt-1">{{ $todaySubmissions }}</h4>
+                            </div>
+                            <div class="w-11 h-11 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-2xl">today</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-4 shadow-sm relative overflow-hidden group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-[#6F767E]">This Week</p>
+                                <h4 class="text-2xl font-black text-[#111827] dark:text-white mt-1">{{ $weekSubmissions }}</h4>
+                            </div>
+                            <div class="w-11 h-11 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-2xl">date_range</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl p-4 shadow-sm relative overflow-hidden group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-[#6F767E]">Latest Activity</p>
+                                <h4 class="text-xs font-bold text-[#111827] dark:text-white mt-2 truncate max-w-[140px]">{{ $latestSubmission }}</h4>
+                            </div>
+                            <div class="w-11 h-11 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-2xl">schedule</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Toolbar: Search & Export --}}
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-[#1A1A1A] p-4 rounded-2xl border border-gray-200 dark:border-[#272B30] shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <h3 class="text-sm font-black text-[#111827] dark:text-[#FCFCFC] tracking-tight">Submissions DataGrid</h3>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/10 text-primary border border-primary/20">
+                            <span x-text="filteredEntries.length"></span> of <span x-text="entriesList.length"></span>
+                        </span>
+                    </div>
 
                     <div class="flex items-center gap-3">
-                        <a href="{{ route('admin.forms.export', $form) }}?format=xlsx" class="px-4 py-2 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#111827] dark:text-white hover:bg-gray-50 transition-all flex items-center gap-1.5">
-                            <span class="material-symbols-outlined text-sm">download</span>
-                            <span>Export Excel</span>
+                        {{-- Instant Alpine Search Input --}}
+                        <div class="relative min-w-[240px] sm:min-w-[320px]">
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg">search</span>
+                            <input 
+                                type="text" 
+                                x-model="submissionSearch" 
+                                placeholder="Search applicant, email, phone, details..." 
+                                class="w-full pl-9 pr-8 py-2 text-xs rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-[#111827] dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                            />
+                            <button 
+                                type="button" 
+                                x-show="submissionSearch" 
+                                @click="submissionSearch = ''" 
+                                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                            >
+                                <span class="material-symbols-outlined text-base">close</span>
+                            </button>
+                        </div>
+
+                        {{-- Export Excel --}}
+                        <a href="{{ route('admin.forms.export', $form) }}?format=xlsx" 
+                            class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#F4F5F6] dark:bg-[#0B0B0B] hover:bg-primary hover:text-white border border-gray-200 dark:border-[#272B30] text-[#111827] dark:text-white transition-all flex items-center gap-1.5 shadow-sm shrink-0">
+                            <span class="material-symbols-outlined text-base">download</span>
+                            <span class="hidden md:inline">Export Excel</span>
                         </a>
                     </div>
                 </div>
 
+                {{-- Submissions Table Card --}}
                 <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl overflow-hidden shadow-sm">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="border-b border-gray-200 dark:border-[#272B30] bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#6F767E] uppercase font-bold tracking-wider">
-                                <th class="py-4 px-6">Submitted Date</th>
-                                <th class="py-4 px-6">Visitor Info</th>
-                                <th class="py-4 px-6">Submitted Data</th>
-                                <th class="py-4 px-6 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-[#272B30]">
-                            @forelse($form->entries as $entry)
-                                <tr class="hover:bg-gray-50/50 dark:hover:bg-[#272B30]/30 transition-colors">
-                                    <td class="py-4 px-6 font-medium text-[#6F767E]">
-                                        {{ $entry->created_at->format('M d, Y H:i') }}
-                                    </td>
-                                    <td class="py-4 px-6 font-bold text-[#111827] dark:text-[#FCFCFC]">
-                                        {{ $entry->data['name'] ?? ($entry->data['corporate_email'] ?? 'Anonymous') }}
-                                    </td>
-                                    <td class="py-4 px-6 text-[#6F767E]">
-                                        <div class="truncate max-w-md">
-                                            @foreach($entry->data as $k => $v)
-                                                <span class="font-bold">{{ $k }}:</span> {{ is_array($v) ? implode(', ', $v) : $v }} |
-                                            @endforeach
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-200 dark:border-[#272B30] bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#6F767E] uppercase font-bold tracking-wider">
+                                    <th class="py-4 px-6">Applicant / Contact</th>
+                                    <th class="py-4 px-6">Submitted Details</th>
+                                    <th class="py-4 px-6">Source & Device</th>
+                                    <th class="py-4 px-6">Submitted Date</th>
+                                    <th class="py-4 px-6 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 dark:divide-[#272B30]">
+                                <template x-for="entry in filteredEntries" :key="entry.id">
+                                    <tr class="hover:bg-gray-50/70 dark:hover:bg-[#272B30]/30 transition-colors group">
+                                        {{-- Column 1: Applicant & Contact --}}
+                                        <td class="py-4 px-6">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-black text-xs flex items-center justify-center shadow-sm shrink-0"
+                                                     x-text="entry.initials"></div>
+                                                <div class="min-w-0">
+                                                    <div class="font-bold text-sm text-[#111827] dark:text-[#FCFCFC] truncate hover:text-primary cursor-pointer"
+                                                         @click="openEntry(entry)"
+                                                         x-text="entry.name"></div>
+                                                    <div class="flex flex-wrap items-center gap-2 mt-0.5">
+                                                        <template x-if="entry.email">
+                                                            <a :href="'mailto:' + entry.email" 
+                                                               class="text-[#6F767E] hover:text-primary transition-colors flex items-center gap-1 text-[11px] truncate">
+                                                                <span class="material-symbols-outlined text-[13px]">mail</span>
+                                                                <span x-text="entry.email"></span>
+                                                            </a>
+                                                        </template>
+                                                        <template x-if="entry.phone">
+                                                            <span class="inline-flex items-center gap-0.5 text-[10px] font-mono text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-[#272B30] px-1.5 py-0.5 rounded">
+                                                                <span class="material-symbols-outlined text-[12px]">call</span>
+                                                                <span x-text="entry.phone"></span>
+                                                            </span>
+                                                        </template>
+                                                        <template x-if="entry.company">
+                                                            <span class="inline-flex items-center gap-0.5 text-[10px] text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-500/10 px-1.5 py-0.5 rounded font-medium">
+                                                                <span class="material-symbols-outlined text-[12px]">apartment</span>
+                                                                <span x-text="entry.company"></span>
+                                                            </span>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        {{-- Column 2: Submitted Details & Files --}}
+                                        <td class="py-4 px-6 text-[#6F767E]">
+                                            <div class="space-y-1.5 max-w-sm">
+                                                {{-- File Attachments Badge --}}
+                                                <template x-if="entry.has_file">
+                                                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold text-[11px] border border-emerald-200 dark:border-emerald-500/20">
+                                                        <span class="material-symbols-outlined text-sm">attach_file</span>
+                                                        <span x-text="entry.file_count === 1 ? '1 File Attached (' + (entry.files[0].ext ? '.' + entry.files[0].ext : 'Document') + ')' : entry.file_count + ' Files Attached'"></span>
+                                                    </div>
+                                                </template>
+
+                                                {{-- Fields Snippet --}}
+                                                <div class="line-clamp-2 text-xs text-[#111827] dark:text-[#E2E8F0]">
+                                                    <template x-for="(f, fIdx) in entry.fields.slice(0, 3)" :key="f.key">
+                                                        <span class="inline">
+                                                            <span class="font-semibold text-gray-500 dark:text-gray-400" x-text="f.label + ':'"></span>
+                                                            <span class="font-medium mr-2" x-text="f.display_value"></span>
+                                                        </span>
+                                                    </template>
+                                                    <template x-if="entry.fields.length > 3">
+                                                        <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500" x-text="'+' + (entry.fields.length - 3) + ' more'"></span>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        {{-- Column 3: Source & Attribution --}}
+                                        <td class="py-4 px-6">
+                                            <div class="space-y-1 text-[11px]">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gray-100 dark:bg-[#272B30] text-gray-600 dark:text-gray-300 font-medium">
+                                                        <span class="material-symbols-outlined text-[13px]">devices</span>
+                                                        <span x-text="entry.attribution.os ? (entry.attribution.os + (entry.attribution.browser ? ' • ' + entry.attribution.browser : '')) : 'Direct / Web'"></span>
+                                                    </span>
+                                                </div>
+                                                <template x-if="entry.attribution.submission_page">
+                                                    <div class="text-[10px] text-gray-400 truncate max-w-[200px]" :title="entry.attribution.submission_page">
+                                                        <span class="font-semibold">Page:</span> <span x-text="entry.attribution.submission_page.replace(/^https?:\/\/[^\/]+/, '')"></span>
+                                                    </div>
+                                                </template>
+                                                <template x-if="entry.attribution.utm_source">
+                                                    <div class="inline-flex items-center gap-1 text-[10px] text-blue-600 dark:text-blue-400 font-bold">
+                                                        <span class="material-symbols-outlined text-[12px]">tag</span>
+                                                        <span x-text="entry.attribution.utm_source + (entry.attribution.utm_medium ? ' / ' + entry.attribution.utm_medium : '')"></span>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </td>
+
+                                        {{-- Column 4: Submitted Date --}}
+                                        <td class="py-4 px-6 whitespace-nowrap">
+                                            <div class="font-bold text-xs text-[#111827] dark:text-[#FCFCFC]" x-text="entry.submitted_date"></div>
+                                            <div class="text-[11px] text-[#6F767E] flex items-center gap-1 mt-0.5">
+                                                <span x-text="entry.submitted_time"></span>
+                                                <span>•</span>
+                                                <span class="italic text-[10px]" x-text="entry.time_ago"></span>
+                                            </div>
+                                        </td>
+
+                                        {{-- Column 5: Actions --}}
+                                        <td class="py-4 px-6 text-right whitespace-nowrap">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button 
+                                                    type="button" 
+                                                    @click="openEntry(entry)" 
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-primary/10 hover:bg-primary text-primary hover:text-white transition-all shadow-sm"
+                                                    title="View Full Submission Details"
+                                                >
+                                                    <span class="material-symbols-outlined text-sm">visibility</span>
+                                                    <span>View</span>
+                                                </button>
+                                                <button 
+                                                    type="button" 
+                                                    @click="deleteEntry(entry.id)" 
+                                                    class="p-1.5 rounded-xl text-gray-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+                                                    title="Delete Submission"
+                                                >
+                                                    <span class="material-symbols-outlined text-base">delete</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+
+                                {{-- Empty State --}}
+                                <tr x-show="filteredEntries.length === 0">
+                                    <td colspan="5" class="py-16 text-center">
+                                        <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-[#272B30] flex items-center justify-center mx-auto mb-3 text-gray-400">
+                                            <span class="material-symbols-outlined text-3xl">inbox</span>
                                         </div>
-                                    </td>
-                                    <td class="py-4 px-6 text-right">
-                                        <button type="button" @click="alert(JSON.stringify({{ json_encode($entry->data) }}, null, 2))" class="text-primary font-bold hover:underline">View Entry</button>
+                                        <h4 class="text-sm font-bold text-[#111827] dark:text-white" x-text="submissionSearch ? 'No matching submissions found' : 'No submissions recorded yet'"></h4>
+                                        <p class="text-xs text-[#6F767E] mt-1 max-w-sm mx-auto" x-text="submissionSearch ? 'Try adjusting your search keywords to find the submission.' : 'Submissions from live forms will automatically appear in this datagrid.'"></p>
+                                        <button 
+                                            type="button" 
+                                            x-show="submissionSearch" 
+                                            @click="submissionSearch = ''" 
+                                            class="mt-4 px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 dark:bg-[#272B30] text-[#111827] dark:text-white hover:bg-gray-200 transition-all"
+                                        >
+                                            Clear Filter
+                                        </button>
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="py-12 text-center text-[#6F767E]">No submissions recorded yet for this form.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -960,6 +1467,314 @@
                         <span class="text-[9px] text-primary/60 leading-tight text-center">{{ $ct['category'] ?? 'theme' }}</span>
                     </button>
                 @endforeach
+            </div>
+        </div>
+    </div>
+
+    {{-- 📑 SLIDE-OVER SUBMISSION DETAIL DRAWER (MODAL) --}}
+    <div x-show="showEntryDrawer" x-cloak class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+        {{-- Backdrop blur --}}
+        <div 
+            x-show="showEntryDrawer"
+            x-transition:enter="ease-in-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in-out duration-300"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            @click="closeEntry()"
+        ></div>
+
+        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <div 
+                x-show="showEntryDrawer"
+                x-transition:enter="transform transition ease-in-out duration-300 sm:duration-400"
+                x-transition:enter-start="translate-x-full"
+                x-transition:enter-end="translate-x-0"
+                x-transition:leave="transform transition ease-in-out duration-300 sm:duration-400"
+                x-transition:leave-start="translate-x-0"
+                x-transition:leave-end="translate-x-full"
+                class="w-screen max-w-2xl bg-white dark:bg-[#1A1A1A] border-l border-gray-200 dark:border-[#272B30] shadow-2xl flex flex-col"
+            >
+                {{-- Drawer Header --}}
+                <div class="p-6 border-b border-gray-200 dark:border-[#272B30] flex items-center justify-between gap-4 bg-gray-50/50 dark:bg-[#0B0B0B]/50 shrink-0">
+                    <div class="flex items-center gap-3">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-primary/10 text-primary border border-primary/20" x-text="'#' + activeEntry?.id"></span>
+                        <div>
+                            <h3 class="text-base font-bold text-[#111827] dark:text-[#FCFCFC] leading-tight" x-text="activeEntry?.name"></h3>
+                            <p class="text-xs text-[#6F767E] mt-0.5 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-[14px]">schedule</span>
+                                <span x-text="activeEntry?.submitted_at"></span>
+                                <span>•</span>
+                                <span class="italic" x-text="activeEntry?.time_ago"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button 
+                            type="button" 
+                            @click="copyEntrySummary()" 
+                            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#111827] dark:text-white hover:bg-gray-50 transition-all flex items-center gap-1 shadow-sm"
+                            title="Copy submission summary to clipboard"
+                        >
+                            <span class="material-symbols-outlined text-sm" x-text="copiedSummary ? 'check' : 'content_copy'"></span>
+                            <span x-text="copiedSummary ? 'Copied!' : 'Copy Summary'"></span>
+                        </button>
+
+                        <button 
+                            type="button" 
+                            @click="deleteEntry(activeEntry?.id)" 
+                            class="p-2 rounded-xl text-gray-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
+                            title="Delete Submission"
+                        >
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                        </button>
+
+                        <button 
+                            type="button" 
+                            @click="closeEntry()" 
+                            class="p-2 rounded-xl text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#272B30] transition-colors"
+                            title="Close (Esc)"
+                        >
+                            <span class="material-symbols-outlined text-lg">close</span>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Drawer Body --}}
+                <div class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 no-scrollbar">
+                    {{-- Profile Header Card --}}
+                    <div class="p-5 rounded-2xl bg-gradient-to-br from-[#F8F9FA] to-white dark:from-[#0B0B0B] dark:to-[#141414] border border-gray-200 dark:border-[#272B30] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white font-black text-lg flex items-center justify-center shadow-md shrink-0"
+                                 x-text="activeEntry?.initials"></div>
+                            <div>
+                                <h4 class="text-lg font-bold text-[#111827] dark:text-white" x-text="activeEntry?.name"></h4>
+                                <div class="flex flex-wrap items-center gap-2 mt-1">
+                                    <template x-if="activeEntry?.email">
+                                        <a :href="'mailto:' + activeEntry?.email" class="inline-flex items-center gap-1 text-xs text-[#2563EB] dark:text-blue-400 hover:underline">
+                                            <span class="material-symbols-outlined text-[14px]">mail</span>
+                                            <span x-text="activeEntry?.email"></span>
+                                        </a>
+                                    </template>
+                                    <template x-if="activeEntry?.phone">
+                                        <a :href="'tel:' + activeEntry?.phone" class="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 font-mono hover:underline">
+                                            <span class="material-symbols-outlined text-[14px]">call</span>
+                                            <span x-text="activeEntry?.phone"></span>
+                                        </a>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <template x-if="activeEntry?.company || activeEntry?.position">
+                            <div class="text-right sm:border-l sm:border-gray-200 sm:dark:border-[#272B30] sm:pl-4">
+                                <template x-if="activeEntry?.position">
+                                    <div class="text-xs font-bold text-gray-900 dark:text-white" x-text="activeEntry?.position"></div>
+                                </template>
+                                <template x-if="activeEntry?.company">
+                                    <div class="text-[11px] text-[#6F767E]" x-text="activeEntry?.company"></div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+
+                    {{-- Uploaded Files / Attachments Section (e.g. CV / Resume) --}}
+                    <template x-if="activeEntry?.has_file">
+                        <div class="space-y-3">
+                            <h5 class="text-xs font-bold uppercase tracking-wider text-[#6F767E] flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-base text-emerald-600">attach_file</span>
+                                Attached Documents & Files (<span x-text="activeEntry?.file_count"></span>)
+                            </h5>
+
+                            <div class="grid grid-cols-1 gap-3">
+                                <template x-for="file in activeEntry?.files" :key="file.name">
+                                    <div class="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-500/5 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-between gap-4">
+                                        <div class="flex items-center gap-3 min-w-0">
+                                            <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                                                <span class="material-symbols-outlined text-xl">description</span>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <div class="text-xs font-bold text-[#111827] dark:text-white truncate" x-text="file.name"></div>
+                                                <div class="text-[10px] text-gray-500 font-mono mt-0.5" x-text="file.label + (file.ext ? ' • ' + file.ext.toUpperCase() : '')"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center gap-2 shrink-0">
+                                            <a 
+                                                :href="file.url" 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all inline-flex items-center gap-1 shadow-sm"
+                                            >
+                                                <span class="material-symbols-outlined text-sm">open_in_new</span>
+                                                <span>Download / View</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    {{-- Form Fields List --}}
+                    <div class="space-y-3">
+                        <h5 class="text-xs font-bold uppercase tracking-wider text-[#6F767E] flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-base text-primary">dynamic_form</span>
+                            Submitted Form Fields
+                        </h5>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <template x-for="field in activeEntry?.fields" :key="field.key">
+                                <div class="p-4 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border border-gray-100 dark:border-[#272B30]/60 space-y-1"
+                                     :class="field.type === 'textarea' || (field.display_value && field.display_value.length > 60) ? 'md:col-span-2' : ''">
+                                    <div class="text-[10px] font-bold uppercase tracking-wider text-[#6F767E]" x-text="field.label"></div>
+                                    
+                                    {{-- File link --}}
+                                    <template x-if="field.is_file">
+                                        <div class="pt-1">
+                                            <a :href="field.file_url" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline">
+                                                <span class="material-symbols-outlined text-sm">download</span>
+                                                <span x-text="field.file_name || 'Download Attachment'"></span>
+                                            </a>
+                                        </div>
+                                    </template>
+
+                                    {{-- Email link --}}
+                                    <template x-if="!field.is_file && field.type === 'email'">
+                                        <div class="pt-1">
+                                            <a :href="'mailto:' + field.value" class="inline-flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                                                <span class="material-symbols-outlined text-[13px]">mail</span>
+                                                <span x-text="field.value"></span>
+                                            </a>
+                                        </div>
+                                    </template>
+
+                                    {{-- Phone link --}}
+                                    <template x-if="!field.is_file && field.type === 'tel'">
+                                        <div class="pt-1">
+                                            <a :href="'tel:' + field.value" class="inline-flex items-center gap-1 text-xs font-mono font-medium text-emerald-600 dark:text-emerald-400 hover:underline">
+                                                <span class="material-symbols-outlined text-[13px]">call</span>
+                                                <span x-text="field.value"></span>
+                                            </a>
+                                        </div>
+                                    </template>
+
+                                    {{-- URL link --}}
+                                    <template x-if="!field.is_file && field.type === 'url'">
+                                        <div class="pt-1">
+                                            <a :href="field.value" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline break-all">
+                                                <span class="material-symbols-outlined text-[13px]">link</span>
+                                                <span x-text="field.value"></span>
+                                            </a>
+                                        </div>
+                                    </template>
+
+                                    {{-- Textarea / Multi-line --}}
+                                    <template x-if="!field.is_file && field.type === 'textarea'">
+                                        <div class="text-xs text-[#111827] dark:text-[#FCFCFC] whitespace-pre-wrap leading-relaxed pt-1 bg-white dark:bg-[#1A1A1A] p-3 rounded-xl border border-gray-200 dark:border-[#272B30]" x-text="field.display_value || '-'"></div>
+                                    </template>
+
+                                    {{-- Standard text / others --}}
+                                    <template x-if="!field.is_file && field.type !== 'email' && field.type !== 'tel' && field.type !== 'url' && field.type !== 'textarea'">
+                                        <div class="text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] pt-1" x-text="field.display_value || '-'"></div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    {{-- Marketing Attribution & System Info --}}
+                    <div class="space-y-3 pt-2">
+                        <h5 class="text-xs font-bold uppercase tracking-wider text-[#6F767E] flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-base text-amber-500">insights</span>
+                            Source & Technical Attribution
+                        </h5>
+
+                        <div class="p-5 rounded-2xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] space-y-3 text-xs">
+                            <div class="grid grid-cols-2 gap-3 pb-3 border-b border-gray-200 dark:border-[#272B30]">
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Operating System</span>
+                                    <span class="font-bold text-[#111827] dark:text-white" x-text="activeEntry?.attribution?.os || 'Unknown'"></span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Browser</span>
+                                    <span class="font-bold text-[#111827] dark:text-white" x-text="activeEntry?.attribution?.browser || 'Unknown'"></span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">IP Address</span>
+                                    <span class="font-mono text-[#111827] dark:text-white" x-text="activeEntry?.ip_address || 'N/A'"></span>
+                                </div>
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Screen & Lang</span>
+                                    <span class="text-[#111827] dark:text-white" x-text="(activeEntry?.attribution?.screen_resolution || 'Default') + ' (' + (activeEntry?.attribution?.browser_language || 'en') + ')'"></span>
+                                </div>
+                            </div>
+
+                            <template x-if="activeEntry?.attribution?.submission_page">
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Submission Page</span>
+                                    <a :href="activeEntry?.attribution?.submission_page" target="_blank" class="font-mono text-[11px] text-blue-600 dark:text-blue-400 hover:underline break-all" x-text="activeEntry?.attribution?.submission_page"></a>
+                                </div>
+                            </template>
+
+                            <template x-if="activeEntry?.attribution?.http_referrer">
+                                <div>
+                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">HTTP Referrer</span>
+                                    <span class="font-mono text-[11px] text-gray-600 dark:text-gray-400 break-all" x-text="activeEntry?.attribution?.http_referrer"></span>
+                                </div>
+                            </template>
+
+                            <template x-if="activeEntry?.attribution?.utm_source || activeEntry?.attribution?.utm_campaign">
+                                <div class="pt-2 border-t border-gray-200 dark:border-[#272B30] flex flex-wrap gap-2">
+                                    <template x-if="activeEntry?.attribution?.utm_source">
+                                        <span class="px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 font-mono text-[10px]">
+                                            source: <strong x-text="activeEntry?.attribution?.utm_source"></strong>
+                                        </span>
+                                    </template>
+                                    <template x-if="activeEntry?.attribution?.utm_medium">
+                                        <span class="px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 font-mono text-[10px]">
+                                            medium: <strong x-text="activeEntry?.attribution?.utm_medium"></strong>
+                                        </span>
+                                    </template>
+                                    <template x-if="activeEntry?.attribution?.utm_campaign">
+                                        <span class="px-2 py-0.5 rounded bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 font-mono text-[10px]">
+                                            campaign: <strong x-text="activeEntry?.attribution?.utm_campaign"></strong>
+                                        </span>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    {{-- Collapsible Raw JSON Accordion --}}
+                    <div class="pt-2">
+                        <details class="group bg-[#F4F5F6] dark:bg-[#0B0B0B] rounded-2xl p-4 border border-gray-200 dark:border-[#272B30]">
+                            <summary class="text-xs font-bold cursor-pointer flex items-center justify-between text-[#6F767E] hover:text-[#111827] dark:hover:text-white select-none">
+                                <span class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">code</span>
+                                    <span>Developer Raw JSON Payload</span>
+                                </span>
+                                <span class="material-symbols-outlined text-base group-open:rotate-180 transition-transform">expand_more</span>
+                            </summary>
+                            <div class="mt-3 space-y-2">
+                                <div class="flex justify-end">
+                                    <button 
+                                        type="button" 
+                                        @click="copyRawJson()" 
+                                        class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#111827] dark:text-white hover:bg-gray-50 transition-all flex items-center gap-1 shadow-sm"
+                                    >
+                                        <span class="material-symbols-outlined text-xs" x-text="copiedJson ? 'check' : 'content_copy'"></span>
+                                        <span x-text="copiedJson ? 'Copied!' : 'Copy JSON'"></span>
+                                    </button>
+                                </div>
+                                <pre class="p-3 bg-black/90 text-emerald-400 font-mono text-[11px] rounded-xl overflow-x-auto select-all leading-relaxed" x-text="JSON.stringify(activeEntry?.raw_data, null, 2)"></pre>
+                            </div>
+                        </details>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
