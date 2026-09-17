@@ -255,38 +255,38 @@
     })->values()->all();
 @endphp
 
-<div class="h-full flex flex-col w-full bg-[#F4F5F6] dark:bg-[#0B0B0B]"
-    x-init="initSortable()"
-    x-data="{
+<script>
+function formStudioController() {
+    return {
         activeTab: '{{ $activeTab ?? 'fields' }}',
         editingLocale: 'en',
-        name: {{ json_encode($form->name) }},
-        slug: {{ json_encode($form->slug) }},
-        description: {{ json_encode($form->description ?? '') }},
-        isActive: {{ json_encode($form->is_active ? '1' : '0') }},
-        submitButtonText: {{ json_encode($form->submit_button_text ?? 'Submit') }},
-        themeSlot: {{ json_encode($assignedSlot) }},
-        translations: {{ json_encode($form->translations ?? ['id' => ['name' => '', 'description' => '', 'submit_button_text' => 'Kirim', 'confirmations' => ['message' => 'Terima kasih atas pengajuan Anda. Tim kami akan segera menghubungi Anda.']]]) }},
+        name: @json($form->name),
+        slug: @json($form->slug),
+        description: @json($form->description ?? ''),
+        isActive: @json($form->is_active ? '1' : '0'),
+        submitButtonText: @json($form->submit_button_text ?? 'Submit'),
+        themeSlot: @json($assignedSlot),
+        translations: @json($form->translations ?? ['id' => ['name' => '', 'description' => '', 'submit_button_text' => 'Kirim', 'confirmations' => ['message' => 'Terima kasih atas pengajuan Anda. Tim kami akan segera menghubungi Anda.']]]),
         
         // Confirmations & Spam
-        confirmationType: {{ json_encode($confirmationType) }},
-        confirmationMessage: {{ json_encode($confirmationMessage) }},
-        redirectUrl: {{ json_encode($redirectUrl) }},
-        honeypot: {{ json_encode((bool)$honeypot) }},
-        captchaProvider: {{ json_encode($captchaProvider) }},
+        confirmationType: @json($confirmationType),
+        confirmationMessage: @json($confirmationMessage),
+        redirectUrl: @json($redirectUrl),
+        honeypot: @json((bool)$honeypot),
+        captchaProvider: @json($captchaProvider),
 
         // Notifications
-        notifyAdmin: {{ json_encode((bool)$notifyAdmin) }},
-        adminEmail: {{ json_encode($adminEmail) }},
-        adminSubject: {{ json_encode($adminSubject) }},
-        adminBody: {{ json_encode($adminEmailBody) }},
+        notifyAdmin: @json((bool)$notifyAdmin),
+        adminEmail: @json($adminEmail),
+        adminSubject: @json($adminSubject),
+        adminBody: @json($adminEmailBody),
         
-        sendToUser: {{ json_encode((bool)$sendToUser) }},
-        userSubject: {{ json_encode($userSubject) }},
-        userBody: {{ json_encode($userEmailBody) }},
+        sendToUser: @json((bool)$sendToUser),
+        userSubject: @json($userSubject),
+        userBody: @json($userEmailBody),
 
         // Builder State
-        fields: {{ json_encode(array_map(function($f) {
+        fields: @json(array_map(function($f) {
             $adv = $f['advanced_settings'] ?? [];
             if (is_string($adv)) {
                 $adv = json_decode($adv, true) ?? [];
@@ -308,7 +308,7 @@
             $f['validation_corporate_email'] = ($validation['rule'] ?? null) === 'corporate_email';
             $f['validation_rule_message'] = $validation['rule_message'] ?? '';
             return $f;
-        }, $form->fields ? $form->fields->toArray() : [])) }},
+        }, $form->fields ? $form->fields->toArray() : [])),
         selectedFieldIndex: null,
         showFieldModal: false,
         settingsSubTab: 'general',
@@ -603,7 +603,16 @@
                 alert('Delete failed: ' + err.message);
             }
         }
-    }">
+    };
+}
+document.addEventListener('alpine:init', () => {
+    Alpine.data('formStudioController', formStudioController);
+});
+</script>
+
+<div class="h-full flex flex-col w-full bg-[#F4F5F6] dark:bg-[#0B0B0B]"
+    x-data="formStudioController()"
+    x-init="initSortable()">
 
     {{-- Persistent Workspace Top Bar --}}
     <div class="h-16 px-4 md:px-6 bg-white dark:bg-[#1A1A1A] border-b border-gray-200 dark:border-[#272B30] flex items-center justify-between shrink-0 shadow-sm z-30 gap-4 overflow-x-auto no-scrollbar">
