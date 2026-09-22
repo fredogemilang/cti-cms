@@ -52,16 +52,33 @@ class FormNotificationService
             return;
         }
 
+        $toEmails = $this->parseEmailList($adminEmail);
+        if (empty($toEmails)) {
+            return;
+        }
+
+        $ccEmails = $this->parseEmailList($notifications['cc_email'] ?? $notifications['admin_cc'] ?? $notifications['admin_cc_email'] ?? null);
+        $bccEmails = $this->parseEmailList($notifications['bcc_email'] ?? $notifications['admin_bcc'] ?? null);
+
         $subject = $notifications['subject'] ?? "New Form Submission: {$form->name}";
         $data = $entry->data ?? [];
 
-        $html = $this->buildAdminEmailHtml($form, $entry, $data);
+        $html = $this->buildAdminEmailHtml($form, $entry, $data, $notifications['admin_email_body'] ?? null);
 
         // Pre-resolve the visitor's email so we can set Reply-To inside the Mail closure.
         $replyTo = $this->findUserEmailFromData($form, $data);
 
-        Mail::html($html, function ($message) use ($adminEmail, $subject, $replyTo) {
-            $message->to($adminEmail)->subject($subject);
+        Mail::html($html, function ($message) use ($toEmails, $ccEmails, $bccEmails, $subject, $replyTo) {
+            $message->to($toEmails)->subject($subject);
+
+            if (! empty($ccEmails)) {
+                $message->cc($ccEmails);
+            }
+
+            if (! empty($bccEmails)) {
+                $message->bcc($bccEmails);
+            }
+
             if ($replyTo) {
                 $message->replyTo($replyTo);
             }
@@ -82,13 +99,41 @@ class FormNotificationService
 
         $subject = $notifications['user_subject'] ?? "Thank you for your submission - {$form->name}";
         $customBody = $notifications['user_email_body'] ?? null;
+        $userCcEmails = $this->parseEmailList($notifications['user_cc_email'] ?? null);
 
         $html = $this->buildUserConfirmationHtml($form, $customBody, $data);
 
-        Mail::html($html, function ($mail) use ($userEmail, $subject) {
+        Mail::html($html, function ($mail) use ($userEmail, $userCcEmails, $subject) {
             $mail->to($userEmail)
                 ->subject($subject);
+
+            if (! empty($userCcEmails)) {
+                $mail->cc($userCcEmails);
+            }
         });
+    }
+
+    /**
+     * Parse email list from string (comma/semicolon/newline separated) or array.
+     *
+     * @param string|array|null $emails
+     * @return array<string>
+     */
+    public function parseEmailList($emails): array
+    {
+        if (empty($emails)) {
+            return [];
+        }
+
+        if (is_array($emails)) {
+            $list = $emails;
+        } else {
+            $list = preg_split('/[\r\n,;]+/', (string) $emails, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        return array_values(array_filter(array_map('trim', $list), function ($email) {
+            return ! empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL);
+        }));
     }
 
     /**

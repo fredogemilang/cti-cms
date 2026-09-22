@@ -93,7 +93,6 @@
       <div class="prod-detail-gallery">
         <!-- Main Display Area -->
         <div class="gallery-main-wrapper">
-          <div class="pedestal-base"></div>
           <img src="{{ $mainImg }}" alt="{{ $entry->getTranslation('title') }}" class="gallery-main-img" @if(str_contains($entry->slug, 'gateway')) style="max-width: 320px !important; height: auto !important;" @endif id="main-prod-image" />
         </div>
 

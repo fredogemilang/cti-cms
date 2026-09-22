@@ -6,6 +6,7 @@
 @php
   $heroBg = $page->block('hero_bg', 'images/bg-about.jpg');
   $heroBgUrl = resolve_block_asset($heroBg);
+  $aboutHeroImage = $page->block('about_hero_image', 'images/about-hero.png');
   
   $aboutTitle = $page->block('about_title', 'Tentang Kami');
   $aboutText = $page->block('about_text', 'Xyora adalah brand teknologi jaringan Indonesia yang menghadirkan solusi konektivitas modern yang simple, seamless, dan relevan untuk kebutuhan rumah modern, gedung bertingkat, SOHO (Smart Office Home Office), ritel, hospitality, ruang publik, sekolah, dan kampus.');
@@ -25,8 +26,10 @@
 <main class="about-page-main" style="background-image: url('{{ $heroBgUrl }}'); background-size: cover; background-position: center;">
   <div class="about-page-container">
     <div class="about-grid">
-      <!-- Spacer to let the background globe graphic on the left show through -->
-      <div class="about-spacer"></div>
+      <!-- Visual on the left -->
+      <div class="about-visual">
+        <img src="{{ resolve_block_asset($aboutHeroImage) }}" alt="{{ $aboutTitle }}" class="about-hero-img" />
+      </div>
 
       <!-- Content section on the right -->
       <div class="about-content">

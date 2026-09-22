@@ -169,7 +169,7 @@
                     </div>
                   @endif
                 </div>
-                <button type="submit" class="kontak-btn-submit">{{ t('contact.send', 'Kirim') }}</button>
+                <button type="submit" class="kontak-btn-submit">{{ t('contact.send', 'Submit') }}</button>
               </div>
             </form>
           @endif
@@ -329,7 +329,7 @@
                     </div>
                   @endif
                 </div>
-                <button type="submit" class="kontak-btn-submit">{{ t('contact.send', 'Kirim') }}</button>
+                <button type="submit" class="kontak-btn-submit">{{ t('contact.send', 'Submit') }}</button>
               </div>
             </form>
           @endif
@@ -369,7 +369,7 @@
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </div>
-            <button type="submit" class="status-btn-submit">{{ t('contact.send', 'Kirim') }}</button>
+            <button type="submit" class="status-btn-submit">{{ t('contact.send', 'Submit') }}</button>
           </form>
 
           @if(request()->has('rma_code'))

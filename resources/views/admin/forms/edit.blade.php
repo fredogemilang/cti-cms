@@ -565,6 +565,7 @@
     $preparedNotifications = $form->notifications ?? [
         'enabled' => false,
         'admin_email' => '',
+        'cc_email' => '',
         'subject' => 'New Form Submission',
         'send_to_user' => false,
     ];

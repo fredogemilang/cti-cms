@@ -645,6 +645,43 @@ class XyoraThemeSeeder extends Seeder
             );
         }
 
+        // C. Newsletter Form
+        $newsletterForm = Form::updateOrCreate(
+            ['slug' => 'newsletter-form'],
+            [
+                'name' => 'Newsletter Form',
+                'description' => 'Formulir Langganan Newsletter Blog XYORA',
+                'is_active' => true,
+                'form_type' => 'standard',
+                'submit_button_text' => 'Langganan',
+                'confirmations' => [
+                    'type' => 'message',
+                    'message' => 'Terima kasih! Anda telah berhasil berlangganan newsletter kami.'
+                ],
+                'spam_protection' => [
+                    'captcha_provider' => 'none',
+                    'honeypot' => true,
+                ]
+            ]
+        );
+
+        $newsletterFields = [
+            ['field_id' => 'email', 'type' => 'email', 'label' => 'Alamat Email', 'placeholder' => 'Isi alamat email anda', 'is_required' => true, 'order' => 0]
+        ];
+
+        foreach ($newsletterFields as $f) {
+            FormField::updateOrCreate(
+                ['form_id' => $newsletterForm->id, 'field_id' => $f['field_id']],
+                [
+                    'type' => $f['type'],
+                    'label' => $f['label'],
+                    'placeholder' => $f['placeholder'],
+                    'is_required' => $f['is_required'],
+                    'order' => $f['order'],
+                ]
+            );
+        }
+
         // 5. Seed Pages (matching templates)
         $pagesData = [
             ['title' => 'Home', 'slug' => 'home', 'template' => 'home'],

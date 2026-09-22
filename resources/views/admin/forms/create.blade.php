@@ -459,11 +459,19 @@
                         </label>
                         
                         <div x-show="notifications.enabled" class="space-y-4">
-                            <div class="space-[#6F767E] space-y-2">
+                            <div class="space-y-2">
                                 <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Admin Email</label>
-                                <input x-model="notifications.admin_email" type="email"
+                                <input x-model="notifications.admin_email" type="text"
                                     class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
                                     placeholder="admin@example.com">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">CC Email</label>
+                                <input x-model="notifications.cc_email" type="text"
+                                    class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
+                                    placeholder="cc1@example.com, cc2@example.com">
+                                <p class="text-[10px] text-[#6F767E]">Separate multiple emails with commas (,)</p>
                             </div>
                             
                             <div class="space-y-2">
@@ -667,6 +675,7 @@
             notifications: {
                 enabled: false,
                 admin_email: '',
+                cc_email: '',
                 subject: 'New Form Submission',
                 send_to_user: false,
             },

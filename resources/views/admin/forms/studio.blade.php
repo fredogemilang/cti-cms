@@ -8,11 +8,13 @@
     $notifications = $form->notifications ?? [];
     $notifyAdmin = $notifications['notify_admin'] ?? ($notifications['enabled'] ?? true);
     $adminEmail = $notifications['admin_email'] ?? config('mail.from.address');
+    $ccEmail = $notifications['cc_email'] ?? ($notifications['admin_cc'] ?? '');
     $adminSubject = $notifications['subject'] ?? "New Form Submission: {$form->name}";
     $adminEmailBody = $notifications['admin_email_body'] ?? "<p>A new submission has been received for <strong>{form_name}</strong>.</p>{submission_table}<p style=\"margin-top: 20px;\"><a href=\"{admin_url}\" style=\"display: inline-block; background-color: #111827; color: #ffffff; padding: 10px 22px; text-decoration: none; border-radius: 8px; font-weight: bold; text-transform: uppercase; font-size: 12px;\">View Entries in Admin</a></p>";
 
     $sendToUser = $notifications['send_to_user'] ?? false;
     $userSubject = $notifications['user_subject'] ?? "Thank you for your submission - {$form->name}";
+    $userCcEmail = $notifications['user_cc_email'] ?? '';
     $userEmailBody = $notifications['user_email_body'] ?? "<p>Hi {name},</p><p>Thank you for submitting <strong>{form_name}</strong>. We have received your details and will get back to you shortly.</p><p><a href=\"https://cdt.devs/themes/cdt/assets/banner_hero-DHYDqbF8.jpg\" style=\"display: inline-block; background-color: #b82d25; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 9999px; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;\">Download Digital Solution Guide</a></p><p>Best regards,<br>Central Data Technology Team</p>";
 
     $confirmations = $form->confirmations ?? [];
@@ -58,11 +60,13 @@
         // Notifications
         notifyAdmin: {{ json_encode((bool)$notifyAdmin) }},
         adminEmail: {{ json_encode($adminEmail) }},
+        ccEmail: {{ json_encode($ccEmail) }},
         adminSubject: {{ json_encode($adminSubject) }},
         adminBody: {{ json_encode($adminEmailBody) }},
         
         sendToUser: {{ json_encode((bool)$sendToUser) }},
         userSubject: {{ json_encode($userSubject) }},
+        userCcEmail: {{ json_encode($userCcEmail) }},
         userBody: {{ json_encode($userEmailBody) }},
 
         // Builder State
@@ -651,13 +655,20 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-2">
                                 <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Admin Recipient Email</label>
-                                <input type="email" name="notifications[admin_email]" x-model="adminEmail" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]">
+                                <input type="text" name="notifications[admin_email]" x-model="adminEmail" placeholder="admin@example.com" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]">
+                                <p class="text-[11px] text-[#6F767E]">Primary recipient (defaults to site email if empty).</p>
                             </div>
 
                             <div class="space-y-2">
-                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Email Subject</label>
-                                <input type="text" name="notifications[subject]" x-model="adminSubject" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]">
+                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">CC Email (Carbon Copy)</label>
+                                <input type="text" name="notifications[cc_email]" x-model="ccEmail" placeholder="cc1@example.com, cc2@example.com" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]">
+                                <p class="text-[11px] text-[#6F767E]">Separate multiple emails with commas (,)</p>
                             </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">Email Subject</label>
+                            <input type="text" name="notifications[subject]" x-model="adminSubject" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]">
                         </div>
 
                         {{-- WYSIWYG Admin --}}
@@ -698,9 +709,17 @@
                     </div>
 
                     <div x-show="sendToUser" x-collapse class="space-y-6">
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">User Email Subject</label>
-                            <input type="text" name="notifications[user_subject]" x-model="userSubject" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">User Email Subject</label>
+                                <input type="text" name="notifications[user_subject]" x-model="userSubject" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider">CC Email (Optional)</label>
+                                <input type="text" name="notifications[user_cc_email]" x-model="userCcEmail" placeholder="support@example.com" class="w-full h-11 bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-xl px-4 text-[#111827] dark:text-[#FCFCFC]">
+                                <p class="text-[11px] text-[#6F767E]">Send a copy of user confirmation to this CC email.</p>
+                            </div>
                         </div>
 
                         {{-- CTA Download Tool --}}

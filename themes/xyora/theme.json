@@ -115,6 +115,12 @@
                     "default": "/tentang"
                 },
                 {
+                    "name": "overview_overlay",
+                    "type": "media",
+                    "label": "Overview Background Overlay",
+                    "default": "images/overlay-overview.png"
+                },
+                {
                     "name": "why_background",
                     "type": "media",
                     "label": "Why Section Background Image",
@@ -254,6 +260,12 @@
                     "type": "media",
                     "label": "Hero Background Image",
                     "default": "media/bg-about-1786430297-qfb3yoZr.jpg"
+                },
+                {
+                    "name": "about_hero_image",
+                    "type": "media",
+                    "label": "About Hero Image",
+                    "default": "images/about-hero.png"
                 },
                 {
                     "name": "about_title",
