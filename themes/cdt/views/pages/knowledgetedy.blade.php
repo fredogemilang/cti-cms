@@ -362,7 +362,7 @@ Central Data Technology (CDT) is a premier IT distributor and IT consulting part
         <h3 class="text-xl font-bold mb-1">Siap Mengakselerasi Transformasi Digital Anda?</h3>
         <p class="text-sm text-zinc-400">Konsultasikan kebutuhan arsitektur cloud, keamanan siber, dan infrastruktur enterprise Anda dengan tim spesialis CDT.</p>
       </div>
-      <a href="{{ url(app()->getLocale() === 'id' ? '/id/hubungi-kami/' : '/contact-us/') }}" class="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-primary hover:bg-red-700 text-white transition-all whitespace-nowrap shadow-md">
+      <a href="{{ url(app()->getLocale() === 'id' ? '/id/kontak-kami/' : '/contact-us/') }}" class="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-primary hover:bg-red-700 text-white transition-all whitespace-nowrap shadow-md">
         {{ app()->getLocale() === 'id' ? 'Hubungi Konsultan CDT' : 'Contact CDT Consultants' }}
       </a>
     </footer>

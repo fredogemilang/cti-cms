@@ -5,32 +5,6 @@
 @section('content')
 
 @push('head')
-  @if(isset($page))
-    <x-seo.head :entity="$page" />
-  @else
-    <!-- Primary Meta Tags -->
-    <meta name="title" content="Get Up to 6 Months Free AWS Cloud Credits | Central Data Technology">
-    <meta name="description" content="Accelerate your AI and cloud transformation with up to 6 months of free AWS Cloud Credits managed by Central Data Technology (CDT), an official AWS Premier Tier Partner. Open to all industries with minimum MRR $2K.">
-    <meta name="keywords" content="AWS Cloud Credits, Amazon Web Services, AWS Partner Indonesia, Free AWS Credits, Amazon Bedrock, Amazon Quick, Central Data Technology, CDT AWS">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="{{ url()->current() }}">
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:title" content="Get Up to 6 Months Free AWS Cloud Credits | Central Data Technology">
-    <meta property="og:description" content="Accelerate your AI and cloud transformation with up to 6 months of free AWS Cloud Credits managed by CDT, an official AWS Premier Tier Partner.">
-    <meta property="og:image" content="{{ asset('storage/media/logo-premier-tier.webp') }}">
-    <meta property="og:site_name" content="Central Data Technology">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url()->current() }}">
-    <meta property="twitter:title" content="Get Up to 6 Months Free AWS Cloud Credits | Central Data Technology">
-    <meta property="twitter:description" content="Accelerate your AI and cloud transformation with up to 6 months of free AWS Cloud Credits managed by CDT, an official AWS Premier Tier Partner.">
-    <meta property="twitter:image" content="{{ asset('storage/media/logo-premier-tier.webp') }}">
-  @endif
-
   @php
     $schemaData = [
       '@context' => 'https://schema.org',

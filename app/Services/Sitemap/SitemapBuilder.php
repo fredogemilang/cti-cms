@@ -121,7 +121,11 @@ class SitemapBuilder
         $locales = available_locales();
         $defaultLocale = setting('default_locale', config('app.locale', 'en'));
 
-        foreach (Page::with('allBlocks')->where('status', 'published')->orderBy('updated_at', 'desc')->get() as $page) {
+        foreach (Page::with(['allBlocks', 'seoMeta'])->where('status', 'published')->orderBy('updated_at', 'desc')->get() as $page) {
+            if (! $this->isIndexable($page)) {
+                continue;
+            }
+
             $blockValues = $page->allBlocks->pluck('value')->filter()->toArray();
             $images = $this->extractImages($page->featured_image ?? null, $blockValues);
 
@@ -176,12 +180,16 @@ class SitemapBuilder
             ];
         }
 
-        $posts = $postModel::where('status', 'published')
+        $posts = $postModel::with('seoMeta')->where('status', 'published')
             ->orderBy('updated_at', 'desc')
             ->get();
 
         foreach ($posts as $post) {
             /** @var Post $post */
+            if (! $this->isIndexable($post)) {
+                continue;
+            }
+
             $images = $this->extractImages($post->featured_image ?? null, $post->content ?? null);
 
             foreach ($locales as $loc) {
@@ -239,12 +247,16 @@ class SitemapBuilder
 
         // Single entry urls (only if publicly_queryable is enabled) for each locale
         if ($cpt->publicly_queryable) {
-            $entries = CptEntry::where('post_type_id', $cpt->id)
+            $entries = CptEntry::with('seoMeta')->where('post_type_id', $cpt->id)
                 ->where('status', 'published')
                 ->orderBy('updated_at', 'desc')
                 ->get();
 
             foreach ($entries as $entry) {
+                if (! $this->isIndexable($entry)) {
+                    continue;
+                }
+
                 $images = $this->extractImages($entry->featured_image ?? null, $entry->content ?? null);
 
                 foreach ($locales as $loc) {
@@ -475,5 +487,25 @@ class SitemapBuilder
         }
 
         return url('/'.$url);
+    }
+
+    /**
+     * Determine if an entity is indexable and allowed in sitemaps.
+     */
+    protected function isIndexable(object $entity): bool
+    {
+        $meta = method_exists($entity, 'relationLoaded') && $entity->relationLoaded('seoMeta')
+            ? $entity->seoMeta
+            : (isset($entity->seoMeta) ? $entity->seoMeta : (method_exists($entity, 'seoMeta') ? $entity->seoMeta()->first() : null));
+
+        if ($meta && ! empty($meta->robots) && str_contains(strtolower((string) $meta->robots), 'noindex')) {
+            return false;
+        }
+
+        if (isset($entity->meta) && is_array($entity->meta) && ! empty($entity->meta['robots']) && str_contains(strtolower((string) $entity->meta['robots']), 'noindex')) {
+            return false;
+        }
+
+        return true;
     }
 }

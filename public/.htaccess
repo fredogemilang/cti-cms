@@ -151,7 +151,6 @@ FileETag None
     # --- Arsip & slug ID yang berubah ---
     RewriteRule ^id/keberhasilan-pelanggan/?$ /id/customer-success/ [R=301,L]
     RewriteRule ^id/amazon-web-services-2/?$ /id/amazon-web-services/ [R=301,L]
-    RewriteRule ^id/dynatrace/pengalaman-digital/?$ /id/dynatrace/digital-experience/ [R=301,L]
 
     # ==========================================
     # Tambahkan trailing slash (kebalikan dari bawaan Laravel)
@@ -161,7 +160,7 @@ FileETag None
     RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^/(ctrlpanel|api|livewire|_deferred|storage|build|themes|vendor)
+    RewriteCond %{REQUEST_URI} !^/(ctrlpanel|api|livewire|_deferred|storage|build|themes|vendor|wp-content)
     RewriteCond %{REQUEST_URI} !^/(feed|search|lang/|forms/|indexnow-)
     RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]{1,6}$
     RewriteCond %{REQUEST_URI} !/$

@@ -316,12 +316,21 @@ if (! function_exists('resolve_block_asset')) {
         }
 
         $cleanPath = ltrim($path, '/');
+        $webpCleanPath = preg_replace('/\.(png|jpe?g)$/i', '.webp', $cleanPath);
 
         if (str_starts_with($cleanPath, 'themes/')) {
+            if ($webpCleanPath !== $cleanPath && file_exists(public_path($webpCleanPath))) {
+                return $cache[$path] = asset($webpCleanPath);
+            }
             return $cache[$path] = asset($cleanPath);
         }
 
         if (str_starts_with($cleanPath, 'storage/')) {
+            $storageSub = substr($cleanPath, 8);
+            $webpStorageSub = preg_replace('/\.(png|jpe?g)$/i', '.webp', $storageSub);
+            if ($webpStorageSub !== $storageSub && file_exists(public_path('storage/'.$webpStorageSub))) {
+                return $cache[$path] = asset('storage/'.$webpStorageSub);
+            }
             if (! file_exists(public_path($cleanPath))) {
                 $unhashed = preg_replace('/-\d+-[a-zA-Z0-9]+\.([a-zA-Z0-9]+)$/', '.$1', $cleanPath);
                 if (file_exists(public_path($unhashed))) {
@@ -336,13 +345,26 @@ if (! function_exists('resolve_block_asset')) {
         $activeThemeSlug = $theme ? $theme->slug : 'default';
 
         if (str_starts_with($cleanPath, 'assets/')) {
+            $themeAssetWebp = "themes/{$activeThemeSlug}/{$webpCleanPath}";
+            if ($webpCleanPath !== $cleanPath && (file_exists(public_path($themeAssetWebp)) || file_exists(base_path($themeAssetWebp)))) {
+                return $cache[$path] = asset($themeAssetWebp);
+            }
             return $cache[$path] = asset("themes/{$activeThemeSlug}/{$cleanPath}");
         }
 
         // Check if file exists in active theme assets
         $themeAssetRel = "themes/{$activeThemeSlug}/assets/{$cleanPath}";
+        $themeAssetWebp = "themes/{$activeThemeSlug}/assets/{$webpCleanPath}";
+        if ($webpCleanPath !== $cleanPath && (file_exists(public_path($themeAssetWebp)) || file_exists(base_path($themeAssetWebp)))) {
+            return $cache[$path] = asset($themeAssetWebp);
+        }
         if (file_exists(public_path($themeAssetRel)) || file_exists(base_path($themeAssetRel))) {
             return $cache[$path] = asset($themeAssetRel);
+        }
+
+        // Prefer webp in storage
+        if ($webpCleanPath !== $cleanPath && file_exists(public_path('storage/'.$webpCleanPath))) {
+            return $cache[$path] = asset('storage/'.$webpCleanPath);
         }
 
         if (! file_exists(public_path('storage/'.$cleanPath))) {

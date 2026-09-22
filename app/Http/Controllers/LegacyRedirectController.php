@@ -8,13 +8,20 @@ use Illuminate\Http\Request;
 
 class LegacyRedirectController extends Controller
 {
+    protected function cleanLegacySlug(string $slug): string
+    {
+        $clean = str_replace([':-', ':'], '-', $slug);
+        $clean = preg_replace('/-+/', '-', $clean);
+        return trim($clean, '-');
+    }
+
     /**
      * Redirect legacy /news-detail/{slug} to /blog-news/{slug}.
      */
     public function newsDetail(Request $request, ?string $localeOrSlug = null, ?string $slug = null): RedirectResponse
     {
         $locale = $slug !== null ? $localeOrSlug : null;
-        $targetSlug = $slug ?? $localeOrSlug;
+        $targetSlug = $this->cleanLegacySlug($slug ?? $localeOrSlug ?? '');
         $qs = $request->getQueryString();
 
         $path = ($locale ? "/{$locale}" : '') . "/blog-news/{$targetSlug}";
@@ -27,7 +34,7 @@ class LegacyRedirectController extends Controller
     public function blogSingle(Request $request, ?string $localeOrSlug = null, ?string $slug = null): RedirectResponse
     {
         $locale = $slug !== null ? $localeOrSlug : null;
-        $targetSlug = $slug ?? $localeOrSlug;
+        $targetSlug = $this->cleanLegacySlug($slug ?? $localeOrSlug ?? '');
         $qs = $request->getQueryString();
 
         $path = ($locale ? "/{$locale}" : '') . "/blog-news/{$targetSlug}";

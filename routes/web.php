@@ -106,8 +106,8 @@ Route::get('/schema/{type}', [SchemaAggregatorController::class, 'showCollection
 Route::get('/indexnow-{key}.txt', [IndexNowController::class, 'showKey'])->name('indexnow.key');
 
 // Legacy WordPress & Elementor 301 Redirects (SEO Protection)
-Route::get('/news-detail/{slug}', [LegacyRedirectController::class, 'newsDetail'])->where('slug', '[a-zA-Z0-9\-]+');
-Route::get('/blog/{slug}', [LegacyRedirectController::class, 'blogSingle'])->where('slug', '[a-zA-Z0-9\-]+');
+Route::get('/news-detail/{slug}', [LegacyRedirectController::class, 'newsDetail'])->where('slug', '[a-zA-Z0-9\-:]+');
+Route::get('/blog/{slug}', [LegacyRedirectController::class, 'blogSingle'])->where('slug', '[a-zA-Z0-9\-:]+');
 Route::get('/category/{slug}', [LegacyRedirectController::class, 'category']);
 Route::get('/tag/{slug}', [LegacyRedirectController::class, 'tag']);
 Route::get('/client-says/{slug?}', [LegacyRedirectController::class, 'clientSays']);
@@ -143,19 +143,28 @@ Route::get('/apple', fn () => redirect(trailing_slash_url(url('/amazon-web-servi
 Route::get('/amazon-web-services-cloud-credits-preview', fn () => redirect(trailing_slash_url(url('/amazon-web-services-cloud-credits')), 301));
 Route::get('/blog-news/transformasi-ke-cloud-dengan-arsitektur-modern-dan-terkoneksi', fn () => redirect(trailing_slash_url(url('/blog-news')), 301));
 Route::get('/blog-news/tingkatkan-keamanan-data-dengan-rubrik-zero-trust-data-security', fn () => redirect(trailing_slash_url(url('/blog-news')), 301));
+
+// Normalize default locale /en/ prefix to root
+Route::redirect('/en', '/', 301);
+Route::get('/en/{any}', fn ($any) => redirect(trailing_slash_url(url($any)), 301))->where('any', '.*');
+
+// Specific blog post legacy / anchor text slug redirects
+Route::get('/blog-news/everything-you-should-know-about-single-sign-on-sso', fn () => redirect(trailing_slash_url(url('/blog-news/what-single-sign-on-sso-functions-and-how-it-works')), 301));
+Route::get('/blog-news/securing-the-cloud-an-intro-to-cloud-network-security', fn () => redirect(trailing_slash_url(url('/blog-news/what-is-cloud-network-security-definition-benefits-and-cloud-security-strategies-for-businesses')), 301));
+Route::get('/blog-news/how-iaas-works-and-why-it-matters-today', fn () => redirect(trailing_slash_url(url('/blog-news/what-is-infrastructure-as-a-service-iaas-and-its-benefits-for-modern-enterprises')), 301));
+Route::get('/blog-news/tired-of-manual-backups-try-cloud-backup-instead', fn () => redirect(trailing_slash_url(url('/blog-news/cloud-backup-definition-how-it-works-and-examples-of-application')), 301));
+Route::get('/blog-news/shape-defense--solusi-anti-penipuan-berbasis-ai-untuk-segala-jenis-bisnis', fn () => redirect(trailing_slash_url(url('/blog-news/shape-defense-solusi-anti-penipuan-berbasis-ai-untuk-segala-jenis-bisnis')), 301));
+
 Route::redirect('/admin', '/ctrlpanel', 301);
-
-
-
 Route::redirect('/admin/login', '/ctrlpanel/login', 301);
 
 
 if (! empty($nonDefaultLocales)) {
     Route::get('/{locale}/news-detail/{slug}', [LegacyRedirectController::class, 'newsDetail'])
-        ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-]+');
+        ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-:]+');
 
     Route::get('/{locale}/blog/{slug}', [LegacyRedirectController::class, 'blogSingle'])
-        ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-]+');
+        ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-:]+');
 
     Route::get('/{locale}/category/{slug}', [LegacyRedirectController::class, 'category'])
         ->where('locale', $localePattern);
@@ -201,6 +210,7 @@ if (! empty($nonDefaultLocales)) {
     Route::get('/id/technology-alliance', fn () => redirect(trailing_slash_url(url('/id/amazon-web-services')), 301));
     Route::get('/id/contact', fn () => redirect(trailing_slash_url(url('/id/kontak-kami')), 301));
     Route::get('/id/kontak', fn () => redirect(trailing_slash_url(url('/id/kontak-kami')), 301));
+    Route::get('/id/hubungi-kami', fn () => redirect(trailing_slash_url(url('/id/kontak-kami')), 301));
     Route::get('/id/career', fn () => redirect(trailing_slash_url(url('/id/karir')), 301));
     Route::get('/id/terms-of-use', fn () => redirect(trailing_slash_url(url('/id/kebijakan-privasi')), 301));
     Route::get('/id/syarat-dan-ketentuan', fn () => redirect(trailing_slash_url(url('/id/kebijakan-privasi')), 301));
@@ -208,6 +218,13 @@ if (! empty($nonDefaultLocales)) {
     Route::get('/id/amazon-web-services-cloud-credits-preview', fn () => redirect(trailing_slash_url(url('/id/amazon-web-services-cloud-credits')), 301));
     Route::get('/id/blog-news/transformasi-ke-cloud-dengan-arsitektur-modern-dan-terkoneksi', fn () => redirect(trailing_slash_url(url('/id/blog-news')), 301));
     Route::get('/id/blog-news/tingkatkan-keamanan-data-dengan-rubrik-zero-trust-data-security', fn () => redirect(trailing_slash_url(url('/id/blog-news')), 301));
+
+    // Specific Indonesian blog post legacy / anchor text slug redirects
+    Route::get('/id/blog-news/apa-itu-sso-ini-fungsi-keunggulan-dan-cara-kerjanya', fn () => redirect(trailing_slash_url(url('/id/blog-news/mengenal-apa-itu-single-sign-on-sso-berserta-fungsi-dan-cara-kerjanya')), 301));
+    Route::get('/id/blog-news/cloud-network-security-solusi-cerdas-hadapi-ancaman-siber', fn () => redirect(trailing_slash_url(url('/id/blog-news/apa-itu-cloud-network-security-definisi-manfaatnya-dan-strategi-keamanan-cloud-untuk-bisnis')), 301));
+    Route::get('/id/blog-news/iaas-cara-cerdas-membangun-infrastruktur-bisnis-tanpa-overbudget', fn () => redirect(trailing_slash_url(url('/id/blog-news/apa-itu-infrastructure-as-a-service-iaas-dan-manfaatnya-bagi-bisnis-modern')), 301));
+    Route::get('/id/blog-news/cloud-backup-cara-simpel-jaga-data-tetap-aman', fn () => redirect(trailing_slash_url(url('/id/blog-news/cloud-backup-pengertian-cara-kerja-dan-contoh-penerapannya')), 301));
+    Route::get('/id/blog-news/shape-defense--solusi-anti-penipuan-berbasis-ai-untuk-segala-jenis-bisnis', fn () => redirect(trailing_slash_url(url('/id/blog-news/shape-defense-solusi-anti-penipuan-berbasis-ai-untuk-segala-jenis-bisnis')), 301));
 }
 
 
