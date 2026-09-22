@@ -146,14 +146,25 @@ class OptimizeHtml
             return $html;
         }
 
-        // Use the rel=preload + onload swap trick for non-blocking CSS
-        return preg_replace_callback(
+        // When the deferred stylesheet finally applies, every element whose
+        // computed style differs from the critical-CSS state starts its CSS
+        // transition at once (344 animations in one 200ms task on the CDT
+        // homepage) and shifts layout. Suppress transitions while <html> carries
+        // `css-pending`; the last deferred link's onload removes it. No-JS users
+        // keep the class (transitions off) but still get the <noscript> sheet.
+        $onload = 'this.onload=null;this.rel=\'stylesheet\';'
+            .'if(!document.querySelector(\'link[data-deferred-css][rel=preload]\'))'
+            .'document.documentElement.classList.remove(\'css-pending\')';
+
+        $deferred = 0;
+        $html = preg_replace_callback(
             '/<link\b([^>]*\brel=("|\')stylesheet\2[^>]*\bhref=("|\')([^"\']+)\3[^>]*)\/?>/i',
-            function ($m) use ($patterns) {
+            function ($m) use ($patterns, $onload, &$deferred) {
                 $href = $m[4];
                 foreach ($patterns as $pat) {
                     if ($pat !== '' && str_contains($href, $pat)) {
-                        $rest = preg_replace('/\brel=("|\')stylesheet\1/', 'rel="preload" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"', $m[1]);
+                        $deferred++;
+                        $rest = preg_replace('/\brel=("|\')stylesheet\1/', 'rel="preload" as="style" data-deferred-css onload="'.$onload.'"', $m[1]);
 
                         // Provide a <noscript> fallback for users without JS
                         return '<link'.$rest.'><noscript><link rel="stylesheet" href="'.htmlspecialchars($href, ENT_QUOTES).'"></noscript>';
@@ -164,6 +175,22 @@ class OptimizeHtml
             },
             $html,
         ) ?? $html;
+
+        if ($deferred === 0) {
+            return $html;
+        }
+
+        $suppress = '<style data-critical-pending>html.css-pending *,html.css-pending *::before,html.css-pending *::after{transition:none!important}</style>';
+        $html = preg_replace('/<\/head>/i', $suppress.'</head>', $html, 1) ?? $html;
+
+        return preg_replace_callback('/<html\b([^>]*)>/i', function ($m) {
+            $attrs = $m[1];
+            if (preg_match('/\bclass=("|\')([^"\']*)\1/i', $attrs, $c)) {
+                return '<html'.str_replace($c[0], 'class='.$c[1].trim($c[2].' css-pending').$c[1], $attrs).'>';
+            }
+
+            return '<html'.$attrs.' class="css-pending">';
+        }, $html, 1) ?? $html;
     }
 
     protected function shouldProcess(Request $request, Response $response): bool
