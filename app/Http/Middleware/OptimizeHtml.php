@@ -124,36 +124,19 @@ class OptimizeHtml
 
     protected function inlineCriticalCss(string $html, string $css): string
     {
-        // Prepend body hiding rule to prevent FOUC during stylesheet swap
-        $hideBody = 'body{opacity:0;transition:opacity .15s ease-in}body.css-loaded{opacity:1}';
-        $tag = '<style data-critical>'.$hideBody.$css.'</style>';
+        // The whole point of critical CSS is to paint above-the-fold content
+        // before the full stylesheet arrives. Do NOT hide <body> until the
+        // deferred stylesheets load: that gate pushed FCP/LCP behind the slowest
+        // CSS request (+2s failsafe) on mobile and cost ~20 Lighthouse points.
+        // If the page flashes unstyled, the curated critical CSS is incomplete —
+        // fix the CSS (Settings → Page Optimization), don't re-add a gate.
+        $tag = '<style data-critical>'.$css.'</style>';
 
-        // Tiny JS: reveal page once deferred stylesheets finish loading (2s failsafe)
-        $reveal = '<script>'.
-            '(function(){'.
-                'function r(){document.body.classList.add("css-loaded")}'.
-                'var s=document.querySelectorAll("link[rel=preload][as=style]");'.
-                'if(!s.length){r();return}'.
-                'var n=s.length;'.
-                's.forEach(function(l){l.addEventListener("load",function(){if(--n<=0)r()})});'.
-                'setTimeout(r,2000)'.
-            '})();'.
-        '</script>';
-
-        // Insert critical style before </head>, reveal script before </body>
         if (stripos($html, '</head>') !== false) {
-            $html = preg_replace('/<\/head>/i', $tag.'</head>', $html, 1) ?? $html;
-        } else {
-            $html = $tag.$html;
+            return preg_replace('/<\/head>/i', $tag.'</head>', $html, 1) ?? $html;
         }
 
-        if (stripos($html, '</body>') !== false) {
-            $html = preg_replace('/<\/body>/i', $reveal.'</body>', $html, 1) ?? $html;
-        } else {
-            $html .= $reveal;
-        }
-
-        return $html;
+        return $tag.$html;
     }
 
     protected function deferStylesheets(string $html): string

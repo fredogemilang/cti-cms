@@ -174,6 +174,6 @@ Raw `<img>` is only allowed for static theme assets (SVG icons, decorative image
 ## G52. Critical CSS Homepage Only + FOUC Prevention (2026-08-14)
 Settings → Page Optimization has a **"Homepage Only"** toggle for Critical CSS. When ON, critical CSS inlining + stylesheet deferring only apply to the homepage (`/`, `/en`, `/id`). Other pages load stylesheets normally.
 
-**FOUC Prevention:** `body{opacity:0}` is injected with critical CSS; a tiny inline JS at `</body>` adds a `css-loaded` class when preloaded stylesheets finish loading (150ms fade-in, 2s failsafe).
+**FOUC gate REMOVED (2026-09-21):** `OptimizeHtml` used to inject `body{opacity:0}` and reveal the page from a `</body>` script once `link[rel=preload][as=style]` fired `load` (2s failsafe). The small preloads had usually *already* loaded by the time the script attached its listeners, so the counter never reached zero and every visitor waited the full 2s: Lighthouse on production showed an LCP "element render delay" of 2149ms with a 60ms TTFB. Critical CSS must paint the fold on its own — never hide `<body>` behind a stylesheet load again. If something flashes unstyled, fix the curated critical CSS in Settings → Page Optimization.
 
 **Failed experiment (do not repeat without a new strategy):** auto-extracted 50KB inline critical CSS + deferred stylesheet swap made scores DROP (TBT +150ms from parsing inline at throttle, CLS up from the swap) and was reverted (commit c124522). If retried: curate critical manually, ≤8KB.
