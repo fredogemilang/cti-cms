@@ -4,6 +4,19 @@
    leaves them untouched — the files live in public/themes/cdt/assets/images/. */
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@source "../../views";
+/* Core views the frontend can render (components, errors, forms, pagination,
+   theme fallbacks). The admin panel has its own bundle (resources/css/app.css),
+   so exclude its ~1.5MB of Livewire/admin templates — scanning them bloated
+   this stylesheet (299KB → 205KB raw) with utilities the site never uses. */
+@source "../../../../resources/views";
+@source not "../../../../resources/views/admin";
+@source not "../../../../resources/views/livewire";
+@source not "../../../../resources/views/layouts";
+@source not "../../../../resources/views/auth";
+@source "../../../../plugins";
+@source not "../../../../plugins/*/resources/views/admin";
+@source not "../../../../plugins/*/resources/views/livewire";
 
 /* Self-hosted fonts (replaces Google Fonts CDN). Variable Inter covers all
    weights 100-900 in a single file; Prompt is non-variable so each weight is

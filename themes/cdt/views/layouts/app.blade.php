@@ -16,7 +16,9 @@
   <x-seo.head :entity="$seoCandidate" />
 
   @if(setting('site_favicon'))
-    <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
+    {{-- 'thumb' (150px) variant: the uploaded logo is fetched at high priority
+         on every page, so serve the 2-3KB variant instead of the 20KB+ original. --}}
+    <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon'), 'thumb') }}">
   @endif
 
   {{-- Preload Critical Above-The-Fold Fonts --}}

@@ -24,7 +24,9 @@
     >
     <!-- Background Image -->
     <div class="absolute inset-0">
-      <x-image :src="$heroImgUrl" alt="{{ setting('site_name', 'Central Data Technology') }} Hero Banner" title="{{ setting('site_name', 'Central Data Technology') }}" sizes="100vw" class="hero-bg-img w-full h-full object-cover origin-center" loading="eager" decoding="sync" fetchpriority="high" onerror="this.src='{{ asset('themes/cdt/assets/photo-1451187580459-43490279c0fa-w2072-DWLGXPRP.jpg') }}'" />
+      {{-- onerror runs once and strips the <picture> sources + srcset first: otherwise the
+           browser keeps re-selecting the failed WebP <source> and re-requests it forever. --}}
+      <x-image :src="$heroImgUrl" alt="{{ setting('site_name', 'Central Data Technology') }} Hero Banner" title="{{ setting('site_name', 'Central Data Technology') }}" sizes="100vw" class="hero-bg-img w-full h-full object-cover origin-center" loading="eager" decoding="sync" fetchpriority="high" onerror="this.onerror=null;var p=this.parentNode;if(p&&p.tagName==='PICTURE'){p.querySelectorAll('source').forEach(function(s){s.remove()})}this.removeAttribute('srcset');this.src='{{ asset('themes/cdt/assets/photo-1451187580459-43490279c0fa-w2072-DWLGXPRP.jpg') }}'" />
 
     </div>
   

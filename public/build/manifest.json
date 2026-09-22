@@ -284,7 +284,7 @@
     "src": "node_modules/@fontsource/prompt/files/prompt-vietnamese-800-normal.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-6zDpYXl8.css",
+    "file": "assets/app-E0QG6Idv.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -299,7 +299,7 @@
     "isEntry": true
   },
   "themes/cdt/assets/css/theme.css": {
-    "file": "assets/theme-k3MtoD5-.css",
+    "file": "assets/theme-C18kHwag.css",
     "src": "themes/cdt/assets/css/theme.css",
     "isEntry": true,
     "name": "theme",
@@ -307,11 +307,27 @@
       "theme.css"
     ]
   },
+  "themes/cdt/assets/js/theme-motion.js": {
+    "file": "assets/theme-motion-CoCYg6ue.js",
+    "name": "theme-motion",
+    "src": "themes/cdt/assets/js/theme-motion.js",
+    "isDynamicEntry": true
+  },
+  "themes/cdt/assets/js/theme-swiper.js": {
+    "file": "assets/theme-swiper-DCxjjWI3.js",
+    "name": "theme-swiper",
+    "src": "themes/cdt/assets/js/theme-swiper.js",
+    "isDynamicEntry": true
+  },
   "themes/cdt/assets/js/theme.js": {
-    "file": "assets/theme-B6wwGIfH.js",
+    "file": "assets/theme-DDdsR5VQ.js",
     "name": "theme",
     "src": "themes/cdt/assets/js/theme.js",
     "isEntry": true,
+    "dynamicImports": [
+      "themes/cdt/assets/js/theme-motion.js",
+      "themes/cdt/assets/js/theme-swiper.js"
+    ],
     "css": [
       "assets/theme-BVYAVZZL.css"
     ]

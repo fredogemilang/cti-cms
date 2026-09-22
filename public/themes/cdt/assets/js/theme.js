@@ -1,396 +1,236 @@
-import Lenis from 'lenis';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+// Eager theme bundle — keep this small. It runs on every page before the user
+// can interact, so it only contains what the first paint/interaction needs:
+// Alpine (nav, sheets, forms) and a few native scroll helpers.
+//
+// Everything heavy is split into on-demand chunks (Vite dynamic import):
+//   theme-motion.js  → GSAP + ScrollTrigger (+ Lenis on desktop)
+//   theme-swiper.js  → Swiper core + Autoplay/Navigation/Pagination
+// Before the split this file shipped ~270KB of JS eagerly and its evaluation
+// was the single 500ms long task blocking mobile TTI (Lighthouse 2026-09-21).
 import Alpine from 'alpinejs';
-// Tree-shaken Swiper: core + only the modules this theme actually uses
-// (Autoplay on posts featured-slider, Navigation + Pagination on testimonials).
-import { Swiper } from 'swiper';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+// Swiper CSS stays eager so slider markup is laid out before Swiper JS lands
+// (avoids a layout shift when the lazy chunk initialises).
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-
-// Register modules globally so inline `new Swiper(...)` calls in Blade views
-// (e.g. posts/index featured-slider) work without passing a modules array.
-Swiper.use([Autoplay, Navigation, Pagination]);
-
-// Expose Swiper globally for inline scripts in partials that do `new Swiper(...)`.
-window.Swiper = Swiper;
 
 // Expose & start Alpine so x-data/x-show directives in partials work.
 window.Alpine = Alpine;
 Alpine.start();
 
-// Register GSAP Plugin
-gsap.registerPlugin(ScrollTrigger);
+const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1));
 
-// Initialize Lenis
-const lenis = new Lenis({
-  autoRaf: false,
-});
-
-// Sync GSAP ScrollTrigger with Lenis
-lenis.on('scroll', ScrollTrigger.update);
-gsap.ticker.add((time) => {
-  lenis.raf(time * 1000);
-});
-gsap.ticker.lagSmoothing(0);
-
-// Smart Sticky Header Logic
-const header = document.getElementById('main-header');
-if (header) {
-  ScrollTrigger.create({
-    start: 'top -50',
-    end: 99999,
-    toggleClass: {className: 'shadow-md', targets: header}
-  });
-
-  let showAnim = gsap.from(header, { 
-    yPercent: -100,
-    paused: true,
-    duration: 0.3,
-    ease: "power2.out"
-  }).progress(1);
-
-  ScrollTrigger.create({
-    start: "top top",
-    end: "max",
-    onUpdate: (self) => {
-      if (self.direction === 1) {
-        showAnim.reverse();
-      } else {
-        showAnim.play();
-      }
-    }
-  });
+// ==========================================
+// LAZY CHUNK LOADERS
+// ==========================================
+let motionPromise = null;
+function loadMotion() {
+  if (!motionPromise) {
+    motionPromise = import('./theme-motion.js').then((m) => {
+      m.init({ smoothScroll: !isTouch, hoverEffects: !isTouch });
+      return m;
+    });
+  }
+  return motionPromise;
 }
 
-// Back to Top Logic
-const backToTopBtn = document.getElementById('back-to-top');
-if (backToTopBtn) {
-  lenis.on('scroll', (e) => {
-    if (window.scrollY > 300) {
-      backToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
-      backToTopBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
-    } else {
-      backToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
-      backToTopBtn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
-    }
-  });
+let swiperPromise = null;
+function loadSwiper() {
+  if (!swiperPromise) {
+    swiperPromise = import('./theme-swiper.js').then((m) => m.Swiper);
+  }
+  return swiperPromise;
+}
 
+// Motion is only worth loading when the page has something to animate
+// (or on desktop, where Lenis smooth scrolling is part of the experience).
+const hasMotionTargets = !!document.querySelector(
+  '[data-gsap], .expertise-card, .alliance-logo, .aws-logo, .alliance-link, #blog-sidebar'
+);
+if (!reducedMotion && (hasMotionTargets || !isTouch)) {
+  const events = ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'];
+  const onFirstInteraction = () => {
+    events.forEach((e) => window.removeEventListener(e, onFirstInteraction));
+    loadMotion();
+  };
+  events.forEach((e) => window.addEventListener(e, onFirstInteraction, { once: true, passive: true }));
+
+  // Desktop: warm it up during idle time so smooth scroll is ready on first wheel.
+  // Mobile: strictly on interaction — keeps the ~150KB chunk off the LCP path.
+  if (!isTouch) {
+    window.addEventListener('load', () => idle(() => loadMotion()), { once: true });
+  }
+}
+
+// ==========================================
+// STICKY HEADER SHADOW + BACK TO TOP (native scroll)
+// ==========================================
+// Show/hide-on-scroll for #main-header lives in its Alpine x-data (header partial).
+const header = document.getElementById('main-header');
+const backToTopBtn = document.getElementById('back-to-top');
+
+if (header || backToTopBtn) {
+  let ticking = false;
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      const y = window.scrollY;
+      if (header) header.classList.toggle('shadow-md', y > 50);
+      if (backToTopBtn) {
+        const show = y > 300;
+        backToTopBtn.classList.toggle('opacity-0', !show);
+        backToTopBtn.classList.toggle('pointer-events-none', !show);
+        backToTopBtn.classList.toggle('translate-y-4', !show);
+        backToTopBtn.classList.toggle('opacity-100', show);
+        backToTopBtn.classList.toggle('pointer-events-auto', show);
+        backToTopBtn.classList.toggle('translate-y-0', show);
+      }
+    });
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
+// ==========================================
+// SMOOTH SCROLLING (anchors + back to top)
+// ==========================================
+function smoothScrollTo(target, offset = 0) {
+  // Once the motion chunk is loaded (desktop) Lenis drives the scroll;
+  // otherwise fall back to native smooth scrolling.
+  if (motionPromise) {
+    motionPromise.then((m) => m.scrollTo(target, offset));
+    return;
+  }
+  const top = typeof target === 'number'
+    ? target
+    : target.getBoundingClientRect().top + window.scrollY + offset;
+  window.scrollTo({ top, behavior: reducedMotion ? 'auto' : 'smooth' });
+}
+
+if (backToTopBtn) {
   backToTopBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    lenis.scrollTo(0, { duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    smoothScrollTo(0);
   });
 }
 
-// Smooth Anchor Scrolling
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener('click', function (e) {
     const targetId = this.getAttribute('href');
     if (targetId === '#') return;
     const targetEl = document.querySelector(targetId);
     if (targetEl) {
       e.preventDefault();
-      lenis.scrollTo(targetEl, { offset: -80, duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+      smoothScrollTo(targetEl, -80);
     }
   });
 });
 
 // ==========================================
-// BLOG SIDEBAR STICKY (GSAP Pin)
-// ==========================================
-const blogSidebar = document.getElementById('blog-sidebar');
-const blogSidebarCol = document.getElementById('blog-sidebar-col');
-if (blogSidebar && blogSidebarCol) {
-  // Find the main content column (sibling) to match its height
-  const mainContent = blogSidebarCol.previousElementSibling;
-  if (mainContent) {
-    ScrollTrigger.create({
-      trigger: blogSidebarCol,
-      pin: blogSidebar,
-      start: 'top 90px',
-      end: () => `+=${mainContent.offsetHeight - blogSidebar.offsetHeight}`,
-      pinSpacing: false,
-    });
-  }
-
-  // Active TOC highlighting (text + dot)
-  const tocLinks = blogSidebar.querySelectorAll('a.toc-link[href^="#"]');
-
-  tocLinks.forEach(link => {
-    const targetId = link.getAttribute('href');
-    const targetEl = document.querySelector(targetId);
-    if (targetEl) {
-      ScrollTrigger.create({
-        trigger: targetEl,
-        start: 'top 40%',
-        end: 'bottom 40%',
-        onEnter: () => setActiveToc(link),
-        onEnterBack: () => setActiveToc(link),
-      });
-    }
-  });
-
-  function setActiveToc(activeLink) {
-    tocLinks.forEach(l => {
-      l.classList.remove('!text-primary', '!font-bold', 'before:!border-primary', 'before:!bg-primary');
-    });
-    activeLink.classList.add('!text-primary', '!font-bold', 'before:!border-primary', 'before:!bg-primary');
-  }
-}
-
-// ==========================================
-// 1. UNIVERSAL DATA-GSAP ATTRIBUTES
-// ==========================================
-const gsapElements = gsap.utils.toArray('[data-gsap]');
-gsapElements.forEach((el) => {
-  const effect = el.getAttribute('data-gsap');
-  const delay = parseFloat(el.getAttribute('data-gsap-delay') || 0);
-  
-  if (effect === 'fade-up') {
-    gsap.from(el, {
-      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none reverse' },
-      y: 50, opacity: 0, duration: 0.8, ease: 'power3.out', delay: delay
-    });
-  } 
-  else if (effect === 'fade-in') {
-    gsap.from(el, {
-      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none reverse' },
-      opacity: 0, duration: 1, ease: 'power2.out', delay: delay
-    });
-  }
-  else if (effect === 'curtain-reveal') {
-    // Elegant left-to-right wipe
-    gsap.fromTo(el, 
-      { clipPath: 'inset(0 100% 0 0)' }, 
-      {
-        scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none reverse' },
-        clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: 'power4.inOut', delay: delay
-      }
-    );
-  }
-  else if (effect === 'blur-reveal') {
-    // Wipe up to reveal from blur
-    gsap.fromTo(el, 
-      { filter: 'blur(20px)', clipPath: 'inset(100% 0 0 0)', scale: 1.1 }, 
-      {
-        scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none reverse' },
-        filter: 'blur(0px)', clipPath: 'inset(0% 0% 0% 0%)', scale: 1, duration: 1.4, ease: 'power3.out', delay: delay
-      }
-    );
-  }
-  else if (effect === 'line-grow') {
-    // For the red underline decorations
-    gsap.fromTo(el,
-      { width: 0 },
-      {
-        scrollTrigger: { trigger: el, start: 'top 90%', toggleActions: 'play none none reverse' },
-        width: '3rem', duration: 0.8, ease: 'power3.out', delay: delay
-      }
-    )
-  }
-});
-
-// ==========================================
-// 2. CUSTOM SECTION TIMELINES
-// ==========================================
-
-// A. Hero Section — animations REMOVED (2026-08-13).
-// The gsap.from() load animation (bg scale 1.15 over 2s + text stagger) delayed
-// the LCP paint by ~1.9s (Lighthouse elementRenderDelay). The hero now renders
-// statically; keep this block deleted so rebuilds don't reintroduce it.
-
-// B. Expertise Section (Staggered Spring Cards)
-const expertiseCards = gsap.utils.toArray('.expertise-card');
-if (expertiseCards.length > 0) {
-  gsap.from(expertiseCards, {
-    scrollTrigger: { trigger: '.expertise-section', start: 'top 75%', toggleActions: 'play none none reverse' },
-    y: 80, opacity: 0, rotation: 2, duration: 0.8, ease: 'back.out(1.2)', stagger: 0.15
-  });
-}
-
-// C. Alliance Section (Pop-up Logo Grid)
-const allianceLogos = gsap.utils.toArray('.alliance-logo');
-if (allianceLogos.length > 0) {
-  gsap.from(allianceLogos, {
-    scrollTrigger: { trigger: '.alliance-section', start: 'top 80%', toggleActions: 'play none none reverse' },
-    scale: 0, opacity: 0, duration: 0.6, ease: 'back.out(1.5)', stagger: 0.05
-  });
-}
-
-// D. AWS Offers Section (Pop-up Logo Grid)
-const awsLogos = gsap.utils.toArray('.aws-logo');
-if (awsLogos.length > 0) {
-  gsap.from(awsLogos, {
-    scrollTrigger: { trigger: '.aws-offers-section', start: 'top 80%', toggleActions: 'play none none reverse' },
-    scale: 0, opacity: 0, duration: 0.6, ease: 'back.out(1.5)', stagger: 0.05
-  });
-}
-
-// ==========================================
-// 3. ALLIANCE HOVER SHOWCASE (14 EFFECTS)
-// ==========================================
-const allianceLinks = document.querySelectorAll('.alliance-link');
-
-allianceLinks.forEach((link) => {
-  const img = link.querySelector('img');
-  const effect = link.getAttribute('data-hover-effect');
-  
-  // Create a timeline for each link that is paused by default
-  const hoverTl = gsap.timeline({ paused: true });
-  
-  switch(effect) {
-    case 'scale-bounce':
-      hoverTl.to(img, { scale: 1.15, duration: 0.4, ease: 'back.out(2)' });
-      break;
-    case 'lift-up':
-      hoverTl.to(img, { y: -8, duration: 0.3, ease: 'power2.out' });
-      break;
-    case 'flip-y':
-      hoverTl.to(img, { rotationY: 180, duration: 0.5, ease: 'power2.inOut' });
-      break;
-    case 'pulse':
-      hoverTl.to(img, { scale: 1.1, duration: 0.3, yoyo: true, repeat: -1, ease: 'sine.inOut' });
-      break;
-    case 'jiggle':
-      hoverTl.to(img, { rotation: 10, duration: 0.1, yoyo: true, repeat: 3, ease: 'sine.inOut' });
-      break;
-    case 'swing':
-      gsap.set(img, { transformOrigin: 'top center' });
-      hoverTl.to(img, { rotation: 15, duration: 0.4, ease: 'back.out(1.5)' });
-      break;
-    case 'elastic':
-      hoverTl.to(img, { scaleX: 1.25, scaleY: 0.75, duration: 0.2 })
-             .to(img, { scaleX: 1, scaleY: 1, duration: 0.6, ease: 'elastic.out(1, 0.3)' });
-      break;
-    case 'spin':
-      hoverTl.to(img, { rotation: 360, duration: 0.6, ease: 'power2.inOut' });
-      break;
-    case 'skew-slide':
-      hoverTl.to(img, { skewX: -15, x: 10, duration: 0.3, ease: 'power1.out' });
-      break;
-    case 'shrink-fade':
-      hoverTl.to(img, { scale: 0.85, opacity: 0.6, duration: 0.3, ease: 'power2.out' });
-      break;
-    case 'glow-pop':
-      hoverTl.to(img, { scale: 1.1, filter: 'drop-shadow(0px 10px 10px rgba(0,0,0,0.2))', duration: 0.3, ease: 'back.out(1.5)' });
-      break;
-    case 'flip-x':
-      hoverTl.to(img, { rotationX: 180, duration: 0.5, ease: 'power2.inOut' });
-      break;
-    case 'vibrate':
-      // Fallback simple vibrate
-      hoverTl.to(img, { x: 2, duration: 0.05, yoyo: true, repeat: 5 })
-             .to(img, { x: -2, duration: 0.05, yoyo: true, repeat: 5 }, 0);
-      break;
-    case 'color-reveal':
-      // Image starts as grayscale via Tailwind class
-      // We animate it to full color using CSS filter
-      hoverTl.to(img, { filter: 'grayscale(0%)', scale: 1.1, duration: 0.4, ease: 'power2.out' });
-      break;
-  }
-  
-  link.addEventListener('mouseenter', () => hoverTl.play());
-  link.addEventListener('mouseleave', () => {
-    // For repeating animations like pulse, we smoothly return to start
-    if (effect === 'pulse' || effect === 'vibrate' || effect === 'jiggle') {
-       gsap.to(img, { scale: 1, rotation: 0, x: 0, y: 0, duration: 0.3, overwrite: true });
-       hoverTl.pause(0);
-    } else {
-       hoverTl.reverse();
-    }
-  });
-});
-
-// ==========================================
-// 4. SWIPER JS INITIALIZATION
+// SWIPER INITIALISATION (on demand)
 // ==========================================
 function initTestimonialsSwiper() {
   const el = document.querySelector('.testimonials-swiper');
-  if (!el || typeof Swiper === 'undefined') return;
-  new Swiper(el, {
-    slidesPerView: 1,
-    spaceBetween: 30,
-    loop: true,
-    navigation: {
-      nextEl: '.swiper-button-next-custom',
-      prevEl: '.swiper-button-prev-custom',
-    },
-    pagination: {
-      el: '.swiper-pagination-custom',
-      type: 'fraction'
-    }
+  if (!el || el.swiper) return;
+  loadSwiper().then((Swiper) => {
+    if (el.swiper) return;
+    new Swiper(el, {
+      slidesPerView: 1,
+      spaceBetween: 30,
+      loop: true,
+      navigation: {
+        nextEl: '.swiper-button-next-custom',
+        prevEl: '.swiper-button-prev-custom',
+      },
+      pagination: {
+        el: '.swiper-pagination-custom',
+        type: 'fraction',
+      },
+    });
   });
 }
 
-// Init on page load (will no-op if testimonials is deferred)
-initTestimonialsSwiper();
-
-if (typeof Swiper !== 'undefined') {
-  new Swiper('.product-testimonials-swiper', {
-    slidesPerView: 1,
-    spaceBetween: 30,
-    loop: true,
-    navigation: {
-      nextEl: '.swiper-button-next-product',
-      prevEl: '.swiper-button-prev-product',
-    },
-    pagination: {
-      el: '.product-testimonials-pagination',
-      type: 'fraction'
-    }
+function initProductTestimonialsSwiper() {
+  const el = document.querySelector('.product-testimonials-swiper');
+  if (!el || el.swiper) return;
+  loadSwiper().then((Swiper) => {
+    if (el.swiper) return;
+    new Swiper(el, {
+      slidesPerView: 1,
+      spaceBetween: 30,
+      loop: true,
+      navigation: {
+        nextEl: '.swiper-button-next-product',
+        prevEl: '.swiper-button-prev-product',
+      },
+      pagination: {
+        el: '.product-testimonials-pagination',
+        type: 'fraction',
+      },
+    });
   });
+}
+
+// Init on page load (no-ops if the testimonials section is deferred).
+initTestimonialsSwiper();
+initProductTestimonialsSwiper();
+
+// Sliders initialised by inline Blade scripts poll for window.Swiper
+// (posts/index featured-slider) — start fetching the chunk for them now.
+if (document.querySelector('.featured-slider, .swiper')) {
+  loadSwiper();
 }
 
 // ==========================================
-// 5. DEFERRED AJAX SECTIONS
+// DEFERRED AJAX SECTIONS
 // ==========================================
 // Loads below-fold sections (testimonials: 97KB, contact: 68KB) on demand
 // via IntersectionObserver to reduce initial HTML from ~239KB to ~74KB.
-document.querySelectorAll('.deferred-ajax').forEach(placeholder => {
+document.querySelectorAll('.deferred-ajax').forEach((placeholder) => {
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        observer.unobserve(placeholder);
-        const section = placeholder.dataset.section;
-        // Detect current locale from URL prefix (e.g. /id/...) or <html lang>
-        const pathLocale = location.pathname.split('/').filter(Boolean)[0];
-        const htmlLang = document.documentElement.lang;
-        const locale = (pathLocale && /^[a-z]{2}$/.test(pathLocale) ? pathLocale : htmlLang) || '';
-        const localeParam = locale ? `&locale=${locale}` : '';
-        fetch(`/_deferred/${section}?_t=${Date.now()}${localeParam}`, { cache: 'no-store' })
-          .then(r => r.ok ? r.text() : Promise.reject(r.status))
-          .then(html => {
-            // Create a temporary container to hold the new DOM
-            const temp = document.createElement('div');
-            temp.innerHTML = html;
-            // Replace placeholder with actual content
-            while (temp.firstChild) {
-              placeholder.parentNode.insertBefore(temp.firstChild, placeholder);
-            }
-            placeholder.remove();
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      observer.unobserve(placeholder);
+      const section = placeholder.dataset.section;
+      // Detect current locale from URL prefix (e.g. /id/...) or <html lang>
+      const pathLocale = location.pathname.split('/').filter(Boolean)[0];
+      const htmlLang = document.documentElement.lang;
+      const locale = (pathLocale && /^[a-z]{2}$/.test(pathLocale) ? pathLocale : htmlLang) || '';
+      const localeParam = locale ? `&locale=${locale}` : '';
+      fetch(`/_deferred/${section}?_t=${Date.now()}${localeParam}`, { cache: 'no-store' })
+        .then((r) => (r.ok ? r.text() : Promise.reject(r.status)))
+        .then((html) => {
+          // Swap the placeholder for the fetched markup
+          const temp = document.createElement('div');
+          temp.innerHTML = html;
+          while (temp.firstChild) {
+            placeholder.parentNode.insertBefore(temp.firstChild, placeholder);
+          }
+          placeholder.remove();
 
-            // Re-initialize components on injected DOM
-            if (section === 'testimonials') {
-              initTestimonialsSwiper();
-              // Re-trigger GSAP ScrollTrigger for new elements
-              ScrollTrigger.refresh();
+          // Re-initialize components on injected DOM
+          if (section === 'testimonials') {
+            initTestimonialsSwiper();
+            // Recalculate ScrollTrigger positions if motion is (being) loaded
+            if (motionPromise) motionPromise.then((m) => m.refresh());
+          }
+          if (section === 'contact') {
+            // Re-init Alpine on the new contact form DOM
+            if (window.Alpine) {
+              window.Alpine.initTree(document.getElementById('contact'));
             }
-            if (section === 'contact') {
-              // Re-init Alpine on the new contact form DOM
-              if (window.Alpine) {
-                window.Alpine.initTree(document.getElementById('contact'));
-              }
-            }
-          })
-          .catch(err => {
-            console.warn(`[deferred] Failed to load section "${section}":`, err);
-          });
-      }
+          }
+        })
+        .catch((err) => {
+          console.warn(`[deferred] Failed to load section "${section}":`, err);
+        });
     });
   }, {
-    rootMargin: '600px' // Start loading 600px before section enters viewport
+    rootMargin: '600px', // Start loading 600px before section enters viewport
   });
   observer.observe(placeholder);
 });

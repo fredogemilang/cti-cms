@@ -165,7 +165,7 @@
         <div class="space-y-6">
           <!-- AWS Premier Tier Partner Logo Header -->
           <div class="flex items-center gap-5">
-            <img src="{{ resolve_block_asset('media/logo-premier-tier.webp') }}" alt="AWS Premier Tier Partner" class="h-24 w-auto object-contain shrink-0" style="height: 6rem;" onerror="this.src='{{ asset('storage/media/logo-awspng-1785241172-yPnfNkus.webp') }}'" />
+            <img src="{{ resolve_block_asset('media/logo-premier-tier.webp') }}" alt="AWS Premier Tier Partner" class="h-24 w-auto object-contain shrink-0" style="height: 6rem;" onerror="this.onerror=null;this.src='{{ asset('storage/media/logo-awspng-1785241172-yPnfNkus.webp') }}'" />
             <div>
               <span class="text-xs uppercase tracking-widest font-bold block" style="color: #cbd5e1;">{{ t('aws_credits.badge_transform', 'Transform Faster with CDT') }}</span>
               <span class="text-sm sm:text-base font-extrabold flex items-center gap-1.5 mt-0.5" style="color: #ff9900;">
