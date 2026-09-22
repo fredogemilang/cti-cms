@@ -22,6 +22,10 @@ class RmaNotificationService
                 return;
             }
 
+            $form = $entry->form ?: \App\Models\Form::find($entry->form_id);
+            $ccEmails = $this->parseEmailList($form?->notifications['cc_email'] ?? $form?->notifications['admin_cc'] ?? $form?->notifications['user_cc_email'] ?? null);
+            $bccEmails = $this->parseEmailList($form?->notifications['bcc_email'] ?? null);
+
             $rmaNumber = sprintf('RMA-%04d', $entry->id);
             $subject = "[XYORA] Pengajuan RMA Berhasil Diterima - #{$rmaNumber}";
 
@@ -32,12 +36,26 @@ class RmaNotificationService
                 $data
             );
 
-            Mail::html($html, function ($mail) use ($userEmail, $subject) {
+            Mail::html($html, function ($mail) use ($userEmail, $ccEmails, $bccEmails, $subject) {
                 $mail->to($userEmail)
                      ->subject($subject);
+
+                if (! empty($ccEmails)) {
+                    $mail->cc($ccEmails);
+                }
+
+                if (! empty($bccEmails)) {
+                    $mail->bcc($bccEmails);
+                }
+
+                $mail->replyTo($userEmail);
             });
 
-            Log::info("RMA created notification email sent successfully.", ['entry_id' => $entry->id, 'email' => $userEmail]);
+            Log::info("RMA created notification email sent successfully.", [
+                'entry_id' => $entry->id,
+                'email' => $userEmail,
+                'cc' => $ccEmails,
+            ]);
         } catch (\Exception $e) {
             Log::error("Failed to send RMA created notification: " . $e->getMessage(), ['entry_id' => $entry->id]);
         }
@@ -57,6 +75,10 @@ class RmaNotificationService
                 return;
             }
 
+            $form = $entry->form ?: \App\Models\Form::find($entry->form_id);
+            $ccEmails = $this->parseEmailList($form?->notifications['cc_email'] ?? $form?->notifications['admin_cc'] ?? $form?->notifications['user_cc_email'] ?? null);
+            $bccEmails = $this->parseEmailList($form?->notifications['bcc_email'] ?? null);
+
             $rmaNumber = sprintf('RMA-%04d', $entry->id);
             $statusText = $this->getStatusLabel($entry->status);
             $subject = "[XYORA] Update Status Pengajuan RMA #{$rmaNumber} - {$statusText}";
@@ -68,15 +90,51 @@ class RmaNotificationService
                 $data
             );
 
-            Mail::html($html, function ($mail) use ($userEmail, $subject) {
+            Mail::html($html, function ($mail) use ($userEmail, $ccEmails, $bccEmails, $subject) {
                 $mail->to($userEmail)
                      ->subject($subject);
+
+                if (! empty($ccEmails)) {
+                    $mail->cc($ccEmails);
+                }
+
+                if (! empty($bccEmails)) {
+                    $mail->bcc($bccEmails);
+                }
             });
 
-            Log::info("RMA status update notification email sent successfully.", ['entry_id' => $entry->id, 'email' => $userEmail, 'status' => $entry->status]);
+            Log::info("RMA status update notification email sent successfully.", [
+                'entry_id' => $entry->id,
+                'email' => $userEmail,
+                'status' => $entry->status,
+                'cc' => $ccEmails,
+            ]);
         } catch (\Exception $e) {
             Log::error("Failed to send RMA status update notification: " . $e->getMessage(), ['entry_id' => $entry->id]);
         }
+    }
+
+    /**
+     * Parse email list from string (comma/semicolon/newline separated) or array.
+     *
+     * @param string|array|null $emails
+     * @return array<string>
+     */
+    public function parseEmailList($emails): array
+    {
+        if (empty($emails)) {
+            return [];
+        }
+
+        if (is_array($emails)) {
+            $list = $emails;
+        } else {
+            $list = preg_split('/[\r\n,;]+/', (string) $emails, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        return array_values(array_filter(array_map('trim', $list), function ($email) {
+            return ! empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL);
+        }));
     }
 
     /**
