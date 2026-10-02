@@ -169,47 +169,53 @@
                 </div>
               </div>
               <div class="w-2/3 p-8 normal-case tracking-normal">
-                <div class="grid grid-cols-2 gap-y-2 gap-x-6">
-                  @forelse($allianceProducts as $prod)
-                    @php
-                      $prodMeta = $prod->meta ?? [];
-                      $prodBadges = $prod->getMeta('badge_text') ?? $prodMeta['badge_text'] ?? $prodMeta['badges'] ?? $prodMeta['badge'] ?? [];
-                      $validBadges = [];
-                      if (is_array($prodBadges)) {
-                          foreach ($prodBadges as $b) {
-                              $txt = is_array($b) ? ($b['text'] ?? $b['title'] ?? '') : (string)$b;
-                              if (!empty(trim($txt))) {
-                                  $validBadges[] = trim($txt);
-                              }
-                          }
-                      } elseif (is_string($prodBadges) && !empty(trim($prodBadges))) {
-                          $validBadges[] = trim($prodBadges);
-                      }
-                    @endphp
+                @if($allianceProducts->isNotEmpty())
+                  <div class="grid grid-cols-2 gap-x-6">
+                    @foreach($allianceProducts->split(2) as $col)
+                      <div class="flex flex-col gap-y-2">
+                        @foreach($col as $prod)
+                          @php
+                            $prodMeta = $prod->meta ?? [];
+                            $prodBadges = $prod->getMeta('badge_text') ?? $prodMeta['badge_text'] ?? $prodMeta['badges'] ?? $prodMeta['badge'] ?? [];
+                            $validBadges = [];
+                            if (is_array($prodBadges)) {
+                                foreach ($prodBadges as $b) {
+                                    $txt = is_array($b) ? ($b['text'] ?? $b['title'] ?? '') : (string)$b;
+                                    if (!empty(trim($txt))) {
+                                        $validBadges[] = trim($txt);
+                                    }
+                                }
+                            } elseif (is_string($prodBadges) && !empty(trim($prodBadges))) {
+                                $validBadges[] = trim($prodBadges);
+                            }
+                          @endphp
 
-                    @if(!empty($validBadges))
-                      <a href="{{ $prod->getUrl() }}" title="{{ $prod->title }}"
-                        class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-2 px-3 -mx-3 hover:bg-gray-50 rounded-md flex flex-col justify-center items-start gap-1.5 group/link">
-                        <span>{{ $prod->title }}</span>
-                        <div class="flex flex-wrap items-center gap-1.5">
-                          @foreach($validBadges as $badgeTxt)
-                            <span
-                              class="text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full group-hover/link:bg-red-100 group-hover/link:text-primary transition-colors whitespace-nowrap">{{ $badgeTxt }}</span>
-                          @endforeach
-                        </div>
-                      </a>
-                    @else
-                      <a href="{{ $prod->getUrl() }}" title="{{ $prod->title }}"
-                        class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-2.5 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
-                        <span>{{ $prod->title }}</span>
-                        <span
-                          class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
-                      </a>
-                    @endif
-                  @empty
-                    <span class="text-sm text-gray-500 py-2">{{ t('nav.no_technology_alliances', 'No technology partners available') }}</span>
-                  @endforelse
-                </div>
+                          @if(!empty($validBadges))
+                            <a href="{{ $prod->getUrl() }}" title="{{ $prod->title }}"
+                              class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-2 px-3 -mx-3 hover:bg-gray-50 rounded-md flex flex-col justify-center items-start gap-1.5 group/link">
+                              <span>{{ $prod->title }}</span>
+                              <div class="flex flex-wrap items-center gap-1.5">
+                                @foreach($validBadges as $badgeTxt)
+                                  <span
+                                    class="text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full group-hover/link:bg-red-100 group-hover/link:text-primary transition-colors whitespace-nowrap">{{ $badgeTxt }}</span>
+                                @endforeach
+                              </div>
+                            </a>
+                          @else
+                            <a href="{{ $prod->getUrl() }}" title="{{ $prod->title }}"
+                              class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors border-b border-gray-200 py-2.5 px-3 -mx-3 hover:bg-gray-50 rounded-md flex justify-between items-center group/link">
+                              <span>{{ $prod->title }}</span>
+                              <span
+                                class="text-primary opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all">→</span>
+                            </a>
+                          @endif
+                        @endforeach
+                      </div>
+                    @endforeach
+                  </div>
+                @else
+                  <span class="text-sm text-gray-500 py-2">{{ t('nav.no_technology_alliances', 'No technology partners available') }}</span>
+                @endif
               </div>
             </div>
           </div>
