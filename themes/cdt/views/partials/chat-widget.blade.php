@@ -14,7 +14,11 @@
 	}
 	.chat-widget {
 		bottom: 100px !important;
+		overscroll-behavior: contain !important;
 	}	
+	.chat-body {
+		overscroll-behavior: contain !important;
+	}
 	.close-icon {
 		background: rgb(28, 142, 249) !important;
 		border-radius: 50% !important;
@@ -94,7 +98,7 @@
                 img.src = targetSrc;
             }
 
-            // Ensure all images inside chat-widget have alt attributes and dimensions
+            // Ensure all images inside chat-widget have alt attributes and dimensions, and isolate scrolling
             const chatWidgetEl = document.getElementById('chat-widget');
             if (chatWidgetEl) {
                 chatWidgetEl.querySelectorAll('img').forEach(function(im) {
@@ -107,6 +111,77 @@
                         im.setAttribute('height', '24');
                     }
                 });
+
+                if (!chatWidgetEl.dataset.scrollLockAttached) {
+                    chatWidgetEl.dataset.scrollLockAttached = 'true';
+
+                    const handleWheelScroll = function(e) {
+                        if (!chatWidgetEl.classList.contains('active')) return;
+
+                        const chatBody = chatWidgetEl.querySelector('.chat-body');
+                        const table = e.target.closest('.table-scroll-wrapper');
+                        if (table && Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                            table.scrollLeft += e.deltaX;
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return;
+                        }
+
+                        if (chatBody) {
+                            let delta = e.deltaY;
+                            if (e.deltaMode === 1) delta *= 20;
+                            else if (e.deltaMode === 2) delta *= chatBody.clientHeight;
+                            const max = chatBody.scrollHeight - chatBody.clientHeight;
+                            if (max > 0) {
+                                chatBody.scrollTop = Math.max(0, Math.min(max, chatBody.scrollTop + delta));
+                            }
+                        }
+
+                        e.preventDefault();
+                        e.stopPropagation();
+                    };
+
+                    chatWidgetEl.addEventListener('wheel', handleWheelScroll, { passive: false });
+
+                    let touchStartY = 0;
+                    chatWidgetEl.addEventListener('touchstart', function(e) {
+                        if (e.touches && e.touches.length > 0) {
+                            touchStartY = e.touches[0].clientY;
+                        }
+                    }, { passive: true });
+
+                    chatWidgetEl.addEventListener('touchmove', function(e) {
+                        if (!chatWidgetEl.classList.contains('active')) return;
+                        if (!e.touches || e.touches.length === 0) return;
+
+                        const chatBody = chatWidgetEl.querySelector('.chat-body');
+                        const currentY = e.touches[0].clientY;
+                        const deltaY = touchStartY - currentY;
+
+                        const isInsideBody = chatBody && chatBody.contains(e.target);
+                        if (!isInsideBody) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return;
+                        }
+
+                        if (chatBody) {
+                            const max = chatBody.scrollHeight - chatBody.clientHeight;
+                            if (max <= 0) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                return;
+                            }
+
+                            const atTop = chatBody.scrollTop <= 0 && deltaY < 0;
+                            const atBottom = chatBody.scrollTop >= max - 1 && deltaY > 0;
+                            if (atTop || atBottom) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                            }
+                        }
+                    }, { passive: false });
+                }
             }
 
             return true;

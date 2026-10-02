@@ -504,6 +504,7 @@ const observer = new MutationObserver(function (mutations) {
       transition: opacity 0.4s ease, transform 0.4s ease;
       z-index: 1000;
       pointer-events: none;
+      overscroll-behavior: contain;
     }
   
     .chat-widget.active {
@@ -594,6 +595,7 @@ const observer = new MutationObserver(function (mutations) {
       max-height: 300px;
       min-height: 300px;
       overflow-y: auto;
+      overscroll-behavior: contain;
     }
   
     .chat-body .message {
@@ -1527,6 +1529,76 @@ chatButton.addEventListener("click", (e) => {
     });
   }
 });
+
+  // Isolate scrolling to prevent background page from scrolling
+  if (chatWidget && !chatWidget.dataset.scrollLockAttached) {
+    chatWidget.dataset.scrollLockAttached = 'true';
+
+    chatWidget.addEventListener("wheel", (e) => {
+      if (!chatWidget.classList.contains("active")) return;
+
+      const chatBody = chatWidget.querySelector(".chat-body");
+      const table = e.target.closest(".table-scroll-wrapper");
+      if (table && Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+        table.scrollLeft += e.deltaX;
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+
+      if (chatBody) {
+        let delta = e.deltaY;
+        if (e.deltaMode === 1) delta *= 20;
+        else if (e.deltaMode === 2) delta *= chatBody.clientHeight;
+        const max = chatBody.scrollHeight - chatBody.clientHeight;
+        if (max > 0) {
+          chatBody.scrollTop = Math.max(0, Math.min(max, chatBody.scrollTop + delta));
+        }
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+    }, { passive: false });
+
+    let touchStartY = 0;
+    chatWidget.addEventListener("touchstart", (e) => {
+      if (e.touches && e.touches.length > 0) {
+        touchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    chatWidget.addEventListener("touchmove", (e) => {
+      if (!chatWidget.classList.contains("active")) return;
+      if (!e.touches || e.touches.length === 0) return;
+
+      const chatBody = chatWidget.querySelector(".chat-body");
+      const currentY = e.touches[0].clientY;
+      const deltaY = touchStartY - currentY;
+
+      const isInsideBody = chatBody && chatBody.contains(e.target);
+      if (!isInsideBody) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+
+      if (chatBody) {
+        const max = chatBody.scrollHeight - chatBody.clientHeight;
+        if (max <= 0) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+
+        const atTop = chatBody.scrollTop <= 0 && deltaY < 0;
+        const atBottom = chatBody.scrollTop >= max - 1 && deltaY > 0;
+        if (atTop || atBottom) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+    }, { passive: false });
+  }
 
   userInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
