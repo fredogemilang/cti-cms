@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\DeferredSectionController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FormSubmissionController;
 use App\Http\Controllers\HomeController;
@@ -43,6 +44,9 @@ $adminPath = config('admin.path', 'admin');
 
 // Public homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Deferred AJAX sections (loaded after initial page paint)
+Route::get('/_deferred/{section}', [DeferredSectionController::class, 'show'])->name('deferred.section');
 
 // Localized homepage (e.g. /id)
 try {
@@ -259,6 +263,11 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
 
                 return view('admin.cpt.entries.create', ['postType' => $postType]);
             })->name('create');
+            Route::get('/reorder', function ($postTypeSlug) {
+                $postType = CustomPostType::where('slug', $postTypeSlug)->firstOrFail();
+
+                return view('admin.cpt.entries.reorder', ['postType' => $postType]);
+            })->name('reorder');
             Route::get('/{id}/edit', function ($postTypeSlug, $id) {
                 $postType = CustomPostType::where('slug', $postTypeSlug)->firstOrFail();
 
@@ -406,6 +415,12 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
             }
             if ($group === 'redirect') {
                 return redirect()->route('admin.seo.redirects');
+            }
+            if ($group === 'api-tokens' || $group === 'tokens') {
+                return redirect()->route('admin.api-tokens.index');
+            }
+            if ($group === 'webhooks') {
+                return redirect()->route('admin.webhooks.index');
             }
 
             abort_unless(app(SettingsRegistry::class)->hasGroup($group), 404);

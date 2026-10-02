@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\Sitemap\SitemapBuilder;
+use App\Traits\HasSanitizedContent;
 use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Support\Str;
 
 class CptEntry extends Model
 {
-    use HasSeoMeta, HasTranslations, SoftDeletes;
+    use HasSanitizedContent, HasSeoMeta, HasTranslations, SoftDeletes;
 
     protected $table = 'cpt_entries';
 
@@ -141,6 +142,32 @@ class CptEntry extends Model
     }
 
     /**
+     * Check if this entry has non-empty content or excerpt for a specific locale
+     * without falling back to another locale.
+     */
+    public function hasContentForLocale(?string $locale = null): bool
+    {
+        $locale ??= app()->getLocale();
+
+        if ($this->isDefaultLocale($locale)) {
+            $rawContent = $this->getRawAttribute('content');
+            $rawExcerpt = $this->getRawAttribute('excerpt');
+
+            return ! empty(trim(strip_tags((string) $rawContent))) || ! empty(trim(strip_tags((string) $rawExcerpt)));
+        }
+
+        $translations = $this->getAttribute('translations');
+        if (! is_array($translations) || empty($translations[$locale])) {
+            return false;
+        }
+
+        $translatedContent = $translations[$locale]['content'] ?? null;
+        $translatedExcerpt = $translations[$locale]['excerpt'] ?? null;
+
+        return ! empty(trim(strip_tags((string) $translatedContent))) || ! empty(trim(strip_tags((string) $translatedExcerpt)));
+    }
+
+    /**
      * Get the post type this entry belongs to
      */
     public function postType(): BelongsTo
@@ -184,7 +211,9 @@ class CptEntry extends Model
      */
     public function children(): HasMany
     {
-        return $this->hasMany(CptEntry::class, 'parent_id')->orderBy('menu_order');
+        return $this->hasMany(CptEntry::class, 'parent_id')
+            ->orderBy('menu_order')
+            ->orderBy('title');
     }
 
     /**
@@ -283,6 +312,29 @@ class CptEntry extends Model
     }
 
     /**
+     * Determine if a meta field / repeater subfield key represents media (icon, image, logo, etc.)
+     */
+    public static function isMediaKey(string $key): bool
+    {
+        $k = strtolower(trim($key));
+
+        return in_array($k, [
+            'icon', 'icon_type', 'image', 'img', 'logo', 'media',
+            'banner_logo', 'about_image', 'featured_image', 'loop_image',
+            'kf_icon', 'kf_image', 'kf_img', 'kf_logo', 'icon_key', 'badge_icon',
+        ], true)
+            || str_ends_with($k, '_icon')
+            || str_ends_with($k, '_image')
+            || str_ends_with($k, '_img')
+            || str_ends_with($k, '_logo')
+            || str_ends_with($k, '_media')
+            || str_ends_with($k, '_photo')
+            || str_starts_with($k, 'icon_')
+            || str_starts_with($k, 'image_')
+            || str_starts_with($k, 'img_');
+    }
+
+    /**
      * Get a meta value (with locale translation support and automatic English fallback)
      */
     public function getMeta(string $key, $default = null)
@@ -295,14 +347,14 @@ class CptEntry extends Model
             $translatedVal = $meta['_translations'][$locale][$key];
             $defaultVal = $meta[$key] ?? null;
 
-            // If both default and translation are arrays (e.g., benefits_cards, features, solutions_other)
+            // If both default and translation are arrays (e.g., benefits_cards, features, solutions_other, key_features_list)
             if (is_array($translatedVal) && is_array($defaultVal)) {
                 foreach ($translatedVal as $idx => &$item) {
                     if (is_array($item) && isset($defaultVal[$idx]) && is_array($defaultVal[$idx])) {
                         // Always inherit fresh icon/image/logo/media from default locale (EN)
-                        foreach (['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'] as $mediaKey) {
-                            if (isset($defaultVal[$idx][$mediaKey])) {
-                                $item[$mediaKey] = $defaultVal[$idx][$mediaKey];
+                        foreach ($defaultVal[$idx] as $subKey => $subVal) {
+                            if (static::isMediaKey($subKey)) {
+                                $item[$subKey] = $subVal;
                             }
                         }
                     }

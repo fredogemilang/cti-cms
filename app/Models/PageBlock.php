@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasSanitizedContent;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PageBlock extends Model
 {
-    use HasTranslations;
+    use HasSanitizedContent, HasTranslations;
 
     protected $fillable = [
         'page_id',
@@ -30,7 +31,7 @@ class PageBlock extends Model
     /** Block types whose `value` carries user-authored content per locale.
      *  Atomic types (number, date, media ref, color, etc.) ignore locale.
      *  Repeater is included because its rows may contain text fields. */
-    public static array $translatableTypes = ['text', 'textarea', 'wysiwyg', 'repeater'];
+    public static array $translatableTypes = ['text', 'textarea', 'wysiwyg', 'repeater', 'button', 'title', 'card'];
 
     protected function casts(): array
     {
@@ -40,6 +41,18 @@ class PageBlock extends Model
             'order' => 'integer',
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Fail-safe mutator to convert array values into JSON string.
+     */
+    public function setValueAttribute($value): void
+    {
+        if (is_array($value)) {
+            $this->attributes['value'] = json_encode($value);
+        } else {
+            $this->attributes['value'] = $value;
+        }
     }
 
     // Available block types configuration
@@ -145,6 +158,24 @@ class PageBlock extends Model
             'icon' => 'repeat',
             'color' => 'neutral',
             'description' => 'Repeatable field group',
+        ],
+        'button' => [
+            'label' => 'Button',
+            'icon' => 'smart_button',
+            'color' => 'blue',
+            'description' => 'Button link with text and URL',
+        ],
+        'title' => [
+            'label' => 'Title',
+            'icon' => 'title',
+            'color' => 'indigo',
+            'description' => 'Section title with optional prefix and main text',
+        ],
+        'card' => [
+            'label' => 'Card',
+            'icon' => 'view_agenda',
+            'color' => 'teal',
+            'description' => 'Compound card block with title, description, and image',
         ],
     ];
 
@@ -253,9 +284,9 @@ class PageBlock extends Model
 
         $raw = $this->getTranslation('value', $locale);
 
-        // Repeater values are stored as JSON strings — decode for theme consumption.
-        if ($this->type === 'repeater' && is_string($raw)) {
-            return json_decode($raw, true) ?: [];
+        // Repeater & compound block values are stored as JSON strings — decode for theme consumption.
+        if (in_array($this->type, ['repeater', 'button', 'title', 'card', 'checkbox', 'gallery', 'posts'], true) && is_string($raw)) {
+            return json_decode($raw, true) ?: $raw;
         }
 
         return $raw;

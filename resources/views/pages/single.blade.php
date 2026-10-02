@@ -59,7 +59,7 @@
                                 @break
 
                             @case('wysiwyg')
-                                <div class="prose prose-lg max-w-none">
+                                <div class="prose prose-lg max-w-none prose-a:text-blue-500 hover:prose-a:text-blue-600 prose-a:underline">
                                     {!! $block->value !!}
                                 </div>
                                 @break

@@ -81,6 +81,9 @@ class PageTemplateService
         return match ($type) {
             'switcher' => false,
             'number' => 0,
+            'button' => '{"text":"","url":"","target":"_self"}',
+            'title' => '{"prefix":"","main":""}',
+            'card' => '{"title":"","description":"","asset_type":"image","image":"","icon":"lucide:sparkles","description_type":"text","list_icon":"lucide:check-circle","list_items":"","wysiwyg_content":"","button_text":"","button_url":"","button_target":"_self"}',
             'checkbox', 'gallery', 'posts', 'repeater' => '[]',
             default => '',
         };

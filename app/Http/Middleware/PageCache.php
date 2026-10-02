@@ -70,6 +70,11 @@ class PageCache
             return false;
         }
 
+        // Skip deferred AJAX fragment paths
+        if (str_starts_with(ltrim($request->path(), '/'), '_deferred')) {
+            return false;
+        }
+
         // Skip admin path
         $adminPath = trim(config('admin.path', 'admin'), '/');
         if ($adminPath !== '' && str_starts_with(ltrim($request->path(), '/'), $adminPath)) {

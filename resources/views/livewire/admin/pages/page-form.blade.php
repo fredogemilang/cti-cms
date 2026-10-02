@@ -98,19 +98,21 @@
                         <p class="text-red-500 text-sm">{{ $message }}</p>
                     @enderror
 
-                    @if($slug)
+                    @if($slug || $isEdit)
                     <div class="flex items-center gap-2 text-xs font-bold text-[#6F767E] uppercase tracking-wider pl-1">
                         <span>PERMALINK:</span>
-                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}/</span>
+                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}{{ $editingLocale && $editingLocale !== $defaultLocale ? '/' . $editingLocale : '' }}/</span>
                         @if($isSystemPage)
                             <span class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30] flex items-center gap-1">
-                                {{ $slug }}
+                                {{ $slug ?: ($page->slug ?? 'home') }}
                                 <span class="material-symbols-outlined text-[12px] text-amber-500" title="System page slug is locked">lock</span>
                             </span>
                         @else
                             <div x-data="{ editing: false }" class="relative flex items-center gap-2">
-                                <span x-show="!editing" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30]">{{ $slug }}</span>
-                                <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[100px]" x-cloak>
+                                <span x-show="!editing" @click="editing = true" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30] cursor-pointer hover:border-[#2563EB] {{ empty($slug) ? 'italic text-gray-400' : '' }}">
+                                    {{ !empty($slug) ? $slug : (($page ? $page->slug : '') ?: 'enter-slug') }}
+                                </span>
+                                <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[120px]" placeholder="{{ $page ? $page->slug : 'slug' }}" x-cloak>
                                 <button @click="editing = !editing; $nextTick(() => $el.previousElementSibling.focus())" class="text-[#6F767E] hover:text-[#FCFCFC] transition-colors">
                                     <span class="material-symbols-outlined text-[14px]">edit</span>
                                 </button>

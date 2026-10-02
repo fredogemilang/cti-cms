@@ -22,8 +22,11 @@
 /storage/cms_installed
 /vendor
 /public/themes/*/assets
-/themes/cdt
-/public/themes/cdt
+# project/cdt branch: CDT theme published assets are tracked so deploy = git pull
+# (negation is branch-scoped — project/ofis has its own theme).
+!/public/themes/cdt/assets
+/themes/ofis
+
 Homestead.json
 Homestead.yaml
 Thumbs.db

@@ -234,6 +234,13 @@ class AdminMenuBuilder
                     'permission' => null,
                     'activeRoutePattern' => 'admin.cpt.entries.create',
                 ],
+                [
+                    'title' => 'Menu Order',
+                    'route' => 'admin.cpt.entries.reorder',
+                    'routeParams' => ['postTypeSlug' => $cpt->slug],
+                    'permission' => null,
+                    'activeRoutePattern' => 'admin.cpt.entries.reorder',
+                ],
             ];
 
             foreach ($taxonomies as $tax) {
@@ -388,6 +395,13 @@ class AdminMenuBuilder
                         'routeParams' => [],
                         'permission' => 'roles.view',
                         'activeRoutePattern' => 'admin.role-permission.*|admin.roles.*',
+                    ],
+                    [
+                        'title' => 'API Tokens',
+                        'route' => 'admin.api-tokens.index',
+                        'routeParams' => [],
+                        'permission' => 'api-tokens.view',
+                        'activeRoutePattern' => 'admin.api-tokens.*',
                     ],
                 ],
             ],

@@ -5,8 +5,10 @@
     'sizes' => '100vw',
     'alt' => null,
     'loading' => 'lazy',
+    'decoding' => 'async',
     'class' => '',
     'pictureClass' => '',
+    'placeholder' => true,
 ])
 
 @php
@@ -23,12 +25,19 @@
 
     $pictureClasses = $pictureClass ?: (str_contains($class, 'w-full') && str_contains($class, 'h-full') ? 'w-full h-full flex items-center justify-center' : 'contents');
 
-    $isSvg = str_ends_with(strtolower((string) parse_url((string) $finalSrc, PHP_URL_PATH)), '.svg')
-        || str_ends_with(strtolower((string) $finalSrc), '.svg');
+    $cleanPath = strtolower((string) parse_url((string) $finalSrc, PHP_URL_PATH));
+    $ext = pathinfo($cleanPath, PATHINFO_EXTENSION);
+
+    $isSvg = $ext === 'svg' || str_ends_with(strtolower((string) $finalSrc), '.svg');
 
     $finalClass = $class;
     if ($isSvg && ! preg_match('/(?<![a-z-])w-(full|auto|\[|\d+)/', $class)) {
         $finalClass = 'w-full '.$class;
+    }
+
+    $usePlaceholder = filter_var($placeholder, FILTER_VALIDATE_BOOLEAN) && !empty($data['placeholder']);
+    if (in_array($ext, ['png', 'webp', 'gif', 'svg'], true)) {
+        $usePlaceholder = false;
     }
 @endphp
 
@@ -44,9 +53,9 @@
         @if (!empty($data['height'])) height="{{ $data['height'] }}" @endif
         alt="{{ $alt }}"
         loading="{{ $loading }}"
-        decoding="async"
+        decoding="{{ $decoding }}"
         class="{{ $finalClass }}"
-        @if (!empty($data['placeholder'])) style="background-image:url('{{ $data['placeholder'] }}');background-size:cover;background-position:{{ $objectPosition }};object-position:{{ $objectPosition }}" @endif
+        @if ($usePlaceholder) style="background-image:url('{{ $data['placeholder'] }}');background-size:cover;background-position:{{ $objectPosition }};object-position:{{ $objectPosition }}" onload="this.style.backgroundImage='none'" @endif
         {{ $attributes->except(['style']) }}
     >
 </picture>

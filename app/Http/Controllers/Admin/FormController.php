@@ -67,6 +67,7 @@ class FormController extends Controller
                 'notifications' => $request->notifications,
                 'confirmations' => $request->confirmations,
                 'spam_protection' => $request->spam_protection,
+                'translations' => $request->translations ?? null,
             ]);
 
             // Create form fields
@@ -144,6 +145,10 @@ class FormController extends Controller
         }
 
         try {
+            $existingTranslations = $form->translations ?? [];
+            $incomingTranslations = $request->translations ?? [];
+            $mergedTranslations = array_replace_recursive($existingTranslations, $incomingTranslations);
+
             $form->update([
                 'name' => $request->name,
                 'slug' => $request->slug ?: Str::slug($request->name),
@@ -154,6 +159,7 @@ class FormController extends Controller
                 'notifications' => $request->notifications,
                 'confirmations' => $request->confirmations,
                 'spam_protection' => $request->spam_protection,
+                'translations' => $mergedTranslations,
             ]);
 
             // Delete existing fields and recreate
@@ -470,12 +476,18 @@ class FormController extends Controller
             'confirmations' => 'nullable|array',
             'spam_protection' => 'nullable|array',
             'theme_slot' => 'nullable|string',
+            'translations' => 'nullable|array',
         ]);
 
         $notifications = $validated['notifications'] ?? $form->notifications ?? [];
         $notifications['notify_admin'] = (bool) ($notifications['notify_admin'] ?? false);
         $notifications['send_to_user'] = (bool) ($notifications['send_to_user'] ?? false);
         $notifications['enabled'] = $notifications['notify_admin'] || $notifications['send_to_user'];
+
+        // Merge translations safely (incoming partial data won't overwrite unrelated keys)
+        $existingTranslations = $form->translations ?? [];
+        $incomingTranslations = $validated['translations'] ?? [];
+        $mergedTranslations = array_replace_recursive($existingTranslations, $incomingTranslations);
 
         $form->update([
             'name' => $validated['name'],
@@ -486,6 +498,7 @@ class FormController extends Controller
             'notifications' => $notifications,
             'confirmations' => $validated['confirmations'] ?? $form->confirmations ?? [],
             'spam_protection' => $validated['spam_protection'] ?? $form->spam_protection ?? [],
+            'translations' => $mergedTranslations,
         ]);
 
         // Save fields if provided

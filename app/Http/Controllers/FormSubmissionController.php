@@ -44,11 +44,11 @@ class FormSubmissionController extends Controller
         // Handle confirmation based on type
         $confirmations = $form->confirmations ?? [];
         $confirmationType = $confirmations['type'] ?? 'message';
-        $successMessage = $confirmations['message'] ?? 'Form submitted successfully!';
+        $successMessage = $form->getConfirmationMessage();
 
         switch ($confirmationType) {
             case 'redirect':
-                $redirectUrl = $confirmations['redirect_url'] ?? url('/');
+                $redirectUrl = $form->getConfirmationRedirectUrl();
 
                 // Only allow internal redirects to prevent open redirect attacks
                 $parsed = parse_url($redirectUrl);
@@ -77,9 +77,8 @@ class FormSubmissionController extends Controller
     {
         $form = Form::where('slug', $slug)->firstOrFail();
 
-        $confirmations = $form->confirmations ?? [];
-        $title = $confirmations['success_title'] ?? 'Thank You!';
-        $message = $confirmations['success_description'] ?? 'Thank you for your submission!';
+        $title = 'Thank You!';
+        $message = $form->getConfirmationMessage();
 
         return view('forms.success', compact('form', 'message', 'title'));
     }
@@ -105,14 +104,14 @@ class FormSubmissionController extends Controller
         }
 
         $confirmations = $form->confirmations ?? [];
-        $successMessage = $confirmations['message'] ?? 'Form submitted successfully!';
+        $successMessage = $form->getConfirmationMessage();
 
         return response()->json([
             'success' => true,
             'message' => $successMessage,
             'entry_id' => $result['entry']->id,
             'redirect_url' => ($confirmations['type'] ?? null) === 'redirect'
-                ? ($confirmations['redirect_url'] ?? null)
+                ? $form->getConfirmationRedirectUrl()
                 : null,
         ]);
     }

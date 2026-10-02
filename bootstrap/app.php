@@ -37,11 +37,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'api.cors' => ApiCors::class,
         ]);
 
-        // Raw XSRF-TOKEN cookie so cached pages can double-submit the CSRF token.
-        // Full-page cache serves one shared HTML; the cookie is re-issued per
-        // visitor (even on cache HITs), so the theme JS can re-stamp the hidden
-        // _token input with the visitor's own session token before submitting.
-        $middleware->encryptCookies(['XSRF-TOKEN']);
+        // Raw cookies so web servers (LiteSpeed) can inspect them directly:
+        // - XSRF-TOKEN: CSRF token for full-page cache forms
+        // - cms_logged_in: Tells LiteSpeed to bypass cache for logged-in admins
+        $middleware->encryptCookies(['XSRF-TOKEN', 'cms_logged_in']);
 
         // Run redirect rules before route matching (so 404 paths can still redirect).
         $middleware->prepend(HandleRedirects::class);
@@ -62,8 +61,9 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule): void {
         // Auto-complete events that have ended.
-        // The Events plugin was removed as client-specific — the command no-ops
-        // safely when the plugin is absent, so the schedule never crashes.
+        // The Events plugin was removed as client-specific (commit a5bf328) — the
+        // command no-ops safely when the plugin is absent, so the schedule never
+        // crashes if a client installs/uninstalls it.
         $schedule->command('events:complete-expired')->dailyAt('00:01')->onOneServer();
 
         // Prune old audit log entries (default 90 days, configurable via setting)

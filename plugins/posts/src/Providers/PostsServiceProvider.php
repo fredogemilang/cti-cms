@@ -9,6 +9,7 @@ use Plugins\Posts\Livewire\BlogList;
 use Plugins\Posts\Livewire\CategoriesManager;
 use Plugins\Posts\Livewire\PostForm;
 use Plugins\Posts\Livewire\PostsTable;
+use Plugins\Posts\Livewire\SearchReplace;
 use Plugins\Posts\Livewire\Settings;
 use Plugins\Posts\Livewire\WordPressMigration;
 
@@ -29,6 +30,7 @@ class PostsServiceProvider extends CmsPluginServiceProvider
         'plugins.authors-manager' => AuthorsManager::class,
         'plugins.posts-settings' => Settings::class,
         'plugins.wordpress-migration' => WordPressMigration::class,
+        'plugins.posts-search-replace' => SearchReplace::class,
         'posts.blog-list' => BlogList::class,
     ];
 
@@ -96,6 +98,17 @@ class PostsServiceProvider extends CmsPluginServiceProvider
                     'url' => route('admin.posts.authors'),
                     'icon' => 'group',
                     'permission' => 'posts.view',
+                    'is_active' => true,
+                    'source' => 'plugin:posts',
+                    'children' => [],
+                ],
+                [
+                    'title' => 'Search & Replace',
+                    'route' => 'admin.posts.search-replace',
+                    'activeRoutePattern' => 'admin.posts.search-replace|admin.posts.search-replace.*',
+                    'url' => route('admin.posts.search-replace'),
+                    'icon' => 'find_replace',
+                    'permission' => 'posts.edit',
                     'is_active' => true,
                     'source' => 'plugin:posts',
                     'children' => [],

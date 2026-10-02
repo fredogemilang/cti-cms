@@ -115,11 +115,28 @@ class ArchiveController extends Controller
 
         $perPage = in_array($postType->slug, ['customer-success', 'client-says'], true) ? 6 : $this->getArchiveSetting('per_page', 12);
 
-        $entries = CptEntry::with(['author', 'postType', 'terms.taxonomy'])
+        $entriesQuery = CptEntry::with(['author', 'postType', 'terms.taxonomy'])
             ->where('post_type_id', $postType->id)
             ->published()
-            ->latest('published_at')
-            ->paginate($perPage);
+            ->orderByRaw('COALESCE(published_at, created_at) DESC')
+            ->orderByDesc('id');
+
+        if (in_array($postType->slug, ['customer-success', 'client-says'], true)) {
+            $allEntries = $entriesQuery->get()
+                ->filter(fn ($entry) => $entry->hasContentForLocale($currentLocale))
+                ->values();
+
+            $page = (int) request()->get('page', 1);
+            $entries = new \Illuminate\Pagination\LengthAwarePaginator(
+                $allEntries->forPage($page, $perPage)->values(),
+                $allEntries->count(),
+                $perPage,
+                $page,
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
+        } else {
+            $entries = $entriesQuery->paginate($perPage);
+        }
 
         $taxonomies = $postType->taxonomies();
 

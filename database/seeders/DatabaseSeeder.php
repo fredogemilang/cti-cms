@@ -39,6 +39,9 @@ class DatabaseSeeder extends Seeder
             // ── UI & Content ───────────────────────
             MenuItemSeeder::class,
             EmailTemplateSeeder::class,
+            AwsCloudCreditsPageSeeder::class,
+            FormsSeeder::class,
+            StringTranslationsSeeder::class,
         ]);
 
         $this->command->info('');

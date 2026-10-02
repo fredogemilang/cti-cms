@@ -306,9 +306,19 @@
         color: #2563EB !important;
         border: 2px solid #2563EB;
     }
-    .btn-outline:hover {
-        background-color: #2563EB;
-        color: #ffffff !important;
+    /* Contact Section Links High-Visibility Override */
+    #contact a,
+    #contact .prose a,
+    #contact label a {
+        color: #72a8fa;
+        text-decoration: underline;
+        font-weight: 600;
+        transition: color 0.2s ease;
+    }
+    #contact a:hover,
+    #contact .prose a:hover,
+    #contact label a:hover {
+        color: #ffffff;
     }
 }
 

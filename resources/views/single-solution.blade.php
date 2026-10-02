@@ -66,9 +66,9 @@
       @foreach($entry->children as $index => $child)
         @php
             $childTitle = $child->getTranslation('title', $locale) ?? $child->title;
-            $childMetaDesc = trim($child->getMeta('banner_description') ?? '');
             $childExcerpt = trim($child->getTranslation('excerpt', $locale) ?? ($child->excerpt ?? ''));
-            $childDesc = !empty($childMetaDesc) ? $childMetaDesc : $childExcerpt;
+            $childMetaDesc = trim($child->getMeta('banner_description') ?? '');
+            $childDesc = !empty($childExcerpt) ? $childExcerpt : $childMetaDesc;
             
             $childLoopImage = $child->getMeta('loop_image');
             $childImage = $childLoopImage 

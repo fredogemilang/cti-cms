@@ -13,7 +13,7 @@
 | i18n & Localization | [i18n-system.md](i18n-system.md) | Three translation systems, HasTranslations trait |
 | Form System | [form-system.md](form-system.md) | Form builder, field types, submissions |
 | Theme System | [theme-system.md](theme-system.md) | ThemeLoader, theme.json, resolve_block_asset |
-| Middleware Stack | [middleware-stack.md](middleware-stack.md) | 13 middleware layers in order |
+| Middleware Stack | [middleware-stack.md](middleware-stack.md) | 14 middleware layers in order |
 | Filter & Hook System | [filter-hook-system.md](filter-hook-system.md) | WordPress-style filters, URL overrides |
 | API & Auth | [api-auth-system.md](api-auth-system.md) | REST API v1, 2FA, tokens, webhooks |
 | Settings System | [settings-system.md](settings-system.md) | CmsSettingsServiceProvider, setting() helper |

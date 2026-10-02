@@ -75,7 +75,7 @@
                                 <livewire:admin.icon-picker 
                                     :field="$modelPath"
                                     :value="$fieldValue"
-                                    :label="$fieldLabel"
+                                    :label="$child['label'] ?? $child['name'] ?? 'Icon'"
                                     :compact="true"
                                     :key="'page-icon-' . $index . '-' . $rowIndex . '-' . $fieldName"
                                 />
