@@ -40,6 +40,7 @@
   $overviewImage = $page->block('overview_image', 'images/overview.png');
   $overviewBtnText = $page->block('overview_btn_text', 'Pelajari Selengkapnya');
   $overviewBtnLink = $page->block('overview_btn_link', '/tentang');
+  $overviewOverlay = $page->block('overview_overlay', 'images/overlay-overview.png');
 
   // 3. Why Section
   $whyTitle = $page->block('why_title', 'Mengapa Xyora?');
@@ -128,11 +129,10 @@
 
 <!-- Products Overview Info Section -->
 <section class="info-section" id="xyora-info-section" aria-label="Jaringan Cepat dan Stabil">
-  <!-- Ambient Green Glow & Diagonal Light Rays -->
-  <div class="glow-bg-container" aria-hidden="true">
-    <div class="green-radial-glow"></div>
-    <div class="green-diagonal-stripes"></div>
-  </div>
+  <!-- Overlay Background Image -->
+  @if($overviewOverlay)
+    <div class="info-overlay" aria-hidden="true" style="background-image: url('{{ resolve_block_asset($overviewOverlay) }}');"></div>
+  @endif
 
   <div class="info-container">
     <div class="info-visual">

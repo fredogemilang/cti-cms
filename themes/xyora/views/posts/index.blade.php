@@ -154,6 +154,43 @@
           </div>
         @endif
       @endif
+
+      <!-- Newsletter Section -->
+      @php
+        $newsletterForm = \App\Models\Form::where('slug', 'newsletter-form')->with('fields')->first();
+      @endphp
+
+      @if($newsletterForm && $newsletterForm->is_active)
+        <div class="newsletter-box">
+          <div class="newsletter-img-wrapper">
+            <img src="{{ theme_asset('icons/mail.png') }}" alt="{{ t('newsletter.image_alt', 'Newsletter Illustration') }}" width="248" height="232" loading="lazy" />
+          </div>
+          <div class="newsletter-content">
+            <h3>{{ t('newsletter.title', 'Jadi yang pertama untuk dapatkan penawaran spesial!') }}</h3>
+            <form action="{{ route('forms.submit', $newsletterForm->slug) }}" method="POST" class="newsletter-form">
+              @csrf
+
+              @if ($newsletterForm->spam_protection['honeypot'] ?? false)
+                <div style="display:none;"><input type="text" name="website_url" tabindex="-1" autocomplete="off"></div>
+              @endif
+
+              @php
+                $emailField = $newsletterForm->fields->where('type', 'email')->first() ?? $newsletterForm->fields->first();
+                $fieldId = $emailField ? $emailField->field_id : 'email';
+                $fieldPlaceholder = $emailField ? ($emailField->localizedPlaceholder() ?: $emailField->localizedLabel()) : t('newsletter.placeholder', 'Isi alamat email anda');
+              @endphp
+
+              <input type="email" 
+                     name="{{ $fieldId }}" 
+                     value="{{ old($fieldId) }}"
+                     placeholder="{{ $fieldPlaceholder }}" 
+                     class="newsletter-input" 
+                     required />
+              <button type="submit" class="newsletter-btn">{{ $newsletterForm->submit_button_text ?: t('newsletter.btn', 'Langganan') }}</button>
+            </form>
+          </div>
+        </div>
+      @endif
     </div>
   </section>
 </main>

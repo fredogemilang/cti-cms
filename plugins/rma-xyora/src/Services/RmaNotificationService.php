@@ -2,9 +2,11 @@
 
 namespace Plugins\RmaXyora\Services;
 
+use App\Models\Form;
 use App\Models\FormEntry;
-use Illuminate\Support\Facades\Mail;
+use App\Services\FormNotificationService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class RmaNotificationService
 {
@@ -17,29 +19,52 @@ class RmaNotificationService
             $data = $entry->data ?? [];
             $userEmail = $data['alamat_email'] ?? null;
 
-            if (empty($userEmail) || !filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
-                Log::warning("Cannot send RMA created notification: invalid email address.", ['entry_id' => $entry->id]);
+            if (empty($userEmail) || ! filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
+                Log::warning('Cannot send RMA created notification: invalid email address.', ['entry_id' => $entry->id]);
+
                 return;
             }
+
+            $form = $entry->form ?: Form::find($entry->form_id);
+            $notificationService = app(FormNotificationService::class);
+            $ccEmails = $notificationService->parseEmailList($form?->notifications['cc_email'] ?? $form?->notifications['admin_cc'] ?? null);
+            $bccEmails = $notificationService->parseEmailList($form?->notifications['bcc_email'] ?? null);
+            $supportEmail = $form?->notifications['admin_email'] ?: setting('contact_email', config('mail.from.address'));
 
             $rmaNumber = sprintf('RMA-%04d', $entry->id);
             $subject = "[XYORA] Pengajuan RMA Berhasil Diterima - #{$rmaNumber}";
 
             $html = $this->buildEmailTemplate(
-                "Pengajuan RMA Diterima",
-                "Halo, <strong>" . e($data['nama_lengkap'] ?? 'Pelanggan') . "</strong>.<br><br>Terima kasih telah mengajukan proses RMA (Return Merchandise Authorization) produk Xyora. Pengajuan Anda telah berhasil kami terima dan sedang berada dalam antrean verifikasi.",
+                'Pengajuan RMA Diterima',
+                'Halo, <strong>'.e($data['nama_lengkap'] ?? 'Pelanggan').'</strong>.<br><br>Terima kasih telah mengajukan proses RMA (Return Merchandise Authorization) produk Xyora. Pengajuan Anda telah berhasil kami terima dan sedang berada dalam antrean verifikasi.',
                 $entry,
                 $data
             );
 
-            Mail::html($html, function ($mail) use ($userEmail, $subject) {
+            Mail::html($html, function ($mail) use ($userEmail, $ccEmails, $bccEmails, $subject, $supportEmail) {
                 $mail->to($userEmail)
-                     ->subject($subject);
+                    ->subject($subject);
+
+                if (! empty($ccEmails)) {
+                    $mail->cc($ccEmails);
+                }
+
+                if (! empty($bccEmails)) {
+                    $mail->bcc($bccEmails);
+                }
+
+                if (! empty($supportEmail) && filter_var($supportEmail, FILTER_VALIDATE_EMAIL)) {
+                    $mail->replyTo($supportEmail);
+                }
             });
 
-            Log::info("RMA created notification email sent successfully.", ['entry_id' => $entry->id, 'email' => $userEmail]);
+            Log::info('RMA created notification email sent successfully.', [
+                'entry_id' => $entry->id,
+                'email' => $userEmail,
+                'cc' => $ccEmails,
+            ]);
         } catch (\Exception $e) {
-            Log::error("Failed to send RMA created notification: " . $e->getMessage(), ['entry_id' => $entry->id]);
+            Log::error('Failed to send RMA created notification: '.$e->getMessage(), ['entry_id' => $entry->id]);
         }
     }
 
@@ -52,30 +77,54 @@ class RmaNotificationService
             $data = $entry->data ?? [];
             $userEmail = $data['alamat_email'] ?? null;
 
-            if (empty($userEmail) || !filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
-                Log::warning("Cannot send RMA status update notification: invalid email address.", ['entry_id' => $entry->id]);
+            if (empty($userEmail) || ! filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
+                Log::warning('Cannot send RMA status update notification: invalid email address.', ['entry_id' => $entry->id]);
+
                 return;
             }
+
+            $form = $entry->form ?: Form::find($entry->form_id);
+            $notificationService = app(FormNotificationService::class);
+            $ccEmails = $notificationService->parseEmailList($form?->notifications['cc_email'] ?? $form?->notifications['admin_cc'] ?? null);
+            $bccEmails = $notificationService->parseEmailList($form?->notifications['bcc_email'] ?? null);
+            $supportEmail = $form?->notifications['admin_email'] ?: setting('contact_email', config('mail.from.address'));
 
             $rmaNumber = sprintf('RMA-%04d', $entry->id);
             $statusText = $this->getStatusLabel($entry->status);
             $subject = "[XYORA] Update Status Pengajuan RMA #{$rmaNumber} - {$statusText}";
 
             $html = $this->buildEmailTemplate(
-                "Update Status Pengajuan RMA",
-                "Halo, <strong>" . e($data['nama_lengkap'] ?? 'Pelanggan') . "</strong>.<br><br>Kami ingin menginformasikan bahwa status pengajuan RMA Anda dengan nomor <strong>#{$rmaNumber}</strong> telah diupdate menjadi: <strong style='color: " . $this->getStatusColor($entry->status) . ";'>" . e($statusText) . "</strong>.",
+                'Update Status Pengajuan RMA',
+                'Halo, <strong>'.e($data['nama_lengkap'] ?? 'Pelanggan')."</strong>.<br><br>Kami ingin menginformasikan bahwa status pengajuan RMA Anda dengan nomor <strong>#{$rmaNumber}</strong> telah diupdate menjadi: <strong style='color: ".$this->getStatusColor($entry->status).";'>".e($statusText).'</strong>.',
                 $entry,
                 $data
             );
 
-            Mail::html($html, function ($mail) use ($userEmail, $subject) {
+            Mail::html($html, function ($mail) use ($userEmail, $ccEmails, $bccEmails, $subject, $supportEmail) {
                 $mail->to($userEmail)
-                     ->subject($subject);
+                    ->subject($subject);
+
+                if (! empty($ccEmails)) {
+                    $mail->cc($ccEmails);
+                }
+
+                if (! empty($bccEmails)) {
+                    $mail->bcc($bccEmails);
+                }
+
+                if (! empty($supportEmail) && filter_var($supportEmail, FILTER_VALIDATE_EMAIL)) {
+                    $mail->replyTo($supportEmail);
+                }
             });
 
-            Log::info("RMA status update notification email sent successfully.", ['entry_id' => $entry->id, 'email' => $userEmail, 'status' => $entry->status]);
+            Log::info('RMA status update notification email sent successfully.', [
+                'entry_id' => $entry->id,
+                'email' => $userEmail,
+                'status' => $entry->status,
+                'cc' => $ccEmails,
+            ]);
         } catch (\Exception $e) {
-            Log::error("Failed to send RMA status update notification: " . $e->getMessage(), ['entry_id' => $entry->id]);
+            Log::error('Failed to send RMA status update notification: '.$e->getMessage(), ['entry_id' => $entry->id]);
         }
     }
 
@@ -91,15 +140,15 @@ class RmaNotificationService
 
         // Determine base URL dynamically based on active request
         $baseUrl = request()->getSchemeAndHttpHost();
-        if (app()->runningInConsole() || !$baseUrl || $baseUrl === 'http://localhost') {
+        if (app()->runningInConsole() || ! $baseUrl || $baseUrl === 'http://localhost') {
             $baseUrl = config('app.url', 'http://localhost');
         }
-        $checkingLink = rtrim($baseUrl, '/') . '/kontak#status-rma';
+        $checkingLink = rtrim($baseUrl, '/').'/kontak#status-rma';
 
         // Clean link
         $buktiLink = $data['bukti_pembelian'] ?? '#';
         $buktiHtml = filter_var($buktiLink, FILTER_VALIDATE_URL)
-            ? '<a href="' . e($buktiLink) . '" target="_blank" style="color: #89C55C; text-decoration: underline; font-weight: 500;">Buka Dokumen</a>'
+            ? '<a href="'.e($buktiLink).'" target="_blank" style="color: #89C55C; text-decoration: underline; font-weight: 500;">Buka Dokumen</a>'
             : e($buktiLink);
 
         return '
@@ -122,7 +171,7 @@ class RmaNotificationService
                 .details-table td { padding: 8px 0; vertical-align: top; }
                 .label-col { width: 150px; font-weight: 600; color: #64748b; }
                 .value-col { color: #1e293b; }
-                .status-badge { display: inline-block; background: ' . $statusColor . '20; color: ' . $statusColor . '; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 12px; border: 1px solid ' . $statusColor . '40; text-transform: uppercase; }
+                .status-badge { display: inline-block; background: '.$statusColor.'20; color: '.$statusColor.'; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 12px; border: 1px solid '.$statusColor.'40; text-transform: uppercase; }
                 .action-section { text-align: center; margin-top: 30px; margin-bottom: 10px; }
                 .btn { display: inline-block; background-color: #89C55C; color: white !important; font-weight: 600; font-size: 14px; text-decoration: none; padding: 12px 28px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(137, 197, 92, 0.3); transition: background-color 0.2s; }
                 .footer { background: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9; }
@@ -133,66 +182,66 @@ class RmaNotificationService
             <div class="wrapper">
                 <div class="header">
                     <div class="logo">XYORA</div>
-                    <h1>' . e($title) . '</h1>
+                    <h1>'.e($title).'</h1>
                 </div>
                 <div class="content">
                     <div class="greeting">
-                        ' . $greeting . '
+                        '.$greeting.'
                     </div>
                     <div class="details-box">
                         <h4 class="details-title">Detail Pengajuan RMA</h4>
                         <table class="details-table">
                             <tr>
                                 <td class="label-col">Nomor RMA:</td>
-                                <td class="value-col" style="font-weight: 700; color: #89C55C;">#' . e($rmaNumber) . '</td>
+                                <td class="value-col" style="font-weight: 700; color: #89C55C;">#'.e($rmaNumber).'</td>
                             </tr>
                             <tr>
                                 <td class="label-col">Nama Produk:</td>
-                                <td class="value-col">' . e($data['nama_produk'] ?? '-') . '</td>
+                                <td class="value-col">'.e($data['nama_produk'] ?? '-').'</td>
                             </tr>
                             <tr>
                                 <td class="label-col">Serial Number:</td>
-                                <td class="value-col" style="font-family: monospace; font-size: 13px;">' . e($data['serial_number_produk'] ?? '-') . '</td>
+                                <td class="value-col" style="font-family: monospace; font-size: 13px;">'.e($data['serial_number_produk'] ?? '-').'</td>
                             </tr>
                             <tr>
                                 <td class="label-col">Jenis Pengajuan:</td>
-                                <td class="value-col">' . e($data['jenis_pengajuan'] ?? '-') . '</td>
+                                <td class="value-col">'.e($data['jenis_pengajuan'] ?? '-').'</td>
                             </tr>
                             <tr>
                                 <td class="label-col">Jumlah Unit:</td>
-                                <td class="value-col">' . e($data['jumlah_unit'] ?? '-') . ' Unit</td>
+                                <td class="value-col">'.e($data['jumlah_unit'] ?? '-').' Unit</td>
                             </tr>
                             <tr>
                                 <td class="label-col">Tanggal Beli:</td>
-                                <td class="value-col">' . e($data['tanggal_pembelian'] ?? '-') . '</td>
+                                <td class="value-col">'.e($data['tanggal_pembelian'] ?? '-').'</td>
                             </tr>
                             <tr>
                                 <td class="label-col">Dokumen Bukti:</td>
-                                <td class="value-col">' . $buktiHtml . '</td>
+                                <td class="value-col">'.$buktiHtml.'</td>
                             </tr>
                             <tr>
                                 <td class="label-col">Alasan RMA:</td>
-                                <td class="value-col">' . e($data['alasan_pengajuan_rma'] ?? '-') . '</td>
+                                <td class="value-col">'.e($data['alasan_pengajuan_rma'] ?? '-').'</td>
                             </tr>
                             <tr>
                                 <td class="label-col">Tanggal Masuk:</td>
-                                <td class="value-col">' . e($timestamp) . '</td>
+                                <td class="value-col">'.e($timestamp).'</td>
                             </tr>
                             <tr>
                                 <td class="label-col">Status Terkini:</td>
                                 <td class="value-col">
-                                    <span class="status-badge">' . e($statusText) . '</span>
+                                    <span class="status-badge">'.e($statusText).'</span>
                                 </td>
                             </tr>
                         </table>
                     </div>
                     <div class="action-section">
-                        <a href="' . e($checkingLink) . '" class="btn">Cek Status RMA Anda</a>
+                        <a href="'.e($checkingLink).'" class="btn">Cek Status RMA Anda</a>
                     </div>
                 </div>
                 <div class="footer">
                     <p>Surel ini dikirim secara otomatis oleh sistem RMA XYORA.</p>
-                    <p>&copy; ' . date('Y') . ' XYORA Indonesia. Hak Cipta Dilindungi.</p>
+                    <p>&copy; '.date('Y').' XYORA Indonesia. Hak Cipta Dilindungi.</p>
                 </div>
             </div>
         </body>
