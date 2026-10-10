@@ -23,7 +23,7 @@ class GetCptEntryTool extends Tool
     {
         return [
             'cpt_slug' => $schema->string()
-                ->description('The CPT type slug (e.g., "technology-alliance"). Required for slug-based lookup.')
+                ->description('The CPT type slug (e.g., "case-study"). Required for slug-based lookup.')
                 ->required(),
 
             'entry_slug' => $schema->string()

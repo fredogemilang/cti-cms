@@ -701,7 +701,7 @@ class PostForm extends Component
             }
         }
 
-        $pairedSlugs = json_decode(Setting::get('paired_cpts', json_encode(['technology-alliance'])), true) ?: ['technology-alliance'];
+        $pairedSlugs = json_decode(Setting::get('paired_cpts', '[]'), true) ?: [];
 
         $pairedCptTypes = DB::table('custom_post_types')
             ->whereIn('slug', $pairedSlugs)

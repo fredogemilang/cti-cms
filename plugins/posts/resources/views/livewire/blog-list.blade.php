@@ -27,8 +27,11 @@
                                 if ($postImg && !str_starts_with($postImg, 'http')) {
                                     $postImg = asset('storage/' . $postImg);
                                 }
+                                $postImg = $postImg ?: (setting('seo_default_og_image')
+                                    ? resolve_block_asset((string) setting('seo_default_og_image'))
+                                    : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 9%22%3E%3Crect width=%2216%22 height=%229%22 fill=%22%23e4e4e7%22/%3E%3C/svg%3E');
                             @endphp
-                            <img src="{{ $postImg ?: '/storage/media/default-blog-iccomjpg-1770368714-AYUyHkb8.webp' }}"
+                            <img src="{{ $postImg }}"
                                 class="img-fluid w-100 h-100 object-fit-cover" alt="{{ $post->title }}">
                         </div>
                         <div class="card-body p-4 flex-grow-1 d-flex flex-column justify-content-center">

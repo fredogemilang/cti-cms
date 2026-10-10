@@ -14,7 +14,7 @@ use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
 use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 
-#[Description('List entries for a specific Custom Post Type (CPT). Requires the CPT slug (e.g., "technology-alliance", "industry"). Use the list-cpts tool first to discover available CPT slugs.')]
+#[Description('List entries for a specific Custom Post Type (CPT). Requires the CPT slug (e.g., "case-study", "industry"). Use the list-cpts tool first to discover available CPT slugs.')]
 #[IsReadOnly]
 #[IsIdempotent]
 class ListCptEntriesTool extends Tool
@@ -23,7 +23,7 @@ class ListCptEntriesTool extends Tool
     {
         return [
             'cpt_slug' => $schema->string()
-                ->description('The CPT slug (e.g., "technology-alliance"). Use list-cpts tool to discover available slugs.')
+                ->description('The CPT slug (e.g., "case-study"). Use list-cpts tool to discover available slugs.')
                 ->required(),
 
             'status' => $schema->string()
