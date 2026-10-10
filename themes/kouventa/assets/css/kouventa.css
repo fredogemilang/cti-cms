@@ -596,19 +596,52 @@ html{scroll-padding-top:0}
   color: #06251A !important;
 }
 
-/* Story Carousel Dots */
-.kv-story-dot {
-  height: 8px;
-  border-radius: 999px;
+
+
+/* Story Carousel Navigation & Dots */
+.kv-story-btn {
+  width: 44px;
+  height: 44px;
   border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0;
   cursor: pointer;
-  transition: all 0.2s ease;
-  background: #C9D2CE;
-  width: 8px;
   outline: none;
 }
-.kv-story-dot.is-active {
+.kv-story-dot-pill {
+  display: block;
+  height: 8px;
+  width: 8px;
+  border-radius: 999px;
+  background: #C9D2CE;
+  transition: all 0.25s ease;
+}
+.kv-story-dot-pill.is-active {
   width: 28px !important;
   background: #071C33 !important;
+}
+.kv-story-btn:hover .kv-story-dot-pill:not(.is-active) {
+  background: #93A4B6;
+}
+
+.kv-slider-nav-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid #C9D2CE;
+  background: #FFFFFF;
+  color: #0E1A24;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+.kv-slider-nav-btn:hover {
+  border-color: #071C33;
+  background: #F4F6F5;
 }

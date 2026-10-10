@@ -84,17 +84,27 @@
             'stat2Label' => t('kouventa.faster customer response time', 'faster customer response time'),
             'quote' => t('kouventa.Kouventa makes it effortless for us to engage directly with customers, from service updates to promotional offers. Its intuitive AI features have strengthened our professional image and boosted engagement.', 'Kouventa makes it effortless for us to engage directly with customers, from service updates to promotional offers. Its intuitive AI features have strengthened our professional image and boosted engagement.'),
             'name' => 'Yudhistira',
-            'role' => 'CEO of PakeDriver'
+            'role' => t('kouventa.CEO of PakeDriver', 'CEO of PakeDriver')
         ],
         [
             'company' => 'Liberta Hotel',
             'stat' => '70%',
             'statLabel' => t('kouventa.time saved sending promotional broadcasts and confirmations', 'time saved sending promotional broadcasts and confirmations'),
             'stat2' => '+45%',
-            'stat2Label' => t('kouventa.increase in direct bookings via WhatsApp', 'increase in direct bookings via WhatsApp'),
-            'quote' => t('kouventa.Kouventa streamlined our reservation confirmations and promotional campaigns. Automated messaging has drastically reduced response times and increased guest satisfaction.', 'Kouventa streamlined our reservation confirmations and promotional campaigns. Automated messaging has drastically reduced response times and increased guest satisfaction.'),
-            'name' => 'Reza Permana',
-            'role' => 'General Manager, Liberta Hotel'
+            'stat2Label' => t('kouventa.increase in guest response rates', 'increase in guest response rates'),
+            'quote' => t('kouventa.Kouventa\'s WhatsApp automation streamlined our promotions and reservations. Their intuitive platform and dedicated support made them a true partner in our hospitality journey.', 'Kouventa\'s WhatsApp automation streamlined our promotions and reservations. Their intuitive platform and dedicated support made them a true partner in our hospitality journey.'),
+            'name' => 'Novellinda Putri Kairo',
+            'role' => 'Corporate Sales Admin, Liberta'
+        ],
+        [
+            'company' => 'DPay',
+            'stat' => '60%',
+            'statLabel' => t('kouventa.fewer customer service tickets', 'fewer customer service tickets'),
+            'stat2' => '+40%',
+            'stat2Label' => t('kouventa.efficiency gain in operational lead time', 'efficiency gain in operational lead time'),
+            'quote' => t('kouventa.Kouventa\'s WhatsApp automation solution revolutionized our logistics tracking and freed our team to focus on service innovation. Their flexible API and responsive support made integration seamless.', 'Kouventa\'s WhatsApp automation solution revolutionized our logistics tracking and freed our team to focus on service innovation. Their flexible API and responsive support made integration seamless.'),
+            'name' => 'Sebastian Hadinata',
+            'role' => t('kouventa.General Manager of DPay', 'General Manager of DPay')
         ]
     ];
 @endphp
@@ -104,8 +114,8 @@
 <div class="kv-canvas-wrap" x-data="{
     activeTeam: 0,
     activeStory: 0,
-    teams: {{ json_encode($teams) }},
-    stories: {{ json_encode($stories) }}
+    teams: @js($teams),
+    stories: @js($stories)
 }">
 <!-- ============ NAV + HERO ============ -->
 <section style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative; overflow: hidden">
@@ -290,8 +300,8 @@
 <div style="display: flex; justify-content: space-between; align-items: end">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Real results, in their words.</h2>
 <div style="display: flex; gap: 8px">
-<button type="button" aria-label="Previous story" @click="activeStory = (activeStory - 1 + stories.length) % stories.length" style="width: 48px; height: 48px; border-radius: 50%; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
-<button type="button" aria-label="Next story" @click="activeStory = (activeStory + 1) % stories.length" style="width: 48px; height: 48px; border-radius: 50%; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
+<button type="button" aria-label="Previous story" @click="activeStory = (activeStory - 1 + stories.length) % stories.length" class="kv-slider-nav-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
+<button type="button" aria-label="Next story" @click="activeStory = (activeStory + 1) % stories.length" class="kv-slider-nav-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
 </div>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; display: grid; grid-template-columns: 420px minmax(0, 1fr); overflow: hidden">
@@ -306,20 +316,23 @@
 </div>
 </div>
 <div style="padding: 48px; display: flex; flex-direction: column; gap: 24px">
-<img src="{{ theme_asset('images/kouventa-logo.png') }}" alt="<span x-text="stories[activeStory].company"></span>" style="height: 48px; width: auto; align-self: flex-start">
+<img src="{{ theme_asset('images/kouventa-logo.png') }}" :alt="stories[activeStory].company" style="height: 48px; width: auto; align-self: flex-start">
 <p style="margin: 0; font-size: 22px; line-height: 1.55; font-weight: 500">“<span x-text="stories[activeStory].quote"></span>”</p>
-<div style="display: flex; flex-direction: column; gap: 2px; margin-top: auto"><span style="font-size: 16px; font-weight: 700"><span x-text="stories[activeStory].name"></span></span><span style="font-size: 14px; color: #4A5866"><span x-text="stories[activeStory].role"></span></span></div>
+<div style="display: flex; flex-direction: column; gap: 2px; margin-top: auto">
+<span style="font-size: 16px; font-weight: 700" x-text="stories[activeStory].name"></span>
+<span style="font-size: 14px; color: #4A5866" x-text="stories[activeStory].role"></span>
 </div>
 </div>
-<div style="display: flex; gap: 8px; justify-content: center">
-
+</div>
+<div style="display: flex; gap: 8px; justify-content: center; align-items: center">
 @foreach($stories as $i => $s)
     <button type="button" @click="activeStory = {{ $i }}"
-            :class="{ 'is-active': activeStory === {{ $i }} }"
-            class="kv-story-dot"
-            aria-label="Story {{ $i + 1 }}"></button>
+            class="kv-story-btn"
+            aria-label="{{ t('kouventa.Show story:', 'Show story:') }} {{ $s['company'] }}"
+            :aria-pressed="activeStory === {{ $i }}">
+        <span class="kv-story-dot-pill" :class="{ 'is-active': activeStory === {{ $i }} }"></span>
+    </button>
 @endforeach
-
 </div>
 </section>
 
