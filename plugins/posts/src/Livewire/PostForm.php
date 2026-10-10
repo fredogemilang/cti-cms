@@ -3,6 +3,8 @@
 namespace Plugins\Posts\Livewire;
 
 use App\Models\CptEntry;
+use App\Models\Redirect;
+use App\Services\EditorialWorkflowService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -68,6 +70,15 @@ class PostForm extends Component
 
     public $newAuthorName = '';
 
+    // Editorial Workflow
+    public bool $canApprove = false;
+
+    public array $allowedStatuses = [];
+
+    public bool $showChangeRequestModal = false;
+
+    public string $changeRequestNote = '';
+
     public $addingAuthor = false;
 
     // Relationships
@@ -103,6 +114,10 @@ class PostForm extends Component
     {
         $this->availableLocales = available_locales();
         $this->editingLocale = Post::defaultLocale();
+
+        $workflow = app(EditorialWorkflowService::class);
+        $this->canApprove = $workflow->canApprove();
+        $this->allowedStatuses = $workflow->allowedStatuses();
 
         $requestedLocale = request()->query('lang');
         if ($postId) {
@@ -210,8 +225,46 @@ class PostForm extends Component
     public function updatedTitle($value)
     {
         if (! $this->postId && empty($this->slug)) {
-            $this->slug = $this->ensureUniqueSlug(Str::slug($value));
+            $this->slug = $this->ensureUniqueSlug(Str::slug($value), $this->editingLocale);
+            $this->localizedSnapshots[$this->editingLocale]['slug'] = $this->slug;
         }
+    }
+
+    public function updatedSlug($value)
+    {
+        $trimmed = trim((string) $value);
+        if (empty($trimmed)) {
+            if (! empty(trim((string) $this->title))) {
+                $this->generateSlug();
+            } else {
+                $this->slug = '';
+                $this->localizedSnapshots[$this->editingLocale]['slug'] = '';
+            }
+        } else {
+            $this->slug = $this->ensureUniqueSlug(Str::slug($trimmed), $this->editingLocale);
+            $this->localizedSnapshots[$this->editingLocale]['slug'] = $this->slug;
+        }
+    }
+
+    public function generateSlug(): void
+    {
+        $trimmedTitle = trim((string) $this->title);
+        if (empty($trimmedTitle)) {
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => 'Please enter a title first to generate slug.',
+            ]);
+
+            return;
+        }
+
+        $this->slug = $this->ensureUniqueSlug(Str::slug($trimmedTitle), $this->editingLocale);
+        $this->localizedSnapshots[$this->editingLocale]['slug'] = $this->slug;
+
+        $this->dispatch('notify', [
+            'type' => 'info',
+            'message' => 'Slug generated from title: '.$this->slug,
+        ]);
     }
 
     public function updatedDocxFile()
@@ -228,7 +281,8 @@ class PostForm extends Component
             $this->content = $result['content'];
 
             if (empty($this->slug)) {
-                $this->slug = $this->ensureUniqueSlug(Str::slug($this->title));
+                $this->slug = $this->ensureUniqueSlug(Str::slug($this->title), $this->editingLocale);
+                $this->localizedSnapshots[$this->editingLocale]['slug'] = $this->slug;
             }
 
             $this->dispatch('notify', [
@@ -243,16 +297,32 @@ class PostForm extends Component
         }
     }
 
-    protected function ensureUniqueSlug($slug)
+    protected function ensureUniqueSlug($slug, ?string $locale = null)
     {
-        $originalSlug = $slug;
+        $originalSlug = Str::slug($slug);
+        if (empty($originalSlug)) {
+            return '';
+        }
+
+        $slug = $originalSlug;
         $counter = 1;
+        $defaultLocale = Post::defaultLocale();
+        $isDefault = empty($locale) || $locale === $defaultLocale;
 
         while (true) {
-            $slugQuery = Post::withTrashed()->where('slug', $slug);
+            $slugQuery = Post::withTrashed();
 
             if ($this->postId) {
                 $slugQuery->where('id', '!=', $this->postId);
+            }
+
+            if ($isDefault) {
+                $slugQuery->where('slug', $slug);
+            } else {
+                $slugQuery->where(function ($q) use ($locale, $slug) {
+                    $q->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(translations, '$.\"{$locale}\".slug')) = ?", [$slug])
+                        ->orWhere('slug', $slug);
+                });
             }
 
             if (! $slugQuery->exists()) {
@@ -281,7 +351,7 @@ class PostForm extends Component
             $this->validate([
                 'title' => $isDefault ? 'required|min:3' : 'nullable|min:3',
                 'slug' => $isDefault ? 'required' : 'nullable',
-                'status' => 'required|in:draft,published,scheduled,archived',
+                'status' => 'required|in:draft,pending_review,published,scheduled,archived',
                 'visibility' => 'required|in:public,private,password',
                 'password' => 'required_if:visibility,password',
                 'author_id' => 'required|exists:post_authors,id',
@@ -299,6 +369,11 @@ class PostForm extends Component
             $this->status = $status;
         }
 
+        $workflow = app(EditorialWorkflowService::class);
+        $resolved = $workflow->resolveStatus($this->status);
+        $this->status = $resolved['status'];
+        $oldStatus = $this->postId && $this->post ? $this->post->getOriginal('status') : null;
+
         // Auto-generate excerpt if empty
         if (empty($this->excerpt) && ! empty($this->content)) {
             $cleaned = html_entity_decode($this->content);
@@ -310,16 +385,26 @@ class PostForm extends Component
         // Handle Image - now using MediaPicker, path is set directly
         $imagePath = $this->featured_image;
 
-        // Ensure slug is unique with auto-increment
-        $this->slug = $this->ensureUniqueSlug($this->slug);
-
         // Build default-locale data from the default locale snapshot
         $defaultLocale = Post::defaultLocale();
         $defaultSnap = $this->localizedSnapshots[$defaultLocale] ?? $this->currentLocaleSnapshot();
 
+        $rawDefaultSlug = $defaultSnap['slug'] ?? ($this->editingLocale === $defaultLocale ? $this->slug : '');
+        $rawDefaultTitle = $defaultSnap['title'] ?? ($this->editingLocale === $defaultLocale ? $this->title : '');
+
+        if (empty(trim((string) $rawDefaultSlug)) && ! empty(trim((string) $rawDefaultTitle))) {
+            $defaultSlug = $this->ensureUniqueSlug(Str::slug($rawDefaultTitle), $defaultLocale);
+        } else {
+            $defaultSlug = $this->ensureUniqueSlug(Str::slug($rawDefaultSlug ?: ($this->post?->slug ?: '')), $defaultLocale);
+        }
+
+        if ($this->editingLocale === $defaultLocale) {
+            $this->slug = $defaultSlug;
+        }
+
         $data = [
             'title' => $defaultSnap['title'] ?? $this->title,
-            'slug' => $defaultSnap['slug'] ?? $this->slug,
+            'slug' => $defaultSlug,
             'content' => $defaultSnap['content'] ?? $this->content,
             'excerpt' => $defaultSnap['excerpt'] ?? $this->excerpt,
             'status' => $this->status,
@@ -337,26 +422,43 @@ class PostForm extends Component
             if ($locale === $defaultLocale) {
                 continue;
             }
-            $isPopulated = false;
-            foreach (['title', 'slug', 'excerpt', 'content'] as $f) {
-                if (! empty($snap[$f] ?? '')) {
-                    $isPopulated = true;
-                    break;
-                }
+
+            $title = trim((string) ($snap['title'] ?? ''));
+            $slug = trim((string) ($snap['slug'] ?? ''));
+            $excerpt = ($snap['excerpt'] ?? '') ?: null;
+            $content = ($snap['content'] ?? '') ?: null;
+
+            // Auto-generate slug from title if title is populated but slug was left empty
+            if (empty($slug) && ! empty($title)) {
+                $slug = $this->ensureUniqueSlug(Str::slug($title), $locale);
+            } elseif (! empty($slug)) {
+                $slug = $this->ensureUniqueSlug(Str::slug($slug), $locale);
             }
+
+            if ($locale === $this->editingLocale && ! empty($slug)) {
+                $this->slug = $slug;
+            }
+
+            $isPopulated = ! empty($title) || ! empty($slug) || ! empty($excerpt) || ! empty($content);
             if (! $isPopulated) {
                 continue;
             }
+
             $translations[$locale] = [
-                'title' => ($snap['title'] ?? '') ?: null,
-                'slug' => ($snap['slug'] ?? '') ?: null,
-                'excerpt' => ($snap['excerpt'] ?? '') ?: null,
-                'content' => ($snap['content'] ?? '') ?: null,
+                'title' => $title ?: null,
+                'slug' => $slug ?: null,
+                'excerpt' => $excerpt,
+                'content' => $content,
             ];
         }
         $data['translations'] = $translations ?: null;
 
         $isNew = ! $this->postId;
+
+        // Auto 301 Redirects for published posts before updating
+        if ($this->postId && $this->post && ($oldStatus === 'published' || $this->post->status === 'published')) {
+            $this->handlePostRedirects($this->post, $defaultSlug, $translations);
+        }
 
         if ($this->postId) {
             $this->post->update($data);
@@ -417,15 +519,83 @@ class PostForm extends Component
             'lang' => $this->editingLocale !== Post::defaultLocale() ? $this->editingLocale : null,
         ]);
 
+        $workflow->handleTransition($post, $post->status, $oldStatus);
+
         if ($isNew) {
-            session()->flash('success', 'Post created successfully.');
+            $msg = $resolved['downgraded'] ? $resolved['message'] : 'Post created successfully.';
+            session()->flash($resolved['downgraded'] ? 'info' : 'success', $msg);
 
             return redirect()->route('admin.posts.edit', array_merge(['id' => $post->id], $queryParams));
         } else {
-            $this->dispatch('notify', ['type' => 'success', 'message' => 'Post updated successfully.']);
+            $msg = $resolved['downgraded'] ? $resolved['message'] : 'Post updated successfully.';
+            $this->dispatch('notify', ['type' => $resolved['downgraded'] ? 'info' : 'success', 'message' => $msg]);
 
             return redirect()->route('admin.posts.edit', array_merge(['id' => $post->id], $queryParams));
         }
+    }
+
+    public function approveAndPublish()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        if (! $this->postId || ! $this->post) {
+            return;
+        }
+
+        $oldStatus = $this->post->status;
+        $this->post->update([
+            'status' => 'published',
+            'published_at' => $this->post->published_at ?? now(),
+        ]);
+        $this->status = 'published';
+        $this->published_at = $this->post->published_at?->format('Y-m-d\TH:i');
+
+        $workflow->handleTransition($this->post, 'published', $oldStatus);
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => "'{$this->post->title}' approved and published successfully.",
+        ]);
+    }
+
+    public function openChangeRequestModal()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+        $this->changeRequestNote = '';
+        $this->showChangeRequestModal = true;
+    }
+
+    public function closeChangeRequestModal()
+    {
+        $this->showChangeRequestModal = false;
+    }
+
+    public function submitChangeRequest()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        $this->validate([
+            'changeRequestNote' => 'required|string|min:3|max:1000',
+        ]);
+
+        if (! $this->postId || ! $this->post) {
+            return;
+        }
+
+        $oldStatus = $this->post->status;
+        $this->post->update([
+            'status' => 'draft',
+        ]);
+        $this->status = 'draft';
+
+        $workflow->handleTransition($this->post, 'draft', $oldStatus, auth()->user(), $this->changeRequestNote);
+        $this->showChangeRequestModal = false;
+        $this->dispatch('notify', [
+            'type' => 'warning',
+            'message' => "Changes requested on '{$this->post->title}'. Post moved to draft.",
+        ]);
     }
 
     public function openCptModal()
@@ -563,5 +733,94 @@ class PostForm extends Component
             'attachedCptEntries' => $attachedCptEntries,
             'modalCptEntries' => $modalCptEntries,
         ]);
+    }
+
+    protected function handlePostRedirects(Post $post, string $newDefaultSlug, array $newTranslations): void
+    {
+        if (! class_exists(Redirect::class)) {
+            return;
+        }
+
+        $archiveSlug = Setting::get('archive_slug', 'blog-news');
+        if (Schema::hasTable('settings')) {
+            $coreBase = \App\Models\Setting::get('permalink_post_base');
+            if (! empty($coreBase)) {
+                $archiveSlug = $coreBase;
+            }
+        }
+        $archiveSlug = trim($archiveSlug, '/');
+
+        $defaultLocale = Post::defaultLocale();
+        $oldDefaultSlug = $post->getRawAttribute('slug');
+
+        // 1. Check Default Locale slug change
+        if (! empty($oldDefaultSlug) && ! empty($newDefaultSlug) && $oldDefaultSlug !== $newDefaultSlug) {
+            $oldPath = '/'.$archiveSlug.'/'.$oldDefaultSlug;
+            $newPath = '/'.$archiveSlug.'/'.$newDefaultSlug;
+            $this->createRedirectRule($oldPath, $newPath, "Auto-redirect: post #{$post->id} slug changed ({$defaultLocale})");
+        }
+
+        // 2. Check Non-Default Locales
+        $availableLocales = array_filter(available_locales(), fn ($l) => $l !== $defaultLocale);
+        foreach ($availableLocales as $locale) {
+            $newTransSlug = $newTranslations[$locale]['slug'] ?? null;
+            $oldTransSlug = $post->getTranslation('slug', $locale, false);
+
+            if (! empty($newTransSlug)) {
+                // Case A: Translated slug changed from previous translated slug
+                if (! empty($oldTransSlug) && $oldTransSlug !== $newTransSlug) {
+                    $oldPath = '/'.$locale.'/'.$archiveSlug.'/'.$oldTransSlug;
+                    $newPath = '/'.$locale.'/'.$archiveSlug.'/'.$newTransSlug;
+                    $this->createRedirectRule($oldPath, $newPath, "Auto-redirect: post #{$post->id} slug changed ({$locale})");
+                }
+                // Case B: Post previously used fallback default slug, now has a distinct localized slug
+                elseif (empty($oldTransSlug) && ! empty($oldDefaultSlug) && $oldDefaultSlug !== $newTransSlug) {
+                    $oldPath = '/'.$locale.'/'.$archiveSlug.'/'.$oldDefaultSlug;
+                    $newPath = '/'.$locale.'/'.$archiveSlug.'/'.$newTransSlug;
+                    $this->createRedirectRule($oldPath, $newPath, "Auto-redirect: post #{$post->id} localized slug created ({$locale})");
+                }
+            }
+        }
+    }
+
+    protected function createRedirectRule(string $fromPath, string $toUrl, string $notes): void
+    {
+        $fromPath = '/'.trim($fromPath, '/');
+        $toPath = '/'.trim($toUrl, '/');
+
+        if ($fromPath === $toPath) {
+            return;
+        }
+
+        // Target URL formatted cleanly
+        $targetUrl = function_exists('trailing_slash_url') ? trailing_slash_url(url($toPath)) : url($toPath);
+
+        // Update existing redirects pointing to the old path to avoid redirect chains (A -> B -> C)
+        Redirect::where('to_url', $fromPath)
+            ->orWhere('to_url', $targetUrl)
+            ->update(['to_url' => $targetUrl]);
+
+        $redirect = Redirect::withTrashed()->where('from_path', $fromPath)->first();
+        if ($redirect) {
+            if ($redirect->trashed()) {
+                $redirect->restore();
+            }
+            $redirect->update([
+                'to_url' => $targetUrl,
+                'status_code' => 301,
+                'is_active' => true,
+                'is_regex' => false,
+                'notes' => $notes,
+            ]);
+        } else {
+            Redirect::create([
+                'from_path' => $fromPath,
+                'to_url' => $targetUrl,
+                'status_code' => 301,
+                'is_active' => true,
+                'is_regex' => false,
+                'notes' => $notes,
+            ]);
+        }
     }
 }

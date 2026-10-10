@@ -161,7 +161,9 @@ class MediaUsageService
             }
 
             // Post plugin posts (featured_image & content HTML img src, including translations)
-            if (class_exists(Post::class)) {
+            // class_exists() alone is not enough: the plugin's classes stay autoloadable when the
+            // plugin is deactivated, but its tables may be absent — querying then throws.
+            if (is_plugin_active('posts') && class_exists(Post::class)) {
                 foreach (Post::all() as $post) {
                     $bump($resolveByPath($post->featured_image));
 
@@ -317,8 +319,8 @@ class MediaUsageService
             }
         }
 
-        // 3. Blog Posts
-        if (class_exists(Post::class)) {
+        // 3. Blog Posts — see note above on why class_exists() alone is insufficient.
+        if (is_plugin_active('posts') && class_exists(Post::class)) {
             $posts = Post::all();
             foreach ($posts as $post) {
                 $foundContext = null;

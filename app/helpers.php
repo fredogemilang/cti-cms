@@ -189,7 +189,7 @@ if (! function_exists('get_assigned_form')) {
      * Get the Form model assigned to the active theme's placeholder slot.
      * Returns null if unassigned or if the assigned form is inactive/deleted.
      */
-    function get_assigned_form(string $placeholder): ?\App\Models\Form
+    function get_assigned_form(string $placeholder): ?Form
     {
         $theme = active_theme();
         if (! $theme) {
@@ -203,7 +203,7 @@ if (! function_exists('get_assigned_form')) {
             return null;
         }
 
-        return \App\Models\Form::where('id', $formId)
+        return Form::where('id', $formId)
             ->where('is_active', true)
             ->with('fields')
             ->first();
@@ -316,12 +316,22 @@ if (! function_exists('resolve_block_asset')) {
         }
 
         $cleanPath = ltrim($path, '/');
+        $webpCleanPath = preg_replace('/\.(png|jpe?g)$/i', '.webp', $cleanPath);
 
         if (str_starts_with($cleanPath, 'themes/')) {
+            if ($webpCleanPath !== $cleanPath && file_exists(public_path($webpCleanPath))) {
+                return $cache[$path] = asset($webpCleanPath);
+            }
+
             return $cache[$path] = asset($cleanPath);
         }
 
         if (str_starts_with($cleanPath, 'storage/')) {
+            $storageSub = substr($cleanPath, 8);
+            $webpStorageSub = preg_replace('/\.(png|jpe?g)$/i', '.webp', $storageSub);
+            if ($webpStorageSub !== $storageSub && file_exists(public_path('storage/'.$webpStorageSub))) {
+                return $cache[$path] = asset('storage/'.$webpStorageSub);
+            }
             if (! file_exists(public_path($cleanPath))) {
                 $unhashed = preg_replace('/-\d+-[a-zA-Z0-9]+\.([a-zA-Z0-9]+)$/', '.$1', $cleanPath);
                 if (file_exists(public_path($unhashed))) {
@@ -336,13 +346,27 @@ if (! function_exists('resolve_block_asset')) {
         $activeThemeSlug = $theme ? $theme->slug : 'default';
 
         if (str_starts_with($cleanPath, 'assets/')) {
+            $themeAssetWebp = "themes/{$activeThemeSlug}/{$webpCleanPath}";
+            if ($webpCleanPath !== $cleanPath && (file_exists(public_path($themeAssetWebp)) || file_exists(base_path($themeAssetWebp)))) {
+                return $cache[$path] = asset($themeAssetWebp);
+            }
+
             return $cache[$path] = asset("themes/{$activeThemeSlug}/{$cleanPath}");
         }
 
         // Check if file exists in active theme assets
         $themeAssetRel = "themes/{$activeThemeSlug}/assets/{$cleanPath}";
+        $themeAssetWebp = "themes/{$activeThemeSlug}/assets/{$webpCleanPath}";
+        if ($webpCleanPath !== $cleanPath && (file_exists(public_path($themeAssetWebp)) || file_exists(base_path($themeAssetWebp)))) {
+            return $cache[$path] = asset($themeAssetWebp);
+        }
         if (file_exists(public_path($themeAssetRel)) || file_exists(base_path($themeAssetRel))) {
             return $cache[$path] = asset($themeAssetRel);
+        }
+
+        // Prefer webp in storage
+        if ($webpCleanPath !== $cleanPath && file_exists(public_path('storage/'.$webpCleanPath))) {
+            return $cache[$path] = asset('storage/'.$webpCleanPath);
         }
 
         if (! file_exists(public_path('storage/'.$cleanPath))) {
@@ -529,28 +553,28 @@ if (! function_exists('current_page_localized_url')) {
         }
 
         if ($page instanceof Page) {
-            return $page->localizedUrl($targetLocale);
+            return $page->getUrl($targetLocale);
         }
 
         // Home page
-        if ($cleanPath === '') {
+        if ($cleanPath === '' || $cleanPath === 'home') {
             if ($targetLocale === $defaultLocale && $hideDefault) {
-                return url('/');
+                return trailing_slash_url(url('/'));
             }
 
-            return url('/'.$targetLocale);
+            return trailing_slash_url(url('/'.$targetLocale));
         }
 
         // Prefix structure
         if ($urlStructure === 'prefix') {
             if ($targetLocale === $defaultLocale && $hideDefault) {
-                return url('/'.$cleanPath);
+                return trailing_slash_url(url('/'.$cleanPath));
             }
 
-            return url('/'.$targetLocale.'/'.$cleanPath);
+            return trailing_slash_url(url('/'.$targetLocale.'/'.$cleanPath));
         }
 
-        return url('/'.$cleanPath);
+        return trailing_slash_url(url('/'.$cleanPath));
     }
 }
 
@@ -665,12 +689,12 @@ if (! function_exists('localized_url')) {
                 $cleanPath = implode('/', $segments);
 
                 if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
-                    return url("/{$locale}/{$cleanPath}").$query.$fragment;
+                    return trailing_slash_url(url("/{$locale}/{$cleanPath}")).$query.$fragment;
                 }
 
                 $base = $hideDefault || $urlStructure !== 'prefix' ? "/{$cleanPath}" : "/{$defaultLocale}/{$cleanPath}";
 
-                return url($base).$query.$fragment;
+                return trailing_slash_url(url($base)).$query.$fragment;
             }
         }
 
@@ -680,12 +704,12 @@ if (! function_exists('localized_url')) {
             if ($page) {
                 $targetSlug = $page->getTranslation('slug', $locale) ?? $page->slug;
                 if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
-                    return url("/{$locale}/{$targetSlug}").$query.$fragment;
+                    return trailing_slash_url(url("/{$locale}/{$targetSlug}")).$query.$fragment;
                 }
 
                 $base = $hideDefault || $urlStructure !== 'prefix' ? "/{$targetSlug}" : "/{$defaultLocale}/{$targetSlug}";
 
-                return url($base).$query.$fragment;
+                return trailing_slash_url(url($base)).$query.$fragment;
             }
         }
 
@@ -693,18 +717,18 @@ if (! function_exists('localized_url')) {
         if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
             $base = $cleanPath !== '' ? "/{$locale}/{$cleanPath}" : "/{$locale}";
 
-            return url($base).$query.$fragment;
+            return trailing_slash_url(url($base)).$query.$fragment;
         }
 
         if (! $hideDefault && $urlStructure === 'prefix') {
             $base = $cleanPath !== '' ? "/{$defaultLocale}/{$cleanPath}" : "/{$defaultLocale}";
 
-            return url($base).$query.$fragment;
+            return trailing_slash_url(url($base)).$query.$fragment;
         }
 
         $base = $cleanPath !== '' ? "/{$cleanPath}" : '/';
 
-        return url($base).$query.$fragment;
+        return trailing_slash_url(url($base)).$query.$fragment;
     }
 }
 
@@ -752,5 +776,70 @@ if (! function_exists('is_plugin_active')) {
     function is_plugin_active(string $slug): bool
     {
         return Plugin::where('slug', $slug)->where('is_active', true)->exists();
+    }
+}
+
+if (! function_exists('trailing_slash_url')) {
+    /**
+     * Pastikan URL publik berakhiran '/', kecuali file, query string, fragment, dan endpoint sistem.
+     */
+    function trailing_slash_url(string $url): string
+    {
+        // Punya query string atau fragment → biarkan
+        if (str_contains($url, '?') || str_contains($url, '#')) {
+            return $url;
+        }
+
+        $path = parse_url($url, PHP_URL_PATH) ?? '';
+
+        // Root domain
+        if ($path === '' || $path === '/') {
+            return rtrim($url, '/').'/';
+        }
+
+        // Sudah berakhiran slash
+        if (str_ends_with($url, '/')) {
+            return $url;
+        }
+
+        // Berakhiran ekstensi file → biarkan
+        if (preg_match('#\.[a-zA-Z0-9]{1,6}$#', $path)) {
+            return $url;
+        }
+
+        // Endpoint sistem → biarkan
+        $excluded = ['/ctrlpanel', '/feed', '/search', '/lang/', '/forms/', '/api/', '/livewire/', '/_deferred/'];
+        foreach ($excluded as $prefix) {
+            if (str_starts_with($path, $prefix)) {
+                return $url;
+            }
+        }
+
+        return $url.'/';
+    }
+}
+
+if (! function_exists('strip_leading_image')) {
+    /**
+     * Strip the first image from HTML content if it appears before any text.
+     * Useful when the featured image is already rendered separately above the content.
+     */
+    function strip_leading_image(?string $html): string
+    {
+        if (empty($html)) {
+            return '';
+        }
+
+        $emptyBlocks = '(?:\s*<p[^>]*>\s*(?:&nbsp;|\s)*<\/p>\s*|<br\s*\/?>\s*)*';
+
+        $pattern = '/^'.$emptyBlocks.
+                   '(?:'.
+                   '<(?:figure|p|div|h[1-6]|header)[^>]*>\s*(?:<a[^>]*>)?\s*<img[^>]+>\s*(?:<\/a>)?\s*(?:<figcaption[^>]*>.*?<\/figcaption>)?\s*<\/(?:figure|p|div|h[1-6]|header)>'.
+                   '|'.
+                   '(?:<a[^>]*>)?\s*<img[^>]+>\s*(?:<\/a>)?'.
+                   ')'.
+                   $emptyBlocks.'/is';
+
+        return (string) preg_replace($pattern, '', $html, 1);
     }
 }

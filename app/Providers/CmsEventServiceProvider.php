@@ -10,9 +10,12 @@ use App\Models\CptEntry;
 use App\Models\FormEntry;
 use App\Models\Media;
 use App\Models\Page;
+use App\Models\PageBlock;
 use App\Models\User;
 use App\Observers\CptEntryObserver;
+use App\Observers\PageBlockObserver;
 use App\Observers\PageObserver;
+use App\Observers\PostObserver;
 use App\Observers\UserObserver;
 use App\Services\CacheManager;
 use App\Services\WebhookDispatcher;
@@ -108,13 +111,18 @@ class CmsEventServiceProvider extends ServiceProvider
     }
 
     /**
-     * Audit log: track CRUD on core models.
+     * Audit log: track CRUD on core models and sync search index.
      */
     protected function registerModelObservers(): void
     {
         Page::observe(PageObserver::class);
+        PageBlock::observe(PageBlockObserver::class);
         CptEntry::observe(CptEntryObserver::class);
         User::observe(UserObserver::class);
+
+        if (class_exists(Post::class)) {
+            Post::observe(PostObserver::class);
+        }
     }
 
     /**

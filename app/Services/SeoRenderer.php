@@ -70,6 +70,8 @@ class SeoRenderer
 
         if (strtolower(trim((string) $rawTitle)) === strtolower(trim((string) $siteName))) {
             $title = $siteName.($tagline ? " {$titleSeparator} {$tagline}" : '');
+        } elseif (str_ends_with(strtolower(trim((string) $rawTitle)), strtolower(trim((string) $siteName)))) {
+            $title = $rawTitle;
         } else {
             $title = strtr($titleTemplate, [
                 '{page}' => $rawTitle,
@@ -90,16 +92,27 @@ class SeoRenderer
             $typePatternDesc = (string) setting("seo_taxonomy_{$taxSlug}_description_pattern");
         }
 
+        $currentLocale = app()->getLocale();
+        $defaultSiteDesc = (string) (setting("seo_default_description_{$currentLocale}") ?: setting('seo_default_description'));
+        if (trim($defaultSiteDesc) === '') {
+            $defaultSiteDesc = (string) setting('site_description');
+        }
+
         $metaDesc = ($meta && ! empty($meta->description) && trim((string) $meta->description) !== '') ? $meta->description : null;
         $description = $overrides['description']
             ?? $metaDesc
             ?? $this->autoDescription($entity)
             ?? $typePatternDesc
-            ?? setting('seo_default_description');
+            ?? (! empty($defaultSiteDesc) ? $defaultSiteDesc : null);
 
         $canonical = $overrides['canonical']
             ?? $meta?->canonical_url
-            ?? ($entity && method_exists($entity, 'getUrl') ? $entity->getUrl() : request()->fullUrl());
+            ?? ($entity && method_exists($entity, 'getUrl') ? $entity->getUrl() : null)
+            ?? ($entity && method_exists($entity, 'getArchiveUrl') ? $entity->getArchiveUrl() : request()->fullUrl());
+
+        if ($canonical) {
+            $canonical = trailing_slash_url($canonical);
+        }
 
         // Robots Indexing Check (Content Type toggle / Taxonomy toggle / Global toggle)
         $isIndexed = true;
@@ -230,12 +243,27 @@ class SeoRenderer
 
         if (method_exists($entity, 'getUrl')) {
             foreach ($availableLocales as $loc) {
-                $hreflangs[$loc] = $entity->getUrl($loc);
+                if ($loc === $defaultLocale || ! method_exists($entity, 'hasTranslationForLocale') || $entity->hasTranslationForLocale($loc)) {
+                    $hreflangs[$loc] = $entity->getUrl($loc);
+                }
             }
             $hreflangs['x-default'] = $entity->getUrl($defaultLocale);
+        } elseif (method_exists($entity, 'getArchiveUrl')) {
+            foreach ($availableLocales as $loc) {
+                $hreflangs[$loc] = $entity->getArchiveUrl($loc);
+            }
+            $hreflangs['x-default'] = $entity->getArchiveUrl($defaultLocale);
         }
 
-        return array_filter($hreflangs);
+        $filtered = array_filter($hreflangs);
+
+        // Only emit hreflangs if there are multiple distinct language versions
+        $localesOnly = array_filter($filtered, fn ($key) => $key !== 'x-default', ARRAY_FILTER_USE_KEY);
+        if (count(array_unique($localesOnly)) <= 1) {
+            return [];
+        }
+
+        return $filtered;
     }
 
     /**
@@ -326,12 +354,29 @@ class SeoRenderer
             ->where('locale', $currentLocale)
             ->first();
 
-        // Fallback to default locale
-        if (! $meta) {
-            $meta = SeoMeta::where('seoable_type', $seoableType)
-                ->where('seoable_id', $seoableId)
-                ->where('locale', '')
-                ->first();
+        // Fallback or merge from default locale ('')
+        $fallbackMeta = SeoMeta::where('seoable_type', $seoableType)
+            ->where('seoable_id', $seoableId)
+            ->where('locale', '')
+            ->first();
+
+        if ($fallbackMeta) {
+            if (! $meta) {
+                $meta = $fallbackMeta;
+            } else {
+                if (empty($meta->title) && ! empty($fallbackMeta->title)) {
+                    $meta->title = $fallbackMeta->title;
+                }
+                if (empty($meta->description) && ! empty($fallbackMeta->description)) {
+                    $meta->description = $fallbackMeta->description;
+                }
+                if (empty($meta->og_title) && ! empty($fallbackMeta->og_title)) {
+                    $meta->og_title = $fallbackMeta->og_title;
+                }
+                if (empty($meta->og_description) && ! empty($fallbackMeta->og_description)) {
+                    $meta->og_description = $fallbackMeta->og_description;
+                }
+            }
         }
 
         // Fallback to legacy JSON seo column (backward compat — pages/cpt_entries)
@@ -387,6 +432,12 @@ class SeoRenderer
             $excerpt = $entity->getBlockValue('hero_subtitle')
                 ?: ($entity->getBlockValue('subtitle') ?: ($entity->getBlockValue('description') ?: $entity->getBlockValue('intro')));
         }
+        if (empty($excerpt) && method_exists($entity, 'getTranslation')) {
+            $excerpt = $entity->getTranslation('description', $currentLocale);
+        }
+        if (empty($excerpt) && ! empty($entity->description)) {
+            $excerpt = (string) $entity->description;
+        }
 
         if (! empty($excerpt)) {
             $text = strip_tags((string) $excerpt);
@@ -398,7 +449,7 @@ class SeoRenderer
             }
         }
 
-        // 2. Fallback to Content (Localized, Direct Attribute, or Meta)
+        // 2. Fallback to Content (Localized, Direct Attribute, Meta, or Page Blocks)
         $content = null;
         if (method_exists($entity, 'getTranslation')) {
             $content = $entity->getTranslation('content', $currentLocale);
@@ -408,6 +459,12 @@ class SeoRenderer
         }
         if (empty($content) && method_exists($entity, 'getMeta')) {
             $content = $entity->getMeta('content') ?: $entity->getMeta('overview');
+        }
+        if (empty($content) && method_exists($entity, 'blocks')) {
+            $block = $entity->blocks()->where('is_active', true)->whereNotNull('value')->where('value', '!=', '')->orderBy('order')->first();
+            if ($block) {
+                $content = $block->value;
+            }
         }
 
         if (! empty($content)) {

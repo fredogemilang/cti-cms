@@ -8,6 +8,7 @@ use App\Models\PageBlock;
 use App\Services\ContentSanitizerService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
+use Plugins\Posts\Models\Post;
 
 class CleanImportedContentCommand extends Command
 {
@@ -28,7 +29,7 @@ class CleanImportedContentCommand extends Command
         $totalCleaned = 0;
 
         // 1. Clean Posts (if Posts plugin exists)
-        if (Schema::hasTable('posts') && class_exists(\Plugins\Posts\Models\Post::class)) {
+        if (Schema::hasTable('posts') && class_exists(Post::class)) {
             $totalCleaned += $this->cleanPosts($sanitizer, $dryRun);
         }
 
@@ -53,7 +54,7 @@ class CleanImportedContentCommand extends Command
 
     protected function cleanPosts(ContentSanitizerService $sanitizer, bool $dryRun): int
     {
-        $posts = \Plugins\Posts\Models\Post::all();
+        $posts = Post::all();
         $cleanedCount = 0;
 
         foreach ($posts as $post) {
@@ -93,7 +94,7 @@ class CleanImportedContentCommand extends Command
             }
         }
 
-        $this->line("  📄 Posts: {$cleanedCount} cleaned / " . $posts->count() . ' total');
+        $this->line("  📄 Posts: {$cleanedCount} cleaned / ".$posts->count().' total');
 
         return $cleanedCount;
     }
@@ -138,7 +139,7 @@ class CleanImportedContentCommand extends Command
             }
         }
 
-        $this->line("  📃 Pages: {$cleanedCount} cleaned / " . $pages->count() . ' total');
+        $this->line("  📃 Pages: {$cleanedCount} cleaned / ".$pages->count().' total');
 
         return $cleanedCount;
     }
@@ -183,7 +184,7 @@ class CleanImportedContentCommand extends Command
             }
         }
 
-        $this->line("  🧩 Page Blocks: {$cleanedCount} cleaned / " . $blocks->count() . ' total');
+        $this->line("  🧩 Page Blocks: {$cleanedCount} cleaned / ".$blocks->count().' total');
 
         return $cleanedCount;
     }
@@ -232,7 +233,7 @@ class CleanImportedContentCommand extends Command
             }
         }
 
-        $this->line("  📦 CPT Entries: {$cleanedCount} cleaned / " . $entries->count() . ' total');
+        $this->line("  📦 CPT Entries: {$cleanedCount} cleaned / ".$entries->count().' total');
 
         return $cleanedCount;
     }

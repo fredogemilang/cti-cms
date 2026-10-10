@@ -627,6 +627,21 @@ class AdminMenuBuilder
             'children' => [],
         ];
 
+        // AI & MCP Integration
+        $items[] = [
+            'key' => 'builtin:ai-mcp',
+            'title' => 'AI & MCP',
+            'icon' => 'smart_toy',
+            'permission' => 'settings.view',
+            'source' => 'core',
+            'source_label' => 'Core System',
+            'section' => $activeSectionMap['builtin:ai-mcp'] ?? 'SYSTEM',
+            'is_active' => true,
+            'activeRoutePattern' => 'admin.ai-settings.*',
+            'url' => route('admin.ai-settings.index'),
+            'children' => [],
+        ];
+
         // Settings — children are dynamic from SettingsRegistry
         $settingsGroups = app(SettingsRegistry::class)->groups();
         $settingsChildren = [];

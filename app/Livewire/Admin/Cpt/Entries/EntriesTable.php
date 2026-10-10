@@ -240,6 +240,7 @@ class EntriesTable extends Component
         return [
             'all' => array_sum($counts),
             'published' => $counts['published'] ?? 0,
+            'pending_review' => $counts['pending_review'] ?? 0,
             'draft' => $counts['draft'] ?? 0,
             'scheduled' => $counts['scheduled'] ?? 0,
             'archived' => $counts['archived'] ?? 0,

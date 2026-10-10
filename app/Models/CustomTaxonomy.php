@@ -132,7 +132,7 @@ class CustomTaxonomy extends Model
      */
     public function getArchiveUrl(): string
     {
-        return url('/'.$this->slug);
+        return trailing_slash_url(url('/'.$this->slug));
     }
 
     /**

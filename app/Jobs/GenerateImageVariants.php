@@ -53,8 +53,8 @@ class GenerateImageVariants implements ShouldQueue
         $srcW = imagesx($source);
         $srcH = imagesy($source);
 
-        $jpgQ = (int) (setting('img_jpg_quality', 85));
-        $webpQ = (int) (setting('img_webp_quality', 80));
+        $jpgQ = (int) (setting('img_jpg_quality', 80));
+        $webpQ = (int) (setting('img_webp_quality', 75));
         $emitWebp = (bool) setting('img_auto_webp', true);
 
         if (! function_exists('imagewebp')) {

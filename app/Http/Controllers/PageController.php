@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use App\Services\ThemeLoader;
 use Illuminate\Support\Facades\View;
+use Plugins\Posts\Models\Post;
 
 class PageController extends Controller
 {
@@ -17,6 +18,21 @@ class PageController extends Controller
 
         // Locale-aware slug lookup — auto-switches app locale if matched on a translated slug.
         $page = Page::findByLocalizedSlug($targetSlug);
+
+        // Legacy Fallback: If not a Page, check if it's a legacy WordPress root-level article (%postname% permalink)
+        if (! $page && is_plugin_active('posts') && class_exists(Post::class)) {
+            $post = Post::findByLocalizedSlug($targetSlug);
+            if ($post) {
+                $targetLocale = ($slug !== null && in_array($localeOrSlug, available_locales(), true))
+                    ? $localeOrSlug
+                    : app()->getLocale();
+                $canonicalUrl = $post->getUrl($targetLocale);
+                $queryString = request()->getQueryString();
+
+                return redirect($canonicalUrl.($queryString ? "?{$queryString}" : ''), 301);
+            }
+        }
+
         abort_if(! $page, 404);
 
         // Redirect homepage slug to canonical root URL to avoid duplicate content.
@@ -32,7 +48,7 @@ class PageController extends Controller
         // Enforce canonical localized URL redirect (e.g. /id/about-us -> /id/tentang-kami)
         $canonicalUrl = $page->getUrl(app()->getLocale());
         $currentUrl = request()->url();
-        if ($currentUrl !== $canonicalUrl) {
+        if (rtrim($currentUrl, '/') !== rtrim($canonicalUrl, '/')) {
             $queryString = request()->getQueryString();
 
             return redirect($canonicalUrl.($queryString ? "?{$queryString}" : ''), 301);
