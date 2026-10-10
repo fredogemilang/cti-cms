@@ -2,19 +2,19 @@
         @click.away="productOpen = false; solutionOpen = false; pricingOpen = false"
         style="height: 80px; padding: 0 80px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; flex-shrink: 0; box-sizing: border-box; background: #071C33; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.06)">
     
-    <a href="{{ url('/') }}" style="display: flex; align-items: center">
+    <a href="{{ url('/') }}" style="display: flex; align-items: center; text-decoration: none">
         <img src="{{ theme_asset('images/kouventa-logo.png') }}" alt="Kouventa home" style="height: 34px; width: auto; display: block">
     </a>
 
     <!-- Desktop Nav -->
-    <nav aria-label="Main" class="hidden lg:flex" style="gap: 40px; align-items: center">
+    <nav aria-label="Main" style="display: flex; gap: 40px; align-items: center">
         <!-- Product Dropdown -->
         <div style="position: relative">
             <button type="button" @click="productOpen = !productOpen; solutionOpen = false; pricingOpen = false"
                     :aria-expanded="productOpen"
-                    style="background: transparent; border: 0; padding: 12px 0; font-size: 15px; color: #D5DEE8; font-weight: 500; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px">
+                    style="background: transparent; border: 0; padding: 12px 0; font-size: 15px; color: #D5DEE8; font-weight: 500; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; cursor: pointer">
                 {{ t('kouventa.Product', 'Product') }}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" :class="{ 'rotate-180': productOpen }"><path d="m6 9 6 6 6-6"></path></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" :style="productOpen ? 'transform: rotate(180deg)' : ''" style="transition: transform 0.2s ease"><path d="m6 9 6 6 6-6"></path></svg>
             </button>
             <div x-show="productOpen" x-transition x-cloak
                  style="position: absolute; top: 52px; left: -16px; width: 300px; background: #FFFFFF; border-radius: 14px; padding: 8px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 2px; z-index: 20">
@@ -33,9 +33,9 @@
         <div style="position: relative">
             <button type="button" @click="solutionOpen = !solutionOpen; productOpen = false; pricingOpen = false"
                     :aria-expanded="solutionOpen"
-                    style="background: transparent; border: 0; padding: 12px 0; font-size: 15px; color: #D5DEE8; font-weight: 500; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px">
+                    style="background: transparent; border: 0; padding: 12px 0; font-size: 15px; color: #D5DEE8; font-weight: 500; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; cursor: pointer">
                 {{ t('kouventa.Solution', 'Solution') }}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" :class="{ 'rotate-180': solutionOpen }"><path d="m6 9 6 6 6-6"></path></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" :style="solutionOpen ? 'transform: rotate(180deg)' : ''" style="transition: transform 0.2s ease"><path d="m6 9 6 6 6-6"></path></svg>
             </button>
             <div x-show="solutionOpen" x-transition x-cloak
                  style="position: absolute; top: 52px; left: -200px; width: 560px; background: #FFFFFF; border-radius: 16px; padding: 20px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; color: #0E1A24; z-index: 20">
@@ -61,9 +61,9 @@
         <div style="position: relative">
             <button type="button" @click="pricingOpen = !pricingOpen; productOpen = false; solutionOpen = false"
                     :aria-expanded="pricingOpen"
-                    style="background: transparent; border: 0; padding: 12px 0; font-size: 15px; color: #D5DEE8; font-weight: 500; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px">
+                    style="background: transparent; border: 0; padding: 12px 0; font-size: 15px; color: #D5DEE8; font-weight: 500; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; cursor: pointer">
                 {{ t('kouventa.Pricing', 'Pricing') }}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" :class="{ 'rotate-180': pricingOpen }"><path d="m6 9 6 6 6-6"></path></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" :style="pricingOpen ? 'transform: rotate(180deg)' : ''" style="transition: transform 0.2s ease"><path d="m6 9 6 6 6-6"></path></svg>
             </button>
             <div x-show="pricingOpen" x-transition x-cloak
                  style="position: absolute; top: 52px; left: -16px; width: 300px; background: #FFFFFF; border-radius: 14px; padding: 8px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 2px; z-index: 20">
@@ -78,8 +78,8 @@
             </div>
         </div>
 
-        <a href="{{ url('/about') }}" style="color: #D5DEE8; font-size: 15px; font-weight: 500">{{ t('kouventa.About us', 'About us') }}</a>
-        <a href="{{ url('/insight') }}" style="color: #D5DEE8; font-size: 15px; font-weight: 500">{{ t('kouventa.Insight', 'Insight') }}</a>
+        <a href="{{ url('/about') }}" style="color: #D5DEE8; font-size: 15px; font-weight: 500; text-decoration: none">{{ t('kouventa.About us', 'About us') }}</a>
+        <a href="{{ url('/insight') }}" style="color: #D5DEE8; font-size: 15px; font-weight: 500; text-decoration: none">{{ t('kouventa.Insight', 'Insight') }}</a>
     </nav>
 
     <!-- Header Actions (Lang Switcher & Book Demo) -->
@@ -95,22 +95,5 @@
         <a href="{{ url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 15px; font-weight: 700; padding: 12px 22px; border-radius: 12px; display: inline-block; text-decoration: none">
             {{ t('kouventa.Book a demo', 'Book a demo') }}
         </a>
-
-        <!-- Mobile hamburger toggle button -->
-        <button type="button" @click="mobileOpen = !mobileOpen" class="flex lg:hidden p-2 text-white">
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
-        </button>
-    </div>
-
-    <!-- Mobile Drawer Menu -->
-    <div x-show="mobileOpen" x-transition x-cloak class="lg:hidden fixed inset-x-0 top-[80px] bg-[#071C33] p-6 border-b border-white/10 flex flex-col gap-4 text-white z-40">
-        <a href="{{ url('/product/ai') }}" class="py-2 text-lg font-semibold">{{ t('kouventa.Product AI', 'Product AI') }}</a>
-        <a href="{{ url('/product/customer-engagement') }}" class="py-2 text-lg font-semibold">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</a>
-        <a href="{{ url('/solutions/ai') }}" class="py-2 text-lg font-semibold">{{ t('kouventa.Solution AI', 'Solution AI') }}</a>
-        <a href="{{ url('/solutions/customer-engagement') }}" class="py-2 text-lg font-semibold">{{ t('kouventa.Solution CE', 'Solution CE') }}</a>
-        <a href="{{ url('/pricing') }}" class="py-2 text-lg font-semibold">{{ t('kouventa.Pricing', 'Pricing') }}</a>
-        <a href="{{ url('/about') }}" class="py-2 text-lg font-semibold">{{ t('kouventa.About us', 'About us') }}</a>
-        <a href="{{ url('/insight') }}" class="py-2 text-lg font-semibold">{{ t('kouventa.Insight', 'Insight') }}</a>
-        <a href="{{ url('/book-demo') }}" class="py-3 px-6 rounded-xl bg-[#2BD46A] text-[#06251A] text-center font-bold">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
     </div>
 </header>
