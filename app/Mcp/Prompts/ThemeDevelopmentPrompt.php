@@ -24,7 +24,7 @@ class ThemeDevelopmentPrompt extends Prompt
     public function handle(Request $request): Response
     {
         $theme = app(ThemeLoader::class)->getActiveTheme();
-        $themeName = $theme ? $theme->getName() : 'cdt';
+        $themeName = $theme ? $theme->getName() : 'default';
         $themePath = $theme ? $theme->getPath() : base_path("themes/{$themeName}");
 
         $output = <<<TEXT

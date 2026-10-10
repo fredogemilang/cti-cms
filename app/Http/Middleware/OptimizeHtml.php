@@ -148,8 +148,8 @@ class OptimizeHtml
 
         // When the deferred stylesheet finally applies, every element whose
         // computed style differs from the critical-CSS state starts its CSS
-        // transition at once (344 animations in one 200ms task on the CDT
-        // homepage) and shifts layout. Suppress transitions while <html> carries
+        // transition at once (344 animations in one 200ms task on a real
+        // production homepage) and shifts layout. Suppress transitions while <html> carries
         // `css-pending`; the last deferred link's onload removes it. No-JS users
         // keep the class (transitions off) but still get the <noscript> sheet.
         $onload = 'this.onload=null;this.rel=\'stylesheet\';'

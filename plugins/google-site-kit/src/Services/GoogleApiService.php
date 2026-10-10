@@ -1038,15 +1038,15 @@ class GoogleApiService
         $factor = $days / 28;
 
         $masterQueries = [
-            ['query' => 'central data technology', 'clicks' => 318, 'impressions' => 2450, 'ctr' => 13.0, 'position' => 1.1],
+            ['query' => 'example company', 'clicks' => 318, 'impressions' => 2450, 'ctr' => 13.0, 'position' => 1.1],
             ['query' => 'cloud migration enterprise indonesia', 'clicks' => 192, 'impressions' => 2180, 'ctr' => 8.8, 'position' => 2.3],
             ['query' => 'oracle cloud infrastructure indonesia partner', 'clicks' => 148, 'impressions' => 1890, 'ctr' => 7.8, 'position' => 2.8],
             ['query' => 'database modernization enterprise', 'clicks' => 134, 'impressions' => 1690, 'ctr' => 7.9, 'position' => 3.1],
-            ['query' => 'hybrid cloud architecture cdt', 'clicks' => 118, 'impressions' => 1460, 'ctr' => 8.1, 'position' => 2.9],
+            ['query' => 'hybrid cloud architecture services', 'clicks' => 118, 'impressions' => 1460, 'ctr' => 8.1, 'position' => 2.9],
             ['query' => 'devops automation managed services jakarta', 'clicks' => 102, 'impressions' => 1320, 'ctr' => 7.7, 'position' => 3.4],
             ['query' => 'it infrastructure consultant indonesia', 'clicks' => 89, 'impressions' => 1210, 'ctr' => 7.4, 'position' => 3.8],
             ['query' => 'cyber security risk assessment enterprise', 'clicks' => 78, 'impressions' => 1060, 'ctr' => 7.4, 'position' => 4.0],
-            ['query' => 'multi cloud monitoring solutions cdt', 'clicks' => 68, 'impressions' => 950, 'ctr' => 7.2, 'position' => 4.2],
+            ['query' => 'multi cloud monitoring solutions', 'clicks' => 68, 'impressions' => 950, 'ctr' => 7.2, 'position' => 4.2],
             ['query' => 'f5 load balancer partner indonesia', 'clicks' => 56, 'impressions' => 840, 'ctr' => 6.7, 'position' => 4.5],
             ['query' => 'enterprise kubernetes management services', 'clicks' => 49, 'impressions' => 760, 'ctr' => 6.4, 'position' => 4.7],
             ['query' => 'disaster recovery as a service indonesia', 'clicks' => 43, 'impressions' => 710, 'ctr' => 6.1, 'position' => 4.9],
@@ -1087,16 +1087,16 @@ class GoogleApiService
         $factor = $days / 28;
 
         $masterPages = [
-            ['title' => 'Central Data Technology - Enterprise Cloud & IT Infrastructure', 'path' => '/', 'views' => 4920, 'sessions' => 3280, 'bounce' => 34.2],
-            ['title' => 'Cloud Infrastructure Modernization | Central Data Technology', 'path' => '/solutions/cloud-infrastructure', 'views' => 2480, 'sessions' => 1910, 'bounce' => 38.5],
-            ['title' => 'Cyber Security & Threat Protection Solutions | CDT', 'path' => '/solutions/cyber-security', 'views' => 1860, 'sessions' => 1370, 'bounce' => 41.0],
-            ['title' => 'About Central Data Technology | Trusted IT Distributor', 'path' => '/about-us', 'views' => 1560, 'sessions' => 1190, 'bounce' => 44.6],
-            ['title' => 'Enterprise Technology Partners & Ecosystem | CDT', 'path' => '/partners', 'views' => 1410, 'sessions' => 1040, 'bounce' => 42.1],
-            ['title' => 'Data Management & Modern Analytics | Central Data Technology', 'path' => '/solutions/data-management', 'views' => 1250, 'sessions' => 960, 'bounce' => 39.8],
-            ['title' => 'Managed Services & IT Operations | CDT', 'path' => '/services/managed-services', 'views' => 1080, 'sessions' => 830, 'bounce' => 45.2],
-            ['title' => 'Insights, Whitepapers & Case Studies | Central Data Technology', 'path' => '/insights', 'views' => 940, 'sessions' => 750, 'bounce' => 47.3],
-            ['title' => 'Contact Us & Request Consultation | Central Data Technology', 'path' => '/contact-us', 'views' => 880, 'sessions' => 710, 'bounce' => 28.4],
-            ['title' => 'Careers & Opportunities at Central Data Technology', 'path' => '/careers', 'views' => 650, 'sessions' => 520, 'bounce' => 48.9],
+            ['title' => 'Example Site - Enterprise Cloud & IT Infrastructure', 'path' => '/', 'views' => 4920, 'sessions' => 3280, 'bounce' => 34.2],
+            ['title' => 'Cloud Infrastructure Modernization | Example Site', 'path' => '/solutions/cloud-infrastructure', 'views' => 2480, 'sessions' => 1910, 'bounce' => 38.5],
+            ['title' => 'Cyber Security & Threat Protection Solutions | Example Site', 'path' => '/solutions/cyber-security', 'views' => 1860, 'sessions' => 1370, 'bounce' => 41.0],
+            ['title' => 'About Example Site | Trusted IT Distributor', 'path' => '/about-us', 'views' => 1560, 'sessions' => 1190, 'bounce' => 44.6],
+            ['title' => 'Enterprise Technology Partners & Ecosystem | Example Site', 'path' => '/partners', 'views' => 1410, 'sessions' => 1040, 'bounce' => 42.1],
+            ['title' => 'Data Management & Modern Analytics | Example Site', 'path' => '/solutions/data-management', 'views' => 1250, 'sessions' => 960, 'bounce' => 39.8],
+            ['title' => 'Managed Services & IT Operations | Example Site', 'path' => '/services/managed-services', 'views' => 1080, 'sessions' => 830, 'bounce' => 45.2],
+            ['title' => 'Insights, Whitepapers & Case Studies | Example Site', 'path' => '/insights', 'views' => 940, 'sessions' => 750, 'bounce' => 47.3],
+            ['title' => 'Contact Us & Request Consultation | Example Site', 'path' => '/contact-us', 'views' => 880, 'sessions' => 710, 'bounce' => 28.4],
+            ['title' => 'Careers & Opportunities at Example Site', 'path' => '/careers', 'views' => 650, 'sessions' => 520, 'bounce' => 48.9],
         ];
 
         $results = [];

@@ -58,7 +58,7 @@ class ConventionsResource extends Resource
 | CPT slug | `kebab-case` | `technology-alliance` |
 | Meta field key | `snake_case` | `hero_image` |
 | Template name | `kebab-case` | `home`, `about-us` |
-| Translation key | `dot.separated` | `cdt.hero_title` |
+| Translation key | `dot.separated` | `home.hero_title` |
 | Blade partial | `kebab-case` | `hero-section.blade.php` |
 
 ## Plugin Safety

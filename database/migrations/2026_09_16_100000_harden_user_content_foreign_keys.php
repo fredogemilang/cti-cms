@@ -20,7 +20,7 @@ return new class extends Migration
                 if ($driver !== 'sqlite') {
                     try {
                         $table->dropForeign(['author_id']);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         // Ignore if constraint does not exist
                     }
                 }
@@ -37,7 +37,7 @@ return new class extends Migration
                 if ($driver !== 'sqlite') {
                     try {
                         $table->dropForeign(['author_id']);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         // Ignore if constraint does not exist
                     }
                 }
@@ -54,7 +54,7 @@ return new class extends Migration
                 if ($driver !== 'sqlite') {
                     try {
                         $table->dropForeign(['uploaded_by']);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         // Ignore if constraint does not exist
                     }
                 }
@@ -71,7 +71,7 @@ return new class extends Migration
                 if ($driver !== 'sqlite') {
                     try {
                         $table->dropForeign(['user_id']);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         // Ignore if constraint does not exist
                     }
                 }
@@ -89,7 +89,7 @@ return new class extends Migration
                 if ($driver !== 'sqlite') {
                     try {
                         $table->dropForeign(['user_id']);
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         // Ignore if constraint does not exist
                     }
                 }
@@ -114,7 +114,8 @@ return new class extends Migration
                 if ($driver !== 'sqlite') {
                     try {
                         $table->dropForeign(['author_id']);
-                    } catch (\Exception $e) {}
+                    } catch (Exception $e) {
+                    }
                 }
                 $table->foreign('author_id')
                     ->references('id')
@@ -128,7 +129,8 @@ return new class extends Migration
                 if ($driver !== 'sqlite') {
                     try {
                         $table->dropForeign(['author_id']);
-                    } catch (\Exception $e) {}
+                    } catch (Exception $e) {
+                    }
                 }
                 $table->foreign('author_id')
                     ->references('id')
@@ -142,7 +144,8 @@ return new class extends Migration
                 if ($driver !== 'sqlite') {
                     try {
                         $table->dropForeign(['uploaded_by']);
-                    } catch (\Exception $e) {}
+                    } catch (Exception $e) {
+                    }
                 }
                 $table->foreign('uploaded_by')
                     ->references('id')

@@ -76,7 +76,7 @@
                 <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 flex items-center justify-center shrink-0">
                     <span class="material-symbols-outlined text-indigo-600 dark:text-indigo-400 text-[18px]">info</span>
                 </div>
-                <span>Currently displaying <strong>CDT Sandbox / Benchmark Data</strong>. Connect your Google account with OAuth Client ID in <a href="{{ route('admin.google-site-kit.settings') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline font-bold">Site Kit Settings</a> to stream live Search Console and GA4 metrics.</span>
+                <span>Currently displaying <strong>Sandbox / Benchmark Data</strong>. Connect your Google account with OAuth Client ID in <a href="{{ route('admin.google-site-kit.settings') }}" class="text-indigo-600 dark:text-indigo-400 hover:underline font-bold">Site Kit Settings</a> to stream live Search Console and GA4 metrics.</span>
             </div>
             <a href="{{ route('admin.google-site-kit.settings') }}" class="shrink-0 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition shadow-sm">
                 Configure OAuth

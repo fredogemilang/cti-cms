@@ -77,7 +77,7 @@ TEXT;
 1. **Meta Title**:
    - Optimal length: 50–60 characters.
    - Must include primary keyword early in the title.
-   - Append brand name if space permits (e.g. `| CDT`).
+   - Append brand name if space permits (e.g. `| Brand`).
 2. **Meta Description**:
    - Optimal length: 130–155 characters (strict max 160).
    - Action-oriented call-to-action (CTA) or clear value proposition.

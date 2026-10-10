@@ -6,7 +6,9 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Services\ThemeLoader;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
+use Plugins\GoogleSiteKit\Livewire\Dashboard;
 use Plugins\GoogleSiteKit\Providers\GoogleSiteKitServiceProvider;
 use Plugins\GoogleSiteKit\Services\GoogleApiService;
 use Tests\TestCase;
@@ -200,7 +202,7 @@ class GoogleSiteKitTest extends TestCase
     #[Test]
     public function dashboard_livewire_component_renders_and_switches_date_ranges(): void
     {
-        \Livewire\Livewire::test(\Plugins\GoogleSiteKit\Livewire\Dashboard::class)
+        Livewire::test(Dashboard::class)
             ->assertSee('Google Site Kit Dashboard')
             ->assertSee('Search Funnel')
             ->assertSee('Top Search Queries')

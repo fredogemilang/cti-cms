@@ -1,7 +1,11 @@
-@if(view()->exists('cdt::posts.index'))
-    @include('cdt::posts.index')
+@php
+    $blogThemeSlug = active_theme()?->slug ?? 'default';
+    $blogLayout = view()->exists($blogThemeSlug.'::layouts.app') ? $blogThemeSlug.'::layouts.app' : 'default::layouts.app';
+@endphp
+@if(view()->exists($blogThemeSlug.'::posts.index'))
+    @include($blogThemeSlug.'::posts.index')
 @else
-    @extends('cdt::layouts.app')
+    @extends($blogLayout)
 
     @php
         $locale = app()->getLocale();
@@ -43,7 +47,7 @@
         $allTags = \Plugins\Posts\Models\Tag::orderBy('name')->get();
     @endphp
 
-    @section('title', 'Blog & News - ' . setting('site_name', 'Central Data Technology'))
+    @section('title', 'Blog & News - ' . setting('site_name', config('app.name')))
 
     @section('content')
     <!-- Minimal Page Header & Featured Section -->

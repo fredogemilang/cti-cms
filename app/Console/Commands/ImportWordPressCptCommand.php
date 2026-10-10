@@ -26,7 +26,7 @@ class ImportWordPressCptCommand extends Command
      * @var string
      */
     protected $signature = 'cms:import-wp
-                            {--url= : WordPress Site Base URL (e.g. https://www.centraldatatech.com)}
+                            {--url= : WordPress Site Base URL (e.g. https://www.example.com)}
                             {--wp-cpt=post : WordPress Post Type slug}
                             {--target=plugin_post : Target CMS Post Type ID or "plugin_post"}
                             {--download-featured-image=1 : Download featured images (1/0)}
@@ -59,7 +59,7 @@ class ImportWordPressCptCommand extends Command
 
         $this->wpUrl = rtrim((string) $this->option('url'), '/');
         if (empty($this->wpUrl)) {
-            $this->wpUrl = (string) $this->ask('Enter WordPress Site Base URL (e.g. https://www.centraldatatech.com)');
+            $this->wpUrl = (string) $this->ask('Enter WordPress Site Base URL (e.g. https://www.example.com)');
             $this->wpUrl = rtrim($this->wpUrl, '/');
         }
 

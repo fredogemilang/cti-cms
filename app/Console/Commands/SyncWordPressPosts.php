@@ -22,28 +22,40 @@ class SyncWordPressPosts extends Command
     protected $signature = 'posts:sync-wordpress
                             {--fresh : Wipe existing posts, relations, and post SEO meta before sync}
                             {--limit= : Limit number of clusters/articles to process}
-                            {--url=https://www.centraldatatech.com : WordPress base URL}
+                            {--url= : WordPress base URL (required, e.g. https://www.example.com)}
                             {--skip-images : Skip downloading missing images}';
 
     protected $description = 'Pull, pair, and synchronize all blog posts from WordPress REST API with full Yoast SEO metadata';
+
+    /**
+     * Source WordPress host without "www." (used for placeholder author emails & media descriptions).
+     */
+    protected string $sourceHost = '';
 
     public function handle(): int
     {
         ini_set('memory_limit', '1024M');
         set_time_limit(0);
 
-        $baseUrl = rtrim($this->option('url'), '/');
+        $baseUrl = rtrim((string) $this->option('url'), '/');
+        if ($baseUrl === '' || ! filter_var($baseUrl, FILTER_VALIDATE_URL)) {
+            $this->error('The --url option is required, e.g. --url=https://www.example.com');
+
+            return self::FAILURE;
+        }
+        $this->sourceHost = (string) preg_replace('/^www\./i', '', (string) parse_url($baseUrl, PHP_URL_HOST));
+
         $isFresh = $this->option('fresh');
         $limit = $this->option('limit') ? (int) $this->option('limit') : null;
         $skipImages = $this->option('skip-images');
 
-        $this->info("========================================================");
-        $this->info("  WordPress Posts & SEO Sync for Central Data Tech");
+        $this->info('========================================================');
+        $this->info('  WordPress Posts & SEO Sync');
         $this->info("  Source: {$baseUrl}");
-        $this->info("========================================================");
+        $this->info('========================================================');
 
         if ($isFresh) {
-            $this->warn("⚠️  --fresh option specified: Wiping existing posts and SEO metadata...");
+            $this->warn('⚠️  --fresh option specified: Wiping existing posts and SEO metadata...');
             Schema::disableForeignKeyConstraints();
             DB::table('category_post')->truncate();
             DB::table('post_tag')->truncate();
@@ -54,7 +66,7 @@ class SyncWordPressPosts extends Command
         }
 
         // 1. Fetch all posts from WordPress REST API
-        $this->info("Fetching all posts from WordPress REST API...");
+        $this->info('Fetching all posts from WordPress REST API...');
         $allWpPosts = [];
         $page = 1;
 
@@ -75,7 +87,7 @@ class SyncWordPressPosts extends Command
 
             $posts = $response->json();
             if (empty($posts)) {
-                $this->output->writeln("<comment>No more posts.</comment>");
+                $this->output->writeln('<comment>No more posts.</comment>');
                 break;
             }
 
@@ -97,12 +109,13 @@ class SyncWordPressPosts extends Command
         $this->info("Total WordPress posts downloaded: {$totalWpPosts}\n");
 
         if ($totalWpPosts === 0) {
-            $this->error("No posts found. Exiting.");
+            $this->error('No posts found. Exiting.');
+
             return 1;
         }
 
         // 2. Cluster posts by Polylang translation pairings
-        $this->info("Grouping posts by Polylang bilingual translations...");
+        $this->info('Grouping posts by Polylang bilingual translations...');
         $clusters = [];
         $visited = [];
 
@@ -122,8 +135,12 @@ class SyncWordPressPosts extends Command
             $enId = $tr['en'] ?? ($lang === 'en' ? $wpId : null);
             $idId = $tr['id'] ?? ($lang === 'id' ? $wpId : null);
 
-            if ($enId) $visited[$enId] = true;
-            if ($idId) $visited[$idId] = true;
+            if ($enId) {
+                $visited[$enId] = true;
+            }
+            if ($idId) {
+                $visited[$idId] = true;
+            }
             $visited[$wpId] = true;
 
             $clusters[] = [
@@ -155,6 +172,7 @@ class SyncWordPressPosts extends Command
 
             if (! $enPost && ! $idPost) {
                 $bar->advance();
+
                 continue;
             }
 
@@ -177,7 +195,7 @@ class SyncWordPressPosts extends Command
             if (! isset($authorCache[$authorSlug])) {
                 $author = PostAuthor::firstOrCreate(
                     ['slug' => $authorSlug],
-                    ['name' => $authorName, 'email' => "{$authorSlug}@centraldatatech.com"]
+                    ['name' => $authorName, 'email' => "{$authorSlug}@{$this->sourceHost}"]
                 );
                 $authorCache[$authorSlug] = $author->id;
             }
@@ -207,7 +225,7 @@ class SyncWordPressPosts extends Command
 
                 // Fallback: extract first image from content if no wp:featuredmedia
                 if (! $featuredImageUrl) {
-                    $combinedContent = ($primaryContent ?? '') . ' ' . ($idPost['content']['rendered'] ?? '');
+                    $combinedContent = ($primaryContent ?? '').' '.($idPost['content']['rendered'] ?? '');
                     if (preg_match('/<img[^>]+src=["\']([^"\']+)["\']/i', $combinedContent, $imgMatch)) {
                         $featuredImageUrl = $imgMatch[1];
                     }
@@ -257,9 +275,9 @@ class SyncWordPressPosts extends Command
         $bar->finish();
         $this->newLine(2);
 
-        $this->info("========================================================");
+        $this->info('========================================================');
         $this->info("  SYNC COMPLETE: Successfully synchronized {$successCount} articles!");
-        $this->info("========================================================");
+        $this->info('========================================================');
 
         return 0;
     }
@@ -271,7 +289,7 @@ class SyncWordPressPosts extends Command
     {
         try {
             if (Str::startsWith($url, '//')) {
-                $url = 'https:' . $url;
+                $url = 'https:'.$url;
             }
 
             $urlPath = parse_url($url, PHP_URL_PATH) ?? '';
@@ -300,7 +318,7 @@ class SyncWordPressPosts extends Command
                 mkdir($tmpDir, 0755, true);
             }
 
-            $tmpPath = $tmpDir . '/' . uniqid('wp_img_') . '_' . $originalFilename;
+            $tmpPath = $tmpDir.'/'.uniqid('wp_img_').'_'.$originalFilename;
             file_put_contents($tmpPath, $response->body());
 
             $mimeType = $response->header('Content-Type') ?: mime_content_type($tmpPath) ?: 'image/jpeg';
@@ -308,7 +326,7 @@ class SyncWordPressPosts extends Command
 
             $media = $mediaService->upload($uploadedFile, [
                 'title' => pathinfo($originalFilename, PATHINFO_FILENAME),
-                'description' => 'Imported from WordPress centraldatatech.com',
+                'description' => 'Imported from WordPress '.$this->sourceHost,
                 'alt_text' => pathinfo($originalFilename, PATHINFO_FILENAME),
             ]);
 
@@ -316,7 +334,8 @@ class SyncWordPressPosts extends Command
 
             return $media->path;
         } catch (\Throwable $e) {
-            Log::warning("Failed downloading media {$url}: " . $e->getMessage());
+            Log::warning("Failed downloading media {$url}: ".$e->getMessage());
+
             return null;
         }
     }
@@ -330,8 +349,11 @@ class SyncWordPressPosts extends Command
         $yoastId = $idPost['yoast_head_json'] ?? [];
 
         $cleanText = function (?string $text): ?string {
-            if (empty($text)) return null;
+            if (empty($text)) {
+                return null;
+            }
             $text = html_entity_decode(strip_tags($text), ENT_QUOTES, 'UTF-8');
+
             return preg_replace('/\s+/', ' ', trim($text));
         };
 
@@ -410,14 +432,18 @@ class SyncWordPressPosts extends Command
             $termGroups = $wpItem['_embedded']['wp:term'] ?? [];
 
             foreach ($termGroups as $group) {
-                if (! is_array($group)) continue;
+                if (! is_array($group)) {
+                    continue;
+                }
 
                 foreach ($group as $term) {
                     $taxonomy = $term['taxonomy'] ?? '';
                     $name = html_entity_decode(trim($term['name'] ?? ''), ENT_QUOTES, 'UTF-8');
                     $slug = $term['slug'] ?? Str::slug($name);
 
-                    if (empty($name)) continue;
+                    if (empty($name)) {
+                        continue;
+                    }
 
                     if ($taxonomy === 'category') {
                         $baseSlug = preg_replace('/-\d+$/', '', $slug);
@@ -479,6 +505,7 @@ class SyncWordPressPosts extends Command
             $slug = "{$original}-{$counter}";
             $counter++;
         }
+
         return $slug;
     }
 }

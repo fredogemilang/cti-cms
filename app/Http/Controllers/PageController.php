@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use App\Services\ThemeLoader;
 use Illuminate\Support\Facades\View;
+use Plugins\Posts\Models\Post;
 
 class PageController extends Controller
 {
@@ -19,8 +20,8 @@ class PageController extends Controller
         $page = Page::findByLocalizedSlug($targetSlug);
 
         // Legacy Fallback: If not a Page, check if it's a legacy WordPress root-level article (%postname% permalink)
-        if (! $page && class_exists(\Plugins\Posts\Models\Post::class)) {
-            $post = \Plugins\Posts\Models\Post::findByLocalizedSlug($targetSlug);
+        if (! $page && is_plugin_active('posts') && class_exists(Post::class)) {
+            $post = Post::findByLocalizedSlug($targetSlug);
             if ($post) {
                 $targetLocale = ($slug !== null && in_array($localeOrSlug, available_locales(), true))
                     ? $localeOrSlug
@@ -28,7 +29,7 @@ class PageController extends Controller
                 $canonicalUrl = $post->getUrl($targetLocale);
                 $queryString = request()->getQueryString();
 
-                return redirect($canonicalUrl . ($queryString ? "?{$queryString}" : ''), 301);
+                return redirect($canonicalUrl.($queryString ? "?{$queryString}" : ''), 301);
             }
         }
 

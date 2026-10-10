@@ -6,8 +6,10 @@ namespace App\Models;
 use App\Traits\HasRoles;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -70,7 +72,7 @@ class User extends Authenticatable
     /**
      * Get pages authored by this user.
      */
-    public function pages(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function pages(): HasMany
     {
         return $this->hasMany(Page::class, 'author_id');
     }
@@ -78,7 +80,7 @@ class User extends Authenticatable
     /**
      * Get CPT entries authored by this user.
      */
-    public function cptEntries(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function cptEntries(): HasMany
     {
         return $this->hasMany(CptEntry::class, 'author_id');
     }
@@ -86,7 +88,7 @@ class User extends Authenticatable
     /**
      * Get media uploaded by this user.
      */
-    public function media(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function media(): HasMany
     {
         return $this->hasMany(Media::class, 'uploaded_by');
     }
@@ -94,7 +96,7 @@ class User extends Authenticatable
     /**
      * Get page revisions made by this user.
      */
-    public function pageRevisions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function pageRevisions(): HasMany
     {
         return $this->hasMany(PageRevision::class, 'user_id');
     }
@@ -126,7 +128,7 @@ class User extends Authenticatable
      */
     public function reassignContentTo(User $targetUser): void
     {
-        \Illuminate\Support\Facades\DB::transaction(function () use ($targetUser) {
+        DB::transaction(function () use ($targetUser) {
             Page::where('author_id', $this->id)->update(['author_id' => $targetUser->id]);
             CptEntry::where('author_id', $this->id)->update(['author_id' => $targetUser->id]);
             Media::where('uploaded_by', $this->id)->update(['uploaded_by' => $targetUser->id]);

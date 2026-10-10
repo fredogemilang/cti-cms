@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -203,6 +204,7 @@ class UsersTable extends Component
 
         if (! $user || $user->id === auth()->id()) {
             $this->cancelDeleteUser();
+
             return;
         }
 
@@ -211,6 +213,7 @@ class UsersTable extends Component
         if ($totalContent > 0) {
             if (! $this->reassignToUserId) {
                 session()->flash('error', 'Please select a user to attribute content to.');
+
                 return;
             }
 
@@ -221,6 +224,7 @@ class UsersTable extends Component
 
             if (! $targetUser) {
                 session()->flash('error', 'Invalid target user selected for content reassignment.');
+
                 return;
             }
 
@@ -228,7 +232,7 @@ class UsersTable extends Component
         }
 
         if ($user->avatar) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            Storage::disk('public')->delete($user->avatar);
         }
 
         $user->delete();
@@ -251,11 +255,12 @@ class UsersTable extends Component
         foreach ($users as $user) {
             if ($user->hasAuthoredContent()) {
                 $skippedCount++;
+
                 continue;
             }
 
             if ($user->avatar) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+                Storage::disk('public')->delete($user->avatar);
             }
 
             $user->delete();

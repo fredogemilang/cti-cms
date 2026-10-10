@@ -16,7 +16,7 @@
     $sendToUser = $notifications['send_to_user'] ?? false;
     $userSubject = $notifications['user_subject'] ?? "Thank you for your submission - {$form->name}";
     $userCcEmail = $notifications['user_cc_email'] ?? '';
-    $userEmailBody = $notifications['user_email_body'] ?? ("<p>Hi {name},</p><p>Thank you for submitting <strong>{form_name}</strong>. We have received your details and will get back to you shortly.</p><p><a href=\"".url('themes/cdt/assets/banner_hero-DHYDqbF8.jpg')."\" style=\"display: inline-block; background-color: #b82d25; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 9999px; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;\">Download Digital Solution Guide</a></p><p>Best regards,<br>Central Data Technology Team</p>");
+    $userEmailBody = $notifications['user_email_body'] ?? ('<p>Hi {name},</p><p>Thank you for submitting <strong>{form_name}</strong>. We have received your details and will get back to you shortly.</p><p>Best regards,<br>'.e(setting('site_name', config('app.name'))).' Team</p>');
 
     $confirmations = $form->confirmations ?? [];
     $confirmationType = $confirmations['type'] ?? 'message';
@@ -354,7 +354,7 @@ function formStudioController() {
             }
         },
         insertDownloadBtn(url, text) {
-            const btnHtml = `<p style='margin-top: 15px; margin-bottom: 15px;'><a href='${url}' style='display: inline-block; background-color: #b82d25; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 9999px; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;'>${text}</a></p>`;
+            const btnHtml = `<p style='margin-top: 15px; margin-bottom: 15px;'><a href='${url}' style='display: inline-block; background-color: #111827; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 9999px; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;'>${text}</a></p>`;
             if (window.userEmailEditor) {
                 const range = window.userEmailEditor.getSelection();
                 const index = range ? range.index : 0;
@@ -1198,8 +1198,8 @@ document.addEventListener('alpine:init', () => {
 
                             <button type="button"
                                 @click="
-                                    const url = prompt('Enter File Download URL:', '{{ url('themes/cdt/assets/banner_hero-DHYDqbF8.jpg') }}');
-                                    const text = prompt('Enter Button Label:', 'Download Digital Solution Guide');
+                                    const url = prompt('Enter File Download URL:', 'https://');
+                                    const text = prompt('Enter Button Label:', 'Download');
                                     if (url && text) insertDownloadBtn(url, text);
                                 "
                                 class="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-white hover:bg-red-700 transition-all flex items-center gap-1.5 shadow-sm">

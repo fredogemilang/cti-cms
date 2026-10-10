@@ -28,7 +28,7 @@ class EnsurePostFeaturedImages extends Command
         if (! $force) {
             $query->where(function ($q) {
                 $q->whereNull('featured_image')
-                  ->orWhere('featured_image', '');
+                    ->orWhere('featured_image', '');
             });
         }
 
@@ -37,7 +37,8 @@ class EnsurePostFeaturedImages extends Command
 
         $this->info("Found {$total} post(s) to inspect.");
         if ($total === 0) {
-            $this->info("All posts already have a featured image. Nothing to do.");
+            $this->info('All posts already have a featured image. Nothing to do.');
+
             return 0;
         }
 
@@ -50,23 +51,26 @@ class EnsurePostFeaturedImages extends Command
 
             $imageUrl = $this->extractFirstImage($post);
             if (! $imageUrl) {
-                $this->output->writeln("<comment>No image found in content.</comment>");
+                $this->output->writeln('<comment>No image found in content.</comment>');
                 $skipped++;
+
                 continue;
             }
 
             $this->output->write("found image: {$imageUrl}... ");
 
             if ($dryRun) {
-                $this->output->writeln("<info>[DRY RUN] would set image</info>");
+                $this->output->writeln('<info>[DRY RUN] would set image</info>');
                 $updated++;
+
                 continue;
             }
 
             $mediaPath = $this->resolveMedia($imageUrl, $mediaService);
             if (! $mediaPath) {
-                $this->output->writeln("<error>Failed to resolve/download image.</error>");
+                $this->output->writeln('<error>Failed to resolve/download image.</error>');
                 $failed++;
+
                 continue;
             }
 
@@ -78,13 +82,13 @@ class EnsurePostFeaturedImages extends Command
         }
 
         $this->newLine();
-        $this->info("==========================================");
-        $this->info("  Finished processing featured images");
+        $this->info('==========================================');
+        $this->info('  Finished processing featured images');
         $this->info("  Total inspected: {$total}");
         $this->info("  Updated:         {$updated}");
         $this->info("  Skipped (no img):{$skipped}");
         $this->info("  Failed:          {$failed}");
-        $this->info("==========================================");
+        $this->info('==========================================');
 
         return 0;
     }
@@ -134,11 +138,12 @@ class EnsurePostFeaturedImages extends Command
             if (! Str::startsWith($url, ['http://', 'https://', '//'])) {
                 $cleanPath = ltrim($url, '/');
                 $cleanPath = preg_replace('#^(storage/|public/)#', '', $cleanPath);
+
                 return $cleanPath;
             }
 
             if (Str::startsWith($url, '//')) {
-                $url = 'https:' . $url;
+                $url = 'https:'.$url;
             }
 
             $urlPath = parse_url($url, PHP_URL_PATH) ?? '';
@@ -167,7 +172,7 @@ class EnsurePostFeaturedImages extends Command
                 mkdir($tmpDir, 0755, true);
             }
 
-            $tmpPath = $tmpDir . '/' . uniqid('featured_img_') . '_' . $originalFilename;
+            $tmpPath = $tmpDir.'/'.uniqid('featured_img_').'_'.$originalFilename;
             file_put_contents($tmpPath, $response->body());
 
             $mimeType = $response->header('Content-Type') ?: mime_content_type($tmpPath) ?: 'image/jpeg';
@@ -183,7 +188,8 @@ class EnsurePostFeaturedImages extends Command
 
             return $media->path;
         } catch (\Throwable $e) {
-            Log::warning("Failed resolving featured image from {$url}: " . $e->getMessage());
+            Log::warning("Failed resolving featured image from {$url}: ".$e->getMessage());
+
             return null;
         }
     }

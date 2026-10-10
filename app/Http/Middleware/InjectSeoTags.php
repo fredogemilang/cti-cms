@@ -14,6 +14,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\View;
 use Plugins\Posts\Models\Category;
 use Plugins\Posts\Models\Tag;
@@ -107,6 +108,42 @@ class InjectSeoTags
     }
 
     /**
+     * Generic CPT entry lookup for custom (theme/plugin) routes whose slug
+     * parameters are not named after a model, e.g. /{parentSlug}/{childSlug}.
+     * The most specific (last) parameter is tried first, against every active CPT.
+     */
+    protected function resolveCptEntryFromRouteParameters(Route $route): ?Model
+    {
+        $reserved = [
+            'locale', 'localeOrSlug', 'slug', 'cptSlug', 'category', 'tag', 'taxonomy',
+            'taxonomySlug', 'term', 'termSlug', 'page', 'section', 'any', 'key', 'type',
+        ];
+
+        $candidates = [];
+        foreach ($route->parameters() as $name => $value) {
+            if (is_string($value) && $value !== '' && ! in_array($name, $reserved, true)) {
+                $candidates[] = $value;
+            }
+        }
+
+        if ($candidates === []) {
+            return null;
+        }
+
+        $cpts = CustomPostType::where('is_active', true)->get();
+        foreach (array_reverse($candidates) as $slug) {
+            foreach ($cpts as $cpt) {
+                $entry = CptEntry::findByLocalizedSlug($cpt, $slug);
+                if ($entry) {
+                    return $entry;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Try to extract the primary entity (Page, CptEntry, etc.)
      * from the response's view data or current request route/path.
      */
@@ -132,7 +169,7 @@ class InjectSeoTags
             }
         }
 
-        // 3. Check route parameters (e.g. CDT short CPT routes or CPT archives)
+        // 3. Check route parameters (theme/plugin custom routes or CPT archives)
         $route = $request->route();
         if ($route) {
             foreach (['postType', 'cpt', 'category', 'tag', 'term', 'taxonomyTerm', 'page', 'entry', 'cpt_entry', 'post', 'event'] as $param) {
@@ -154,26 +191,11 @@ class InjectSeoTags
                 }
             }
 
-            // CDT Theme short CPT routes: {vendorSlug}/{productSlug} or {vendorSlug}
-            $productSlug = $route->parameter('productSlug');
-            $vendorSlug = $route->parameter('vendorSlug');
-            if ($productSlug && class_exists(CustomPostType::class) && class_exists(CptEntry::class)) {
-                $prodCpt = CustomPostType::whereIn('slug', ['tech-products', 'products'])->where('is_active', true)->first();
-                if ($prodCpt) {
-                    $entry = CptEntry::findByLocalizedSlug($prodCpt, $productSlug);
-                    if ($entry) {
-                        return $entry;
-                    }
-                }
-            }
-            if ($vendorSlug && class_exists(CustomPostType::class) && class_exists(CptEntry::class)) {
-                $allianceCpt = CustomPostType::whereIn('slug', ['technology-alliance', 'technology_alliance'])->where('is_active', true)->first();
-                if ($allianceCpt) {
-                    $entry = CptEntry::findByLocalizedSlug($allianceCpt, $vendorSlug);
-                    if ($entry) {
-                        return $entry;
-                    }
-                }
+            // Theme/plugin custom CPT routes (e.g. /{parentSlug}/{childSlug}):
+            // try free-form string parameters against every active CPT.
+            $entry = $this->resolveCptEntryFromRouteParameters($route);
+            if ($entry) {
+                return $entry;
             }
 
             $catSlug = $route->parameter('category');
@@ -248,7 +270,7 @@ class InjectSeoTags
             }
             if (class_exists(CptEntry::class)) {
                 $entry = CptEntry::where('slug', $cleanPath)
-                    ->orWhereRaw('JSON_UNQUOTE(JSON_EXTRACT(translations, "$.id.slug")) = ?', [$cleanPath])
+                    ->orWhere('translations->id->slug', $cleanPath)
                     ->first();
                 if ($entry) {
                     return $entry;
@@ -296,7 +318,6 @@ class InjectSeoTags
                 }
             }
         }
-
 
         // Open Graph
         if (setting('seo_opengraph_enabled', true)) {

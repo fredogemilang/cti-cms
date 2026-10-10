@@ -35,7 +35,7 @@ class DeferredSectionController extends Controller
         }
 
         $theme = app(ThemeLoader::class)->getActiveTheme();
-        $themeNs = $theme?->slug ?? 'cdt';
+        $themeNs = $theme?->slug ?? 'default';
 
         $page = Page::with(['blocks' => fn ($q) => $q->whereNull('parent_block_id')->orderBy('order')])
             ->where('slug', 'home')

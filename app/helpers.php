@@ -322,6 +322,7 @@ if (! function_exists('resolve_block_asset')) {
             if ($webpCleanPath !== $cleanPath && file_exists(public_path($webpCleanPath))) {
                 return $cache[$path] = asset($webpCleanPath);
             }
+
             return $cache[$path] = asset($cleanPath);
         }
 
@@ -349,6 +350,7 @@ if (! function_exists('resolve_block_asset')) {
             if ($webpCleanPath !== $cleanPath && (file_exists(public_path($themeAssetWebp)) || file_exists(base_path($themeAssetWebp)))) {
                 return $cache[$path] = asset($themeAssetWebp);
             }
+
             return $cache[$path] = asset("themes/{$activeThemeSlug}/{$cleanPath}");
         }
 
@@ -711,7 +713,6 @@ if (! function_exists('localized_url')) {
             }
         }
 
-
         // 4. Default Fallback
         if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
             $base = $cleanPath !== '' ? "/{$locale}/{$cleanPath}" : "/{$locale}";
@@ -831,15 +832,14 @@ if (! function_exists('strip_leading_image')) {
 
         $emptyBlocks = '(?:\s*<p[^>]*>\s*(?:&nbsp;|\s)*<\/p>\s*|<br\s*\/?>\s*)*';
 
-        $pattern = '/^' . $emptyBlocks .
-                   '(?:' .
-                   '<(?:figure|p|div|h[1-6]|header)[^>]*>\s*(?:<a[^>]*>)?\s*<img[^>]+>\s*(?:<\/a>)?\s*(?:<figcaption[^>]*>.*?<\/figcaption>)?\s*<\/(?:figure|p|div|h[1-6]|header)>' .
-                   '|' .
-                   '(?:<a[^>]*>)?\s*<img[^>]+>\s*(?:<\/a>)?' .
-                   ')' .
-                   $emptyBlocks . '/is';
+        $pattern = '/^'.$emptyBlocks.
+                   '(?:'.
+                   '<(?:figure|p|div|h[1-6]|header)[^>]*>\s*(?:<a[^>]*>)?\s*<img[^>]+>\s*(?:<\/a>)?\s*(?:<figcaption[^>]*>.*?<\/figcaption>)?\s*<\/(?:figure|p|div|h[1-6]|header)>'.
+                   '|'.
+                   '(?:<a[^>]*>)?\s*<img[^>]+>\s*(?:<\/a>)?'.
+                   ')'.
+                   $emptyBlocks.'/is';
 
         return (string) preg_replace($pattern, '', $html, 1);
     }
 }
-

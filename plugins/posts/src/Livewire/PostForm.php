@@ -3,6 +3,7 @@
 namespace Plugins\Posts\Livewire;
 
 use App\Models\CptEntry;
+use App\Models\Redirect;
 use App\Services\EditorialWorkflowService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -736,7 +737,7 @@ class PostForm extends Component
 
     protected function handlePostRedirects(Post $post, string $newDefaultSlug, array $newTranslations): void
     {
-        if (! class_exists(\App\Models\Redirect::class)) {
+        if (! class_exists(Redirect::class)) {
             return;
         }
 
@@ -754,8 +755,8 @@ class PostForm extends Component
 
         // 1. Check Default Locale slug change
         if (! empty($oldDefaultSlug) && ! empty($newDefaultSlug) && $oldDefaultSlug !== $newDefaultSlug) {
-            $oldPath = '/' . $archiveSlug . '/' . $oldDefaultSlug;
-            $newPath = '/' . $archiveSlug . '/' . $newDefaultSlug;
+            $oldPath = '/'.$archiveSlug.'/'.$oldDefaultSlug;
+            $newPath = '/'.$archiveSlug.'/'.$newDefaultSlug;
             $this->createRedirectRule($oldPath, $newPath, "Auto-redirect: post #{$post->id} slug changed ({$defaultLocale})");
         }
 
@@ -768,14 +769,14 @@ class PostForm extends Component
             if (! empty($newTransSlug)) {
                 // Case A: Translated slug changed from previous translated slug
                 if (! empty($oldTransSlug) && $oldTransSlug !== $newTransSlug) {
-                    $oldPath = '/' . $locale . '/' . $archiveSlug . '/' . $oldTransSlug;
-                    $newPath = '/' . $locale . '/' . $archiveSlug . '/' . $newTransSlug;
+                    $oldPath = '/'.$locale.'/'.$archiveSlug.'/'.$oldTransSlug;
+                    $newPath = '/'.$locale.'/'.$archiveSlug.'/'.$newTransSlug;
                     $this->createRedirectRule($oldPath, $newPath, "Auto-redirect: post #{$post->id} slug changed ({$locale})");
                 }
                 // Case B: Post previously used fallback default slug, now has a distinct localized slug
                 elseif (empty($oldTransSlug) && ! empty($oldDefaultSlug) && $oldDefaultSlug !== $newTransSlug) {
-                    $oldPath = '/' . $locale . '/' . $archiveSlug . '/' . $oldDefaultSlug;
-                    $newPath = '/' . $locale . '/' . $archiveSlug . '/' . $newTransSlug;
+                    $oldPath = '/'.$locale.'/'.$archiveSlug.'/'.$oldDefaultSlug;
+                    $newPath = '/'.$locale.'/'.$archiveSlug.'/'.$newTransSlug;
                     $this->createRedirectRule($oldPath, $newPath, "Auto-redirect: post #{$post->id} localized slug created ({$locale})");
                 }
             }
@@ -784,8 +785,8 @@ class PostForm extends Component
 
     protected function createRedirectRule(string $fromPath, string $toUrl, string $notes): void
     {
-        $fromPath = '/' . trim($fromPath, '/');
-        $toPath = '/' . trim($toUrl, '/');
+        $fromPath = '/'.trim($fromPath, '/');
+        $toPath = '/'.trim($toUrl, '/');
 
         if ($fromPath === $toPath) {
             return;
@@ -795,11 +796,11 @@ class PostForm extends Component
         $targetUrl = function_exists('trailing_slash_url') ? trailing_slash_url(url($toPath)) : url($toPath);
 
         // Update existing redirects pointing to the old path to avoid redirect chains (A -> B -> C)
-        \App\Models\Redirect::where('to_url', $fromPath)
+        Redirect::where('to_url', $fromPath)
             ->orWhere('to_url', $targetUrl)
             ->update(['to_url' => $targetUrl]);
 
-        $redirect = \App\Models\Redirect::withTrashed()->where('from_path', $fromPath)->first();
+        $redirect = Redirect::withTrashed()->where('from_path', $fromPath)->first();
         if ($redirect) {
             if ($redirect->trashed()) {
                 $redirect->restore();
@@ -812,7 +813,7 @@ class PostForm extends Component
                 'notes' => $notes,
             ]);
         } else {
-            \App\Models\Redirect::create([
+            Redirect::create([
                 'from_path' => $fromPath,
                 'to_url' => $targetUrl,
                 'status_code' => 301,

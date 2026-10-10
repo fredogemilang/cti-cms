@@ -69,11 +69,11 @@ class RemovePostLeadingImages extends Command
         $bar->finish();
         $this->newLine(2);
 
-        $this->info("==========================================");
-        $this->info("  Finished processing posts");
+        $this->info('==========================================');
+        $this->info('  Finished processing posts');
         $this->info("  Total scanned:   {$total}");
-        $this->info("  Posts updated:   {$updated}" . ($dryRun ? " [DRY RUN - NOT SAVED]" : ""));
-        $this->info("==========================================");
+        $this->info("  Posts updated:   {$updated}".($dryRun ? ' [DRY RUN - NOT SAVED]' : ''));
+        $this->info('==========================================');
 
         return 0;
     }
