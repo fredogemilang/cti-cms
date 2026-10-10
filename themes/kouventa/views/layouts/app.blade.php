@@ -8,7 +8,7 @@
     <x-seo-meta :model="$page ?? null" />
 
     <!-- Kouventa Local Fonts & CSS -->
-    <link rel="stylesheet" href="{{ theme_asset('css/kouventa.css') }}">
+    <link rel="stylesheet" href="{{ theme_asset('css/kouventa.css') }}?v={{ time() }}">
 
     <!-- Local Alpine.js (Rule 10: No External CDN) -->
     <script defer src="{{ theme_asset('js/alpine.min.js') }}"></script>

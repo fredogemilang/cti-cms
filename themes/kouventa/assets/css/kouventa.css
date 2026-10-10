@@ -539,10 +539,7 @@ html{scroll-padding-top:0}
 /* --- Theme Specific Enhancements --- */
 .kv-canvas-wrap {
   width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
   position: relative;
-  overflow: clip;
 }
 
 [x-cloak] { display: none !important; }
