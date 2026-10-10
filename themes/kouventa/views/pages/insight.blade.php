@@ -16,24 +16,29 @@
     $isPostsActive = is_plugin_active('posts');
     $categories = $isPostsActive ? \Plugins\Posts\Models\Category::where('slug', '!=', 'blog')->get() : collect();
     $posts = $isPostsActive ? \Plugins\Posts\Models\Post::published()->with('categories')->orderBy('published_at', 'desc')->get() : collect();
+    $postsData = $posts->map(fn($p) => ['id' => $p->id, 'cats' => $p->categories->pluck('name')->toArray()]);
 @endphp
 
+<script>
+function initInsightBlog() {
+    return {
+        currentCat: 'All',
+        posts: {!! json_encode($postsData) !!},
+        get isEmpty() {
+            if (this.currentCat === 'All') return this.posts.length === 0;
+            return !this.posts.some(p => p.cats.includes(this.currentCat));
+        },
+        isPostVisible(id) {
+            if (this.currentCat === 'All') return true;
+            const p = this.posts.find(x => x.id === id);
+            return p ? p.cats.includes(this.currentCat) : false;
+        }
+    };
+}
+</script>
+
 <section style="padding: 56px 80px 112px; display: flex; flex-direction: column; gap: 48px"
-         x-data="{
-             currentCat: 'All',
-             posts: [
-                 @foreach($posts as $p)
-                 {
-                     id: {{ $p->id }},
-                     cats: {!! json_encode($p->categories->pluck('name')->toArray()) !!}
-                 },
-                 @endforeach
-             ],
-             get isEmpty() {
-                 if (this.currentCat === 'All') return this.posts.length === 0;
-                 return !this.posts.some(p => p.cats.includes(this.currentCat));
-             }
-         }">
+         x-data="initInsightBlog()">
 <div role="group" aria-label="Filter by category" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px">
 <button type="button"
         :aria-pressed="currentCat === 'All'"
@@ -60,8 +65,6 @@
 <div x-show="!isEmpty" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 32px; row-gap: 48px">
 @foreach($posts as $post)
 @php
-    $postCatNames = $post->categories->pluck('name')->toArray();
-    $postCatsJson = json_encode($postCatNames);
     $imgUrl = '';
     if ($post->featured_image) {
         if (str_starts_with($post->featured_image, 'images/')) {
@@ -72,7 +75,7 @@
     }
     $readingMinutes = max(1, ceil(str_word_count(strip_tags($post->content)) / 200));
 @endphp
-<article x-show="currentCat === 'All' || {{ $postCatsJson }}.includes(currentCat)"
+<article x-show="isPostVisible({{ $post->id }})"
          style="display: flex; flex-direction: column; gap: 14px">
 @if($imgUrl)
     <img src="{{ $imgUrl }}" alt="{{ $post->title }}" style="width: 100%; aspect-ratio: 3 / 1; object-fit: cover; border-radius: 16px; display: block; background: #DCE3E0">
