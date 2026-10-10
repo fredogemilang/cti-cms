@@ -155,7 +155,7 @@
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Where do you want to start?</h2>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
-<a href="{{ url('/product/ai') }}" style="background: #071C33; border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF">
+<a href="{{ localized_url('/product/ai') }}" style="background: #071C33; border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF">
 <span style="display: flex; align-items: center; gap: 14px">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"></path><path d="M9 21v-6h6v6M9 10h.01M15 10h.01"></path></svg></span>
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #2BD46A">AI that works</span>
@@ -164,7 +164,7 @@
 <span style="font-size: 18px; line-height: 1.55; color: #B9C6D3">Instant answers from your company knowledge, and agents that take routine tasks off your teams.</span>
 <span style="font-size: 16px; font-weight: 700; color: #2BD46A; padding-top: 8px">Explore more →</span>
 </a>
-<a href="{{ url('/product/customer-engagement') }}" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 16px; color: #0E1A24">
+<a href="{{ localized_url('/product/customer-engagement') }}" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 16px; color: #0E1A24">
 <span style="display: flex; align-items: center; gap: 14px">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path><path d="M8 11h.01M12 11h.01M16 11h.01"></path></svg></span>
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F">AI that engages</span>

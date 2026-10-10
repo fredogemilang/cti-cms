@@ -71,7 +71,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>AI guardrails & PII masking</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Livechat delivery, SDK access</span></li>
                 </ul>
-                <a href="{{ url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Talk to sales</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Talk to sales</a>
             </article>
 
             <!-- AI Grow (Most Popular) -->
@@ -97,7 +97,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>500 GB storage, chat playground</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>File & chart generation tools</span></li>
                 </ul>
-                <a href="{{ url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Talk to sales</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Talk to sales</a>
             </article>
 
             <!-- AI Scale -->
@@ -122,7 +122,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Dedicated engineering pod</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Audit trail & change approval gates</span></li>
                 </ul>
-                <a href="{{ url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none">Talk to sales</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none">Talk to sales</a>
             </article>
         </div>
 
@@ -150,7 +150,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Analytics, role-based access, MFA</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>SaaS cloud deployment</span></li>
                 </ul>
-                <a href="{{ url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Talk to sales</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Talk to sales</a>
             </article>
 
             <!-- CE Professional (Most Popular) -->
@@ -176,7 +176,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Broadcast scheduling & CSAT</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Standard 9×5 support, 99.5% uptime</span></li>
                 </ul>
-                <a href="{{ url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Talk to sales</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Talk to sales</a>
             </article>
 
             <!-- CE Enterprise -->
@@ -201,7 +201,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Dedicated implementation team</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>Data masking & audit trail</span></li>
                 </ul>
-                <a href="{{ url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none">Talk to sales</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none">Talk to sales</a>
             </article>
         </div>
     </div>
@@ -297,7 +297,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.14)"><span style="font-size: 15px; color: #B9C6D3">Conversation fee / month</span><span style="font-size: 18px; font-weight: 800" x-text="fmt(convTotal)">Rp 0</span></div>
                         <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.14)"><span style="font-size: 15px; color: #B9C6D3">Platform + conversation / month</span><span style="font-size: 18px; font-weight: 800" x-text="fmt(monthlyTotal)">Rp 1.499.000</span></div>
                         <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 4px"><span style="font-size: 15px; color: #B9C6D3">Grand total / year</span><span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; color: #2BD46A" x-text="fmt(yearlyTotal)">Rp 17.988.000</span></div>
-                        <a href="{{ url('/book-demo') }}" style="margin-top: 6px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Book a demo</a>
+                        <a href="{{ localized_url('/book-demo') }}" style="margin-top: 6px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Book a demo</a>
                     </div>
                 </template>
 
@@ -308,7 +308,7 @@
                             <span style="font-size: 26px; line-height: 1.25; font-weight: 800">More than 15,000 active users?</span>
                             <span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">You're ready for an enterprise setup. Talk to our team for a plan tailored to your volume, channels and integrations.</span>
                         </div>
-                        <a href="{{ url('/book-demo') }}" style="margin-top: 6px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Talk to sales</a>
+                        <a href="{{ localized_url('/book-demo') }}" style="margin-top: 6px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">Talk to sales</a>
                     </div>
                 </template>
             </div>
@@ -324,8 +324,8 @@
             <p style="margin: 0; font-size: 18px; line-height: 1.55">Book a working session with our solution team. We'll map your use cases to the right tier and deployment.</p>
         </div>
         <div style="display: flex; gap: 12px; flex-shrink: 0">
-            <a href="{{ url('/book-demo') }}" class="kv-btn" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">Book a working session</a>
-            <a href="{{ url('/book-demo') }}" class="kv-btn" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none">Contact sales</a>
+            <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">Book a working session</a>
+            <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none">Contact sales</a>
         </div>
     </div>
 </section>

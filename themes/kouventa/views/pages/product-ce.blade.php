@@ -156,8 +156,8 @@
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
 <nav aria-label="Products" style="height: 56px; padding: 0 80px; display: flex; align-items: center; gap: 32px; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 4">
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #93A4B6">{{ t('kouventa.Products', 'Products') }}</span>
-<a href="{{ url('/product/ai') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</a>
-<a href="{{ url('/product/customer-engagement') }}" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</a>
+<a href="{{ localized_url('/product/ai') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</a>
+<a href="{{ localized_url('/product/customer-engagement') }}" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</a>
 </nav>
 
 <div style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 80px; align-items: center; position: relative">
@@ -166,7 +166,7 @@
 <h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ t('kouventa.The smarter way to', 'The smarter way to') }} <span style="color: #2BD46A">{{ t('kouventa.engage customers.', 'engage customers.') }}</span></h1>
 <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{{ t('kouventa.Reach more customers, respond faster, and keep every conversation seamless — on WhatsApp and beyond.', 'Reach more customers, respond faster, and keep every conversation seamless — on WhatsApp and beyond.') }}</p>
 <div style="display: flex; gap: 12px; padding-top: 4px">
-<a href="{{ url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
+<a href="{{ localized_url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
 </div>
 </div>
 
@@ -682,8 +682,8 @@
 <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #B9C6D3">{{ t('kouventa.Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge.', 'Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge.') }}</p>
 </div>
 <div style="display: flex; gap: 14px; position: relative; z-index: 2; flex-shrink: 0">
-<a href="{{ url('/pricing') }}" style="background: transparent; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28); text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>
-<a href="{{ url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 26px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
+<a href="{{ localized_url('/pricing') }}" style="background: transparent; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28); text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>
+<a href="{{ localized_url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 26px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
 </div>
 </div>
 </section>
