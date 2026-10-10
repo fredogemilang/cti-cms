@@ -12,7 +12,7 @@ class SettingsPublicController extends Controller
     public function index()
     {
         $settings = [
-            'site_name' => setting('site_name', config('app.name', 'Central Data Technology')),
+            'site_name' => setting('site_name', config('app.name')),
             'site_tagline' => setting('site_tagline', ''),
             'site_logo' => setting('site_logo') ? asset('storage/'.setting('site_logo')) : null,
             'site_favicon' => setting('site_favicon') ? asset('storage/'.setting('site_favicon')) : null,

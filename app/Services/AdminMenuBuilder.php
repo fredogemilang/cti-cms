@@ -7,6 +7,7 @@ use App\Models\CustomPostType;
 use App\Models\MenuItem;
 use App\Models\Plugin;
 use App\Models\Setting;
+use App\Support\Filter;
 
 /**
  * Service for building the admin sidebar menu.
@@ -140,11 +141,6 @@ class AdminMenuBuilder
             'core:1' => 'MAIN',
             'core:2' => 'CONTENT',
             'builtin:media' => 'CONTENT',
-            'cpt:technology-alliance' => 'CONTENT',
-            'cpt:solutions' => 'CONTENT',
-            'cpt:customer-success' => 'CONTENT',
-            'cpt:client-says' => 'CONTENT',
-            'cpt:tech-products' => 'CONTENT',
             'plugin:google-site-kit' => 'PLUGINS',
             'plugin:posts' => 'PLUGINS',
             'builtin:seo' => 'SYSTEM',
@@ -157,6 +153,8 @@ class AdminMenuBuilder
             'builtin:activity-log' => 'SYSTEM',
             'builtin:settings' => 'SYSTEM',
         ];
+        // Themes/plugins can place their own items (e.g. 'cpt:{slug}' => 'CONTENT').
+        $defaultSectionMap = (array) Filter::apply('admin_menu.default_sections', $defaultSectionMap);
 
         $customOrder = Setting::get('admin_sidebar_custom_order', []);
         $dynamicSectionMap = [];
@@ -684,11 +682,6 @@ class AdminMenuBuilder
                 'core:1', // Dashboard (MAIN)
                 'core:2', // Pages (CONTENT)
                 'builtin:media', // Media (CONTENT)
-                'cpt:technology-alliance',
-                'cpt:solutions',
-                'cpt:customer-success',
-                'cpt:client-says',
-                'cpt:tech-products',
                 'plugin:google-site-kit', // PLUGINS
                 'plugin:posts',
                 'builtin:seo', // SEO & GEO (SYSTEM)
@@ -701,6 +694,7 @@ class AdminMenuBuilder
                 'builtin:activity-log', // Activity Log (SYSTEM)
                 'builtin:settings', // Settings (SYSTEM)
             ];
+            $defaultOrderKeys = (array) Filter::apply('admin_menu.default_order', $defaultOrderKeys);
             $orderMap = array_flip($defaultOrderKeys);
         } else {
             $itemKeysOnly = array_values(array_filter($customOrder, fn ($k) => ! str_starts_with($k, 'SECTION:')));

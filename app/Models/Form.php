@@ -6,6 +6,7 @@ use App\Jobs\SendFormNotificationJob;
 use App\Services\CaptchaService;
 use App\Services\FormConditionalLogic;
 use App\Services\MediaService;
+use App\Support\Filter;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -281,12 +282,14 @@ class Form extends Model
 
         // Auto-capture server-side & client-side attribution metadata (Approach B)
         $attributionData = [];
+        // Themes that track attribution client-side can rename the cookie via this filter.
+        $attributionCookie = (string) Filter::apply('forms.attribution_cookie', 'cms_attribution');
         if (! empty($data['_attribution'])) {
             $attributionData = is_array($data['_attribution'])
                 ? $data['_attribution']
                 : (json_decode($data['_attribution'], true) ?? []);
-        } elseif ($request && $request->hasCookie('cdt_attribution')) {
-            $attributionData = json_decode($request->cookie('cdt_attribution'), true) ?? [];
+        } elseif ($request && $request->hasCookie($attributionCookie)) {
+            $attributionData = json_decode($request->cookie($attributionCookie), true) ?? [];
         }
 
         $attributionData['submission_page'] = $data['_submission_page'] ?? ($request ? $request->fullUrl() : null);

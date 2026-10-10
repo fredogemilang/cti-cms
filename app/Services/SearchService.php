@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\SearchIndex;
+use App\Support\Filter;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\LengthAwarePaginator as ConcretePaginator;
 use Illuminate\Support\Facades\DB;
@@ -145,12 +146,13 @@ class SearchService
             $snippet = rtrim($snippet).'...';
         }
 
-        // Highlight matching term safely
+        // Highlight matching term safely (themes can restyle via `search.highlight_class`)
         $pattern = '/('.preg_quote($cleanQuery, '/').')/iu';
+        $markClass = e((string) Filter::apply('search.highlight_class', 'bg-yellow-100 text-inherit font-semibold dark:bg-yellow-900/40 px-1 rounded'));
 
         return (string) preg_replace(
             $pattern,
-            '<mark class="bg-red-100 text-[#E30613] font-semibold dark:bg-red-950/50 dark:text-red-400 px-1 rounded">$1</mark>',
+            '<mark class="'.$markClass.'">$1</mark>',
             e($snippet)
         );
     }

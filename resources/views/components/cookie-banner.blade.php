@@ -1,7 +1,7 @@
 @if(setting('enable_cookie_consent', false))
 <style>
     [x-cloak] { display: none !important; }
-    .cdt-cookie-banner {
+    .cms-cookie-banner {
         position: fixed !important;
         bottom: 24px !important;
         right: 24px !important;
@@ -10,7 +10,7 @@
         width: calc(100% - 48px) !important;
         z-index: 99999 !important;
     }
-    .cdt-cookie-btn-primary {
+    .cms-cookie-btn-primary {
         background-color: #F53003 !important;
         color: #ffffff !important;
         font-weight: 700 !important;
@@ -27,13 +27,13 @@
         transition: all 0.2s ease !important;
         text-decoration: none !important;
     }
-    .cdt-cookie-btn-primary:hover {
+    .cms-cookie-btn-primary:hover {
         background-color: #d92900 !important;
         border-color: #d92900 !important;
         color: #ffffff !important;
         transform: translateY(-1px) !important;
     }
-    .cdt-cookie-btn-secondary {
+    .cms-cookie-btn-secondary {
         background-color: #f3f4f6 !important;
         color: #1f2937 !important;
         font-weight: 600 !important;
@@ -49,12 +49,12 @@
         transition: all 0.2s ease !important;
         text-decoration: none !important;
     }
-    .cdt-cookie-btn-secondary:hover {
+    .cms-cookie-btn-secondary:hover {
         background-color: #e5e7eb !important;
         color: #111827 !important;
     }
     @media (max-width: 640px) {
-        .cdt-cookie-banner {
+        .cms-cookie-banner {
             left: 16px !important;
             right: 16px !important;
             bottom: 16px !important;
@@ -79,7 +79,7 @@
     x-transition:leave-start="opacity-100 transform translate-y-0 scale-100"
     x-transition:leave-end="opacity-0 transform translate-y-8 scale-95"
     x-cloak
-    class="cdt-cookie-banner bg-white/95 dark:bg-[#141414]/95 backdrop-blur-xl border border-gray-200/80 dark:border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.18)] p-5 text-sm text-gray-800 dark:text-gray-200 antialiased font-sans">
+    class="cms-cookie-banner bg-white/95 dark:bg-[#141414]/95 backdrop-blur-xl border border-gray-200/80 dark:border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.18)] p-5 text-sm text-gray-800 dark:text-gray-200 antialiased font-sans">
     
     <div class="flex items-start gap-3.5">
         {{-- Cookie Icon SVG --}}
@@ -105,10 +105,10 @@
             </p>
 
             <div class="flex items-center gap-2.5 pt-1.5">
-                <button type="button" @click="accept()" class="cdt-cookie-btn-primary flex-1">
+                <button type="button" @click="accept()" class="cms-cookie-btn-primary flex-1">
                     Accept All
                 </button>
-                <button type="button" @click="accept()" class="cdt-cookie-btn-secondary flex-1">
+                <button type="button" @click="accept()" class="cms-cookie-btn-secondary flex-1">
                     Essential Only
                 </button>
             </div>

@@ -1,10 +1,9 @@
 @php
     $themeSlug = isset($activeTheme) ? $activeTheme->slug : setting('active_theme', 'default');
-    if ($themeSlug === 'default' && file_exists(base_path('themes/cdt/theme.json'))) {
-        $themeSlug = 'cdt';
-    }
-    $primaryColor = $themeSlug === 'cdt' ? '#e30613' : '#2563eb';
-    $primaryHover = $themeSlug === 'cdt' ? '#c00510' : '#1d4ed8';
+    $themeManifestPath = base_path('themes/'.basename((string) $themeSlug).'/theme.json');
+    $themeManifest = is_file($themeManifestPath) ? (json_decode((string) file_get_contents($themeManifestPath), true) ?: []) : [];
+    $primaryColor = data_get($themeManifest, 'colors.primary', '#2563eb');
+    $primaryHover = data_get($themeManifest, 'colors.primary_hover', '#1d4ed8');
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">

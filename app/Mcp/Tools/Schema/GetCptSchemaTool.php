@@ -22,7 +22,7 @@ class GetCptSchemaTool extends Tool
     {
         return [
             'slug' => $schema->string()
-                ->description('The CPT slug (e.g., "technology-alliance").')
+                ->description('The CPT slug (e.g., "case-study").')
                 ->required(),
         ];
     }

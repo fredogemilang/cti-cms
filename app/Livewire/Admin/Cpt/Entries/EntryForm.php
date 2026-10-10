@@ -11,6 +11,7 @@ use App\Models\MetaField;
 use App\Models\TaxonomyTerm;
 use App\Services\ContentLockService;
 use App\Services\EditorialWorkflowService;
+use App\Support\Filter;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -462,14 +463,8 @@ class EntryForm extends Component
             }
         }
 
-        // Load reverse relationship (where current entry is child_entry_id)
-        $childRels = CptEntryRelationship::where('child_entry_id', $entry->id)->get();
-        foreach ($childRels as $cRel) {
-            $parentVendorField = $this->postType->metaFields->where('name', 'parent_vendor_id')->first();
-            if ($parentVendorField) {
-                $this->meta['parent_vendor_id'] = (string) $cRel->parent_entry_id;
-            }
-        }
+        // Let themes hydrate extra relationship meta (e.g. child → parent pointers).
+        $this->meta = (array) Filter::apply('cpt_entry.form_meta', $this->meta, $entry, $this->postType);
 
         // Hydrate per-locale snapshots from translations JSON column AND meta _translations
         $defaultLocale = CptEntry::defaultLocale();
@@ -857,56 +852,28 @@ class EntryForm extends Component
         foreach ($this->postType->metaFields as $field) {
             /** @var MetaField $field */
             if ($field->type === 'relationship') {
-                if ($field->name === 'parent_vendor_id') {
-                    $parentMetaFieldId = MetaField::where('name', 'product_id')
-                        ->where('options->target_cpt', 'tech-products')
-                        ->value('id') ?? 43;
+                // Themes can take over syncing of special relationship fields
+                // (e.g. a child → parent pointer). Return true when handled.
+                if (Filter::apply('cpt_entry.sync_relationship_field', false, $field, $entry, $this->meta)) {
+                    continue;
+                }
 
-                    CptEntryRelationship::where('child_entry_id', $entry->id)
-                        ->where('meta_field_id', $parentMetaFieldId)
-                        ->delete();
+                CptEntryRelationship::where('parent_entry_id', $entry->id)
+                    ->where('meta_field_id', $field->id)
+                    ->delete();
 
-                    $parentVendorId = $this->meta['parent_vendor_id'] ?? null;
-                    if (! empty($parentVendorId)) {
-                        $parentEntryId = (int) (is_array($parentVendorId) ? ($parentVendorId[0] ?? 0) : $parentVendorId);
-                        if ($parentEntryId > 0) {
-                            CptEntryRelationship::create([
-                                'parent_entry_id' => $parentEntryId,
-                                'child_entry_id' => $entry->id,
-                                'meta_field_id' => $parentMetaFieldId,
-                                'order' => 0,
-                            ]);
-
-                            $parentEntry = CptEntry::find($parentEntryId);
-                            if ($parentEntry) {
-                                $metaData = $entry->meta ?? [];
-                                $metaData['parent_vendor'] = $parentEntry->slug;
-                                $entry->meta = $metaData;
-                                if (empty($entry->featured_image) && ! empty($parentEntry->featured_image)) {
-                                    $entry->featured_image = $parentEntry->featured_image;
-                                }
-                                $entry->save();
-                            }
-                        }
-                    }
-                } else {
-                    CptEntryRelationship::where('parent_entry_id', $entry->id)
-                        ->where('meta_field_id', $field->id)
-                        ->delete();
-
-                    $val = $this->meta[$field->name] ?? null;
-                    if (! empty($val)) {
-                        $childIds = is_array($val) ? $val : [$val];
-                        $uniqueChildIds = array_values(array_unique(array_filter($childIds)));
-                        foreach ($uniqueChildIds as $order => $childId) {
-                            CptEntryRelationship::updateOrCreate([
-                                'parent_entry_id' => $entry->id,
-                                'child_entry_id' => (int) $childId,
-                                'meta_field_id' => $field->id,
-                            ], [
-                                'order' => $order,
-                            ]);
-                        }
+                $val = $this->meta[$field->name] ?? null;
+                if (! empty($val)) {
+                    $childIds = is_array($val) ? $val : [$val];
+                    $uniqueChildIds = array_values(array_unique(array_filter($childIds)));
+                    foreach ($uniqueChildIds as $order => $childId) {
+                        CptEntryRelationship::updateOrCreate([
+                            'parent_entry_id' => $entry->id,
+                            'child_entry_id' => (int) $childId,
+                            'meta_field_id' => $field->id,
+                        ], [
+                            'order' => $order,
+                        ]);
                     }
                 }
             }

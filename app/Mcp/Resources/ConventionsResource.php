@@ -55,7 +55,7 @@ class ConventionsResource extends Resource
 
 | Entity | Convention | Example |
 |--------|-----------|---------|
-| CPT slug | `kebab-case` | `technology-alliance` |
+| CPT slug | `kebab-case` | `case-study` |
 | Meta field key | `snake_case` | `hero_image` |
 | Template name | `kebab-case` | `home`, `about-us` |
 | Translation key | `dot.separated` | `home.hero_title` |

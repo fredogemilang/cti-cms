@@ -10,8 +10,8 @@ class FeedController extends Controller
 {
     public function index(): Response
     {
-        $siteName = setting('site_name', config('app.name', 'CDT'));
-        $siteTagline = setting('site_tagline', 'Central Data Technology');
+        $siteName = setting('site_name', config('app.name'));
+        $siteTagline = setting('site_tagline', '');
         $siteUrl = url('/');
 
         // Fetch recent published posts / CPT entries

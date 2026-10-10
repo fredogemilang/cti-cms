@@ -56,7 +56,7 @@ class WarmCacheJob implements ShouldQueue
                     $pool->as($url)
                         ->timeout(10)
                         ->withHeaders([
-                            'User-Agent' => 'CdtCacheCrawler/1.0 (CDT Cache Preloader; +'.url('/').')',
+                            'User-Agent' => 'CmsCacheCrawler/1.0 (Cache Preloader; +'.url('/').')',
                             'Accept' => 'text/html,application/xhtml+xml',
                         ])
                         ->get($url);
