@@ -25,14 +25,14 @@
     <!-- Platform Toggle -->
     <div id="pricing-toggle" role="group" aria-label="Choose a platform" style="align-self: center; display: flex; padding: 5px; background: rgba(255,255,255,0.08); border-radius: 14px; gap: 4px; margin-top: 12px; z-index: 10">
         <button type="button" @click="product = 'ai'"
-                :style="product === 'ai' ? 'background: #2BD46A; color: #06251A;' : 'background: transparent; color: #FFFFFF;'"
-                style="border: 0; padding: 14px 26px; min-height: 48px; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s">
-            Artificial Intelligence
+                :class="{ 'is-active': product === 'ai' }"
+                class="kv-toggle-btn">
+            {{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}
         </button>
         <button type="button" @click="product = 'ce'"
-                :style="product === 'ce' ? 'background: #2BD46A; color: #06251A;' : 'background: transparent; color: #FFFFFF;'"
-                style="border: 0; padding: 14px 26px; min-height: 48px; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s">
-            Customer Engagement
+                :class="{ 'is-active': product === 'ce' }"
+                class="kv-toggle-btn">
+            {{ t('kouventa.Customer Engagement', 'Customer Engagement') }}
         </button>
     </div>
 </section>

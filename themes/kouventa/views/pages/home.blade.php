@@ -194,8 +194,8 @@
 
 @foreach($teams as $i => $t)
     <button type="button" @click="activeTeam = {{ $i }}"
-            :style="activeTeam === {{ $i }} ? 'background: #071C33; color: #FFFFFF; border-color: #071C33;' : 'background: #FFFFFF; color: #0E1A24; border-color: #C9D2CE;'"
-            style="padding: 10px 18px; border-radius: 999px; border: 1.5px solid #C9D2CE; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s">
+            :class="{ 'is-active': activeTeam === {{ $i }} }"
+            class="kv-tab-team">
         {{ $t['name'] }}
     </button>
 @endforeach
@@ -315,8 +315,8 @@
 
 @foreach($stories as $i => $s)
     <button type="button" @click="activeStory = {{ $i }}"
-            :style="activeStory === {{ $i }} ? 'width: 28px; background: #071C33;' : 'width: 8px; background: #C9D2CE;'"
-            style="height: 8px; border-radius: 999px; border: 0; padding: 0; cursor: pointer; transition: all 0.25s"
+            :class="{ 'is-active': activeStory === {{ $i }} }"
+            class="kv-story-dot"
             aria-label="Story {{ $i + 1 }}"></button>
 @endforeach
 
