@@ -645,3 +645,62 @@ html{scroll-padding-top:0}
   border-color: #071C33;
   background: #F4F6F5;
 }
+
+
+/* === Clean-HTML Animation Keyframes === */
+@keyframes kvTlF{0%,2%{transform:scaleY(0)}
+@keyframes kvTlR0{0%,2%{opacity:0;transform:translateY(18px)}
+@keyframes kvTlD0{0%,2%{transform:scale(.4);opacity:.3}
+@keyframes kvTlR1{0%,22%{opacity:0;transform:translateY(18px)}
+@keyframes kvTlD1{0%,22%{transform:scale(.4);opacity:.3}
+@keyframes kvTlR2{0%,42%{opacity:0;transform:translateY(18px)}
+@keyframes kvTlD2{0%,42%{transform:scale(.4);opacity:.3}
+@keyframes kvTlR3{0%,62%{opacity:0;transform:translateY(18px)}
+@keyframes kvTlD3{0%,62%{transform:scale(.4);opacity:.3}
+@keyframes kvDraw{0%{stroke-dashoffset:var(--len)}
+@keyframes kvFade{0%{opacity:0}
+@keyframes kvPath{0%{offset-distance:0%;opacity:0}
+@keyframes kvIn{0%{opacity:0;transform:translateY(10px)}
+@keyframes kvOut{0%{opacity:1}
+@keyframes kvPopIn{0%{opacity:0;transform:scale(.6)}
+@keyframes kvDrop{0%{opacity:0;transform:translateY(-28px) scale(1.04)}
+@keyframes kvGrowW{0%{width:0}
+@keyframes kvGrowH{0%{height:0}
+@keyframes kvTravel{0%{transform:translateX(0);opacity:0}
+@keyframes kvSpin{0%{transform:rotate(0)}
+@keyframes kvConverge{0%{transform:translate(var(--x),var(--y)) scale(1);opacity:0}
+@keyframes kvLogo{0%,74%{opacity:0;transform:scale(.6)}
+@keyframes kvGlow{0%,80%{box-shadow:0 0 0 0 rgba(43,212,106,0),0 0 0 rgba(43,212,106,0)}
+@keyframes kvJitter{0%{transform:translate(0,0)}
+@keyframes kvWobble{0%,100%{transform:rotate(0)}
+@keyframes kvCursor{0%{transform:translate(110px,70px);opacity:0}
+@keyframes kvLight{0%{background:#F4F6F5;color:#4A5866;box-shadow:none}
+@keyframes kvPress{0%,100%{transform:scale(1)}
+@keyframes kvPulse{0%,100%{box-shadow:0 0 0 0 rgba(43,212,106,.45)}
+@keyframes kvFloat{0%,100%{transform:translateY(0)}
+@keyframes kvMarquee{0%{transform:translateX(0)}
+@keyframes kvH1{0%,2%{opacity:0;transform:translateY(10px)}
+@keyframes kvH2{0%,12%{opacity:0;transform:translateY(10px)}
+@keyframes kvHt1{0%,20%{opacity:0}
+@keyframes kvH3{0%,27%{opacity:0;transform:translateY(10px)}
+@keyframes kvH4{0%,38%{opacity:0;transform:translateY(10px)}
+@keyframes kvHt2{0%,44%{opacity:0}
+@keyframes kvH5{0%,51%{opacity:0;transform:translateY(10px)}
+@keyframes kvH6{0%,63%{opacity:0;transform:translateY(10px)}
+@keyframes kvLoop{0%{opacity:0;transform:translateY(10px)}
+@keyframes kvPop{0%,10%{opacity:0;transform:scale(.6)}
+@keyframes kvGrow{0%,10%{width:0}
+@keyframes kvLit{0%{background:#FFFFFF;color:#0E1A24;border-color:#E3E8E6}
+@keyframes kvGreen{0%{background:#FFFFFF}
+@keyframes kvAmber{0%{background:#FFFFFF}
+@keyframes kvMark{0%{background:transparent}
+@keyframes kvMove{0%{transform:none}
+@keyframes kvScan{0%{transform:translateX(0)}
+@keyframes kvKnob{0%{transform:translateX(0)}
+@keyframes kvRoleHi{0%,100%{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.16)}
+@keyframes kvLineHi{0%{opacity:0}
+@keyframes kvToast{0%{opacity:0;transform:translateY(8px)}
+@keyframes kvHubPulse{0%{box-shadow:0 0 0 0 rgba(43,212,106,.45),0 0 40px rgba(43,212,106,.35)}
+@keyframes kvHi{0%{border-color:#E3E8E6;background:#FFFFFF;box-shadow:none}
+@keyframes kvStepOn{0%{background:#FFFFFF;color:#4A5866;border-color:#C9D2CE}
+@keyframes kvStar{0%{color:#D5DCD9;transform:scale(.7)}
