@@ -26,6 +26,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\RobotsController;
 use App\Http\Controllers\SchemaAggregatorController;
 use App\Http\Controllers\SchemaManifestController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SitemapStyleController;
 use App\Livewire\Admin\Redirects\RedirectTable;
@@ -63,6 +64,14 @@ if (! empty($nonDefaultLocales)) {
     Route::get('/{locale}', [HomeController::class, 'index'])
         ->where('locale', $localePattern)
         ->name('locale.home');
+}
+
+// Public Site Search
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+if (! empty($nonDefaultLocales)) {
+    Route::get('/{locale}/search', [SearchController::class, 'index'])
+        ->where('locale', $localePattern)
+        ->name('locale.search');
 }
 
 // Public Language Switcher
@@ -377,6 +386,13 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
         })->name('api-tokens.index');
     });
 
+    // AI & MCP Integration Settings
+    Route::middleware('permission:settings.view')->group(function () {
+        Route::get('/ai-settings', function () {
+            return view('admin.ai.mcp-settings');
+        })->name('ai-settings.index');
+    });
+
     // Webhooks
     Route::middleware('permission:webhooks.view')->group(function () {
         Route::get('/webhooks', function () {
@@ -418,6 +434,9 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
             }
             if ($group === 'api-tokens' || $group === 'tokens') {
                 return redirect()->route('admin.api-tokens.index');
+            }
+            if ($group === 'ai' || $group === 'mcp') {
+                return redirect()->route('admin.ai-settings.index');
             }
             if ($group === 'webhooks') {
                 return redirect()->route('admin.webhooks.index');

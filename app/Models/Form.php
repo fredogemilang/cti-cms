@@ -6,14 +6,13 @@ use App\Jobs\SendFormNotificationJob;
 use App\Services\CaptchaService;
 use App\Services\FormConditionalLogic;
 use App\Services\MediaService;
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-
-use App\Traits\HasTranslations;
 
 class Form extends Model
 {

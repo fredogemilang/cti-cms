@@ -10,6 +10,7 @@ use App\Models\CustomTaxonomy;
 use App\Models\MetaField;
 use App\Models\TaxonomyTerm;
 use App\Services\ContentLockService;
+use App\Services\EditorialWorkflowService;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -26,7 +27,17 @@ class EntryForm extends Component
 
     public ?int $entryId = null;
 
+    public ?CptEntry $entry = null;
+
     public bool $isEdit = false;
+
+    public bool $canApprove = false;
+
+    public array $allowedStatuses = [];
+
+    public bool $showChangeRequestModal = false;
+
+    public string $changeRequestNote = '';
 
     public ?array $activeLock = null;
 
@@ -170,7 +181,7 @@ class EntryForm extends Component
             'slug' => $isDefaultLocale ? 'required|string|max:255' : 'nullable|string|max:255',
             'content' => 'nullable|string',
             'excerpt' => 'nullable|string|max:500',
-            'status' => 'required|in:draft,pending,published,scheduled,archived',
+            'status' => 'required|in:draft,pending,pending_review,published,scheduled,archived',
             'publishedAt' => 'nullable|date',
             'parentId' => 'nullable|integer|exists:cpt_entries,id',
             'menuOrder' => 'integer|min:0',
@@ -221,6 +232,10 @@ class EntryForm extends Component
         $this->postType = $postType;
         $this->availableLocales = available_locales();
         $this->editingLocale = CptEntry::defaultLocale();
+
+        $workflow = app(EditorialWorkflowService::class);
+        $this->canApprove = $workflow->canApprove();
+        $this->allowedStatuses = $workflow->allowedStatuses();
 
         // Initialize meta fields with defaults
         foreach ($postType->metaFields as $field) {
@@ -375,6 +390,7 @@ class EntryForm extends Component
     protected function loadEntry()
     {
         $entry = CptEntry::with('terms')->findOrFail($this->entryId);
+        $this->entry = $entry;
 
         $this->title = $entry->title;
         $this->slug = $entry->slug;
@@ -794,6 +810,11 @@ class EntryForm extends Component
             $finalMeta['_translations'] = $metaTranslations;
         }
 
+        $workflow = app(EditorialWorkflowService::class);
+        $resolved = $workflow->resolveStatus($this->status);
+        $this->status = $resolved['status'];
+        $oldStatus = $this->isEdit && $this->entry ? $this->entry->getOriginal('status') : null;
+
         $data = [
             'post_type_id' => $this->postType->id,
             'title' => $defaultSnap['title'] ?? '',
@@ -807,6 +828,7 @@ class EntryForm extends Component
                 : ($this->publishedAt ? Carbon::parse($this->publishedAt) : null),
             'parent_id' => $this->parentId,
             'menu_order' => $this->menuOrder,
+            'author_id' => $this->isEdit && $this->entry ? $this->entry->author_id : auth()->id(),
             'updated_by' => auth()->id(),
             'meta' => $finalMeta,
             'translations' => $translations ?: null,
@@ -819,6 +841,8 @@ class EntryForm extends Component
             $entry = CptEntry::create($data);
             $this->entryId = $entry->id;
         }
+
+        $this->entry = $entry;
 
         $this->releaseLock();
 
@@ -903,11 +927,13 @@ class EntryForm extends Component
             'is_autosave' => false,
         ]);
 
+        $workflow->handleTransition($entry, $entry->status, $oldStatus);
+
         $this->dispatch('notify', [
-            'type' => 'success',
-            'message' => $this->isEdit
-                ? "'{$this->title}' updated successfully."
-                : "'{$this->title}' created successfully.",
+            'type' => $resolved['downgraded'] ? 'info' : 'success',
+            'message' => $resolved['downgraded']
+                ? $resolved['message']
+                : ($this->isEdit ? "'{$this->title}' updated successfully." : "'{$this->title}' created successfully."),
         ]);
 
         $queryParams = array_filter([
@@ -919,6 +945,76 @@ class EntryForm extends Component
             ['postTypeSlug' => $this->postType->slug, 'id' => $entry->id],
             $queryParams
         ));
+    }
+
+    public function approveAndPublish()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        if (! $this->isEdit || ! $this->entryId) {
+            return;
+        }
+
+        $entry = CptEntry::findOrFail($this->entryId);
+        $oldStatus = $entry->status;
+        $entry->update([
+            'status' => 'published',
+            'published_at' => $entry->published_at ?? now(),
+            'updated_by' => auth()->id(),
+        ]);
+        $this->status = 'published';
+        $this->publishedAt = $entry->published_at?->format('Y-m-d\TH:i');
+        $this->entry = $entry;
+
+        $workflow->handleTransition($entry, 'published', $oldStatus);
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => "'{$entry->title}' approved and published successfully.",
+        ]);
+    }
+
+    public function openChangeRequestModal()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+        $this->changeRequestNote = '';
+        $this->showChangeRequestModal = true;
+    }
+
+    public function closeChangeRequestModal()
+    {
+        $this->showChangeRequestModal = false;
+    }
+
+    public function submitChangeRequest()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        $this->validate([
+            'changeRequestNote' => 'required|string|min:3|max:1000',
+        ]);
+
+        if (! $this->isEdit || ! $this->entryId) {
+            return;
+        }
+
+        $entry = CptEntry::findOrFail($this->entryId);
+        $oldStatus = $entry->status;
+        $entry->update([
+            'status' => 'draft',
+            'updated_by' => auth()->id(),
+        ]);
+        $this->status = 'draft';
+        $this->entry = $entry;
+
+        $workflow->handleTransition($entry, 'draft', $oldStatus, auth()->user(), $this->changeRequestNote);
+        $this->showChangeRequestModal = false;
+        $this->dispatch('notify', [
+            'type' => 'warning',
+            'message' => "Changes requested on '{$entry->title}'. Entry moved to draft.",
+        ]);
     }
 
     public function saveAsDraft()

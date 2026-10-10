@@ -2,6 +2,7 @@
 
 namespace Plugins\GoogleSiteKit\Livewire;
 
+use App\Models\Setting;
 use Livewire\Component;
 use Plugins\GoogleSiteKit\Services\GoogleApiService;
 
@@ -23,9 +24,9 @@ class Settings extends Component
 
     public function mount(GoogleApiService $api)
     {
-        $this->clientId = setting('gsk_client_id', '');
-        $this->clientSecret = setting('gsk_client_secret', '');
-        $this->propertyId = setting('gsk_ga4_property_id', '');
+        $this->clientId = (string) setting('gsk_client_id', '');
+        $this->clientSecret = (string) setting('gsk_client_secret', '');
+        $this->propertyId = (string) setting('gsk_ga4_property_id', '');
         $this->isConnected = $api->isConnected();
     }
 
@@ -42,15 +43,7 @@ class Settings extends Component
 
     protected function saveSetting(string $key, ?string $value): void
     {
-        \DB::table('settings')->updateOrInsert(
-            ['key' => $key],
-            [
-                'value' => json_encode($value),
-                'group' => 'google-site-kit',
-                'type' => 'string',
-                'updated_at' => now(),
-            ]
-        );
+        Setting::set($key, $value, 'google-site-kit', 'string');
     }
 
     public function render()

@@ -22,6 +22,16 @@
                 </span>
             </button>
 
+            <!-- Pending Review -->
+            <button
+                wire:click="$set('status', 'pending_review')"
+                class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $status === 'pending_review' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                Pending Review
+                <span class="px-2 py-0.5 rounded-lg {{ $status === 'pending_review' ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                    {{ $statusCounts['pending_review'] ?? 0 }}
+                </span>
+            </button>
+
             <!-- Draft -->
             <button
                 wire:click="$set('status', 'draft')"

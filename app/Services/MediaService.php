@@ -19,13 +19,24 @@ class MediaService
         $filename = $this->generateUniqueFilename($file);
         $path = config('media.path').'/'.$filename;
 
-        // Store the file
-        $disk = Storage::disk(config('media.disk'));
-        $disk->put($path, file_get_contents($file->getRealPath()));
-
         // Get file information
         $mimeType = $file->getMimeType();
         $extension = $file->getClientOriginalExtension();
+
+        // Read file contents
+        $disk = Storage::disk(config('media.disk'));
+        $contents = file_get_contents($file->getRealPath());
+
+        // Sanitize SVG before it touches disk — covers admin UI, API, and MCP uploads
+        if (strtolower($extension) === 'svg' || $mimeType === 'image/svg+xml') {
+            $contents = app(SvgSanitizerService::class)->clean($contents);
+            if ($contents === null) {
+                throw new \RuntimeException('SVG rejected: could not be parsed or sanitized.');
+            }
+        }
+
+        // Store the file
+        $disk->put($path, $contents);
 
         // Optimize original image if enabled
         if ($this->isImage($mimeType)) {
@@ -34,7 +45,7 @@ class MediaService
 
         // Get updated size and dimensions after optimization
         $fullPath = $disk->path($path);
-        $size = file_exists($fullPath) ? filesize($fullPath) : $file->getSize();
+        $size = file_exists($fullPath) ? filesize($fullPath) : strlen($contents);
         $dimensions = $this->isImage($mimeType) ? $this->getImageDimensions($fullPath) : null;
 
         // Create media record

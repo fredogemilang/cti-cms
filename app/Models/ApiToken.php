@@ -67,4 +67,105 @@ class ApiToken extends Model
     {
         return $this->expires_at && $this->expires_at->isPast();
     }
+
+    // ─── MCP Ability Constants ───────────────────────────────────────
+
+    /** Minimum ability to establish MCP connection. */
+    const MCP_CONNECT = 'mcp.connect';
+
+    /** Read-only access: list/get content, schema, theme info. */
+    const MCP_READ = 'mcp.read';
+
+    /** Write access: create/update content (implies mcp.read). */
+    const MCP_WRITE = 'mcp.write';
+
+    /** Destructive access: delete/trash content (standalone, not implied by write). */
+    const MCP_DELETE = 'mcp.delete';
+
+    /** Full admin access: settings, reports, user management (implies all). */
+    const MCP_ADMIN = 'mcp.admin';
+
+    /** Read theme config, views, template hierarchy. */
+    const MCP_THEME_READ = 'mcp.theme.read';
+
+    /** Create/modify theme files (for coding assistants). */
+    const MCP_THEME_WRITE = 'mcp.theme.write';
+
+    /** Upload files to media library. */
+    const MCP_MEDIA_UPLOAD = 'mcp.media.upload';
+
+    /** Publish content (transition from draft to published). */
+    const MCP_CONTENT_PUBLISH = 'mcp.content.publish';
+
+    // ─── MCP Ability Tiers (Single Source of Truth) ────────────────
+
+    /**
+     * All available MCP ability tiers.
+     *
+     * @return array<string, array{label: string, description: string, abilities: array<int, string>, rate_limit: int, badge_color: string}>
+     */
+    public static function mcpTiers(): array
+    {
+        return [
+            'readonly' => [
+                'label' => 'Read Only',
+                'description' => 'Can read content, schema, and theme. No write access.',
+                'abilities' => [self::MCP_CONNECT, self::MCP_READ, self::MCP_THEME_READ],
+                'rate_limit' => 120,
+                'badge_color' => 'blue',
+            ],
+            'editor' => [
+                'label' => 'Editor',
+                'description' => 'Can read, create/update content, and upload media. Cannot delete or modify settings.',
+                'abilities' => [self::MCP_CONNECT, self::MCP_READ, self::MCP_WRITE, self::MCP_THEME_READ, self::MCP_MEDIA_UPLOAD, self::MCP_CONTENT_PUBLISH],
+                'rate_limit' => 120,
+                'badge_color' => 'green',
+            ],
+            'developer' => [
+                'label' => 'Developer',
+                'description' => 'Full read/write including theme development, media upload, and two-step delete. No settings/admin tools.',
+                'abilities' => [self::MCP_CONNECT, self::MCP_READ, self::MCP_WRITE, self::MCP_DELETE, self::MCP_THEME_READ, self::MCP_THEME_WRITE, self::MCP_MEDIA_UPLOAD, self::MCP_CONTENT_PUBLISH],
+                'rate_limit' => 300,
+                'badge_color' => 'purple',
+            ],
+            'admin' => [
+                'label' => 'Admin',
+                'description' => 'Full access including reports, settings updates, and schema management.',
+                'abilities' => [self::MCP_CONNECT, self::MCP_READ, self::MCP_WRITE, self::MCP_DELETE, self::MCP_ADMIN, self::MCP_THEME_READ, self::MCP_THEME_WRITE, self::MCP_MEDIA_UPLOAD, self::MCP_CONTENT_PUBLISH],
+                'rate_limit' => 300,
+                'badge_color' => 'red',
+            ],
+            'chatbot' => [
+                'label' => 'Chatbot (Read-Only Published)',
+                'description' => 'Read-only access to published content only. For customer-facing chatbots.',
+                'abilities' => [self::MCP_CONNECT, self::MCP_READ],
+                'rate_limit' => 60,
+                'badge_color' => 'cyan',
+            ],
+        ];
+    }
+
+    /**
+     * Read-only MCP abilities — safe for chatbots and viewers.
+     */
+    public static function mcpReadOnlyAbilities(): array
+    {
+        return static::mcpTiers()['readonly']['abilities'];
+    }
+
+    /**
+     * Editor MCP abilities — for content editors creating/updating content.
+     */
+    public static function mcpEditorAbilities(): array
+    {
+        return static::mcpTiers()['editor']['abilities'];
+    }
+
+    /**
+     * Full MCP abilities — for admin-level coding assistants.
+     */
+    public static function mcpFullAbilities(): array
+    {
+        return static::mcpTiers()['admin']['abilities'];
+    }
 }

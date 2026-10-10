@@ -648,7 +648,9 @@ class FormField extends Model
                     break;
 
                 case 'url':
-                    if (! filter_var($value, FILTER_VALIDATE_URL)) {
+                    $urlToTest = preg_match('~^https?://~i', $value) ? $value : 'https://'.$value;
+                    $host = parse_url($urlToTest, PHP_URL_HOST);
+                    if (! filter_var($urlToTest, FILTER_VALIDATE_URL) || ! $host || ! str_contains($host, '.')) {
                         return "{$this->label} must be a valid URL.";
                     }
                     break;

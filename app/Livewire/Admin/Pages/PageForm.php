@@ -5,8 +5,10 @@ namespace App\Livewire\Admin\Pages;
 use App\Models\Page;
 use App\Models\PageBlock;
 use App\Models\PageRevision;
+use App\Services\EditorialWorkflowService;
 use App\Services\PageTemplateService;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\On;
@@ -58,6 +60,15 @@ class PageForm extends Component
 
     public ?int $editingBlockIndex = null;
 
+    // Editorial Workflow
+    public bool $canApprove = false;
+
+    public array $allowedStatuses = [];
+
+    public bool $showChangeRequestModal = false;
+
+    public string $changeRequestNote = '';
+
     // Autosave
     public bool $hasUnsavedChanges = false;
 
@@ -102,7 +113,7 @@ class PageForm extends Component
             'slug' => $isDefaultLocale
                 ? ['required', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/', Rule::unique('pages', 'slug')->ignore($this->pageId)]
                 : ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'],
-            'status' => 'required|in:draft,pending,published,scheduled,private',
+            'status' => 'required|in:draft,pending_review,published,scheduled,private',
             'parentId' => 'nullable|exists:pages,id',
             'template' => 'required|string',
             'publishedAt' => 'nullable|date',
@@ -126,6 +137,10 @@ class PageForm extends Component
     {
         $this->availableLocales = available_locales();
         $this->editingLocale = Page::defaultLocale();
+
+        $workflow = app(EditorialWorkflowService::class);
+        $this->canApprove = $workflow->canApprove();
+        $this->allowedStatuses = $workflow->allowedStatuses();
 
         $requestedLocale = request()->query('lang');
         if ($id) {
@@ -928,6 +943,11 @@ class PageForm extends Component
         $defaultLocale = Page::defaultLocale();
         $defaultSnap = $this->localizedSnapshots[$defaultLocale] ?? $this->currentLocaleFormSnapshot();
 
+        $workflow = app(EditorialWorkflowService::class);
+        $resolved = $workflow->resolveStatus($this->status);
+        $this->status = $resolved['status'];
+        $oldStatus = $this->isEdit ? $this->page->getOriginal('status') : null;
+
         // Build default-locale data for the row columns
         $pageData = [
             'title' => $defaultSnap['title'] ?? $this->title,
@@ -980,7 +1000,73 @@ class PageForm extends Component
         // Notify SeoMetaBox to save/attach (for new pages, it now has the ID)
         $this->dispatch('seo-attach', id: $this->page->id);
 
-        $this->dispatch('notify', type: 'success', message: 'Page saved successfully!');
+        $workflow->handleTransition($this->page, $this->page->status, $oldStatus);
+
+        if ($resolved['downgraded']) {
+            $this->dispatch('notify', type: 'info', message: $resolved['message']);
+        } else {
+            $this->dispatch('notify', type: 'success', message: 'Page saved successfully!');
+        }
+    }
+
+    public function approveAndPublish()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        if (! $this->isEdit || ! $this->page) {
+            return;
+        }
+
+        $oldStatus = $this->page->status;
+        $this->page->update([
+            'status' => 'published',
+            'published_at' => $this->page->published_at ?? now(),
+            'updated_by' => auth()->id(),
+        ]);
+        $this->status = 'published';
+        $this->publishedAt = $this->page->published_at?->format('Y-m-d\TH:i');
+
+        $workflow->handleTransition($this->page, 'published', $oldStatus);
+        $this->dispatch('notify', type: 'success', message: 'Page approved and published successfully!');
+    }
+
+    public function openChangeRequestModal()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+        $this->changeRequestNote = '';
+        $this->showChangeRequestModal = true;
+    }
+
+    public function closeChangeRequestModal()
+    {
+        $this->showChangeRequestModal = false;
+    }
+
+    public function submitChangeRequest()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        $this->validate([
+            'changeRequestNote' => 'required|string|min:3|max:1000',
+        ]);
+
+        if (! $this->isEdit || ! $this->page) {
+            return;
+        }
+
+        $oldStatus = $this->page->status;
+        $this->page->update([
+            'status' => 'draft',
+            'updated_by' => auth()->id(),
+        ]);
+        $this->status = 'draft';
+
+        $workflow->handleTransition($this->page, 'draft', $oldStatus, auth()->user(), $this->changeRequestNote);
+        $this->showChangeRequestModal = false;
+        $this->dispatch('notify', type: 'warning', message: 'Changes requested. Page returned to draft and author notified.');
     }
 
     protected function saveBlocks()
@@ -1263,7 +1349,9 @@ class PageForm extends Component
         }
 
         if ($this->isEdit && $this->pageId && $this->status !== 'published') {
-            $previewUrl = route('pages.preview', ['id' => $this->pageId, 'lang' => $targetLocale]);
+            $previewUrl = Route::has('admin.pages.preview')
+                ? route('admin.pages.preview', ['id' => $this->pageId, 'lang' => $targetLocale])
+                : (Route::has('pages.preview') ? route('pages.preview', ['id' => $this->pageId, 'lang' => $targetLocale]) : $frontendUrl);
         } else {
             $previewUrl = $frontendUrl;
         }

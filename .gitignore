@@ -21,11 +21,16 @@
 /storage/pail
 /storage/cms_installed
 /vendor
-/public/themes/*/assets
-# project/cdt branch: CDT theme published assets are tracked so deploy = git pull
-# (negation is branch-scoped — project/ofis has its own theme).
-!/public/themes/cdt/assets
-/themes/ofis
+# ── Core boundary (allowlist) ─────────────────────────────
+# main tracks ONLY core themes/plugins. Each project/<name> branch MUST
+# un-ignore its own theme/plugins, e.g. on project/cdt:
+#   !/themes/cdt  !/public/themes/cdt  !/plugins/youtube
+/themes/*
+!/themes/default
+/public/themes/*
+/plugins/*
+!/plugins/posts
+!/plugins/google-site-kit
 
 Homestead.json
 Homestead.yaml
@@ -39,4 +44,12 @@ Thumbs.db
 !/scratch/.gitkeep
 
 testsprite_tests\tmp\config.json
+
+# cPanel & Hosting Artifacts
+.well-known
+.well-known/
+cgi-bin/
+error_log
+*/error_log
+.user.ini
 
