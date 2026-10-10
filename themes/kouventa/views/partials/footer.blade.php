@@ -48,11 +48,20 @@
     
     <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1)">
         <span style="font-size: 14px; color: #93A4B6">© {{ date('Y') }} Kouventa by PT Helios Informatika Nusantara</span>
-        <a href="https://wa.me/62811849689" target="_blank" rel="noopener" style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; color: #0E1A24; padding: 10px 18px 10px 12px; border-radius: 999px; font-size: 14px; font-weight: 700; text-decoration: none">
-            <span style="width: 28px; height: 28px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1-4.9A8 8 0 1 1 21 12Z"></path></svg>
-            </span>
-            Chat on WhatsApp
-        </a>
     </div>
 </footer>
+
+<!-- Sticky Floating WhatsApp Button -->
+<a href="{{ function_exists('setting') ? setting('whatsapp_url', 'https://wa.me/62811849689') : 'https://wa.me/62811849689' }}"
+   target="_blank"
+   rel="noopener noreferrer"
+   class="kv-wa-sticky"
+   aria-label="Chat on WhatsApp">
+    <span class="kv-wa-icon-wrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12a8 8 0 0 1-11.8 7L4 20l1-4.9A8 8 0 1 1 21 12Z"></path>
+        </svg>
+        <span class="kv-wa-ping"></span>
+    </span>
+    <span class="kv-wa-text">{{ t('kouventa.Chat on WhatsApp', 'Chat on WhatsApp') }}</span>
+</a>

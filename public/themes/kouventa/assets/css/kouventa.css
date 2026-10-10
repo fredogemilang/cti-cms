@@ -645,3 +645,157 @@ html{scroll-padding-top:0}
   border-color: #071C33;
   background: #F4F6F5;
 }
+
+/* === Clean-HTML Animation Keyframes === */
+@keyframes kvTlF{0%,2%{transform:scaleY(0)}70%,100%{transform:scaleY(1)}}
+@keyframes kvTlR0{0%,2%{opacity:0;transform:translateY(18px)}12%,100%{opacity:1;transform:none}}
+@keyframes kvTlD0{0%,2%{transform:scale(.4);opacity:.3}8%{transform:scale(1.3);opacity:1}14%,100%{transform:scale(1);opacity:1}}
+@keyframes kvTlR1{0%,22%{opacity:0;transform:translateY(18px)}32%,100%{opacity:1;transform:none}}
+@keyframes kvTlD1{0%,22%{transform:scale(.4);opacity:.3}28%{transform:scale(1.3);opacity:1}34%,100%{transform:scale(1);opacity:1}}
+@keyframes kvTlR2{0%,42%{opacity:0;transform:translateY(18px)}52%,100%{opacity:1;transform:none}}
+@keyframes kvTlD2{0%,42%{transform:scale(.4);opacity:.3}48%{transform:scale(1.3);opacity:1}54%,100%{transform:scale(1);opacity:1}}
+@keyframes kvTlR3{0%,62%{opacity:0;transform:translateY(18px)}72%,100%{opacity:1;transform:none}}
+@keyframes kvTlD3{0%,62%{transform:scale(.4);opacity:.3}68%{transform:scale(1.3);opacity:1}74%,100%{transform:scale(1);opacity:1}}
+@keyframes kvBubIn{0%{opacity:0;transform:translateY(14px) scale(.92)}100%{opacity:1;transform:none}}
+@keyframes kvBlinkDot{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes kvBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes kvDraw{0%{stroke-dashoffset:var(--len)}100%{stroke-dashoffset:0}}
+@keyframes kvFade{0%{opacity:0}100%{opacity:1}}
+@keyframes kvPath{0%{offset-distance:0%;opacity:0}10%{opacity:1}90%{opacity:1}100%{offset-distance:100%;opacity:0}}
+@keyframes kvIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}
+@keyframes kvOut{0%{opacity:1}100%{opacity:0}}
+@keyframes kvPopIn{0%{opacity:0;transform:scale(.6)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes kvDrop{0%{opacity:0;transform:translateY(-28px) scale(1.04)}100%{opacity:1;transform:none}}
+@keyframes kvBlink{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes kvGrowW{0%{width:0}100%{width:var(--w)}}
+@keyframes kvGrowH{0%{height:0}100%{height:var(--h)}}
+@keyframes kvTravel{0%{transform:translateX(0);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateX(var(--d));opacity:0}}
+@keyframes kvSpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+@keyframes kvConverge{0%{transform:translate(var(--x),var(--y)) scale(1);opacity:0}10%{opacity:1}42%{transform:translate(calc(var(--x) * 1.06),calc(var(--y) * 1.06 - 12px)) scale(1);opacity:1}78%{transform:translate(0,0) scale(.5);opacity:1}88%,100%{transform:translate(0,0) scale(.3);opacity:0}}
+@keyframes kvLogo{0%,74%{opacity:0;transform:scale(.6)}86%{opacity:1;transform:scale(1.08)}100%{opacity:1;transform:scale(1)}}
+@keyframes kvGlow{0%,80%{box-shadow:0 0 0 0 rgba(43,212,106,0),0 0 0 rgba(43,212,106,0)}90%{box-shadow:0 0 0 18px rgba(43,212,106,.25),0 0 70px rgba(43,212,106,.6)}100%{box-shadow:0 0 0 0 rgba(43,212,106,0),0 0 44px rgba(43,212,106,.35)}}
+@keyframes kvJitter{0%{transform:translate(0,0)}100%{transform:translate(var(--x),var(--y))}}
+@keyframes kvWobble{0%,100%{transform:rotate(0)}20%{transform:rotate(-12deg)}40%{transform:rotate(10deg)}60%{transform:rotate(-6deg)}80%{transform:rotate(3deg)}}
+@keyframes kvCursor{0%{transform:translate(110px,70px);opacity:0}15%{opacity:1}55%{transform:translate(0,0) scale(1)}65%{transform:translate(0,0) scale(.82)}75%,100%{transform:translate(0,0) scale(1);opacity:1}}
+@keyframes kvLight{0%{background:#F4F6F5;color:#4A5866;box-shadow:none}100%{background:#071C33;color:#FFFFFF;box-shadow:0 0 0 4px rgba(43,212,106,.35)}}
+@keyframes kvPress{0%,100%{transform:scale(1)}50%{transform:scale(.92)}}
+@keyframes kvPulse{0%,100%{box-shadow:0 0 0 0 rgba(43,212,106,.45)}50%{box-shadow:0 0 0 14px rgba(43,212,106,0)}}
+@keyframes kvFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes kvMarquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes kvH1{0%,2%{opacity:0;transform:translateY(10px)}5%,90%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes kvH2{0%,12%{opacity:0;transform:translateY(10px)}15%,90%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes kvHt1{0%,20%{opacity:0}22%,26%{opacity:1}27%,100%{opacity:0}}
+@keyframes kvH3{0%,27%{opacity:0;transform:translateY(10px)}30%,90%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes kvH4{0%,38%{opacity:0;transform:translateY(10px)}41%,90%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes kvHt2{0%,44%{opacity:0}46%,50%{opacity:1}51%,100%{opacity:0}}
+@keyframes kvH5{0%,51%{opacity:0;transform:translateY(10px)}54%,90%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes kvH6{0%,63%{opacity:0;transform:translateY(10px)}66%,90%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes kvLoop{0%{opacity:0;transform:translateY(10px)}8%{opacity:1;transform:none}86%{opacity:1;transform:none}96%,100%{opacity:0;transform:none}}
+@keyframes kvPop{0%,10%{opacity:0;transform:scale(.6)}20%{opacity:1;transform:scale(1.08)}26%,86%{opacity:1;transform:scale(1)}96%,100%{opacity:0}}
+@keyframes kvGrow{0%,10%{width:0}55%,90%{width:var(--w)}100%{width:var(--w)}}
+@keyframes kvLit{0%{background:#FFFFFF;color:#0E1A24;border-color:#E3E8E6}100%{background:#071C33;color:#FFFFFF;border-color:#071C33}}
+@keyframes kvGreen{0%{background:#FFFFFF}100%{background:#DDF3E4}}
+@keyframes kvAmber{0%{background:#FFFFFF}100%{background:#FFF1D6}}
+@keyframes kvMark{0%{background:transparent}100%{background:var(--c)}}
+@keyframes kvMove{0%{transform:none}100%{transform:translate(var(--mx),var(--my))}}
+@keyframes kvScan{0%{transform:translateX(0)}100%{transform:translateX(var(--d))}}
+@keyframes kvKnob{0%{transform:translateX(0)}100%{transform:translateX(20px)}}
+@keyframes kvRoleHi{0%,100%{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.16)}2%,14%{background:rgba(43,212,106,0.18);border-color:#2BD46A}17%{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.16)}}
+@keyframes kvLineHi{0%{opacity:0}2%,14%{opacity:1}17%,100%{opacity:0}}
+@keyframes kvToast{0%{opacity:0;transform:translateY(8px)}3%,14%{opacity:1;transform:none}16.6%,100%{opacity:0;transform:none}}
+@keyframes kvHubPulse{0%{box-shadow:0 0 0 0 rgba(43,212,106,.45),0 0 40px rgba(43,212,106,.35)}100%{box-shadow:0 0 0 22px rgba(43,212,106,0),0 0 40px rgba(43,212,106,.35)}}
+@keyframes kvHi{0%{border-color:#E3E8E6;background:#FFFFFF;box-shadow:none}12%,82%{border-color:#13803F;background:#EAF7EF;box-shadow:0 0 0 3px rgba(19,128,63,.12)}100%{border-color:#E3E8E6;background:#FFFFFF;box-shadow:none}}
+@keyframes kvStepOn{0%{background:#FFFFFF;color:#4A5866;border-color:#C9D2CE}100%{background:#071C33;color:#FFFFFF;border-color:#071C33}}
+@keyframes kvStar{0%{color:#D5DCD9;transform:scale(.7)}70%{color:#E8A200;transform:scale(1.2)}100%{color:#E8A200;transform:scale(1)}}
+
+
+/* ==========================================================================
+   Sticky Floating WhatsApp Button
+   ========================================================================== */
+.kv-wa-sticky {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 9999;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #FFFFFF;
+    color: #0E1A24;
+    padding: 8px 18px 8px 8px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    box-shadow: 0 12px 32px rgba(7, 28, 51, 0.16), 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(7, 28, 51, 0.08);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.kv-wa-sticky:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 18px 42px rgba(7, 28, 51, 0.22), 0 4px 14px rgba(37, 211, 102, 0.25);
+    border-color: rgba(37, 211, 102, 0.4);
+    color: #0E1A24;
+}
+
+.kv-wa-sticky:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.kv-wa-icon-wrap {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #25D366;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 3px 8px rgba(37, 211, 102, 0.35);
+}
+
+.kv-wa-ping {
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 2px solid rgba(37, 211, 102, 0.7);
+    animation: kvWaPulse 2.8s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    pointer-events: none;
+}
+
+@keyframes kvWaPulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.22);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1.22);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .kv-wa-sticky {
+        bottom: 18px;
+        right: 18px;
+        padding: 7px 14px 7px 7px;
+        font-size: 13px;
+    }
+    .kv-wa-icon-wrap {
+        width: 30px;
+        height: 30px;
+    }
+    .kv-wa-icon-wrap svg {
+        width: 17px;
+        height: 17px;
+    }
+}
