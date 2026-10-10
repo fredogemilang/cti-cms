@@ -1,0 +1,142 @@
+{
+    "name": "Kouventa Theme",
+    "slug": "kouventa",
+    "version": "1.0.0",
+    "description": "Official Kouventa Enterprise AI & Customer Engagement Theme.",
+    "author": "Kouventa",
+    "screenshot": "screenshot.png",
+    "supports": [
+        "pages",
+        "posts",
+        "menus",
+        "forms"
+    ],
+    "form_placeholders": [
+        {
+            "key": "book_demo_form",
+            "label": "Book a Demo Form",
+            "description": "Formulir pendaftaran konsultasi enterprise pada halaman Book a Demo"
+        }
+    ],
+    "page_templates": {
+        "home": {
+            "label": "Homepage",
+            "description": "Main Kouventa Homepage (Dual-track AI & Customer Engagement)",
+            "blocks": []
+        },
+        "product-ai": {
+            "label": "Product AI",
+            "description": "Artificial Intelligence product overview page",
+            "blocks": []
+        },
+        "product-ce": {
+            "label": "Product Customer Engagement",
+            "description": "Customer Engagement WhatsApp & Omnichannel page",
+            "blocks": []
+        },
+        "solution-ai": {
+            "label": "Solution AI",
+            "description": "AI Solutions for 6 enterprise departments",
+            "blocks": []
+        },
+        "solution-ce": {
+            "label": "Solution Customer Engagement",
+            "description": "Customer Engagement solutions by use-case",
+            "blocks": []
+        },
+        "pricing": {
+            "label": "Pricing",
+            "description": "Pricing tiers and WhatsApp conversation cost calculator",
+            "blocks": []
+        },
+        "about": {
+            "label": "About Us",
+            "description": "About Kouventa, mission, leadership, and milestones",
+            "blocks": []
+        },
+        "insight": {
+            "label": "Insight (Blog)",
+            "description": "Thought leadership and AI insight articles",
+            "blocks": []
+        },
+        "book-demo": {
+            "label": "Book a Demo",
+            "description": "Enterprise consultation booking page with Form Studio slot",
+            "blocks": []
+        }
+    },
+    "seed_pages": [
+        {
+            "title": "AI adoption, done right",
+            "slug": "home",
+            "template": "home",
+            "status": "published",
+            "menu_order": 0
+        },
+        {
+            "title": "Artificial Intelligence",
+            "slug": "product/ai",
+            "template": "product-ai",
+            "status": "published",
+            "menu_order": 1
+        },
+        {
+            "title": "Customer Engagement",
+            "slug": "product/customer-engagement",
+            "template": "product-ce",
+            "status": "published",
+            "menu_order": 2
+        },
+        {
+            "title": "AI Solutions",
+            "slug": "solutions/ai",
+            "template": "solution-ai",
+            "status": "published",
+            "menu_order": 3
+        },
+        {
+            "title": "Customer Engagement Solutions",
+            "slug": "solutions/customer-engagement",
+            "template": "solution-ce",
+            "status": "published",
+            "menu_order": 4
+        },
+        {
+            "title": "Pricing",
+            "slug": "pricing",
+            "template": "pricing",
+            "status": "published",
+            "menu_order": 5
+        },
+        {
+            "title": "About Kouventa",
+            "slug": "about",
+            "template": "about",
+            "status": "published",
+            "menu_order": 6
+        },
+        {
+            "title": "Insight",
+            "slug": "insight",
+            "template": "insight",
+            "status": "published",
+            "menu_order": 7
+        },
+        {
+            "title": "Book a Demo",
+            "slug": "book-demo",
+            "template": "book-demo",
+            "status": "published",
+            "menu_order": 8
+        }
+    ],
+    "archive_settings": {
+        "per_page": 9,
+        "layout": "grid",
+        "show_sidebar": false,
+        "show_excerpt": true,
+        "show_author": true,
+        "show_date": true,
+        "excerpt_length": 140
+    }
+}
