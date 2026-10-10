@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CptEntry;
-use App\Models\CustomPostType;
 use App\Models\Page;
 use App\Services\ThemeLoader;
+use App\Support\Filter;
 use Illuminate\Support\Facades\View;
 
 /**
- * Public homepage controller. Pulls the active theme's home view with:
- *   - $page          — Page (slug=home) with eager-loaded top-level blocks
- *   - $testimonials  — latest 6 published testimonial CPT entries
- *   - $partners      — all published "our-partners" CPT entries
+ * Public homepage controller. Renders the active theme's home view with:
+ *   - $page — Page (slug=home) with eager-loaded top-level blocks
  *
- * Themes can rely on these always being defined (empty collection if no data).
+ * Themes add their own home data (testimonials, partners, ...) through the
+ * `home.view_data` filter: Filter::add('home.view_data', fn (array $data, Page $page) => $data + [...]).
  */
 class HomeController extends Controller
 {
@@ -43,51 +41,9 @@ class HomeController extends Controller
         request()->attributes->set('page', $page);
         View::share('page', $page);
 
-        return view($viewName, [
-            'testimonials' => $this->latestEntries('client-says'),
-            'partners' => $this->partnerEntries(),
-            'page' => $page,
-        ]);
-    }
+        $data = Filter::apply('home.view_data', ['page' => $page], $page);
 
-    protected function latestEntries(string $cptSlug, ?int $limit = null)
-    {
-        $cpt = CustomPostType::where('slug', $cptSlug)->first();
-        if (! $cpt) {
-            return collect();
-        }
-
-        $currentLocale = app()->getLocale();
-
-        $entries = CptEntry::with('author')
-            ->where('post_type_id', $cpt->id)
-            ->where('status', 'published')
-            ->orderByRaw('COALESCE(published_at, created_at) DESC')
-            ->orderByDesc('id')
-            ->get();
-
-        if (in_array($cptSlug, ['client-says', 'customer-success'], true)) {
-            $entries = $entries->filter(fn ($entry) => $entry->hasContentForLocale($currentLocale))->values();
-        }
-
-        if ($limit) {
-            return $entries->take($limit);
-        }
-
-        return $entries;
-    }
-
-    protected function partnerEntries()
-    {
-        $cpt = CustomPostType::where('slug', 'technology-alliance')->first();
-        if (! $cpt) {
-            return collect();
-        }
-
-        return CptEntry::where('post_type_id', $cpt->id)
-            ->where('status', 'published')
-            ->orderBy('title')
-            ->get();
+        return view($viewName, $data);
     }
 
     protected function loadHomePage(): ?Page

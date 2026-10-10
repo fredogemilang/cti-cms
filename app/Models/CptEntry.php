@@ -417,7 +417,7 @@ class CptEntry extends Model
 
     /**
      * Get the public frontend URL for this entry, respecting the current locale.
-     * Uses translated slugs so /products/what-is-cdt and /products/apa-itu-cdt
+     * Uses translated slugs so /products/what-is-x and /products/apa-itu-x
      * both resolve to the same entry while keeping the locale in the URL.
      */
     public function hasTranslationForLocale(string $locale): bool

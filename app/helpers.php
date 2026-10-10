@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\CptEntry;
-use App\Models\CustomPostType;
 use App\Models\Form;
 use App\Models\FormField;
 use App\Models\Page;
@@ -12,6 +11,7 @@ use App\Models\Theme;
 use App\Services\ActivityLogger;
 use App\Services\IconLibraryService;
 use App\Services\ThemeLoader;
+use App\Support\Action;
 use App\Support\Filter;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
@@ -415,52 +415,26 @@ if (! function_exists('add_filter')) {
     }
 }
 
+if (! function_exists('add_action')) {
+    function add_action(string $tag, callable $callback, int $priority = 10): void
+    {
+        Action::add($tag, $callback, $priority);
+    }
+}
+
+if (! function_exists('do_action')) {
+    function do_action(string $tag, mixed ...$args): void
+    {
+        Action::run($tag, ...$args);
+    }
+}
+
 if (! function_exists('resolve_frontend_entry')) {
     function resolve_frontend_entry(string $path, ?string $locale = null): ?CptEntry
     {
         $locale ??= app()->getLocale();
 
         return apply_filters('frontend.resolve_entry', null, $path, $locale);
-    }
-}
-
-if (! function_exists('resolve_solution_url')) {
-    /**
-     * Resolve solution link (converting legacy .html or static paths to CPT tech-product entry permalinks).
-     */
-    function resolve_solution_url(?string $link, string $vendorSlug = ''): string
-    {
-        if (empty($link) || $link === '#') {
-            return '#';
-        }
-
-        // Clean html extension and leading slashes
-        $clean = (string) preg_replace('/\.html$/i', '', ltrim($link, '/'));
-
-        // Strip prefix like sub-akamai- or sub-aws- if present
-        if (preg_match('/^sub-[^-\/]+-(.+)$/', $clean, $matches)) {
-            $candidateSlug = $matches[1];
-        } else {
-            $candidateSlug = $clean;
-        }
-
-        // Try finding tech-product by slug
-        $techProductType = CustomPostType::where('slug', 'tech-products')->first();
-        if ($techProductType) {
-            $entry = CptEntry::where('post_type_id', $techProductType->id)
-                ->where(function ($q) use ($candidateSlug, $clean) {
-                    $q->where('slug', $candidateSlug)
-                        ->orWhere('slug', $clean)
-                        ->orWhere('slug', 'like', '%'.$candidateSlug.'%');
-                })
-                ->first();
-
-            if ($entry) {
-                return $entry->getUrl();
-            }
-        }
-
-        return url('/'.$clean);
     }
 }
 

@@ -13,7 +13,7 @@
     $post = $post ?? view()->shared('post') ?? request()->attributes->get('post');
 
     if (isset($entry) && $entry instanceof \App\Models\CptEntry) {
-        $postTypeSlug = $entry->postType?->slug ?? $entry->post_type_slug ?? 'technology-alliance';
+        $postTypeSlug = $entry->postType?->slug ?? $entry->post_type_slug ?? '';
         $editUrl = url("{$adminPath}/cpt/entries/{$postTypeSlug}/{$entry->id}/edit");
         $editLabel = 'Edit ' . ($entry->postType?->singular_label ?? 'Entry');
     } elseif (isset($page) && $page instanceof \App\Models\Page) {

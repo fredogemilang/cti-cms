@@ -55,7 +55,7 @@ class TranslationScannerService
                 if ($this->shouldScanFile($file)) {
                     $items = $this->extractCallsFromFile($file);
                     foreach ($items as $item) {
-                        $this->registerDiscoveredCall($item, 'core', 'cdt', $file->getRelativePathname(), $discovered);
+                        $this->registerDiscoveredCall($item, 'core', 'core', $file->getRelativePathname(), $discovered);
                     }
                 }
             }

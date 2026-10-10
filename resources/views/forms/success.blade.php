@@ -1,4 +1,8 @@
-@extends('iccom::layouts.app')
+@php
+    $successThemeSlug = active_theme()?->slug ?? 'default';
+    $successLayout = view()->exists($successThemeSlug.'::layouts.app') ? $successThemeSlug.'::layouts.app' : 'layouts.app';
+@endphp
+@extends($successLayout)
 
 @section('title', 'Form Submitted - ' . $form->name)
 

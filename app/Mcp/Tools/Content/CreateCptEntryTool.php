@@ -21,7 +21,7 @@ class CreateCptEntryTool extends Tool
     {
         return [
             'cpt_slug' => $schema->string()
-                ->description('The Custom Post Type slug (e.g., "technology-alliance"). Use list-cpts to discover available CPTs.')
+                ->description('The Custom Post Type slug (e.g., "case-study"). Use list-cpts to discover available CPTs.')
                 ->required(),
 
             'title' => $schema->string()
