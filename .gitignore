@@ -27,7 +27,9 @@
 #   !/themes/cdt  !/public/themes/cdt  !/plugins/youtube
 /themes/*
 !/themes/default
+!/themes/kouventa
 /public/themes/*
+!/public/themes/kouventa
 /plugins/*
 !/plugins/posts
 !/plugins/google-site-kit
