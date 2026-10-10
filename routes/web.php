@@ -158,7 +158,6 @@ Route::get('/blog-news/shape-defense--solusi-anti-penipuan-berbasis-ai-untuk-seg
 Route::redirect('/admin', '/ctrlpanel', 301);
 Route::redirect('/admin/login', '/ctrlpanel/login', 301);
 
-
 if (! empty($nonDefaultLocales)) {
     Route::get('/{locale}/news-detail/{slug}', [LegacyRedirectController::class, 'newsDetail'])
         ->where('locale', $localePattern)->where('slug', '[a-zA-Z0-9\-:]+');
@@ -226,9 +225,6 @@ if (! empty($nonDefaultLocales)) {
     Route::get('/id/blog-news/cloud-backup-cara-simpel-jaga-data-tetap-aman', fn () => redirect(trailing_slash_url(url('/id/blog-news/cloud-backup-pengertian-cara-kerja-dan-contoh-penerapannya')), 301));
     Route::get('/id/blog-news/shape-defense--solusi-anti-penipuan-berbasis-ai-untuk-segala-jenis-bisnis', fn () => redirect(trailing_slash_url(url('/id/blog-news/shape-defense-solusi-anti-penipuan-berbasis-ai-untuk-segala-jenis-bisnis')), 301));
 }
-
-
-
 
 // Public Form Submission
 Route::prefix('forms')->name('forms.')->group(function () {

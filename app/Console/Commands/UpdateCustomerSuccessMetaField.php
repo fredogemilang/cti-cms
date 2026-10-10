@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\CustomPostType;
+use App\Models\MetaField;
 use Illuminate\Console\Command;
 
 class UpdateCustomerSuccessMetaField extends Command
@@ -36,6 +37,7 @@ class UpdateCustomerSuccessMetaField extends Command
             return Command::FAILURE;
         }
 
+        /** @var MetaField|null $field */
         $field = $cpt->metaFields()->where('name', 'related_products')->first();
 
         if (! $field) {

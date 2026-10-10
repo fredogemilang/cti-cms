@@ -153,6 +153,7 @@ class MergeCustomerSuccessContent extends Command
         $cpt->settings = $settings;
 
         // Also update MetaField 97 field_group to 'related_products'
+        /** @var MetaField|null $relField */
         $relField = $cpt->metaFields()->where('name', 'related_products')->first();
         if ($relField) {
             $relField->field_group = 'related_products';

@@ -7,6 +7,7 @@ use App\Models\CustomPostType;
 use App\Models\Page;
 use App\Models\SeoMeta;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class SeoMetadataPatchSeeder extends Seeder
@@ -223,7 +224,7 @@ class SeoMetadataPatchSeeder extends Seeder
                 'slug' => 'blog-news',
                 'status' => 'published',
                 'is_system' => true,
-                'author_id' => \App\Models\User::first()?->id ?? 1,
+                'author_id' => User::first()?->id ?? 1,
                 'translations' => [
                     'id' => [
                         'title' => 'Blog & Berita',

@@ -12,6 +12,7 @@ class LegacyRedirectController extends Controller
     {
         $clean = str_replace([':-', ':'], '-', $slug);
         $clean = preg_replace('/-+/', '-', $clean);
+
         return trim($clean, '-');
     }
 
@@ -24,8 +25,9 @@ class LegacyRedirectController extends Controller
         $targetSlug = $this->cleanLegacySlug($slug ?? $localeOrSlug ?? '');
         $qs = $request->getQueryString();
 
-        $path = ($locale ? "/{$locale}" : '') . "/blog-news/{$targetSlug}";
-        return redirect(trailing_slash_url(url($path)) . ($qs ? "?{$qs}" : ''), 301);
+        $path = ($locale ? "/{$locale}" : '')."/blog-news/{$targetSlug}";
+
+        return redirect(trailing_slash_url(url($path)).($qs ? "?{$qs}" : ''), 301);
     }
 
     /**
@@ -37,8 +39,9 @@ class LegacyRedirectController extends Controller
         $targetSlug = $this->cleanLegacySlug($slug ?? $localeOrSlug ?? '');
         $qs = $request->getQueryString();
 
-        $path = ($locale ? "/{$locale}" : '') . "/blog-news/{$targetSlug}";
-        return redirect(trailing_slash_url(url($path)) . ($qs ? "?{$qs}" : ''), 301);
+        $path = ($locale ? "/{$locale}" : '')."/blog-news/{$targetSlug}";
+
+        return redirect(trailing_slash_url(url($path)).($qs ? "?{$qs}" : ''), 301);
     }
 
     /**
@@ -52,7 +55,8 @@ class LegacyRedirectController extends Controller
 
         $prefix = $locale ? "/{$locale}" : '';
         $path = $targetSlug ? "{$prefix}/blog-news/category/{$targetSlug}" : "{$prefix}/blog-news";
-        return redirect(trailing_slash_url(url($path)) . ($qs ? "?{$qs}" : ''), 301);
+
+        return redirect(trailing_slash_url(url($path)).($qs ? "?{$qs}" : ''), 301);
     }
 
     /**
@@ -66,7 +70,8 @@ class LegacyRedirectController extends Controller
 
         $prefix = $locale ? "/{$locale}" : '';
         $path = $targetSlug ? "{$prefix}/blog-news/tag/{$targetSlug}" : "{$prefix}/blog-news";
-        return redirect(trailing_slash_url(url($path)) . ($qs ? "?{$qs}" : ''), 301);
+
+        return redirect(trailing_slash_url(url($path)).($qs ? "?{$qs}" : ''), 301);
     }
 
     /**
@@ -103,6 +108,7 @@ class LegacyRedirectController extends Controller
         $pageNum = (int) ($page ?? $localeOrPage);
 
         $prefix = $locale ? "/{$locale}" : '';
+
         return redirect(trailing_slash_url(url("{$prefix}/customer-success"))."?page={$pageNum}", 301);
     }
 
@@ -115,6 +121,7 @@ class LegacyRedirectController extends Controller
         $pageNum = (int) ($page ?? $localeOrPage);
 
         $prefix = $locale ? "/{$locale}" : '';
+
         return redirect(trailing_slash_url(url("{$prefix}/blog-news"))."?page={$pageNum}", 301);
     }
 
@@ -129,6 +136,7 @@ class LegacyRedirectController extends Controller
         $pageNum = (int) ($hasLocale ? $page : $slugOrPage);
 
         $prefix = $locale ? "/{$locale}" : '';
+
         return redirect(trailing_slash_url(url("{$prefix}/blog-news/tag/{$targetSlug}"))."?page={$pageNum}", 301);
     }
 
@@ -143,6 +151,7 @@ class LegacyRedirectController extends Controller
         $pageNum = (int) ($hasLocale ? $page : $slugOrPage);
 
         $prefix = $locale ? "/{$locale}" : '';
+
         return redirect(trailing_slash_url(url("{$prefix}/blog-news/category/{$targetSlug}"))."?page={$pageNum}", 301);
     }
 
@@ -206,5 +215,4 @@ class LegacyRedirectController extends Controller
 
         abort(404);
     }
-
 }

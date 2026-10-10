@@ -14,6 +14,7 @@ foreach ($sitemaps as $sm) {
     $xml = @file_get_contents($sm);
     if (! $xml) {
         echo "Failed to fetch {$sm}\n";
+
         continue;
     }
     preg_match_all('/<loc>([^<]+)<\/loc>/', $xml, $matches);
@@ -25,7 +26,7 @@ foreach ($sitemaps as $sm) {
 }
 
 $allUrls = array_unique($allUrls);
-echo "Total URLs collected: " . count($allUrls) . "\n";
+echo 'Total URLs collected: '.count($allUrls)."\n";
 
 $results = [];
 $withDesc = [];
@@ -33,7 +34,7 @@ $withDesc = [];
 // Concurrency using curl_multi for fast crawling
 $chunks = array_chunk($allUrls, 20);
 foreach ($chunks as $chunkIndex => $chunk) {
-    echo "Processing chunk " . ($chunkIndex + 1) . "/" . count($chunks) . "...\n";
+    echo 'Processing chunk '.($chunkIndex + 1).'/'.count($chunks)."...\n";
     $mh = curl_multi_init();
     $curlHandles = [];
 
@@ -97,7 +98,7 @@ foreach ($chunks as $chunkIndex => $chunk) {
     curl_multi_close($mh);
 }
 
-echo "Total with description: " . count($withDesc) . "\n";
-file_put_contents(__DIR__ . '/prod-with-description.json', json_encode($withDesc, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-file_put_contents(__DIR__ . '/prod-all-meta.json', json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+echo 'Total with description: '.count($withDesc)."\n";
+file_put_contents(__DIR__.'/prod-with-description.json', json_encode($withDesc, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+file_put_contents(__DIR__.'/prod-all-meta.json', json_encode($results, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 echo "Saved to scripts/prod-with-description.json and scripts/prod-all-meta.json\n";

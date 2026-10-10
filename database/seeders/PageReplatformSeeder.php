@@ -50,7 +50,7 @@ class PageReplatformSeeder extends Seeder
             </div>
             <h2 class="text-2xl md:text-3xl font-bold text-zinc-900 mb-4">Submission Received!</h2>
             <p class="text-zinc-600 text-base md:text-lg mb-8">Thank you for getting in touch with Central Data Technology. Our specialized consultants have received your details and will contact you shortly.</p>
-            <a href="' . url('/') . '" class="inline-flex items-center justify-center px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-primary hover:bg-red-700 text-white transition-all shadow-md">Back to Home</a>
+            <a href="'.url('/').'" class="inline-flex items-center justify-center px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-primary hover:bg-red-700 text-white transition-all shadow-md">Back to Home</a>
         </div>');
         SeoMeta::updateOrCreate(
             ['seoable_type' => Page::class, 'seoable_id' => $thankSubmission->id, 'locale' => ''],
@@ -78,7 +78,7 @@ class PageReplatformSeeder extends Seeder
             </div>
             <h2 class="text-2xl md:text-3xl font-bold text-zinc-900 mb-4">Subscription Confirmed!</h2>
             <p class="text-zinc-600 text-base md:text-lg mb-8">Thank you for subscribing to Central Data Technology. You will now receive regular updates on enterprise cloud computing, cybersecurity trends, and digital transformation guides.</p>
-            <a href="' . url('/blog-news/') . '" class="inline-flex items-center justify-center px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-primary hover:bg-red-700 text-white transition-all shadow-md">Explore Tech Insights</a>
+            <a href="'.url('/blog-news/').'" class="inline-flex items-center justify-center px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-primary hover:bg-red-700 text-white transition-all shadow-md">Explore Tech Insights</a>
         </div>');
         SeoMeta::updateOrCreate(
             ['seoable_type' => Page::class, 'seoable_id' => $thankSubscribe->id, 'locale' => ''],
@@ -112,7 +112,7 @@ class PageReplatformSeeder extends Seeder
             </div>
             <h2 class="text-2xl md:text-3xl font-bold text-zinc-900 mb-4">Pengajuan Berhasil Dikirim!</h2>
             <p class="text-zinc-600 text-base md:text-lg mb-8">Terima kasih telah menghubungi Central Data Technology. Tim konsultan IT kami telah menerima formulir Anda dan akan segera menghubungi Anda dalam waktu 1x24 jam kerja.</p>
-            <a href="' . url('/id/') . '" class="inline-flex items-center justify-center px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-primary hover:bg-red-700 text-white transition-all shadow-md">Kembali ke Beranda</a>
+            <a href="'.url('/id/').'" class="inline-flex items-center justify-center px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider bg-primary hover:bg-red-700 text-white transition-all shadow-md">Kembali ke Beranda</a>
         </div>');
         SeoMeta::updateOrCreate(
             ['seoable_type' => Page::class, 'seoable_id' => $terimaKasih->id, 'locale' => 'id'],

@@ -78,4 +78,3 @@ class Dashboard extends Component
         return view('google-site-kit::livewire.dashboard');
     }
 }
-
