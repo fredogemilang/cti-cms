@@ -12,6 +12,9 @@
 .kv-mockup-workflow { width: 440px; height: 440px; position: relative; overflow: hidden; border-radius: 14px; }
 .kv-linked-pill { min-height: 48px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap; }
 .kv-unlinked-pill { min-height: 48px; display: flex; align-items: center; font-size: 15px; color: #4A5866; }
+.kv-product-tab { flex: 1 1 0; min-height: 88px; padding: 16px 18px; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; color: #0E1A24; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s ease; box-sizing: border-box; width: 100%; }
+.kv-product-tab-icon { width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.kv-product-tab-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; transition: background 0.3s; }
 </style>
 @endpush
 
@@ -54,7 +57,7 @@ $stageRoles = [
         'wiki' => t('kouventa.Ground every analysis in your own business knowledge', 'Ground every analysis in your own business knowledge'),
     ],
     'execute' => [
-        'taskforce' => t('kouventa.AI agents that plan and execute business processes autonomously · Connect AI agents to your business systems', 'AI agents that plan and execute business processes autonomously · Connect AI agents to your business systems'),
+        'taskforce' => t('kouventa.AI agents that plan and execute business processes autonomously · MCP Connectivity: Connect AI agents to your business systems', 'AI agents that plan and execute business processes autonomously · MCP Connectivity: Connect AI agents to your business systems'),
     ],
 ];
 
@@ -351,31 +354,38 @@ $productsList = [
 <div role="tablist" aria-label="Products" aria-orientation="vertical" style="display: flex; flex-direction: column; gap: 10px">
 
 @foreach($productsList as $p)
-<button type="button" role="tab" :aria-selected="product === '{{ $p['id'] }}'" @click="product = '{{ $p['id'] }}'; replayProduct()"
-        style="flex: 1 1 0; min-height: 88px; padding: 16px 18px; border-radius: 16px; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s ease; {{ $p['id'] === 'wiki' ? 'border: 1px solid #071C33; background: #071C33; color: #FFFFFF;' : 'border: 1px solid #E3E8E6; background: #FFFFFF; color: #0E1A24;' }}"
-        :style="'border: 1px solid ' + (product === '{{ $p['id'] }}' ? '#071C33' : (hasRole('{{ $p['id'] }}') ? '#13803F' : '#E3E8E6')) + '; background: ' + (product === '{{ $p['id'] }}' ? '#071C33' : '#FFFFFF') + '; color: ' + (product === '{{ $p['id'] }}' ? '#FFFFFF' : '#0E1A24') + '; opacity: ' + getOpacity('{{ $p['id'] }}')">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; {{ $p['id'] === 'wiki' ? 'background: rgba(43,212,106,0.18); color: #2BD46A;' : 'background: #EAF7EF; color: #13803F;' }}"
-      :style="product === '{{ $p['id'] }}' ? 'background: rgba(43,212,106,0.18); color: #2BD46A' : 'background: #EAF7EF; color: #13803F'">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        {!! $p['svg'] !!}
-    </svg>
-</span>
-<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0">
-<span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
-    <span style="font-size: 17px; font-weight: 800">{{ $p['name'] }}</span>
-    @if($p['soon'])
-        <span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ t('kouventa.COMING SOON', 'COMING SOON') }}</span>
-    @endif
-</span>
-<template x-if="hasRole('{{ $p['id'] }}')">
-    <span style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85" x-text="getRole('{{ $p['id'] }}')"></span>
-</template>
-<template x-if="!hasRole('{{ $p['id'] }}')">
-    <span style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ $p['tag'] }}</span>
-</template>
-</span>
-<span style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; transition: background 0.3s"
-      :style="'background: ' + (hasRole('{{ $p['id'] }}') ? (product === '{{ $p['id'] }}' ? '#2BD46A' : '#13803F') : 'transparent')"></span>
+<button type="button" role="tab" class="kv-product-tab"
+        :aria-selected="product === '{{ $p['id'] }}'"
+        @click="product = '{{ $p['id'] }}'; replayProduct()"
+        :style="{
+            border: '1px solid ' + (product === '{{ $p['id'] }}' ? '#071C33' : (hasRole('{{ $p['id'] }}') ? '#13803F' : '#E3E8E6')),
+            background: product === '{{ $p['id'] }}' ? '#071C33' : '#FFFFFF',
+            color: product === '{{ $p['id'] }}' ? '#FFFFFF' : '#0E1A24',
+            opacity: getOpacity('{{ $p['id'] }}')
+        }">
+    <span class="kv-product-tab-icon"
+          :style="{
+              background: product === '{{ $p['id'] }}' ? 'rgba(43,212,106,0.18)' : '#EAF7EF',
+              color: product === '{{ $p['id'] }}' ? '#2BD46A' : '#13803F'
+          }">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            {!! $p['svg'] !!}
+        </svg>
+    </span>
+    <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; text-align: left">
+        <span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+            <span style="font-size: 17px; font-weight: 800">{{ $p['name'] }}</span>
+            @if($p['soon'])
+                <span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ t('kouventa.COMING SOON', 'COMING SOON') }}</span>
+            @endif
+        </span>
+        <span x-show="hasRole('{{ $p['id'] }}')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85" x-text="getRole('{{ $p['id'] }}')"></span>
+        <span x-show="!hasRole('{{ $p['id'] }}')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ $p['tag'] }}</span>
+    </span>
+    <span class="kv-product-tab-dot"
+          :style="{
+              background: hasRole('{{ $p['id'] }}') ? (product === '{{ $p['id'] }}' ? '#2BD46A' : '#13803F') : 'transparent'
+          }"></span>
 </button>
 @endforeach
 
@@ -515,7 +525,7 @@ $productsList = [
 
 <!-- Mockup Taskforce -->
 <div class="kv-mockup-taskforce" x-show="product === 'taskforce'" x-cloak>
-<div style="background: #071C33; color: #FFFFFF; border-radius: 12px; padding: 10px 16px; font-size: 13px; animation: kvIn .4s ease .2s both"><span style="color: #2BD46A; font-weight: 700">{{ t('kouventa.Objective', 'Objective') }}</span> · {{ t('kouventa.· Reduce overdue receivables', '· Reduce overdue receivables') }}</div>
+<div style="background: #071C33; color: #FFFFFF; border-radius: 12px; padding: 10px 16px; font-size: 13px; animation: kvIn .4s ease .2s both"><span style="color: #2BD46A; font-weight: 700">{{ t('kouventa.Objective', 'Objective') }}</span> · {{ t('kouventa.Reduce overdue receivables', 'Reduce overdue receivables') }}</div>
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; width: 100%">
 <span style="background: #FFFFFF; border-radius: 10px; padding: 10px; text-align: center; font-size: 12px; font-weight: 700; animation: kvIn .4s ease 1s both">{{ t('kouventa.Analyst agent', 'Analyst agent') }}</span>
 <span style="background: #FFFFFF; border-radius: 10px; padding: 10px; text-align: center; font-size: 12px; font-weight: 700; animation: kvIn .4s ease 1.2s both">{{ t('kouventa.Planner agent', 'Planner agent') }}</span>
