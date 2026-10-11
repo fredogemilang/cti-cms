@@ -862,3 +862,87 @@ html{scroll-padding-top:0}
     align-items: center;
     z-index: 10;
 }
+
+/* --- Products Highlight Pill Styles --- */
+.kv-linked-pill {
+    min-height: 48px;
+    box-sizing: border-box;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 6px 6px 16px;
+    border-radius: 999px;
+    background: #FFFFFF;
+    border: 1px solid #E3E8E6;
+    font-size: 15px;
+    color: #4A5866;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(7, 28, 51, 0.04);
+}
+.kv-pill-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #13803F;
+    flex-shrink: 0;
+    display: inline-block;
+}
+.kv-btn-show-all {
+    margin-left: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 36px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid #C9D2CE;
+    background: #FFFFFF;
+    color: #0E1A24;
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.kv-btn-show-all:hover {
+    background: #071C33;
+    border-color: #071C33;
+    color: #FFFFFF;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(7, 28, 51, 0.15);
+}
+.kv-btn-show-all:hover svg {
+    stroke: #2BD46A;
+}
+.kv-btn-show-all:active {
+    transform: translateY(0);
+}
+.kv-unlinked-pill {
+    min-height: 48px;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    color: #4A5866;
+}
+.kv-unlinked-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #4A5866;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.2s;
+    cursor: pointer;
+}
+.kv-unlinked-link:hover {
+    color: #13803F;
+}
+.kv-unlinked-link svg {
+    transition: transform 0.2s;
+}
+.kv-unlinked-link:hover svg {
+    transform: translateY(-2px);
+    stroke: #13803F;
+}

@@ -15,6 +15,91 @@
 .kv-product-tab { flex: 1 1 0; min-height: 88px; padding: 16px 18px; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; color: #0E1A24; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s ease; box-sizing: border-box; width: 100%; }
 .kv-product-tab-icon { width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 .kv-product-tab-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; transition: background 0.3s; }
+
+/* --- Products Highlight Pill Styles --- */
+.kv-linked-pill {
+    min-height: 48px;
+    box-sizing: border-box;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 6px 6px 16px;
+    border-radius: 999px;
+    background: #FFFFFF;
+    border: 1px solid #E3E8E6;
+    font-size: 15px;
+    color: #4A5866;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(7, 28, 51, 0.04);
+}
+.kv-pill-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #13803F;
+    flex-shrink: 0;
+    display: inline-block;
+}
+.kv-btn-show-all {
+    margin-left: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 36px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid #C9D2CE;
+    background: #FFFFFF;
+    color: #0E1A24;
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.kv-btn-show-all:hover {
+    background: #071C33;
+    border-color: #071C33;
+    color: #FFFFFF;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(7, 28, 51, 0.15);
+}
+.kv-btn-show-all:hover svg {
+    stroke: #2BD46A;
+}
+.kv-btn-show-all:active {
+    transform: translateY(0);
+}
+.kv-unlinked-pill {
+    min-height: 48px;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    color: #4A5866;
+}
+.kv-unlinked-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #4A5866;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.2s;
+    cursor: pointer;
+}
+.kv-unlinked-link:hover {
+    color: #13803F;
+}
+.kv-unlinked-link svg {
+    transition: transform 0.2s;
+}
+.kv-unlinked-link:hover svg {
+    transform: translateY(-2px);
+    stroke: #13803F;
+}
+
 </style>
 @endpush
 
@@ -194,7 +279,7 @@ $productsList = [
 </section>
 
 <!-- ============ ENTERPRISE AI JOURNEY ============ -->
-<section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 28px">
+<section id="journey" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 14px; max-width: 900px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Bring your AI together,', 'Bring your AI together,') }} <span style="color: #13803F">{{ t('kouventa.from answers to action.', 'from answers to action.') }}</span></h2>
 <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.', 'Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.') }}</p>
@@ -342,12 +427,17 @@ $productsList = [
 <section id="ai-products" style="padding: 48px 80px 104px; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.The products that put you', 'The products that put you') }} <span style="color: #13803F">{{ t('kouventa.in control.', 'in control.') }}</span></h2>
-<span class="kv-linked-pill" x-show="linked" x-cloak>
-    <span style="width: 10px; height: 10px; border-radius: 50%; background: #13803F"></span>
+<span class="kv-linked-pill" x-show="linked" x-cloak style="min-height: 48px; box-sizing: border-box; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
+    <span class="kv-pill-dot" style="width: 10px; height: 10px; border-radius: 50%; background: #13803F; flex-shrink: 0; display: inline-block"></span>
     <span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ $stages[0]['name'] }}</strong></span>
-    <button type="button" @click="linked = false" style="margin-left: 4px; white-space: nowrap; flex-shrink: 0; min-height: 36px; padding: 6px 12px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+    <button type="button" @click="linked = false" class="kv-btn-show-all" style="margin-left: 6px; white-space: nowrap; flex-shrink: 0; min-height: 36px; padding: 6px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
 </span>
-<span class="kv-unlinked-pill" x-show="!linked">{{ t('kouventa.Pick a journey stage above to see which products help', 'Pick a journey stage above to see which products help') }}</span>
+<span class="kv-unlinked-pill" x-show="!linked" style="min-height: 48px; display: inline-flex; align-items: center; font-size: 15px; color: #4A5866">
+    <a href="#journey" @click.prevent="document.getElementById('journey')?.scrollIntoView({ behavior: 'smooth' })" class="kv-unlinked-link" style="display: inline-flex; align-items: center; gap: 8px; color: #4A5866; text-decoration: none; cursor: pointer">
+        <span>{{ t('kouventa.Pick a journey stage above to see which products help', 'Pick a journey stage above to see which products help') }}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </a>
+</span>
 </div>
 
 <div style="display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; align-items: stretch">
