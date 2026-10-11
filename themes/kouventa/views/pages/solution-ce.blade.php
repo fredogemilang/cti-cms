@@ -79,7 +79,7 @@
 </div>
 
 <!-- ===== TAB 0: Sales & Marketing ===== -->
-<div role="tabpanel" x-show="tab === 0" style="display: flex; flex-direction: column; gap: 48px">
+<div role="tabpanel" x-show="tab === 0" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
@@ -228,7 +228,7 @@
 </div>
 
 <!-- ===== TAB 1: Customer Service ===== -->
-<div role="tabpanel" x-show="tab === 1" style="display: flex; flex-direction: column; gap: 48px">
+<div role="tabpanel" x-show="tab === 1" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
@@ -339,7 +339,7 @@
 </div>
 
 <!-- ===== TAB 2: Operations ===== -->
-<div role="tabpanel" x-show="tab === 2" style="display: flex; flex-direction: column; gap: 48px">
+<div role="tabpanel" x-show="tab === 2" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">

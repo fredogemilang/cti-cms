@@ -330,12 +330,12 @@
 <section id="products" style="padding: 48px 80px 104px; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.One platform.', 'One platform.') }} <span style="color: #13803F">{{ t('kouventa.Zero missed messages.', 'Zero missed messages.') }}</span></h2>
-<span x-show="linked" style="min-height: 48px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
+<span class="kv-flex kv-items-center" x-show="linked" x-cloak style="min-height: 48px; box-sizing: border-box; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
 <span style="width: 10px; height: 10px; border-radius: 50%; background: #13803F"></span>
 <span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name"></strong></span>
 <button type="button" @click="linked = false" style="margin-left: 4px; white-space: nowrap; flex-shrink: 0; min-height: 36px; padding: 6px 12px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
 </span>
-<span x-show="!linked" style="min-height: 48px; display: flex; align-items: center; font-size: 15px; color: #4A5866">{{ t('kouventa.Pick a journey stage above to see which products help', 'Pick a journey stage above to see which products help') }}</span>
+<span class="kv-flex kv-items-center" x-show="!linked" style="min-height: 48px; font-size: 15px; color: #4A5866">{{ t('kouventa.Pick a journey stage above to see which products help', 'Pick a journey stage above to see which products help') }}</span>
 </div>
 
 <div style="display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; align-items: stretch">
@@ -498,7 +498,7 @@
 <div role="img" :aria-label="products[product].alt" style="height: 420px; border-radius: 18px; background: #F4F6F5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
 
 <!-- Auth Illustration -->
-<div x-show="product === 'auth'" style="width: 300px; display: flex; flex-direction: column; gap: 14px">
+<div class="kv-flex-col" x-show="product === 'auth'" style="width: 300px; gap: 14px">
 <div style="background: #FFFFFF; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(7,28,51,0.08)">
 <span style="font-size: 13px; font-weight: 700; color: #4A5866">{{ t('kouventa.Sign in to Your Brand', 'Sign in to Your Brand') }}</span>
 <div style="height: 40px; border-radius: 10px; border: 1px solid #E3E8E6; display: flex; align-items: center; padding: 0 12px; font-size: 14px; color: #0E1A24">+62 812 •••• 4567</div>
@@ -516,7 +516,7 @@
 </div>
 
 <!-- Broadcast Illustration -->
-<div x-show="product === 'broadcast'" style="width: 400px; display: flex; flex-direction: column; gap: 22px">
+<div class="kv-flex-col" x-show="product === 'broadcast'" style="width: 400px; gap: 22px">
 <div style="display: flex; align-items: center; gap: 0">
 <div style="width: 150px; flex-shrink: 0; background: #FFFFFF; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.08); animation: kvPulse 2.4s ease infinite">
 <div style="height: 54px; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px">PROMO</div>
@@ -546,7 +546,7 @@
 </div>
 
 <!-- Chatbot Illustration -->
-<div x-show="product === 'chatbot'" style="width: 350px; display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; line-height: 1.45">
+<div class="kv-flex-col" x-show="product === 'chatbot'" style="width: 350px; gap: 8px; font-size: 12.5px; line-height: 1.45">
 <div style="align-self: flex-start; max-width: 88%; background: #FFFFFF; padding: 10px 12px; border-radius: 4px 14px 14px 14px; display: flex; flex-direction: column; gap: 8px; animation: kvLoop 12s ease 0.3s infinite both">
 <span><span style="font-size: 10.5px; font-weight: 800; color: #4A5866">{{ t('kouventa.STATIC BOT', 'STATIC BOT') }}</span><br>{{ t('kouventa.Hi! How can we help you today?', 'Hi! How can we help you today?') }}</span>
 <div style="display: flex; gap: 6px; flex-wrap: wrap"><span style="font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 999px; border: 1px solid #13803F; color: #13803F">{{ t('kouventa.Track order', 'Track order') }}</span><span style="font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 999px; border: 1px solid #13803F; color: #13803F">Promo</span><span style="font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 999px; border: 1px solid #13803F; color: #13803F">{{ t('kouventa.Store hours', 'Store hours') }}</span></div>
@@ -559,7 +559,7 @@
 </div>
 
 <!-- Integration Illustration -->
-<div x-show="product === 'integration'" style="width: 420px; display: flex; align-items: center">
+<div class="kv-flex kv-items-center" x-show="product === 'integration'" style="width: 420px">
 <div style="width: 118px; flex-shrink: 0; background: #FFFFFF; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 10px 30px rgba(7,28,51,0.08)">
 <span style="font-size: 12px; font-weight: 700">{{ t('kouventa.Your system', 'Your system') }}</span>
 <span style="font-size: 11px; color: #4A5866">ERP · CRM · POS</span>
@@ -576,7 +576,7 @@
 </div>
 
 <!-- Flows Illustration -->
-<div x-show="product === 'flows'" style="width: 300px; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1); display: flex; flex-direction: column">
+<div class="kv-flex-col" x-show="product === 'flows'" style="width: 300px; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1)">
 <div style="background: #071C33; color: #FFFFFF; padding: 14px 16px; font-size: 14px; font-weight: 700">{{ t('kouventa.Open an account', 'Open an account') }}</div>
 <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px">
 <div style="display: flex; flex-direction: column; gap: 5px"><span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.Full name', 'Full name') }}</span><div style="height: 36px; border-radius: 8px; border: 1px solid #E3E8E6; padding: 0 10px; display: flex; align-items: center"><div style="height: 8px; border-radius: 4px; background: #0E1A24; --w: 60%; animation: kvGrow 7s ease 0.2s infinite both"></div></div></div>
@@ -589,7 +589,7 @@
 </div>
 
 <!-- Omni Illustration -->
-<div x-show="product === 'omni'" style="width: 420px; display: flex; align-items: center; gap: 0">
+<div class="kv-flex kv-items-center" x-show="product === 'omni'" style="width: 420px; gap: 0">
 <div style="width: 118px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px">
 <span style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>WhatsApp</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">Chat</span></span></span>
 <span style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-1.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Instagram</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.DM & comments', 'DM & comments') }}</span></span></span>

@@ -799,3 +799,10 @@ html{scroll-padding-top:0}
         height: 17px;
     }
 }
+
+/* --- Display Utilities for Alpine x-show Preservation --- */
+.kv-flex { display: flex; }
+.kv-flex-col { display: flex; flex-direction: column; }
+.kv-flex-center { display: flex; align-items: center; justify-content: center; }
+.kv-items-center { align-items: center; }
+.kv-justify-center { justify-content: center; }

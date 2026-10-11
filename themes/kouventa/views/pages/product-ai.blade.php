@@ -1,3 +1,20 @@
+@push('styles')
+<style>
+.kv-stage-wrap { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.kv-stage-0 { width: 380px; display: flex; flex-direction: column; gap: 12px; font-size: 14px; line-height: 1.5; }
+.kv-stage-1 { width: 470px; display: flex; align-items: center; }
+.kv-stage-2 { width: 420px; display: flex; flex-direction: column; gap: 16px; }
+.kv-product-info { display: flex; flex-direction: column; gap: 16px; }
+.kv-mockup-wrap { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.kv-mockup-wiki { width: 360px; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1); display: flex; flex-direction: column; }
+.kv-mockup-taskforce { width: 400px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.kv-mockup-playground { width: 380px; background: #FFFFFF; border-radius: 18px; box-shadow: 0 10px 30px rgba(7,28,51,0.1); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.kv-mockup-workflow { width: 440px; height: 440px; position: relative; overflow: hidden; border-radius: 14px; }
+.kv-linked-pill { min-height: 48px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap; }
+.kv-unlinked-pill { min-height: 48px; display: flex; align-items: center; font-size: 15px; color: #4A5866; }
+</style>
+@endpush
+
 @extends('kouventa::layouts.app')
 
 @php
@@ -240,10 +257,10 @@ $productsList = [
 
 <div style="display: flex; flex-direction: column; gap: 10px">
 <div role="img" style="height: 400px; border-radius: 18px; background: #F4F6F5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
-<div x-show="jOn" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center">
+<div class="kv-stage-wrap" x-show="jOn">
 
 <!-- Stage 0: Answer Animation -->
-<div x-show="stage === 0" style="width: 380px; display: flex; flex-direction: column; gap: 12px; font-size: 14px; line-height: 1.5">
+<div class="kv-stage-0" x-show="stage === 0">
 <div style="align-self: flex-end; max-width: 75%; background: #071C33; color: #FFFFFF; padding: 11px 15px; border-radius: 16px 4px 16px 16px; animation: kvIn .4s ease .2s both">{{ t('kouventa.What is our leave policy?', 'What is our leave policy?') }}</div>
 <div style="display: grid">
 <div style="grid-area: 1 / 1; align-self: start; justify-self: start; background: #FFFFFF; padding: 13px 15px; border-radius: 4px 16px 16px 16px; display: flex; gap: 5px; animation: kvIn .3s ease .9s both, kvOut .2s ease 2.1s 1 forwards"><span style="width: 7px; height: 7px; border-radius: 50%; background: #4A5866; animation: kvBlink 1s ease infinite"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #4A5866; animation: kvBlink 1s ease .2s infinite"></span><span style="width: 7px; height: 7px; border-radius: 50%; background: #4A5866; animation: kvBlink 1s ease .4s infinite"></span></div>
@@ -258,7 +275,7 @@ $productsList = [
 </div>
 
 <!-- Stage 1: Analyze Animation -->
-<div x-show="stage === 1" x-cloak style="width: 470px; display: flex; align-items: center">
+<div class="kv-stage-1" x-show="stage === 1" x-cloak>
 <div style="width: 108px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px">
 <span style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; padding: 10px; border-radius: 10px; background: #FFFFFF; animation: kvIn .4s ease .1s both"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path></svg>Database</span>
 <span style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; padding: 10px; border-radius: 10px; background: #FFFFFF; animation: kvIn .4s ease .3s both"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6"></path></svg>{{ t('kouventa.Documents', 'Documents') }}</span>
@@ -289,7 +306,7 @@ $productsList = [
 </div>
 
 <!-- Stage 2: Execute Animation -->
-<div x-show="stage === 2" x-cloak style="width: 420px; display: flex; flex-direction: column; gap: 16px">
+<div class="kv-stage-2" x-show="stage === 2" x-cloak>
 <div style="background: #FFFFFF; border-radius: 16px; padding: 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px; box-shadow: 0 10px 30px rgba(7,28,51,0.08); animation: kvIn .4s ease .1s both">
 <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: #13803F">{{ t('kouventa.RECOMMENDATION', 'RECOMMENDATION') }}</span><span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Prioritize 3 overdue invoices', 'Prioritize 3 overdue invoices') }}</span></div>
 <div style="position: relative; display: grid; flex-shrink: 0">
@@ -322,12 +339,12 @@ $productsList = [
 <section id="ai-products" style="padding: 48px 80px 104px; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.The products that put you', 'The products that put you') }} <span style="color: #13803F">{{ t('kouventa.in control.', 'in control.') }}</span></h2>
-<span x-show="linked" style="display: none; min-height: 48px; box-sizing: border-box; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
+<span class="kv-linked-pill" x-show="linked" x-cloak>
     <span style="width: 10px; height: 10px; border-radius: 50%; background: #13803F"></span>
     <span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ $stages[0]['name'] }}</strong></span>
     <button type="button" @click="linked = false" style="margin-left: 4px; white-space: nowrap; flex-shrink: 0; min-height: 36px; padding: 6px 12px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
 </span>
-<span x-show="!linked" style="min-height: 48px; display: flex; align-items: center; font-size: 15px; color: #4A5866">{{ t('kouventa.Pick a journey stage above to see which products help', 'Pick a journey stage above to see which products help') }}</span>
+<span class="kv-unlinked-pill" x-show="!linked">{{ t('kouventa.Pick a journey stage above to see which products help', 'Pick a journey stage above to see which products help') }}</span>
 </div>
 
 <div style="display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; align-items: stretch">
@@ -371,7 +388,7 @@ $productsList = [
 <div style="display: flex; flex-direction: column; gap: 16px">
 
 <!-- Wikipedia Info -->
-<div x-show="product === 'wiki'" style="display: flex; flex-direction: column; gap: 16px">
+<div class="kv-product-info" x-show="product === 'wiki'">
     <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">AI Company Wikipedia</span>
     <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.An AI-powered chatbot that understands the context of your questions and delivers fast, accurate answers in seconds, drawing from your company knowledge, websites, databases, and other connected data sources.', 'An AI-powered chatbot that understands the context of your questions and delivers fast, accurate answers in seconds, drawing from your company knowledge, websites, databases, and other connected data sources.') }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
@@ -395,7 +412,7 @@ $productsList = [
 </div>
 
 <!-- Playground Info -->
-<div x-show="product === 'playground'" x-cloak style="display: flex; flex-direction: column; gap: 16px">
+<div class="kv-product-info" x-show="product === 'playground'" x-cloak>
     <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">Chat Playground</span>
     <span style="font-size: 13px; font-weight: 700; color: #13803F">{{ t('kouventa.Works with Wikipedia & Task Force', 'Works with Wikipedia & Task Force') }}</span>
     <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Chat Playground is your controlled workspace to chat with AI Company Wikipedia, and to trigger, run, and monitor AI Task Force agents, securely, efficiently, and within your boundaries.', 'Chat Playground is your controlled workspace to chat with AI Company Wikipedia, and to trigger, run, and monitor AI Task Force agents, securely, efficiently, and within your boundaries.') }}</span>
@@ -420,7 +437,7 @@ $productsList = [
 </div>
 
 <!-- Task Force Info -->
-<div x-show="product === 'taskforce'" x-cloak style="display: flex; flex-direction: column; gap: 16px">
+<div class="kv-product-info" x-show="product === 'taskforce'" x-cloak>
     <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">AI Task Force</span>
     <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.An Agentic AI-powered solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.', 'An Agentic AI-powered solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.') }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
@@ -448,7 +465,7 @@ $productsList = [
 </div>
 
 <!-- TaskO Info -->
-<div x-show="product === 'workflow'" x-cloak style="display: flex; flex-direction: column; gap: 16px">
+<div class="kv-product-info" x-show="product === 'workflow'" x-cloak>
     <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
         <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">TaskO</span>
         <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.06em; padding: 6px 10px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ t('kouventa.COMING SOON', 'COMING SOON') }}</span>
@@ -480,10 +497,10 @@ $productsList = [
 <!-- Right animated mockup column -->
 <div style="display: flex; flex-direction: column; gap: 10px">
 <div role="img" style="height: 440px; border-radius: 18px; background: #F4F6F5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
-<div x-show="pOn" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center">
+<div class="kv-mockup-wrap" x-show="pOn">
 
 <!-- Mockup Wiki -->
-<div x-show="product === 'wiki'" style="width: 360px; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1); display: flex; flex-direction: column">
+<div class="kv-mockup-wiki" x-show="product === 'wiki'">
 <div style="background: #071C33; color: #FFFFFF; padding: 14px 16px; display: flex; align-items: center; gap: 10px"><span style="width: 28px; height: 28px; border-radius: 8px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px">K</span><span style="font-size: 14px; font-weight: 700">Company Wikipedia</span></div>
 <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px; font-size: 13px; line-height: 1.5">
 <div style="align-self: flex-end; max-width: 80%; background: #071C33; color: #FFFFFF; padding: 10px 13px; border-radius: 14px 4px 14px 14px; animation: kvIn .4s ease .2s both">{{ t('kouventa.How do I claim travel expenses?', 'How do I claim travel expenses?') }}</div>
@@ -497,7 +514,7 @@ $productsList = [
 </div>
 
 <!-- Mockup Taskforce -->
-<div x-show="product === 'taskforce'" x-cloak style="width: 400px; display: flex; flex-direction: column; align-items: center; gap: 12px">
+<div class="kv-mockup-taskforce" x-show="product === 'taskforce'" x-cloak>
 <div style="background: #071C33; color: #FFFFFF; border-radius: 12px; padding: 10px 16px; font-size: 13px; animation: kvIn .4s ease .2s both"><span style="color: #2BD46A; font-weight: 700">{{ t('kouventa.Objective', 'Objective') }}</span> · {{ t('kouventa.· Reduce overdue receivables', '· Reduce overdue receivables') }}</div>
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; width: 100%">
 <span style="background: #FFFFFF; border-radius: 10px; padding: 10px; text-align: center; font-size: 12px; font-weight: 700; animation: kvIn .4s ease 1s both">{{ t('kouventa.Analyst agent', 'Analyst agent') }}</span>
@@ -519,7 +536,7 @@ $productsList = [
 </div>
 
 <!-- Mockup Playground -->
-<div x-show="product === 'playground'" x-cloak style="width: 380px; background: #FFFFFF; border-radius: 18px; box-shadow: 0 10px 30px rgba(7,28,51,0.1); padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<div class="kv-mockup-playground" x-show="product === 'playground'" x-cloak>
 <div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 14px; font-weight: 800">Chat Playground</span><span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.Finance team', 'Finance team') }}</span></div>
 <div style="display: flex; flex-direction: column; gap: 6px">
 <span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.Permitted agents', 'Permitted agents') }}</span>
@@ -544,7 +561,7 @@ $productsList = [
 </div>
 
 <!-- Mockup TaskO -->
-<div x-show="product === 'workflow'" x-cloak style="width: 440px; height: 440px; position: relative; overflow: hidden; border-radius: 14px">
+<div class="kv-mockup-workflow" x-show="product === 'workflow'" x-cloak>
 <div style="position: absolute; inset: 0; background-color: #071C33; background-image: radial-gradient(rgba(255,255,255,0.09) 1px, transparent 1px); background-size: 18px 18px"></div>
 <span style="position: absolute; top: 14px; right: 14px; z-index: 3; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; padding: 6px 10px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ t('kouventa.COMING SOON', 'COMING SOON') }}</span>
 <span style="position: absolute; top: 16px; left: 16px; z-index: 3; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #93A4B6"><span style="width: 7px; height: 7px; border-radius: 50%; background: #2BD46A; animation: kvBlink 1s ease 5 both"></span>TaskO · Invoice approval flow</span>
