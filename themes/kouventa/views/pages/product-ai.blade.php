@@ -1,45 +1,104 @@
 @extends('kouventa::layouts.app')
 
-@section('content')
-<div class="kv-canvas-wrap" x-data="{
-    stage: 0,
-    product: 'wiki',
-    linked: false,
-    stages: [
-        {
-            key: 'answer',
-            num: '01',
-            name: '{{ t('kouventa.Answer', 'Answer') }}',
-            headline: '{{ t('kouventa.Give everyone fast, accurate answers from your own knowledge.', 'Give everyone fast, accurate answers from your own knowledge.') }}',
-            sub: '{{ t('kouventa.Kouventa AI turns your company\'s documents and knowledge into an AI assistant that helps customers and employees find the right information instantly, without searching through files or waiting for another team.', 'Kouventa AI turns your company\'s documents and knowledge into an AI assistant that helps customers and employees find the right information instantly, without searching through files or waiting for another team.') }}',
-            defaultProduct: 'wiki'
-        },
-        {
-            key: 'analyze',
-            num: '02',
-            name: '{{ t('kouventa.Analyze', 'Analyze') }}',
-            headline: '{{ t('kouventa.Turn your data into insights that drive better decisions.', 'Turn your data into insights that drive better decisions.') }}',
-            sub: '{{ t('kouventa.Go beyond answering questions. Kouventa AI analyzes business data and conversations to uncover patterns, highlight risks and opportunities, and recommend what to do next.', 'Go beyond answering questions. Kouventa AI analyzes business data and conversations to uncover patterns, highlight risks and opportunities, and recommend what to do next.') }}',
-            defaultProduct: 'taskforce'
-        },
-        {
-            key: 'execute',
-            num: '03',
-            name: '{{ t('kouventa.Execute', 'Execute') }}',
-            headline: '{{ t('kouventa.Let AI take action, with your approval.', 'Let AI take action, with your approval.') }}',
-            sub: '{{ t('kouventa.Once a recommendation is approved, Kouventa AI agents reason, plan, and carry out the task across connected systems, so insights turn into completed work.', 'Once a recommendation is approved, Kouventa AI agents reason, plan, and carry out the task across connected systems, so insights turn into completed work.') }}',
-            defaultProduct: 'taskforce'
-        }
+@php
+$stages = [
+    [
+        'key' => 'answer',
+        'num' => '01',
+        'name' => t('kouventa.Answer', 'Answer'),
+        'headline' => t('kouventa.Give everyone fast, accurate answers from your own knowledge.', 'Give everyone fast, accurate answers from your own knowledge.'),
+        'sub' => t("kouventa.Kouventa AI turns your company's documents and knowledge into an AI assistant that helps customers and employees find the right information instantly, without searching through files or waiting for another team.", "Kouventa AI turns your company's documents and knowledge into an AI assistant that helps customers and employees find the right information instantly, without searching through files or waiting for another team."),
+        'defaultProduct' => 'wiki'
     ],
-    seeTools(prod) {
-        this.linked = true;
-        this.product = prod;
-        $nextTick(() => {
-            const el = document.getElementById('ai-products');
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    }
-}">
+    [
+        'key' => 'analyze',
+        'num' => '02',
+        'name' => t('kouventa.Analyze', 'Analyze'),
+        'headline' => t('kouventa.Turn your data into insights that drive better decisions.', 'Turn your data into insights that drive better decisions.'),
+        'sub' => t('kouventa.Go beyond answering questions. Kouventa AI analyzes business data and conversations to uncover patterns, highlight risks and opportunities, and recommend what to do next.', 'Go beyond answering questions. Kouventa AI analyzes business data and conversations to uncover patterns, highlight risks and opportunities, and recommend what to do next.'),
+        'defaultProduct' => 'taskforce'
+    ],
+    [
+        'key' => 'execute',
+        'num' => '03',
+        'name' => t('kouventa.Execute', 'Execute'),
+        'headline' => t('kouventa.Let AI take action, with your approval.', 'Let AI take action, with your approval.'),
+        'sub' => t('kouventa.Once a recommendation is approved, Kouventa AI agents reason, plan, and carry out the task across connected systems, so insights turn into completed work.', 'Once a recommendation is approved, Kouventa AI agents reason, plan, and carry out the task across connected systems, so insights turn into completed work.'),
+        'defaultProduct' => 'taskforce'
+    ]
+];
+
+$stageRoles = [
+    'answer' => [
+        'wiki' => t('kouventa.One trusted knowledge base for answering questions', 'One trusted knowledge base for answering questions'),
+    ],
+    'analyze' => [
+        'taskforce' => t('kouventa.AI agents that analyze data and produce actionable recommendations', 'AI agents that analyze data and produce actionable recommendations'),
+        'wiki' => t('kouventa.Ground every analysis in your own business knowledge', 'Ground every analysis in your own business knowledge'),
+    ],
+    'execute' => [
+        'taskforce' => t('kouventa.AI agents that plan and execute business processes autonomously · Connect AI agents to your business systems', 'AI agents that plan and execute business processes autonomously · Connect AI agents to your business systems'),
+    ],
+];
+
+$stageButtons = [
+    [
+        'key' => 'answer',
+        'num' => '01',
+        'name' => t('kouventa.Answer', 'Answer'),
+        'left' => '16.667%',
+        'svg' => '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path><path d="M10 9.5a2 2 0 1 1 2.8 1.8c-.5.3-.8.7-.8 1.2v.5M12 16h.01"></path>'
+    ],
+    [
+        'key' => 'analyze',
+        'num' => '02',
+        'name' => t('kouventa.Analyze', 'Analyze'),
+        'left' => '50%',
+        'svg' => '<path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path>'
+    ],
+    [
+        'key' => 'execute',
+        'num' => '03',
+        'name' => t('kouventa.Execute', 'Execute'),
+        'left' => '83.333%',
+        'svg' => '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path>'
+    ]
+];
+
+$productsList = [
+    [
+        'id' => 'wiki',
+        'name' => 'AI Company Wikipedia',
+        'tag' => t('kouventa.Knowledge assistant', 'Knowledge assistant'),
+        'soon' => false,
+        'svg' => '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14Z"></path><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"></path>'
+    ],
+    [
+        'id' => 'playground',
+        'name' => 'Chat Playground',
+        'tag' => t('kouventa.Works with Wikipedia & Task Force', 'Works with Wikipedia & Task Force'),
+        'soon' => false,
+        'svg' => '<path d="M21 12a8 8 0 0 1-11.8 7L4 20l1-4.9A8 8 0 1 1 21 12Z"></path><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"></path>'
+    ],
+    [
+        'id' => 'taskforce',
+        'name' => 'AI Task Force',
+        'tag' => t('kouventa.Agentic AI', 'Agentic AI'),
+        'soon' => false,
+        'svg' => '<circle cx="12" cy="7" r="3"></circle><circle cx="5" cy="17" r="2.5"></circle><circle cx="19" cy="17" r="2.5"></circle><path d="M10 9.5 6.5 15M14 9.5l3.5 5.5"></path>'
+    ],
+    [
+        'id' => 'workflow',
+        'name' => 'TaskO',
+        'tag' => t('kouventa.Task Automation', 'Task Automation'),
+        'soon' => true,
+        'svg' => '<rect x="3" y="3" width="7" height="6" rx="1.5"></rect><rect x="14" y="15" width="7" height="6" rx="1.5"></rect><path d="M6.5 9v3a3 3 0 0 0 3 3H14"></path>'
+    ]
+];
+@endphp
+
+@section('content')
+<div class="kv-canvas-wrap" x-data="productAiPage">
 <!-- ============ NAV + HERO ============ -->
 <section style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative">
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
@@ -65,17 +124,18 @@
 <div style="position: absolute; left: 50%; top: 50%; width: 380px; height: 380px; margin: -190px 0 0 -190px; border-radius: 50%; border: 1px dashed rgba(255,255,255,0.12)"></div>
 <div style="position: absolute; left: 50%; top: 50%; width: 240px; height: 240px; margin: -120px 0 0 -120px; border-radius: 50%; border: 1px dashed rgba(255,255,255,0.12)"></div>
 
-<div style="position: absolute; inset: 0">
+<div x-show="heroOn" style="position: absolute; inset: 0">
 <span style="position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 18px; background: #0F3357; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; --x: -190px; --y: -130px; animation: kvConverge 5s ease 0s 1 forwards"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D5DEE8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1-4.9A8 8 0 1 1 21 12Z"></path></svg></span>
 <span style="position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 18px; background: #0F3357; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; --x: 180px; --y: -150px; animation: kvConverge 5s ease 0s 1 forwards"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D5DEE8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg></span>
 <span style="position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 18px; background: #0F3357; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; --x: 210px; --y: 60px; animation: kvConverge 5s ease 0s 1 forwards"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D5DEE8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M7 16v-4M12 16V8M17 16v-6"></path></svg></span>
 <span style="position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 18px; background: #0F3357; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; --x: 90px; --y: 170px; animation: kvConverge 5s ease 0s 1 forwards"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D5DEE8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2Z"></path><path d="M9 7h6M9 11h6M9 15h3"></path></svg></span>
 <span style="position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 18px; background: #0F3357; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; --x: -150px; --y: 150px; animation: kvConverge 5s ease 0s 1 forwards"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D5DEE8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg></span>
 <span style="position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 18px; background: #0F3357; border: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; --x: -220px; --y: 20px; animation: kvConverge 5s ease 0s 1 forwards"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D5DEE8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"></path><circle cx="12" cy="12" r="3"></circle></svg></span>
-<div style="position: absolute; left: 50%; top: 50%; width: 300px; margin: -118px 0 0 -150px; box-sizing: border-box; border-radius: 22px; background: #0C2A48; border: 1px solid rgba(43,212,106,0.45); padding: 16px; display: flex; flex-direction: column; gap: 12px; animation: kvLogo 5s ease 0s 1 forwards, kvGlow 5s ease 0s 1 forwards"><div style="display: flex; justify-content: space-between; align-items: center"><span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: #FFFFFF"><span style="width: 8px; height: 8px; border-radius: 50%; background: #2BD46A"></span>{{ t('kouventa.Your AI workspace', 'Your AI workspace') }}</span><span style="font-size: 10.5px; font-weight: 700; padding: 4px 8px; border-radius: 999px; background: rgba(43,212,106,0.15); color: #2BD46A">{{ t('kouventa.All models', 'All models') }}</span></div><div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px"><span style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 9px 8px; display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; color: #FFFFFF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1-4.9A8 8 0 1 1 21 12Z"></path></svg>Chat</span><span style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 9px 8px; display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; color: #FFFFFF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6"></path></svg>{{ t('kouventa.Documents', 'Documents') }}</span><span style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 9px 8px; display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; color: #FFFFFF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M7 16v-4M12 16V8M17 16v-6"></path></svg>{{ t('kouventa.Insights', 'Insights') }}</span><span style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 9px 8px; display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; color: #FFFFFF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2Z"></path><path d="M9 7h6M9 11h6"></path></svg>Billing</span></div><div style="display: flex; align-items: center; gap: 8px; background: #FFFFFF; border-radius: 10px; padding: 8px 8px 8px 12px"><span style="flex-grow: 1; font-size: 12px; color: #5B6875">{{ t('kouventa.Ask anything about your business…', 'Ask anything about your business…') }}</span><span style="width: 26px; height: 26px; border-radius: 8px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></div><div style="display: flex; gap: 6px; font-size: 10.5px; font-weight: 700"><span style="padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,0.08); color: #D5DEE8">{{ t('kouventa.PII masked', 'PII masked') }}</span><span style="padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,0.08); color: #D5DEE8">{{ t('kouventa.Role access', 'Role access') }}</span><span style="padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,0.08); color: #D5DEE8">{{ t('kouventa.Budget on track', 'Budget on track') }}</span></div></div>
+<div style="position: absolute; left: 50%; top: 50%; width: 300px; margin: -118px 0 0 -150px; box-sizing: border-box; border-radius: 22px; background: #0C2A48; border: 1px solid rgba(43,212,106,0.45); padding: 16px; display: flex; flex-direction: column; gap: 12px; animation: kvLogo 5s ease 0s 1 forwards, kvGlow 5s ease 0s 1 forwards"><div style="display: flex; justify-content: space-between; align-items: center"><span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: #FFFFFF"><span style="width: 8px; height: 8px; border-radius: 50%; background: #2BD46A"></span>{{ t('kouventa.Your AI workspace', 'Your AI workspace') }}</span><span style="font-size: 10.5px; font-weight: 700; padding: 4px 8px; border-radius: 999px; background: rgba(43,212,106,0.15); color: #2BD46A">{{ t('kouventa.All models', 'All models') }}</span></div><div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px"><span style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 9px 8px; display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; color: #FFFFFF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1-4.9A8 8 0 1 1 21 12Z"></path></svg>Chat</span><span style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 9px 8px; display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; color: #FFFFFF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6"></path></svg>{{ t('kouventa.Documents', 'Documents') }}</span><span style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 9px 8px; display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; color: #FFFFFF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M7 16v-4M12 16V8M17 16v-6"></path></svg>{{ t('kouventa.Insights', 'Insights') }}</span><span style="background: rgba(255,255,255,0.06); border-radius: 10px; padding: 9px 8px; display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; color: #FFFFFF"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2V2Z"></path><path d="M9 7h6M9 11h6M9 15h3"></path></svg>Billing</span></div><div style="display: flex; align-items: center; gap: 8px; background: #FFFFFF; border-radius: 10px; padding: 8px 8px 8px 12px"><span style="flex-grow: 1; font-size: 12px; color: #5B6875">{{ t('kouventa.Ask anything about your business…', 'Ask anything about your business…') }}</span><span style="width: 26px; height: 26px; border-radius: 8px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></div><div style="display: flex; gap: 6px; font-size: 10.5px; font-weight: 700"><span style="padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,0.08); color: #D5DEE8">{{ t('kouventa.PII masked', 'PII masked') }}</span><span style="padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,0.08); color: #D5DEE8">{{ t('kouventa.Role access', 'Role access') }}</span><span style="padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,0.08); color: #D5DEE8">{{ t('kouventa.Budget on track', 'Budget on track') }}</span></div></div>
 </div>
 
 </div>
+<button type="button" @click="replayHero()" style="min-height: 40px; padding: 8px 16px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #B9C6D3; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>{{ t('kouventa.Replay', 'Replay') }}</button>
 </div>
 </div>
 </section>
@@ -128,11 +188,11 @@
 
 <!-- Active green progress bar -->
 <span aria-hidden="true" style="position: absolute; top: 76px; left: 16.667%; height: 4px; border-radius: 4px; background: #13803F; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1)"
-      :style="'width: ' + (stage === 0 ? '0%' : (stage === 1 ? '33.333%' : '66.667%'))"></span>
+      :style="{ width: stage === 0 ? '0%' : (stage === 1 ? '33.333%' : '66.667%') }"></span>
 
 <!-- Floating badge "Your AI needs" -->
-<span aria-hidden="true" style="position: absolute; top: 0; transform: translateX(-50%); transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center"
-      :style="'left: ' + (stage === 0 ? '16.667%' : (stage === 1 ? '50%' : '83.333%'))">
+<span aria-hidden="true" style="position: absolute; top: 0; transform: translateX(-50%); transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; z-index: 10"
+      :style="{ left: stage === 0 ? '16.667%' : (stage === 1 ? '50%' : '83.333%') }">
 <span style="animation: kvFloat 2.4s ease-in-out infinite; display: flex; flex-direction: column; align-items: center">
 <span style="display: flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; border-radius: 999px; background: #071C33; color: #FFFFFF; font-size: 13px; font-weight: 700; white-space: nowrap; box-shadow: 0 6px 16px rgba(7, 28, 51, 0.18)">
 <span style="width: 26px; height: 26px; border-radius: 50%; background: #2BD46A; color: #071C33; display: flex; align-items: center; justify-content: center">
@@ -143,45 +203,24 @@
 </span>
 </span>
 
-@php
-$stageButtons = [
-    [
-        'key' => 'answer',
-        'num' => '01',
-        'name' => t('kouventa.Answer', 'Answer'),
-        'left' => '16.667%',
-        'svg' => '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path><path d="M10 9.5a2 2 0 1 1 2.8 1.8c-.5.3-.8.7-.8 1.2v.5M12 16h.01"></path>'
-    ],
-    [
-        'key' => 'analyze',
-        'num' => '02',
-        'name' => t('kouventa.Analyze', 'Analyze'),
-        'left' => '50%',
-        'svg' => '<path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path>'
-    ],
-    [
-        'key' => 'execute',
-        'num' => '03',
-        'name' => t('kouventa.Execute', 'Execute'),
-        'left' => '83.333%',
-        'svg' => '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path>'
-    ]
-];
-@endphp
-
 @foreach($stageButtons as $idx => $btn)
-<button type="button" role="tab" :aria-selected="stage === {{ $idx }}" @click="stage = {{ $idx }}"
+<button type="button" role="tab" :aria-selected="stage === {{ $idx }}" @click="pickStage({{ $idx }})"
         style="position: absolute; top: 50px; left: {{ $btn['left'] }}; transform: translateX(-50%); width: 240px; padding: 0; border: 0; background: transparent; color: #0E1A24; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; cursor: pointer">
-    <span style="width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.3s, border-color 0.3s, color 0.3s"
-          :style="stage === {{ $idx }} ? 'background: #071C33; border: 2px solid #071C33; color: #2BD46A; animation: kvPulse 2s ease-out infinite' : (stage > {{ $idx }} ? 'background: #EAF7EF; border: 2px solid #13803F; color: #13803F' : 'background: #FFFFFF; border: 2px solid #C9D2CE; color: #6B7A88')">
+    <span style="width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.3s, border-color 0.3s, color 0.3s; {{ $idx === 0 ? 'background: #071C33; border: 2px solid #071C33; color: #2BD46A; animation: kvPulse 2s ease-out infinite;' : 'background: #FFFFFF; border: 2px solid #C9D2CE; color: #6B7A88;' }}"
+          :style="{
+              background: stage === {{ $idx }} ? '#071C33' : (stage > {{ $idx }} ? '#EAF7EF' : '#FFFFFF'),
+              border: stage === {{ $idx }} ? '2px solid #071C33' : (stage > {{ $idx }} ? '2px solid #13803F' : '2px solid #C9D2CE'),
+              color: stage === {{ $idx }} ? '#2BD46A' : (stage > {{ $idx }} ? '#13803F' : '#6B7A88'),
+              animation: stage === {{ $idx }} ? 'kvPulse 2s ease-out infinite' : 'none'
+          }">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             {!! $btn['svg'] !!}
         </svg>
     </span>
-    <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px;"
-          :style="stage >= {{ $idx }} ? 'color: #13803F' : 'color: #6B7A88'">{{ $btn['num'] }}</span>
-    <span style="font-size: 20px; font-weight: 800;"
-          :style="stage === {{ $idx }} ? 'color: #0E1A24' : 'color: #4A5866'">{{ $btn['name'] }}</span>
+    <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; {{ $idx === 0 ? 'color: #13803F;' : 'color: #6B7A88;' }}"
+          :style="{ color: stage >= {{ $idx }} ? '#13803F' : '#6B7A88' }">{{ $btn['num'] }}</span>
+    <span style="font-size: 20px; font-weight: 800; {{ $idx === 0 ? 'color: #0E1A24;' : 'color: #4A5866;' }}"
+          :style="{ color: stage === {{ $idx }} ? '#0E1A24' : '#4A5866' }">{{ $btn['name'] }}</span>
 </button>
 @endforeach
 
@@ -191,16 +230,17 @@ $stageButtons = [
 <!-- Journey Tabpanel -->
 <div role="tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 44px; display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 48px; align-items: center">
 <div style="display: flex; flex-direction: column; gap: 16px">
-<span style="font-size: 30px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em" x-text="stages[stage].headline"></span>
-<span style="font-size: 16px; line-height: 1.6; color: #4A5866" x-text="stages[stage].sub"></span>
+<span style="font-size: 30px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em" x-text="stages[stage].headline">{{ $stages[0]['headline'] }}</span>
+<span style="font-size: 16px; line-height: 1.6; color: #4A5866" x-text="stages[stage].sub">{{ $stages[0]['sub'] }}</span>
 <button type="button" @click="seeTools(stages[stage].defaultProduct)" style="align-self: flex-start; margin-top: 8px; min-height: 52px; padding: 14px 22px; border-radius: 12px; border: 0; background: #071C33; color: #FFFFFF; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; cursor: pointer">
-<span>{{ t('kouventa.See the products for', 'See the products for') }} <span x-text="stages[stage].name"></span></span>
+<span>{{ t('kouventa.See the products for', 'See the products for') }} <span x-text="stages[stage].name">{{ $stages[0]['name'] }}</span></span>
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"></path></svg>
 </button>
 </div>
 
 <div style="display: flex; flex-direction: column; gap: 10px">
 <div role="img" style="height: 400px; border-radius: 18px; background: #F4F6F5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
+<div x-show="jOn" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center">
 
 <!-- Stage 0: Answer Animation -->
 <div x-show="stage === 0" style="width: 380px; display: flex; flex-direction: column; gap: 12px; font-size: 14px; line-height: 1.5">
@@ -218,7 +258,7 @@ $stageButtons = [
 </div>
 
 <!-- Stage 1: Analyze Animation -->
-<div x-show="stage === 1" style="width: 470px; display: flex; align-items: center">
+<div x-show="stage === 1" x-cloak style="width: 470px; display: flex; align-items: center">
 <div style="width: 108px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px">
 <span style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; padding: 10px; border-radius: 10px; background: #FFFFFF; animation: kvIn .4s ease .1s both"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"></ellipse><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path></svg>Database</span>
 <span style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; padding: 10px; border-radius: 10px; background: #FFFFFF; animation: kvIn .4s ease .3s both"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6"></path></svg>{{ t('kouventa.Documents', 'Documents') }}</span>
@@ -249,7 +289,7 @@ $stageButtons = [
 </div>
 
 <!-- Stage 2: Execute Animation -->
-<div x-show="stage === 2" style="width: 420px; display: flex; flex-direction: column; gap: 16px">
+<div x-show="stage === 2" x-cloak style="width: 420px; display: flex; flex-direction: column; gap: 16px">
 <div style="background: #FFFFFF; border-radius: 16px; padding: 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px; box-shadow: 0 10px 30px rgba(7,28,51,0.08); animation: kvIn .4s ease .1s both">
 <div style="display: flex; flex-direction: column; gap: 4px"><span style="font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: #13803F">{{ t('kouventa.RECOMMENDATION', 'RECOMMENDATION') }}</span><span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Prioritize 3 overdue invoices', 'Prioritize 3 overdue invoices') }}</span></div>
 <div style="position: relative; display: grid; flex-shrink: 0">
@@ -269,6 +309,12 @@ $stageButtons = [
 
 </div>
 </div>
+
+<button type="button" @click="replayJourney()" style="align-self: flex-end; min-height: 40px; padding: 8px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #4A5866; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>
+    {{ t('kouventa.Replay', 'Replay') }}
+</button>
+</div>
 </div>
 </section>
 
@@ -276,9 +322,9 @@ $stageButtons = [
 <section id="ai-products" style="padding: 48px 80px 104px; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.The products that put you', 'The products that put you') }} <span style="color: #13803F">{{ t('kouventa.in control.', 'in control.') }}</span></h2>
-<span x-show="linked" style="min-height: 48px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
+<span x-show="linked" style="display: none; min-height: 48px; box-sizing: border-box; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
     <span style="width: 10px; height: 10px; border-radius: 50%; background: #13803F"></span>
-    <span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name"></strong></span>
+    <span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ $stages[0]['name'] }}</strong></span>
     <button type="button" @click="linked = false" style="margin-left: 4px; white-space: nowrap; flex-shrink: 0; min-height: 36px; padding: 6px 12px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
 </span>
 <span x-show="!linked" style="min-height: 48px; display: flex; align-items: center; font-size: 15px; color: #4A5866">{{ t('kouventa.Pick a journey stage above to see which products help', 'Pick a journey stage above to see which products help') }}</span>
@@ -287,44 +333,11 @@ $stageButtons = [
 <div style="display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; align-items: stretch">
 <div role="tablist" aria-label="Products" aria-orientation="vertical" style="display: flex; flex-direction: column; gap: 10px">
 
-@php
-$productsList = [
-    [
-        'id' => 'wiki',
-        'name' => 'AI Company Wikipedia',
-        'tag' => t('kouventa.Knowledge assistant', 'Knowledge assistant'),
-        'soon' => false,
-        'svg' => '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14Z"></path><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"></path>'
-    ],
-    [
-        'id' => 'playground',
-        'name' => 'Chat Playground',
-        'tag' => t('kouventa.Works with Wikipedia & Task Force', 'Works with Wikipedia & Task Force'),
-        'soon' => false,
-        'svg' => '<path d="M21 12a8 8 0 0 1-11.8 7L4 20l1-4.9A8 8 0 1 1 21 12Z"></path><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"></path>'
-    ],
-    [
-        'id' => 'taskforce',
-        'name' => 'AI Task Force',
-        'tag' => t('kouventa.Agentic AI', 'Agentic AI'),
-        'soon' => false,
-        'svg' => '<circle cx="12" cy="7" r="3"></circle><circle cx="5" cy="17" r="2.5"></circle><circle cx="19" cy="17" r="2.5"></circle><path d="M10 9.5 6.5 15M14 9.5l3.5 5.5"></path>'
-    ],
-    [
-        'id' => 'workflow',
-        'name' => 'TaskO',
-        'tag' => t('kouventa.Task Automation', 'Task Automation'),
-        'soon' => true,
-        'svg' => '<rect x="3" y="3" width="7" height="6" rx="1.5"></rect><rect x="14" y="15" width="7" height="6" rx="1.5"></rect><path d="M6.5 9v3a3 3 0 0 0 3 3H14"></path>'
-    ]
-];
-@endphp
-
 @foreach($productsList as $p)
-<button type="button" role="tab" :aria-selected="product === '{{ $p['id'] }}'" @click="product = '{{ $p['id'] }}'"
-        style="flex: 1 1 0; min-height: 88px; padding: 16px 18px; border-radius: 16px; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s ease"
-        :style="product === '{{ $p['id'] }}' ? 'border: 1px solid #071C33; background: #071C33; color: #FFFFFF' : 'border: 1px solid #E3E8E6; background: #FFFFFF; color: #0E1A24'">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center"
+<button type="button" role="tab" :aria-selected="product === '{{ $p['id'] }}'" @click="product = '{{ $p['id'] }}'; replayProduct()"
+        style="flex: 1 1 0; min-height: 88px; padding: 16px 18px; border-radius: 16px; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s ease; {{ $p['id'] === 'wiki' ? 'border: 1px solid #071C33; background: #071C33; color: #FFFFFF;' : 'border: 1px solid #E3E8E6; background: #FFFFFF; color: #0E1A24;' }}"
+        :style="'border: 1px solid ' + (product === '{{ $p['id'] }}' ? '#071C33' : (hasRole('{{ $p['id'] }}') ? '#13803F' : '#E3E8E6')) + '; background: ' + (product === '{{ $p['id'] }}' ? '#071C33' : '#FFFFFF') + '; color: ' + (product === '{{ $p['id'] }}' ? '#FFFFFF' : '#0E1A24') + '; opacity: ' + getOpacity('{{ $p['id'] }}')">
+<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; {{ $p['id'] === 'wiki' ? 'background: rgba(43,212,106,0.18); color: #2BD46A;' : 'background: #EAF7EF; color: #13803F;' }}"
       :style="product === '{{ $p['id'] }}' ? 'background: rgba(43,212,106,0.18); color: #2BD46A' : 'background: #EAF7EF; color: #13803F'">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         {!! $p['svg'] !!}
@@ -337,8 +350,15 @@ $productsList = [
         <span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ t('kouventa.COMING SOON', 'COMING SOON') }}</span>
     @endif
 </span>
-<span style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ $p['tag'] }}</span>
+<template x-if="hasRole('{{ $p['id'] }}')">
+    <span style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85" x-text="getRole('{{ $p['id'] }}')"></span>
+</template>
+<template x-if="!hasRole('{{ $p['id'] }}')">
+    <span style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ $p['tag'] }}</span>
+</template>
 </span>
+<span style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; transition: background 0.3s"
+      :style="'background: ' + (hasRole('{{ $p['id'] }}') ? (product === '{{ $p['id'] }}' ? '#2BD46A' : '#13803F') : 'transparent')"></span>
 </button>
 @endforeach
 
@@ -375,7 +395,7 @@ $productsList = [
 </div>
 
 <!-- Playground Info -->
-<div x-show="product === 'playground'" style="display: flex; flex-direction: column; gap: 16px">
+<div x-show="product === 'playground'" x-cloak style="display: flex; flex-direction: column; gap: 16px">
     <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">Chat Playground</span>
     <span style="font-size: 13px; font-weight: 700; color: #13803F">{{ t('kouventa.Works with Wikipedia & Task Force', 'Works with Wikipedia & Task Force') }}</span>
     <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Chat Playground is your controlled workspace to chat with AI Company Wikipedia, and to trigger, run, and monitor AI Task Force agents, securely, efficiently, and within your boundaries.', 'Chat Playground is your controlled workspace to chat with AI Company Wikipedia, and to trigger, run, and monitor AI Task Force agents, securely, efficiently, and within your boundaries.') }}</span>
@@ -400,7 +420,7 @@ $productsList = [
 </div>
 
 <!-- Task Force Info -->
-<div x-show="product === 'taskforce'" style="display: flex; flex-direction: column; gap: 16px">
+<div x-show="product === 'taskforce'" x-cloak style="display: flex; flex-direction: column; gap: 16px">
     <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">AI Task Force</span>
     <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.An Agentic AI-powered solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.', 'An Agentic AI-powered solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.') }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
@@ -428,7 +448,7 @@ $productsList = [
 </div>
 
 <!-- TaskO Info -->
-<div x-show="product === 'workflow'" style="display: flex; flex-direction: column; gap: 16px">
+<div x-show="product === 'workflow'" x-cloak style="display: flex; flex-direction: column; gap: 16px">
     <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
         <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">TaskO</span>
         <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.06em; padding: 6px 10px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ t('kouventa.COMING SOON', 'COMING SOON') }}</span>
@@ -460,6 +480,7 @@ $productsList = [
 <!-- Right animated mockup column -->
 <div style="display: flex; flex-direction: column; gap: 10px">
 <div role="img" style="height: 440px; border-radius: 18px; background: #F4F6F5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
+<div x-show="pOn" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center">
 
 <!-- Mockup Wiki -->
 <div x-show="product === 'wiki'" style="width: 360px; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1); display: flex; flex-direction: column">
@@ -476,7 +497,7 @@ $productsList = [
 </div>
 
 <!-- Mockup Taskforce -->
-<div x-show="product === 'taskforce'" style="width: 400px; display: flex; flex-direction: column; align-items: center; gap: 12px">
+<div x-show="product === 'taskforce'" x-cloak style="width: 400px; display: flex; flex-direction: column; align-items: center; gap: 12px">
 <div style="background: #071C33; color: #FFFFFF; border-radius: 12px; padding: 10px 16px; font-size: 13px; animation: kvIn .4s ease .2s both"><span style="color: #2BD46A; font-weight: 700">{{ t('kouventa.Objective', 'Objective') }}</span> · {{ t('kouventa.· Reduce overdue receivables', '· Reduce overdue receivables') }}</div>
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; width: 100%">
 <span style="background: #FFFFFF; border-radius: 10px; padding: 10px; text-align: center; font-size: 12px; font-weight: 700; animation: kvIn .4s ease 1s both">{{ t('kouventa.Analyst agent', 'Analyst agent') }}</span>
@@ -498,7 +519,7 @@ $productsList = [
 </div>
 
 <!-- Mockup Playground -->
-<div x-show="product === 'playground'" style="width: 380px; background: #FFFFFF; border-radius: 18px; box-shadow: 0 10px 30px rgba(7,28,51,0.1); padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<div x-show="product === 'playground'" x-cloak style="width: 380px; background: #FFFFFF; border-radius: 18px; box-shadow: 0 10px 30px rgba(7,28,51,0.1); padding: 18px; display: flex; flex-direction: column; gap: 14px">
 <div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 14px; font-weight: 800">Chat Playground</span><span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.Finance team', 'Finance team') }}</span></div>
 <div style="display: flex; flex-direction: column; gap: 6px">
 <span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.Permitted agents', 'Permitted agents') }}</span>
@@ -523,7 +544,7 @@ $productsList = [
 </div>
 
 <!-- Mockup TaskO -->
-<div x-show="product === 'workflow'" style="width: 440px; height: 440px; position: relative; overflow: hidden; border-radius: 14px">
+<div x-show="product === 'workflow'" x-cloak style="width: 440px; height: 440px; position: relative; overflow: hidden; border-radius: 14px">
 <div style="position: absolute; inset: 0; background-color: #071C33; background-image: radial-gradient(rgba(255,255,255,0.09) 1px, transparent 1px); background-size: 18px 18px"></div>
 <span style="position: absolute; top: 14px; right: 14px; z-index: 3; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; padding: 6px 10px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ t('kouventa.COMING SOON', 'COMING SOON') }}</span>
 <span style="position: absolute; top: 16px; left: 16px; z-index: 3; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #93A4B6"><span style="width: 7px; height: 7px; border-radius: 50%; background: #2BD46A; animation: kvBlink 1s ease 5 both"></span>TaskO · Invoice approval flow</span>
@@ -580,6 +601,13 @@ $productsList = [
 </div>
 </div>
 
+</div>
+</div>
+
+<button type="button" @click="replayProduct()" style="align-self: flex-end; min-height: 40px; padding: 8px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #4A5866; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>
+    {{ t('kouventa.Replay', 'Replay') }}
+</button>
 </div>
 </div>
 
@@ -686,4 +714,74 @@ $channelsDbl = array_merge($channels, $channels);
 </section>
 
 </div>
+
+@push('scripts')
+<script>
+(() => {
+    const initProductAi = () => {
+        if (!window.Alpine) return;
+        Alpine.data('productAiPage', () => ({
+            stage: 0,
+            product: 'wiki',
+            linked: false,
+            heroOn: true,
+            jOn: true,
+            pOn: true,
+            stages: @json($stages),
+            roles: @json($stageRoles),
+            replayHero() {
+                this.heroOn = false;
+                setTimeout(() => { this.heroOn = true; }, 40);
+            },
+            replayJourney() {
+                this.jOn = false;
+                setTimeout(() => { this.jOn = true; }, 40);
+            },
+            replayProduct() {
+                this.pOn = false;
+                setTimeout(() => { this.pOn = true; }, 40);
+            },
+            pickStage(idx) {
+                if (this.linked && this.stage === idx) {
+                    this.linked = false;
+                    return;
+                }
+                this.stage = idx;
+                this.product = this.stages[idx].defaultProduct;
+                this.linked = true;
+                this.replayJourney();
+                this.replayProduct();
+            },
+            seeTools(prod) {
+                this.linked = true;
+                this.product = prod;
+                this.replayProduct();
+                this.$nextTick(() => {
+                    const el = document.getElementById('ai-products');
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            },
+            getRole(prodId) {
+                if (!this.linked) return null;
+                const stageKey = this.stages[this.stage].key;
+                return (this.roles[stageKey] && this.roles[stageKey][prodId]) ? this.roles[stageKey][prodId] : null;
+            },
+            hasRole(prodId) {
+                return this.getRole(prodId) !== null;
+            },
+            getOpacity(prodId) {
+                if (!this.linked || this.hasRole(prodId) || this.product === prodId) return 1;
+                return 0.6;
+            }
+        }));
+    };
+
+    if (window.Alpine) {
+        initProductAi();
+    } else {
+        document.addEventListener('alpine:init', initProductAi);
+    }
+})();
+</script>
+@endpush
 @endsection
