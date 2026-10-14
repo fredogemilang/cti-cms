@@ -111,12 +111,7 @@
 
 
 @section('content')
-<div class="kv-canvas-wrap" x-data="{
-    activeTeam: 0,
-    activeStory: 0,
-    teams: @js($teams),
-    stories: @js($stories)
-}">
+<div class="kv-canvas-wrap">
 <!-- ============ NAV + HERO ============ -->
 <section style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative; overflow: hidden">
 <div style="padding: 88px 80px 112px; display: flex; flex-direction: column; align-items: center; gap: 28px; position: relative">
@@ -146,7 +141,7 @@
 </div>
 </div>
 <div style="display: flex; gap: 12px; padding-top: 8px">
-<a href="#pick-team" @click="document.getElementById('pick-team')?.scrollIntoView({ behavior: 'smooth' })" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; display: flex; align-items: center; gap: 10px">See how it fits your business<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+<a href="#pick-team" onclick="document.getElementById('pick-team')?.scrollIntoView({ behavior: 'smooth' }); return false;" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; display: flex; align-items: center; gap: 10px">See how it fits your business<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
 </div>
 </div>
 </section>
@@ -198,14 +193,17 @@
 </section>
 
 <!-- ============ WHO NEEDS THIS (tabs) ============ -->
-<section id="pick-team" style="padding: 104px 80px; display: flex; flex-direction: column; gap: 32px; scroll-margin-top: 60px">
+<section id="pick-team" x-data="{
+    activeTeam: 0,
+    teams: @js($teams)
+}" style="padding: 104px 80px; display: flex; flex-direction: column; gap: 32px; scroll-margin-top: 60px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Pick your team to see how it works for your organization.</h2>
 <div role="tablist" aria-label="Teams" style="display: flex; gap: 8px; flex-wrap: wrap">
 
 @foreach($teams as $i => $t)
     <button type="button" @click="activeTeam = {{ $i }}"
             :class="{ 'is-active': activeTeam === {{ $i }} }"
-            class="kv-tab-team">
+            class="kv-tab-team {{ $i === 0 ? 'is-active' : '' }}">
         {{ $t['name'] }}
     </button>
 @endforeach
@@ -213,11 +211,11 @@
 </div>
 <div role="tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 48px; display: grid; grid-template-columns: minmax(0, 1fr) 480px; gap: 64px; align-items: center">
 <div style="display: flex; flex-direction: column; gap: 20px">
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F"><span x-text="teams[activeTeam].name"></span></span>
-<span style="font-size: 38px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em"><span x-text="teams[activeTeam].line"></span></span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F"><span x-text="teams[activeTeam].name">{{ $teams[0]['name'] ?? '' }}</span></span>
+<span style="font-size: 38px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em"><span x-text="teams[activeTeam].line">{{ $teams[0]['line'] ?? '' }}</span></span>
 <a href="{{ url('/solutions/ai') }}"  style="align-self: flex-start; font-size: 16px; font-weight: 700">See how it works →</a>
 </div>
-<div style="background: #F4F6F5; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px">
+<div style="background: #F4F6F5; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px; min-height: 290px">
 <span style="font-size: 13px; font-weight: 600; color: #4A5866; padding-bottom: 4px">Your agent handles</span>
 
 <template x-for="(task, idx) in teams[activeTeam].tasks" :key="idx">
@@ -227,6 +225,14 @@
 </div>
 
 </template>
+
+<noscript>
+@foreach(($teams[0]['tasks'] ?? []) as $task)
+<div style="background: #FFFFFF; border-radius: 12px; padding: 16px 18px; display: flex; align-items: center; gap: 14px; font-size: 16px; font-weight: 600">
+<span style="width: 28px; height: 28px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ $task }}</span>
+</div>
+@endforeach
+</noscript>
 
 </div>
 </div>
@@ -296,7 +302,10 @@
 </section>
 
 <!-- ============ STORIES (carousel) ============ -->
-<section style="padding: 72px 80px 104px; display: flex; flex-direction: column; gap: 32px">
+<section style="padding: 72px 80px 104px; display: flex; flex-direction: column; gap: 32px" x-data="{
+    activeStory: 0,
+    stories: @js($stories)
+}">
 <div style="display: flex; justify-content: space-between; align-items: end">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Real results, in their words.</h2>
 <div style="display: flex; gap: 8px">
@@ -307,20 +316,20 @@
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; display: grid; grid-template-columns: 420px minmax(0, 1fr); overflow: hidden">
 <div style="background: #071C33; color: #FFFFFF; padding: 48px; display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
 <div style="display: flex; flex-direction: column; gap: 6px">
-<span style="font-size: 88px; line-height: 1; font-weight: 800; letter-spacing: -0.04em; color: #2BD46A"><span x-text="stories[activeStory].stat"></span></span>
-<span style="font-size: 18px; line-height: 1.4; color: #D5DEE8"><span x-text="stories[activeStory].statLabel"></span></span>
+<span style="font-size: 88px; line-height: 1; font-weight: 800; letter-spacing: -0.04em; color: #2BD46A"><span x-text="stories[activeStory].stat">{{ $stories[0]['stat'] ?? '' }}</span></span>
+<span style="font-size: 18px; line-height: 1.4; color: #D5DEE8"><span x-text="stories[activeStory].statLabel">{{ $stories[0]['statLabel'] ?? '' }}</span></span>
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.14)">
-<span style="font-size: 36px; font-weight: 800; letter-spacing: -0.02em"><span x-text="stories[activeStory].stat2"></span></span>
-<span style="font-size: 15px; color: #B9C6D3"><span x-text="stories[activeStory].stat2Label"></span></span>
+<span style="font-size: 36px; font-weight: 800; letter-spacing: -0.02em"><span x-text="stories[activeStory].stat2">{{ $stories[0]['stat2'] ?? '' }}</span></span>
+<span style="font-size: 15px; color: #B9C6D3"><span x-text="stories[activeStory].stat2Label">{{ $stories[0]['stat2Label'] ?? '' }}</span></span>
 </div>
 </div>
 <div style="padding: 48px; display: flex; flex-direction: column; gap: 24px">
-<img src="{{ theme_asset('images/kouventa-logo.png') }}" :alt="stories[activeStory].company" style="height: 48px; width: auto; align-self: flex-start">
-<p style="margin: 0; font-size: 22px; line-height: 1.55; font-weight: 500">“<span x-text="stories[activeStory].quote"></span>”</p>
+<img src="{{ theme_asset('images/kouventa-logo.png') }}" :alt="stories[activeStory].company" alt="{{ $stories[0]['company'] ?? 'Customer' }}" style="height: 48px; width: auto; align-self: flex-start">
+<p style="margin: 0; font-size: 22px; line-height: 1.55; font-weight: 500">“<span x-text="stories[activeStory].quote">{{ $stories[0]['quote'] ?? '' }}</span>”</p>
 <div style="display: flex; flex-direction: column; gap: 2px; margin-top: auto">
-<span style="font-size: 16px; font-weight: 700" x-text="stories[activeStory].name"></span>
-<span style="font-size: 14px; color: #4A5866" x-text="stories[activeStory].role"></span>
+<span style="font-size: 16px; font-weight: 700" x-text="stories[activeStory].name">{{ $stories[0]['name'] ?? '' }}</span>
+<span style="font-size: 14px; color: #4A5866" x-text="stories[activeStory].role">{{ $stories[0]['role'] ?? '' }}</span>
 </div>
 </div>
 </div>
@@ -329,8 +338,9 @@
     <button type="button" @click="activeStory = {{ $i }}"
             class="kv-story-btn"
             aria-label="{{ t('kouventa.Show story:', 'Show story:') }} {{ $s['company'] }}"
-            :aria-pressed="activeStory === {{ $i }}">
-        <span class="kv-story-dot-pill" :class="{ 'is-active': activeStory === {{ $i }} }"></span>
+            :aria-pressed="activeStory === {{ $i }}"
+            aria-pressed="{{ $i === 0 ? 'true' : 'false' }}">
+        <span class="kv-story-dot-pill {{ $i === 0 ? 'is-active' : '' }}" :class="{ 'is-active': activeStory === {{ $i }} }"></span>
     </button>
 @endforeach
 </div>

@@ -425,11 +425,11 @@
 
 <div role="tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px 44px; display: flex; justify-content: space-between; align-items: center; gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 10px; max-width: 760px">
-<span x-text="stages[stage].headline" style="font-size: 30px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em"></span>
-<span x-text="stages[stage].sub" style="font-size: 17px; line-height: 1.6; color: #4A5866"></span>
+<span x-text="stages[stage].headline" style="font-size: 30px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em">{{ t('kouventa.Turn prospects into customers.', 'Turn prospects into customers.') }}</span>
+<span x-text="stages[stage].sub" style="font-size: 17px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Reach and engage potential customers with targeted campaigns across channels.', 'Reach and engage potential customers with targeted campaigns across channels.') }}</span>
 </div>
 <button type="button" @click="seeTools()" style="flex-shrink: 0; min-height: 52px; padding: 14px 22px; border-radius: 12px; border: 0; background: #071C33; color: #FFFFFF; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; cursor: pointer">
-<span>{{ t('kouventa.See the products for', 'See the products for') }} <span x-text="stages[stage].name"></span></span>
+<span>{{ t('kouventa.See the products for', 'See the products for') }} <span x-text="stages[stage].name">{{ t('kouventa.Prospecting', 'Prospecting') }}</span></span>
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"></path></svg>
 </button>
 </div>
@@ -441,7 +441,7 @@
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.One platform.', 'One platform.') }} <span style="color: #13803F">{{ t('kouventa.Zero missed messages.', 'Zero missed messages.') }}</span></h2>
 <span class="kv-linked-pill" x-show="linked" x-cloak style="min-height: 48px; box-sizing: border-box; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
 <span class="kv-pill-dot" style="width: 10px; height: 10px; border-radius: 50%; background: #13803F; flex-shrink: 0; display: inline-block"></span>
-<span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name"></strong></span>
+<span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ t('kouventa.Prospecting', 'Prospecting') }}</strong></span>
 <button type="button" @click="linked = false" class="kv-btn-show-all" style="margin-left: 6px; white-space: nowrap; flex-shrink: 0; min-height: 36px; padding: 6px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
 </span>
 <span class="kv-unlinked-pill" x-show="!linked" style="min-height: 48px; display: inline-flex; align-items: center; font-size: 15px; color: #4A5866">
@@ -598,9 +598,9 @@
 <!-- Product Detail Panel (Right Side) -->
 <div role="tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 40px; display: grid; grid-template-columns: minmax(0, 1fr) 460px; gap: 40px; align-items: center">
 <div style="display: flex; flex-direction: column; gap: 18px">
-<span x-text="products[product].name" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F"></span>
-<span x-text="products[product].headline" style="font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em"></span>
-<span x-text="products[product].desc" style="font-size: 17px; line-height: 1.6; color: #4A5866"></span>
+<span x-text="products[product].name" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F">{{ t('kouventa.Broadcasting', 'Broadcasting') }}</span>
+<span x-text="products[product].headline" style="font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Reach more customers, at scale.', 'Reach more customers, at scale.') }}</span>
+<span x-text="products[product].desc" style="font-size: 17px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Send promotions, campaigns and feedback requests on WhatsApp.', 'Send promotions, campaigns and feedback requests on WhatsApp.') }}</span>
 <ul style="margin: 0; padding: 18px 0 0; list-style: none; border-top: 1px solid #E3E8E6; display: flex; flex-direction: column; gap: 12px">
 <template x-for="(bullet, bIdx) in products[product].bullets" :key="bIdx">
 <li style="display: flex; gap: 12px; align-items: center; font-size: 16px; font-weight: 600"><span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span x-text="bullet"></span></li>
