@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
             EmailTemplateSeeder::class,
             FormsSeeder::class,
             StringTranslationsSeeder::class,
+            TestimonialSeeder::class,
         ]);
 
         $this->command->info('');

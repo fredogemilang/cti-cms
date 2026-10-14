@@ -65,48 +65,81 @@
         ]
     ];
 
-    $stories = [
-        [
-            'company' => "Luna's Doughnuts",
-            'stat' => '+55%',
-            'statLabel' => t('kouventa.time saved in daily communication and coordination', 'time saved in daily communication and coordination'),
-            'stat2' => '35%',
-            'stat2Label' => t('kouventa.lower operational costs', 'lower operational costs'),
-            'quote' => t('kouventa.Kouventa provides an efficient and customizable communication solution that perfectly fits our business needs. Since using it, we\'ve achieved faster customer responses and significant cost savings.', 'Kouventa provides an efficient and customizable communication solution that perfectly fits our business needs. Since using it, we\'ve achieved faster customer responses and significant cost savings.'),
-            'name' => 'Caca Patricia',
-            'role' => 'Partnership Specialist, PT Kaluna Indonesia Group'
-        ],
-        [
-            'company' => 'PakeDriver',
-            'stat' => '+45%',
-            'statLabel' => t('kouventa.improvement in customer engagement', 'improvement in customer engagement'),
-            'stat2' => '30%',
-            'stat2Label' => t('kouventa.faster customer response time', 'faster customer response time'),
-            'quote' => t('kouventa.Kouventa makes it effortless for us to engage directly with customers, from service updates to promotional offers. Its intuitive AI features have strengthened our professional image and boosted engagement.', 'Kouventa makes it effortless for us to engage directly with customers, from service updates to promotional offers. Its intuitive AI features have strengthened our professional image and boosted engagement.'),
-            'name' => 'Yudhistira',
-            'role' => t('kouventa.CEO of PakeDriver', 'CEO of PakeDriver')
-        ],
-        [
-            'company' => 'Liberta Hotel',
-            'stat' => '70%',
-            'statLabel' => t('kouventa.time saved sending promotional broadcasts and confirmations', 'time saved sending promotional broadcasts and confirmations'),
-            'stat2' => '+45%',
-            'stat2Label' => t('kouventa.increase in guest response rates', 'increase in guest response rates'),
-            'quote' => t('kouventa.Kouventa\'s WhatsApp automation streamlined our promotions and reservations. Their intuitive platform and dedicated support made them a true partner in our hospitality journey.', 'Kouventa\'s WhatsApp automation streamlined our promotions and reservations. Their intuitive platform and dedicated support made them a true partner in our hospitality journey.'),
-            'name' => 'Novellinda Putri Kairo',
-            'role' => 'Corporate Sales Admin, Liberta'
-        ],
-        [
-            'company' => 'DPay',
-            'stat' => '60%',
-            'statLabel' => t('kouventa.fewer customer service tickets', 'fewer customer service tickets'),
-            'stat2' => '+40%',
-            'stat2Label' => t('kouventa.efficiency gain in operational lead time', 'efficiency gain in operational lead time'),
-            'quote' => t('kouventa.Kouventa\'s WhatsApp automation solution revolutionized our logistics tracking and freed our team to focus on service innovation. Their flexible API and responsive support made integration seamless.', 'Kouventa\'s WhatsApp automation solution revolutionized our logistics tracking and freed our team to focus on service innovation. Their flexible API and responsive support made integration seamless.'),
-            'name' => 'Sebastian Hadinata',
-            'role' => t('kouventa.General Manager of DPay', 'General Manager of DPay')
-        ]
-    ];
+    // ── Dynamic CPT: Testimonials ────────────────────────
+    $cptTestimonials = \App\Models\CustomPostType::where('slug', 'testimonials')->where('is_active', true)->first();
+    $stories = [];
+    if ($cptTestimonials) {
+        $cptEntries = \App\Models\CptEntry::where('post_type_id', $cptTestimonials->id)
+            ->published()
+            ->orderBy('menu_order')
+            ->get();
+
+        if ($cptEntries->isNotEmpty()) {
+            $stories = $cptEntries->map(function ($entry) {
+                return [
+                    'company' => $entry->title,
+                    'stat' => $entry->getMeta('stat', ''),
+                    'statLabel' => $entry->getMeta('stat_label', ''),
+                    'stat2' => $entry->getMeta('stat2', ''),
+                    'stat2Label' => $entry->getMeta('stat2_label', ''),
+                    'quote' => $entry->getMeta('quote', ''),
+                    'name' => $entry->getMeta('client_name', ''),
+                    'role' => $entry->getMeta('role', ''),
+                    'logo' => $entry->featured_image ? resolve_block_asset($entry->featured_image) : null,
+                ];
+            })->all();
+        }
+    }
+
+    // Graceful fallback if no CPT entries exist yet
+    if (empty($stories)) {
+        $stories = [
+            [
+                'company' => "Luna's Doughnuts",
+                'stat' => '+55%',
+                'statLabel' => t('kouventa.time saved in daily communication and coordination', 'time saved in daily communication and coordination'),
+                'stat2' => '35%',
+                'stat2Label' => t('kouventa.lower operational costs', 'lower operational costs'),
+                'quote' => t('kouventa.Kouventa provides an efficient and customizable communication solution that perfectly fits our business needs. Since using it, we\'ve achieved faster customer responses and significant cost savings.', 'Kouventa provides an efficient and customizable communication solution that perfectly fits our business needs. Since using it, we\'ve achieved faster customer responses and significant cost savings.'),
+                'name' => 'Caca Patricia',
+                'role' => 'Partnership Specialist, PT Kaluna Indonesia Group',
+                'logo' => null,
+            ],
+            [
+                'company' => 'PakeDriver',
+                'stat' => '+45%',
+                'statLabel' => t('kouventa.improvement in customer engagement', 'improvement in customer engagement'),
+                'stat2' => '30%',
+                'stat2Label' => t('kouventa.faster customer response time', 'faster customer response time'),
+                'quote' => t('kouventa.Kouventa makes it effortless for us to engage directly with customers, from service updates to promotional offers. Its intuitive AI features have strengthened our professional image and boosted engagement.', 'Kouventa makes it effortless for us to engage directly with customers, from service updates to promotional offers. Its intuitive AI features have strengthened our professional image and boosted engagement.'),
+                'name' => 'Yudhistira',
+                'role' => t('kouventa.CEO of PakeDriver', 'CEO of PakeDriver'),
+                'logo' => null,
+            ],
+            [
+                'company' => 'Liberta Hotel',
+                'stat' => '70%',
+                'statLabel' => t('kouventa.time saved sending promotional broadcasts and confirmations', 'time saved sending promotional broadcasts and confirmations'),
+                'stat2' => '+45%',
+                'stat2Label' => t('kouventa.increase in guest response rates', 'increase in guest response rates'),
+                'quote' => t('kouventa.Kouventa\'s WhatsApp automation streamlined our promotions and reservations. Their intuitive platform and dedicated support made them a true partner in our hospitality journey.', 'Kouventa\'s WhatsApp automation streamlined our promotions and reservations. Their intuitive platform and dedicated support made them a true partner in our hospitality journey.'),
+                'name' => 'Novellinda Putri Kairo',
+                'role' => 'Corporate Sales Admin, Liberta',
+                'logo' => null,
+            ],
+            [
+                'company' => 'DPay',
+                'stat' => '60%',
+                'statLabel' => t('kouventa.fewer customer service tickets', 'fewer customer service tickets'),
+                'stat2' => '+40%',
+                'stat2Label' => t('kouventa.efficiency gain in operational lead time', 'efficiency gain in operational lead time'),
+                'quote' => t('kouventa.Kouventa\'s WhatsApp automation solution revolutionized our logistics tracking and freed our team to focus on service innovation. Their flexible API and responsive support made integration seamless.', 'Kouventa\'s WhatsApp automation solution revolutionized our logistics tracking and freed our team to focus on service innovation. Their flexible API and responsive support made integration seamless.'),
+                'name' => 'Sebastian Hadinata',
+                'role' => t('kouventa.General Manager of DPay', 'General Manager of DPay'),
+                'logo' => null,
+            ],
+        ];
+    }
 @endphp
 
 
@@ -325,7 +358,7 @@
 </div>
 </div>
 <div style="padding: 48px; display: flex; flex-direction: column; gap: 24px">
-<img src="{{ theme_asset('images/kouventa-logo.png') }}" :alt="stories[activeStory].company" alt="{{ $stories[0]['company'] ?? 'Customer' }}" style="height: 48px; width: auto; align-self: flex-start">
+<img :src="stories[activeStory].logo || '{{ theme_asset('images/kouventa-logo.png') }}'" src="{{ $stories[0]['logo'] ?? theme_asset('images/kouventa-logo.png') }}" :alt="stories[activeStory].company" alt="{{ $stories[0]['company'] ?? 'Customer' }}" style="height: 48px; width: auto; align-self: flex-start">
 <p style="margin: 0; font-size: 22px; line-height: 1.55; font-weight: 500">“<span x-text="stories[activeStory].quote">{{ $stories[0]['quote'] ?? '' }}</span>”</p>
 <div style="display: flex; flex-direction: column; gap: 2px; margin-top: auto">
 <span style="font-size: 16px; font-weight: 700" x-text="stories[activeStory].name">{{ $stories[0]['name'] ?? '' }}</span>
