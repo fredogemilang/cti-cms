@@ -1839,13 +1839,24 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
 
 @media (max-width: 1024px) {
     .kv-partner-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 14px !important;
     }
 }
 
 @media (max-width: 640px) {
     .kv-partner-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px 10px !important;
+    }
+    .kv-partner-card {
+        height: 72px !important;
+        min-height: 72px !important;
+        padding: 10px 14px !important;
+    }
+    .kv-partner-card img {
+        max-height: 28px !important;
+        max-width: 85% !important;
     }
 }
 
@@ -1858,13 +1869,42 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
 
 @media (max-width: 1024px) {
     .kv-customer-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 14px !important;
     }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 640px) {
     .kv-customer-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px 10px !important;
+    }
+    .kv-customer-card {
+        height: 72px !important;
+        min-height: 72px !important;
+        padding: 10px 14px !important;
+    }
+    .kv-customer-card img {
+        max-height: 32px !important;
+        max-width: 85% !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .kv-partner-grid,
+    .kv-customer-grid {
+        gap: 8px !important;
+    }
+    .kv-partner-card,
+    .kv-customer-card {
+        height: 62px !important;
+        min-height: 62px !important;
+        padding: 8px 10px !important;
+    }
+    .kv-partner-card img,
+    .kv-customer-card img {
+        max-height: 24px !important;
+        max-width: 85% !important;
     }
 }
 
@@ -2295,12 +2335,12 @@ body {
     div[style*="grid-template-columns: 480px minmax(0, 1fr)"],
     div[style*="grid-template-columns: minmax(0, 1fr) 340px"],
     div[style*="grid-template-columns: 340px minmax(0, 1fr)"],
-    div[style*="grid-template-columns: repeat(2, minmax(0, 1fr))"]:not(.kv-industry-grid),
-    div[style*="grid-template-columns: repeat(2, 1fr)"]:not(.kv-industry-grid),
-    div[style*="grid-template-columns: repeat(3, minmax(0, 1fr))"]:not(.kv-industry-grid),
-    div[style*="grid-template-columns: repeat(3, 1fr)"]:not(.kv-industry-grid),
-    div[style*="grid-template-columns: repeat(4, minmax(0, 1fr))"]:not(.kv-industry-grid),
-    div[style*="grid-template-columns: repeat(4, 1fr)"]:not(.kv-industry-grid),
+    div[style*="grid-template-columns: repeat(2, minmax(0, 1fr))"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
+    div[style*="grid-template-columns: repeat(2, 1fr)"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
+    div[style*="grid-template-columns: repeat(3, minmax(0, 1fr))"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
+    div[style*="grid-template-columns: repeat(3, 1fr)"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
+    div[style*="grid-template-columns: repeat(4, minmax(0, 1fr))"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
+    div[style*="grid-template-columns: repeat(4, 1fr)"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
     div[style*="grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr)"],
     div[style*="grid-template-columns: minmax(0, 1fr) 600px"],
     div[role="tabpanel"][style*="grid-template-columns"] {
@@ -2558,6 +2598,22 @@ body {
         width: 100% !important;
     }
 
+    .kv-partner-grid,
+    div.kv-partner-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px 10px !important;
+        width: 100% !important;
+    }
+
+    .kv-customer-grid,
+    div.kv-customer-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px 10px !important;
+        width: 100% !important;
+    }
+
     .kv-industry-card {
         height: 64px !important;
         min-height: 64px !important;
@@ -2593,6 +2649,34 @@ body {
         line-height: 1.25 !important;
         word-break: break-word !important;
     }
+
+    .kv-partner-card,
+    .kv-customer-card {
+        height: 70px !important;
+        min-height: 70px !important;
+        padding: 10px 14px !important;
+        box-sizing: border-box !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: 14px !important;
+    }
+
+    .kv-partner-card img {
+        max-height: 28px !important;
+        max-width: 82% !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain !important;
+    }
+
+    .kv-customer-card img {
+        max-height: 32px !important;
+        max-width: 82% !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain !important;
+    }
 }
 
 @media (min-width: 640px) and (max-width: 1024px) {
@@ -2600,6 +2684,18 @@ body {
     div.kv-industry-grid,
     div[style*="grid-template-columns: repeat(5, minmax(0, 1fr))"],
     div[style*="grid-template-columns: repeat(5, minmax(0px, 1fr))"] {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 14px !important;
+    }
+
+    .kv-partner-grid,
+    div.kv-partner-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 14px !important;
+    }
+
+    .kv-customer-grid,
+    div.kv-customer-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
         gap: 14px !important;
     }
@@ -2619,11 +2715,21 @@ body {
     .kv-industry-card > span:last-child {
         font-size: 15px !important;
     }
+
+    .kv-partner-card,
+    .kv-customer-card {
+        height: 80px !important;
+        min-height: 80px !important;
+    }
 }
 
 @media (max-width: 380px) {
     .kv-industry-grid,
-    div.kv-industry-grid {
+    div.kv-industry-grid,
+    .kv-partner-grid,
+    div.kv-partner-grid,
+    .kv-customer-grid,
+    div.kv-customer-grid {
         gap: 8px !important;
     }
 
@@ -2649,6 +2755,24 @@ body {
     .kv-industry-card > span:last-child {
         font-size: 11.5px !important;
         letter-spacing: -0.01em !important;
+    }
+
+    .kv-partner-card,
+    .kv-customer-card {
+        height: 60px !important;
+        min-height: 60px !important;
+        padding: 8px 10px !important;
+        border-radius: 12px !important;
+    }
+
+    .kv-partner-card img {
+        max-height: 24px !important;
+        max-width: 80% !important;
+    }
+
+    .kv-customer-card img {
+        max-height: 26px !important;
+        max-width: 80% !important;
     }
 }
 
