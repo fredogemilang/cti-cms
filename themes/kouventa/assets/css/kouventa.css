@@ -934,7 +934,7 @@ html{scroll-padding-top:0}
     text-decoration: none;
     font-size: 15px;
     transition: color 0.2s;
-    cursor: pointer;
+    cursor: default;
 }
 .kv-unlinked-link:hover {
     color: #13803F;
@@ -1014,7 +1014,9 @@ html.js-motion .is-revealed .kv-reveal,
 .kv-hover,
 .kv-logo-card,
 .kv-industry-card,
-.kv-video-card {
+.kv-video-card,
+.kv-card-dark {
+    cursor: default;
     transition: transform var(--kv-duration-hover) var(--kv-ease-hover),
                 box-shadow var(--kv-duration-hover) var(--kv-ease-hover),
                 border-color 0.22s ease,
@@ -1022,11 +1024,30 @@ html.js-motion .is-revealed .kv-reveal,
     will-change: transform, box-shadow;
 }
 
+/* Genuine interactive links/buttons always get cursor: pointer */
+a.kv-card,
+a.kv-card-hover,
+a.kv-hover,
+a.kv-logo-card,
+a.kv-industry-card,
+a.kv-video-card,
+a.kv-card-dark,
+button.kv-card,
+[role="button"],
+.kv-card a,
+.kv-card-hover a,
+.kv-card button,
+.kv-card-hover button,
+.kv-card-link {
+    cursor: pointer;
+}
+
 /* --- Static Panels (Tabpanel, Stories Container, CTA Banner) --- */
 /* These are structural layout panels, not hoverable cards. They must never lift or gain card shadows. */
 .kv-panel,
 [role="tabpanel"] {
     position: relative;
+    cursor: default;
 }
 .kv-panel:hover,
 [role="tabpanel"]:hover,
@@ -1039,6 +1060,7 @@ html.js-motion .kv-reveal-item.is-revealed[role="tabpanel"]:hover {
     transform: none !important;
     box-shadow: none !important;
     border-color: transparent !important;
+    cursor: default !important;
 }
 
 /* Standard White Card Hover */
@@ -1077,7 +1099,7 @@ html.js-motion .kv-reveal-item.is-revealed.kv-card-dark:hover {
 
 /* Logo Cards Hover (Partners & Customers) */
 .kv-logo-card {
-    cursor: pointer;
+    cursor: default;
 }
 .kv-logo-card img {
     transition: transform 0.28s var(--kv-ease-hover), filter 0.25s ease;
@@ -1099,7 +1121,7 @@ html.js-motion .kv-reveal-item.is-revealed.kv-logo-card:hover {
 
 /* Industry Chips Hover */
 .kv-industry-card {
-    cursor: pointer;
+    cursor: default;
 }
 .kv-industry-card .kv-ind-icon {
     transition: background-color 0.22s ease, color 0.22s ease, transform 0.25s var(--kv-ease-hover);
@@ -1123,6 +1145,10 @@ html.js-motion .kv-reveal-item.is-revealed.kv-industry-card:hover {
 
 /* Video Cards Hover */
 .kv-video-card {
+    cursor: default;
+}
+a.kv-video-card,
+.kv-video-card[href] {
     cursor: pointer;
 }
 .kv-video-card .kv-play-btn {
