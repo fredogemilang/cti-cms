@@ -2,8 +2,12 @@
         @click.away="productOpen = false; solutionOpen = false; pricingOpen = false"
         style="height: 80px; padding: 0 80px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; flex-shrink: 0; box-sizing: border-box; background: #071C33; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.06)">
     
+    @php
+        $siteLogo = setting('site_logo') ? resolve_block_asset(setting('site_logo')) : theme_asset('images/kouventa-logo.png');
+        $siteName = setting('site_name', 'Kouventa');
+    @endphp
     <a href="{{ localized_url('/') }}" style="display: flex; align-items: center; text-decoration: none">
-        <img src="{{ theme_asset('images/kouventa-logo.png') }}" alt="Kouventa home" style="height: 34px; width: auto; display: block">
+        <img src="{{ $siteLogo }}" alt="{{ $siteName }} home" style="height: 34px; width: auto; display: block">
     </a>
 
     <!-- Desktop Nav -->

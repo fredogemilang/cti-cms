@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#071C33">
     
+    @if($siteFavicon = setting('site_favicon'))
+        <link rel="icon" href="{{ resolve_block_asset($siteFavicon) }}">
+        <link rel="apple-touch-icon" href="{{ resolve_block_asset($siteFavicon) }}">
+    @else
+        <link rel="icon" href="{{ asset('favicon.ico') }}">
+    @endif
+
     <x-seo-meta :model="$page ?? null" />
 
     <!-- Kouventa Local Fonts & CSS -->
