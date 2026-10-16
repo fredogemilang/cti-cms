@@ -928,6 +928,303 @@ html{scroll-padding-top:0}
     }
 }
 
+/* ==========================================================================
+   WhatsApp Chat Form Widget & Popup
+   ========================================================================== */
+.kv-wa-widget-container {
+    position: relative;
+    z-index: 9999;
+}
+
+.kv-wa-card {
+    position: fixed;
+    bottom: 84px;
+    right: 28px;
+    z-index: 10000;
+    width: 390px;
+    max-width: calc(100vw - 32px);
+    max-height: min(650px, calc(100vh - 100px));
+    display: flex;
+    flex-direction: column;
+    background: #FFFFFF;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(7, 28, 51, 0.22), 0 4px 16px rgba(0, 0, 0, 0.08);
+    border: 1px solid #E3E8E6;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: bottom right;
+}
+
+.kv-wa-header {
+    background: #20BA56;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: #FFFFFF;
+    flex-shrink: 0;
+}
+
+.kv-wa-header-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.kv-wa-header-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.kv-wa-header-title {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: #FFFFFF;
+}
+
+.kv-wa-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(255, 255, 255, 0.15);
+    color: #FFFFFF;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    padding: 0;
+    outline: none;
+}
+
+.kv-wa-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.06);
+}
+
+.kv-wa-body {
+    padding: 20px 22px 22px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-sizing: border-box;
+    background: #FAFCFB;
+}
+
+.kv-wa-body::-webkit-scrollbar {
+    width: 6px;
+}
+.kv-wa-body::-webkit-scrollbar-thumb {
+    background: #DCE3E0;
+    border-radius: 4px;
+}
+
+.kv-wa-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.kv-wa-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.kv-wa-field-group.is-full {
+    grid-column: 1 / -1;
+}
+
+.kv-wa-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #0E1A24;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.kv-wa-req {
+    color: #E53935;
+    font-weight: 700;
+}
+
+.kv-wa-input,
+.kv-wa-select {
+    box-sizing: border-box;
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid #DCE3E0;
+    background: #FFFFFF;
+    font-size: 13.5px;
+    color: #0E1A24;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    outline: none;
+    font-family: inherit;
+}
+
+.kv-wa-input::placeholder {
+    color: #93A4B6;
+    opacity: 0.85;
+}
+
+.kv-wa-input:focus,
+.kv-wa-select:focus {
+    border-color: #2BD46A;
+    box-shadow: 0 0 0 3px rgba(43, 212, 106, 0.2);
+    background: #FFFFFF;
+}
+
+.kv-wa-input.has-error,
+.kv-wa-select.has-error {
+    border-color: #E53935;
+    background: #FFFBFB;
+}
+
+.kv-wa-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234A5866' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+}
+
+.kv-wa-field-error {
+    font-size: 11.5px;
+    color: #E53935;
+    font-weight: 600;
+    margin-top: 1px;
+}
+
+.kv-wa-consent {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding-top: 4px;
+}
+
+.kv-wa-checkbox {
+    width: 17px;
+    height: 17px;
+    margin-top: 2px;
+    accent-color: #20BA56;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.kv-wa-consent-text {
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: #5A6A78;
+    cursor: pointer;
+    user-select: none;
+}
+
+.kv-wa-consent-text a {
+    color: #0E1A24;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.kv-wa-btn-send {
+    box-sizing: border-box;
+    width: 100%;
+    height: 46px;
+    border: 0;
+    border-radius: 12px;
+    background: #2BD46A;
+    color: #06251A;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px rgba(43, 212, 106, 0.3);
+    outline: none;
+    font-family: inherit;
+}
+
+.kv-wa-btn-send:hover:not(:disabled) {
+    background: #24BE5E;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(43, 212, 106, 0.42);
+}
+
+.kv-wa-btn-send:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.kv-wa-btn-send:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.kv-wa-alert-error {
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #FDE8E8;
+    border: 1px solid #F8B4B4;
+    color: #9B1C1C;
+    font-size: 12.5px;
+    line-height: 1.4;
+}
+
+.kv-wa-success-state {
+    padding: 36px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.kv-wa-success-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #EAF7EF;
+    color: #20BA56;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 640px) {
+    .kv-wa-card {
+        bottom: 74px;
+        right: 16px;
+        left: 16px;
+        width: auto;
+        max-width: none;
+        max-height: calc(100vh - 90px);
+    }
+    .kv-wa-form-grid {
+        grid-template-columns: 1fr;
+    }
+    .kv-wa-field-group {
+        grid-column: 1 / -1;
+    }
+}
+
 /* --- Display Utilities for Alpine x-show Preservation --- */
 .kv-flex { display: flex; }
 .kv-flex-col { display: flex; flex-direction: column; }

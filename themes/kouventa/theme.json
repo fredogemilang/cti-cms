@@ -16,6 +16,11 @@
             "key": "book_demo_form",
             "label": "Book a Demo Form",
             "description": "Formulir pendaftaran konsultasi enterprise pada halaman Book a Demo"
+        },
+        {
+            "key": "whatsapp_chat_form",
+            "label": "WhatsApp Chat Form",
+            "description": "Formulir Start a Conversation pada popup WhatsApp Chat di pojok kanan bawah"
         }
     ],
     "page_templates": {

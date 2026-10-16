@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
             MenuItemSeeder::class,
             EmailTemplateSeeder::class,
             FormsSeeder::class,
+            WhatsAppFormSeeder::class,
             StringTranslationsSeeder::class,
             TestimonialSeeder::class,
         ]);
