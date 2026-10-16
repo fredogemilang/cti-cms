@@ -103,7 +103,7 @@
             this.loading = false;
 
             // Generate WhatsApp message
-            const waNumber = '{{ function_exists('setting') ? setting('whatsapp_number', '62811849689') : '62811849689' }}';
+            const waNumber = '{{ function_exists('setting') ? setting('whatsapp_number', '628118496889') : '628118496889' }}';
             const msg = `Halo Kouventa,\nSaya ingin memulai percakapan.\n\n*Nama:* ${this.formData.name}\n*Email:* ${this.formData.working_email}\n*Perusahaan:* ${this.formData.company}\n*Jabatan:* ${this.formData.job_role}\n*Posisi:* ${this.formData.position}`;
             const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
 
