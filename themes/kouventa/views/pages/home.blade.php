@@ -14,7 +14,7 @@
             ]
         ],
         [
-            'name' => t('kouventa.Recruiting', 'Recruiting'),
+            'name' => t('kouventa.Recruitment', 'Recruitment'),
             'line' => t('kouventa.Hire faster, with less admin.', 'Hire faster, with less admin.'),
             'tab' => 1,
             'tasks' => [
@@ -273,7 +273,7 @@
 
 <!-- ============ WHY ============ -->
 <section style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 40px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Enterprise-ready <span style="color: #13803F">from day one.</span></h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Enterprise ready <span style="color: #13803F">from day one.</span></h2>
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; align-items: stretch">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05)">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
@@ -284,8 +284,8 @@
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05)">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 8a4 4 0 0 1-1 10H7Z"></path></svg></span>
 <span style="font-size: 22px; font-weight: 800; letter-spacing: -0.01em; padding-top: 4px">Deploy anywhere</span>
-<span style="font-size: 16px; color: #4A5866; line-height: 1.6; flex-grow: 1">Run Kouventa in the cloud or on-premise on your own servers, so it fits your IT policies, infrastructure and data residency needs.</span>
-<span style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px"><span style="font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C">Cloud</span><span style="font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C">On-premise</span></span>
+<span style="font-size: 16px; color: #4A5866; line-height: 1.6; flex-grow: 1">Run Kouventa in the cloud, on-premise on your own servers, or hybrid, so it fits your IT policies, infrastructure and data residency needs.</span>
+<span style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px"><span style="font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C">Cloud</span><span style="font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C">On-premise</span><span style="font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C">Hybrid</span></span>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05)">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg></span>
@@ -305,32 +305,71 @@
 <!-- ============ TECHNOLOGY PARTNERS ============ -->
 <section style="padding: 0 80px; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 32px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Supported by leading technology partners.</h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Technology Partners', 'Technology Partners') }}</h2>
 <div style="width: 100%; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px">
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Meta</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">AWS</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Azure OpenAI</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Tokenku</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Deka LLM</span></div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/partner-meta.svg') }}" alt="Meta" title="Meta" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/partner-aws.svg') }}" alt="AWS" title="Amazon Web Services" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/partner-azure.svg') }}" alt="Azure OpenAI" title="Microsoft Azure" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/partner-tokenku.png') }}" alt="TokenKu" title="TokenKu.ai" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/partner-deka-llm.png') }}" alt="Deka LLM" title="Lintasarta Cloudeka" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/partner-motadata.svg') }}" alt="Motadata" title="Motadata" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
 </div>
 </div>
 </section>
 
 <!-- ============ CUSTOMERS ============ -->
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 32px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">They trusted us.</h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.They trusted us.', 'They trusted us.') }}</h2>
 <div style="width: 100%; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px">
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Maybank</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Bussan Auto Finance</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Mandiri Tunas Finance</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Sriwijaya Air</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Pelita Air</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Astra Otoparts</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Garuda Yamato Steel</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Sekolah Bunda Mulia</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Rumah Sakit Pluit</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">Luna's Doughnuts</span></div>
-<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1.5px dashed #C9D2CE; background: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9AA7B3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #4A5866; text-align: center; line-height: 1.3">AKI GS</span></div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-maybank.svg') }}" alt="Maybank" title="Maybank" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-baf.png') }}" alt="Bussan Auto Finance" title="PT Bussan Auto Finance" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-mtf.png') }}" alt="Mandiri Tunas Finance" title="Mandiri Tunas Finance" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-sriwijaya-air.png') }}" alt="Sriwijaya Air" title="Sriwijaya Air" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-pelita-air.png') }}" alt="Pelita Air" title="Pelita Air" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-astra-otoparts.png') }}" alt="Astra Otoparts" title="Astra Otoparts" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-garuda-yamato-steel.webp') }}" alt="Garuda Yamato Steel" title="Garuda Yamato Steel" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-sbm.svg') }}" alt="Sekolah Bunda Mulia" title="Sekolah Bunda Mulia" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-rs-pluit.png') }}" alt="Rumah Sakit Pluit" title="Rumah Sakit Pluit" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-lunas-doughnuts.png') }}" alt="Luna's Doughnuts" title="Luna's Doughnuts" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-aki-gs.png') }}" alt="AKI GS Astra" title="GS Astra" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
+<div style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; background: #DDF3E4; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 12px">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+    <span style="font-size: 14px; font-weight: 800; color: #13803F; text-align: center; line-height: 1.3">{{ t('kouventa.And many more', 'And many more') }}</span>
+</div>
 </div>
 </section>
 
@@ -391,6 +430,45 @@
 </div>
 </section>
 
+<!-- ============ VIDEOS ============ -->
+<section style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 32px">
+    <div style="display: flex; justify-content: space-between; align-items: end; gap: 24px">
+        <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.See Kouventa in action.', 'See Kouventa in action.') }}</h2>
+        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #0E1A24; padding: 12px 18px; border-radius: 12px; border: 1px solid #C9D2CE; background: #FFFFFF; white-space: nowrap; text-decoration: none">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" fill="#FF0033"></rect><path d="M10 9v6l5-3Z" fill="#FFFFFF"></path></svg>
+            {{ t('kouventa.Watch more on YouTube', 'Watch more on YouTube') }}
+        </a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
+        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-hover" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
+            <div role="img" aria-label="Video thumbnail placeholder" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
+                <span style="width: 64px; height: 44px; border-radius: 12px; background: #FF0033; display: flex; align-items: center; justify-content: center">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7Z"></path></svg>
+                </span>
+            </div>
+            <span style="align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C; margin: 0 6px">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
+            <span style="font-size: 17px; line-height: 1.4; font-weight: 700; margin: 0 6px">{{ t('kouventa.AI Company Wikipedia: instant answers from your company knowledge', 'AI Company Wikipedia: instant answers from your company knowledge') }}</span>
+        </a>
+        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-hover" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
+            <div role="img" aria-label="Video thumbnail placeholder" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
+                <span style="width: 64px; height: 44px; border-radius: 12px; background: #FF0033; display: flex; align-items: center; justify-content: center">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7Z"></path></svg>
+                </span>
+            </div>
+            <span style="align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C; margin: 0 6px">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
+            <span style="font-size: 17px; line-height: 1.4; font-weight: 700; margin: 0 6px">{{ t('kouventa.AI Task Force: automate invoice reconciliation with human approval', 'AI Task Force: automate invoice reconciliation with human approval') }}</span>
+        </a>
+        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-hover" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
+            <div role="img" aria-label="Video thumbnail placeholder" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
+                <span style="width: 64px; height: 44px; border-radius: 12px; background: #FF0033; display: flex; align-items: center; justify-content: center">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7Z"></path></svg>
+                </span>
+            </div>
+            <span style="align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C; margin: 0 6px">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</span>
+            <span style="font-size: 17px; line-height: 1.4; font-weight: 700; margin: 0 6px">{{ t('kouventa.Omnichannel inbox: from Instagram DM to WhatsApp campaign', 'Omnichannel inbox: from Instagram DM to WhatsApp campaign') }}</span>
+        </a>
+    </div>
+</section>
 
 <!-- ============ FOOTER ============ -->
 </div>

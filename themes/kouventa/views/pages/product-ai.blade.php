@@ -769,7 +769,7 @@ $productsList = [
 </div>
 <div class="kv-hover" style="background: #071C33; color: #FFFFFF; border: 1px solid #071C33; border-radius: 18px; padding: 28px 0; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
 <div style="padding: 0 28px; display: flex; justify-content: space-between; align-items: baseline; gap: 24px">
-<span style="font-size: 19px; font-weight: 700">{{ t('kouventa.Deploy on Any Channel', 'Deploy on Any Channel') }}</span>
+<span style="font-size: 19px; font-weight: 700">{{ t('kouventa.Integrate with Any Channel', 'Integrate with Any Channel') }}</span>
 <span style="font-size: 15px; color: #B9C6D3">{{ t('kouventa.Plug your AI into any app or channel your teams and customers already use.', 'Plug your AI into any app or channel your teams and customers already use.') }}</span>
 </div>
 <div aria-label="Example channels: WhatsApp, Email, Slack, Microsoft Teams, Telegram, SAP, Salesforce, internal apps" role="img" style="overflow: hidden">
@@ -790,7 +790,7 @@ $channelsDbl = array_merge($channels, $channels);
 <section style="padding: 104px 80px; background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; gap: 48px; position: relative; overflow: hidden">
 <div aria-hidden="true" style="position: absolute; left: -200px; bottom: -320px; width: 700px; height: 700px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div>
 <div aria-hidden="true" style="position: absolute; right: -160px; top: -260px; width: 560px; height: 560px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div>
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; position: relative">{{ t('kouventa.Why Kouventa', 'Why Kouventa') }} <span style="color: #2BD46A">AI</span></h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; position: relative">{{ t('kouventa.What held your AI back,', 'What held your AI back,') }} <span style="color: #2BD46A">{{ t('kouventa.now solved.', 'now solved.') }}</span></h2>
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; position: relative">
 <div class="kv-why" style="position: relative; overflow: hidden; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 14px; min-height: 300px; box-sizing: border-box">
 <span style="width: 60px; height: 60px; border-radius: 16px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(43,212,106,0.25)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span>
@@ -813,7 +813,7 @@ $channelsDbl = array_merge($channels, $channels);
 <div class="kv-why" style="position: relative; overflow: hidden; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 14px; min-height: 300px; box-sizing: border-box">
 <span style="width: 60px; height: 60px; border-radius: 16px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(43,212,106,0.25)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg></span>
 <span style="font-size: 22px; line-height: 1.25; font-weight: 800; padding-top: 10px">{{ t('kouventa.Budget Management', 'Budget Management') }}</span>
-<span style="font-size: 16px; line-height: 1.55; color: #B9C6D3">{{ t('kouventa.Monitor and control AI usage and spending with per-user budgets, usage limits, and overage alerts.', 'Monitor and control AI usage and spending with per-user budgets, usage limits, and overage alerts.') }}</span>
+<span style="font-size: 16px; line-height: 1.55; color: #B9C6D3">{{ t('kouventa.Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.', 'Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.') }}</span>
 <span style="margin-top: auto; align-self: flex-start; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A">{{ t('kouventa.Solves: hard-to-manage billing', 'Solves: hard-to-manage billing') }}</span>
 </div>
 </div>

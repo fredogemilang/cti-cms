@@ -28,13 +28,22 @@
         
         <div style="display: flex; flex-direction: column; gap: 14px">
             <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Contact us', 'Contact us') }}</span>
-            <span style="font-size: 15px; line-height: 1.55; color: #B9C6D3">Centennial Tower, 12th Floor<br>Jl. Jend. Gatot Subroto Kav. 24-25, Jakarta</span>
-            <a href="tel:+62811849689" style="color: #B9C6D3; font-size: 15px">+62 8118 4968 89</a>
-            <a href="mailto:kouventa@helios.id" style="color: #B9C6D3; font-size: 15px">kouventa@helios.id</a>
+            <a href="https://www.google.com/maps/search/?api=1&query=Centennial+Tower+Jl.+Jend.+Gatot+Subroto+Kav.+24-25+Jakarta" target="_blank" rel="noopener noreferrer" aria-label="Open address in Google Maps" style="color: #B9C6D3; font-size: 15px; display: flex; gap: 10px; align-items: flex-start; text-decoration: none; line-height: 1.55">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>Centennial Tower, 12th Floor<br>Jl. Jend. Gatot Subroto Kav. 24-25, Jakarta</span>
+            </a>
+            <a href="https://wa.me/62811849689" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" style="color: #B9C6D3; font-size: 15px; display: flex; gap: 10px; align-items: center; text-decoration: none">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M3 21l1.65-4.6A9 9 0 1 1 8.6 20.1Z"></path><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-2.3-2.3l.8-1-1-2Z"></path></svg>
+                <span>+62 8118 4968 89</span>
+            </a>
+            <a href="mailto:kouventa@helios.id" aria-label="Send an email" style="color: #B9C6D3; font-size: 15px; display: flex; gap: 10px; align-items: center; text-decoration: none">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
+                <span>kouventa@helios.id</span>
+            </a>
         </div>
         
         <div style="display: flex; flex-direction: column; gap: 14px">
-            <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Certified', 'Certified') }}</span>
+            <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Certified & Registered', 'Certified & Registered') }}</span>
             <div style="display: flex; gap: 12px; align-items: center">
                 <div style="background: #FFFFFF; border-radius: 10px; height: 80px; width: 96px; box-sizing: border-box; padding: 8px; display: flex; align-items: center; justify-content: center">
                     <img src="{{ theme_asset('images/badge-iso-27001.png') }}" alt="ISO 27001 — KAN accredited" style="width: 100%; height: auto">

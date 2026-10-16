@@ -271,7 +271,7 @@
 
 <div style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 80px; align-items: center; position: relative">
 <div style="display: flex; flex-direction: column; gap: 26px">
-<span style="align-self: flex-start; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>{{ t('kouventa.Official Meta Business Partner', 'Official Meta Business Partner') }}</span>
+<span style="align-self: flex-start; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>{{ t('kouventa.Official Meta Business Solution Provider', 'Official Meta Business Solution Provider') }}</span>
 <h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ t('kouventa.The smarter way to', 'The smarter way to') }} <span style="color: #2BD46A">{{ t('kouventa.engage customers.', 'engage customers.') }}</span></h1>
 <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{{ t('kouventa.Reach more customers, respond faster, and keep every conversation seamless — on WhatsApp and beyond.', 'Reach more customers, respond faster, and keep every conversation seamless — on WhatsApp and beyond.') }}</p>
 <div style="display: flex; gap: 12px; padding-top: 4px">
@@ -791,7 +791,7 @@
 <div style="background: #071C33; color: #FFFFFF; border-radius: 28px; padding: 56px 64px; display: flex; justify-content: space-between; align-items: center; gap: 40px; position: relative; overflow: hidden">
 <div style="position: absolute; right: -120px; top: -140px; width: 440px; height: 440px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.06); pointer-events: none"></div>
 <div style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; position: relative; z-index: 2">
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #2BD46A">{{ t('kouventa.Certified', 'Certified') }}</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #2BD46A">{{ t('kouventa.Certified & Registered', 'Certified & Registered') }}</span>
 <h2 style="margin: 0; font-size: 40px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Start engaging customers on WhatsApp.', 'Start engaging customers on WhatsApp.') }}</h2>
 <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #B9C6D3">{{ t('kouventa.Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge.', 'Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge.') }}</p>
 </div>
