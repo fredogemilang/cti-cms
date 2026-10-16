@@ -2855,6 +2855,11 @@ body {
 .kv-product-replay-btn {
     align-self: flex-end;
 }
+.kv-channel-card:hover {
+    background: rgba(255,255,255,0.09) !important;
+    border-color: rgba(43,212,106,0.45) !important;
+    transform: translateY(-2px);
+}
 
 @media (max-width: 1024px) {
     .kv-ai-products-section {
@@ -2891,6 +2896,27 @@ body {
 }
 
 @media (max-width: 768px) {
+    .kv-integrate-card {
+        padding: 24px 0 !important;
+    }
+    .kv-integrate-header {
+        padding: 0 20px !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+    }
+    .kv-channel-card {
+        width: 136px !important;
+        height: 84px !important;
+        padding: 10px 10px !important;
+    }
+    .kv-channel-card img {
+        width: 26px !important;
+        height: 26px !important;
+    }
+    .kv-channel-card span {
+        font-size: 12px !important;
+    }
     .kv-ai-products-section {
         padding: 32px 20px 60px !important;
         gap: 20px !important;

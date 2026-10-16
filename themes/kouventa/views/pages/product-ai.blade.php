@@ -206,6 +206,13 @@
     stroke: #13803F;
 }
 
+/* Channel Marquee Card Styles */
+.kv-channel-card:hover {
+    background: rgba(255,255,255,0.09) !important;
+    border-color: rgba(43,212,106,0.45) !important;
+    transform: translateY(-2px);
+}
+
 /* ============================================================
    RESPONSIVE MEDIA QUERIES FOR AI PRODUCTS SECTION
    ============================================================ */
@@ -253,6 +260,32 @@
 
 /* Mobile Screens (<= 768px) */
 @media (max-width: 768px) {
+    .kv-integrate-card {
+        padding: 24px 0 !important;
+    }
+
+    .kv-integrate-header {
+        padding: 0 20px !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+    }
+
+    .kv-channel-card {
+        width: 136px !important;
+        height: 84px !important;
+        padding: 10px 10px !important;
+    }
+
+    .kv-channel-card img {
+        width: 26px !important;
+        height: 26px !important;
+    }
+
+    .kv-channel-card span {
+        font-size: 12px !important;
+    }
+
     .kv-ai-products-section {
         padding: 32px 20px 60px !important;
         gap: 20px !important;
@@ -1119,19 +1152,31 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see ho
 <span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Require changes to AI resources to go through review and approval before they are applied.', 'Require changes to AI resources to go through review and approval before they are applied.') }}</span>
 </div>
 </div>
-<div class="kv-hover" style="background: #071C33; color: #FFFFFF; border: 1px solid #071C33; border-radius: 18px; padding: 28px 0; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
-<div style="padding: 0 28px; display: flex; justify-content: space-between; align-items: baseline; gap: 24px">
+<div class="kv-hover kv-integrate-card" style="background: #071C33; color: #FFFFFF; border: 1px solid #071C33; border-radius: 18px; padding: 28px 0; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
+<div class="kv-integrate-header" style="padding: 0 28px; display: flex; justify-content: space-between; align-items: baseline; gap: 24px; flex-wrap: wrap">
 <span style="font-size: 19px; font-weight: 700">{{ t('kouventa.Integrate with Any Channel', 'Integrate with Any Channel') }}</span>
 <span style="font-size: 15px; color: #B9C6D3">{{ t('kouventa.Plug your AI into any app or channel your teams and customers already use.', 'Plug your AI into any app or channel your teams and customers already use.') }}</span>
 </div>
 <div aria-label="Example channels: WhatsApp, Email, Slack, Microsoft Teams, Telegram, SAP, Salesforce, internal apps" role="img" style="overflow: hidden">
 <div style="display: flex; gap: 14px; width: max-content; animation: kvMarquee 40s linear infinite">
 @php
-$channels = ['WhatsApp', 'Email', 'Slack', 'Microsoft Teams', 'Telegram', 'SAP', 'Salesforce', t('kouventa.Internal apps', 'Internal apps')];
+$channels = [
+    ['name' => 'WhatsApp', 'icon' => 'images/channels/whatsapp.svg'],
+    ['name' => 'Email', 'icon' => 'images/channels/email.svg'],
+    ['name' => 'Slack', 'icon' => 'images/channels/slack.svg'],
+    ['name' => 'Microsoft Teams', 'icon' => 'images/channels/teams.svg'],
+    ['name' => 'Telegram', 'icon' => 'images/channels/telegram.svg'],
+    ['name' => 'SAP', 'icon' => 'images/channels/sap.svg'],
+    ['name' => 'Salesforce', 'icon' => 'images/channels/salesforce.svg'],
+    ['name' => t('kouventa.Internal apps', 'Internal apps'), 'icon' => 'images/channels/internal-apps.svg'],
+];
 $channelsDbl = array_merge($channels, $channels);
 @endphp
 @foreach($channelsDbl as $ch)
-<span style="width: 168px; height: 88px; flex-shrink: 0; box-sizing: border-box; padding: 8px 12px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1.5px dashed rgba(255,255,255,0.28); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#93A4B6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5-9 9"></path></svg><span style="font-size: 13px; font-weight: 700; color: #D5DEE8; text-align: center; line-height: 1.3">{{ $ch }}</span></span>
+<span class="kv-channel-card" style="width: 168px; height: 96px; flex-shrink: 0; box-sizing: border-box; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease">
+    <img src="{{ theme_asset($ch['icon']) }}" alt="{{ $ch['name'] }}" style="width: 32px; height: 32px; object-fit: contain; display: block" loading="lazy">
+    <span style="font-size: 13px; font-weight: 700; color: #D5DEE8; text-align: center; line-height: 1.3">{{ $ch['name'] }}</span>
+</span>
 @endforeach
 </div>
 </div>
