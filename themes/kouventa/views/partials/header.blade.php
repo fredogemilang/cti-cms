@@ -5,19 +5,19 @@
 @endphp
 
 <!-- Mobile Top Header Bar -->
-<div class="lg:hidden bg-[#071C33] border-b border-white/10 sticky top-0 z-[100] px-4 py-3 flex items-center justify-between">
+<div class="kv-mobile-header">
     <!-- Logo -->
-    <a href="{{ localized_url('/') }}" class="flex-shrink-0 flex items-center text-white no-underline">
-        <img src="{{ $siteLogo }}" alt="{{ $siteName }}" class="h-8 w-auto">
+    <a href="{{ localized_url('/') }}" style="flex-shrink: 0; display: flex; align-items: center; text-decoration: none">
+        <img src="{{ $siteLogo }}" alt="{{ $siteName }}" style="height: 32px; width: auto; display: block">
     </a>
 
     <!-- Right Actions: Language Switcher & Book Demo -->
-    <div class="flex items-center gap-2">
-        <div role="group" aria-label="Language" class="flex p-0.5 gap-0.5 rounded-lg bg-white/10 border border-white/15 text-xs font-bold">
-            <a href="{{ current_page_localized_url('en') }}" class="px-2 py-1 rounded {{ $currentLocale === 'en' ? 'bg-white text-[#071C33]' : 'text-white/80' }} no-underline">EN</a>
-            <a href="{{ current_page_localized_url('id') }}" class="px-2 py-1 rounded {{ $currentLocale === 'id' ? 'bg-white text-[#071C33]' : 'text-white/80' }} no-underline">ID</a>
+    <div style="display: flex; align-items: center; gap: 8px">
+        <div role="group" aria-label="Language" style="display: flex; padding: 2px; gap: 2px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); font-size: 12px; font-weight: 700">
+            <a href="{{ current_page_localized_url('en') }}" style="padding: 4px 8px; border-radius: 6px; text-decoration: none; {{ $currentLocale === 'en' ? 'background: #FFFFFF; color: #071C33;' : 'color: rgba(255,255,255,0.8);' }}">EN</a>
+            <a href="{{ current_page_localized_url('id') }}" style="padding: 4px 8px; border-radius: 6px; text-decoration: none; {{ $currentLocale === 'id' ? 'background: #FFFFFF; color: #071C33;' : 'color: rgba(255,255,255,0.8);' }}">ID</a>
         </div>
-        <a href="{{ localized_url('/book-demo') }}" class="bg-[#2BD46A] text-[#06251A] text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 no-underline">
+        <a href="{{ localized_url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; text-decoration: none">
             {{ t('kouventa.Book demo', 'Book demo') }}
         </a>
     </div>
@@ -26,8 +26,8 @@
 <!-- Desktop Header -->
 <header x-data="{ productOpen: false, solutionOpen: false, pricingOpen: false }"
         @click.away="productOpen = false; solutionOpen = false; pricingOpen = false"
-        class="hidden lg:flex"
-        style="height: 80px; padding: 0 80px; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; flex-shrink: 0; box-sizing: border-box; background: #071C33; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.06)">
+        class="kv-desktop-header"
+        style="height: 80px; padding: 0 80px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; flex-shrink: 0; box-sizing: border-box; background: #071C33; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.06)">
     
     @php
         $siteLogo = setting('site_logo') ? resolve_block_asset(setting('site_logo')) : theme_asset('images/kouventa-logo.png');
