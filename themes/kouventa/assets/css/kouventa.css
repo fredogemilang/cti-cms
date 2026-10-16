@@ -1327,3 +1327,84 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
     transform: translateX(6px);
 }
 
+/* ==========================================================================
+   PARTNER & CUSTOMER LOGO CARDS
+   ========================================================================== */
+.kv-partner-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px;
+}
+
+@media (max-width: 1024px) {
+    .kv-partner-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .kv-partner-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.kv-customer-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+@media (max-width: 1024px) {
+    .kv-customer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 540px) {
+    .kv-customer-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.kv-logo-card {
+    width: 100%;
+    height: 88px;
+    box-sizing: border-box;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 20px;
+    cursor: default;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s ease;
+}
+
+/* Light customer logo card */
+.kv-customer-card {
+    background: #FFFFFF;
+    border: 1px solid #E3E8E6;
+    box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02);
+}
+
+.kv-customer-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(7, 28, 51, 0.08);
+    border-color: #2BD46A;
+}
+
+/* Dark technology partner card */
+.kv-partner-card {
+    background: #071C33 !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12) !important;
+}
+
+.kv-partner-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(43, 212, 106, 0.5) !important;
+    box-shadow: 0 10px 28px rgba(7, 28, 51, 0.3) !important;
+}
+
+

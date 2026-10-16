@@ -306,24 +306,24 @@
 <section style="padding: 0 80px; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 32px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Technology Partners', 'Technology Partners') }}</h2>
-<div style="width: 100%; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px">
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+<div class="kv-partner-grid" style="width: 100%; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px">
+<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
     <img src="{{ theme_asset('images/logos/partner-meta.svg') }}" alt="Meta" title="Meta" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/partner-aws.svg') }}" alt="AWS" title="Amazon Web Services" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
+    <img src="{{ theme_asset('images/logos/partner-aws-v2.svg') }}" alt="AWS" title="Amazon Web Services" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/partner-azure.svg') }}" alt="Azure OpenAI" title="Microsoft Azure" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
+    <img src="{{ theme_asset('images/logos/partner-azure.svg') . '?v=4' }}" alt="Azure OpenAI" title="Microsoft Azure" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
     <img src="{{ theme_asset('images/logos/partner-tokenku.png') }}" alt="TokenKu" title="TokenKu.ai" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
     <img src="{{ theme_asset('images/logos/partner-deka-llm.png') }}" alt="Deka LLM" title="Lintasarta Cloudeka" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/partner-motadata.svg') }}" alt="Motadata" title="Motadata" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
+    <img src="{{ theme_asset('images/logos/partner-motadata-v2.svg') }}" alt="Motadata" title="Motadata" style="max-height: 30px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 </div>
 </div>
@@ -331,44 +331,31 @@
 
 <!-- ============ CUSTOMERS ============ -->
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 32px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.They trusted us.', 'They trusted us.') }}</h2>
-<div style="width: 100%; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px">
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-maybank.svg') }}" alt="Maybank" title="Maybank" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em"><span style="color: #0E1A24">{{ t('kouventa.Our', 'Our') }} </span><span style="color: #2BD46A">{{ t('kouventa.Customers', 'Customers') }}</span></h2>
+<div class="kv-customer-grid" style="width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-pakedriver.png') }}" alt="PakeDriver" title="PakeDriver" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-baf.png') }}" alt="Bussan Auto Finance" title="PT Bussan Auto Finance" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+<div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-lunas-doughnuts.png') }}" alt="Luna's Doughnuts" title="Luna's Doughnuts" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-mtf.png') }}" alt="Mandiri Tunas Finance" title="Mandiri Tunas Finance" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-</div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-sriwijaya-air.png') }}" alt="Sriwijaya Air" title="Sriwijaya Air" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-</div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-pelita-air.png') }}" alt="Pelita Air" title="Pelita Air" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-</div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+<div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
     <img src="{{ theme_asset('images/logos/customer-astra-otoparts.png') }}" alt="Astra Otoparts" title="Astra Otoparts" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-garuda-yamato-steel.webp') }}" alt="Garuda Yamato Steel" title="Garuda Yamato Steel" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+<div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-navios.png') }}" alt="Navios" title="Navios" style="max-height: 30px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-sbm.svg') }}" alt="Sekolah Bunda Mulia" title="Sekolah Bunda Mulia" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+<div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-toqco.png') }}" alt="Toqco" title="Toqco" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-rs-pluit.png') }}" alt="Rumah Sakit Pluit" title="Rumah Sakit Pluit" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+<div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-mitra-mandiri.png') }}" alt="Mitra Mandiri Informatika" title="Mitra Mandiri Informatika" style="max-height: 38px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-lunas-doughnuts.png') }}" alt="Luna's Doughnuts" title="Luna's Doughnuts" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+<div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-liberta-hotels.png') }}" alt="Liberta Hotels" title="Liberta Hotels" style="max-height: 38px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-aki-gs.png') }}" alt="AKI GS Astra" title="GS Astra" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-</div>
-<div class="kv-logo-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; background: #DDF3E4; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 12px">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
-    <span style="font-size: 14px; font-weight: 800; color: #13803F; text-align: center; line-height: 1.3">{{ t('kouventa.And many more', 'And many more') }}</span>
+<div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-my-password.png') }}" alt="My Password" title="My Password" style="max-height: 28px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 </div>
 </section>
