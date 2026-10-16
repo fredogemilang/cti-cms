@@ -109,6 +109,17 @@
 
 @extends('kouventa::layouts.app')
 
+@php
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'The smarter way to', 'main' => 'engage customers.']);
+    $heroSubtitle = $page?->block('hero_subtitle', 'Reach more customers, respond faster, and keep every conversation seamless — on WhatsApp and beyond.');
+    $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Book a demo', 'url' => '/book-demo']);
+    $channelsTitle = $page?->titleBlock('channels_title', ['prefix' => 'Every missed message is a', 'main' => 'missed sale.']);
+    $featuresTitle = $page?->titleBlock('features_title', ['prefix' => 'One platform.', 'main' => 'Zero missed messages.']);
+    $whyTitle = $page?->titleBlock('why_title', ['prefix' => 'Why Kouventa for customer', 'main' => 'engagement']);
+    $bottomCtaTitle = $page?->block('bottom_cta_title', 'Start engaging customers on WhatsApp.');
+    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge.');
+@endphp
+
 @section('content')
 <div class="kv-canvas-wrap" x-data="{
     stage: 0,
@@ -272,10 +283,10 @@
 <div style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 80px; align-items: center; position: relative">
 <div style="display: flex; flex-direction: column; gap: 26px">
 <span style="align-self: flex-start; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>{{ t('kouventa.Official Meta Business Solution Provider', 'Official Meta Business Solution Provider') }}</span>
-<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ t('kouventa.The smarter way to', 'The smarter way to') }} <span style="color: #2BD46A">{{ t('kouventa.engage customers.', 'engage customers.') }}</span></h1>
-<p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{{ t('kouventa.Reach more customers, respond faster, and keep every conversation seamless — on WhatsApp and beyond.', 'Reach more customers, respond faster, and keep every conversation seamless — on WhatsApp and beyond.') }}</p>
+<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'The smarter way to' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'engage customers.' }}</span></h1>
+<p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{!! nl2br(e($heroSubtitle)) !!}</p>
 <div style="display: flex; gap: 12px; padding-top: 4px">
-<a href="{{ localized_url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
+<a href="{{ localized_url($heroCta['url'] ?? '/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ $heroCta['text'] ?? 'Book a demo' }}</a>
 </div>
 </div>
 
@@ -318,7 +329,7 @@
 
 <!-- ============ CHALLENGES ============ -->
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Every missed message is a', 'Every missed message is a') }} <span style="color: #13803F">{{ t('kouventa.missed sale.', 'missed sale.') }}</span></h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">@if(!empty($channelsTitle['prefix'])){{ $channelsTitle['prefix'] }} <span style="color: #13803F">{{ $channelsTitle['main'] }}</span>@else{{ $channelsTitle['main'] ?? $channelsTitle }}@endif</h2>
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
 <article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 0.2s both">
 <div aria-hidden="true" style="height: 56px; display: flex; align-items: center; gap: 10px">
@@ -438,7 +449,7 @@
 <!-- ============ PRODUCTS ============ -->
 <section id="products" style="padding: 48px 80px 104px; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.One platform.', 'One platform.') }} <span style="color: #13803F">{{ t('kouventa.Zero missed messages.', 'Zero missed messages.') }}</span></h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">@if(!empty($featuresTitle['prefix'])){{ $featuresTitle['prefix'] }} <span style="color: #13803F">{{ $featuresTitle['main'] }}</span>@else{{ $featuresTitle['main'] ?? $featuresTitle }}@endif</h2>
 <span class="kv-linked-pill" x-show="linked" x-cloak style="min-height: 48px; box-sizing: border-box; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
 <span class="kv-pill-dot" style="width: 10px; height: 10px; border-radius: 50%; background: #13803F; flex-shrink: 0; display: inline-block"></span>
 <span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ t('kouventa.Prospecting', 'Prospecting') }}</strong></span>
@@ -760,7 +771,7 @@
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
 <div style="display: flex; flex-direction: column; gap: 12px">
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F">{{ t('kouventa.Why Kouventa', 'Why Kouventa') }}</span>
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Why Kouventa for customer', 'Why Kouventa for customer') }} <span style="color: #13803F">{{ t('kouventa.engagement', 'engagement') }}</span></h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $whyTitle['prefix'] ?? 'Why Kouventa for customer' }} <span style="color: #13803F">{{ $whyTitle['main'] ?? 'engagement' }}</span></h2>
 </div>
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 14px">
@@ -792,8 +803,8 @@
 <div style="position: absolute; right: -120px; top: -140px; width: 440px; height: 440px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.06); pointer-events: none"></div>
 <div style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; position: relative; z-index: 2">
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #2BD46A">{{ t('kouventa.Certified & Registered', 'Certified & Registered') }}</span>
-<h2 style="margin: 0; font-size: 40px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Start engaging customers on WhatsApp.', 'Start engaging customers on WhatsApp.') }}</h2>
-<p style="margin: 0; font-size: 17px; line-height: 1.6; color: #B9C6D3">{{ t('kouventa.Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge.', 'Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge.') }}</p>
+<h2 style="margin: 0; font-size: 40px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
+<p style="margin: 0; font-size: 17px; line-height: 1.6; color: #B9C6D3">{!! nl2br(e($bottomCtaSubtitle)) !!}</p>
 </div>
 <div style="display: flex; gap: 14px; position: relative; z-index: 2; flex-shrink: 0">
 <a href="{{ localized_url('/pricing') }}" style="background: transparent; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28); text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>

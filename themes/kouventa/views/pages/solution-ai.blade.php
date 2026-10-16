@@ -1,6 +1,13 @@
 @extends('kouventa::layouts.app')
 
 @section('content')
+@php
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'From knowledge to action', 'main' => 'with AI.']);
+    $heroSubtitle = $page?->block('hero_subtitle', 'From knowledge retrieval to process automation, Kouventa AI helps businesses turn information into actionable insights and automate business processes with AI-powered autonomous agents.');
+    $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Request a Demo', 'url' => '/book-demo']);
+    $bottomCtaTitle = $page?->block('bottom_cta_title', 'Start simple. Scale with confidence.');
+    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', "Begin with everyday AI for your employees, governed by your organization. Grow into AI agents when you're ready.");
+@endphp
 <div class="kv-canvas-wrap" x-data="{
     tab: (function() {
         const p = new URLSearchParams(window.location.search);
@@ -56,10 +63,10 @@
 
 <div style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 64px; align-items: center; position: relative">
 <div style="display: flex; flex-direction: column; gap: 26px">
-<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ t('kouventa.From knowledge to action', 'From knowledge to action') }} <span style="color: #2BD46A">{{ t('kouventa.with AI.', 'with AI.') }}</span></h1>
-<p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{{ t('kouventa.From knowledge retrieval to process automation, Kouventa AI helps businesses turn information into actionable insights and automate business processes with AI-powered autonomous agents.', 'From knowledge retrieval to process automation, Kouventa AI helps businesses turn information into actionable insights and automate business processes with AI-powered autonomous agents.') }}</p>
+<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? '' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? '' }}</span></h1>
+<p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{{ $heroSubtitle }}</p>
 <div style="display: flex; gap: 12px; padding-top: 4px">
-<a href="{{ localized_url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px">{{ t('kouventa.Request a Demo', 'Request a Demo') }}</a>
+<a href="{{ localized_url($heroCta['url'] ?? '/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px">{{ $heroCta['text'] ?? 'Request a Demo' }}</a>
 <button type="button" @click="pickTab(tab, true)" style="background: transparent; color: #FFFFFF; font-size: 17px; font-weight: 600; padding: 17px 26px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28)">{{ t('kouventa.See How It Works', 'See How It Works') }}</button>
 </div>
 </div>
@@ -917,8 +924,8 @@
 <section style="padding: 0 80px 104px">
 <div style="background: #2BD46A; border-radius: 28px; padding: 56px 64px; display: flex; justify-content: space-between; align-items: center; gap: 48px; color: #06251A">
 <div style="display: flex; flex-direction: column; gap: 12px; max-width: 720px">
-<h2 style="margin: 0; font-size: 40px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Start simple. Scale with confidence.', 'Start simple. Scale with confidence.') }}</h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.55">{{ t('kouventa.Begin with everyday AI for your employees, governed by your organization. Grow into AI agents when you\'re ready.', 'Begin with everyday AI for your employees, governed by your organization. Grow into AI agents when you\'re ready.') }}</p>
+<h2 style="margin: 0; font-size: 40px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.55">{{ $bottomCtaSubtitle }}</p>
 </div>
 <div style="display: flex; gap: 12px; flex-shrink: 0">
 <a href="#solution-tabs" @click.prevent="pickTab(0, true)" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; white-space: nowrap">{{ t('kouventa.Find your first use case', 'Find your first use case') }}</a>

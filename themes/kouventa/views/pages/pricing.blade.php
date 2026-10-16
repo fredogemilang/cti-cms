@@ -1,5 +1,15 @@
 @extends('kouventa::layouts.app')
 
+@php
+    $heroBadge = $page?->block('hero_badge', 'PRICING');
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Intelligence you control,', 'main' => 'priced for how you grow.']);
+    $heroSubtitle = $page?->block('hero_subtitle', 'Two platforms, three tiers each. Start where your team is today, and scale without switching vendors.');
+    $calcTitle = $page?->block('calc_title', 'Estimate your WhatsApp cost');
+    $calcSubtitle = $page?->block('calc_subtitle', 'Enter your expected monthly conversations per category to see your estimated monthly and yearly cost.');
+    $ctaTitle = $page?->block('cta_title', 'Ready to see how your team would use it?');
+    $ctaSubtitle = $page?->block('cta_subtitle', "Book a working session with our solution team. We'll map your use cases to the right tier and deployment.");
+@endphp
+
 @section('content')
 <div x-data="{
     product: (new URLSearchParams(window.location.search).get('tab') === 'ai' ? 'ai' : 'ce'),
@@ -12,14 +22,14 @@
         <div style="position: absolute; left: 50%; top: -200px; width: 1000px; height: 1000px; margin-left: -500px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div>
     </div>
     
-    <span style="font-size: 13px; font-weight: 800; letter-spacing: 0.1em; color: #2BD46A; text-transform: uppercase">{{ t('kouventa.Pricing', 'PRICING') }}</span>
+    <span style="font-size: 13px; font-weight: 800; letter-spacing: 0.1em; color: #2BD46A; text-transform: uppercase">{{ $heroBadge }}</span>
     
     <h1 style="margin: 0; font-size: 72px; line-height: 1.04; font-weight: 800; letter-spacing: -0.035em; max-width: 960px">
-        Intelligence you <span style="color: #2BD46A">control,</span><br>priced for how you grow.
+        {{ $heroTitle['prefix'] ?? 'Intelligence you control,' }}<br><span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'priced for how you grow.' }}</span>
     </h1>
     
     <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 660px">
-        Two platforms, three tiers each. Start where your team is today, and scale without switching vendors.
+        {!! nl2br(e($heroSubtitle)) !!}
     </p>
 
     <!-- Platform Toggle -->
@@ -209,8 +219,8 @@
     <!-- ============ WHATSAPP CALCULATOR ============ -->
     <div style="display: flex; flex-direction: column; gap: 32px">
         <div style="display: flex; flex-direction: column; gap: 10px">
-            <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; color: #0E1A24">Estimate your WhatsApp cost</h2>
-            <p style="margin: 0; font-size: 16px; color: #4A5866">Enter your expected monthly conversations per category to see your estimated monthly and yearly cost.</p>
+            <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; color: #0E1A24">{{ $calcTitle }}</h2>
+            <p style="margin: 0; font-size: 16px; color: #4A5866">{{ $calcSubtitle }}</p>
         </div>
 
         <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 40px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 40px; align-items: start">
@@ -320,8 +330,8 @@
 <section style="padding: 0 80px 104px; background: #F4F6F5">
     <div style="background: #2BD46A; border-radius: 28px; padding: 56px 64px; display: flex; justify-content: space-between; align-items: center; gap: 48px; color: #06251A">
         <div style="display: flex; flex-direction: column; gap: 12px; max-width: 720px">
-            <h2 style="margin: 0; font-size: 40px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">Ready to see how your team would use it?</h2>
-            <p style="margin: 0; font-size: 18px; line-height: 1.55">Book a working session with our solution team. We'll map your use cases to the right tier and deployment.</p>
+            <h2 style="margin: 0; font-size: 40px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $ctaTitle }}</h2>
+            <p style="margin: 0; font-size: 18px; line-height: 1.55">{!! nl2br(e($ctaSubtitle)) !!}</p>
         </div>
         <div style="display: flex; gap: 12px; flex-shrink: 0">
             <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">Book a working session</a>

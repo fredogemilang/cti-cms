@@ -1,6 +1,13 @@
 @extends('kouventa::layouts.app')
 
 @section('content')
+@php
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Seamless omnichannel', 'main' => 'customer experience.']);
+    $heroSubtitle = $page?->block('hero_subtitle', 'From marketing campaigns and customer support to operational updates, Kouventa helps businesses connect, respond, and communicate more effectively.');
+    $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Request a Demo', 'url' => '/book-demo']);
+    $bottomCtaTitle = $page?->block('bottom_cta_title', 'Ready to improve every customer conversation?');
+    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', "Tell us about your team's needs and we'll show you how Kouventa fits.");
+@endphp
 <div class="kv-canvas-wrap" x-data="{
     tab: (function() {
         const p = new URLSearchParams(window.location.search);
@@ -31,10 +38,10 @@
 
 <div style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 72px; align-items: center; position: relative">
 <div style="display: flex; flex-direction: column; gap: 26px">
-<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ t('kouventa.Seamless omnichannel', 'Seamless omnichannel') }} <span style="color: #2BD46A">{{ t('kouventa.customer experience.', 'customer experience.') }}</span></h1>
-<p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{{ t('kouventa.From marketing campaigns and customer support to operational updates, Kouventa helps businesses connect, respond, and communicate more effectively.', 'From marketing campaigns and customer support to operational updates, Kouventa helps businesses connect, respond, and communicate more effectively.') }}</p>
+<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? '' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? '' }}</span></h1>
+<p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{{ $heroSubtitle }}</p>
 <div style="display: flex; gap: 12px; padding-top: 4px">
-<a href="{{ localized_url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px">{{ t('kouventa.Request a Demo', 'Request a Demo') }}</a>
+<a href="{{ localized_url($heroCta['url'] ?? '/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px">{{ $heroCta['text'] ?? 'Request a Demo' }}</a>
 <button type="button" @click="pickTab(tab, true)" style="background: transparent; color: #FFFFFF; font-size: 17px; font-weight: 600; padding: 17px 26px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28)">{{ t('kouventa.See How It Works', 'See How It Works') }}</button>
 </div>
 </div>
@@ -419,8 +426,8 @@
 <section style="padding: 0 80px 104px">
 <div style="background: #2BD46A; border-radius: 28px; padding: 56px 64px; display: flex; justify-content: space-between; align-items: center; gap: 48px; color: #06251A">
 <div style="display: flex; flex-direction: column; gap: 12px; max-width: 720px">
-<h2 style="margin: 0; font-size: 40px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Ready to improve every customer conversation?', 'Ready to improve every customer conversation?') }}</h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.55">{{ t('kouventa.Tell us about your team\'s needs and we\'ll show you how Kouventa fits.', 'Tell us about your team\'s needs and we\'ll show you how Kouventa fits.') }}</p>
+<h2 style="margin: 0; font-size: 40px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.55">{{ $bottomCtaSubtitle }}</p>
 </div>
 <div style="display: flex; gap: 12px; flex-shrink: 0">
 <a href="{{ localized_url('/book-demo') }}" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Request a Demo', 'Request a Demo') }}</a>

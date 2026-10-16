@@ -1,13 +1,18 @@
 @extends('kouventa::layouts.app')
 
+@php
+    $heroBadge = $page?->block('hero_badge', 'Blog');
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Explore the newest articles', 'main' => 'in our blog.']);
+@endphp
+
 @section('content')
 <div class="kv-canvas-wrap">
 <!-- ============ NAV + HERO ============ -->
 <section style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative">
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
 <div style="padding: 88px 80px 96px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 18px; position: relative">
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #93A4B6">{{ t('Blog') }}</span>
-<h1 style="margin: 0; max-width: 900px; font-size: 64px; line-height: 1.05; font-weight: 800; letter-spacing: -0.035em">{{ t('Explore the newest articles') }}<br><span style="color: #2BD46A">{{ t('in our blog.') }}</span></h1>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #93A4B6">{{ $heroBadge }}</span>
+<h1 style="margin: 0; max-width: 900px; font-size: 64px; line-height: 1.05; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'Explore the newest articles' }}<br><span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'in our blog.' }}</span></h1>
 </div>
 </section>
 

@@ -140,6 +140,31 @@
             ],
         ];
     }
+
+    // ── Page Blocks from CMS Content Builder ──────────────
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'AI adoption,', 'main' => 'done right.']);
+    $heroSubtitle = $page?->block('hero_subtitle', "For your customers. For your teams.\nOne enterprise AI platform, your organization’s rules.");
+    $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'See how it fits your business', 'url' => '#pick-team']);
+    $pathsTitle = $page?->titleBlock('paths_title', ['main' => 'Where do you want to start?']);
+    $path1Badge = $page?->block('path1_badge', 'AI that works');
+    $path1Title = $page?->titleBlock('path1_title', ['prefix' => 'Inside your', 'main' => 'organization.']);
+    $path1Desc = $page?->block('path1_desc', 'Instant answers from your company knowledge, and agents that take routine tasks off your teams.');
+    $path1Btn = $page?->buttonBlock('path1_button', ['text' => 'Explore more', 'url' => '/product/ai']);
+    $path2Badge = $page?->block('path2_badge', 'AI that engages');
+    $path2Title = $page?->titleBlock('path2_title', ['prefix' => 'With your', 'main' => 'customers.']);
+    $path2Desc = $page?->block('path2_desc', 'Chatbots reply first on WhatsApp, Instagram, Facebook and Live Chat, then hand off to your agents when needed.');
+    $path2Btn = $page?->buttonBlock('path2_button', ['text' => 'Explore more', 'url' => '/product/customer-engagement']);
+    $industriesTitle = $page?->block('industries_title', 'Proven across industries.');
+    $teamsTitle = $page?->block('teams_title', 'Pick your team to see how it works for your organization.');
+    $whyTitle = $page?->titleBlock('why_title', ['prefix' => 'Enterprise ready', 'main' => 'from day one.']);
+    $partnersTitle = $page?->block('partners_title', 'Technology Partners');
+    $customersTitle = $page?->block('customers_title', 'They trusted us.');
+    $resultsTitle = $page?->block('results_title', 'Real results, in their words.');
+    $ctaTitle = $page?->block('cta_title', 'Ready to see it work for your business?');
+    $ctaSubtitle = $page?->block('cta_subtitle', "Book a demo and we'll walk you through it with your own use case.");
+    $ctaDemoBtn = $page?->buttonBlock('cta_demo_button', ['text' => 'Book a demo', 'url' => '/book-demo']);
+    $ctaPricingBtn = $page?->buttonBlock('cta_pricing_button', ['text' => 'See pricing', 'url' => '/pricing']);
+    $videosTitle = $page?->block('videos_title', 'See Kouventa in action.');
 @endphp
 
 
@@ -148,8 +173,8 @@
 <!-- ============ NAV + HERO ============ -->
 <section style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative; overflow: hidden">
 <div style="padding: 88px 80px 112px; display: flex; flex-direction: column; align-items: center; gap: 28px; position: relative">
-<h1 style="margin: 0; font-size: 96px; line-height: 1.0; text-align: center; font-weight: 800; letter-spacing: -0.035em">{{ t('kouventa.AI adoption,', 'AI adoption,') }} <span style="color: #2BD46A">{{ t('kouventa.done right.', 'done right.') }}</span></h1>
-<p style="margin: 0; text-align: center; font-size: 24px; line-height: 1.5; color: #B9C6D3">{{ t('kouventa.For your customers. For your teams.', 'For your customers. For your teams.') }}<br>{{ t('kouventa.One enterprise AI platform, your organization’s rules.', 'One enterprise AI platform, your organization’s rules.') }}</p>
+<h1 style="margin: 0; font-size: 96px; line-height: 1.0; text-align: center; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'AI adoption,' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'done right.' }}</span></h1>
+<p style="margin: 0; text-align: center; font-size: 24px; line-height: 1.5; color: #B9C6D3">{!! nl2br(e($heroSubtitle)) !!}</p>
 <div style="position: relative; width: 1080px; height: 500px; margin-top: 8px">
 <span aria-hidden="true" style="position: absolute; left: 50%; bottom: 40px; width: 520px; height: 520px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.30), rgba(43, 212, 106, 0) 66%)"></span>
 <img src="{{ theme_asset('images/kouventa-mascot.png') }}" alt="{{ t('kouventa.Kouventa mascot, a penguin with a headset and visor', 'Kouventa mascot, a penguin with a headset and visor') }}" style="position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 420px; -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); mask-image: linear-gradient(to bottom, #000 78%, transparent 100%); height: auto; display: block; filter: drop-shadow(0 24px 40px rgba(0, 0, 0, 0.35))">
@@ -174,32 +199,32 @@
 </div>
 </div>
 <div style="display: flex; gap: 12px; padding-top: 8px">
-<a href="#pick-team" onclick="document.getElementById('pick-team')?.scrollIntoView({ behavior: 'smooth' }); return false;" class="kv-btn-action kv-btn-primary" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; display: flex; align-items: center; gap: 10px; text-decoration: none">{{ t('kouventa.See how it fits your business', 'See how it fits your business') }}<svg class="kv-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+<a href="{{ $heroCta['url'] ?? '#pick-team' }}" onclick="if('{{ $heroCta['url'] ?? '#pick-team' }}' === '#pick-team'){document.getElementById('pick-team')?.scrollIntoView({ behavior: 'smooth' }); return false;}" class="kv-btn-action kv-btn-primary" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; display: flex; align-items: center; gap: 10px; text-decoration: none">{{ $heroCta['text'] ?? 'See how it fits your business' }}<svg class="kv-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
 </div>
 </div>
 </section>
 
 <!-- ============ TWO PATHS ============ -->
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Where do you want to start?', 'Where do you want to start?') }}</h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $pathsTitle['main'] ?? 'Where do you want to start?' }}</h2>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
-<a href="{{ localized_url('/product/ai') }}" class="kv-card kv-card-dark" style="background: #071C33; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; text-decoration: none">
+<a href="{{ localized_url($path1Btn['url'] ?? '/product/ai') }}" class="kv-card kv-card-dark" style="background: #071C33; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; text-decoration: none">
 <span style="display: flex; align-items: center; gap: 14px">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"></path><path d="M9 21v-6h6v6M9 10h.01M15 10h.01"></path></svg></span>
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #2BD46A">{{ t('kouventa.AI that works', 'AI that works') }}</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #2BD46A">{{ $path1Badge }}</span>
 </span>
-<span style="font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Inside your', 'Inside your') }} <span style="color: #2BD46A">{{ t('kouventa.organization.', 'organization.') }}</span></span>
-<span style="font-size: 18px; line-height: 1.55; color: #B9C6D3">{{ t('kouventa.Instant answers from your company knowledge, and agents that take routine tasks off your teams.', 'Instant answers from your company knowledge, and agents that take routine tasks off your teams.') }}</span>
-<span class="kv-card-link" style="font-size: 16px; font-weight: 700; color: #2BD46A; padding-top: 8px">{{ t('kouventa.Explore more', 'Explore more') }} <span class="kv-arrow">→</span></span>
+<span style="font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $path1Title['prefix'] ?? 'Inside your' }} <span style="color: #2BD46A">{{ $path1Title['main'] ?? 'organization.' }}</span></span>
+<span style="font-size: 18px; line-height: 1.55; color: #B9C6D3">{{ $path1Desc }}</span>
+<span class="kv-card-link" style="font-size: 16px; font-weight: 700; color: #2BD46A; padding-top: 8px">{{ $path1Btn['text'] ?? 'Explore more' }} <span class="kv-arrow">→</span></span>
 </a>
-<a href="{{ localized_url('/product/customer-engagement') }}" class="kv-card kv-card-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 16px; color: #0E1A24; text-decoration: none">
+<a href="{{ localized_url($path2Btn['url'] ?? '/product/customer-engagement') }}" class="kv-card kv-card-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 16px; color: #0E1A24; text-decoration: none">
 <span style="display: flex; align-items: center; gap: 14px">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path><path d="M8 11h.01M12 11h.01M16 11h.01"></path></svg></span>
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F">{{ t('kouventa.AI that engages', 'AI that engages') }}</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F">{{ $path2Badge }}</span>
 </span>
-<span style="font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.With your', 'With your') }} <span style="color: #13803F">{{ t('kouventa.customers.', 'customers.') }}</span></span>
-<span style="font-size: 18px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Chatbots reply first on WhatsApp, Instagram, Facebook and Live Chat, then hand off to your agents when needed.', 'Chatbots reply first on WhatsApp, Instagram, Facebook and Live Chat, then hand off to your agents when needed.') }}</span>
-<span class="kv-card-link" style="font-size: 16px; font-weight: 700; color: #13803F; padding-top: 8px">{{ t('kouventa.Explore more', 'Explore more') }} <span class="kv-arrow">→</span></span>
+<span style="font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $path2Title['prefix'] ?? 'With your' }} <span style="color: #13803F">{{ $path2Title['main'] ?? 'customers.' }}</span></span>
+<span style="font-size: 18px; line-height: 1.55; color: #4A5866">{{ $path2Desc }}</span>
+<span class="kv-card-link" style="font-size: 16px; font-weight: 700; color: #13803F; padding-top: 8px">{{ $path2Btn['text'] ?? 'Explore more' }} <span class="kv-arrow">→</span></span>
 </a>
 </div>
 </section>
@@ -208,7 +233,7 @@
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; gap: 10px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Proven across industries.', 'Proven across industries.') }}</h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $industriesTitle }}</h2>
 </div>
 <div style="width: 100%; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px">
 <div class="kv-industry-card" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V10M19 21V10M9 21V10M15 21V10M2 10l10-6 10 6"></path></svg></span><span style="font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Government', 'Government') }}</span></div>
@@ -230,7 +255,7 @@
     activeTeam: 0,
     teams: @js($teams)
 }" style="padding: 104px 80px; display: flex; flex-direction: column; gap: 32px; scroll-margin-top: 60px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Pick your team to see how it works for your organization.', 'Pick your team to see how it works for your organization.') }}</h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $teamsTitle }}</h2>
 <div role="tablist" aria-label="Teams" style="display: flex; gap: 8px; flex-wrap: wrap">
 
 @foreach($teams as $i => $t)
@@ -273,7 +298,7 @@
 
 <!-- ============ WHY ============ -->
 <section style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 40px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Enterprise ready', 'Enterprise ready') }} <span style="color: #13803F">{{ t('kouventa.from day one.', 'from day one.') }}</span></h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $whyTitle['prefix'] ?? 'Enterprise ready' }} <span style="color: #13803F">{{ $whyTitle['main'] ?? 'from day one.' }}</span></h2>
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; align-items: stretch">
 <div class="kv-card kv-card-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05)">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
@@ -305,7 +330,7 @@
 <!-- ============ TECHNOLOGY PARTNERS ============ -->
 <section style="padding: 0 80px; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 32px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Technology Partners', 'Technology Partners') }}</h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $partnersTitle }}</h2>
 <div class="kv-partner-grid" style="width: 100%; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px">
 <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
     <img src="{{ theme_asset('images/logos/partner-meta.svg') }}" alt="Meta" title="Meta" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
@@ -331,7 +356,7 @@
 
 <!-- ============ CUSTOMERS ============ -->
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 32px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.They trusted us.', 'They trusted us.') }}</h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $customersTitle }}</h2>
 <div class="kv-customer-grid" style="width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
 <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
     <img src="{{ theme_asset('images/logos/customer-pakedriver.png') }}" alt="PakeDriver" title="PakeDriver" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
@@ -428,7 +453,7 @@
              }
          }">
 <div style="display: flex; justify-content: space-between; align-items: end">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Real results, in their words.', 'Real results, in their words.') }}</h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $resultsTitle }}</h2>
 <div style="display: flex; gap: 8px">
 <button type="button" aria-label="{{ t('kouventa.Previous story', 'Previous story') }}" @click="prev(); resetAutoSlide()" class="kv-slider-nav-btn kv-btn-action"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
 <button type="button" aria-label="{{ t('kouventa.Next story', 'Next story') }}" @click="next(); resetAutoSlide()" class="kv-slider-nav-btn kv-btn-action"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
@@ -491,11 +516,11 @@
 <!-- ============ CTA ============ -->
 <section style="padding: 0 80px 104px">
 <div class="kv-panel" style="background: #2BD46A; border-radius: 28px; padding: 72px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; color: #06251A">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Ready to see it work for your business?', 'Ready to see it work for your business?') }}</h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.55; max-width: 640px">{{ t('kouventa.Book a demo and we\'ll walk you through it with your own use case.', 'Book a demo and we\'ll walk you through it with your own use case.') }}</p>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $ctaTitle }}</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.55; max-width: 640px">{!! nl2br(e($ctaSubtitle)) !!}</p>
 <div style="display: flex; gap: 14px; justify-content: center; padding-top: 16px">
-<a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
-<a href="{{ localized_url('/pricing') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>
+<a href="{{ localized_url($ctaDemoBtn['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ $ctaDemoBtn['text'] ?? 'Book a demo' }}</a>
+<a href="{{ localized_url($ctaPricingBtn['url'] ?? '/pricing') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ $ctaPricingBtn['text'] ?? 'See pricing' }}</a>
 </div>
 </div>
 </section>
@@ -503,7 +528,7 @@
 <!-- ============ VIDEOS ============ -->
 <section style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 32px">
     <div style="display: flex; justify-content: space-between; align-items: end; gap: 24px">
-        <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.See Kouventa in action.', 'See Kouventa in action.') }}</h2>
+        <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $videosTitle }}</h2>
         <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-btn-action kv-btn-outline" style="display: inline-flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #0E1A24; padding: 12px 18px; border-radius: 12px; border: 1px solid #C9D2CE; background: #FFFFFF; white-space: nowrap; text-decoration: none">
             <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" fill="#FF0033"></rect><path d="M10 9v6l5-3Z" fill="#FFFFFF"></path></svg>
             {{ t('kouventa.Watch more on YouTube', 'Watch more on YouTube') }}

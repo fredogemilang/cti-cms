@@ -200,6 +200,16 @@ $productsList = [
         'svg' => '<rect x="3" y="3" width="7" height="6" rx="1.5"></rect><rect x="14" y="15" width="7" height="6" rx="1.5"></rect><path d="M6.5 9v3a3 3 0 0 0 3 3H14"></path>'
     ]
 ];
+
+// ── Page Blocks from CMS Content Builder ──────────────
+$heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'One AI platform is', 'main' => 'all you need.']);
+$heroSubtitle = $page?->block('hero_subtitle', 'Build AI agents with ease and put them to work on what your organization needs, with control you can measure.');
+$heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Book a demo', 'url' => '/book-demo']);
+$heroSecondaryCta = $page?->buttonBlock('hero_secondary_cta', ['text' => 'Explore products', 'url' => '#ai-products']);
+$challengesTitle = $page?->titleBlock('challenges_title', ['prefix' => 'Too many AI tools,', 'main' => 'too little control.']);
+$productsTitle = $page?->block('products_title', 'Four specialized products, one unified platform.');
+$bottomCtaTitle = $page?->block('bottom_cta_title', 'Ready to take control of AI in your organization?');
+$bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see how Kouventa unifies AI adoption with enterprise control.');
 @endphp
 
 @section('content')
@@ -215,11 +225,11 @@ $productsList = [
 
 <div style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 64px; align-items: center; position: relative">
 <div style="display: flex; flex-direction: column; gap: 26px">
-<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ t('kouventa.One AI platform is', 'One AI platform is') }} <span style="color: #2BD46A">{{ t('kouventa.all you need.', 'all you need.') }}</span></h1>
-<p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 600px">{{ t('kouventa.Build AI agents with ease and put them to work on what your organization needs, with control you can measure.', 'Build AI agents with ease and put them to work on what your organization needs, with control you can measure.') }}</p>
+<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'One AI platform is' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'all you need.' }}</span></h1>
+<p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 600px">{!! nl2br(e($heroSubtitle)) !!}</p>
 <div style="display: flex; gap: 12px; padding-top: 4px">
-<a href="{{ localized_url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
-<a href="#ai-products" style="color: #FFFFFF; font-size: 17px; font-weight: 600; padding: 17px 26px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28); text-decoration: none">{{ t('kouventa.Explore products', 'Explore products') }}</a>
+<a href="{{ localized_url($heroCta['url'] ?? '/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ $heroCta['text'] ?? 'Book a demo' }}</a>
+<a href="{{ $heroSecondaryCta['url'] ?? '#ai-products' }}" style="color: #FFFFFF; font-size: 17px; font-weight: 600; padding: 17px 26px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28); text-decoration: none">{{ $heroSecondaryCta['text'] ?? 'Explore products' }}</a>
 </div>
 </div>
 
@@ -247,7 +257,7 @@ $productsList = [
 
 <!-- ============ CHALLENGES ============ -->
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Too many AI tools,', 'Too many AI tools,') }} <span style="color: #13803F">{{ t('kouventa.too little control.', 'too little control.') }}</span></h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $challengesTitle['prefix'] ?? 'Too many AI tools,' }} <span style="color: #13803F">{{ $challengesTitle['main'] ?? 'too little control.' }}</span></h2>
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
 <article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 0.2s both">
 <div aria-hidden="true" style="height: 56px; position: relative; width: 120px">
@@ -426,7 +436,7 @@ $productsList = [
 <!-- ============ OUR PRODUCTS ============ -->
 <section id="ai-products" style="padding: 48px 80px 104px; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.The products that put you', 'The products that put you') }} <span style="color: #13803F">{{ t('kouventa.in control.', 'in control.') }}</span></h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $productsTitle }}</h2>
 <span class="kv-linked-pill" x-show="linked" x-cloak style="min-height: 48px; box-sizing: border-box; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
     <span class="kv-pill-dot" style="width: 10px; height: 10px; border-radius: 50%; background: #13803F; flex-shrink: 0; display: inline-block"></span>
     <span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ $stages[0]['name'] }}</strong></span>
@@ -822,7 +832,8 @@ $channelsDbl = array_merge($channels, $channels);
 <!-- ============ CTA ============ -->
 <section style="padding: 104px 80px">
 <div style="background: #2BD46A; border-radius: 28px; padding: 72px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 32px; color: #06251A">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Bring all your AI into one platform.', 'Bring all your AI into one platform.') }}</h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.55; max-width: 680px">{!! nl2br(e($bottomCtaSubtitle)) !!}</p>
 <div style="display: flex; gap: 14px; justify-content: center">
 <a href="{{ localized_url('/book-demo') }}" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
 <a href="{{ localized_url('/pricing') }}" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>
