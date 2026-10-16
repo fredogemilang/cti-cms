@@ -1904,6 +1904,81 @@ body {
         padding-bottom: calc(76px + 32px) !important;
     }
 
+    /* Mobile Bottom Dock Button Styles */
+    .kv-dock-btn {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 60px !important;
+        gap: 4px !important;
+        background: transparent !important;
+        background-color: transparent !important;
+        border: 0 !important;
+        outline: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        cursor: pointer !important;
+        color: #FFFFFF !important;
+        font-family: inherit !important;
+    }
+    .kv-dock-btn span {
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.02em !important;
+        text-transform: uppercase !important;
+        color: #FFFFFF !important;
+        transition: color 0.2s ease !important;
+        line-height: 1.2 !important;
+    }
+    .kv-dock-btn .kv-dock-icon {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.2s ease !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #FFFFFF !important;
+    }
+    .kv-dock-btn.is-active,
+    .kv-dock-btn.is-active span {
+        color: #2BD46A !important;
+    }
+    .kv-dock-btn.is-active .kv-dock-icon {
+        background: rgba(43, 212, 106, 0.18) !important;
+        color: #2BD46A !important;
+        box-shadow: 0 2px 8px rgba(43, 212, 106, 0.3) !important;
+    }
+
+    /* Polished Sheet Close Button */
+    .kv-sheet-close-btn {
+        width: 32px !important;
+        height: 32px !important;
+        border-radius: 50% !important;
+        background: rgba(255, 255, 255, 0.12) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        color: #FFFFFF !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        padding: 0 !important;
+        transition: background 0.2s ease, transform 0.2s ease !important;
+    }
+    .kv-sheet-close-btn:hover {
+        background: rgba(255, 255, 255, 0.22) !important;
+        transform: scale(1.05) !important;
+    }
+    .kv-sheet-close-btn svg {
+        color: #FFFFFF !important;
+        stroke: #FFFFFF !important;
+    }
+
     /* Mobile Bottom Dock Bar & Sheet Styles */
     .kv-sheet-overlay {
         position: fixed !important;

@@ -17,11 +17,8 @@
                 <!-- 1. Product -->
                 <button type="button" @click="activeSheet = activeSheet === 'products' ? null : 'products'"
                         class="kv-dock-btn"
-                        :class="activeSheet === 'products' ? 'is-active text-[#2BD46A]' : 'text-[#B9C6D3]'"
-                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; gap: 3px; background: transparent; border: 0; cursor: pointer;">
-                    <div class="kv-dock-icon"
-                         :style="activeSheet === 'products' ? 'background: rgba(43,212,106,0.18); color: #2BD46A; box-shadow: 0 2px 8px rgba(43,212,106,0.3);' : 'background: rgba(255,255,255,0.06); color: #B9C6D3;'"
-                         style="width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
+                        :class="activeSheet === 'products' ? 'is-active' : ''">
+                    <div class="kv-dock-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect width="7" height="7" x="3" y="3" rx="1"></rect>
                             <rect width="7" height="7" x="14" y="3" rx="1"></rect>
@@ -29,69 +26,57 @@
                             <rect width="7" height="7" x="3" y="14" rx="1"></rect>
                         </svg>
                     </div>
-                    <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase;">{{ t('kouventa.Product', 'Product') }}</span>
+                    <span>{{ t('kouventa.Product', 'Product') }}</span>
                 </button>
 
                 <!-- 2. Solutions -->
                 <button type="button" @click="activeSheet = activeSheet === 'solutions' ? null : 'solutions'"
                         class="kv-dock-btn"
-                        :class="activeSheet === 'solutions' ? 'is-active text-[#2BD46A]' : 'text-[#B9C6D3]'"
-                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; gap: 3px; background: transparent; border: 0; cursor: pointer;">
-                    <div class="kv-dock-icon"
-                         :style="activeSheet === 'solutions' ? 'background: rgba(43,212,106,0.18); color: #2BD46A; box-shadow: 0 2px 8px rgba(43,212,106,0.3);' : 'background: rgba(255,255,255,0.06); color: #B9C6D3;'"
-                         style="width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
+                        :class="activeSheet === 'solutions' ? 'is-active' : ''">
+                    <div class="kv-dock-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 2 2 7l10 5 10-5-10-5Z"></path>
                             <path d="m2 17 10 5 10-5"></path>
                             <path d="m2 12 10 5 10-5"></path>
                         </svg>
                     </div>
-                    <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase;">{{ t('kouventa.Solution', 'Solution') }}</span>
+                    <span>{{ t('kouventa.Solution', 'Solution') }}</span>
                 </button>
 
-                <!-- 3. Floating Center Action (Book Demo) -->
+                <!-- 3. Floating Center Action (Book Demo with Telephone Icon) -->
                 <a href="{{ localized_url('/book-demo') }}"
                    style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 54px; height: 54px; margin-top: -24px; background: #2BD46A; color: #06251A; border-radius: 16px; box-shadow: 0 8px 20px rgba(43,212,106,0.45); border: 2px solid #071C33; text-decoration: none;"
                    title="{{ t('kouventa.Book a demo', 'Book a demo') }}">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                     </svg>
                 </a>
 
                 <!-- 4. Pricing -->
                 <button type="button" @click="activeSheet = activeSheet === 'pricing' ? null : 'pricing'"
                         class="kv-dock-btn"
-                        :class="activeSheet === 'pricing' ? 'is-active text-[#2BD46A]' : 'text-[#B9C6D3]'"
-                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; gap: 3px; background: transparent; border: 0; cursor: pointer;">
-                    <div class="kv-dock-icon"
-                         :style="activeSheet === 'pricing' ? 'background: rgba(43,212,106,0.18); color: #2BD46A; box-shadow: 0 2px 8px rgba(43,212,106,0.3);' : 'background: rgba(255,255,255,0.06); color: #B9C6D3;'"
-                         style="width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
+                        :class="activeSheet === 'pricing' ? 'is-active' : ''">
+                    <div class="kv-dock-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect width="20" height="14" x="2" y="5" rx="2"></rect>
                             <line x1="2" x2="22" y1="10" y2="10"></line>
                         </svg>
                     </div>
-                    <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase;">{{ t('kouventa.Pricing', 'Pricing') }}</span>
+                    <span>{{ t('kouventa.Pricing', 'Pricing') }}</span>
                 </button>
 
                 <!-- 5. More -->
                 <button type="button" @click="activeSheet = activeSheet === 'more' ? null : 'more'"
                         class="kv-dock-btn"
-                        :class="activeSheet === 'more' ? 'is-active text-[#2BD46A]' : 'text-[#B9C6D3]'"
-                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; gap: 3px; background: transparent; border: 0; cursor: pointer;">
-                    <div class="kv-dock-icon"
-                         :style="activeSheet === 'more' ? 'background: rgba(43,212,106,0.18); color: #2BD46A; box-shadow: 0 2px 8px rgba(43,212,106,0.3);' : 'background: rgba(255,255,255,0.06); color: #B9C6D3;'"
-                         style="width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;">
+                        :class="activeSheet === 'more' ? 'is-active' : ''">
+                    <div class="kv-dock-icon">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="1"></circle>
                             <circle cx="19" cy="12" r="1"></circle>
                             <circle cx="5" cy="12" r="1"></circle>
                         </svg>
                     </div>
-                    <span style="font-size: 10px; font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase;">{{ t('kouventa.More', 'More') }}</span>
+                    <span>{{ t('kouventa.More', 'More') }}</span>
                 </button>
 
             </div>
@@ -122,12 +107,18 @@
      class="kv-bottom-sheet">
     
     <div>
-        <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-4"></div>
+        <div style="width: 44px; height: 5px; background: rgba(255,255,255,0.25); border-radius: 999px; margin: 0 auto 16px;"></div>
 
-        <div class="flex items-center justify-between mb-4">
-            <span class="text-xs font-bold text-[#B9C6D3] uppercase tracking-wider">{{ t('kouventa.Product Offerings', 'Product Offerings') }}</span>
-            <button @click="activeSheet = null" class="p-2 text-white/70 hover:text-white bg-white/10 rounded-full transition-colors">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <span style="font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #FFFFFF;">{{ t('kouventa.Product Offerings', 'Product Offerings') }}</span>
+            <button type="button" @click="activeSheet = null"
+                    aria-label="Close"
+                    class="kv-sheet-close-btn"
+                    style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; padding: 0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
             </button>
         </div>
 
@@ -177,12 +168,18 @@
      class="kv-bottom-sheet">
     
     <div>
-        <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-4"></div>
+        <div style="width: 44px; height: 5px; background: rgba(255,255,255,0.25); border-radius: 999px; margin: 0 auto 16px;"></div>
 
-        <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-[#B9C6D3] uppercase tracking-wider">{{ t('kouventa.Enterprise Solutions', 'Enterprise Solutions') }}</span>
-            <button @click="activeSheet = null" class="p-2 text-white/70 hover:text-white bg-white/10 rounded-full transition-colors">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <span style="font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #FFFFFF;">{{ t('kouventa.Enterprise Solutions', 'Enterprise Solutions') }}</span>
+            <button type="button" @click="activeSheet = null"
+                    aria-label="Close"
+                    class="kv-sheet-close-btn"
+                    style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; padding: 0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
             </button>
         </div>
 
@@ -245,12 +242,18 @@
      class="kv-bottom-sheet">
     
     <div>
-        <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-4"></div>
+        <div style="width: 44px; height: 5px; background: rgba(255,255,255,0.25); border-radius: 999px; margin: 0 auto 16px;"></div>
 
-        <div class="flex items-center justify-between mb-4">
-            <span class="text-xs font-bold text-[#B9C6D3] uppercase tracking-wider">{{ t('kouventa.Pricing & Plans', 'Pricing & Plans') }}</span>
-            <button @click="activeSheet = null" class="p-2 text-white/70 hover:text-white bg-white/10 rounded-full transition-colors">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <span style="font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #FFFFFF;">{{ t('kouventa.Pricing & Plans', 'Pricing & Plans') }}</span>
+            <button type="button" @click="activeSheet = null"
+                    aria-label="Close"
+                    class="kv-sheet-close-btn"
+                    style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; padding: 0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
             </button>
         </div>
 
@@ -297,12 +300,18 @@
      class="kv-bottom-sheet">
     
     <div>
-        <div class="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-4"></div>
+        <div style="width: 44px; height: 5px; background: rgba(255,255,255,0.25); border-radius: 999px; margin: 0 auto 16px;"></div>
 
-        <div class="flex items-center justify-between mb-4">
-            <span class="text-xs font-bold text-[#B9C6D3] uppercase tracking-wider">{{ t('kouventa.More Navigation', 'More Navigation') }}</span>
-            <button @click="activeSheet = null" class="p-2 text-white/70 hover:text-white bg-white/10 rounded-full transition-colors">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+            <span style="font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #FFFFFF;">{{ t('kouventa.More Navigation', 'More Navigation') }}</span>
+            <button type="button" @click="activeSheet = null"
+                    aria-label="Close"
+                    class="kv-sheet-close-btn"
+                    style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18); color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; padding: 0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
             </button>
         </div>
 
@@ -334,7 +343,9 @@
             <!-- Book a Demo -->
             <a href="{{ localized_url('/book-demo') }}" @click="activeSheet = null" class="kv-sheet-card" style="background: rgba(43,212,106,0.14); border-color: rgba(43,212,106,0.3);">
                 <div class="kv-sheet-card-icon" style="background: #2BD46A; color: #06251A;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
                 </div>
                 <div style="flex: 1;">
                     <div style="font-weight: 700; color: #2BD46A; font-size: 14px;">{{ t('kouventa.Book a demo', 'Book a demo') }}</div>
