@@ -3076,6 +3076,175 @@ body {
     }
 }
 
+/* ============ WHY SECTION & CARDS HOVER EFFECT ============ */
+.kv-why-section {
+    padding: 104px 80px;
+    background: #071C33;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    position: relative;
+    overflow: hidden;
+}
+.kv-why-heading {
+    margin: 0;
+    font-size: 44px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    position: relative;
+}
+.kv-why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+    position: relative;
+}
+.kv-why-card {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 300px;
+    box-sizing: border-box;
+    cursor: default;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.25s ease,
+                background-color 0.25s ease;
+    will-change: transform, box-shadow;
+}
+.kv-why-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #2BD46A, transparent);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+}
+.kv-why-card::after {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(43, 212, 106, 0.18) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    border-radius: 50%;
+}
+.kv-why-card:hover {
+    transform: translateY(-6px);
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(43, 212, 106, 0.45);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.65), 0 0 24px rgba(43, 212, 106, 0.15);
+}
+.kv-why-card:hover::before,
+.kv-why-card:hover::after {
+    opacity: 1;
+}
+.kv-why-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: #2BD46A;
+    color: #06251A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(43, 212, 106, 0.25);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.kv-why-card:hover .kv-why-icon {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 14px 34px rgba(43, 212, 106, 0.45);
+}
+.kv-why-icon svg {
+    transition: transform 0.3s ease;
+}
+.kv-why-card:hover .kv-why-icon svg {
+    transform: scale(1.06);
+}
+.kv-why-title {
+    font-size: 22px;
+    line-height: 1.25;
+    font-weight: 800;
+    padding-top: 10px;
+}
+.kv-why-desc {
+    font-size: 16px;
+    line-height: 1.55;
+    color: #B9C6D3;
+}
+.kv-why-badge {
+    margin-top: auto;
+    align-self: flex-start;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(43, 212, 106, 0.12);
+    color: #2BD46A;
+    border: 1px solid transparent;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+.kv-why-card:hover .kv-why-badge {
+    background-color: rgba(43, 212, 106, 0.22);
+    border-color: rgba(43, 212, 106, 0.4);
+    transform: translateX(4px);
+}
+
+@media (max-width: 1024px) {
+    .kv-why-section {
+        padding: 80px 32px !important;
+        gap: 36px !important;
+    }
+    .kv-why-heading {
+        font-size: 34px !important;
+    }
+    .kv-why-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+    }
+    .kv-why-card {
+        padding: 24px !important;
+        min-height: 260px !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .kv-why-section {
+        padding: 60px 20px !important;
+        gap: 28px !important;
+    }
+    .kv-why-heading {
+        font-size: 28px !important;
+        line-height: 1.2 !important;
+    }
+    .kv-why-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+    .kv-why-card {
+        padding: 22px 20px !important;
+        min-height: auto !important;
+    }
+}
+
+
 
 
 

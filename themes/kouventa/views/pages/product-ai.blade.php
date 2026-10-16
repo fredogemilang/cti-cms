@@ -213,12 +213,159 @@
     transform: translateY(-2px);
 }
 
+/* ============ WHY SECTION & CARDS HOVER EFFECT ============ */
+.kv-why-section {
+    padding: 104px 80px;
+    background: #071C33;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    position: relative;
+    overflow: hidden;
+}
+.kv-why-heading {
+    margin: 0;
+    font-size: 44px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    position: relative;
+}
+.kv-why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+    position: relative;
+}
+.kv-why-card {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 300px;
+    box-sizing: border-box;
+    cursor: default;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.25s ease,
+                background-color 0.25s ease;
+    will-change: transform, box-shadow;
+}
+.kv-why-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #2BD46A, transparent);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+}
+.kv-why-card::after {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(43, 212, 106, 0.18) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    border-radius: 50%;
+}
+.kv-why-card:hover {
+    transform: translateY(-6px);
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(43, 212, 106, 0.45);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.65), 0 0 24px rgba(43, 212, 106, 0.15);
+}
+.kv-why-card:hover::before,
+.kv-why-card:hover::after {
+    opacity: 1;
+}
+.kv-why-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: #2BD46A;
+    color: #06251A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(43, 212, 106, 0.25);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.kv-why-card:hover .kv-why-icon {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 14px 34px rgba(43, 212, 106, 0.45);
+}
+.kv-why-icon svg {
+    transition: transform 0.3s ease;
+}
+.kv-why-card:hover .kv-why-icon svg {
+    transform: scale(1.06);
+}
+.kv-why-title {
+    font-size: 22px;
+    line-height: 1.25;
+    font-weight: 800;
+    padding-top: 10px;
+}
+.kv-why-desc {
+    font-size: 16px;
+    line-height: 1.55;
+    color: #B9C6D3;
+}
+.kv-why-badge {
+    margin-top: auto;
+    align-self: flex-start;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(43, 212, 106, 0.12);
+    color: #2BD46A;
+    border: 1px solid transparent;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+.kv-why-card:hover .kv-why-badge {
+    background-color: rgba(43, 212, 106, 0.22);
+    border-color: rgba(43, 212, 106, 0.4);
+    transform: translateX(4px);
+}
+
 /* ============================================================
    RESPONSIVE MEDIA QUERIES FOR AI PRODUCTS SECTION
    ============================================================ */
 
 /* Tablet & Smaller Screens (<= 1024px) */
 @media (max-width: 1024px) {
+    .kv-why-section {
+        padding: 80px 32px !important;
+        gap: 36px !important;
+    }
+    .kv-why-heading {
+        font-size: 34px !important;
+    }
+    .kv-why-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+    }
+    .kv-why-card {
+        padding: 24px !important;
+        min-height: 260px !important;
+    }
+
     .kv-ai-products-section {
         padding: 40px 32px 72px !important;
         gap: 24px !important;
@@ -284,6 +431,26 @@
 
     .kv-channel-card span {
         font-size: 12px !important;
+    }
+
+    .kv-why-section {
+        padding: 60px 20px !important;
+        gap: 28px !important;
+    }
+
+    .kv-why-heading {
+        font-size: 28px !important;
+        line-height: 1.2 !important;
+    }
+
+    .kv-why-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+
+    .kv-why-card {
+        padding: 22px 20px !important;
+        min-height: auto !important;
     }
 
     .kv-ai-products-section {
@@ -1184,34 +1351,34 @@ $channelsDbl = array_merge($channels, $channels);
 </section>
 
 <!-- ============ WHY ============ -->
-<section style="padding: 104px 80px; background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; gap: 48px; position: relative; overflow: hidden">
-<div aria-hidden="true" style="position: absolute; left: -200px; bottom: -320px; width: 700px; height: 700px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div>
-<div aria-hidden="true" style="position: absolute; right: -160px; top: -260px; width: 560px; height: 560px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div>
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; position: relative">{{ t('kouventa.What held your AI back,', 'What held your AI back,') }} <span style="color: #2BD46A">{{ t('kouventa.now solved.', 'now solved.') }}</span></h2>
-<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; position: relative">
-<div class="kv-why" style="position: relative; overflow: hidden; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 14px; min-height: 300px; box-sizing: border-box">
-<span style="width: 60px; height: 60px; border-radius: 16px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(43,212,106,0.25)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span>
-<span style="font-size: 22px; line-height: 1.25; font-weight: 800; padding-top: 10px">Multi-Model AI</span>
-<span style="font-size: 16px; line-height: 1.55; color: #B9C6D3">{{ t('kouventa.Access multiple AI models and choose the right model for each business need, all in one platform.', 'Access multiple AI models and choose the right model for each business need, all in one platform.') }}</span>
-<span style="margin-top: auto; align-self: flex-start; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A">{{ t('kouventa.Solves: scattered AI tools', 'Solves: scattered AI tools') }}</span>
+<section class="kv-why-section">
+<div aria-hidden="true" style="position: absolute; left: -200px; bottom: -320px; width: 700px; height: 700px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
+<div aria-hidden="true" style="position: absolute; right: -160px; top: -260px; width: 560px; height: 560px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
+<h2 class="kv-why-heading">{{ t('kouventa.What held your AI back,', 'What held your AI back,') }} <span style="color: #2BD46A">{{ t('kouventa.now solved.', 'now solved.') }}</span></h2>
+<div class="kv-why-grid">
+<div class="kv-why-card">
+<span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span>
+<span class="kv-why-title">Multi-Model AI</span>
+<span class="kv-why-desc">{{ t('kouventa.Access multiple AI models and choose the right model for each business need, all in one platform.', 'Access multiple AI models and choose the right model for each business need, all in one platform.') }}</span>
+<span class="kv-why-badge">{{ t('kouventa.Solves: scattered AI tools', 'Solves: scattered AI tools') }}</span>
 </div>
-<div class="kv-why" style="position: relative; overflow: hidden; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 14px; min-height: 300px; box-sizing: border-box">
-<span style="width: 60px; height: 60px; border-radius: 16px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(43,212,106,0.25)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg></span>
-<span style="font-size: 22px; line-height: 1.25; font-weight: 800; padding-top: 10px">{{ t('kouventa.Controlled AI', 'Controlled AI') }}</span>
-<span style="font-size: 16px; line-height: 1.55; color: #B9C6D3">{{ t('kouventa.Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.', 'Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.') }}</span>
-<span style="margin-top: auto; align-self: flex-start; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A">{{ t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
+<div class="kv-why-card">
+<span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg></span>
+<span class="kv-why-title">{{ t('kouventa.Controlled AI', 'Controlled AI') }}</span>
+<span class="kv-why-desc">{{ t('kouventa.Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.', 'Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.') }}</span>
+<span class="kv-why-badge">{{ t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
 </div>
-<div class="kv-why" style="position: relative; overflow: hidden; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 14px; min-height: 300px; box-sizing: border-box">
-<span style="width: 60px; height: 60px; border-radius: 16px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(43,212,106,0.25)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
-<span style="font-size: 22px; line-height: 1.25; font-weight: 800; padding-top: 10px">{{ t('kouventa.Secure AI', 'Secure AI') }}</span>
-<span style="font-size: 16px; line-height: 1.55; color: #B9C6D3">{{ t('kouventa.Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.', 'Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.') }}</span>
-<span style="margin-top: auto; align-self: flex-start; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A">{{ t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
+<div class="kv-why-card">
+<span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
+<span class="kv-why-title">{{ t('kouventa.Secure AI', 'Secure AI') }}</span>
+<span class="kv-why-desc">{{ t('kouventa.Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.', 'Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.') }}</span>
+<span class="kv-why-badge">{{ t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
 </div>
-<div class="kv-why" style="position: relative; overflow: hidden; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 14px; min-height: 300px; box-sizing: border-box">
-<span style="width: 60px; height: 60px; border-radius: 16px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(43,212,106,0.25)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg></span>
-<span style="font-size: 22px; line-height: 1.25; font-weight: 800; padding-top: 10px">{{ t('kouventa.Budget Management', 'Budget Management') }}</span>
-<span style="font-size: 16px; line-height: 1.55; color: #B9C6D3">{{ t('kouventa.Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.', 'Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.') }}</span>
-<span style="margin-top: auto; align-self: flex-start; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A">{{ t('kouventa.Solves: hard-to-manage billing', 'Solves: hard-to-manage billing') }}</span>
+<div class="kv-why-card">
+<span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg></span>
+<span class="kv-why-title">{{ t('kouventa.Budget Management', 'Budget Management') }}</span>
+<span class="kv-why-desc">{{ t('kouventa.Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.', 'Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.') }}</span>
+<span class="kv-why-badge">{{ t('kouventa.Solves: hard-to-manage billing', 'Solves: hard-to-manage billing') }}</span>
 </div>
 </div>
 </section>
