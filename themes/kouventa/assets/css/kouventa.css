@@ -956,15 +956,16 @@ html{scroll-padding-top:0}
 :root {
     --kv-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --kv-ease-hover: cubic-bezier(0.2, 0.8, 0.2, 1);
-    --kv-duration-reveal: 0.65s;
+    --kv-duration-reveal: 0.72s;
     --kv-duration-hover: 0.26s;
 }
 
 /* --- Scroll Reveal (Below Fold) --- */
 html.js-motion .kv-reveal-item,
-html.js-motion .kv-reveal {
+html.js-motion .kv-reveal,
+html.js-motion .kv-reveal-block {
     opacity: 0;
-    transform: translateY(28px);
+    transform: translateY(32px);
     transition: opacity var(--kv-duration-reveal) var(--kv-ease-out),
                 transform var(--kv-duration-reveal) var(--kv-ease-out);
     transition-delay: var(--kv-delay, 0ms);
@@ -973,13 +974,17 @@ html.js-motion .kv-reveal {
 
 /* When revealed */
 html.js-motion .kv-reveal-item.is-revealed,
-html.js-motion .is-revealed .kv-reveal-item,
 html.js-motion .kv-reveal.is-revealed,
+html.js-motion .kv-reveal-block.is-revealed,
+html.js-motion .kv-reveal-grid.is-revealed .kv-reveal-item,
+html.js-motion .kv-reveal-block.is-revealed .kv-reveal-item,
+html.js-motion .is-revealed .kv-reveal-item,
 html.js-motion .is-revealed .kv-reveal,
+.kv-above-fold,
 .kv-above-fold .kv-reveal-item,
 .kv-above-fold .kv-reveal {
     opacity: 1 !important;
-    transform: translateY(0) !important;
+    transform: translateY(0);
 }
 
 /* Stagger presets */
@@ -994,6 +999,7 @@ html.js-motion .is-revealed .kv-reveal,
 @media (prefers-reduced-motion: reduce) {
     html.js-motion .kv-reveal-item,
     html.js-motion .kv-reveal,
+    html.js-motion .kv-reveal-block,
     .kv-reveal-item,
     .kv-reveal {
         opacity: 1 !important;
@@ -1019,15 +1025,17 @@ html.js-motion .is-revealed .kv-reveal,
 /* Standard White Card Hover */
 .kv-card:hover,
 .kv-card-hover:hover,
-.kv-hover:hover {
-    transform: translateY(-5px);
+.kv-hover:hover,
+html.js-motion .kv-reveal-item.is-revealed.kv-card:hover,
+html.js-motion .kv-reveal-item.is-revealed.kv-card-hover:hover {
+    transform: translateY(-5px) !important;
     box-shadow: 0 18px 36px -8px rgba(7, 28, 51, 0.10), 0 4px 14px -2px rgba(7, 28, 51, 0.04) !important;
     border-color: #B5E8CD !important;
 }
 .kv-card:active,
 .kv-card-hover:active,
 .kv-hover:active {
-    transform: translateY(-2px) scale(0.995);
+    transform: translateY(-2px) scale(0.995) !important;
     transition-duration: 0.1s;
 }
 
@@ -1037,13 +1045,14 @@ html.js-motion .is-revealed .kv-reveal,
                 box-shadow var(--kv-duration-hover) var(--kv-ease-hover),
                 border-color 0.24s ease;
 }
-.kv-card-dark:hover {
-    transform: translateY(-5px);
+.kv-card-dark:hover,
+html.js-motion .kv-reveal-item.is-revealed.kv-card-dark:hover {
+    transform: translateY(-5px) !important;
     box-shadow: 0 22px 45px -10px rgba(0, 0, 0, 0.55), 0 0 28px rgba(43, 212, 106, 0.18) !important;
     border-color: rgba(43, 212, 106, 0.45) !important;
 }
 .kv-card-dark:active {
-    transform: translateY(-2px) scale(0.995);
+    transform: translateY(-2px) scale(0.995) !important;
     transition-duration: 0.1s;
 }
 
@@ -1055,8 +1064,9 @@ html.js-motion .is-revealed .kv-reveal,
     transition: transform 0.28s var(--kv-ease-hover), filter 0.25s ease;
     will-change: transform;
 }
-.kv-logo-card:hover {
-    transform: translateY(-4px);
+.kv-logo-card:hover,
+html.js-motion .kv-reveal-item.is-revealed.kv-logo-card:hover {
+    transform: translateY(-4px) !important;
     box-shadow: 0 12px 26px -6px rgba(7, 28, 51, 0.09), 0 2px 6px rgba(7, 28, 51, 0.04) !important;
     border-color: #2BD46A !important;
 }
@@ -1064,7 +1074,7 @@ html.js-motion .is-revealed .kv-reveal,
     transform: scale(1.08);
 }
 .kv-logo-card:active {
-    transform: translateY(-1px) scale(0.99);
+    transform: translateY(-1px) scale(0.99) !important;
     transition-duration: 0.1s;
 }
 
@@ -1075,8 +1085,9 @@ html.js-motion .is-revealed .kv-reveal,
 .kv-industry-card .kv-ind-icon {
     transition: background-color 0.22s ease, color 0.22s ease, transform 0.25s var(--kv-ease-hover);
 }
-.kv-industry-card:hover {
-    transform: translateY(-4px);
+.kv-industry-card:hover,
+html.js-motion .kv-reveal-item.is-revealed.kv-industry-card:hover {
+    transform: translateY(-4px) !important;
     box-shadow: 0 12px 24px -6px rgba(7, 28, 51, 0.09) !important;
     border-color: #13803F !important;
     background-color: #F8FDF9 !important;
@@ -1087,7 +1098,7 @@ html.js-motion .is-revealed .kv-reveal,
     transform: scale(1.05);
 }
 .kv-industry-card:active {
-    transform: translateY(-1px) scale(0.99);
+    transform: translateY(-1px) scale(0.99) !important;
     transition-duration: 0.1s;
 }
 
@@ -1099,8 +1110,9 @@ html.js-motion .is-revealed .kv-reveal,
     transition: transform 0.25s var(--kv-ease-hover), box-shadow 0.25s ease, filter 0.25s ease;
     will-change: transform;
 }
-.kv-video-card:hover {
-    transform: translateY(-6px);
+.kv-video-card:hover,
+html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
+    transform: translateY(-6px) !important;
     box-shadow: 0 20px 40px -10px rgba(7, 28, 51, 0.12), 0 6px 16px -3px rgba(7, 28, 51, 0.05) !important;
     border-color: #B5E8CD !important;
 }
