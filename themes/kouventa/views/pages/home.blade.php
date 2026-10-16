@@ -242,7 +242,7 @@
 @endforeach
 
 </div>
-<div role="tabpanel" class="kv-card" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 48px; display: grid; grid-template-columns: minmax(0, 1fr) 480px; gap: 64px; align-items: center">
+<div role="tabpanel" class="kv-panel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 48px; display: grid; grid-template-columns: minmax(0, 1fr) 480px; gap: 64px; align-items: center">
 <div style="display: flex; flex-direction: column; gap: 20px">
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F"><span x-text="teams[activeTeam].name">{{ $teams[0]['name'] ?? '' }}</span></span>
 <span style="font-size: 38px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em"><span x-text="teams[activeTeam].line">{{ $teams[0]['line'] ?? '' }}</span></span>
@@ -385,7 +385,7 @@
 <button type="button" aria-label="Next story" @click="activeStory = (activeStory + 1) % stories.length" class="kv-slider-nav-btn kv-btn-action"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
 </div>
 </div>
-<div class="kv-card" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; display: grid; grid-template-columns: 420px minmax(0, 1fr); overflow: hidden">
+<div class="kv-panel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; display: grid; grid-template-columns: 420px minmax(0, 1fr); overflow: hidden">
 <div style="background: #071C33; color: #FFFFFF; padding: 48px; display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
 <div style="display: flex; flex-direction: column; gap: 6px">
 <span style="font-size: 88px; line-height: 1; font-weight: 800; letter-spacing: -0.04em; color: #2BD46A"><span x-text="stories[activeStory].stat">{{ $stories[0]['stat'] ?? '' }}</span></span>
@@ -420,7 +420,7 @@
 
 <!-- ============ CTA ============ -->
 <section style="padding: 0 80px 104px">
-<div class="kv-card" style="background: #2BD46A; border-radius: 28px; padding: 72px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; color: #06251A">
+<div class="kv-panel" style="background: #2BD46A; border-radius: 28px; padding: 72px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; color: #06251A">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">Ready to see it work for your business?</h2>
 <p style="margin: 0; font-size: 18px; line-height: 1.55; max-width: 640px">Book a demo and we'll walk you through it with your own use case.</p>
 <div style="display: flex; gap: 14px; justify-content: center; padding-top: 16px">

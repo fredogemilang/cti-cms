@@ -1022,6 +1022,25 @@ html.js-motion .is-revealed .kv-reveal,
     will-change: transform, box-shadow;
 }
 
+/* --- Static Panels (Tabpanel, Stories Container, CTA Banner) --- */
+/* These are structural layout panels, not hoverable cards. They must never lift or gain card shadows. */
+.kv-panel,
+[role="tabpanel"] {
+    position: relative;
+}
+.kv-panel:hover,
+[role="tabpanel"]:hover,
+html.js-motion .kv-reveal-item.is-revealed.kv-panel:hover,
+html.js-motion .kv-reveal-item.is-revealed[role="tabpanel"]:hover {
+    transform: none !important;
+}
+.kv-panel .kv-card-hover,
+[role="tabpanel"] .kv-card-hover {
+    transform: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+}
+
 /* Standard White Card Hover */
 .kv-card:hover,
 .kv-card-hover:hover,

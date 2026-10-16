@@ -3,7 +3,8 @@
  * Features:
  * - IntersectionObserver based below-the-fold scroll reveals with smooth cascading waves ("susul-susulan").
  * - Hardware-accelerated transforms (translateY + opacity).
- * - Automatic detection of grids, cards, logo lists, tablists, and section headings.
+ * - Automatic detection of genuine card grids, logo lists, tablists, section headings, and standalone panels.
+ * - Strict isolation: never adds card hover styles to structural containers, tabpanels, or inner text columns.
  * - Triggers progressively as the user scrolls into each block/grid.
  * - Unobserves each item after reveal for 60fps performance without layout thrashing.
  * - Prefers-reduced-motion compliance.
@@ -48,6 +49,9 @@
       // 1. Section Header / Headings (h2, subtitle, action button at top)
       var headings = Array.from(section.querySelectorAll('h2, [role="heading"]'));
       headings.forEach(function (h) {
+        // Do NOT separate headings if they are inside a self-contained panel (e.g. CTA banner)
+        if (h.closest('.kv-panel, [role="tabpanel"]')) return;
+
         var headerWrapper = h.closest('div[style*="justify-content: space-between"]') || h.parentElement;
         if (headerWrapper && headerWrapper !== section && !headerWrapper.hasAttribute('data-motion-observed')) {
           headerWrapper.classList.add('kv-reveal-block');
@@ -75,24 +79,42 @@
         }
       });
 
-      // 2. Grids and multi-card containers (Two Paths, Industries, Why, Partners, Customers, Videos)
-      var gridContainers = section.querySelectorAll(
+      // 2. Genuine Card Grids (Two Paths, Industries, Why, Partners, Customers, Videos)
+      // Must NOT be inside a card/panel, and must NOT be an internal layout grid
+      var allGrids = Array.from(section.querySelectorAll(
         '[style*="display: grid"], [style*="grid-template-columns"], .grid, .kv-grid'
-      );
+      ));
 
-      gridContainers.forEach(function (grid) {
+      var cardGrids = allGrids.filter(function (grid) {
+        // Exclude if it's inside a panel or card (like the 2-column layout inside tabpanel or stories)
+        if (grid.closest('.kv-panel, [role="tabpanel"], .kv-card')) return false;
+        if (grid.classList.contains('kv-panel') || grid.classList.contains('kv-card') || grid.getAttribute('role') === 'tabpanel') return false;
+        if (grid.closest('form, header, nav')) return false;
+
+        var validChildren = Array.from(grid.children).filter(function (c) {
+          return c.tagName !== 'TEMPLATE' && c.tagName !== 'NOSCRIPT';
+        });
+        if (validChildren.length < 2) return false;
+
+        var style = grid.getAttribute('style') || '';
+        var hasRepeat = style.indexOf('repeat(') !== -1;
+        var hasGridClass = grid.classList.contains('grid') || grid.classList.contains('kv-grid') || grid.classList.contains('kv-card-grid');
+
+        return hasRepeat || hasGridClass;
+      });
+
+      cardGrids.forEach(function (grid) {
         if (grid.hasAttribute('data-motion-observed')) return;
         grid.setAttribute('data-motion-observed', 'true');
         grid.classList.add('kv-reveal-grid');
         targetsToObserve.push(grid);
 
-        var children = Array.from(grid.children);
-        var validChildren = children.filter(function (c) {
+        var validChildren = Array.from(grid.children).filter(function (c) {
           return c.tagName !== 'TEMPLATE' && c.tagName !== 'NOSCRIPT';
         });
 
         // Determine stagger interval based on item count
-        var interval = validChildren.length > 8 ? 55 : 85;
+        var interval = validChildren.length > 8 ? 50 : 80;
 
         validChildren.forEach(function (child, index) {
           child.classList.add('kv-reveal-item');
@@ -100,7 +122,7 @@
           var staggerDelay = Math.min(index * interval, 650);
           child.style.setProperty('--kv-delay', staggerDelay + 'ms');
 
-          // Assign card hover styling classes if needed
+          // Normalize logo or industry cards if needed
           assignCardClasses(child);
         });
       });
@@ -116,13 +138,13 @@
         var tabs = Array.from(tablist.children);
         tabs.forEach(function (tab, index) {
           tab.classList.add('kv-reveal-item');
-          tab.style.setProperty('--kv-delay', (index * 50) + 'ms');
+          tab.style.setProperty('--kv-delay', (index * 45) + 'ms');
         });
       });
 
-      // 4. Standalone large cards / panels (Tabpanel, Stories card, CTA banner)
+      // 4. Standalone large panels (Tabpanel, Stories container, CTA banner)
       var standalonePanels = section.querySelectorAll(
-        '[role="tabpanel"], .kv-card:not(.kv-reveal-item), [style*="border-radius: 24px"]:not(.kv-reveal-item), [style*="border-radius: 28px"]:not(.kv-reveal-item)'
+        '[role="tabpanel"], .kv-panel, .kv-card:not(.kv-reveal-item), [style*="border-radius: 24px"]:not(.kv-reveal-item), [style*="border-radius: 28px"]:not(.kv-reveal-item)'
       );
 
       standalonePanels.forEach(function (panel) {
@@ -133,7 +155,7 @@
         panel.classList.add('kv-reveal-item', 'kv-reveal-block');
         panel.style.setProperty('--kv-delay', '60ms');
         targetsToObserve.push(panel);
-        assignCardClasses(panel);
+        // Note: Do NOT call assignCardClasses on structural panels
       });
     });
 
@@ -172,8 +194,6 @@
     }, observerOptions);
 
     // Observe all below-the-fold targets!
-    // Elements already in view will fire immediately on first frame.
-    // Elements below the fold will wait until user scrolls down into them.
     targetsToObserve.forEach(function (target) {
       revealObserver.observe(target);
     });
@@ -206,10 +226,8 @@
       }
     }
 
-    // General card
-    if (!el.classList.contains('kv-card') && !el.classList.contains('kv-card-hover') && !el.classList.contains('kv-logo-card') && !el.classList.contains('kv-video-card')) {
-      el.classList.add('kv-card-hover');
-    }
+    // NOTE: NEVER add .kv-card-hover to arbitrary elements!
+    // Real cards have their classes explicitly in the Blade templates.
   }
 
   function setupCardButtonHoverSync() {
