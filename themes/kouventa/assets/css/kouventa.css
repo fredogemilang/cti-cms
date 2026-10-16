@@ -2776,5 +2776,280 @@ body {
     }
 }
 
+/* ============================================================
+   AI PRODUCTS SECTION LAYOUT & RESPONSIVE (PRODUCT AI PAGE)
+   ============================================================ */
+.kv-ai-products-section {
+    padding: 48px 80px 104px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    scroll-margin-top: 100px;
+}
+.kv-products-heading {
+    font-size: 44px;
+    line-height: 1.1;
+}
+.kv-products-layout {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 24px;
+    align-items: stretch;
+}
+.kv-product-tablist {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.kv-product-tab-name {
+    font-size: 17px;
+    font-weight: 800;
+}
+.kv-product-tab-badge {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #FFE9C7;
+    color: #7A4A00;
+}
+.kv-product-tab-role {
+    font-size: 13px;
+    line-height: 1.4;
+    opacity: 0.85;
+}
+.kv-product-panel {
+    background: #FFFFFF;
+    border: 1px solid #E3E8E6;
+    border-radius: 24px;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 440px;
+    gap: 40px;
+    align-items: start;
+}
+.kv-product-info-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+.kv-product-mockup-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+.kv-product-mockup-container {
+    height: 440px;
+    width: 100%;
+    border-radius: 18px;
+    background: #F4F6F5;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.kv-product-replay-btn {
+    align-self: flex-end;
+}
+
+@media (max-width: 1024px) {
+    .kv-ai-products-section {
+        padding: 40px 32px 72px !important;
+        gap: 24px !important;
+        scroll-margin-top: 80px !important;
+    }
+    .kv-products-heading {
+        font-size: 34px !important;
+    }
+    .kv-products-layout {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+    .kv-product-tablist {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+    }
+    .kv-product-panel {
+        grid-template-columns: 1fr !important;
+        gap: 32px !important;
+        padding: 32px 24px !important;
+    }
+    .kv-product-mockup-container {
+        height: auto !important;
+        min-height: 400px !important;
+        padding: 24px 16px !important;
+        box-sizing: border-box !important;
+    }
+    .kv-product-replay-btn {
+        align-self: center !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .kv-ai-products-section {
+        padding: 32px 20px 60px !important;
+        gap: 20px !important;
+    }
+    .kv-products-heading {
+        font-size: 28px !important;
+        line-height: 1.2 !important;
+    }
+    .kv-linked-pill {
+        white-space: normal !important;
+        height: auto !important;
+        min-height: 44px !important;
+        padding: 10px 14px !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        border-radius: 16px !important;
+        font-size: 13.5px !important;
+    }
+    .kv-btn-show-all {
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        min-height: 32px !important;
+        padding: 4px 12px !important;
+    }
+    .kv-product-tablist {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+    }
+    .kv-product-tab {
+        min-height: 72px !important;
+        padding: 12px 12px !important;
+        border-radius: 14px !important;
+        gap: 10px !important;
+        align-items: flex-start !important;
+    }
+    .kv-product-tab-icon {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 10px !important;
+    }
+    .kv-product-tab-icon svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    .kv-product-tab-name {
+        font-size: 14.5px !important;
+        line-height: 1.25 !important;
+    }
+    .kv-product-tab-badge {
+        font-size: 9px !important;
+        padding: 2px 6px !important;
+    }
+    .kv-product-tab-role {
+        font-size: 11.5px !important;
+        line-height: 1.35 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+    .kv-product-tab-dot {
+        display: none !important;
+    }
+    .kv-product-panel {
+        padding: 24px 18px !important;
+        border-radius: 20px !important;
+        gap: 24px !important;
+    }
+    .kv-product-info > span:first-child {
+        font-size: 24px !important;
+        line-height: 1.2 !important;
+    }
+    .kv-product-info > span:nth-child(2),
+    .kv-product-info > span:nth-child(3) {
+        font-size: 14.5px !important;
+        line-height: 1.5 !important;
+    }
+    .kv-product-mockup-container {
+        min-height: 360px !important;
+        padding: 16px 8px !important;
+    }
+    .kv-mockup-wiki {
+        width: 100% !important;
+        max-width: 360px !important;
+    }
+    .kv-mockup-taskforce {
+        width: 100% !important;
+        max-width: 380px !important;
+        padding: 0 4px !important;
+        box-sizing: border-box !important;
+    }
+    .kv-mockup-playground {
+        width: 100% !important;
+        max-width: 360px !important;
+    }
+    .kv-mockup-workflow {
+        transform: scale(0.82);
+        transform-origin: center center;
+        margin: -25px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .kv-ai-products-section {
+        padding: 24px 16px 48px !important;
+    }
+    .kv-products-heading {
+        font-size: 24px !important;
+    }
+    .kv-product-tablist {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+    }
+    .kv-product-tab {
+        padding: 10px 8px !important;
+        border-radius: 12px !important;
+        gap: 8px !important;
+        min-height: 64px !important;
+    }
+    .kv-product-tab-icon {
+        width: 30px !important;
+        height: 30px !important;
+        border-radius: 8px !important;
+    }
+    .kv-product-tab-icon svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+    .kv-product-tab-name {
+        font-size: 13px !important;
+        line-height: 1.2 !important;
+    }
+    .kv-product-tab-role {
+        font-size: 10.5px !important;
+    }
+    .kv-product-panel {
+        padding: 20px 14px !important;
+        border-radius: 16px !important;
+        gap: 20px !important;
+    }
+    .kv-mockup-workflow {
+        transform: scale(0.70);
+        transform-origin: center center;
+        margin: -40px 0;
+    }
+}
+
+@media (max-width: 360px) {
+    .kv-product-tablist {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    .kv-mockup-workflow {
+        transform: scale(0.60);
+        transform-origin: center center;
+        margin: -55px 0;
+    }
+}
+
+
 
 

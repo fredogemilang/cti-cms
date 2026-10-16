@@ -6,15 +6,121 @@
 .kv-stage-2 { width: 420px; display: flex; flex-direction: column; gap: 16px; }
 .kv-product-info { display: flex; flex-direction: column; gap: 16px; }
 .kv-mockup-wrap { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-.kv-mockup-wiki { width: 360px; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1); display: flex; flex-direction: column; }
-.kv-mockup-taskforce { width: 400px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.kv-mockup-playground { width: 380px; background: #FFFFFF; border-radius: 18px; box-shadow: 0 10px 30px rgba(7,28,51,0.1); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.kv-mockup-wiki { width: 360px; max-width: 100%; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1); display: flex; flex-direction: column; }
+.kv-mockup-taskforce { width: 400px; max-width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.kv-mockup-playground { width: 380px; max-width: 100%; background: #FFFFFF; border-radius: 18px; box-shadow: 0 10px 30px rgba(7,28,51,0.1); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
 .kv-mockup-workflow { width: 440px; height: 440px; position: relative; overflow: hidden; border-radius: 14px; }
-.kv-linked-pill { min-height: 48px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap; }
-.kv-unlinked-pill { min-height: 48px; display: flex; align-items: center; font-size: 15px; color: #4A5866; }
-.kv-product-tab { flex: 1 1 0; min-height: 88px; padding: 16px 18px; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; color: #0E1A24; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s ease; box-sizing: border-box; width: 100%; }
-.kv-product-tab-icon { width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-.kv-product-tab-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; transition: background 0.3s; }
+
+/* --- AI Products Section Layout & Components --- */
+.kv-ai-products-section {
+    padding: 48px 80px 104px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    scroll-margin-top: 100px;
+}
+.kv-products-heading {
+    font-size: 44px;
+    line-height: 1.1;
+}
+.kv-products-layout {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 24px;
+    align-items: stretch;
+}
+.kv-product-tablist {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.kv-product-tab {
+    flex: 1 1 0;
+    min-height: 88px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid #E3E8E6;
+    background: #FFFFFF;
+    color: #0E1A24;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    width: 100%;
+}
+.kv-product-tab-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.kv-product-tab-name {
+    font-size: 17px;
+    font-weight: 800;
+}
+.kv-product-tab-badge {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #FFE9C7;
+    color: #7A4A00;
+}
+.kv-product-tab-role {
+    font-size: 13px;
+    line-height: 1.4;
+    opacity: 0.85;
+}
+.kv-product-tab-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background 0.3s;
+}
+.kv-product-panel {
+    background: #FFFFFF;
+    border: 1px solid #E3E8E6;
+    border-radius: 24px;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 440px;
+    gap: 40px;
+    align-items: start;
+}
+.kv-product-info-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+.kv-product-mockup-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+.kv-product-mockup-container {
+    height: 440px;
+    width: 100%;
+    border-radius: 18px;
+    background: #F4F6F5;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.kv-product-replay-btn {
+    align-self: flex-end;
+}
 
 /* --- Products Highlight Pill Styles --- */
 .kv-linked-pill {
@@ -100,6 +206,242 @@
     stroke: #13803F;
 }
 
+/* ============================================================
+   RESPONSIVE MEDIA QUERIES FOR AI PRODUCTS SECTION
+   ============================================================ */
+
+/* Tablet & Smaller Screens (<= 1024px) */
+@media (max-width: 1024px) {
+    .kv-ai-products-section {
+        padding: 40px 32px 72px !important;
+        gap: 24px !important;
+        scroll-margin-top: 80px !important;
+    }
+
+    .kv-products-heading {
+        font-size: 34px !important;
+    }
+
+    .kv-products-layout {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+
+    .kv-product-tablist {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+    }
+
+    .kv-product-panel {
+        grid-template-columns: 1fr !important;
+        gap: 32px !important;
+        padding: 32px 24px !important;
+    }
+
+    .kv-product-mockup-container {
+        height: auto !important;
+        min-height: 400px !important;
+        padding: 24px 16px !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-product-replay-btn {
+        align-self: center !important;
+    }
+}
+
+/* Mobile Screens (<= 768px) */
+@media (max-width: 768px) {
+    .kv-ai-products-section {
+        padding: 32px 20px 60px !important;
+        gap: 20px !important;
+    }
+
+    .kv-products-heading {
+        font-size: 28px !important;
+        line-height: 1.2 !important;
+    }
+
+    .kv-linked-pill {
+        white-space: normal !important;
+        height: auto !important;
+        min-height: 44px !important;
+        padding: 10px 14px !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        border-radius: 16px !important;
+        font-size: 13.5px !important;
+    }
+
+    .kv-btn-show-all {
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        min-height: 32px !important;
+        padding: 4px 12px !important;
+    }
+
+    .kv-product-tablist {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+    }
+
+    .kv-product-tab {
+        min-height: 72px !important;
+        padding: 12px 12px !important;
+        border-radius: 14px !important;
+        gap: 10px !important;
+        align-items: flex-start !important;
+    }
+
+    .kv-product-tab-icon {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 10px !important;
+    }
+
+    .kv-product-tab-icon svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    .kv-product-tab-name {
+        font-size: 14.5px !important;
+        line-height: 1.25 !important;
+    }
+
+    .kv-product-tab-badge {
+        font-size: 9px !important;
+        padding: 2px 6px !important;
+    }
+
+    .kv-product-tab-role {
+        font-size: 11.5px !important;
+        line-height: 1.35 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+
+    .kv-product-tab-dot {
+        display: none !important;
+    }
+
+    .kv-product-panel {
+        padding: 24px 18px !important;
+        border-radius: 20px !important;
+        gap: 24px !important;
+    }
+
+    .kv-product-info > span:first-child {
+        font-size: 24px !important;
+        line-height: 1.2 !important;
+    }
+
+    .kv-product-info > span:nth-child(2),
+    .kv-product-info > span:nth-child(3) {
+        font-size: 14.5px !important;
+        line-height: 1.5 !important;
+    }
+
+    .kv-product-mockup-container {
+        min-height: 360px !important;
+        padding: 16px 8px !important;
+    }
+
+    .kv-mockup-wiki {
+        width: 100% !important;
+        max-width: 360px !important;
+    }
+
+    .kv-mockup-taskforce {
+        width: 100% !important;
+        max-width: 380px !important;
+        padding: 0 4px !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-playground {
+        width: 100% !important;
+        max-width: 360px !important;
+    }
+
+    .kv-mockup-workflow {
+        transform: scale(0.82);
+        transform-origin: center center;
+        margin: -25px 0;
+    }
+}
+
+/* Small Mobile Screens (<= 480px) */
+@media (max-width: 480px) {
+    .kv-ai-products-section {
+        padding: 24px 16px 48px !important;
+    }
+
+    .kv-products-heading {
+        font-size: 24px !important;
+    }
+
+    .kv-product-tablist {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+    }
+
+    .kv-product-tab {
+        padding: 10px 8px !important;
+        border-radius: 12px !important;
+        gap: 8px !important;
+        min-height: 64px !important;
+    }
+
+    .kv-product-tab-icon {
+        width: 30px !important;
+        height: 30px !important;
+        border-radius: 8px !important;
+    }
+
+    .kv-product-tab-icon svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+
+    .kv-product-tab-name {
+        font-size: 13px !important;
+        line-height: 1.2 !important;
+    }
+
+    .kv-product-tab-role {
+        font-size: 10.5px !important;
+    }
+
+    .kv-product-panel {
+        padding: 20px 14px !important;
+        border-radius: 16px !important;
+        gap: 20px !important;
+    }
+
+    .kv-mockup-workflow {
+        transform: scale(0.70);
+        transform-origin: center center;
+        margin: -40px 0;
+    }
+}
+
+/* Extra Small (<= 360px) */
+@media (max-width: 360px) {
+    .kv-product-tablist {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+
+    .kv-mockup-workflow {
+        transform: scale(0.60);
+        transform-origin: center center;
+        margin: -55px 0;
+    }
+}
 </style>
 @endpush
 
@@ -434,24 +776,24 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see ho
 </section>
 
 <!-- ============ OUR PRODUCTS ============ -->
-<section id="ai-products" style="padding: 48px 80px 104px; display: flex; flex-direction: column; gap: 32px">
+<section id="ai-products" class="kv-ai-products-section">
 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $productsTitle }}</h2>
-<span class="kv-linked-pill" x-show="linked" x-cloak style="min-height: 48px; box-sizing: border-box; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
-    <span class="kv-pill-dot" style="width: 10px; height: 10px; border-radius: 50%; background: #13803F; flex-shrink: 0; display: inline-block"></span>
+<h2 class="kv-products-heading" style="margin: 0; font-weight: 800; letter-spacing: -0.02em">{{ $productsTitle }}</h2>
+<span class="kv-linked-pill" x-show="linked" x-cloak>
+    <span class="kv-pill-dot"></span>
     <span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ $stages[0]['name'] }}</strong></span>
-    <button type="button" @click="linked = false" class="kv-btn-show-all" style="margin-left: 6px; white-space: nowrap; flex-shrink: 0; min-height: 36px; padding: 6px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+    <button type="button" @click="linked = false" class="kv-btn-show-all">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
 </span>
-<span class="kv-unlinked-pill" x-show="!linked" style="min-height: 48px; display: inline-flex; align-items: center; font-size: 15px; color: #4A5866">
-    <a href="#journey" @click.prevent="document.getElementById('journey')?.scrollIntoView({ behavior: 'smooth' })" class="kv-unlinked-link" style="display: inline-flex; align-items: center; gap: 8px; color: #4A5866; text-decoration: none; cursor: pointer">
+<span class="kv-unlinked-pill" x-show="!linked">
+    <a href="#journey" @click.prevent="document.getElementById('journey')?.scrollIntoView({ behavior: 'smooth' })" class="kv-unlinked-link">
         <span>{{ t('kouventa.Pick a journey stage above to see which products help', 'Pick a journey stage above to see which products help') }}</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
     </a>
 </span>
 </div>
 
-<div style="display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; align-items: stretch">
-<div role="tablist" aria-label="Products" aria-orientation="vertical" style="display: flex; flex-direction: column; gap: 10px">
+<div class="kv-products-layout">
+<div role="tablist" class="kv-product-tablist" aria-label="Products" aria-orientation="vertical">
 
 @foreach($productsList as $p)
 <button type="button" role="tab" class="kv-product-tab"
@@ -474,13 +816,13 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see ho
     </span>
     <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; text-align: left">
         <span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
-            <span style="font-size: 17px; font-weight: 800">{{ $p['name'] }}</span>
+            <span class="kv-product-tab-name">{{ $p['name'] }}</span>
             @if($p['soon'])
-                <span style="font-size: 10.5px; font-weight: 800; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ t('kouventa.COMING SOON', 'COMING SOON') }}</span>
+                <span class="kv-product-tab-badge">{{ t('kouventa.COMING SOON', 'COMING SOON') }}</span>
             @endif
         </span>
-        <span x-show="hasRole('{{ $p['id'] }}')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85" x-text="getRole('{{ $p['id'] }}')"></span>
-        <span x-show="!hasRole('{{ $p['id'] }}')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ $p['tag'] }}</span>
+        <span class="kv-product-tab-role" x-show="hasRole('{{ $p['id'] }}')" x-text="getRole('{{ $p['id'] }}')"></span>
+        <span class="kv-product-tab-role" x-show="!hasRole('{{ $p['id'] }}')">{{ $p['tag'] }}</span>
     </span>
     <span class="kv-product-tab-dot"
           :style="{
@@ -492,10 +834,10 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see ho
 </div>
 
 <!-- Product Detail Panels -->
-<div role="tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 40px; display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 40px; align-items: start">
+<div role="tabpanel" class="kv-product-panel">
 
 <!-- Left info column -->
-<div style="display: flex; flex-direction: column; gap: 16px">
+<div class="kv-product-info-col">
 
 <!-- Wikipedia Info -->
 <div class="kv-product-info" x-show="product === 'wiki'">
@@ -605,8 +947,8 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see ho
 </div>
 
 <!-- Right animated mockup column -->
-<div style="display: flex; flex-direction: column; gap: 10px">
-<div role="img" style="height: 440px; border-radius: 18px; background: #F4F6F5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
+<div class="kv-product-mockup-col">
+<div role="img" class="kv-product-mockup-container">
 <div class="kv-mockup-wrap" x-show="pOn">
 
 <!-- Mockup Wiki -->
@@ -731,7 +1073,7 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see ho
 </div>
 </div>
 
-<button type="button" @click="replayProduct()" style="align-self: flex-end; min-height: 40px; padding: 8px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #4A5866; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer">
+<button type="button" @click="replayProduct()" class="kv-product-replay-btn" style="min-height: 40px; padding: 8px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #4A5866; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>
     {{ t('kouventa.Replay', 'Replay') }}
 </button>
