@@ -2238,4 +2238,32 @@ body {
     }
 }
 
+/* ==========================================================================
+   Desktop Navigation Dropdowns (Alpine.js x-show compatible)
+   ========================================================================== */
+.kv-dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.kv-dropdown-menu a {
+    transition: background-color 0.15s ease;
+}
+.kv-dropdown-menu a:hover {
+    background: #F4F6F5 !important;
+}
+
+.kv-dropdown-solution {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+.kv-dropdown-item {
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+.kv-dropdown-item:hover {
+    background: #F4F6F5 !important;
+    color: #0E1A24 !important;
+}
+
 

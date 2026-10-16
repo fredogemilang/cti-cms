@@ -48,7 +48,8 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" :style="productOpen ? 'transform: rotate(180deg)' : ''" style="transition: transform 0.2s ease"><path d="m6 9 6 6 6-6"></path></svg>
             </button>
             <div x-show="productOpen" x-transition x-cloak
-                 style="position: absolute; top: 52px; left: -16px; width: 300px; background: #FFFFFF; border-radius: 14px; padding: 8px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 2px; z-index: 20">
+                 class="kv-dropdown-menu"
+                 style="position: absolute; top: 52px; left: -16px; width: 300px; background: #FFFFFF; border-radius: 14px; padding: 8px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); z-index: 20">
                 <a href="{{ localized_url('/product/ai') }}" style="background: transparent; padding: 14px 16px; border-radius: 10px; color: #0E1A24; display: flex; flex-direction: column; gap: 2px; text-decoration: none">
                     <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
                     <span style="font-size: 13px; color: #4A5866">{{ t('kouventa.Knowledge & automation agents', 'Knowledge & automation agents') }}</span>
@@ -69,21 +70,22 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" :style="solutionOpen ? 'transform: rotate(180deg)' : ''" style="transition: transform 0.2s ease"><path d="m6 9 6 6 6-6"></path></svg>
             </button>
             <div x-show="solutionOpen" x-transition x-cloak
-                 style="position: absolute; top: 52px; left: -200px; width: 560px; background: #FFFFFF; border-radius: 16px; padding: 20px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; color: #0E1A24; z-index: 20">
+                 class="kv-dropdown-solution"
+                 style="position: absolute; top: 52px; left: -200px; width: 560px; background: #FFFFFF; border-radius: 16px; padding: 20px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); color: #0E1A24; z-index: 20">
                 <div style="display: flex; flex-direction: column; gap: 2px">
                     <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #4A5866; padding: 0 12px 8px">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
-                    <a href="{{ localized_url('/solutions/ai?dept=0') }}" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Customer Service', 'Customer Service') }}</a>
-                    <a href="{{ localized_url('/solutions/ai?dept=1') }}" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Recruitment', 'Recruitment') }}</a>
-                    <a href="{{ localized_url('/solutions/ai?dept=2') }}" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Sales & Marketing', 'Sales & Marketing') }}</a>
-                    <a href="{{ localized_url('/solutions/ai?dept=3') }}" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Business Operation', 'Business Operation') }}</a>
-                    <a href="{{ localized_url('/solutions/ai?dept=4') }}" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Finance', 'Finance') }}</a>
-                    <a href="{{ localized_url('/solutions/ai?dept=5') }}" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Legal & Compliance', 'Legal & Compliance') }}</a>
+                    <a href="{{ localized_url('/solutions/ai?dept=0') }}" class="kv-dropdown-item" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Customer Service', 'Customer Service') }}</a>
+                    <a href="{{ localized_url('/solutions/ai?dept=1') }}" class="kv-dropdown-item" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Recruitment', 'Recruitment') }}</a>
+                    <a href="{{ localized_url('/solutions/ai?dept=2') }}" class="kv-dropdown-item" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Sales & Marketing', 'Sales & Marketing') }}</a>
+                    <a href="{{ localized_url('/solutions/ai?dept=3') }}" class="kv-dropdown-item" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Business Operation', 'Business Operation') }}</a>
+                    <a href="{{ localized_url('/solutions/ai?dept=4') }}" class="kv-dropdown-item" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Finance', 'Finance') }}</a>
+                    <a href="{{ localized_url('/solutions/ai?dept=5') }}" class="kv-dropdown-item" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Legal & Compliance', 'Legal & Compliance') }}</a>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 2px">
                     <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #4A5866; padding: 0 12px 8px">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</span>
-                    <a href="{{ localized_url('/solutions/customer-engagement?case=0') }}" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Sales & Marketing', 'Sales & Marketing') }}</a>
-                    <a href="{{ localized_url('/solutions/customer-engagement?case=1') }}" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Customer Service', 'Customer Service') }}</a>
-                    <a href="{{ localized_url('/solutions/customer-engagement?case=2') }}" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Operation', 'Operation') }}</a>
+                    <a href="{{ localized_url('/solutions/customer-engagement?case=0') }}" class="kv-dropdown-item" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Sales & Marketing', 'Sales & Marketing') }}</a>
+                    <a href="{{ localized_url('/solutions/customer-engagement?case=1') }}" class="kv-dropdown-item" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Customer Service', 'Customer Service') }}</a>
+                    <a href="{{ localized_url('/solutions/customer-engagement?case=2') }}" class="kv-dropdown-item" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: 0; background: transparent; color: #0E1A24; font-size: 15px; font-weight: 600; text-decoration: none; display: block">{{ t('kouventa.Operation', 'Operation') }}</a>
                 </div>
             </div>
         </div>
@@ -97,7 +99,8 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" :style="pricingOpen ? 'transform: rotate(180deg)' : ''" style="transition: transform 0.2s ease"><path d="m6 9 6 6 6-6"></path></svg>
             </button>
             <div x-show="pricingOpen" x-transition x-cloak
-                 style="position: absolute; top: 52px; left: -16px; width: 300px; background: #FFFFFF; border-radius: 14px; padding: 8px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); display: flex; flex-direction: column; gap: 2px; z-index: 20">
+                 class="kv-dropdown-menu"
+                 style="position: absolute; top: 52px; left: -16px; width: 300px; background: #FFFFFF; border-radius: 14px; padding: 8px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); z-index: 20">
                 <a href="{{ localized_url('/pricing?tab=ai') }}" style="background: transparent; padding: 14px 16px; border-radius: 10px; color: #0E1A24; display: flex; flex-direction: column; gap: 2px; text-decoration: none">
                     <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
                     <span style="font-size: 13px; color: #4A5866">Starter · Grow · Scale</span>
