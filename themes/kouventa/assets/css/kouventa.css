@@ -1836,16 +1836,24 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
    KOUVENTA MOBILE RESPONSIVENESS OVERRIDES & ADAPTATIONS (max-width: 1024px)
    ========================================================================== */
 
-/* Prevent horizontal overflow on entire mobile viewport */
-html, body {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
-    width: 100% !important;
+/* Prevent horizontal overflow without creating nested scroll containers on #wrap */
+html {
+    overflow-x: hidden;
 }
 
-#wrap, .kv-canvas-wrap {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
+body {
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+#wrap {
+    overflow: visible !important;
+    width: 100% !important;
+    min-height: 100vh;
+}
+
+.kv-canvas-wrap {
+    overflow: visible !important;
     width: 100% !important;
 }
 
