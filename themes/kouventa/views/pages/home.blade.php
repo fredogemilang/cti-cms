@@ -361,40 +361,123 @@
 </section>
 
 <!-- ============ STORIES (carousel) ============ -->
-<section style="padding: 72px 80px 104px; display: flex; flex-direction: column; gap: 32px" x-data="{
-    activeStory: 0,
-    stories: @js($stories)
-}">
+<section style="padding: 72px 80px 104px; display: flex; flex-direction: column; gap: 32px" 
+         x-data="{
+             activeStory: 0,
+             totalStories: {{ count($stories) }},
+             timer: null,
+             isPaused: false,
+             touchStartX: 0,
+
+             init() {
+                 this.startAutoSlide();
+             },
+             startAutoSlide() {
+                 this.clearTimer();
+                 this.timer = setInterval(() => {
+                     if (!this.isPaused) {
+                         this.next();
+                     }
+                 }, 5000);
+             },
+             clearTimer() {
+                 if (this.timer) {
+                     clearInterval(this.timer);
+                     this.timer = null;
+                 }
+             },
+             resetAutoSlide() {
+                 this.clearTimer();
+                 this.startAutoSlide();
+             },
+             next() {
+                 this.activeStory = (this.activeStory + 1) % this.totalStories;
+             },
+             prev() {
+                 this.activeStory = (this.activeStory - 1 + this.totalStories) % this.totalStories;
+             },
+             goTo(index) {
+                 this.activeStory = index;
+                 this.resetAutoSlide();
+             },
+             pause() {
+                 this.isPaused = true;
+             },
+             resume() {
+                 this.isPaused = false;
+             },
+             handleTouchStart(e) {
+                 this.pause();
+                 if (e.changedTouches && e.changedTouches.length > 0) {
+                     this.touchStartX = e.changedTouches[0].screenX;
+                 }
+             },
+             handleTouchEnd(e) {
+                 if (e.changedTouches && e.changedTouches.length > 0) {
+                     const diff = this.touchStartX - e.changedTouches[0].screenX;
+                     if (Math.abs(diff) > 40) {
+                         if (diff > 0) {
+                             this.next();
+                         } else {
+                             this.prev();
+                         }
+                     }
+                 }
+                 this.resume();
+                 this.resetAutoSlide();
+             }
+         }">
 <div style="display: flex; justify-content: space-between; align-items: end">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">Real results, in their words.</h2>
 <div style="display: flex; gap: 8px">
-<button type="button" aria-label="Previous story" @click="activeStory = (activeStory - 1 + stories.length) % stories.length" class="kv-slider-nav-btn kv-btn-action"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
-<button type="button" aria-label="Next story" @click="activeStory = (activeStory + 1) % stories.length" class="kv-slider-nav-btn kv-btn-action"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
+<button type="button" aria-label="Previous story" @click="prev(); resetAutoSlide()" class="kv-slider-nav-btn kv-btn-action"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
+<button type="button" aria-label="Next story" @click="next(); resetAutoSlide()" class="kv-slider-nav-btn kv-btn-action"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
 </div>
 </div>
-<div class="kv-panel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; display: grid; grid-template-columns: 420px minmax(0, 1fr); overflow: hidden">
-<div style="background: #071C33; color: #FFFFFF; padding: 48px; display: flex; flex-direction: column; justify-content: space-between; gap: 32px">
-<div style="display: flex; flex-direction: column; gap: 6px">
-<span style="font-size: 88px; line-height: 1; font-weight: 800; letter-spacing: -0.04em; color: #2BD46A"><span x-text="stories[activeStory].stat">{{ $stories[0]['stat'] ?? '' }}</span></span>
-<span style="font-size: 18px; line-height: 1.4; color: #D5DEE8"><span x-text="stories[activeStory].statLabel">{{ $stories[0]['statLabel'] ?? '' }}</span></span>
+
+<div class="kv-panel kv-story-slider-viewport" 
+     @mouseenter="pause()" 
+     @mouseleave="resume()"
+     @touchstart="handleTouchStart($event)"
+     @touchend="handleTouchEnd($event)">
+    <div class="kv-story-slider-track" 
+         :style="{ transform: 'translateX(-' + (activeStory * 100) + '%)' }">
+        @foreach($stories as $i => $story)
+            <div class="kv-story-slide">
+                <!-- Left stats panel (dark navy) -->
+                <div class="kv-story-stats-panel">
+                    <div style="display: flex; flex-direction: column; gap: 6px">
+                        <span class="kv-story-stat-number">{{ $story['stat'] }}</span>
+                        <span class="kv-story-stat-label">{{ $story['statLabel'] }}</span>
+                    </div>
+                    @if(!empty($story['stat2']))
+                    <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.14)">
+                        <span class="kv-story-stat2-number">{{ $story['stat2'] }}</span>
+                        <span class="kv-story-stat2-label">{{ $story['stat2Label'] }}</span>
+                    </div>
+                    @endif
+                </div>
+
+                <!-- Right testimonial panel (white) -->
+                <div class="kv-story-content-panel">
+                    <img src="{{ !empty($story['logo']) ? $story['logo'] : theme_asset('images/kouventa-logo.png') }}" 
+                         alt="{{ $story['company'] }}" 
+                         class="kv-story-logo">
+                    <p class="kv-story-quote">“{{ $story['quote'] }}”</p>
+                    <div class="kv-story-author">
+                        <span class="kv-story-author-name">{{ $story['name'] }}</span>
+                        <span class="kv-story-author-role">{{ $story['role'] }}</span>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
 </div>
-<div style="display: flex; flex-direction: column; gap: 6px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.14)">
-<span style="font-size: 36px; font-weight: 800; letter-spacing: -0.02em"><span x-text="stories[activeStory].stat2">{{ $stories[0]['stat2'] ?? '' }}</span></span>
-<span style="font-size: 15px; color: #B9C6D3"><span x-text="stories[activeStory].stat2Label">{{ $stories[0]['stat2Label'] ?? '' }}</span></span>
-</div>
-</div>
-<div style="padding: 48px; display: flex; flex-direction: column; gap: 24px">
-<img :src="stories[activeStory].logo || '{{ theme_asset('images/kouventa-logo.png') }}'" src="{{ $stories[0]['logo'] ?? theme_asset('images/kouventa-logo.png') }}" :alt="stories[activeStory].company" alt="{{ $stories[0]['company'] ?? 'Customer' }}" style="height: 48px; width: auto; align-self: flex-start">
-<p style="margin: 0; font-size: 22px; line-height: 1.55; font-weight: 500">“<span x-text="stories[activeStory].quote">{{ $stories[0]['quote'] ?? '' }}</span>”</p>
-<div style="display: flex; flex-direction: column; gap: 2px; margin-top: auto">
-<span style="font-size: 16px; font-weight: 700" x-text="stories[activeStory].name">{{ $stories[0]['name'] ?? '' }}</span>
-<span style="font-size: 14px; color: #4A5866" x-text="stories[activeStory].role">{{ $stories[0]['role'] ?? '' }}</span>
-</div>
-</div>
-</div>
+
+<!-- Indicator dots -->
 <div style="display: flex; gap: 8px; justify-content: center; align-items: center">
 @foreach($stories as $i => $s)
-    <button type="button" @click="activeStory = {{ $i }}"
+    <button type="button" @click="goTo({{ $i }})"
             class="kv-story-btn"
             aria-label="{{ t('kouventa.Show story:', 'Show story:') }} {{ $s['company'] }}"
             :aria-pressed="activeStory === {{ $i }}"

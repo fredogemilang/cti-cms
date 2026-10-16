@@ -646,6 +646,134 @@ html{scroll-padding-top:0}
   background: #F4F6F5;
 }
 
+/* Story Carousel Slider (Slide animation & responsive layout) */
+.kv-story-slider-viewport {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid #E3E8E6;
+  background: #FFFFFF;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(7, 28, 51, 0.04);
+}
+
+.kv-story-slider-track {
+  display: flex;
+  width: 100%;
+  will-change: transform;
+  transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.kv-story-slide {
+  min-width: 100%;
+  width: 100%;
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 420px minmax(0, 1fr);
+  box-sizing: border-box;
+  background: #FFFFFF;
+}
+
+.kv-story-stats-panel {
+  background: #071C33;
+  color: #FFFFFF;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  box-sizing: border-box;
+}
+
+.kv-story-stat-number {
+  font-size: 88px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #2BD46A;
+}
+
+.kv-story-stat-label {
+  font-size: 18px;
+  line-height: 1.4;
+  color: #D5DEE8;
+}
+
+.kv-story-stat2-number {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+}
+
+.kv-story-stat2-label {
+  font-size: 15px;
+  color: #B9C6D3;
+}
+
+.kv-story-content-panel {
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: #FFFFFF;
+  box-sizing: border-box;
+}
+
+.kv-story-logo {
+  height: 48px;
+  width: auto;
+  max-width: 200px;
+  align-self: flex-start;
+  object-fit: contain;
+}
+
+.kv-story-quote {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.55;
+  font-weight: 500;
+  color: #0E1A24;
+}
+
+.kv-story-author {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: auto;
+}
+
+.kv-story-author-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0E1A24;
+}
+
+.kv-story-author-role {
+  font-size: 14px;
+  color: #4A5866;
+}
+
+@media (max-width: 900px) {
+  .kv-story-slide {
+    grid-template-columns: 1fr;
+  }
+  .kv-story-stats-panel {
+    padding: 32px 24px;
+    gap: 20px;
+  }
+  .kv-story-stat-number {
+    font-size: 56px;
+  }
+  .kv-story-content-panel {
+    padding: 32px 24px;
+    gap: 20px;
+  }
+  .kv-story-quote {
+    font-size: 18px;
+  }
+}
+
 /* === Clean-HTML Animation Keyframes === */
 @keyframes kvTlF{0%,2%{transform:scaleY(0)}70%,100%{transform:scaleY(1)}}
 @keyframes kvTlR0{0%,2%{opacity:0;transform:translateY(18px)}12%,100%{opacity:1;transform:none}}
