@@ -4,13 +4,15 @@
             @php
                 $footerLogo = setting('site_logo') ? resolve_block_asset(setting('site_logo')) : theme_asset('images/kouventa-logo.png');
                 $footerSiteName = setting('site_name', 'Kouventa');
+                $instagramUrl = setting('social_instagram', 'https://instagram.com/kouventa.ai');
+                $linkedinUrl = setting('social_linkedin', 'https://linkedin.com/company/kouventa');
             @endphp
             <img src="{{ $footerLogo }}" alt="{{ $footerSiteName }}" style="height: 40px; width: auto; align-self: flex-start">
             <div style="display: flex; gap: 10px">
-                <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Kouventa on Instagram" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+                <a href="{{ $instagramUrl }}" target="_blank" rel="noopener" aria-label="Kouventa on Instagram" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><path d="M17.5 6.5h.01"></path></svg>
                 </a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="Kouventa on LinkedIn" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+                <a href="{{ $linkedinUrl }}" target="_blank" rel="noopener" aria-label="Kouventa on LinkedIn" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M8 10v7M8 7h.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"></path></svg>
                 </a>
             </div>

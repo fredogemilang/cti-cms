@@ -12,7 +12,16 @@
         <link rel="icon" href="{{ asset('favicon.ico') }}">
     @endif
 
-    <x-seo-meta :model="$page ?? null" />
+    @php
+        $seoCandidate = null;
+        foreach ([$post ?? null, $entry ?? null, $page ?? null, $cpt ?? null, $postType ?? null, $entity ?? null, $taxonomyTerm ?? null, $term ?? null, $category ?? null, $tag ?? null] as $candidate) {
+            if ($candidate instanceof \Illuminate\Database\Eloquent\Model) {
+                $seoCandidate = $candidate;
+                break;
+            }
+        }
+    @endphp
+    <x-seo.head :entity="$seoCandidate" />
 
     <!-- Kouventa Local Fonts & CSS -->
     <link rel="stylesheet" href="{{ theme_asset('css/kouventa.css') }}?v={{ time() }}">
