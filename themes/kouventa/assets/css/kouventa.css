@@ -432,7 +432,8 @@ button{font-family:inherit;cursor:pointer}
 [style*="grid-template-columns: repeat(4, minmax(0px, 1fr));"]:not(:where(#kv-ill *,[style*="width: 520px; height: 440px"] *,[style*="width: 420px; height: 340px"] *,[style*="width: 440px; height: 360px"] *)){grid-template-columns:repeat(1,minmax(0,1fr)) !important}
 [style*="grid-template-columns: repeat(5, minmax(0px, 1fr));"]:not(:where(#kv-ill *,[style*="width: 520px; height: 440px"] *,[style*="width: 420px; height: 340px"] *,[style*="width: 440px; height: 360px"] *)){grid-template-columns:repeat(2,minmax(0,1fr)) !important}
 [style*="grid-template-columns: repeat(6, minmax(0px, 1fr));"]:not(:where(#kv-ill *,[style*="width: 520px; height: 440px"] *,[style*="width: 420px; height: 340px"] *,[style*="width: 440px; height: 360px"] *)){grid-template-columns:repeat(2,minmax(0,1fr)) !important}
-html,body{overflow-x:hidden}
+html{overflow-x:hidden}
+body{overflow:visible}
 [id^="kv-root-"]{width:100% !important;height:auto !important;min-height:0 !important}
 img,svg{max-width:100%}
 /* header */
@@ -1836,13 +1837,13 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
    KOUVENTA MOBILE RESPONSIVENESS OVERRIDES & ADAPTATIONS (max-width: 1024px)
    ========================================================================== */
 
-/* Prevent horizontal overflow without creating nested scroll containers on #wrap */
+/* Prevent horizontal overflow without creating nested scroll containers on body or #wrap */
 html {
     overflow-x: hidden;
 }
 
 body {
-    overflow-x: hidden;
+    overflow: visible;
     min-height: 100vh;
 }
 
