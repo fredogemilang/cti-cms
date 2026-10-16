@@ -1880,9 +1880,28 @@ body {
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 100 !important;
+        background: #071C33 !important;
+        padding: 12px 20px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
     }
     #mobile-bottom-nav {
         display: block !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 9999 !important;
+    }
+    #mobile-bottom-nav > div {
+        transform: translateY(0px) !important;
+    }
+    footer {
+        padding-bottom: calc(76px + 32px) !important;
     }
 
     /* Mobile Bottom Dock Bar & Sheet Styles */

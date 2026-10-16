@@ -8,8 +8,7 @@
 
 <!-- Mobile Bottom Navigation Bar & Bottom Sheets (CDT Architecture) -->
 <div id="mobile-bottom-nav" style="position: fixed; bottom: 0; left: 0; right: 0; pointer-events: none; z-index: 9999;">
-    <div style="width: 100%; height: 76px; position: relative; pointer-events: auto; transition: transform 0.3s ease-out;"
-         :style="showMenu ? 'transform: translateY(0px);' : 'transform: translateY(100%);'">
+    <div style="width: 100%; height: 76px; position: relative; pointer-events: auto; transform: translateY(0px);">
 
         <!-- Dark Glass Navy Dock Bar -->
         <div style="position: absolute; inset: 0; background: rgba(7,28,51,0.96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.12); padding: 8px 12px; box-shadow: 0 -4px 24px rgba(0,0,0,0.4);">

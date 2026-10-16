@@ -5,7 +5,7 @@
 @endphp
 
 <!-- Mobile Top Header Bar -->
-<div class="kv-mobile-header">
+<div class="kv-mobile-header" style="position: sticky; top: 0; z-index: 100; background: #071C33; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); box-sizing: border-box; width: 100%;">
     <!-- Logo -->
     <a href="{{ localized_url('/') }}" style="flex-shrink: 0; display: flex; align-items: center; text-decoration: none">
         <img src="{{ $siteLogo }}" alt="{{ $siteName }}" style="height: 32px; width: auto; display: block">
