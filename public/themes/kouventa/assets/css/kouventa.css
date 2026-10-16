@@ -799,3 +799,474 @@ html{scroll-padding-top:0}
         height: 17px;
     }
 }
+
+/* --- Display Utilities for Alpine x-show Preservation --- */
+.kv-flex { display: flex; }
+.kv-flex-col { display: flex; flex-direction: column; }
+.kv-flex-center { display: flex; align-items: center; justify-content: center; }
+.kv-items-center { align-items: center; }
+.kv-justify-center { justify-content: center; }
+
+/* --- Product Tab List Styles --- */
+.kv-product-tab {
+    flex: 1 1 0;
+    min-height: 88px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid #E3E8E6;
+    background: #FFFFFF;
+    color: #0E1A24;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    width: 100%;
+}
+.kv-product-tab-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.kv-product-tab-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background 0.3s;
+}
+
+/* --- Customer Engagement Journey Styles --- */
+.kv-ce-track-fill {
+    position: absolute;
+    top: 76px;
+    left: 12.5%;
+    height: 4px;
+    border-radius: 4px;
+    background: #13803F;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.kv-ce-customer-pointer {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+/* --- Products Highlight Pill Styles --- */
+.kv-linked-pill {
+    min-height: 48px;
+    box-sizing: border-box;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 6px 6px 16px;
+    border-radius: 999px;
+    background: #FFFFFF;
+    border: 1px solid #E3E8E6;
+    font-size: 15px;
+    color: #4A5866;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(7, 28, 51, 0.04);
+}
+.kv-pill-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #13803F;
+    flex-shrink: 0;
+    display: inline-block;
+}
+.kv-btn-show-all {
+    margin-left: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 36px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid #C9D2CE;
+    background: #FFFFFF;
+    color: #0E1A24;
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.kv-btn-show-all:hover {
+    background: #071C33;
+    border-color: #071C33;
+    color: #FFFFFF;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(7, 28, 51, 0.15);
+}
+.kv-btn-show-all:hover svg {
+    stroke: #2BD46A;
+}
+.kv-btn-show-all:active {
+    transform: translateY(0);
+}
+.kv-unlinked-pill {
+    min-height: 48px;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    color: #4A5866;
+}
+.kv-unlinked-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #4A5866;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.2s;
+    cursor: pointer;
+}
+.kv-unlinked-link:hover {
+    color: #13803F;
+}
+.kv-unlinked-link svg {
+    transition: transform 0.2s;
+}
+.kv-unlinked-link:hover svg {
+    transform: translateY(-2px);
+    stroke: #13803F;
+}
+
+/* ==========================================================================
+   KOUVENTA MOTION & INTERACTION DESIGN SYSTEM
+   Professional Scroll Reveal, Staggered Waves, Interactive Cards & Buttons
+   ========================================================================== */
+
+/* --- Motion Variables & Custom Easings --- */
+:root {
+    --kv-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --kv-ease-hover: cubic-bezier(0.2, 0.8, 0.2, 1);
+    --kv-duration-reveal: 0.65s;
+    --kv-duration-hover: 0.26s;
+}
+
+/* --- Scroll Reveal (Below Fold) --- */
+html.js-motion .kv-reveal-item,
+html.js-motion .kv-reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity var(--kv-duration-reveal) var(--kv-ease-out),
+                transform var(--kv-duration-reveal) var(--kv-ease-out);
+    transition-delay: var(--kv-delay, 0ms);
+    will-change: opacity, transform;
+}
+
+/* When revealed */
+html.js-motion .kv-reveal-item.is-revealed,
+html.js-motion .is-revealed .kv-reveal-item,
+html.js-motion .kv-reveal.is-revealed,
+html.js-motion .is-revealed .kv-reveal,
+.kv-above-fold .kv-reveal-item,
+.kv-above-fold .kv-reveal {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+/* Stagger presets */
+.kv-stagger-1 { --kv-delay: 60ms; }
+.kv-stagger-2 { --kv-delay: 120ms; }
+.kv-stagger-3 { --kv-delay: 180ms; }
+.kv-stagger-4 { --kv-delay: 240ms; }
+.kv-stagger-5 { --kv-delay: 300ms; }
+.kv-stagger-6 { --kv-delay: 360ms; }
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    html.js-motion .kv-reveal-item,
+    html.js-motion .kv-reveal,
+    .kv-reveal-item,
+    .kv-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}
+
+/* --- Interactive Cards Hover Effects --- */
+.kv-card,
+.kv-card-hover,
+.kv-hover,
+.kv-logo-card,
+.kv-industry-card,
+.kv-video-card {
+    transition: transform var(--kv-duration-hover) var(--kv-ease-hover),
+                box-shadow var(--kv-duration-hover) var(--kv-ease-hover),
+                border-color 0.22s ease,
+                background-color 0.22s ease;
+    will-change: transform, box-shadow;
+}
+
+/* Standard White Card Hover */
+.kv-card:hover,
+.kv-card-hover:hover,
+.kv-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 36px -8px rgba(7, 28, 51, 0.10), 0 4px 14px -2px rgba(7, 28, 51, 0.04) !important;
+    border-color: #B5E8CD !important;
+}
+.kv-card:active,
+.kv-card-hover:active,
+.kv-hover:active {
+    transform: translateY(-2px) scale(0.995);
+    transition-duration: 0.1s;
+}
+
+/* Dark Card Hover (e.g. Two Paths Dark Card) */
+.kv-card-dark {
+    transition: transform var(--kv-duration-hover) var(--kv-ease-hover),
+                box-shadow var(--kv-duration-hover) var(--kv-ease-hover),
+                border-color 0.24s ease;
+}
+.kv-card-dark:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 22px 45px -10px rgba(0, 0, 0, 0.55), 0 0 28px rgba(43, 212, 106, 0.18) !important;
+    border-color: rgba(43, 212, 106, 0.45) !important;
+}
+.kv-card-dark:active {
+    transform: translateY(-2px) scale(0.995);
+    transition-duration: 0.1s;
+}
+
+/* Logo Cards Hover (Partners & Customers) */
+.kv-logo-card {
+    cursor: pointer;
+}
+.kv-logo-card img {
+    transition: transform 0.28s var(--kv-ease-hover), filter 0.25s ease;
+    will-change: transform;
+}
+.kv-logo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 26px -6px rgba(7, 28, 51, 0.09), 0 2px 6px rgba(7, 28, 51, 0.04) !important;
+    border-color: #2BD46A !important;
+}
+.kv-logo-card:hover img {
+    transform: scale(1.08);
+}
+.kv-logo-card:active {
+    transform: translateY(-1px) scale(0.99);
+    transition-duration: 0.1s;
+}
+
+/* Industry Chips Hover */
+.kv-industry-card {
+    cursor: pointer;
+}
+.kv-industry-card .kv-ind-icon {
+    transition: background-color 0.22s ease, color 0.22s ease, transform 0.25s var(--kv-ease-hover);
+}
+.kv-industry-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -6px rgba(7, 28, 51, 0.09) !important;
+    border-color: #13803F !important;
+    background-color: #F8FDF9 !important;
+}
+.kv-industry-card:hover .kv-ind-icon {
+    background-color: #13803F !important;
+    color: #FFFFFF !important;
+    transform: scale(1.05);
+}
+.kv-industry-card:active {
+    transform: translateY(-1px) scale(0.99);
+    transition-duration: 0.1s;
+}
+
+/* Video Cards Hover */
+.kv-video-card {
+    cursor: pointer;
+}
+.kv-video-card .kv-play-btn {
+    transition: transform 0.25s var(--kv-ease-hover), box-shadow 0.25s ease, filter 0.25s ease;
+    will-change: transform;
+}
+.kv-video-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px -10px rgba(7, 28, 51, 0.12), 0 6px 16px -3px rgba(7, 28, 51, 0.05) !important;
+    border-color: #B5E8CD !important;
+}
+.kv-video-card:hover .kv-play-btn {
+    transform: scale(1.15);
+    box-shadow: 0 8px 24px rgba(255, 0, 51, 0.45);
+    filter: brightness(1.08);
+}
+.kv-video-card:active {
+    transform: translateY(-2px) scale(0.99);
+    transition-duration: 0.1s;
+}
+
+/* --- Professional Buttons & CTAs Hover Effects --- */
+.kv-btn-action,
+.kv-btn-primary,
+.kv-btn-navy,
+.kv-btn-outline {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.22s var(--kv-ease-hover),
+                box-shadow 0.22s var(--kv-ease-hover),
+                background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                filter 0.2s ease;
+    will-change: transform, box-shadow;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+/* Arrow inside buttons & links */
+.kv-arrow,
+.kv-btn-action svg:last-child {
+    display: inline-block;
+    transition: transform 0.24s var(--kv-ease-hover);
+    will-change: transform;
+}
+
+/* Green Primary Button Hover */
+.kv-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px -4px rgba(43, 212, 106, 0.55), 0 3px 8px rgba(43, 212, 106, 0.3) !important;
+    filter: brightness(1.03);
+}
+.kv-btn-primary:hover .kv-arrow,
+.kv-btn-primary:hover svg:last-child {
+    transform: translateX(4px);
+}
+.kv-btn-primary:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 12px rgba(43, 212, 106, 0.35);
+    transition-duration: 0.08s;
+}
+
+/* Navy Primary Button Hover */
+.kv-btn-navy:hover {
+    transform: translateY(-2px);
+    background-color: #0E2E52 !important;
+    box-shadow: 0 12px 28px -4px rgba(7, 28, 51, 0.38) !important;
+}
+.kv-btn-navy:hover .kv-arrow,
+.kv-btn-navy:hover svg:last-child {
+    transform: translateX(4px);
+}
+.kv-btn-navy:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 12px rgba(7, 28, 51, 0.22);
+    transition-duration: 0.08s;
+}
+
+/* Outline / Ghost Button Hover */
+.kv-btn-outline:hover {
+    transform: translateY(-2px);
+    background-color: #071C33 !important;
+    color: #FFFFFF !important;
+    border-color: #071C33 !important;
+    box-shadow: 0 10px 24px -4px rgba(7, 28, 51, 0.25) !important;
+}
+.kv-btn-outline:hover .kv-arrow,
+.kv-btn-outline:hover svg:last-child {
+    transform: translateX(4px);
+}
+.kv-btn-outline:active {
+    transform: translateY(0) scale(0.98);
+    transition-duration: 0.08s;
+}
+
+/* Slider Navigation Buttons Hover */
+.kv-slider-nav-btn {
+    transition: transform 0.2s var(--kv-ease-hover), background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.kv-slider-nav-btn:hover {
+    transform: translateY(-2px);
+    background-color: #071C33 !important;
+    border-color: #071C33 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 6px 16px rgba(7, 28, 51, 0.2) !important;
+}
+.kv-slider-nav-btn:active {
+    transform: translateY(0) scale(0.96);
+}
+
+/* --- CRITICAL: Card Hover Triggers Inner Button & Arrow Hover --- */
+/* When parent card is hovered, inner buttons and arrows react */
+.kv-card:hover .kv-btn-primary,
+.kv-card-hover:hover .kv-btn-primary,
+.kv-hover:hover .kv-btn-primary,
+.kv-card-dark:hover .kv-btn-primary,
+.is-parent-hovered.kv-btn-primary {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px -4px rgba(43, 212, 106, 0.55);
+    filter: brightness(1.03);
+}
+
+.kv-card:hover .kv-btn-navy,
+.kv-card-hover:hover .kv-btn-navy,
+.kv-hover:hover .kv-btn-navy,
+.kv-card-dark:hover .kv-btn-navy,
+.is-parent-hovered.kv-btn-navy {
+    transform: translateY(-2px);
+    background-color: #0E2E52 !important;
+    box-shadow: 0 12px 28px -4px rgba(7, 28, 51, 0.38);
+}
+
+.kv-card:hover .kv-btn-outline,
+.kv-card-hover:hover .kv-btn-outline,
+.kv-hover:hover .kv-btn-outline,
+.is-parent-hovered.kv-btn-outline {
+    transform: translateY(-2px);
+    background-color: #071C33 !important;
+    color: #FFFFFF !important;
+    border-color: #071C33 !important;
+}
+
+/* Arrow inside cards slides when card is hovered */
+.kv-card:hover .kv-arrow,
+.kv-card-hover:hover .kv-arrow,
+.kv-hover:hover .kv-arrow,
+.kv-card-dark:hover .kv-arrow,
+.kv-card:hover .kv-card-link-arrow,
+.kv-card-hover:hover .kv-card-link-arrow,
+.kv-card-dark:hover .kv-card-link-arrow,
+.is-parent-hovered .kv-arrow,
+.is-parent-hovered.kv-arrow {
+    transform: translateX(6px) !important;
+}
+
+.kv-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 0.24s var(--kv-ease-hover), transform 0.24s var(--kv-ease-hover), color 0.2s ease;
+}
+.kv-card:hover .kv-card-link,
+.kv-card-hover:hover .kv-card-link,
+.kv-card-dark:hover .kv-card-link,
+.is-parent-hovered.kv-card-link {
+    gap: 10px;
+}
+.kv-card:hover .kv-card-link .kv-arrow,
+.kv-card-hover:hover .kv-card-link .kv-arrow,
+.kv-card-dark:hover .kv-card-link .kv-arrow,
+.is-parent-hovered .kv-arrow {
+    transform: translateX(6px);
+}
+

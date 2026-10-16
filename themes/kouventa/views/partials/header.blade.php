@@ -92,7 +92,7 @@
             <a href="{{ current_page_localized_url('id') }}" style="border: 0; min-width: 40px; min-height: 36px; padding: 6px 10px; border-radius: 8px; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; {{ $currentLocale === 'id' ? 'background: #FFFFFF; color: #071C33;' : 'background: transparent; color: #D5DEE8;' }}">ID</a>
         </div>
 
-        <a href="{{ localized_url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 15px; font-weight: 700; padding: 12px 22px; border-radius: 12px; display: inline-block; text-decoration: none">
+        <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-primary" style="background: #2BD46A; color: #06251A; font-size: 15px; font-weight: 700; padding: 12px 22px; border-radius: 12px; display: inline-block; text-decoration: none">
             {{ t('kouventa.Book a demo', 'Book a demo') }}
         </a>
     </div>

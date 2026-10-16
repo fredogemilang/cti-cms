@@ -13,6 +13,9 @@
     <!-- Local Alpine.js (Rule 10: No External CDN) -->
     <script defer src="{{ theme_asset('js/alpine.min.js') }}"></script>
 
+    <!-- Local Motion & Scroll Reveal Engine (Rule 10: No External CDN) -->
+    <script defer src="{{ theme_asset('js/kouventa-motion.js') }}?v={{ time() }}"></script>
+
     @stack('styles')
 </head>
 <body class="bg-[#F4F6F5] text-[#0E1A24] antialiased">
