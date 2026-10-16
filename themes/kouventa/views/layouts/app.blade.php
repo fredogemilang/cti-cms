@@ -35,7 +35,9 @@
     @stack('styles')
 </head>
 <body class="bg-[#F4F6F5] text-[#0E1A24] antialiased">
-    <div id="wrap" class="min-h-screen flex flex-col justify-between">
+    <div id="wrap" class="min-h-screen flex flex-col justify-between"
+         x-data="{ activeSheet: null, showMenu: true }"
+         x-effect="const isSheetOpen = activeSheet !== null; document.documentElement.style.overflow = isSheetOpen ? 'hidden' : ''; document.body.style.overflow = isSheetOpen ? 'hidden' : '';">
         @include('kouventa::partials.header')
 
         <main class="flex-grow">
@@ -43,6 +45,7 @@
         </main>
 
         @include('kouventa::partials.footer')
+        @include('kouventa::partials.mobile-nav')
     </div>
 
     @stack('scripts')

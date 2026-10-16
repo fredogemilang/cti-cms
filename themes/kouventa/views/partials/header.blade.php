@@ -1,6 +1,33 @@
-<header x-data="{ productOpen: false, solutionOpen: false, pricingOpen: false, mobileOpen: false }"
+@php
+    $siteLogo = setting('site_logo') ? resolve_block_asset(setting('site_logo')) : theme_asset('images/kouventa-logo.png');
+    $siteName = setting('site_name', 'Kouventa');
+    $currentLocale = app()->getLocale();
+@endphp
+
+<!-- Mobile Top Header Bar -->
+<div class="lg:hidden bg-[#071C33] border-b border-white/10 sticky top-0 z-[100] px-4 py-3 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="{{ localized_url('/') }}" class="flex-shrink-0 flex items-center text-white no-underline">
+        <img src="{{ $siteLogo }}" alt="{{ $siteName }}" class="h-8 w-auto">
+    </a>
+
+    <!-- Right Actions: Language Switcher & Book Demo -->
+    <div class="flex items-center gap-2">
+        <div role="group" aria-label="Language" class="flex p-0.5 gap-0.5 rounded-lg bg-white/10 border border-white/15 text-xs font-bold">
+            <a href="{{ current_page_localized_url('en') }}" class="px-2 py-1 rounded {{ $currentLocale === 'en' ? 'bg-white text-[#071C33]' : 'text-white/80' }} no-underline">EN</a>
+            <a href="{{ current_page_localized_url('id') }}" class="px-2 py-1 rounded {{ $currentLocale === 'id' ? 'bg-white text-[#071C33]' : 'text-white/80' }} no-underline">ID</a>
+        </div>
+        <a href="{{ localized_url('/book-demo') }}" class="bg-[#2BD46A] text-[#06251A] text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 no-underline">
+            {{ t('kouventa.Book demo', 'Book demo') }}
+        </a>
+    </div>
+</div>
+
+<!-- Desktop Header -->
+<header x-data="{ productOpen: false, solutionOpen: false, pricingOpen: false }"
         @click.away="productOpen = false; solutionOpen = false; pricingOpen = false"
-        style="height: 80px; padding: 0 80px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; flex-shrink: 0; box-sizing: border-box; background: #071C33; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.06)">
+        class="hidden lg:flex"
+        style="height: 80px; padding: 0 80px; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; flex-shrink: 0; box-sizing: border-box; background: #071C33; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.06)">
     
     @php
         $siteLogo = setting('site_logo') ? resolve_block_asset(setting('site_logo')) : theme_asset('images/kouventa-logo.png');
