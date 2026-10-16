@@ -104,6 +104,355 @@
     stroke: #13803F;
 }
 
+/* ============ CE PRODUCTS SECTION & TABS ============ */
+.kv-ce-products-section {
+    padding: 48px 80px 104px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+.kv-products-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+}
+.kv-products-heading {
+    margin: 0;
+    font-size: 44px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+.kv-products-layout {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 24px;
+    align-items: stretch;
+}
+.kv-product-tablist {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.kv-product-tab {
+    flex: 1 0 auto;
+    min-height: 72px;
+    padding: 12px 18px;
+    border-radius: 16px;
+    border: 1px solid;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-sizing: border-box;
+}
+.kv-product-tab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(7, 28, 51, 0.08);
+}
+.kv-product-tab-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease;
+}
+.kv-product-tab:hover .kv-product-tab-icon {
+    transform: scale(1.06);
+}
+.kv-product-tab-text {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+.kv-product-tab-name {
+    font-size: 16px;
+    font-weight: 800;
+}
+.kv-product-tab-role {
+    font-size: 13px;
+    line-height: 1.4;
+}
+.kv-product-tab-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background 0.25s ease;
+}
+.kv-product-panel {
+    background: #FFFFFF;
+    border: 1px solid #E3E8E6;
+    border-radius: 24px;
+    padding: 40px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 460px;
+    gap: 40px;
+    align-items: center;
+}
+.kv-product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.kv-product-mockup-container {
+    height: 420px;
+    border-radius: 18px;
+    background: #F4F6F5;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ============================================================
+   RESPONSIVE MEDIA QUERIES FOR CE PRODUCTS SECTION
+   ============================================================ */
+
+/* Tablet & Smaller Screens (<= 1024px) */
+@media (max-width: 1024px) {
+    .kv-ce-products-section {
+        padding: 40px 32px 72px !important;
+        gap: 24px !important;
+        scroll-margin-top: 80px !important;
+    }
+
+    .kv-products-heading {
+        font-size: 34px !important;
+    }
+
+    .kv-products-layout {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+
+    .kv-product-tablist {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+    }
+
+    .kv-product-panel {
+        grid-template-columns: 1fr !important;
+        gap: 32px !important;
+        padding: 32px 24px !important;
+    }
+
+    .kv-product-mockup-container {
+        height: auto !important;
+        min-height: 400px !important;
+        padding: 24px 16px !important;
+        box-sizing: border-box !important;
+    }
+}
+
+/* Mobile Screens (<= 640px) */
+@media (max-width: 640px) {
+    .kv-ce-products-section {
+        padding: 32px 20px 60px !important;
+        gap: 20px !important;
+        scroll-margin-top: 80px !important;
+    }
+
+    .kv-products-heading {
+        font-size: 28px !important;
+        line-height: 1.2 !important;
+    }
+
+    .kv-linked-pill {
+        white-space: normal !important;
+        height: auto !important;
+        min-height: 44px !important;
+        padding: 10px 14px !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        border-radius: 16px !important;
+        font-size: 13.5px !important;
+    }
+
+    .kv-btn-show-all {
+        margin-left: 0 !important;
+        font-size: 12px !important;
+        min-height: 32px !important;
+        padding: 4px 12px !important;
+    }
+
+    .kv-unlinked-pill {
+        white-space: normal !important;
+        font-size: 13.5px !important;
+        line-height: 1.4 !important;
+    }
+
+    .kv-products-layout {
+        gap: 16px !important;
+    }
+
+    .kv-product-tablist {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+    }
+
+    .kv-product-tab {
+        min-height: 70px !important;
+        padding: 10px 10px !important;
+        border-radius: 14px !important;
+        gap: 10px !important;
+        align-items: flex-start !important;
+    }
+
+    .kv-product-tab-icon {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 10px !important;
+        flex-shrink: 0 !important;
+    }
+
+    .kv-product-tab-icon svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    .kv-product-tab-name {
+        font-size: 14px !important;
+        line-height: 1.25 !important;
+    }
+
+    .kv-product-tab-role {
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+
+    .kv-product-tab-dot {
+        display: none !important;
+    }
+
+    .kv-product-panel {
+        padding: 24px 18px !important;
+        border-radius: 20px !important;
+        gap: 24px !important;
+    }
+
+    .kv-product-info > span:first-child {
+        font-size: 11px !important;
+    }
+
+    .kv-product-info > span:nth-child(2) {
+        font-size: 24px !important;
+        line-height: 1.2 !important;
+    }
+
+    .kv-product-info > span:nth-child(3) {
+        font-size: 14.5px !important;
+        line-height: 1.5 !important;
+    }
+
+    .kv-product-mockup-container {
+        min-height: 360px !important;
+        padding: 18px 10px !important;
+        border-radius: 16px !important;
+    }
+
+    /* Mockups scaling */
+    .kv-mockup-auth {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-broadcast {
+        transform: scale(0.80);
+        transform-origin: center center;
+        margin: -25px 0;
+    }
+
+    .kv-mockup-chatbot {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        transform: scale(0.92);
+        transform-origin: center center;
+    }
+
+    .kv-mockup-integration {
+        transform: scale(0.74);
+        transform-origin: center center;
+        margin: -20px 0;
+    }
+
+    .kv-mockup-flows {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-omni {
+        transform: scale(0.74);
+        transform-origin: center center;
+        margin: -20px 0;
+    }
+}
+
+/* Extra Small Screens (<= 380px) */
+@media (max-width: 380px) {
+    .kv-products-heading {
+        font-size: 25px !important;
+    }
+
+    .kv-product-tab {
+        padding: 8px 8px !important;
+        gap: 8px !important;
+    }
+
+    .kv-product-tab-name {
+        font-size: 12.5px !important;
+    }
+
+    .kv-product-tab-role {
+        font-size: 10px !important;
+    }
+
+    .kv-mockup-broadcast {
+        transform: scale(0.68);
+        margin: -40px 0;
+    }
+
+    .kv-mockup-chatbot {
+        transform: scale(0.82);
+        margin: -15px 0;
+    }
+
+    .kv-mockup-integration {
+        transform: scale(0.64);
+        margin: -35px 0;
+    }
+
+    .kv-mockup-omni {
+        transform: scale(0.64);
+        margin: -35px 0;
+    }
+}
+
+/* Smallest Screens (<= 360px) */
+@media (max-width: 360px) {
+    .kv-product-tablist {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+}
+
 </style>
 @endpush
 
@@ -444,12 +793,10 @@
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"></path></svg>
 </button>
 </div>
-</section>
-
 <!-- ============ PRODUCTS ============ -->
-<section id="products" style="padding: 48px 80px 104px; display: flex; flex-direction: column; gap: 32px">
-<div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">@if(!empty($featuresTitle['prefix'])){{ $featuresTitle['prefix'] }} <span style="color: #13803F">{{ $featuresTitle['main'] }}</span>@else{{ $featuresTitle['main'] ?? $featuresTitle }}@endif</h2>
+<section id="products" class="kv-ce-products-section" style="padding: 48px 80px 104px; display: flex; flex-direction: column; gap: 32px">
+<div class="kv-products-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
+<h2 class="kv-products-heading" style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">@if(!empty($featuresTitle['prefix'])){{ $featuresTitle['prefix'] }} <span style="color: #13803F">{{ $featuresTitle['main'] }}</span>@else{{ $featuresTitle['main'] ?? $featuresTitle }}@endif</h2>
 <span class="kv-linked-pill" x-show="linked" x-cloak style="min-height: 48px; box-sizing: border-box; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
 <span class="kv-pill-dot" style="width: 10px; height: 10px; border-radius: 50%; background: #13803F; flex-shrink: 0; display: inline-block"></span>
 <span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ t('kouventa.Prospecting', 'Prospecting') }}</strong></span>
@@ -463,11 +810,11 @@
 </span>
 </div>
 
-<div style="display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; align-items: stretch">
-<div role="tablist" aria-label="Products" aria-orientation="vertical" style="display: flex; flex-direction: column; gap: 10px">
+<div class="kv-products-layout" style="display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; align-items: stretch">
+<div class="kv-product-tablist" role="tablist" aria-label="Products" aria-orientation="vertical" style="display: flex; flex-direction: column; gap: 10px">
 
 <!-- Auth Product Tab -->
-<button type="button" role="tab" :aria-selected="product === 'auth'" @click="product = 'auth'"
+<button type="button" role="tab" class="kv-product-tab" :aria-selected="product === 'auth'" @click="product = 'auth'"
     :style="{
         background: product === 'auth' ? '#071C33' : '#FFFFFF',
         color: product === 'auth' ? '#FFFFFF' : '#0E1A24',
@@ -475,22 +822,22 @@
         opacity: (!linked || isToolInStage('auth') || product === 'auth') ? 1 : 0.6
     }"
     style="flex: 1 0 auto; min-height: 72px; padding: 12px 18px; border-radius: 16px; border: 1px solid; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s">
-<span :style="{
+<span class="kv-product-tab-icon" :style="{
     background: product === 'auth' ? 'rgba(43,212,106,0.18)' : '#EAF7EF',
     color: product === 'auth' ? '#2BD46A' : '#13803F'
 }" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center">
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
 </span>
-<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Authentication', 'Authentication') }}</span>
-<span x-show="isToolInStage('auth')" x-text="getToolRole('auth')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span x-show="!isToolInStage('auth')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Secure OTP verification', 'Secure OTP verification') }}</span>
+<span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.Authentication', 'Authentication') }}</span>
+<span class="kv-product-tab-role" x-show="isToolInStage('auth')" x-text="getToolRole('auth')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('auth')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Secure OTP verification', 'Secure OTP verification') }}</span>
 </span>
-<span :style="{ background: isToolInStage('auth') ? (product === 'auth' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
+<span class="kv-product-tab-dot" :style="{ background: isToolInStage('auth') ? (product === 'auth' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
 
 <!-- Broadcast Product Tab -->
-<button type="button" role="tab" :aria-selected="product === 'broadcast'" @click="product = 'broadcast'"
+<button type="button" role="tab" class="kv-product-tab" :aria-selected="product === 'broadcast'" @click="product = 'broadcast'"
     :style="{
         background: product === 'broadcast' ? '#071C33' : '#FFFFFF',
         color: product === 'broadcast' ? '#FFFFFF' : '#0E1A24',
@@ -498,22 +845,22 @@
         opacity: (!linked || isToolInStage('broadcast') || product === 'broadcast') ? 1 : 0.6
     }"
     style="flex: 1 0 auto; min-height: 72px; padding: 12px 18px; border-radius: 16px; border: 1px solid; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s">
-<span :style="{
+<span class="kv-product-tab-icon" :style="{
     background: product === 'broadcast' ? 'rgba(43,212,106,0.18)' : '#EAF7EF',
     color: product === 'broadcast' ? '#2BD46A' : '#13803F'
 }" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center">
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1Z"></path><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"></path></svg>
 </span>
-<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Broadcasting', 'Broadcasting') }}</span>
-<span x-show="isToolInStage('broadcast')" x-text="getToolRole('broadcast')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span x-show="!isToolInStage('broadcast')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Campaigns at scale', 'Campaigns at scale') }}</span>
+<span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.Broadcasting', 'Broadcasting') }}</span>
+<span class="kv-product-tab-role" x-show="isToolInStage('broadcast')" x-text="getToolRole('broadcast')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('broadcast')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Campaigns at scale', 'Campaigns at scale') }}</span>
 </span>
-<span :style="{ background: isToolInStage('broadcast') ? (product === 'broadcast' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
+<span class="kv-product-tab-dot" :style="{ background: isToolInStage('broadcast') ? (product === 'broadcast' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
 
 <!-- Chatbot Product Tab -->
-<button type="button" role="tab" :aria-selected="product === 'chatbot'" @click="product = 'chatbot'"
+<button type="button" role="tab" class="kv-product-tab" :aria-selected="product === 'chatbot'" @click="product = 'chatbot'"
     :style="{
         background: product === 'chatbot' ? '#071C33' : '#FFFFFF',
         color: product === 'chatbot' ? '#FFFFFF' : '#0E1A24',
@@ -521,22 +868,22 @@
         opacity: (!linked || isToolInStage('chatbot') || product === 'chatbot') ? 1 : 0.6
     }"
     style="flex: 1 0 auto; min-height: 72px; padding: 12px 18px; border-radius: 16px; border: 1px solid; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s">
-<span :style="{
+<span class="kv-product-tab-icon" :style="{
     background: product === 'chatbot' ? 'rgba(43,212,106,0.18)' : '#EAF7EF',
     color: product === 'chatbot' ? '#2BD46A' : '#13803F'
 }" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center">
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V5M9 13h.01M15 13h.01M10 17h4"></path></svg>
 </span>
-<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Chatbot', 'Chatbot') }}</span>
-<span x-show="isToolInStage('chatbot')" x-text="getToolRole('chatbot')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span x-show="!isToolInStage('chatbot')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.AI & predefined chatbots', 'AI & predefined chatbots') }}</span>
+<span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.Chatbot', 'Chatbot') }}</span>
+<span class="kv-product-tab-role" x-show="isToolInStage('chatbot')" x-text="getToolRole('chatbot')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('chatbot')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.AI & predefined chatbots', 'AI & predefined chatbots') }}</span>
 </span>
-<span :style="{ background: isToolInStage('chatbot') ? (product === 'chatbot' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
+<span class="kv-product-tab-dot" :style="{ background: isToolInStage('chatbot') ? (product === 'chatbot' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
 
 <!-- Integration Product Tab -->
-<button type="button" role="tab" :aria-selected="product === 'integration'" @click="product = 'integration'"
+<button type="button" role="tab" class="kv-product-tab" :aria-selected="product === 'integration'" @click="product = 'integration'"
     :style="{
         background: product === 'integration' ? '#071C33' : '#FFFFFF',
         color: product === 'integration' ? '#FFFFFF' : '#0E1A24',
@@ -544,22 +891,22 @@
         opacity: (!linked || isToolInStage('integration') || product === 'integration') ? 1 : 0.6
     }"
     style="flex: 1 0 auto; min-height: 72px; padding: 12px 18px; border-radius: 16px; border: 1px solid; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s">
-<span :style="{
+<span class="kv-product-tab-icon" :style="{
     background: product === 'integration' ? 'rgba(43,212,106,0.18)' : '#EAF7EF',
     color: product === 'integration' ? '#2BD46A' : '#13803F'
 }" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center">
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10H7z"></path><path d="M3 9h4M3 15h4M17 9h4M17 15h4M9 3v4M15 3v4M9 17v4M15 17v4"></path></svg>
 </span>
-<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Cross Platform Integration', 'Cross Platform Integration') }}</span>
-<span x-show="isToolInStage('integration')" x-text="getToolRole('integration')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span x-show="!isToolInStage('integration')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Automated system updates', 'Automated system updates') }}</span>
+<span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.Cross Platform Integration', 'Cross Platform Integration') }}</span>
+<span class="kv-product-tab-role" x-show="isToolInStage('integration')" x-text="getToolRole('integration')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('integration')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Automated system updates', 'Automated system updates') }}</span>
 </span>
-<span :style="{ background: isToolInStage('integration') ? (product === 'integration' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
+<span class="kv-product-tab-dot" :style="{ background: isToolInStage('integration') ? (product === 'integration' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
 
 <!-- Flows Product Tab -->
-<button type="button" role="tab" :aria-selected="product === 'flows'" @click="product = 'flows'"
+<button type="button" role="tab" class="kv-product-tab" :aria-selected="product === 'flows'" @click="product = 'flows'"
     :style="{
         background: product === 'flows' ? '#071C33' : '#FFFFFF',
         color: product === 'flows' ? '#FFFFFF' : '#0E1A24',
@@ -567,22 +914,22 @@
         opacity: (!linked || isToolInStage('flows') || product === 'flows') ? 1 : 0.6
     }"
     style="flex: 1 0 auto; min-height: 72px; padding: 12px 18px; border-radius: 16px; border: 1px solid; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s">
-<span :style="{
+<span class="kv-product-tab-icon" :style="{
     background: product === 'flows' ? 'rgba(43,212,106,0.18)' : '#EAF7EF',
     color: product === 'flows' ? '#2BD46A' : '#13803F'
 }" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center">
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h3"></path></svg>
 </span>
-<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.WhatsApp Flows', 'WhatsApp Flows') }}</span>
-<span x-show="isToolInStage('flows')" x-text="getToolRole('flows')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span x-show="!isToolInStage('flows')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Forms inside the chat', 'Forms inside the chat') }}</span>
+<span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.WhatsApp Flows', 'WhatsApp Flows') }}</span>
+<span class="kv-product-tab-role" x-show="isToolInStage('flows')" x-text="getToolRole('flows')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('flows')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Forms inside the chat', 'Forms inside the chat') }}</span>
 </span>
-<span :style="{ background: isToolInStage('flows') ? (product === 'flows' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
+<span class="kv-product-tab-dot" :style="{ background: isToolInStage('flows') ? (product === 'flows' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
 
 <!-- Omni Product Tab -->
-<button type="button" role="tab" :aria-selected="product === 'omni'" @click="product = 'omni'"
+<button type="button" role="tab" class="kv-product-tab" :aria-selected="product === 'omni'" @click="product = 'omni'"
     :style="{
         background: product === 'omni' ? '#071C33' : '#FFFFFF',
         color: product === 'omni' ? '#FFFFFF' : '#0E1A24',
@@ -590,25 +937,25 @@
         opacity: (!linked || isToolInStage('omni') || product === 'omni') ? 1 : 0.6
     }"
     style="flex: 1 0 auto; min-height: 72px; padding: 12px 18px; border-radius: 16px; border: 1px solid; display: flex; align-items: center; gap: 14px; text-align: left; cursor: pointer; transition: all 0.2s">
-<span :style="{
+<span class="kv-product-tab-icon" :style="{
     background: product === 'omni' ? 'rgba(43,212,106,0.18)' : '#EAF7EF',
     color: product === 'omni' ? '#2BD46A' : '#13803F'
 }" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; display: flex; align-items: center; justify-content: center">
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"></path></svg>
 </span>
-<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Omnichannel', 'Omnichannel') }}</span>
-<span x-show="isToolInStage('omni')" x-text="getToolRole('omni')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span x-show="!isToolInStage('omni')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.One inbox for all channels', 'One inbox for all channels') }}</span>
+<span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.Omnichannel', 'Omnichannel') }}</span>
+<span class="kv-product-tab-role" x-show="isToolInStage('omni')" x-text="getToolRole('omni')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('omni')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.One inbox for all channels', 'One inbox for all channels') }}</span>
 </span>
-<span :style="{ background: isToolInStage('omni') ? (product === 'omni' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
+<span class="kv-product-tab-dot" :style="{ background: isToolInStage('omni') ? (product === 'omni' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
 
 </div>
 
 <!-- Product Detail Panel (Right Side) -->
-<div role="tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 40px; display: grid; grid-template-columns: minmax(0, 1fr) 460px; gap: 40px; align-items: center">
-<div style="display: flex; flex-direction: column; gap: 18px">
+<div class="kv-product-panel" role="tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 40px; display: grid; grid-template-columns: minmax(0, 1fr) 460px; gap: 40px; align-items: center">
+<div class="kv-product-info" style="display: flex; flex-direction: column; gap: 18px">
 <span x-text="products[product].name" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F">{{ t('kouventa.Broadcasting', 'Broadcasting') }}</span>
 <span x-text="products[product].headline" style="font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Reach more customers, at scale.', 'Reach more customers, at scale.') }}</span>
 <span x-text="products[product].desc" style="font-size: 17px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Send promotions, campaigns and feedback requests on WhatsApp.', 'Send promotions, campaigns and feedback requests on WhatsApp.') }}</span>
@@ -620,10 +967,10 @@
 </div>
 
 <!-- illustrations -->
-<div role="img" :aria-label="products[product].alt" style="height: 420px; border-radius: 18px; background: #F4F6F5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
+<div class="kv-product-mockup-container" role="img" :aria-label="products[product].alt" style="height: 420px; border-radius: 18px; background: #F4F6F5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
 
 <!-- Auth Illustration -->
-<div class="kv-flex-col" x-show="product === 'auth'" style="width: 300px; gap: 14px">
+<div class="kv-flex-col kv-mockup-auth" x-show="product === 'auth'" style="width: 300px; gap: 14px">
 <div style="background: #FFFFFF; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(7,28,51,0.08)">
 <span style="font-size: 13px; font-weight: 700; color: #4A5866">{{ t('kouventa.Sign in to Your Brand', 'Sign in to Your Brand') }}</span>
 <div style="height: 40px; border-radius: 10px; border: 1px solid #E3E8E6; display: flex; align-items: center; padding: 0 12px; font-size: 14px; color: #0E1A24">+62 812 •••• 4567</div>
@@ -641,7 +988,7 @@
 </div>
 
 <!-- Broadcast Illustration -->
-<div class="kv-flex-col" x-show="product === 'broadcast'" style="width: 400px; gap: 22px">
+<div class="kv-flex-col kv-mockup-broadcast" x-show="product === 'broadcast'" style="width: 400px; gap: 22px">
 <div style="display: flex; align-items: center; gap: 0">
 <div style="width: 150px; flex-shrink: 0; background: #FFFFFF; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.08); animation: kvPulse 2.4s ease infinite">
 <div style="height: 54px; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px">PROMO</div>
@@ -671,7 +1018,7 @@
 </div>
 
 <!-- Chatbot Illustration -->
-<div class="kv-flex-col" x-show="product === 'chatbot'" style="width: 350px; gap: 8px; font-size: 12.5px; line-height: 1.45">
+<div class="kv-flex-col kv-mockup-chatbot" x-show="product === 'chatbot'" style="width: 350px; gap: 8px; font-size: 12.5px; line-height: 1.45">
 <div style="align-self: flex-start; max-width: 88%; background: #FFFFFF; padding: 10px 12px; border-radius: 4px 14px 14px 14px; display: flex; flex-direction: column; gap: 8px; animation: kvLoop 12s ease 0.3s infinite both">
 <span><span style="font-size: 10.5px; font-weight: 800; color: #4A5866">{{ t('kouventa.STATIC BOT', 'STATIC BOT') }}</span><br>{{ t('kouventa.Hi! How can we help you today?', 'Hi! How can we help you today?') }}</span>
 <div style="display: flex; gap: 6px; flex-wrap: wrap"><span style="font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 999px; border: 1px solid #13803F; color: #13803F">{{ t('kouventa.Track order', 'Track order') }}</span><span style="font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 999px; border: 1px solid #13803F; color: #13803F">Promo</span><span style="font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 999px; border: 1px solid #13803F; color: #13803F">{{ t('kouventa.Store hours', 'Store hours') }}</span></div>
@@ -684,7 +1031,7 @@
 </div>
 
 <!-- Integration Illustration -->
-<div class="kv-flex kv-items-center" x-show="product === 'integration'" style="width: 420px">
+<div class="kv-flex kv-items-center kv-mockup-integration" x-show="product === 'integration'" style="width: 420px">
 <div style="width: 118px; flex-shrink: 0; background: #FFFFFF; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 10px 30px rgba(7,28,51,0.08)">
 <span style="font-size: 12px; font-weight: 700">{{ t('kouventa.Your system', 'Your system') }}</span>
 <span style="font-size: 11px; color: #4A5866">ERP · CRM · POS</span>
@@ -701,7 +1048,7 @@
 </div>
 
 <!-- Flows Illustration -->
-<div class="kv-flex-col" x-show="product === 'flows'" style="width: 300px; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1)">
+<div class="kv-flex-col kv-mockup-flows" x-show="product === 'flows'" style="width: 300px; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1)">
 <div style="background: #071C33; color: #FFFFFF; padding: 14px 16px; font-size: 14px; font-weight: 700">{{ t('kouventa.Open an account', 'Open an account') }}</div>
 <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px">
 <div style="display: flex; flex-direction: column; gap: 5px"><span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.Full name', 'Full name') }}</span><div style="height: 36px; border-radius: 8px; border: 1px solid #E3E8E6; padding: 0 10px; display: flex; align-items: center"><div style="height: 8px; border-radius: 4px; background: #0E1A24; --w: 60%; animation: kvGrow 7s ease 0.2s infinite both"></div></div></div>
@@ -714,7 +1061,7 @@
 </div>
 
 <!-- Omni Illustration -->
-<div class="kv-flex kv-items-center" x-show="product === 'omni'" style="width: 420px; gap: 0">
+<div class="kv-flex kv-items-center kv-mockup-omni" x-show="product === 'omni'" style="width: 420px; gap: 0">
 <div style="width: 118px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px">
 <span style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>WhatsApp</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">Chat</span></span></span>
 <span style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-1.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Instagram</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.DM & comments', 'DM & comments') }}</span></span></span>
