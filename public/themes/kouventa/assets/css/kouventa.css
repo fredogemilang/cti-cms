@@ -671,6 +671,98 @@ html{scroll-padding-top:0}
   color: #06251A !important;
 }
 
+/* Pricing Tier Cards Grid - Strict Horizontal Layout */
+.kv-pricing-tier-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 24px;
+  align-items: stretch;
+  width: 100%;
+}
+.kv-pricing-tier-grid[style*="display: none"],
+.kv-pricing-tier-grid.kv-hidden {
+  display: none !important;
+}
+@media (max-width: 991px) {
+  .kv-pricing-tier-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Pricing Compare Feature Table - Strict Horizontal Layout */
+.kv-compare-wrapper {
+  background: #FFFFFF;
+  border: 1px solid #E3E8E6;
+  border-radius: 24px;
+  height: 640px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.kv-compare-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #071C33;
+  color: #FFFFFF;
+  display: grid !important;
+  grid-template-columns: minmax(260px, 1.6fr) repeat(3, minmax(160px, 1fr)) !important;
+  font-size: 14px;
+  font-weight: 800;
+  min-width: 780px;
+}
+.kv-compare-row {
+  display: grid !important;
+  grid-template-columns: minmax(260px, 1.6fr) repeat(3, minmax(160px, 1fr)) !important;
+  border-top: 1px solid #EEF2F0;
+  font-size: 14px;
+  align-items: center;
+  min-width: 780px;
+}
+.kv-compare-row:hover {
+  background: #F9FBFA;
+}
+
+/* Pricing Add-on Cards Grid */
+.kv-addon-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 16px;
+  width: 100%;
+}
+@media (max-width: 1100px) {
+  .kv-addon-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 768px) {
+  .kv-addon-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 480px) {
+  .kv-addon-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+}
+
+/* Pricing Template Types Grid */
+.kv-template-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 20px;
+  width: 100%;
+}
+@media (max-width: 991px) {
+  .kv-template-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 640px) {
+  .kv-template-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+}
+
 
 
 /* Story Carousel Navigation & Dots */
