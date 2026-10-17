@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('is_featured')->default(false);
             $table->unsignedInteger('views_count')->default(0);
             $table->json('meta')->nullable();
+            $table->json('translations')->nullable();
             $table->timestamps();
 
             $table->index(['status', 'published_at']);
@@ -37,6 +38,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->unsignedInteger('order')->default(0);
+            $table->json('translations')->nullable();
             $table->timestamps();
         });
 
@@ -44,6 +46,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->json('translations')->nullable();
             $table->timestamps();
         });
 
