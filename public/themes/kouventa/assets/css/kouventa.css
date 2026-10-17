@@ -2586,7 +2586,7 @@ body {
     }
 
     /* Interactive Illustrations and Mockups on Product/Solution pages */
-    div[role="img"][style*="width: 420px"],
+    div[role="img"][style*="width: 420px"]:not(.kv-sol-ce-hero-desktop):not(.kv-sol-ce-hero-mobile),
     div[role="img"][style*="width: 440px"]:not(.kv-sol-ai-hero-ill),
     div[role="img"][style*="width: 520px"],
     .kv-stage-1,
@@ -3940,17 +3940,69 @@ body {
 
 .kv-sol-ai-hero-ill {
     width: 440px !important;
+    min-width: 440px !important;
     max-width: 440px !important;
     height: 370px !important;
     position: relative !important;
     flex-shrink: 0 !important;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 500px) {
     .kv-sol-ai-hero-ill {
+        left: 50% !important;
+        margin-left: -220px !important;
         transform: scale(calc((100vw - 32px) / 440)) !important;
         transform-origin: top center !important;
         margin-bottom: calc((370px * (1 - ((100vw - 32px) / 440))) * -1) !important;
+    }
+}
+
+/* Solution CE Hero Section Illustration */
+.kv-sol-ce-hero-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+}
+
+.kv-sol-ce-hero-desktop {
+    display: block !important;
+    width: 420px !important;
+    min-width: 420px !important;
+    max-width: 420px !important;
+    height: 340px !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+}
+
+.kv-sol-ce-hero-mobile {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .kv-sol-ce-hero-desktop {
+        display: none !important;
+    }
+
+    .kv-sol-ce-hero-mobile {
+        display: block !important;
+        width: 320px !important;
+        min-width: 320px !important;
+        max-width: 320px !important;
+        height: 340px !important;
+        position: relative !important;
+        flex-shrink: 0 !important;
+        margin: 0 auto !important;
+    }
+}
+
+@media (max-width: 340px) {
+    .kv-sol-ce-hero-mobile {
+        margin-left: calc((100% - 320px) / 2) !important;
+        transform: scale(calc((100vw - 20px) / 320)) !important;
+        transform-origin: top center !important;
+        margin-bottom: calc((340px * (1 - ((100vw - 20px) / 320))) * -1) !important;
     }
 }
 
