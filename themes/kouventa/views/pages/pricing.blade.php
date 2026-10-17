@@ -1112,7 +1112,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.AI guardrails & PII masking', 'AI guardrails & PII masking') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Livechat delivery, SDK access', 'Livechat delivery, SDK access') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- AI Grow (Most Popular) -->
@@ -1138,7 +1138,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.500 GB storage, chat playground', '500 GB storage, chat playground') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.File & chart generation tools', 'File & chart generation tools') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-primary" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- AI Scale -->
@@ -1163,7 +1163,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Dedicated engineering pod', 'Dedicated engineering pod') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Audit trail & change approval gates', 'Audit trail & change approval gates') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-outline" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
         </div>
 
@@ -1191,7 +1191,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Analytics, role-based access, MFA', 'Analytics, role-based access, MFA') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.SaaS cloud deployment', 'SaaS cloud deployment') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- CE Professional (Most Popular) -->
@@ -1217,7 +1217,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Broadcast scheduling & CSAT', 'Broadcast scheduling & CSAT') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Standard 9×5 support, 99.5% uptime', 'Standard 9×5 support, 99.5% uptime') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-primary" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- CE Enterprise -->
@@ -1242,7 +1242,7 @@
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Dedicated implementation team', 'Dedicated implementation team') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Data masking & audit trail', 'Data masking & audit trail') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="margin-top: 8px; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-outline" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
         </div>
     </div>
@@ -1260,11 +1260,11 @@
                 </p>
             </div>
             <div style="display: flex; gap: 8px; flex-shrink: 0">
-                <button type="button" @click="expandAll()" style="min-height: 44px; padding: 10px 16px; border-radius: 10px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer">
+                <button type="button" @click="expandAll()" class="kv-btn-action kv-btn-table-control" style="min-height: 44px; padding: 10px 16px; border-radius: 10px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; cursor: pointer">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9l5-5 5 5M7 15l5 5 5-5"></path></svg>
                     {{ t('kouventa.Expand all', 'Expand all') }}
                 </button>
-                <button type="button" @click="collapseAll()" style="min-height: 44px; padding: 10px 16px; border-radius: 10px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer">
+                <button type="button" @click="collapseAll()" class="kv-btn-action kv-btn-table-control" style="min-height: 44px; padding: 10px 16px; border-radius: 10px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; cursor: pointer">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4l5 5 5-5M7 20l5-5 5 5"></path></svg>
                     {{ t('kouventa.Collapse all', 'Collapse all') }}
                 </button>
@@ -1285,7 +1285,7 @@
                 @foreach ($ceCategories as $cIndex => $category)
                     @php $catKey = 'ce_' . $cIndex; @endphp
                     <div style="border-bottom: 1px solid #E3E8E6">
-                        <button type="button" @click="toggleCat('{{ $catKey }}')" style="width: 100%; min-height: 48px; border: 0; background: #F4F6F5; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 800; color: #0E1A24; text-align: left; cursor: pointer">
+                        <button type="button" @click="toggleCat('{{ $catKey }}')" class="kv-table-cat-btn" style="width: 100%; min-height: 48px; border: 0; background: #F4F6F5; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 800; color: #0E1A24; text-align: left; cursor: pointer">
                             <span>{{ t('kouventa.' . $category[0], $category[0]) }}</span>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" :style="{ transform: isCatOpen('{{ $catKey }}') ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }">
                                 <path d="m6 9 6 6 6-6"></path>
@@ -1325,7 +1325,7 @@
                 @foreach ($aiCategories as $cIndex => $category)
                     @php $catKey = 'ai_' . $cIndex; @endphp
                     <div style="border-bottom: 1px solid #E3E8E6">
-                        <button type="button" @click="toggleCat('{{ $catKey }}')" style="width: 100%; min-height: 48px; border: 0; background: #F4F6F5; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 800; color: #0E1A24; text-align: left; cursor: pointer">
+                        <button type="button" @click="toggleCat('{{ $catKey }}')" class="kv-table-cat-btn" style="width: 100%; min-height: 48px; border: 0; background: #F4F6F5; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 800; color: #0E1A24; text-align: left; cursor: pointer">
                             <span>{{ t('kouventa.' . $category[0], $category[0]) }}</span>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" :style="{ transform: isCatOpen('{{ $catKey }}') ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }">
                                 <path d="m6 9 6 6 6-6"></path>
@@ -1535,7 +1535,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.14)"><span style="font-size: 15px; color: #B9C6D3">{{ t('kouventa.Conversation fee / month', 'Conversation fee / month') }}</span><span style="font-size: 18px; font-weight: 800" x-text="fmt(convTotal)">Rp 0</span></div>
                         <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.14)"><span style="font-size: 15px; color: #B9C6D3">{{ t('kouventa.Platform + conversation / month', 'Platform + conversation / month') }}</span><span style="font-size: 18px; font-weight: 800" x-text="fmt(monthlyTotal)">Rp 1.499.000</span></div>
                         <div style="display: flex; flex-direction: column; gap: 4px; padding-top: 4px"><span style="font-size: 15px; color: #B9C6D3">{{ t('kouventa.Grand total / year', 'Grand total / year') }}</span><span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; color: #2BD46A" x-text="fmt(yearlyTotal)">Rp 17.988.000</span></div>
-                        <a href="{{ localized_url('/book-demo') }}" style="margin-top: 6px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
+                        <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-primary" style="margin-top: 6px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
                     </div>
                 </template>
 
@@ -1546,7 +1546,7 @@
                             <span style="font-size: 26px; line-height: 1.25; font-weight: 800">{{ t('kouventa.More than 15,000 active users?', 'More than 15,000 active users?') }}</span>
                             <span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ t("kouventa.You're ready for an enterprise setup. Talk to our team for a plan tailored to your volume, channels and integrations.", "You're ready for an enterprise setup. Talk to our team for a plan tailored to your volume, channels and integrations.") }}</span>
                         </div>
-                        <a href="{{ localized_url('/book-demo') }}" style="margin-top: 6px; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                        <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-primary" style="margin-top: 6px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
                     </div>
                 </template>
             </div>
@@ -1562,8 +1562,8 @@
             <p style="margin: 0; font-size: 18px; line-height: 1.55">{!! nl2br(e($ctaSubtitle)) !!}</p>
         </div>
         <div style="display: flex; gap: 12px; flex-shrink: 0">
-            <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a working session', 'Book a working session') }}</a>
-            <a href="{{ localized_url('/book-demo') }}" class="kv-btn" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none">{{ t('kouventa.Contact sales', 'Contact sales') }}</a>
+            <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a working session', 'Book a working session') }}</a>
+            <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none">{{ t('kouventa.Contact sales', 'Contact sales') }}</a>
         </div>
     </div>
 </section>

@@ -670,6 +670,10 @@ html{scroll-padding-top:0}
   background: #2BD46A !important;
   color: #06251A !important;
 }
+.kv-toggle-btn:hover:not(.is-active) {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #FFFFFF !important;
+}
 
 /* Pricing Tier Cards Grid - Strict Horizontal Layout */
 .kv-pricing-tier-grid {
@@ -1781,7 +1785,8 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
 .kv-btn-action,
 .kv-btn-primary,
 .kv-btn-navy,
-.kv-btn-outline {
+.kv-btn-outline,
+.kv-btn {
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -1922,6 +1927,53 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
 }
 .kv-slider-nav-btn:active {
     transform: translateY(0) scale(0.96);
+}
+
+/* Pricing Table Control Buttons (Expand All / Collapse All) */
+.kv-btn-table-control {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.22s var(--kv-ease-hover),
+                background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease,
+                box-shadow 0.22s var(--kv-ease-hover);
+    will-change: transform, box-shadow;
+    cursor: pointer;
+    text-decoration: none;
+}
+.kv-btn-table-control:hover {
+    transform: translateY(-2px);
+    background-color: #071C33 !important;
+    border-color: #071C33 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 8px 20px -3px rgba(7, 28, 51, 0.25) !important;
+}
+.kv-btn-table-control:hover svg {
+    stroke: #2BD46A !important;
+    transform: scale(1.08);
+}
+.kv-btn-table-control svg {
+    transition: transform 0.22s var(--kv-ease-hover), stroke 0.2s ease;
+}
+.kv-btn-table-control:active {
+    transform: translateY(0) scale(0.98);
+    transition-duration: 0.08s;
+}
+
+/* Pricing Table Category Accordion Header Button */
+.kv-table-cat-btn {
+    transition: background-color 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+}
+.kv-table-cat-btn:hover {
+    background-color: #EAEFEC !important;
+}
+.kv-table-cat-btn:hover svg {
+    stroke: #13803F !important;
 }
 
 /* --- CRITICAL: Card Hover Triggers Inner Button & Arrow Hover --- */
