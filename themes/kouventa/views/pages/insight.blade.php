@@ -2,22 +2,25 @@
 
 @php
     $heroBadge = $page?->block('hero_badge', 'Blog');
-    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Explore The Newest Articles', 'main' => 'In Our Blog Section']);
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Explore the newest articles', 'main' => 'in our blog.']);
 @endphp
 
 @section('content')
 <div class="kv-canvas-wrap">
-<!-- ============ HERO SECTION ============ -->
+<!-- ============ NAV + HERO (Navy #071C33 Consistent with /product/ai/) ============ -->
 <section class="kv-insight-hero">
-    <div class="kv-hero-ambient-glow" aria-hidden="true"></div>
+    <!-- Decorative Circle Ring matching /product/ai/ & /solution/ce/ -->
+    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none">
+        <div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div>
+    </div>
     <div class="kv-hero-container">
         <div class="kv-hero-badge">
             <span class="kv-badge-dot"></span>
             <span>{{ $heroBadge ?? 'BLOG' }}</span>
         </div>
         <h1 class="kv-hero-heading">
-            {{ $heroTitle['prefix'] ?? 'Explore The Newest Articles' }}<br>
-            <span class="kv-hero-gradient-text">{{ $heroTitle['main'] ?? 'In Our Blog Section' }}</span>
+            {{ $heroTitle['prefix'] ?? 'Explore the newest articles' }}<br>
+            <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'in our blog.' }}</span>
         </h1>
         <p class="kv-hero-desc">
             {{ t('kouventa.insight_desc', 'Explore our latest thinking on Agentic AI, WhatsApp Business automation, and generative AI innovations.') }}
@@ -56,24 +59,15 @@ function initInsightBlog() {
    KOUVENTA INSIGHT ARCHIVE — ULTRA-PREMIUM ENTERPRISE STYLING
    ============================================================ */
 
-/* Hero */
+/* Hero: Navy #071C33 matching /product/ai/ and other pages */
 .kv-insight-hero {
     position: relative;
     overflow: hidden;
-    background: radial-gradient(ellipse 90% 75% at 50% -10%, rgba(43, 212, 106, 0.28) 0%, rgba(200, 245, 222, 0.35) 30%, rgba(244, 246, 245, 0.5) 70%, #F4F6F5 100%);
-    padding: 72px 24px 56px;
+    background: #071C33 !important;
+    color: #FFFFFF !important;
+    padding: 88px 80px 88px;
     display: flex;
     justify-content: center;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-}
-
-.kv-hero-ambient-glow {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image: radial-gradient(rgba(19, 128, 63, 0.04) 1px, transparent 1px);
-    background-size: 24px 24px;
-    opacity: 0.6;
 }
 
 .kv-hero-container {
@@ -85,7 +79,8 @@ function initInsightBlog() {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 16px;
+    gap: 20px;
+    z-index: 2;
 }
 
 .kv-hero-badge {
@@ -94,58 +89,53 @@ function initInsightBlog() {
     gap: 8px;
     padding: 6px 18px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(43, 212, 106, 0.35);
-    box-shadow: 0 4px 16px -2px rgba(19, 128, 63, 0.12);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(8px);
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #13803F;
+    color: #93A4B6;
 }
 
 .kv-badge-dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #13803F;
+    background: #2BD46A;
     box-shadow: 0 0 8px #2BD46A;
 }
 
 .kv-hero-heading {
     margin: 0;
-    font-size: clamp(34px, 4.5vw, 54px);
-    line-height: 1.15;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1.05;
     font-weight: 800;
     letter-spacing: -0.035em;
-    color: #0E1A24;
-}
-
-.kv-hero-gradient-text {
-    background: linear-gradient(135deg, #0E1A24 15%, #13803F 85%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #FFFFFF;
 }
 
 .kv-hero-desc {
     margin: 0;
-    max-width: 600px;
-    font-size: 16.5px;
-    line-height: 1.6;
-    color: #4A5866;
+    max-width: 640px;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #B9C6D3;
 }
 
-/* Category Filter Bar */
+/* Category Filter Bar: Navy #071C33 Subnav style matching Kouventa */
 .kv-tab-bar-wrap {
     width: 100%;
-    background: #FFFFFF;
-    border-bottom: 1px solid #E5E9EB;
+    background: #071C33;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     position: sticky;
     top: 80px;
     z-index: 30;
-    box-shadow: 0 4px 12px -4px rgba(14, 26, 36, 0.03);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .kv-tab-bar {
@@ -169,7 +159,7 @@ function initInsightBlog() {
     padding: 16px 18px;
     font-size: 14.5px;
     font-weight: 600;
-    color: #64748B;
+    color: #93A4B6;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -180,10 +170,10 @@ function initInsightBlog() {
     justify-content: center;
 }
 .kv-tab-item:hover {
-    color: #0E1A24;
+    color: #FFFFFF;
 }
 .kv-tab-item.is-active {
-    color: #13803F;
+    color: #FFFFFF;
     font-weight: 700;
 }
 .kv-tab-underline {
@@ -192,8 +182,9 @@ function initInsightBlog() {
     left: 16px;
     right: 16px;
     height: 2.5px;
-    background: #13803F;
+    background: #2BD46A;
     border-radius: 999px;
+    box-shadow: 0 0 10px rgba(43, 212, 106, 0.5);
 }
 
 /* Archive Grid Container */
@@ -233,13 +224,14 @@ function initInsightBlog() {
     border-color: rgba(43, 212, 106, 0.45);
 }
 
+/* Image Container: Native Support for 2560 x 871 Featured Images */
 .kv-card-img-wrap {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 2560 / 871;
     overflow: hidden;
     position: relative;
-    background: #F1F5F9;
+    background: #0E1A24;
     border-bottom: 1px solid #F0F4F2;
 }
 
@@ -252,7 +244,7 @@ function initInsightBlog() {
 }
 
 .kv-insight-card:hover .kv-insight-card-img {
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 
 .kv-card-img-placeholder {
@@ -293,7 +285,7 @@ function initInsightBlog() {
 
 .kv-card-title {
     margin: 0 0 14px;
-    font-size: 18px;
+    font-size: 17.5px;
     line-height: 1.4;
     font-weight: 700;
     color: #0E1A24;
@@ -302,7 +294,7 @@ function initInsightBlog() {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 50px;
+    min-height: 48px;
 }
 
 .kv-card-title a {
@@ -413,6 +405,9 @@ function initInsightBlog() {
 
 /* Responsive Styles */
 @media (max-width: 1023px) {
+    .kv-insight-hero {
+        padding: 64px 32px 64px !important;
+    }
     .kv-insight-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         column-gap: 20px !important;
@@ -430,7 +425,10 @@ function initInsightBlog() {
 
 @media (max-width: 640px) {
     .kv-insight-hero {
-        padding: 44px 16px 36px !important;
+        padding: 48px 16px 44px !important;
+    }
+    .kv-hero-desc {
+        font-size: 15px !important;
     }
     .kv-tab-bar-wrap {
         top: 60px !important;
@@ -468,21 +466,20 @@ function initInsightBlog() {
         margin-bottom: 8px !important;
     }
     .kv-card-footer {
-        padding-top: 10px !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
+        padding-top: 8px !important;
         gap: 6px !important;
     }
     .kv-card-meta {
-        font-size: 10.5px !important;
-        gap: 6px !important;
+        font-size: 10px !important;
+        gap: 4px !important;
+        flex-wrap: wrap !important;
     }
     .kv-card-meta svg {
-        width: 12px !important;
-        height: 12px !important;
+        width: 11px !important;
+        height: 11px !important;
     }
     .kv-card-readmore {
-        font-size: 12px !important;
+        font-size: 11.5px !important;
     }
 }
 </style>
