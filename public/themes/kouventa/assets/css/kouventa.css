@@ -1762,6 +1762,61 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
     transition-duration: 0.08s;
 }
 
+/* Outline / Ghost Button on Dark Backgrounds (.kv-btn-outline-white or inside dark containers) */
+.kv-btn-outline-white,
+[style*="background: #071C33"] .kv-btn-outline,
+[style*="background:#071C33"] .kv-btn-outline,
+[style*="background: #0C2A48"] .kv-btn-outline,
+[style*="background:#0C2A48"] .kv-btn-outline {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #FFFFFF !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: transform 0.24s var(--kv-ease-hover),
+                background-color 0.22s ease,
+                color 0.22s ease,
+                border-color 0.22s ease,
+                box-shadow 0.24s var(--kv-ease-hover);
+    will-change: transform, box-shadow;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.kv-btn-outline-white:hover,
+[style*="background: #071C33"] .kv-btn-outline:hover,
+[style*="background:#071C33"] .kv-btn-outline:hover,
+[style*="background: #0C2A48"] .kv-btn-outline:hover,
+[style*="background:#0C2A48"] .kv-btn-outline:hover {
+    transform: translateY(-2px);
+    background-color: #FFFFFF !important;
+    color: #071C33 !important;
+    border-color: #FFFFFF !important;
+    box-shadow: 0 12px 28px -4px rgba(255, 255, 255, 0.35), 0 0 20px rgba(43, 212, 106, 0.28), 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+}
+
+.kv-btn-outline-white:hover .kv-arrow,
+.kv-btn-outline-white:hover svg:last-child,
+[style*="background: #071C33"] .kv-btn-outline:hover .kv-arrow,
+[style*="background:#071C33"] .kv-btn-outline:hover .kv-arrow {
+    transform: translateX(4px);
+}
+
+.kv-btn-outline-white:active,
+[style*="background: #071C33"] .kv-btn-outline:active,
+[style*="background:#071C33"] .kv-btn-outline:active,
+[style*="background: #0C2A48"] .kv-btn-outline:active,
+[style*="background:#0C2A48"] .kv-btn-outline:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2) !important;
+    transition-duration: 0.08s;
+}
+
+
 /* Slider Navigation Buttons Hover */
 .kv-slider-nav-btn {
     transition: transform 0.2s var(--kv-ease-hover), background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
