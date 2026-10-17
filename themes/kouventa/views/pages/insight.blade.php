@@ -1,8 +1,48 @@
 @extends('kouventa::layouts.app')
 
 @php
-    $heroBadge = $page?->block('hero_badge', 'Blog');
-    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Explore the newest articles', 'main' => 'in our blog.']);
+    $page = $page ?? (class_exists(\App\Models\Page::class) ? \App\Models\Page::where('slug', 'insight')->first() : null);
+    $selectedCategory = $selectedCategory ?? null;
+    $selectedTag = $selectedTag ?? null;
+    $searchQuery = $searchQuery ?? null;
+    $category = $category ?? null;
+    $tag = $tag ?? null;
+
+    $activeCategory = $category ?? ($selectedCategory ? (\Plugins\Posts\Models\Category::where('slug', $selectedCategory)->orWhere('id', $selectedCategory)->first()) : null);
+    $activeTag = $tag ?? ($selectedTag ? (\Plugins\Posts\Models\Tag::where('slug', $selectedTag)->orWhere('id', $selectedTag)->first()) : null);
+
+    if ($activeCategory) {
+        $heroBadge = $activeCategory->name;
+        $heroTitle = [
+            'prefix' => t('kouventa.category_articles_prefix', 'Articles in category'),
+            'main' => $activeCategory->name,
+        ];
+        $heroDescription = $activeCategory->description ?: ($page?->block('hero_desc', t('kouventa.insight_desc', 'Explore our latest thinking on Agentic AI, WhatsApp Business automation, and generative AI innovations.')));
+    } elseif ($activeTag) {
+        $heroBadge = $activeTag->name;
+        $heroTitle = [
+            'prefix' => t('kouventa.tag_articles_prefix', 'Articles tagged'),
+            'main' => $activeTag->name,
+        ];
+        $heroDescription = $page?->block('hero_desc', t('kouventa.insight_desc', 'Explore our latest thinking on Agentic AI, WhatsApp Business automation, and generative AI innovations.'));
+    } elseif (!empty($searchQuery)) {
+        $heroBadge = t('Search');
+        $heroTitle = [
+            'prefix' => t('kouventa.search_results_prefix', 'Search results for'),
+            'main' => '"' . e($searchQuery) . '"',
+        ];
+        $heroDescription = $page?->block('hero_desc', t('kouventa.insight_desc', 'Explore our latest thinking on Agentic AI, WhatsApp Business automation, and generative AI innovations.'));
+    } else {
+        $heroBadge = $page?->block('hero_badge', 'Blog') ?? 'BLOG';
+        $heroTitle = $page?->titleBlock('hero_title', [
+            'prefix' => 'Explore the newest articles',
+            'main' => 'in our blog.',
+        ]) ?? [
+            'prefix' => 'Explore the newest articles',
+            'main' => 'in our blog.',
+        ];
+        $heroDescription = $page?->block('hero_desc', t('kouventa.insight_desc', 'Explore our latest thinking on Agentic AI, WhatsApp Business automation, and generative AI innovations.'));
+    }
 @endphp
 
 @section('content')
@@ -23,7 +63,7 @@
             <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'in our blog.' }}</span>
         </h1>
         <p class="kv-hero-desc">
-            {{ t('kouventa.insight_desc', 'Explore our latest thinking on Agentic AI, WhatsApp Business automation, and generative AI innovations.') }}
+            {{ $heroDescription }}
         </p>
     </div>
 </section>
@@ -34,21 +74,45 @@
     $categories = $isPostsActive ? \Plugins\Posts\Models\Category::where('slug', '!=', 'blog')->get() : collect();
     $posts = $isPostsActive ? \Plugins\Posts\Models\Post::published()->with('categories')->orderBy('published_at', 'desc')->get() : collect();
     $postsData = $posts->map(fn($p) => ['id' => $p->id, 'cats' => $p->categories->pluck('name')->toArray()]);
+    $initialCat = $activeCategory ? $activeCategory->name : 'All';
 @endphp
 
 <script>
-function initInsightBlog() {
+function initInsightBlog(initialCat = 'All') {
     return {
-        currentCat: 'All',
+        currentCat: initialCat,
+        currentPage: 1,
+        perPage: 9,
         posts: {!! json_encode($postsData) !!},
+        get filteredPosts() {
+            if (this.currentCat === 'All') return this.posts;
+            return this.posts.filter(p => p.cats.includes(this.currentCat));
+        },
+        get totalPages() {
+            return Math.ceil(this.filteredPosts.length / this.perPage) || 1;
+        },
         get isEmpty() {
-            if (this.currentCat === 'All') return this.posts.length === 0;
-            return !this.posts.some(p => p.cats.includes(this.currentCat));
+            return this.filteredPosts.length === 0;
         },
         isPostVisible(id) {
-            if (this.currentCat === 'All') return true;
-            const p = this.posts.find(x => x.id === id);
-            return p ? p.cats.includes(this.currentCat) : false;
+            const index = this.filteredPosts.findIndex(p => p.id === id);
+            if (index === -1) return false;
+            const start = (this.currentPage - 1) * this.perPage;
+            const end = start + this.perPage;
+            return index >= start && index < end;
+        },
+        setCategory(cat) {
+            this.currentCat = cat;
+            this.currentPage = 1;
+        },
+        goToPage(page) {
+            if (page >= 1 && page <= this.totalPages) {
+                this.currentPage = page;
+                const section = document.querySelector('.kv-insight-section');
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
         }
     };
 }
@@ -393,8 +457,15 @@ function initInsightBlog() {
     box-shadow: 0 4px 14px rgba(19, 128, 63, 0.35);
 }
 
+.kv-page-btn.is-prev,
 .kv-page-btn.is-next {
     background: #13803F;
+    color: #FFFFFF;
+}
+
+.kv-page-btn.is-prev:hover,
+.kv-page-btn.is-next:hover {
+    background: #0E6531;
     color: #FFFFFF;
 }
 
@@ -485,25 +556,25 @@ function initInsightBlog() {
 </style>
 
 <!-- Category Filter Sticky Bar & Archive Grid Container -->
-<div x-data="initInsightBlog()">
+<div x-data="initInsightBlog('{{ addslashes($initialCat) }}')">
 <div class="kv-tab-bar-wrap">
     <div class="kv-tab-bar" role="group" aria-label="Filter by category">
         <button type="button"
                 class="kv-tab-item"
                 :class="{ 'is-active': currentCat === 'All' }"
-                @click="currentCat = 'All'"
+                @click="setCategory('All')"
                 :aria-pressed="currentCat === 'All'">
             <span>{{ t('All') }}</span>
             <span class="kv-tab-underline" x-show="currentCat === 'All'"></span>
         </button>
-        @foreach($categories as $category)
+        @foreach($categories as $catItem)
         <button type="button"
                 class="kv-tab-item"
-                :class="{ 'is-active': currentCat === '{{ $category->name }}' }"
-                @click="currentCat = '{{ $category->name }}'"
-                :aria-pressed="currentCat === '{{ $category->name }}'">
-            <span>{{ t($category->name) }}</span>
-            <span class="kv-tab-underline" x-show="currentCat === '{{ $category->name }}'"></span>
+                :class="{ 'is-active': currentCat === '{{ $catItem->name }}' }"
+                @click="setCategory('{{ $catItem->name }}')"
+                :aria-pressed="currentCat === '{{ $catItem->name }}'">
+            <span>{{ t($catItem->name) }}</span>
+            <span class="kv-tab-underline" x-show="currentCat === '{{ $catItem->name }}'"></span>
         </button>
         @endforeach
     </div>
@@ -585,12 +656,30 @@ function initInsightBlog() {
     </div>
 
     <!-- Pagination -->
-    <nav aria-label="Pagination" class="kv-pagination">
-        <span aria-current="page" class="kv-page-btn is-active">1</span>
-        <span class="kv-page-btn">2</span>
-        <span class="kv-page-btn is-next" aria-label="Next page">
+    <nav aria-label="Pagination" class="kv-pagination" x-show="totalPages > 1" x-cloak>
+        <button type="button"
+                class="kv-page-btn is-prev"
+                @click="goToPage(currentPage - 1)"
+                x-show="currentPage > 1"
+                aria-label="Previous page">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <template x-for="p in totalPages" :key="p">
+            <button type="button"
+                    class="kv-page-btn"
+                    :class="{ 'is-active': currentPage === p }"
+                    @click="goToPage(p)"
+                    x-text="p"
+                    :aria-current="currentPage === p ? 'page' : false">
+            </button>
+        </template>
+        <button type="button"
+                class="kv-page-btn is-next"
+                @click="goToPage(currentPage + 1)"
+                x-show="currentPage < totalPages"
+                aria-label="Next page">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
-        </span>
+        </button>
     </nav>
 </section>
 </div>

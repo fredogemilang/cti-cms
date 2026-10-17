@@ -113,7 +113,7 @@
             <!-- Category Badges -->
             <div class="kv-single-tags">
                 @foreach($post->categories as $category)
-                    <a href="{{ localized_url('/insight') }}" class="kv-tag-pill">
+                    <a href="{{ $category->getUrl() }}" class="kv-tag-pill">
                         {{ t($category->name) }}
                     </a>
                 @endforeach
