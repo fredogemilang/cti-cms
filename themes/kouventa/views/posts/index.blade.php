@@ -1,0 +1,1 @@
+@include('kouventa::pages.insight')
