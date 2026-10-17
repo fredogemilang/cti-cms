@@ -969,44 +969,208 @@ html{scroll-padding-top:0}
 @keyframes kvGrowW{0%{width:0}100%{width:var(--w)}}
 @keyframes kvGrowH{0%{height:0}100%{height:var(--h)}}
 
-/* History Timeline Section - 1-to-1 from Kouventa.ai */
-.kv-history-row {
+/* ========================================================
+   History Timeline Section - Triggered by Scroll
+   Exact 1-to-1 match with scratch/extracted_pages/about.html
+   ======================================================== */
+.kv-history-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* Background gray dashed timeline rail running from center of 2014 dot to 2026 dot */
+.kv-tl-track {
+  position: absolute;
+  left: 235px;
+  top: 112px;
+  bottom: 112px;
+  width: 2px;
+  background: repeating-linear-gradient(to bottom, #C3CDC8 0 6px, transparent 6px 12px);
+  z-index: 1;
+}
+
+/* Active green timeline progress fill line, driven by scroll */
+.kv-tl-fill {
+  position: absolute;
+  left: 235px;
+  top: 112px;
+  bottom: 112px;
+  width: 2px;
+  background: #2BD46A;
+  transform-origin: top;
+  transform: scaleY(0);
+  z-index: 1;
+  box-shadow: 0 0 10px rgba(43, 212, 106, 0.45);
+  will-change: transform;
+}
+
+/* Milestone Grid Row */
+.kv-tl-row {
   display: grid;
-  grid-template-columns: 140px 530px minmax(0, 1fr);
-  gap: 28px;
+  grid-template-columns: 180px 48px 400px minmax(0, 1fr);
+  gap: 32px;
   align-items: center;
   position: relative;
-  transition: transform 0.25s var(--kv-ease-hover, cubic-bezier(0.16, 1, 0.3, 1));
-}
-.kv-history-img {
-  width: 530px;
-  max-width: 100%;
-  height: auto;
-  display: block;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
-  will-change: transform, filter;
-}
-.kv-history-row:hover .kv-history-img {
-  transform: translateY(-3px) scale(1.015);
-  filter: drop-shadow(0 14px 28px rgba(7, 28, 51, 0.12));
+  transition: transform 0.4s var(--kv-ease-hover, cubic-bezier(0.16, 1, 0.3, 1));
 }
 
-@media (max-width: 1100px) {
-  .kv-history-row {
-    grid-template-columns: 110px minmax(320px, 460px) minmax(0, 1fr);
-    gap: 20px;
+/* Year label */
+.kv-tl-year {
+  font-size: 72px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #C3CDC8;
+  text-align: right;
+  transition: color 0.4s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: color, transform;
+}
+.kv-tl-row.is-active .kv-tl-year {
+  color: #0E1A24;
+  transform: scale(1.02);
+}
+
+/* Dot Wrapper & Dot */
+.kv-tl-dot-wrap {
+  width: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.kv-tl-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #D8DFDB;
+  box-shadow: 0 0 0 6px #F4F6F5;
+  transform: scale(0.85);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.35s ease, box-shadow 0.35s ease;
+  display: block;
+}
+
+.kv-tl-row.is-active .kv-tl-dot {
+  background: #2BD46A;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 6px #F4F6F5, 0 0 0 8px rgba(43, 212, 106, 0.35);
+}
+
+/* Milestone Image */
+.kv-tl-img {
+  width: 400px;
+  height: 224px;
+  object-fit: cover;
+  border-radius: 18px;
+  display: block;
+  opacity: 0.45;
+  transform: translateY(16px);
+  filter: grayscale(15%);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease, box-shadow 0.3s ease;
+  will-change: transform, opacity;
+}
+
+.kv-tl-row.is-active .kv-tl-img {
+  opacity: 1;
+  transform: translateY(0);
+  filter: grayscale(0%);
+}
+
+.kv-tl-row.is-active:hover .kv-tl-img {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 16px 32px rgba(7, 28, 51, 0.12);
+}
+
+/* Content (Title & Description) */
+.kv-tl-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0.45;
+  transform: translateY(14px);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.kv-tl-row.is-active .kv-tl-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.kv-tl-title {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.2;
+  font-weight: 800;
+  color: #13803F;
+  letter-spacing: -0.01em;
+}
+
+.kv-tl-desc {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.65;
+  color: #4A5866;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .kv-tl-row {
+    grid-template-columns: 130px 48px 340px minmax(0, 1fr);
+    gap: 24px;
+  }
+  .kv-tl-track,
+  .kv-tl-fill {
+    left: 177px;
+    top: 96px;
+    bottom: 96px;
+  }
+  .kv-tl-img {
+    width: 340px;
+    height: 190px;
+  }
+  .kv-tl-year {
+    font-size: 56px;
   }
 }
 
-@media (max-width: 768px) {
-  .kv-history-row {
-    grid-template-columns: 1fr;
-    gap: 16px;
+@media (max-width: 1023px) {
+  #kv-history {
+    padding: 52px 20px !important;
+  }
+  .kv-tl-track,
+  .kv-tl-fill {
+    display: none !important;
+  }
+  .kv-tl-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px !important;
     text-align: left;
   }
-  .kv-history-img {
-    width: 100%;
-    max-width: 100%;
+  .kv-tl-row > .kv-tl-year {
+    text-align: left !important;
+    font-size: 48px !important;
+  }
+  .kv-tl-row > .kv-tl-dot-wrap {
+    display: none !important;
+  }
+  .kv-tl-img {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 400 / 224;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .kv-tl-content {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .kv-tl-year {
+    color: #0E1A24 !important;
   }
 }
 @keyframes kvTravel{0%{transform:translateX(0);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translateX(var(--d));opacity:0}}

@@ -52,44 +52,53 @@
 <!-- ============ HISTORY ============ -->
 <section id="kv-history" style="padding: 120px 80px 128px; display: flex; flex-direction: column; gap: 56px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $historyTitle }}</h2>
-<div style="position: relative; display: flex; flex-direction: column; gap: 48px">
+<div class="kv-history-wrap">
+    <!-- Static dashed track line connecting 2014 down to 2026 -->
+    <div class="kv-tl-track"></div>
+    <!-- Dynamic scroll-filled green line -->
+    <div class="kv-tl-fill"></div>
+
     <!-- 2014 -->
-    <div class="kv-history-row">
-        <span style="font-size: 72px; line-height: 1; font-weight: 800; letter-spacing: -0.03em; color: #C3CDC8; text-align: right">2014</span>
-        <img src="{{ theme_asset('images/history-2014.png') }}" alt="Established 2014" class="kv-history-img">
-        <div style="display: flex; flex-direction: column; gap: 10px">
-            <h3 style="margin: 0; font-size: 26px; line-height: 1.2; font-weight: 800; color: #13803F; letter-spacing: -0.01em">{{ t('kouventa.Established', 'Established') }}</h3>
-            <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #4A5866">{{ t('kouventa.PT Helios Informatika Nusantara (Helios) was established in 2014 as IT Value Added Distributor (VAD). As a member of PT Computrade Technology International (CTI Group), Helios collaborates with some of the world\'s leading IT global companies to provide our clients with cutting-edge and innovative technologies.', 'PT Helios Informatika Nusantara (Helios) was established in 2014 as IT Value Added Distributor (VAD). As a member of PT Computrade Technology International (CTI Group), Helios collaborates with some of the world\'s leading IT global companies to provide our clients with cutting-edge and innovative technologies.') }}</p>
+    <div class="kv-tl-row" data-year="2014">
+        <span class="kv-tl-year">2014</span>
+        <span class="kv-tl-dot-wrap"><span class="kv-tl-dot"></span></span>
+        <img src="{{ theme_asset('images/about-milestone-office.webp') }}" alt="Established 2014" class="kv-tl-img">
+        <div class="kv-tl-content">
+            <h3 class="kv-tl-title">{{ t('kouventa.Established', 'Established') }}</h3>
+            <p class="kv-tl-desc">{{ t('kouventa.PT Helios Informatika Nusantara (Helios) was established in 2014 as IT Value Added Distributor (VAD). As a member of PT Computrade Technology International (CTI Group), Helios collaborates with some of the world\'s leading IT global companies to provide our clients with cutting-edge and innovative technologies.', 'PT Helios Informatika Nusantara (Helios) was established in 2014 as IT Value Added Distributor (VAD). As a member of PT Computrade Technology International (CTI Group), Helios collaborates with some of the world\'s leading IT global companies to provide our clients with cutting-edge and innovative technologies.') }}</p>
         </div>
     </div>
 
     <!-- 2021 -->
-    <div class="kv-history-row">
-        <span style="font-size: 72px; line-height: 1; font-weight: 800; letter-spacing: -0.03em; color: #C3CDC8; text-align: right">2021</span>
-        <img src="{{ theme_asset('images/history-2021.png') }}" alt="Embracing The Digital Era 2021" class="kv-history-img">
-        <div style="display: flex; flex-direction: column; gap: 10px">
-            <h3 style="margin: 0; font-size: 26px; line-height: 1.2; font-weight: 800; color: #13803F; letter-spacing: -0.01em">{{ t('kouventa.Embracing The Digital Era', 'Embracing The Digital Era') }}</h3>
-            <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #4A5866">{{ t('kouventa.We created Kouventa, an All-In-One Customer Engagement solution, to help businesses maintain and grow their customer engagement. We are also committed to providing great service and support to our clients who wish to maximize the usefulness of technology such as Generative AI technology, and API Integration.', 'We created Kouventa, an All-In-One Customer Engagement solution, to help businesses maintain and grow their customer engagement. We are also committed to providing great service and support to our clients who wish to maximize the usefulness of technology such as Generative AI technology, and API Integration.') }}</p>
+    <div class="kv-tl-row" data-year="2021">
+        <span class="kv-tl-year">2021</span>
+        <span class="kv-tl-dot-wrap"><span class="kv-tl-dot"></span></span>
+        <img src="{{ theme_asset('images/about-milestone-planning.webp') }}" alt="Embracing The Digital Era 2021" class="kv-tl-img">
+        <div class="kv-tl-content">
+            <h3 class="kv-tl-title">{{ t('kouventa.Embracing The Digital Era', 'Embracing The Digital Era') }}</h3>
+            <p class="kv-tl-desc">{{ t('kouventa.We created Kouventa, an All-In-One Customer Engagement solution, to help businesses maintain and grow their customer engagement. We are also committed to providing great service and support to our clients who wish to maximize the usefulness of technology such as Generative AI technology, and API Integration.', 'We created Kouventa, an All-In-One Customer Engagement solution, to help businesses maintain and grow their customer engagement. We are also committed to providing great service and support to our clients who wish to maximize the usefulness of technology such as Generative AI technology, and API Integration.') }}</p>
         </div>
     </div>
 
     <!-- 2022 -->
-    <div class="kv-history-row">
-        <span style="font-size: 72px; line-height: 1; font-weight: 800; letter-spacing: -0.03em; color: #C3CDC8; text-align: right">2022</span>
-        <img src="{{ theme_asset('images/history-2022.png') }}" alt="Advancing The Generative AI Solutions 2022" class="kv-history-img">
-        <div style="display: flex; flex-direction: column; gap: 10px">
-            <h3 style="margin: 0; font-size: 26px; line-height: 1.2; font-weight: 800; color: #13803F; letter-spacing: -0.01em">{{ t('kouventa.Advancing The Generative AI Solutions', 'Advancing The Generative AI Solutions') }}</h3>
-            <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #4A5866">{{ t('kouventa.Kouventa provides an AI Company Wikipedia solution based on Gen-AI technology, crafted to address enterprise demands for advanced AI adoption in complex operations.', 'Kouventa provides an AI Company Wikipedia solution based on Gen-AI technology, crafted to address enterprise demands for advanced AI adoption in complex operations.') }}</p>
+    <div class="kv-tl-row" data-year="2022">
+        <span class="kv-tl-year">2022</span>
+        <span class="kv-tl-dot-wrap"><span class="kv-tl-dot"></span></span>
+        <img src="{{ theme_asset('images/about-milestone-genai.webp') }}" alt="Advancing The Generative AI Solutions 2022" class="kv-tl-img">
+        <div class="kv-tl-content">
+            <h3 class="kv-tl-title">{{ t('kouventa.Advancing The Generative AI Solutions', 'Advancing The Generative AI Solutions') }}</h3>
+            <p class="kv-tl-desc">{{ t('kouventa.Kouventa provides an AI Company Wikipedia solution based on Gen-AI technology, crafted to address enterprise demands for advanced AI adoption in complex operations.', 'Kouventa provides an AI Company Wikipedia solution based on Gen-AI technology, crafted to address enterprise demands for advanced AI adoption in complex operations.') }}</p>
         </div>
     </div>
 
     <!-- 2026 -->
-    <div class="kv-history-row">
-        <span style="font-size: 72px; line-height: 1; font-weight: 800; letter-spacing: -0.03em; color: #C3CDC8; text-align: right">2026</span>
-        <img src="{{ theme_asset('images/history-2026.png') }}" alt="Agentic AI with AI Task Force 2026" class="kv-history-img">
-        <div style="display: flex; flex-direction: column; gap: 10px">
-            <h3 style="margin: 0; font-size: 26px; line-height: 1.2; font-weight: 800; color: #13803F; letter-spacing: -0.01em">{{ t('kouventa.Agentic AI with AI Task Force', 'Agentic AI with AI Task Force') }}</h3>
-            <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #4A5866">{{ t('kouventa.Kouventa launched AI Task Force, its Agentic AI solution, allowing intelligent agents to reason, plan, and take action across enterprise applications to automate business processes from start to finish.', 'Kouventa launched AI Task Force, its Agentic AI solution, allowing intelligent agents to reason, plan, and take action across enterprise applications to automate business processes from start to finish.') }}</p>
+    <div class="kv-tl-row" data-year="2026">
+        <span class="kv-tl-year">2026</span>
+        <span class="kv-tl-dot-wrap"><span class="kv-tl-dot"></span></span>
+        <img src="{{ theme_asset('images/about-milestone-agentic.webp') }}" alt="Agentic AI with AI Task Force 2026" class="kv-tl-img">
+        <div class="kv-tl-content">
+            <h3 class="kv-tl-title">{{ t('kouventa.Agentic AI with AI Task Force', 'Agentic AI with AI Task Force') }}</h3>
+            <p class="kv-tl-desc">{{ t('kouventa.Kouventa launched AI Task Force, its Agentic AI solution, allowing intelligent agents to reason, plan, and take action across enterprise applications to automate business processes from start to finish.', 'Kouventa launched AI Task Force, its Agentic AI solution, allowing intelligent agents to reason, plan, and take action across enterprise applications to automate business processes from start to finish.') }}</p>
         </div>
     </div>
 </div>
@@ -98,3 +107,95 @@
 <!-- ============ FOOTER ============ -->
 </div>
 @endsection
+
+@push('scripts')
+<script>
+(function() {
+    'use strict';
+    
+    function initScrollTimeline() {
+        const historySection = document.getElementById('kv-history');
+        if (!historySection) return;
+
+        const fill = historySection.querySelector('.kv-tl-fill');
+        const rows = Array.from(historySection.querySelectorAll('.kv-tl-row'));
+        if (!fill || !rows.length) return;
+
+        // Check reduced motion preference
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            fill.style.transform = 'scaleY(1)';
+            rows.forEach(r => r.classList.add('is-active'));
+            return;
+        }
+
+        let ticking = false;
+
+        function updateTimeline() {
+            const viewportH = window.innerHeight;
+            // The trigger line where user's eye naturally reads (~62% down the screen)
+            const triggerY = viewportH * 0.62;
+
+            const firstRow = rows[0];
+            const lastRow = rows[rows.length - 1];
+            const firstDot = firstRow.querySelector('.kv-tl-dot-wrap');
+            const lastDot = lastRow.querySelector('.kv-tl-dot-wrap');
+
+            if (!firstDot || !lastDot) {
+                ticking = false;
+                return;
+            }
+
+            const firstRect = firstDot.getBoundingClientRect();
+            const lastRect = lastDot.getBoundingClientRect();
+
+            const startY = firstRect.top + firstRect.height / 2;
+            const endY = lastRect.top + lastRect.height / 2;
+            const totalDist = endY - startY;
+
+            let progress = 0;
+            if (totalDist > 0) {
+                progress = (triggerY - startY) / totalDist;
+                progress = Math.max(0, Math.min(1, progress));
+            }
+
+            fill.style.transform = `scaleY(${progress})`;
+
+            // Update active state on each row
+            rows.forEach(row => {
+                const dot = row.querySelector('.kv-tl-dot-wrap');
+                if (!dot) return;
+                const r = dot.getBoundingClientRect();
+                const dotCenter = r.top + r.height / 2;
+
+                if (triggerY >= dotCenter - 10) {
+                    row.classList.add('is-active');
+                } else {
+                    row.classList.remove('is-active');
+                }
+            });
+
+            ticking = false;
+        }
+
+        function requestUpdate() {
+            if (!ticking) {
+                requestAnimationFrame(updateTimeline);
+                ticking = true;
+            }
+        }
+
+        window.addEventListener('scroll', requestUpdate, { passive: true });
+        window.addEventListener('resize', requestUpdate, { passive: true });
+
+        // Initial run
+        requestUpdate();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initScrollTimeline);
+    } else {
+        initScrollTimeline();
+    }
+})();
+</script>
+@endpush
