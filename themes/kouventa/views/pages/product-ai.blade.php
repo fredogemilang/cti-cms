@@ -1281,7 +1281,6 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see ho
 </div>
 
 </div>
-</div>
 </section>
 
 <!-- ============ PLATFORM CONTROL ============ -->
