@@ -96,19 +96,19 @@
 <!-- ============ TABS ============ -->
 <section id="solution-tabs" style="padding: 88px 80px 104px; display: flex; flex-direction: column; gap: 40px">
 <div style="display: flex; flex-direction: column; gap: 14px">
-<div role="tablist" aria-label="Solutions by role" style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px">
-<button type="button" role="tab" :aria-selected="tab === 0" @click="pickTab(0)" :style="tab === 0 ? 'background: #071C33; color: #FFFFFF; border-color: #071C33' : 'background: #FFFFFF; color: #0E1A24; border-color: #C9D2CE'" style="min-height: 60px; padding: 12px 14px; border-radius: 14px; border: 1px solid #C9D2CE; font-size: 16px; font-weight: 800; text-align: center; white-space: nowrap">{{ t('kouventa.Customer Service', 'Customer Service') }}</button>
-<button type="button" role="tab" :aria-selected="tab === 1" @click="pickTab(1)" :style="tab === 1 ? 'background: #071C33; color: #FFFFFF; border-color: #071C33' : 'background: #FFFFFF; color: #0E1A24; border-color: #C9D2CE'" style="min-height: 60px; padding: 12px 14px; border-radius: 14px; border: 1px solid #C9D2CE; font-size: 16px; font-weight: 800; text-align: center; white-space: nowrap">{{ t('kouventa.Recruitment', 'Recruitment') }}</button>
-<button type="button" role="tab" :aria-selected="tab === 2" @click="pickTab(2)" :style="tab === 2 ? 'background: #071C33; color: #FFFFFF; border-color: #071C33' : 'background: #FFFFFF; color: #0E1A24; border-color: #C9D2CE'" style="min-height: 60px; padding: 12px 14px; border-radius: 14px; border: 1px solid #C9D2CE; font-size: 16px; font-weight: 800; text-align: center; white-space: nowrap">{{ t('kouventa.Sales & Marketing', 'Sales & Marketing') }}</button>
-<button type="button" role="tab" :aria-selected="tab === 3" @click="pickTab(3)" :style="tab === 3 ? 'background: #071C33; color: #FFFFFF; border-color: #071C33' : 'background: #FFFFFF; color: #0E1A24; border-color: #C9D2CE'" style="min-height: 60px; padding: 12px 14px; border-radius: 14px; border: 1px solid #C9D2CE; font-size: 16px; font-weight: 800; text-align: center; white-space: nowrap">{{ t('kouventa.Business Operations', 'Business Operations') }}</button>
-<button type="button" role="tab" :aria-selected="tab === 4 || tab === 5" @click="if (tab !== 4 && tab !== 5) pickTab(4)" :style="(tab === 4 || tab === 5) ? 'background: #071C33; color: #FFFFFF; border-color: #071C33' : 'background: #FFFFFF; color: #0E1A24; border-color: #C9D2CE'" style="min-height: 60px; padding: 12px 14px; border-radius: 14px; border: 1px solid #C9D2CE; font-size: 16px; font-weight: 800; text-align: center; white-space: nowrap">{{ t('kouventa.Finance', 'Finance') }}</button>
-<button type="button" role="tab" :aria-selected="tab === 6" @click="pickTab(6)" :style="tab === 6 ? 'background: #071C33; color: #FFFFFF; border-color: #071C33' : 'background: #FFFFFF; color: #0E1A24; border-color: #C9D2CE'" style="min-height: 60px; padding: 12px 14px; border-radius: 14px; border: 1px solid #C9D2CE; font-size: 16px; font-weight: 800; text-align: center; white-space: nowrap">{{ t('kouventa.Legal & Compliance', 'Legal & Compliance') }}</button>
+<div role="tablist" aria-label="Solutions by role" class="kv-sol-ai-tablist">
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 0" @click="pickTab(0)">{{ t('kouventa.Customer Service', 'Customer Service') }}</button>
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 1" @click="pickTab(1)">{{ t('kouventa.Recruitment', 'Recruitment') }}</button>
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 2" @click="pickTab(2)">{{ t('kouventa.Sales & Marketing', 'Sales & Marketing') }}</button>
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 3" @click="pickTab(3)">{{ t('kouventa.Business Operations', 'Business Operations') }}</button>
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 4 || tab === 5" @click="if (tab !== 4 && tab !== 5) pickTab(4)">{{ t('kouventa.Finance', 'Finance') }}</button>
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 6" @click="pickTab(6)">{{ t('kouventa.Legal & Compliance', 'Legal & Compliance') }}</button>
 </div>
 
 <!-- Finance Sub-tabs Pill -->
-<div role="tablist" aria-label="Finance solutions" x-show="tab === 4 || tab === 5" class="kv-flex" style="align-self: center; padding: 4px; gap: 4px; border-radius: 12px; background: #E3E8E6">
-<button type="button" role="tab" :aria-selected="tab === 4" @click="pickTab(4)" :style="tab === 4 ? 'background: #FFFFFF; color: #071C33; box-shadow: 0 1px 3px rgba(7,28,51,0.15)' : 'background: transparent; color: #4A5866; box-shadow: none'" style="min-height: 44px; padding: 10px 20px; border-radius: 9px; border: 0; font-size: 15px; font-weight: 700">{{ t('kouventa.Payment Prioritization', 'Payment Prioritization') }}</button>
-<button type="button" role="tab" :aria-selected="tab === 5" @click="pickTab(5)" :style="tab === 5 ? 'background: #FFFFFF; color: #071C33; box-shadow: 0 1px 3px rgba(7,28,51,0.15)' : 'background: transparent; color: #4A5866; box-shadow: none'" style="min-height: 44px; padding: 10px 20px; border-radius: 9px; border: 0; font-size: 15px; font-weight: 700">{{ t('kouventa.Bank Reconciliation', 'Bank Reconciliation') }}</button>
+<div role="tablist" aria-label="Finance solutions" x-show="tab === 4 || tab === 5" class="kv-sol-fin-wrap">
+<button type="button" role="tab" class="kv-sol-fin-tab" :aria-selected="tab === 4" @click="pickTab(4)">{{ t('kouventa.Payment Prioritization', 'Payment Prioritization') }}</button>
+<button type="button" role="tab" class="kv-sol-fin-tab" :aria-selected="tab === 5" @click="pickTab(5)">{{ t('kouventa.Bank Reconciliation', 'Bank Reconciliation') }}</button>
 </div>
 </div>
 
@@ -134,19 +134,19 @@
 
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
-<div style="display: flex; flex-direction: column; justify-content: center; gap: 10px">
-<button type="button" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" :style="sol === 0 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 1.6s ease 1s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="14" width="5" height="6" rx="2"></rect><rect x="17" y="14" width="5" height="6" rx="2"></rect></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Customer Support Agent', 'Customer Support Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.', 'Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.') }}</span>
+<div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 1s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="14" width="5" height="6" rx="2"></rect><rect x="17" y="14" width="5" height="6" rx="2"></rect></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Customer Support Agent', 'Customer Support Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.', 'Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" :style="sol === 1 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 2.8s ease 2.8s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M13 6v2M13 11v2M13 16v2"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Ticket Management Agent', 'Ticket Management Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Automatically create support tickets from customer conversations, capture the necessary details, and assign them to the right team.', 'Automatically create support tickets from customer conversations, capture the necessary details, and assign them to the right team.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" style="animation: kvHi 2.8s ease 2.8s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M13 6v2M13 11v2M13 16v2"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Ticket Management Agent', 'Ticket Management Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Automatically create support tickets from customer conversations, capture the necessary details, and assign them to the right team.', 'Automatically create support tickets from customer conversations, capture the necessary details, and assign them to the right team.') }}</span>
 </span>
 </button>
 </div>
@@ -223,33 +223,33 @@
 
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
-<div style="display: flex; flex-direction: column; justify-content: center; gap: 10px">
-<button type="button" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" :style="sol === 0 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 3.4s ease 0.2s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="4"></circle><path d="M2 21a8 8 0 0 1 10.5-7.6"></path><circle cx="17.5" cy="17.5" r="3"></circle><path d="m22 22-2.3-2.3"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Candidate Screening and Sourcing Agent', 'Candidate Screening and Sourcing Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Source candidates from multiple job portals, then screen and match candidates based on job requirements and qualifications.', 'Source candidates from multiple job portals, then screen and match candidates based on job requirements and qualifications.') }}</span>
+<div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" style="animation: kvHi 3.4s ease 0.2s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="4"></circle><path d="M2 21a8 8 0 0 1 10.5-7.6"></path><circle cx="17.5" cy="17.5" r="3"></circle><path d="m22 22-2.3-2.3"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Candidate Screening and Sourcing Agent', 'Candidate Screening and Sourcing Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Source candidates from multiple job portals, then screen and match candidates based on job requirements and qualifications.', 'Source candidates from multiple job portals, then screen and match candidates based on job requirements and qualifications.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" :style="sol === 1 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 1.1s ease 3.9s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Candidate Communication Agent', 'Candidate Communication Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Send interview and psychotest invitations, provide recruitment updates, and answer candidate questions throughout the hiring process.', 'Send interview and psychotest invitations, provide recruitment updates, and answer candidate questions throughout the hiring process.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" style="animation: kvHi 1.1s ease 3.9s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Candidate Communication Agent', 'Candidate Communication Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Send interview and psychotest invitations, provide recruitment updates, and answer candidate questions throughout the hiring process.', 'Send interview and psychotest invitations, provide recruitment updates, and answer candidate questions throughout the hiring process.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 2 ? -1 : 2)" :aria-pressed="sol === 2" :style="sol === 2 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 1.4s ease 5s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Candidate Scheduling Agent', 'Candidate Scheduling Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Coordinate and schedule interviews and psychotests based on the availability of HR, interviewers, and candidates.', 'Coordinate and schedule interviews and psychotests based on the availability of HR, interviewers, and candidates.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 2 ? -1 : 2)" :aria-pressed="sol === 2" style="animation: kvHi 1.4s ease 5s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Candidate Scheduling Agent', 'Candidate Scheduling Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Coordinate and schedule interviews and psychotests based on the availability of HR, interviewers, and candidates.', 'Coordinate and schedule interviews and psychotests based on the availability of HR, interviewers, and candidates.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 3 ? -1 : 3)" :aria-pressed="sol === 3" :style="sol === 3 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 1.5s ease 6.5s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Recruitment Insight Agent', 'Recruitment Insight Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Analyze candidate profiles based on interview and psychotest results to identify key insights and provide recommendations.', 'Analyze candidate profiles based on interview and psychotest results to identify key insights and provide recommendations.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 3 ? -1 : 3)" :aria-pressed="sol === 3" style="animation: kvHi 1.5s ease 6.5s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Recruitment Insight Agent', 'Recruitment Insight Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Analyze candidate profiles based on interview and psychotest results to identify key insights and provide recommendations.', 'Analyze candidate profiles based on interview and psychotest results to identify key insights and provide recommendations.') }}</span>
 </span>
 </button>
 </div>
@@ -335,26 +335,26 @@
 
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
-<div style="display: flex; flex-direction: column; justify-content: center; gap: 10px">
-<button type="button" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" :style="sol === 0 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 3.7s ease 0.3s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M2 3h3l2.5 12h11L21 7H6"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Sales Assistant Agent', 'Sales Assistant Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.', 'Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.') }}</span>
+<div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" style="animation: kvHi 3.7s ease 0.3s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M2 3h3l2.5 12h11L21 7H6"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Sales Assistant Agent', 'Sales Assistant Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.', 'Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" :style="sol === 1 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 1.5s ease 4.2s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5Z"></path><path d="M3 8l9 5 9-5M12 13v8"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Order Agent', 'Order Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Create orders, process payments, verify transactions, and confirm purchases.', 'Create orders, process payments, verify transactions, and confirm purchases.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" style="animation: kvHi 1.5s ease 4.2s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5Z"></path><path d="M3 8l9 5 9-5M12 13v8"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Order Agent', 'Order Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Create orders, process payments, verify transactions, and confirm purchases.', 'Create orders, process payments, verify transactions, and confirm purchases.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 2 ? -1 : 2)" :aria-pressed="sol === 2" :style="sol === 2 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 2.2s ease 5.8s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Shipment Tracking Agent', 'Shipment Tracking Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Track order and shipment status, provide delivery updates, and answer post-purchase questions.', 'Track order and shipment status, provide delivery updates, and answer post-purchase questions.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 2 ? -1 : 2)" :aria-pressed="sol === 2" style="animation: kvHi 2.2s ease 5.8s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Shipment Tracking Agent', 'Shipment Tracking Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Track order and shipment status, provide delivery updates, and answer post-purchase questions.', 'Track order and shipment status, provide delivery updates, and answer post-purchase questions.') }}</span>
 </span>
 </button>
 </div>
@@ -435,19 +435,19 @@
 
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
-<div style="display: flex; flex-direction: column; justify-content: center; gap: 10px">
-<button type="button" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" :style="sol === 0 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 1.7s ease 1.5s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5Z"></path><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Knowledge Assistant Agent', 'Knowledge Assistant Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Find and explain information from the company\'s internal documents, policies, SOPs, and business knowledge.', 'Find and explain information from the company\'s internal documents, policies, SOPs, and business knowledge.') }}</span>
+<div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" style="animation: kvHi 1.7s ease 1.5s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5Z"></path><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Knowledge Assistant Agent', 'Knowledge Assistant Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Find and explain information from the company\'s internal documents, policies, SOPs, and business knowledge.', 'Find and explain information from the company\'s internal documents, policies, SOPs, and business knowledge.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" :style="sol === 1 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 3.4s ease 3.2s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Action Agent', 'Action Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Turn employee requests into actions by connecting with internal systems, submitting requests, and executing routine tasks with the required approvals.', 'Turn employee requests into actions by connecting with internal systems, submitting requests, and executing routine tasks with the required approvals.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" style="animation: kvHi 3.4s ease 3.2s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Action Agent', 'Action Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Turn employee requests into actions by connecting with internal systems, submitting requests, and executing routine tasks with the required approvals.', 'Turn employee requests into actions by connecting with internal systems, submitting requests, and executing routine tasks with the required approvals.') }}</span>
 </span>
 </button>
 </div>
@@ -516,11 +516,11 @@
 
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
-<div style="display: flex; flex-direction: column; justify-content: center; gap: 10px">
-<button type="button" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" :style="sol === 0 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 0 0 auto; min-height: 88px; max-height: none; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: flex-start; gap: 16px; animation: kvHi 7.4s ease 0.2s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h15V7"></path><path d="M16 14h.01"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Payment Prioritization Agent', 'Payment Prioritization Agent') }}</span>
+<div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" style="align-items: flex-start; max-height: none; animation: kvHi 7.4s ease 0.2s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h15V7"></path><path d="M16 14h.01"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Payment Prioritization Agent', 'Payment Prioritization Agent') }}</span>
 <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px">
 <li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ t('kouventa.Analyze invoices, due dates, cash flow, and vendor data', 'Analyze invoices, due dates, cash flow, and vendor data') }}</li>
 <li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ t('kouventa.Prioritize payments based on business criteria', 'Prioritize payments based on business criteria') }}</li>
@@ -618,33 +618,33 @@
 
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
-<div style="display: flex; flex-direction: column; justify-content: center; gap: 10px">
-<button type="button" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" :style="sol === 0 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 1.6s ease 0.3s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Transaction Matching Agent', 'Transaction Matching Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Automatically matches bank transactions with invoices, including partial and bulk transactions.', 'Automatically matches bank transactions with invoices, including partial and bulk transactions.') }}</span>
+<div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 0.3s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Transaction Matching Agent', 'Transaction Matching Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Automatically matches bank transactions with invoices, including partial and bulk transactions.', 'Automatically matches bank transactions with invoices, including partial and bulk transactions.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" :style="sol === 1 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 1.8s ease 2s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Reconciliation Analysis Agent', 'Reconciliation Analysis Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.', 'Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" style="animation: kvHi 1.8s ease 2s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Reconciliation Analysis Agent', 'Reconciliation Analysis Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.', 'Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 2 ? -1 : 2)" :aria-pressed="sol === 2" :style="sol === 2 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 3s ease 4.1s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Clearing Agent', 'Clearing Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Prepares clearing proposals and executes ERP clearing.', 'Prepares clearing proposals and executes ERP clearing.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 2 ? -1 : 2)" :aria-pressed="sol === 2" style="animation: kvHi 3s ease 4.1s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Clearing Agent', 'Clearing Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Prepares clearing proposals and executes ERP clearing.', 'Prepares clearing proposals and executes ERP clearing.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 3 ? -1 : 3)" :aria-pressed="sol === 3" :style="sol === 3 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 1s ease 7.1s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Audit & Notification Agent', 'Audit & Notification Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Logs activities and sends relevant notifications to related teams.', 'Logs activities and sends relevant notifications to related teams.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 3 ? -1 : 3)" :aria-pressed="sol === 3" style="animation: kvHi 1s ease 7.1s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Audit & Notification Agent', 'Audit & Notification Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Logs activities and sends relevant notifications to related teams.', 'Logs activities and sends relevant notifications to related teams.') }}</span>
 </span>
 </button>
 </div>
@@ -736,26 +736,26 @@
 
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
-<div style="display: flex; flex-direction: column; justify-content: center; gap: 10px">
-<button type="button" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" :style="sol === 0 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 2.2s ease 0.3s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Contract Review Agent', 'Contract Review Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Review contracts and identify key clauses, terms, and potential issues.', 'Review contracts and identify key clauses, terms, and potential issues.') }}</span>
+<div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0" style="animation: kvHi 2.2s ease 0.3s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Contract Review Agent', 'Contract Review Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Review contracts and identify key clauses, terms, and potential issues.', 'Review contracts and identify key clauses, terms, and potential issues.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" :style="sol === 1 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 1.5s ease 2.5s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Legal Research Agent', 'Legal Research Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Find relevant policies, regulations, and legal information based on the context of the contract.', 'Find relevant policies, regulations, and legal information based on the context of the contract.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1" style="animation: kvHi 1.5s ease 2.5s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Legal Research Agent', 'Legal Research Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Find relevant policies, regulations, and legal information based on the context of the contract.', 'Find relevant policies, regulations, and legal information based on the context of the contract.') }}</span>
 </span>
 </button>
-<button type="button" @click="sol = (sol === 2 ? -1 : 2)" :aria-pressed="sol === 2" :style="sol === 2 ? 'border-color: #13803F; background: #EAF7EF; box-shadow: 0 0 0 3px rgba(19,128,63,.12); animation: none' : (sol >= 0 ? 'animation: none' : '')" style="flex: 1 1 0; min-height: 88px; max-height: 150px; box-sizing: border-box; width: 100%; text-align: left; font-family: inherit; color: inherit; cursor: pointer; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 16px; padding: 14px 20px; display: flex; align-items: center; gap: 16px; animation: kvHi 2.5s ease 4.1s 1 both; transition: background .2s ease, border-color .2s ease">
-<span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg></span>
-<span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
-<span style="font-size: 16px; font-weight: 800">{{ t('kouventa.Contract Insights Agent', 'Contract Insights Agent') }}</span>
-<span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Answer questions and summarize key terms and important information from contracts.', 'Answer questions and summarize key terms and important information from contracts.') }}</span>
+<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 2 ? -1 : 2)" :aria-pressed="sol === 2" style="animation: kvHi 2.5s ease 4.1s 1 both">
+<span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg></span>
+<span class="kv-help-sol-text">
+<span class="kv-help-sol-title">{{ t('kouventa.Contract Insights Agent', 'Contract Insights Agent') }}</span>
+<span class="kv-help-sol-desc">{{ t('kouventa.Answer questions and summarize key terms and important information from contracts.', 'Answer questions and summarize key terms and important information from contracts.') }}</span>
 </span>
 </button>
 </div>
@@ -824,15 +824,15 @@
 
 <!-- Step 1: Discover -->
 <button type="button" @click="replayStep(0)" aria-label="Step 1: Discover (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24">
-<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="implSeen ? 'animation: kvGrowW 1.6s linear ' + (replayed[0] ? '0s' : '0s') + ' 1 both' : 'width: 0'"></span></div>
+<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="{ animation: implSeen ? ('kvGrowW 1.6s linear ' + (replayed[0] ? '0s' : '0s') + ' 1 both') : 'none', width: implSeen ? '' : '0' }"></span></div>
 <div style="height: 150px; background: #F4F6F5; position: relative; overflow: hidden">
 <div x-show="stepOn[0]" style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 10px">
 <span style="width: 50px; height: 34px; border-radius: 8px; background: #FFFFFF; border: 1px solid #E3E8E6"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
-<span style="width: 50px; height: 34px; border-radius: 8px; border: 1px solid #E3E8E6;" :style="'animation: kvAmber .3s ease ' + (replayed[0] ? '0.6s' : '0.6s') + ' both'"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
+<span style="width: 50px; height: 34px; border-radius: 8px; border: 1px solid #E3E8E6;" :style="{ animation: 'kvAmber .3s ease ' + (replayed[0] ? '0.6s' : '0.6s') + ' both' }"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
 <span style="width: 50px; height: 34px; border-radius: 8px; background: #FFFFFF; border: 1px solid #E3E8E6"></span>
 </div>
-<span style="position: absolute; left: 24px; top: 46px; --d: 170px;" :style="'animation: kvScan 1.4s ease ' + (replayed[0] ? '0.1s' : '0.1s') + ' 1 both'"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#071C33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"></circle><path d="m20 20-4.5-4.5"></path></svg></span>
+<span style="position: absolute; left: 24px; top: 46px; --d: 170px;" :style="{ animation: 'kvScan 1.4s ease ' + (replayed[0] ? '0.1s' : '0.1s') + ' 1 both' }"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#071C33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"></circle><path d="m20 20-4.5-4.5"></path></svg></span>
 </div>
 </div>
 <div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
@@ -843,17 +843,17 @@
 
 <!-- Step 2: Connect -->
 <button type="button" @click="replayStep(1)" aria-label="Step 2: Connect (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24">
-<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="implSeen ? 'animation: kvGrowW 1.6s linear ' + (replayed[1] ? '0s' : '2s') + ' 1 both' : 'width: 0'"></span></div>
+<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="{ animation: implSeen ? ('kvGrowW 1.6s linear ' + (replayed[1] ? '0s' : '2s') + ' 1 both') : 'none', width: implSeen ? '' : '0' }"></span></div>
 <div style="height: 150px; background: #F4F6F5; position: relative; overflow: hidden">
 <div x-show="stepOn[1]" style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 14px">
 <div style="display: flex; flex-direction: column; gap: 5px">
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="'animation: kvIn .25s ease ' + (replayed[1] ? '0.1s' : '2.1s') + ' both'">{{ t('kouventa.Documents', 'Documents') }}</span>
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="'animation: kvIn .25s ease ' + (replayed[1] ? '0.6s' : '2.6s') + ' both'">CRM</span>
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="'animation: kvIn .25s ease ' + (replayed[1] ? '1.0s' : '3.0s') + ' both'">ERP</span>
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="'animation: kvIn .25s ease ' + (replayed[1] ? '1.4s' : '3.4s') + ' both'">Ticketing</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '0.1s' : '2.1s') + ' both' }">{{ t('kouventa.Documents', 'Documents') }}</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '0.6s' : '2.6s') + ' both' }">CRM</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '1.0s' : '3.0s') + ' both' }">ERP</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '1.4s' : '3.4s') + ' both' }">Ticketing</span>
 </div>
-<div style="width: 40px; height: 2px; background: #13803F; --w: 40px;" :style="'animation: kvGrowW .4s ease ' + (replayed[1] ? '1.4s' : '3.4s') + ' both'"></div>
+<div style="width: 40px; height: 2px; background: #13803F; --w: 40px;" :style="{ animation: 'kvGrowW .4s ease ' + (replayed[1] ? '1.4s' : '3.4s') + ' both' }"></div>
 <span style="width: 52px; height: 52px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800">AGENT</span>
 </div>
 </div>
@@ -866,19 +866,19 @@
 
 <!-- Step 3: Configure -->
 <button type="button" @click="replayStep(2)" aria-label="Step 3: Configure (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24">
-<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="implSeen ? 'animation: kvGrowW 1.6s linear ' + (replayed[2] ? '0s' : '4s') + ' 1 both' : 'width: 0'"></span></div>
+<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="{ animation: implSeen ? ('kvGrowW 1.6s linear ' + (replayed[2] ? '0s' : '4s') + ' 1 both') : 'none', width: implSeen ? '' : '0' }"></span></div>
 <div style="height: 150px; background: #F4F6F5; position: relative; overflow: hidden">
 <div x-show="stepOn[2]" style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 16px">
 <div style="display: flex; flex-direction: column; gap: 5px; width: 90px">
-<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #E3E8E6;" :style="'animation: kvIn .25s ease ' + (replayed[2] ? '0.1s' : '4.1s') + ' both'"></span>
-<span style="height: 18px; border-radius: 5px; background: #FFF6E5; border: 1px solid #F2C46D; font-size: 9px; font-weight: 800; color: #7A4A00; display: flex; align-items: center; justify-content: center;" :style="'animation: kvIn .25s ease ' + (replayed[2] ? '0.6s' : '4.6s') + ' both'">{{ t('kouventa.Approval', 'Approval') }}</span>
-<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #E3E8E6;" :style="'animation: kvIn .25s ease ' + (replayed[2] ? '1.0s' : '5.0s') + ' both'"></span>
+<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #E3E8E6;" :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '0.1s' : '4.1s') + ' both' }"></span>
+<span style="height: 18px; border-radius: 5px; background: #FFF6E5; border: 1px solid #F2C46D; font-size: 9px; font-weight: 800; color: #7A4A00; display: flex; align-items: center; justify-content: center;" :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '0.6s' : '4.6s') + ' both' }">{{ t('kouventa.Approval', 'Approval') }}</span>
+<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #E3E8E6;" :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '1.0s' : '5.0s') + ' both' }"></span>
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px; font-size: 10px; font-weight: 700">
-<span :style="'animation: kvIn .25s ease ' + (replayed[2] ? '0.6s' : '4.6s') + ' both'">✓ {{ t('kouventa.Rules', 'Rules') }}</span>
-<span :style="'animation: kvIn .25s ease ' + (replayed[2] ? '1.0s' : '5.0s') + ' both'">✓ {{ t('kouventa.Actions', 'Actions') }}</span>
-<span style="display: flex; align-items: center; gap: 4px;" :style="'animation: kvPopIn .3s ease ' + (replayed[2] ? '1.4s' : '5.4s') + ' both'"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path></svg>{{ t('kouventa.Guardrails', 'Guardrails') }}</span>
+<span :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '0.6s' : '4.6s') + ' both' }">✓ {{ t('kouventa.Rules', 'Rules') }}</span>
+<span :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '1.0s' : '5.0s') + ' both' }">✓ {{ t('kouventa.Actions', 'Actions') }}</span>
+<span style="display: flex; align-items: center; gap: 4px;" :style="{ animation: 'kvPopIn .3s ease ' + (replayed[2] ? '1.4s' : '5.4s') + ' both' }"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path></svg>{{ t('kouventa.Guardrails', 'Guardrails') }}</span>
 </div>
 </div>
 </div>
@@ -891,22 +891,22 @@
 
 <!-- Step 4: Deploy & Scale -->
 <button type="button" @click="replayStep(3)" aria-label="Step 4: Deploy & Scale (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24">
-<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="implSeen ? 'animation: kvGrowW 1.6s linear ' + (replayed[3] ? '0s' : '6s') + ' 1 both' : 'width: 0'"></span></div>
+<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="{ animation: implSeen ? ('kvGrowW 1.6s linear ' + (replayed[3] ? '0s' : '6s') + ' 1 both') : 'none', width: implSeen ? '' : '0' }"></span></div>
 <div style="height: 150px; background: #F4F6F5; position: relative; overflow: hidden">
 <div x-show="stepOn[3]" style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 16px">
 <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
-<span style="width: 44px; height: 24px; border-radius: 999px; background: #C9D2CE; padding: 2px; box-sizing: border-box; display: flex;" :style="'animation: kvGreen .3s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both'"><span style="width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF;" :style="'animation: kvKnob .3s ease ' + (replayed[3] ? '0.1s' : '6.1s') + ' both'"></span></span>
-<span style="font-size: 11px; font-weight: 800; color: #0B5E2C;" :style="'animation: kvIn .25s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both'">Live</span>
+<span style="width: 44px; height: 24px; border-radius: 999px; background: #C9D2CE; padding: 2px; box-sizing: border-box; display: flex;" :style="{ animation: 'kvGreen .3s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both' }"><span style="width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF;" :style="{ animation: 'kvKnob .3s ease ' + (replayed[3] ? '0.1s' : '6.1s') + ' both' }"></span></span>
+<span style="font-size: 11px; font-weight: 800; color: #0B5E2C;" :style="{ animation: 'kvIn .25s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both' }">Live</span>
 </div>
-<div style="display: flex; align-items: flex-end; gap: 4px; height: 40px;" :style="'animation: kvIn .25s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both'"><span style="width: 8px; height: 14px; background: #9ED3B0; border-radius: 2px"></span><span style="width: 8px; height: 24px; background: #5BB880; border-radius: 2px"></span><span style="width: 8px; height: 32px; background: #13803F; border-radius: 2px"></span></div>
+<div style="display: flex; align-items: flex-end; gap: 4px; height: 40px;" :style="{ animation: 'kvIn .25s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both' }"><span style="width: 8px; height: 14px; background: #9ED3B0; border-radius: 2px"></span><span style="width: 8px; height: 24px; background: #5BB880; border-radius: 2px"></span><span style="width: 8px; height: 32px; background: #13803F; border-radius: 2px"></span></div>
 <div style="display: grid; grid-template-columns: repeat(3, 16px); gap: 5px">
 <span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33"></span>
-<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="'animation: kvPopIn .25s ease ' + (replayed[3] ? '1.0s' : '7.0s') + ' both'"></span>
-<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="'animation: kvPopIn .25s ease ' + (replayed[3] ? '1.0s' : '7.0s') + ' both'"></span>
-<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="'animation: kvPopIn .25s ease ' + (replayed[3] ? '1.4s' : '7.4s') + ' both'"></span>
-<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="'animation: kvPopIn .25s ease ' + (replayed[3] ? '1.4s' : '7.4s') + ' both'"></span>
-<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="'animation: kvPopIn .25s ease ' + (replayed[3] ? '1.4s' : '7.4s') + ' both'"></span>
+<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: 'kvPopIn .25s ease ' + (replayed[3] ? '1.0s' : '7.0s') + ' both' }"></span>
+<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: 'kvPopIn .25s ease ' + (replayed[3] ? '1.0s' : '7.0s') + ' both' }"></span>
+<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: 'kvPopIn .25s ease ' + (replayed[3] ? '1.4s' : '7.4s') + ' both' }"></span>
+<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: 'kvPopIn .25s ease ' + (replayed[3] ? '1.4s' : '7.4s') + ' both' }"></span>
+<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: 'kvPopIn .25s ease ' + (replayed[3] ? '1.4s' : '7.4s') + ' both' }"></span>
 </div>
 </div>
 </div>

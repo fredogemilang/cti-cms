@@ -3662,6 +3662,333 @@ body {
     }
 }
 
+/* ========================================================
+   Solutions Page Styling (AI & Customer Engagement)
+   ======================================================== */
+
+/* Solution AI Role Tabs */
+.kv-sol-ai-tablist {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+}
+
+.kv-sol-ai-tab {
+    min-height: 60px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid #C9D2CE;
+    background: #FFFFFF;
+    color: #0E1A24;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all .2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.kv-sol-ai-tab:hover:not([aria-selected="true"]) {
+    border-color: #071C33;
+    background: #F4F6F5;
+}
+
+.kv-sol-ai-tab[aria-selected="true"] {
+    background: #071C33 !important;
+    color: #FFFFFF !important;
+    border-color: #071C33 !important;
+}
+
+/* Solution AI Finance Subtabs */
+.kv-sol-fin-wrap {
+    align-self: center;
+    display: flex;
+    padding: 4px;
+    gap: 4px;
+    border-radius: 12px;
+    background: #E3E8E6;
+}
+
+.kv-sol-fin-tab {
+    min-height: 44px;
+    padding: 10px 20px;
+    border-radius: 9px;
+    border: 0;
+    font-size: 15px;
+    font-weight: 700;
+    background: transparent;
+    color: #4A5866;
+    box-shadow: none;
+    cursor: pointer;
+    transition: all .2s ease;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.kv-sol-fin-tab:hover:not([aria-selected="true"]) {
+    color: #071C33;
+}
+
+.kv-sol-fin-tab[aria-selected="true"] {
+    background: #FFFFFF !important;
+    color: #071C33 !important;
+    box-shadow: 0 1px 3px rgba(7,28,51,0.15) !important;
+}
+
+/* Solution CE Role Tabs */
+.kv-sol-ce-tablist {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+}
+
+.kv-sol-ce-tab {
+    min-height: 76px;
+    padding: 16px 22px;
+    border-radius: 16px;
+    border: 1px solid #C9D2CE;
+    background: #FFFFFF;
+    color: #0E1A24;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: all .2s ease;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.kv-sol-ce-tab:hover:not([aria-selected="true"]) {
+    border-color: #071C33;
+    background: #F4F6F5;
+}
+
+.kv-sol-ce-tab[aria-selected="true"] {
+    background: #071C33 !important;
+    color: #FFFFFF !important;
+    border-color: #071C33 !important;
+}
+
+.kv-sol-ce-tab .kv-ce-tab-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #EAF7EF;
+    color: #0B5E2C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 800;
+    transition: all .2s ease;
+}
+
+.kv-sol-ce-tab[aria-selected="true"] .kv-ce-tab-badge {
+    background: #2BD46A !important;
+    color: #06251A !important;
+}
+
+.kv-sol-ce-tab .kv-ce-tab-title {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+/* Interactive Solution Buttons ("How Kouventa AI / CE helps") */
+.kv-sol-btn-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+
+.kv-help-sol-btn {
+    flex: 1 1 0;
+    min-height: 88px;
+    max-height: 150px;
+    box-sizing: border-box;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+    border: 1px solid #E3E8E6;
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.kv-help-sol-btn:hover:not([aria-pressed="true"]) {
+    border-color: #C9D2CE;
+}
+
+.kv-help-sol-btn[aria-pressed="true"] {
+    border-color: #13803F !important;
+    background: #EAF7EF !important;
+    box-shadow: 0 0 0 3px rgba(19,128,63,.12) !important;
+    animation: none !important;
+}
+
+.kv-sol-btn-col.has-sol .kv-help-sol-btn:not([aria-pressed="true"]) {
+    animation: none !important;
+}
+
+.kv-help-sol-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #EAF7EF;
+    color: #13803F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.kv-help-sol-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.kv-help-sol-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0E1A24;
+}
+
+.kv-help-sol-desc {
+    font-size: 14px;
+    line-height: 1.55;
+    color: #4A5866;
+}
+
+/* Solution Responsive Layout */
+@media (max-width: 1023px) {
+    #solution-tabs {
+        padding: 48px 20px 64px !important;
+        gap: 32px !important;
+    }
+
+    .kv-sol-ai-tablist {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+    }
+
+    .kv-sol-ai-tab {
+        min-height: 52px !important;
+        padding: 10px 8px !important;
+        font-size: 14px !important;
+        white-space: normal !important;
+        line-height: 1.25 !important;
+    }
+
+    .kv-sol-ce-tablist {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+    }
+
+    .kv-sol-ce-tab {
+        min-height: 64px !important;
+        padding: 12px 14px !important;
+        gap: 10px !important;
+    }
+
+    .kv-sol-ce-tab .kv-ce-tab-badge {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 11px !important;
+        border-radius: 10px !important;
+    }
+
+    .kv-sol-ce-tab .kv-ce-tab-title {
+        font-size: 16px !important;
+    }
+
+    /* "How Kouventa AI/CE helps" 2-col to 1-col */
+    div[style*="grid-template-columns: minmax(0, 1fr) 600px"] {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+    }
+
+    div[id^="kv-ill-"],
+    div#kv-ill {
+        width: 100% !important;
+        max-width: 600px !important;
+        margin: 0 auto !important;
+    }
+
+    /* Challenges grids */
+    div[style*="grid-template-columns: repeat(3, minmax(0, 1fr))"],
+    div[style*="grid-template-columns: repeat(4, minmax(0, 1fr))"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    /* Implementation journey */
+    #impl-journey {
+        padding: 0 20px 60px !important;
+    }
+
+    #impl-journey > div[style*="grid-template-columns: repeat(4, minmax(0, 1fr))"] {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+@media (max-width: 639px) {
+    .kv-sol-ai-tablist {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .kv-sol-ce-tablist {
+        grid-template-columns: 1fr !important;
+    }
+
+    .kv-sol-fin-wrap {
+        width: 100% !important;
+        flex-direction: column !important;
+    }
+
+    .kv-sol-fin-tab {
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    /* Challenges grids to 1 col */
+    div[style*="grid-template-columns: repeat(3, minmax(0, 1fr))"],
+    div[style*="grid-template-columns: repeat(4, minmax(0, 1fr))"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Implementation journey to 1 col */
+    #impl-journey > div[style*="grid-template-columns: repeat(4, minmax(0, 1fr))"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Business impact grids to 1 col */
+    div[style*="position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))"],
+    div[style*="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))"],
+    div[style*="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr))"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    .kv-help-sol-btn {
+        max-height: none !important;
+    }
+}
+
 
 
 
