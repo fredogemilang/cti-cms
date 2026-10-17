@@ -2587,7 +2587,7 @@ body {
 
     /* Interactive Illustrations and Mockups on Product/Solution pages */
     div[role="img"][style*="width: 420px"]:not(.kv-sol-ce-hero-desktop):not(.kv-sol-ce-hero-mobile),
-    div[role="img"][style*="width: 440px"]:not(.kv-sol-ai-hero-ill),
+    div[role="img"][style*="width: 440px"]:not(.kv-sol-ai-hero-desktop):not(.kv-sol-ai-hero-ill),
     div[role="img"][style*="width: 520px"],
     .kv-stage-1,
     .kv-stage-2,
@@ -3938,7 +3938,8 @@ body {
     overflow: visible;
 }
 
-.kv-sol-ai-hero-ill {
+.kv-sol-ai-hero-desktop {
+    display: block !important;
     width: 440px !important;
     min-width: 440px !important;
     max-width: 440px !important;
@@ -3947,13 +3948,32 @@ body {
     flex-shrink: 0 !important;
 }
 
-@media (max-width: 500px) {
-    .kv-sol-ai-hero-ill {
-        left: 50% !important;
-        margin-left: -220px !important;
-        transform: scale(calc((100vw - 32px) / 440)) !important;
+.kv-sol-ai-hero-mobile {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .kv-sol-ai-hero-desktop {
+        display: none !important;
+    }
+
+    .kv-sol-ai-hero-mobile {
+        display: block !important;
+        width: 330px !important;
+        min-width: 330px !important;
+        max-width: 330px !important;
+        height: 365px !important;
+        position: relative !important;
+        flex-shrink: 0 !important;
+        margin: 0 auto !important;
+    }
+}
+
+@media (max-width: 350px) {
+    .kv-sol-ai-hero-mobile {
+        transform: scale(0.92) !important;
         transform-origin: top center !important;
-        margin-bottom: calc((370px * (1 - ((100vw - 32px) / 440))) * -1) !important;
+        margin-bottom: -28px !important;
     }
 }
 
