@@ -2465,8 +2465,9 @@ body {
         overflow-x: clip !important;
     }
 
-    /* Product Secondary Subnav Bar */
-    nav[aria-label="Products"] {
+    /* Product and Solutions Secondary Subnav Bar */
+    nav[aria-label="Products"],
+    nav[aria-label="Solutions"] {
         padding: 0 16px !important;
         gap: 16px !important;
         overflow-x: auto !important;
@@ -2475,10 +2476,12 @@ body {
         width: 100% !important;
         box-sizing: border-box !important;
     }
-    nav[aria-label="Products"]::-webkit-scrollbar {
+    nav[aria-label="Products"]::-webkit-scrollbar,
+    nav[aria-label="Solutions"]::-webkit-scrollbar {
         display: none !important;
     }
-    nav[aria-label="Products"] > * {
+    nav[aria-label="Products"] > *,
+    nav[aria-label="Solutions"] > * {
         flex-shrink: 0 !important;
         white-space: nowrap !important;
     }
@@ -2557,7 +2560,7 @@ body {
     div[style*="height: 704px"] > div:last-child {
         width: 100% !important;
         max-width: 100% !important;
-        overflow: hidden !important;
+        overflow: visible !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
@@ -2584,7 +2587,7 @@ body {
 
     /* Interactive Illustrations and Mockups on Product/Solution pages */
     div[role="img"][style*="width: 420px"],
-    div[role="img"][style*="width: 440px"],
+    div[role="img"][style*="width: 440px"]:not(.kv-sol-ai-hero-ill),
     div[role="img"][style*="width: 520px"],
     .kv-stage-1,
     .kv-stage-2,
@@ -3908,9 +3911,8 @@ body {
 }
 
 .kv-help-sol-btn {
-    flex: 1 1 0;
+    flex: 1 1 auto;
     min-height: 88px;
-    max-height: 150px;
     box-sizing: border-box;
     width: 100%;
     text-align: left;
@@ -3920,11 +3922,36 @@ body {
     border: 1px solid #E3E8E6;
     background: #FFFFFF;
     border-radius: 16px;
-    padding: 14px 20px;
+    padding: 16px 20px;
     display: flex;
     align-items: center;
     gap: 16px;
     transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+/* Solution AI Hero Constellation */
+.kv-sol-ai-hero-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+}
+
+.kv-sol-ai-hero-ill {
+    width: 440px !important;
+    max-width: 440px !important;
+    height: 370px !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+}
+
+@media (max-width: 480px) {
+    .kv-sol-ai-hero-ill {
+        transform: scale(calc((100vw - 32px) / 440)) !important;
+        transform-origin: top center !important;
+        margin-bottom: calc((370px * (1 - ((100vw - 32px) / 440))) * -1) !important;
+    }
 }
 
 .kv-help-sol-btn:hover:not([aria-pressed="true"]) {
@@ -4019,6 +4046,22 @@ body {
     div[style*="grid-template-columns: minmax(0, 1fr) 600px"] {
         grid-template-columns: 1fr !important;
         gap: 24px !important;
+    }
+
+    .kv-sol-btn-col {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        height: auto !important;
+    }
+
+    .kv-help-sol-btn {
+        flex: 0 0 auto !important;
+        height: auto !important;
+        min-height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        padding: 18px 20px !important;
     }
 
     div[id^="kv-ill-"],

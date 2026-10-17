@@ -10,7 +10,7 @@
 @endphp
 <div class="kv-canvas-wrap" x-data="{
     tab: 0,
-    sol: -1,
+    sol: 0,
     parseTabFromUrl(url = window.location.href) {
         try {
             const u = new URL(url, window.location.origin);
@@ -25,7 +25,7 @@
     },
     pickTab(i, scroll = false) {
         this.tab = i;
-        this.sol = -1;
+        this.sol = 0;
         if (scroll) {
             this.$nextTick(() => {
                 const el = document.getElementById('solution-tabs');
@@ -165,36 +165,36 @@
 
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa helps', 'How Kouventa helps') }}</h2>
-<div class="kv-sol-btn-col">
-<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0">
+<div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
+<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1Z"></path><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.WhatsApp Broadcast', 'WhatsApp Broadcast') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Send promotional campaigns, product launches, and seasonal offers to customers at scale.', 'Send promotional campaigns, product launches, and seasonal offers to customers at scale.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1">
+<button type="button" class="kv-help-sol-btn" @click="sol = 1" :aria-pressed="sol === 1">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V5M9 13h.01M15 13h.01M10 17h4"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Chatbot', 'Chatbot') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Answer product and service inquiries with predefined or AI chatbots, or escalate to a human agent for more complex requests.', 'Answer product and service inquiries with predefined or AI chatbots, or escalate to a human agent for more complex requests.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 2 ? -1 : 2)" :aria-pressed="sol === 2">
+<button type="button" class="kv-help-sol-btn" @click="sol = 2" :aria-pressed="sol === 2">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Omnichannel', 'Omnichannel') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Manage customer conversations and respond to comments from WhatsApp, Instagram, Facebook, and Live Chat in one platform.', 'Manage customer conversations and respond to comments from WhatsApp, Instagram, Facebook, and Live Chat in one platform.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 3 ? -1 : 3)" :aria-pressed="sol === 3">
+<button type="button" class="kv-help-sol-btn" @click="sol = 3" :aria-pressed="sol === 3">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Authentication', 'Authentication') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Secure customer logins and transactions with fast, seamless WhatsApp OTP verification.', 'Secure customer logins and transactions with fast, seamless WhatsApp OTP verification.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 4 ? -1 : 4)" :aria-pressed="sol === 4">
+<button type="button" class="kv-help-sol-btn" @click="sol = 4" :aria-pressed="sol === 4">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h3"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.WhatsApp Flows', 'WhatsApp Flows') }}</span>
@@ -231,10 +231,10 @@
 <div style="position: absolute; inset: 0; padding: 28px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto; gap: 16px; animation: kvIn .4s ease 4.4s both">
 <div style="grid-column: 1 / 3; display: flex; align-items: center; gap: 12px">
 <div style="display: flex; flex-direction: column; gap: 6px; width: 120px; flex-shrink: 0">
-<span style="font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px; white-space: nowrap"><img src="../assets/images/icon-whatsapp.png" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain">WhatsApp</span>
-<span style="font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px; white-space: nowrap"><img src="../assets/images/icon-channel-1.png" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain">Instagram</span>
-<span style="font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px; white-space: nowrap"><img src="../assets/images/icon-channel-2.png" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain">Facebook</span>
-<span style="font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px; white-space: nowrap"><img src="../assets/images/icon-channel-3.png" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain">Live Chat</span>
+<span style="font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px; white-space: nowrap"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain">WhatsApp</span>
+<span style="font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px; white-space: nowrap"><img src="{{ theme_asset('images/icon-instagram.png') }}" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain">Instagram</span>
+<span style="font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px; white-space: nowrap"><img src="{{ theme_asset('images/icon-facebook.png') }}" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain">Facebook</span>
+<span style="font-size: 12px; font-weight: 700; padding: 6px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px; white-space: nowrap"><img src="{{ theme_asset('images/icon-livechat.png') }}" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain">Live Chat</span>
 </div>
 <div style="width: 60px; flex-shrink: 0; display: flex; flex-direction: column; gap: 26px">
 <div style="height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: #13803F; --d: 52px; animation: kvTravel .8s linear 4.6s 2 both"></span></div>
@@ -243,13 +243,13 @@
 </div>
 <div style="flex-grow: 1; background: #F4F6F5; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px">
 <span style="font-size: 12px; font-weight: 800">One inbox</span>
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-radius: 8px; background: #FFFFFF; font-size: 12px; animation: kvIn .3s ease 4.8s both"><span>Rina · Is this available?</span><img src="../assets/images/icon-whatsapp.png" alt="WhatsApp" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain"></div>
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-radius: 8px; background: #FFFFFF; font-size: 12px; animation: kvIn .3s ease 5.0s both"><span>Sari · Comment on post</span><img src="../assets/images/icon-channel-1.png" alt="Instagram" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain"></div>
-<div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-radius: 8px; background: #FFFFFF; font-size: 12px; animation: kvIn .3s ease 5.2s both"><span>Budi · Price question</span><img src="../assets/images/icon-channel-2.png" alt="Facebook" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain"></div>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-radius: 8px; background: #FFFFFF; font-size: 12px; animation: kvIn .3s ease 4.8s both"><span>Rina · Is this available?</span><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain"></div>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-radius: 8px; background: #FFFFFF; font-size: 12px; animation: kvIn .3s ease 5.0s both"><span>Sari · Comment on post</span><img src="{{ theme_asset('images/icon-instagram.png') }}" alt="Instagram" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain"></div>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-radius: 8px; background: #FFFFFF; font-size: 12px; animation: kvIn .3s ease 5.2s both"><span>Budi · Price question</span><img src="{{ theme_asset('images/icon-facebook.png') }}" alt="Facebook" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain"></div>
 </div>
 </div>
 <div style="background: #F4F6F5; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; animation: kvIn .35s ease 5.6s both">
-<span style="font-size: 12px; font-weight: 800; color: #4A5866; display: flex; align-items: center; gap: 6px"><img src="../assets/images/icon-whatsapp.png" alt="" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain">WhatsApp</span>
+<span style="font-size: 12px; font-weight: 800; color: #4A5866; display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain">WhatsApp</span>
 <span style="background: #FFFFFF; border-radius: 4px 12px 12px 12px; padding: 10px 12px; font-size: 13px">Your code is <strong style="font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em">482917</strong></span>
 <span style="align-self: flex-start; display: flex; align-items: center; gap: 6px; background: #13803F; color: #FFFFFF; padding: 7px 12px; border-radius: 999px; font-size: 13px; font-weight: 800; animation: kvPopIn .3s ease 6.2s both"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Verified</span>
 </div>
@@ -310,29 +310,29 @@
 
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa helps', 'How Kouventa helps') }}</h2>
-<div class="kv-sol-btn-col">
-<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0">
+<div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
+<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Omnichannel', 'Omnichannel') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Centralize customer complaints from WhatsApp, Instagram, Facebook, and Live Chat in one platform, making it easier to track and respond to every issue.', 'Centralize customer complaints from WhatsApp, Instagram, Facebook, and Live Chat in one platform, making it easier to track and respond to every issue.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 1 ? -1 : 1)" :aria-pressed="sol === 1">
+<button type="button" class="kv-help-sol-btn" @click="sol = 1" :aria-pressed="sol === 1">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V5M9 13h.01M15 13h.01M10 17h4"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Chatbot', 'Chatbot') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Handle common customer complaints instantly with predefined or AI-powered chatbots, while escalating complex issues to human agents when needed.', 'Handle common customer complaints instantly with predefined or AI-powered chatbots, while escalating complex issues to human agents when needed.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 2 ? -1 : 2)" :aria-pressed="sol === 2">
+<button type="button" class="kv-help-sol-btn" @click="sol = 2" :aria-pressed="sol === 2">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M13 6v2M13 11v2M13 16v2"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Ticket Creation', 'Ticket Creation') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Create support tickets from customer complaints, reducing manual work and minimizing errors or miscommunication during issue handling.', 'Create support tickets from customer complaints, reducing manual work and minimizing errors or miscommunication during issue handling.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 3 ? -1 : 3)" :aria-pressed="sol === 3">
+<button type="button" class="kv-help-sol-btn" @click="sol = 3" :aria-pressed="sol === 3">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.CSAT Survey', 'CSAT Survey') }}</span>
@@ -346,12 +346,12 @@
 <div style="display: flex; flex-direction: column; gap: 12px">
 <span style="font-size: 13px; font-weight: 800; animation: kvIn .3s ease .1s both">One inbox</span>
 <div style="background: #F4F6F5; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .35s ease .2s both">
-<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 12px; font-weight: 800; color: #0B5E2C; display: flex; align-items: center; gap: 6px"><img src="../assets/images/icon-whatsapp.png" alt="" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain">WhatsApp</span><span style="display: grid; font-size: 11px; font-weight: 800"><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #E3E8E6">New</span><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 2.0s both">Resolved</span></span></div>
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 12px; font-weight: 800; color: #0B5E2C; display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain">WhatsApp</span><span style="display: grid; font-size: 11px; font-weight: 800"><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #E3E8E6">New</span><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 2.0s both">Resolved</span></span></div>
 <span style="font-size: 14px; font-weight: 600">Where is my order?</span>
 <span style="font-size: 13px; line-height: 1.5; background: #FFFFFF; padding: 8px 10px; border-radius: 4px 10px 10px 10px; animation: kvIn .35s ease 1.4s both"><strong style="font-size: 11px; color: #13803F">Chatbot</strong><br>It's with the courier and arrives tomorrow.</span>
 </div>
 <div style="background: #F4F6F5; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .35s ease .5s both">
-<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 12px; font-weight: 800; color: #5B2E86; display: flex; align-items: center; gap: 6px"><img src="../assets/images/icon-channel-1.png" alt="" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain">Instagram</span><span style="display: grid; font-size: 11px; font-weight: 800"><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #E3E8E6">New</span><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #FFF1D6; color: #7A4A00; animation: kvPopIn .3s ease 2.4s both">Escalated</span></span></div>
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 12px; font-weight: 800; color: #5B2E86; display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-instagram.png') }}" alt="" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain">Instagram</span><span style="display: grid; font-size: 11px; font-weight: 800"><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #E3E8E6">New</span><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #FFF1D6; color: #7A4A00; animation: kvPopIn .3s ease 2.4s both">Escalated</span></span></div>
 <span style="font-size: 14px; font-weight: 600">I was charged twice for one order.</span>
 <span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; animation: kvIn .35s ease 2.8s both"><span style="width: 28px; height: 28px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-size: 11px">DW</span>Dewi · Support agent</span>
 </div>
@@ -417,8 +417,8 @@
 
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa helps', 'How Kouventa helps') }}</h2>
-<div class="kv-sol-btn-col">
-<button type="button" class="kv-help-sol-btn" @click="sol = (sol === 0 ? -1 : 0)" :aria-pressed="sol === 0">
+<div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
+<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10H7z"></path><path d="M3 9h4M3 15h4M17 9h4M17 15h4M9 3v4M15 3v4M9 17v4M15 17v4"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Cross Platform Integrations', 'Cross Platform Integrations') }}</span>
