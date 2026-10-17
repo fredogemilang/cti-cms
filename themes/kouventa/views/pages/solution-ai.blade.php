@@ -927,9 +927,9 @@
 <h2 style="margin: 0; font-size: 40px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
 <p style="margin: 0; font-size: 18px; line-height: 1.55">{{ $bottomCtaSubtitle }}</p>
 </div>
-<div style="display: flex; gap: 12px; flex-shrink: 0">
-<a href="#solution-tabs" @click.prevent="pickTab(0, true)" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; white-space: nowrap">{{ t('kouventa.Find your first use case', 'Find your first use case') }}</a>
-<a href="{{ localized_url('/book-demo') }}" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; white-space: nowrap">{{ t('kouventa.Talk to Sales', 'Talk to Sales') }}</a>
+<div style="display: flex; gap: 12px; flex-shrink: 0; flex-wrap: wrap">
+<a href="#solution-tabs" @click.prevent="pickTab(0, true)" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ t('kouventa.Find your first use case', 'Find your first use case') }}</a>
+<a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; white-space: nowrap; text-decoration: none">{{ t('kouventa.Talk to Sales', 'Talk to Sales') }}</a>
 </div>
 </div>
 </section>

@@ -1153,9 +1153,9 @@
 <h2 style="margin: 0; font-size: 40px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
 <p style="margin: 0; font-size: 17px; line-height: 1.6; color: #B9C6D3">{!! nl2br(e($bottomCtaSubtitle)) !!}</p>
 </div>
-<div style="display: flex; gap: 14px; position: relative; z-index: 2; flex-shrink: 0">
-<a href="{{ localized_url('/pricing') }}" style="background: transparent; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28); text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>
-<a href="{{ localized_url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 26px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
+<div style="display: flex; gap: 14px; position: relative; z-index: 2; flex-shrink: 0; flex-wrap: wrap">
+<a href="{{ localized_url('/pricing') }}" class="kv-btn-action kv-btn-outline" style="background: transparent; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28); text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>
+<a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-primary" style="background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 26px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
 </div>
 </div>
 </section>
