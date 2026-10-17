@@ -47,6 +47,9 @@
 
     // Related Posts (Rule 15 Plugin Fail-Safe)
     $relatedPosts = collect();
+    $prevPost = null;
+    $nextPost = null;
+
     if (is_plugin_active('posts') && class_exists(\Plugins\Posts\Models\Post::class)) {
         $relatedPosts = \Plugins\Posts\Models\Post::published()
             ->where('id', '!=', $post->id)
@@ -54,6 +57,34 @@
             ->latest('published_at')
             ->take(3)
             ->get();
+
+        $currentTimestamp = $post->published_at ?? $post->created_at;
+
+        // Previous post (older)
+        $prevPost = \Plugins\Posts\Models\Post::published()
+            ->where(function ($query) use ($currentTimestamp, $post) {
+                $query->where('published_at', '<', $currentTimestamp)
+                      ->orWhere(function ($q) use ($currentTimestamp, $post) {
+                          $q->where('published_at', '=', $currentTimestamp)
+                            ->where('id', '<', $post->id);
+                      });
+            })
+            ->orderByDesc('published_at')
+            ->orderByDesc('id')
+            ->first();
+
+        // Next post (newer)
+        $nextPost = \Plugins\Posts\Models\Post::published()
+            ->where(function ($query) use ($currentTimestamp, $post) {
+                $query->where('published_at', '>', $currentTimestamp)
+                      ->orWhere(function ($q) use ($currentTimestamp, $post) {
+                          $q->where('published_at', '=', $currentTimestamp)
+                            ->where('id', '>', $post->id);
+                      });
+            })
+            ->orderBy('published_at', 'asc')
+            ->orderBy('id', 'asc')
+            ->first();
     }
 
     $currentUrl = request()->url();
@@ -154,18 +185,44 @@
                 </div>
                 @endif
 
-                <!-- Author Bio Card -->
-                <div class="kv-author-bio-card">
-                    <div class="kv-bio-avatar">
-                        {{ strtoupper(substr($authorName, 0, 2)) }}
-                    </div>
-                    <div class="kv-bio-details">
-                        <h4 class="kv-bio-name">{{ $authorName }}</h4>
-                        <p class="kv-bio-desc">
-                            {{ t('kouventa.author_desc', 'Specialist in Enterprise AI automation, Agentic workflows, and high-performance WhatsApp business platforms at Kouventa.') }}
-                        </p>
-                    </div>
-                </div>
+                <!-- Previous & Next Article Navigation -->
+                <nav class="kv-post-nav-grid" aria-label="Article navigation">
+                    @if($prevPost)
+                    <a href="{{ $prevPost->getUrl() }}" class="kv-post-nav-card kv-post-nav-prev">
+                        <div class="kv-post-nav-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                            <span>{{ t('Previous Article') }}</span>
+                        </div>
+                        <h4 class="kv-post-nav-title">{{ $prevPost->title }}</h4>
+                    </a>
+                    @else
+                    <a href="{{ localized_url('/insight') }}" class="kv-post-nav-card kv-post-nav-prev">
+                        <div class="kv-post-nav-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                            <span>{{ t('All Articles') }}</span>
+                        </div>
+                        <h4 class="kv-post-nav-title">{{ t('Back to Insight & Blog') }}</h4>
+                    </a>
+                    @endif
+
+                    @if($nextPost)
+                    <a href="{{ $nextPost->getUrl() }}" class="kv-post-nav-card kv-post-nav-next">
+                        <div class="kv-post-nav-label">
+                            <span>{{ t('Next Article') }}</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </div>
+                        <h4 class="kv-post-nav-title">{{ $nextPost->title }}</h4>
+                    </a>
+                    @else
+                    <a href="{{ localized_url('/insight') }}" class="kv-post-nav-card kv-post-nav-next">
+                        <div class="kv-post-nav-label">
+                            <span>{{ t('All Articles') }}</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </div>
+                        <h4 class="kv-post-nav-title">{{ t('Back to Insight & Blog') }}</h4>
+                    </a>
+                    @endif
+                </nav>
             </main>
 
             <!-- Right Column: Sticky Sidebar with TOC & CTA -->
@@ -562,51 +619,81 @@
     border-radius: 999px;
 }
 
-/* Author Bio Card */
-.kv-author-bio-card {
-    margin-top: 36px;
+/* ============================================================
+   PREVIOUS & NEXT ARTICLE NAVIGATION
+   ============================================================ */
+.kv-post-nav-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.kv-post-nav-card {
     background: #FFFFFF;
     border: 1px solid #E2E8F0;
     border-radius: 18px;
-    padding: 24px;
+    padding: 22px 24px;
     display: flex;
-    align-items: flex-start;
-    gap: 18px;
+    flex-direction: column;
+    text-decoration: none;
     box-shadow: 0 3px 12px -2px rgba(14, 26, 36, 0.03);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.kv-bio-avatar {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: #071C33;
-    color: #2BD46A;
-    font-size: 17px;
-    font-weight: 800;
-    display: flex;
+.kv-post-nav-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(43, 212, 106, 0.5);
+    box-shadow: 0 14px 28px -6px rgba(14, 26, 36, 0.08);
+}
+
+.kv-post-nav-next {
+    text-align: right;
+    align-items: flex-end;
+}
+
+.kv-post-nav-label {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #13803F;
+    margin-bottom: 10px;
+    transition: gap 0.2s ease;
+}
+
+.kv-post-nav-prev:hover .kv-post-nav-label {
+    gap: 11px;
+}
+
+.kv-post-nav-next:hover .kv-post-nav-label {
+    gap: 11px;
+}
+
+.kv-post-nav-label svg {
     flex-shrink: 0;
 }
 
-.kv-bio-details {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.kv-bio-name {
+.kv-post-nav-title {
     margin: 0;
-    font-size: 17px;
+    font-size: 15px;
+    line-height: 1.45;
     font-weight: 700;
     color: #0E1A24;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s ease;
 }
 
-.kv-bio-desc {
-    margin: 0;
-    font-size: 14px;
-    line-height: 1.6;
-    color: #64748B;
+.kv-post-nav-card:hover .kv-post-nav-title {
+    color: #13803F;
 }
 
 /* Sticky Sidebar */
@@ -969,6 +1056,22 @@
     .kv-article-prose h3 {
         font-size: 18px !important;
         margin: 24px 0 10px !important;
+    }
+    .kv-post-nav-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        margin-top: 32px !important;
+    }
+    .kv-post-nav-card {
+        padding: 16px 18px !important;
+        border-radius: 14px !important;
+    }
+    .kv-post-nav-next {
+        text-align: left !important;
+        align-items: flex-start !important;
+    }
+    .kv-post-nav-title {
+        font-size: 14px !important;
     }
     .kv-related-section {
         padding: 40px 14px 64px !important;
