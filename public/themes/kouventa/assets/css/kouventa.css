@@ -3666,6 +3666,11 @@ body {
    Solutions Page Styling (AI & Customer Engagement)
    ======================================================== */
 
+/* Solution Tabs Section Anchor */
+#solution-tabs {
+    scroll-margin-top: 88px;
+}
+
 /* Solution AI Role Tabs */
 .kv-sol-ai-tablist {
     display: grid;

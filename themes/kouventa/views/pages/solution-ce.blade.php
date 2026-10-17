@@ -9,12 +9,20 @@
     $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', "Tell us about your team's needs and we'll show you how Kouventa fits.");
 @endphp
 <div class="kv-canvas-wrap" x-data="{
-    tab: (function() {
-        const p = new URLSearchParams(window.location.search);
-        const v = parseInt(p.get('case')) || parseInt(p.get('tab'));
-        return (!isNaN(v) && v >= 0 && v <= 2) ? v : 0;
-    })(),
+    tab: 0,
     sol: -1,
+    parseTabFromUrl(url = window.location.href) {
+        try {
+            const u = new URL(url, window.location.origin);
+            const p = u.searchParams;
+            const raw = p.get('case') !== null ? p.get('case') : p.get('tab');
+            if (raw !== null) {
+                const v = parseInt(raw, 10);
+                if (!isNaN(v) && v >= 0 && v <= 2) return v;
+            }
+        } catch(e) {}
+        return 0;
+    },
     pickTab(i, scroll = false) {
         this.tab = i;
         this.sol = -1;
@@ -24,6 +32,52 @@
                 if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         }
+    },
+    init() {
+        this.tab = this.parseTabFromUrl();
+
+        // If landing with case, tab, or #solution-tabs, scroll smoothly to tabs section
+        const p = new URLSearchParams(window.location.search);
+        if (p.has('case') || p.has('tab') || window.location.hash.includes('solution-tabs')) {
+            setTimeout(() => {
+                const el = document.getElementById('solution-tabs');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        // Intercept internal tab clicks from header/mobile menu while already on this page
+        document.addEventListener('click', (e) => {
+            const a = e.target.closest('a');
+            if (!a) return;
+            const href = a.getAttribute('href');
+            if (!href) return;
+            try {
+                const u = new URL(href, window.location.href);
+                if (u.pathname === window.location.pathname && (u.searchParams.has('case') || u.searchParams.has('tab') || u.hash.includes('solution-tabs'))) {
+                    const raw = u.searchParams.get('case') !== null ? u.searchParams.get('case') : u.searchParams.get('tab');
+                    if (raw !== null) {
+                        const target = parseInt(raw, 10);
+                        if (!isNaN(target) && target >= 0 && target <= 2) {
+                            this.pickTab(target, true);
+                            window.history.pushState(null, '', u.href);
+                            e.preventDefault();
+                            return;
+                        }
+                    }
+                    if (u.hash.includes('solution-tabs')) {
+                        const el = document.getElementById('solution-tabs');
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            } catch(err) {}
+        });
+
+        window.addEventListener('popstate', () => {
+            this.tab = this.parseTabFromUrl();
+            this.sol = -1;
+            const el = document.getElementById('solution-tabs');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
     }
 }">
 

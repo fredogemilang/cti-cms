@@ -9,15 +9,24 @@
     $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', "Begin with everyday AI for your employees, governed by your organization. Grow into AI agents when you're ready.");
 @endphp
 <div class="kv-canvas-wrap" x-data="{
-    tab: (function() {
-        const p = new URLSearchParams(window.location.search);
-        const v = parseInt(p.get('dept')) || parseInt(p.get('tab'));
-        return (!isNaN(v) && v >= 0 && v <= 6) ? v : 0;
-    })(),
+    tab: 0,
     sol: -1,
     stepOn: [true, true, true, true],
     replayed: [false, false, false, false],
     implSeen: false,
+    parseTabFromUrl(url = window.location.href) {
+        try {
+            const u = new URL(url, window.location.origin);
+            const p = u.searchParams;
+            const raw = p.get('dept') !== null ? p.get('dept') : p.get('tab');
+            if (raw !== null) {
+                let v = parseInt(raw, 10);
+                if (v === 5 && !p.has('tab')) v = 6;
+                if (!isNaN(v) && v >= 0 && v <= 6) return v;
+            }
+        } catch(e) {}
+        return 0;
+    },
     pickTab(i, scroll = false) {
         this.tab = i;
         this.sol = -1;
@@ -35,6 +44,52 @@
         setTimeout(() => { this.stepOn[i] = true; }, 40);
     },
     init() {
+        this.tab = this.parseTabFromUrl();
+
+        // If landing with dept, tab, or #solution-tabs, scroll smoothly to tabs section
+        const p = new URLSearchParams(window.location.search);
+        if (p.has('dept') || p.has('tab') || window.location.hash.includes('solution-tabs')) {
+            setTimeout(() => {
+                const el = document.getElementById('solution-tabs');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        // Intercept internal tab clicks from header/mobile menu while already on this page
+        document.addEventListener('click', (e) => {
+            const a = e.target.closest('a');
+            if (!a) return;
+            const href = a.getAttribute('href');
+            if (!href) return;
+            try {
+                const u = new URL(href, window.location.href);
+                if (u.pathname === window.location.pathname && (u.searchParams.has('dept') || u.searchParams.has('tab') || u.hash.includes('solution-tabs'))) {
+                    const raw = u.searchParams.get('dept') !== null ? u.searchParams.get('dept') : u.searchParams.get('tab');
+                    if (raw !== null) {
+                        let target = parseInt(raw, 10);
+                        if (target === 5 && !u.searchParams.has('tab')) target = 6;
+                        if (!isNaN(target) && target >= 0 && target <= 6) {
+                            this.pickTab(target, true);
+                            window.history.pushState(null, '', u.href);
+                            e.preventDefault();
+                            return;
+                        }
+                    }
+                    if (u.hash.includes('solution-tabs')) {
+                        const el = document.getElementById('solution-tabs');
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            } catch(err) {}
+        });
+
+        window.addEventListener('popstate', () => {
+            this.tab = this.parseTabFromUrl();
+            this.sol = -1;
+            const el = document.getElementById('solution-tabs');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
         this.$nextTick(() => {
             const el = document.getElementById('impl-journey');
             if (!el || typeof IntersectionObserver === 'undefined') {
