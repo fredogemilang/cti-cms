@@ -803,26 +803,26 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see ho
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
 <article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 0.2s both">
 <div aria-hidden="true" style="height: 56px; position: relative; width: 120px">
-<span style="position: absolute; left: 0; top: 10px; width: 34px; height: 34px; border-radius: 10px; background: #FBE6E1; border: 1px solid #F0C4BA; --x: -4px; --y: -8px; animation: kvJitter 2s ease 0.4s 1 both"></span>
-<span style="position: absolute; left: 44px; top: 0; width: 34px; height: 34px; border-radius: 10px; background: #FBE6E1; border: 1px solid #F0C4BA; --x: 6px; --y: 10px; animation: kvJitter 2s ease 0.4s 1 both"></span>
-<span style="position: absolute; left: 86px; top: 18px; width: 34px; height: 34px; border-radius: 10px; background: #FBE6E1; border: 1px solid #F0C4BA; --x: 8px; --y: -6px; animation: kvJitter 2s ease 0.4s 1 both"></span>
+<span style="position: absolute; left: 0; top: 10px; width: 34px; height: 34px; border-radius: 10px; background: #FBE6E1; border: 1px solid #F0C4BA; animation: kvScatterDrift1 3.2s ease-in-out infinite alternate"></span>
+<span style="position: absolute; left: 44px; top: 0; width: 34px; height: 34px; border-radius: 10px; background: #FBE6E1; border: 1px solid #F0C4BA; animation: kvScatterDrift2 2.8s ease-in-out .3s infinite alternate"></span>
+<span style="position: absolute; left: 86px; top: 18px; width: 34px; height: 34px; border-radius: 10px; background: #FBE6E1; border: 1px solid #F0C4BA; animation: kvScatterDrift3 3.5s ease-in-out .6s infinite alternate"></span>
 </div>
 <h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ t('kouventa.AI tools are scattered across teams', 'AI tools are scattered across teams') }}</h3>
 <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Different teams use different AI tools based on their needs, creating a fragmented AI environment across the organization.', 'Different teams use different AI tools based on their needs, creating a fragmented AI environment across the organization.') }}</p>
 </article>
 <article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 0.8s both">
 <div aria-hidden="true" style="height: 56px; display: flex; align-items: center">
-<span style="width: 52px; height: 52px; border-radius: 14px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; transform-origin: 50% 80%; animation: kvWobble 1.4s ease 1.2s 1 both"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 7.5-2"></path></svg></span>
+<span style="width: 52px; height: 52px; border-radius: 14px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; transform-origin: 50% 80%; animation: kvWobbleLoop 3.2s ease-in-out infinite"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 7.5-2"></path></svg></span>
 </div>
 <h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ t('kouventa.Limited control over AI usage', 'Limited control over AI usage') }}</h3>
 <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.With AI tools managed separately, it becomes harder to control how AI is used and ensure business data is handled securely.', 'With AI tools managed separately, it becomes harder to control how AI is used and ensure business data is handled securely.') }}</p>
 </article>
 <article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 1.4s both">
 <div aria-hidden="true" style="height: 56px; display: flex; align-items: flex-end; gap: 6px">
-<span style="width: 16px; border-radius: 4px 4px 0 0; background: #F0C4BA; --h: 18px; animation: kvGrowH 1.2s ease 1.8s 1 both"></span>
-<span style="width: 16px; border-radius: 4px 4px 0 0; background: #E79F8E; --h: 30px; animation: kvGrowH 1.2s ease 1.9s 1 both"></span>
-<span style="width: 16px; border-radius: 4px 4px 0 0; background: #D9735D; --h: 42px; animation: kvGrowH 1.2s ease 2.0s 1 both"></span>
-<span style="width: 16px; border-radius: 4px 4px 0 0; background: #B4412A; --h: 56px; animation: kvGrowH 1.2s ease 2.1s 1 both"></span>
+<span style="width: 16px; height: 18px; border-radius: 4px 4px 0 0; background: #F0C4BA; transform-origin: bottom; animation: kvBarFluctuate 2.1s ease-in-out infinite alternate"></span>
+<span style="width: 16px; height: 30px; border-radius: 4px 4px 0 0; background: #E79F8E; transform-origin: bottom; animation: kvBarFluctuate 2.5s ease-in-out .3s infinite alternate"></span>
+<span style="width: 16px; height: 42px; border-radius: 4px 4px 0 0; background: #D9735D; transform-origin: bottom; animation: kvBarFluctuate 2.3s ease-in-out .6s infinite alternate"></span>
+<span style="width: 16px; height: 56px; border-radius: 4px 4px 0 0; background: #B4412A; transform-origin: bottom; animation: kvBarFluctuate 2.7s ease-in-out .15s infinite alternate"></span>
 </div>
 <h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ t('kouventa.AI usage & billing are hard to manage', 'AI usage & billing are hard to manage') }}</h3>
 <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.', 'Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.') }}</p>
