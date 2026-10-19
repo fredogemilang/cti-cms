@@ -49,6 +49,23 @@ class WhatsappGatewayService
     }
 
     /**
+     * Get persistent cache store for WhatsApp OTP and tokens.
+     */
+    public function cache(): \Illuminate\Contracts\Cache\Repository
+    {
+        $default = config('cache.default');
+        if ($default === 'array') {
+            if (\Illuminate\Support\Facades\Schema::hasTable('cache')) {
+                return Cache::store('database');
+            }
+
+            return Cache::store('file');
+        }
+
+        return Cache::store();
+    }
+
+    /**
      * Store OTP in cache with expiration.
      */
     public function storeOtp(string $normalizedPhone, string $otp): void
@@ -58,7 +75,7 @@ class WhatsappGatewayService
             $expiryMinutes = 5;
         }
 
-        Cache::put("wa_otp:{$normalizedPhone}", $otp, now()->addMinutes($expiryMinutes));
+        $this->cache()->put("wa_otp:{$normalizedPhone}", $otp, now()->addMinutes($expiryMinutes));
     }
 
     /**
@@ -135,7 +152,7 @@ class WhatsappGatewayService
      */
     public function verifyOtp(string $normalizedPhone, string $inputOtp): array
     {
-        $storedOtp = Cache::get("wa_otp:{$normalizedPhone}");
+        $storedOtp = $this->cache()->get("wa_otp:{$normalizedPhone}");
 
         if (empty($storedOtp)) {
             return [
@@ -152,11 +169,11 @@ class WhatsappGatewayService
         }
 
         // OTP matched, consume it
-        Cache::forget("wa_otp:{$normalizedPhone}");
+        $this->cache()->forget("wa_otp:{$normalizedPhone}");
 
         // Generate tamper-proof signed token valid for 45 minutes
         $token = hash_hmac('sha256', "wa_verified:{$normalizedPhone}:".config('app.key'), config('app.key'));
-        Cache::put("wa_verified_token:{$token}", $normalizedPhone, now()->addMinutes(45));
+        $this->cache()->put("wa_verified_token:{$token}", $normalizedPhone, now()->addMinutes(45));
 
         if (session()->isStarted()) {
             session()->put("wa_verified_{$normalizedPhone}", $token);
@@ -181,7 +198,7 @@ class WhatsappGatewayService
 
         // 1. Check signed HMAC token
         if (! empty($token)) {
-            $cachedPhone = Cache::get("wa_verified_token:{$token}");
+            $cachedPhone = $this->cache()->get("wa_verified_token:{$token}");
             if ($cachedPhone && $cachedPhone === $normalized) {
                 return true;
             }
@@ -191,7 +208,7 @@ class WhatsappGatewayService
         if ($request && $request->hasSession()) {
             $sessionToken = $request->session()->get("wa_verified_{$normalized}");
             if (! empty($sessionToken)) {
-                $cachedPhone = Cache::get("wa_verified_token:{$sessionToken}");
+                $cachedPhone = $this->cache()->get("wa_verified_token:{$sessionToken}");
                 if ($cachedPhone && $cachedPhone === $normalized) {
                     return true;
                 }

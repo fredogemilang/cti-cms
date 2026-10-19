@@ -44,8 +44,8 @@ class WhatsappOtpController extends Controller
 
         // Check cooldown (e.g. 60s)
         $cooldownKey = "wa_otp_cooldown:{$normalizedPhone}";
-        if (Cache::has($cooldownKey)) {
-            $remaining = Cache::get($cooldownKey) - time();
+        if ($service->cache()->has($cooldownKey)) {
+            $remaining = $service->cache()->get($cooldownKey) - time();
             if ($remaining > 0) {
                 return response()->json([
                     'success' => false,
@@ -67,7 +67,7 @@ class WhatsappOtpController extends Controller
         $service->storeOtp($normalizedPhone, $otp);
 
         // Set cooldown timestamp
-        Cache::put($cooldownKey, time() + $cooldownSeconds, now()->addSeconds($cooldownSeconds));
+        $service->cache()->put($cooldownKey, time() + $cooldownSeconds, now()->addSeconds($cooldownSeconds));
 
         // Send via WhatsApp
         $name = $request->input('name') ?: 'Customer';
