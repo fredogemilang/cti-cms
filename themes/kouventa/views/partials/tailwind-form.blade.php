@@ -79,6 +79,102 @@
                                 {!! $consentText !!}
                             </label>
                         </div>
+                    @elseif(is_plugin_active('whatsapp-verifier') && (in_array($field->type, ['tel', 'wa_verified_phone'], true) || $field->field_id === 'phone' || str_contains(strtolower($field->field_id), 'phone')))
+                        <div x-data="waPhoneVerifier({
+                            initialPhone: '{{ old($fieldId) }}',
+                            sendUrl: '{{ route('plugins.whatsapp-verifier.send-otp') }}',
+                            verifyUrl: '{{ route('plugins.whatsapp-verifier.verify-otp') }}',
+                            csrfToken: '{{ csrf_token() }}',
+                            isRequired: {{ $field->is_required ? 'true' : 'false' }},
+                            nameFieldId: 'f-full_name'
+                        })" class="kv-wa-verifier-wrap" style="display: flex; flex-direction: column; gap: 10px; width: 100%">
+                            
+                            <!-- Input & Verify Button Group -->
+                            <div style="display: flex; gap: 10px; align-items: center; width: 100%">
+                                <input id="f-{{ $fieldId }}" name="{{ $fieldId }}" type="tel"
+                                       x-model="phone"
+                                       :readonly="isVerified"
+                                       placeholder="{{ $placeholder ?: 'WhatsApp number' }}"
+                                       {{ $field->is_required ? 'required' : '' }}
+                                       class="kv-in"
+                                       @input="onPhoneInput($event)"
+                                       style="box-sizing: border-box; flex: 1; min-width: 0; height: 52px; padding: 0 16px; border-radius: 12px; border: 1px solid #DCE3E0; background: #F7F9F8; font-size: 15px; color: #0E1A24">
+
+                                <button type="button"
+                                        @click="sendOtp()"
+                                        :disabled="loading || cooldown > 0 || isVerified"
+                                        :style="isVerified
+                                            ? 'box-sizing: border-box; height: 52px; padding: 0 20px; border-radius: 12px; border: 0; background: #2BD46A; color: #06251A; font-size: 15px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: default; flex-shrink: 0'
+                                            : 'box-sizing: border-box; height: 52px; padding: 0 24px; border-radius: 12px; border: 0; background: #071C33; color: #FFFFFF; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0;' + (cooldown > 0 || loading ? ' opacity: 0.65; cursor: not-allowed;' : '')">
+                                    <template x-if="isVerified">
+                                        <span style="display: inline-flex; align-items: center; gap: 4px">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>
+                                            <span>Verified</span>
+                                        </span>
+                                    </template>
+                                    <template x-if="!isVerified && loading">
+                                        <span>Sending...</span>
+                                    </template>
+                                    <template x-if="!isVerified && !loading && cooldown > 0">
+                                        <span x-text="'Resend (' + cooldown + 's)'"></span>
+                                    </template>
+                                    <template x-if="!isVerified && !loading && cooldown === 0">
+                                        <span>Verify</span>
+                                    </template>
+                                </button>
+                            </div>
+
+                            <!-- Hidden Verification Token Input -->
+                            <input type="hidden" name="_wa_verification_token" :value="token">
+                            <input type="hidden" name="_wa_verified_phone" :value="verifiedPhone">
+
+                            <!-- Inline OTP Container -->
+                            <div x-show="showOtpInput && !isVerified" x-cloak
+                                 x-transition:enter="transition ease-out duration-200"
+                                 x-transition:enter-start="opacity-0 transform -translate-y-2"
+                                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                                 style="background: #F4F7F5; border: 1px solid #D2E0D8; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+                                <div style="display: flex; justify-content: space-between; align-items: center">
+                                    <label style="font-size: 13px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Verification Code', 'Verification Code') }}</label>
+                                    <span style="font-size: 12px; color: #5B6B78">{{ t('kouventa.Enter 4-digit code sent to WhatsApp', 'Enter 4-digit code sent to WhatsApp') }}</span>
+                                </div>
+
+                                <div style="display: flex; gap: 10px; align-items: center">
+                                    <input type="text"
+                                           x-model="otp"
+                                           maxlength="4"
+                                           placeholder="••••"
+                                           inputmode="numeric"
+                                           autocomplete="one-time-code"
+                                           @input="onOtpInput($event)"
+                                           @keydown.enter.prevent="verifyOtp()"
+                                           style="box-sizing: border-box; width: 140px; height: 46px; text-align: center; font-size: 20px; font-weight: 800; letter-spacing: 6px; border-radius: 10px; border: 1px solid #C4D2CB; background: #FFFFFF; color: #0E1A24">
+
+                                    <button type="button"
+                                            @click="verifyOtp()"
+                                            :disabled="verifying || otp.length < 4"
+                                            style="height: 46px; padding: 0 20px; border-radius: 10px; border: 0; background: #2BD46A; color: #06251A; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s ease"
+                                            :style="otp.length < 4 ? 'opacity: 0.5; cursor: not-allowed;' : ''">
+                                        <span x-text="verifying ? '{{ t('kouventa.Verifying...', 'Verifying...') }}' : '{{ t('kouventa.Confirm OTP', 'Confirm OTP') }}'"></span>
+                                    </button>
+                                </div>
+
+                                <!-- Feedback messages -->
+                                <div x-show="errorMessage" style="font-size: 13px; color: #C62828; font-weight: 600" x-text="errorMessage"></div>
+                                <div x-show="infoMessage" style="font-size: 13px; color: #0B5C28; font-weight: 600" x-text="infoMessage"></div>
+                            </div>
+
+                            <!-- Verified Status Notice + Reset Option -->
+                            <div x-show="isVerified" x-cloak style="display: flex; align-items: center; justify-content: space-between; font-size: 13px">
+                                <span style="color: #0B5C28; font-weight: 600; display: inline-flex; align-items: center; gap: 4px">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg>
+                                    <span>{{ t('kouventa.WhatsApp number verified', 'WhatsApp number verified') }}</span>
+                                </span>
+                                <button type="button" @click="resetVerification()" style="background: none; border: 0; padding: 0; font-size: 12px; color: #4A5866; text-decoration: underline; cursor: pointer">
+                                    {{ t('kouventa.Change number', 'Change number') }}
+                                </button>
+                            </div>
+                        </div>
                     @else
                         <input id="f-{{ $fieldId }}" name="{{ $fieldId }}"
                                type="{{ $field->type === 'email' ? 'email' : ($field->type === 'tel' ? 'tel' : 'text') }}"
@@ -101,4 +197,163 @@
             {{ $form->submit_button_text ?: t('kouventa.Submit', 'Submit') }}
         </button>
     </form>
+
+    @if(is_plugin_active('whatsapp-verifier'))
+        <script>
+        (function() {
+            function initWaPhoneVerifier() {
+                if (!window.Alpine) return;
+                if (typeof window.waPhoneVerifierRegistered !== 'undefined') return;
+                window.waPhoneVerifierRegistered = true;
+
+                Alpine.data('waPhoneVerifier', (config) => ({
+                    phone: config.initialPhone || '',
+                    otp: '',
+                    token: '',
+                    verifiedPhone: '',
+                    loading: false,
+                    verifying: false,
+                    isVerified: false,
+                    showOtpInput: false,
+                    cooldown: 0,
+                    timer: null,
+                    errorMessage: '',
+                    infoMessage: '',
+
+                    onPhoneInput(e) {
+                        let val = e.target.value.replace(/[^0-9+]/g, '');
+                        if (val.startsWith('0')) {
+                            val = '62' + val.substring(1);
+                        } else if (val.startsWith('8')) {
+                            val = '628' + val.substring(1);
+                        }
+                        this.phone = val;
+                        if (this.isVerified && this.phone !== this.verifiedPhone) {
+                            this.isVerified = false;
+                            this.token = '';
+                            this.verifiedPhone = '';
+                        }
+                    },
+
+                    onOtpInput(e) {
+                        this.otp = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
+                        if (this.otp.length === 4) {
+                            this.verifyOtp();
+                        }
+                    },
+
+                    async sendOtp() {
+                        this.errorMessage = '';
+                        this.infoMessage = '';
+
+                        let raw = this.phone.trim();
+                        if (!raw || raw.length < 10) {
+                            this.errorMessage = 'Please enter a valid phone number (min. 10 digits).';
+                            return;
+                        }
+
+                        let nameInput = document.getElementById(config.nameFieldId) || document.querySelector('input[name="full_name"]') || document.querySelector('input[name="name"]');
+                        let nameVal = nameInput ? nameInput.value : 'Customer';
+
+                        this.loading = true;
+                        try {
+                            let res = await fetch(config.sendUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': config.csrfToken,
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    phone: raw,
+                                    name: nameVal
+                                })
+                            });
+
+                            let data = await res.json();
+                            if (data.success) {
+                                this.showOtpInput = true;
+                                this.infoMessage = data.message || 'OTP sent to your WhatsApp.';
+                                this.startCooldown(data.cooldown || 60);
+                            } else {
+                                this.errorMessage = data.message || 'Failed to send OTP.';
+                            }
+                        } catch (err) {
+                            this.errorMessage = 'Network error while sending OTP. Please try again.';
+                        } finally {
+                            this.loading = false;
+                        }
+                    },
+
+                    async verifyOtp() {
+                        if (this.otp.length < 4 || this.verifying) return;
+
+                        this.errorMessage = '';
+                        this.infoMessage = '';
+                        this.verifying = true;
+
+                        try {
+                            let res = await fetch(config.verifyUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': config.csrfToken,
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    phone: this.phone,
+                                    otp: this.otp
+                                })
+                            });
+
+                            let data = await res.json();
+                            if (data.success) {
+                                this.token = data.token;
+                                this.verifiedPhone = data.phone;
+                                this.isVerified = true;
+                                this.showOtpInput = false;
+                                this.infoMessage = data.message || 'Phone number verified!';
+                                if (this.timer) clearInterval(this.timer);
+                            } else {
+                                this.errorMessage = data.message || 'Invalid verification code.';
+                            }
+                        } catch (err) {
+                            this.errorMessage = 'Network error while verifying OTP.';
+                        } finally {
+                            this.verifying = false;
+                        }
+                    },
+
+                    startCooldown(seconds) {
+                        this.cooldown = seconds;
+                        if (this.timer) clearInterval(this.timer);
+                        this.timer = setInterval(() => {
+                            this.cooldown--;
+                            if (this.cooldown <= 0) {
+                                clearInterval(this.timer);
+                                this.cooldown = 0;
+                            }
+                        }, 1000);
+                    },
+
+                    resetVerification() {
+                        this.isVerified = false;
+                        this.token = '';
+                        this.verifiedPhone = '';
+                        this.otp = '';
+                        this.showOtpInput = false;
+                        this.errorMessage = '';
+                        this.infoMessage = '';
+                    }
+                }));
+            }
+
+            if (window.Alpine) {
+                initWaPhoneVerifier();
+            } else {
+                document.addEventListener('alpine:init', initWaPhoneVerifier);
+            }
+        })();
+        </script>
+    @endif
 @endif

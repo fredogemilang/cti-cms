@@ -33,6 +33,7 @@
 /plugins/*
 !/plugins/posts
 !/plugins/google-site-kit
+!/plugins/whatsapp-verifier
 
 Homestead.json
 Homestead.yaml

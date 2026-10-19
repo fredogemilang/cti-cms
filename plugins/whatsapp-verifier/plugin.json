@@ -1,0 +1,26 @@
+{
+    "name": "WhatsApp Verifier",
+    "slug": "whatsapp-verifier",
+    "version": "1.0.0",
+    "description": "WhatsApp OTP Phone Verification Plugin for forms using Helios Gateway.",
+    "author": "CMS Team",
+    "namespace": "Plugins\\WhatsappVerifier",
+    "provider": "Plugins\\WhatsappVerifier\\Providers\\WhatsappVerifierServiceProvider",
+    "permissions": {
+        "resources": [
+            {
+                "module": "whatsapp-verifier",
+                "actions": [
+                    "view",
+                    "manage"
+                ],
+                "icon": "chat",
+                "description": "Manage WhatsApp Verifier settings"
+            }
+        ]
+    },
+    "requires": {
+        "php": ">=8.2",
+        "cms": ">=1.0"
+    }
+}

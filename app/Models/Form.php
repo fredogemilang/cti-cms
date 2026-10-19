@@ -269,6 +269,10 @@ class Form extends Model
 
             // Validate field
             $validation = $field->validateValue($value);
+
+            // Allow plugins/themes to filter or perform custom field validation
+            $validation = Filter::apply('form.validate_field', $validation, $field, $value, $data, $request);
+
             if ($validation !== true) {
                 $errors[$field->field_id] = $validation;
             } else {
