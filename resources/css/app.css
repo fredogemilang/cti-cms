@@ -340,3 +340,10 @@
 
 /* Force dark mode to use selector strategy instead of media query */
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Tiptap table support (admin WYSIWYG) */
+.ProseMirror table { border-collapse: collapse; table-layout: fixed; width: 100%; margin: 1rem 0; overflow: hidden; }
+.ProseMirror table td, .ProseMirror table th { border: 1px solid rgba(128,128,128,.35); padding: .5rem .75rem; vertical-align: top; position: relative; min-width: 1em; }
+.ProseMirror table th { background: rgba(128,128,128,.12); font-weight: 600; text-align: left; }
+.ProseMirror table .selectedCell:after { content: ""; position: absolute; inset: 0; background: rgba(37,99,235,.18); pointer-events: none; }
+.ProseMirror .tableWrapper { overflow-x: auto; }
