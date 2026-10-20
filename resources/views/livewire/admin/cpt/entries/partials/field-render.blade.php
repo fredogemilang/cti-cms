@@ -230,6 +230,16 @@
                         <button type="button" @click="setHorizontalRule()" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Horizontal Rule">
                             <span class="material-symbols-outlined text-[20px]">horizontal_rule</span>
                         </button>
+                        <button type="button" @click="insertTable()" :class="{ 'bg-gray-100 dark:bg-[#272B30] text-[#2563EB]': isActive('table') }" class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Insert Table"><span class="material-symbols-outlined text-[20px]">table</span></button>
+                        <template x-if="isActive('table')"><div class="flex items-center gap-0.5 pl-1 ml-1 border-l border-gray-200 dark:border-[#272B30]">
+                        <button type="button" @click="addRowAfter()"  class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Add Row After"><span class="material-symbols-outlined text-[20px]">table_rows</span></button>
+                        <button type="button" @click="addColumnAfter()"  class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Add Column After"><span class="material-symbols-outlined text-[20px]">view_column</span></button>
+                        <button type="button" @click="deleteRow()"  class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Delete Row"><span class="material-symbols-outlined text-[20px]">vertical_align_center</span></button>
+                        <button type="button" @click="deleteColumn()"  class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Delete Column"><span class="material-symbols-outlined text-[20px]">view_week</span></button>
+                        <button type="button" @click="toggleHeaderRow()"  class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Toggle Header Row"><span class="material-symbols-outlined text-[20px]">table_chart</span></button>
+                        <button type="button" @click="mergeOrSplitCells()"  class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Merge / Split Cells"><span class="material-symbols-outlined text-[20px]">cell_merge</span></button>
+                        <button type="button" @click="deleteTable()"  class="p-1.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#272B30] text-[#6F767E] transition-colors" title="Delete Table"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                        </div></template>
                     </div>
 
                     <div class="w-px h-5 bg-gray-200 dark:bg-gray-700 mx-1"></div>

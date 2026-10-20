@@ -6,6 +6,7 @@ import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import TextAlign from '@tiptap/extension-text-align';
 import OfficePaste from '@intevation/tiptap-extension-office-paste';
+import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table';
 
 const CustomButton = Node.create({
     name: 'customButton',
@@ -116,6 +117,10 @@ document.addEventListener('alpine:init', () => {
                         TextAlign.configure({
                             types: ['heading', 'paragraph'],
                         }),
+                        Table.configure({ resizable: false }),
+                        TableRow,
+                        TableHeader,
+                        TableCell,
                         OfficePaste,
                     ],
                     editorProps: {
@@ -245,6 +250,31 @@ document.addEventListener('alpine:init', () => {
             },
             setHorizontalRule() {
                 if (editorInstance) editorInstance.chain().focus().setHorizontalRule().run();
+            },
+            // Table commands
+            insertTable() {
+                if (editorInstance) editorInstance.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+            },
+            addRowAfter() {
+                if (editorInstance) editorInstance.chain().focus().addRowAfter().run();
+            },
+            addColumnAfter() {
+                if (editorInstance) editorInstance.chain().focus().addColumnAfter().run();
+            },
+            deleteRow() {
+                if (editorInstance) editorInstance.chain().focus().deleteRow().run();
+            },
+            deleteColumn() {
+                if (editorInstance) editorInstance.chain().focus().deleteColumn().run();
+            },
+            toggleHeaderRow() {
+                if (editorInstance) editorInstance.chain().focus().toggleHeaderRow().run();
+            },
+            mergeOrSplitCells() {
+                if (editorInstance) editorInstance.chain().focus().mergeOrSplit().run();
+            },
+            deleteTable() {
+                if (editorInstance) editorInstance.chain().focus().deleteTable().run();
             },
             openLinkModal() {
                 if (!editorInstance) return;
