@@ -157,11 +157,20 @@ class DocxParserService
             return '';
         }
 
+        return $this->parseBlocks($bodyNode, $xpath, $zip, $relations);
+    }
+
+    /**
+     * Convert block-level children (paragraphs, lists, tables) of a container
+     * (w:body or w:tc) to HTML.
+     */
+    protected function parseBlocks(\DOMNode $container, DOMXPath $xpath, ZipArchive $zip, array $relations): string
+    {
         $html = '';
         $inList = false;
         $listType = 'ul'; // ul or ol
 
-        foreach ($bodyNode->childNodes as $node) {
+        foreach ($container->childNodes as $node) {
             if ($node->nodeName === 'w:p') {
                 // Check if this paragraph is part of a list
                 $isListItem = $xpath->query('w:pPr/w:numPr', $node)->length > 0;
@@ -387,21 +396,77 @@ class DocxParserService
      */
     protected function parseTable(\DOMNode $tableNode, DOMXPath $xpath, ZipArchive $zip, array $relations): string
     {
-        $html = "<table class=\"post-table\">\n";
         $trNodes = $xpath->query('w:tr', $tableNode);
 
+        // Word's "Header Row" table style option (tblLook firstRow) as fallback
+        $look = $xpath->query('w:tblPr/w:tblLook', $tableNode)->item(0);
+        $firstRowIsHeader = false;
+        if ($look) {
+            $firstRowIsHeader = $look->getAttribute('w:firstRow') === '1'
+                || ((hexdec($look->getAttribute('w:val') ?: '0') & 0x0020) !== 0);
+        }
+
+        // Pass 1: build rows, resolving gridSpan (colspan) and vMerge (rowspan)
+        $rows = [];
+        $active = []; // grid column => cell currently extended by vMerge
+        $rowIndex = 0;
         foreach ($trNodes as $tr) {
-            $html .= "  <tr>\n";
-            $tcNodes = $xpath->query('w:tc', $tr);
-            foreach ($tcNodes as $tc) {
-                // Get cell text by parsing paragraphs inside it
-                $cellText = '';
-                $pNodes = $xpath->query('w:p', $tc);
-                foreach ($pNodes as $p) {
-                    $cellText .= $this->parseParagraphRuns($p, $xpath, $zip, $relations).'<br>';
+            $isHeaderRow = $xpath->query('w:trPr/w:tblHeader', $tr)->length > 0
+                || ($rowIndex === 0 && $firstRowIsHeader);
+            $cells = [];
+            $col = 0;
+
+            foreach ($xpath->query('w:tc', $tr) as $tc) {
+                $span = (int) ($xpath->query('w:tcPr/w:gridSpan', $tc)->item(0)?->getAttribute('w:val') ?: 1);
+                $span = max(1, $span);
+                $vMerge = $xpath->query('w:tcPr/w:vMerge', $tc)->item(0);
+
+                if ($vMerge && $vMerge->getAttribute('w:val') !== 'restart' && isset($active[$col])) {
+                    // Continuation of a vertically merged cell
+                    $active[$col]->rowspan++;
+                } else {
+                    $cell = (object) [
+                        'node' => $tc,
+                        'colspan' => $span,
+                        'rowspan' => 1,
+                        'header' => $isHeaderRow,
+                    ];
+                    $cells[] = $cell;
+                    for ($i = 0; $i < $span; $i++) {
+                        if ($vMerge) {
+                            $active[$col + $i] = $cell;
+                        } else {
+                            unset($active[$col + $i]);
+                        }
+                    }
                 }
-                $cellText = rtrim($cellText, '<br>');
-                $html .= "    <td>{$cellText}</td>\n";
+                $col += $span;
+            }
+
+            $rows[] = $cells;
+            $rowIndex++;
+        }
+
+        // Pass 2: render
+        $html = "<table class=\"post-table\">\n";
+        foreach ($rows as $cells) {
+            $html .= "  <tr>\n";
+            foreach ($cells as $cell) {
+                $tag = $cell->header ? 'th' : 'td';
+                $attrs = '';
+                if ($cell->colspan > 1) {
+                    $attrs .= ' colspan="'.$cell->colspan.'"';
+                }
+                if ($cell->rowspan > 1) {
+                    $attrs .= ' rowspan="'.$cell->rowspan.'"';
+                }
+
+                // Cell content: paragraphs, lists, images, nested tables
+                $content = trim($this->parseBlocks($cell->node, $xpath, $zip, $relations));
+                if ($content === '') {
+                    $content = '<p></p>';
+                }
+                $html .= "    <{$tag}{$attrs}>{$content}</{$tag}>\n";
             }
             $html .= "  </tr>\n";
         }
