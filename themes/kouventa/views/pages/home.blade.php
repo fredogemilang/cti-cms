@@ -171,6 +171,9 @@
     $path2Btn = $page?->buttonBlock('path2_button', ['text' => 'Explore more', 'url' => '/product/customer-engagement']);
     $industriesTitle = $page?->block('industries_title', 'Proven across industries.');
     $teamsTitle = $page?->block('teams_title', 'Pick your team to see how it works for your organization.');
+    $seeHowItWorksRaw = t('kouventa.See how it works →', 'See how it works →');
+    $seeHowItWorksHasArrow = str_ends_with($seeHowItWorksRaw, '→') || str_ends_with($seeHowItWorksRaw, '->');
+    $seeHowItWorksText = $seeHowItWorksHasArrow ? rtrim(str_replace(['→', '->'], '', $seeHowItWorksRaw)) : $seeHowItWorksRaw;
     $whyTitle = $page?->titleBlock('why_title', ['prefix' => 'Enterprise ready', 'main' => 'from day one.']);
     $partnersTitle = $page?->block('partners_title', 'Technology Partners');
     $customersTitle = $page?->block('customers_title', 'They trusted us.');
@@ -348,7 +351,7 @@
 <div style="display: flex; flex-direction: column; gap: 20px">
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F"><span x-text="teams[activeTeam].name">{{ $teams[0]['name'] ?? '' }}</span></span>
 <span style="font-size: 38px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em"><span x-text="teams[activeTeam].line">{{ $teams[0]['line'] ?? '' }}</span></span>
-<a :href="teams[activeTeam].url" href="{{ localized_url('/solutions/ai?dept=0#solution-tabs') }}" class="kv-card-link" style="align-self: flex-start; font-size: 16px; font-weight: 700; color: #13803F; text-decoration: none">{{ t('kouventa.See how it works', 'See how it works') }} <span class="kv-arrow">→</span></a>
+<a :href="teams[activeTeam].url" href="{{ localized_url('/solutions/ai?dept=0#solution-tabs') }}" class="kv-card-link" style="align-self: flex-start; font-size: 16px; font-weight: 700; color: #13803F; text-decoration: none">{{ $seeHowItWorksText }}@if($seeHowItWorksHasArrow) <span class="kv-arrow">→</span>@endif</a>
 </div>
 <div style="background: #F4F6F5; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px; min-height: 290px">
 <span style="font-size: 13px; font-weight: 600; color: #4A5866; padding-bottom: 4px">{{ t('kouventa.Your AI agent handles', 'Your AI agent handles') }}</span>
