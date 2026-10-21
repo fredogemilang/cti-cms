@@ -333,7 +333,7 @@
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $partnersTitle }}</h2>
 <div class="kv-partner-grid" style="width: 100%; display: grid; gap: 16px">
 <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/partner-meta.svg') }}" alt="Meta" title="Meta" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/meta-logo-white.png') }}" alt="Meta" title="Meta" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
     <img src="{{ theme_asset('images/logos/partner-aws-v2.svg') }}" alt="AWS" title="Amazon Web Services" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
