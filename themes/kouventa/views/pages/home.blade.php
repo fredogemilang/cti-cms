@@ -93,50 +93,59 @@
 
     // Graceful fallback if no CPT entries exist yet
     if (empty($stories)) {
+        $isIdLocale = app()->getLocale() === 'id';
         $stories = [
             [
-                'company' => "Luna's Doughnuts",
-                'stat' => '+55%',
-                'statLabel' => t('kouventa.time saved in daily communication and coordination', 'time saved in daily communication and coordination'),
-                'stat2' => '35%',
-                'stat2Label' => t('kouventa.lower operational costs', 'lower operational costs'),
-                'quote' => t('kouventa.Kouventa provides an efficient and customizable communication solution that perfectly fits our business needs. Since using it, we\'ve achieved faster customer responses and significant cost savings.', 'Kouventa provides an efficient and customizable communication solution that perfectly fits our business needs. Since using it, we\'ve achieved faster customer responses and significant cost savings.'),
-                'name' => 'Caca Patricia',
-                'role' => 'Partnership Specialist, PT Kaluna Indonesia Group',
-                'logo' => null,
+                'company' => 'DPay',
+                'stat' => '+60%',
+                'statLabel' => t('kouventa.reduction in customer service tickets.', 'reduction in customer service tickets.'),
+                'stat2' => '+40%',
+                'stat2Label' => t('kouventa.efficiency gain in operational lead time.', 'efficiency gain in operational lead time.'),
+                'quote' => $isIdLocale
+                    ? 'Solusi otomasi WhatsApp dari Kouventa merevolusi pelacakan logistik kami, memangkas pertanyaan pelanggan hingga 60%, dan memberi keleluasaan bagi tim kami untuk fokus pada inovasi layanan. API yang fleksibel serta dukungan yang responsif membuat proses integrasi berjalan mulus.'
+                    : 'Kouventa’s WhatsApp automation solution revolutionized our logistics tracking, cutting customer inquiries by 60% and freeing our team to focus on service innovation. Their flexible API and responsive support made integration seamless.',
+                'name' => 'Sebastian Hadinata',
+                'role' => t('kouventa.General Manager of DPay', 'General Manager of DPay'),
+                'logo' => theme_asset('images/logos/logo-dpay.png'),
+            ],
+            [
+                'company' => 'Liberta Hotel',
+                'stat' => '+70%',
+                'statLabel' => t('kouventa.time saved in sending promotional broadcasts & confirmations.', 'time saved in sending promotional broadcasts & confirmations.'),
+                'stat2' => '+45%',
+                'stat2Label' => t('kouventa.increase in guest response rates.', 'increase in guest response rates.'),
+                'quote' => $isIdLocale
+                    ? 'Otomasi WhatsApp dari Kouventa menyederhanakan alur promosi dan reservasi kami, menghemat 70% waktu tim sekaligus meningkatkan tingkat respons tamu hingga 45%. Platform yang intuitif dan dukungan yang berdedikasi menjadikan mereka mitra sejati dalam bisnis perhotelan kami.'
+                    : 'Kouventa’s WhatsApp automation streamlined our promotions and reservations, saving 70% of our team’s time while boosting guest response rates by 45%. Their intuitive platform and dedicated support made them a true partner in our hospitality journey.',
+                'name' => 'Novellinda Putri Kairo',
+                'role' => t('kouventa.Corporate Sales Admin at Liberta', 'Corporate Sales Admin at Liberta'),
+                'logo' => theme_asset('images/logos/customer-liberta-hotels.png'),
             ],
             [
                 'company' => 'PakeDriver',
                 'stat' => '+45%',
                 'statLabel' => t('kouventa.improvement in customer engagement', 'improvement in customer engagement'),
-                'stat2' => '30%',
+                'stat2' => '+30%',
                 'stat2Label' => t('kouventa.faster customer response time', 'faster customer response time'),
-                'quote' => t('kouventa.Kouventa makes it effortless for us to engage directly with customers, from service updates to promotional offers. Its intuitive AI features have strengthened our professional image and boosted engagement.', 'Kouventa makes it effortless for us to engage directly with customers, from service updates to promotional offers. Its intuitive AI features have strengthened our professional image and boosted engagement.'),
+                'quote' => $isIdLocale
+                    ? 'Kouventa memudahkan kami berinteraksi langsung dengan pelanggan secara mudah, mulai dari pembaruan layanan hingga penawaran promo. Fitur AI yang intuitif memperkuat citra profesional kami serta mendongkrak interaksi dengan menciptakan pengalaman pelanggan yang lebih cerdas dan terhubung.'
+                    : 'Kouventa makes it effortless for us to engage directly with customers, from service updates to promotional offers. Its intuitive AI features have strengthened our professional image and boosted engagement by creating a smarter, more connected customer experience.',
                 'name' => 'Yudhistira',
                 'role' => t('kouventa.CEO of PakeDriver', 'CEO of PakeDriver'),
-                'logo' => null,
+                'logo' => theme_asset('images/logos/customer-pakedriver.png'),
             ],
             [
-                'company' => 'Liberta Hotel',
-                'stat' => '70%',
-                'statLabel' => t('kouventa.time saved sending promotional broadcasts and confirmations', 'time saved sending promotional broadcasts and confirmations'),
-                'stat2' => '+45%',
-                'stat2Label' => t('kouventa.increase in guest response rates', 'increase in guest response rates'),
-                'quote' => t('kouventa.Kouventa\'s WhatsApp automation streamlined our promotions and reservations. Their intuitive platform and dedicated support made them a true partner in our hospitality journey.', 'Kouventa\'s WhatsApp automation streamlined our promotions and reservations. Their intuitive platform and dedicated support made them a true partner in our hospitality journey.'),
-                'name' => 'Novellinda Putri Kairo',
-                'role' => 'Corporate Sales Admin, Liberta',
-                'logo' => null,
-            ],
-            [
-                'company' => 'DPay',
-                'stat' => '60%',
-                'statLabel' => t('kouventa.fewer customer service tickets', 'fewer customer service tickets'),
-                'stat2' => '+40%',
-                'stat2Label' => t('kouventa.efficiency gain in operational lead time', 'efficiency gain in operational lead time'),
-                'quote' => t('kouventa.Kouventa\'s WhatsApp automation solution revolutionized our logistics tracking and freed our team to focus on service innovation. Their flexible API and responsive support made integration seamless.', 'Kouventa\'s WhatsApp automation solution revolutionized our logistics tracking and freed our team to focus on service innovation. Their flexible API and responsive support made integration seamless.'),
-                'name' => 'Sebastian Hadinata',
-                'role' => t('kouventa.General Manager of DPay', 'General Manager of DPay'),
-                'logo' => null,
+                'company' => "Luna's Doughnuts",
+                'stat' => '+55%',
+                'statLabel' => t('kouventa.time savings in daily communication and coordination', 'time savings in daily communication and coordination'),
+                'stat2' => '+35%',
+                'stat2Label' => t('kouventa.reduction in operational costs', 'reduction in operational costs'),
+                'quote' => $isIdLocale
+                    ? 'Kouventa menghadirkan solusi komunikasi yang efisien dan dapat disesuaikan sesuai kebutuhan bisnis kami. Sejak menggunakannya, kami meraih waktu respons pelanggan yang lebih cepat serta penghematan biaya yang signifikan.'
+                    : 'Kouventa provides an efficient and customizable communication solution that perfectly fits our business needs. Since using it, we\'ve achieved faster customer responses and significant cost savings.',
+                'name' => 'Caca Patricia',
+                'role' => t('kouventa.Partnership Specialist, PT Kaluna Indonesia Group', 'Partnership Specialist, PT Kaluna Indonesia Group'),
+                'logo' => theme_asset('images/logos/customer-lunas-doughnuts.png'),
             ],
         ];
     }

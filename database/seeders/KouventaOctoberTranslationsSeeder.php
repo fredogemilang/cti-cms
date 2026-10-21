@@ -36,6 +36,19 @@ class KouventaOctoberTranslationsSeeder extends Seeder
             'Role-based access' => 'Akses per peran',
             'Secure by design' => 'Aman dari fondasinya',
             'You\'re in control' => 'Kendali penuh',
+            // Testimonials (short labels & roles)
+            'reduction in customer service tickets.' => 'penurunan tiket keluhan pelanggan.',
+            'efficiency gain in operational lead time.' => 'peningkatan efisiensi lead time operasional.',
+            'General Manager of DPay' => 'General Manager DPay',
+            'time saved in sending promotional broadcasts & confirmations.' => 'waktu hemat dalam pengiriman siaran promo & konfirmasi.',
+            'increase in guest response rates.' => 'peningkatan tingkat respons dari tamu.',
+            'Corporate Sales Admin at Liberta' => 'Corporate Sales Admin di Liberta',
+            'improvement in customer engagement' => 'peningkatan interaksi dengan pelanggan',
+            'faster customer response time' => 'waktu respons pelanggan lebih cepat',
+            'CEO of PakeDriver' => 'CEO PakeDriver',
+            'time savings in daily communication and coordination' => 'penghematan waktu dalam komunikasi dan koordinasi harian',
+            'reduction in operational costs' => 'pengurangan biaya operasional',
+            'Partnership Specialist, PT Kaluna Indonesia Group' => 'Partnership Specialist, PT Kaluna Indonesia Group',
         ];
 
         foreach ($dict14 as $enKey => $idVal) {
