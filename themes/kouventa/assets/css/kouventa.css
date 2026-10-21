@@ -2049,6 +2049,37 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
     }
 }
 
+/* Video Player Modal Centering */
+.kv-video-modal-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    display: grid !important;
+    place-items: center !important;
+    padding: 24px !important;
+    box-sizing: border-box !important;
+    background: rgba(7, 28, 51, 0.88) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}
+.kv-video-modal-container {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 960px !important;
+    margin: auto !important;
+    background: #000000 !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.18) !important;
+    box-sizing: border-box !important;
+}
+
 /* --- Professional Buttons & CTAs Hover Effects --- */
 .kv-btn-action,
 .kv-btn-primary,

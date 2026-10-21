@@ -683,6 +683,35 @@
             border-color: #0E1A24 !important;
             color: #0E1A24 !important;
         }
+        .kv-video-modal-backdrop {
+            position: fixed !important;
+            inset: 0 !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 999999 !important;
+            display: grid !important;
+            place-items: center !important;
+            padding: 24px !important;
+            box-sizing: border-box !important;
+            background: rgba(7, 28, 51, 0.88) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+        }
+        .kv-video-modal-container {
+            position: relative !important;
+            width: 100% !important;
+            max-width: 960px !important;
+            margin: auto !important;
+            background: #000000 !important;
+            border-radius: 20px !important;
+            overflow: hidden !important;
+            box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.18) !important;
+            box-sizing: border-box !important;
+        }
         @media (max-width: 1024px) {
             .kv-video-slider .kv-video-card {
                 flex: 0 0 calc((100% - 20px) / 2) !important;
@@ -770,13 +799,16 @@
         <div x-show="activeVideo" 
              x-cloak 
              @keydown.escape.window="activeVideo = null"
-             style="position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(7, 28, 51, 0.85); backdrop-filter: blur(8px)">
+             @click.self="activeVideo = null"
+             class="kv-video-modal-backdrop"
+             style="position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 999999; display: grid; place-items: center; padding: 24px; box-sizing: border-box; background: rgba(7, 28, 51, 0.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px)">
             <div @click.outside="activeVideo = null" 
-                 style="position: relative; width: 100%; max-width: 920px; background: #000000; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); border: 1px solid rgba(255,255,255,0.15)">
+                 class="kv-video-modal-container"
+                 style="position: relative; width: 100%; max-width: 960px; margin: auto; background: #000000; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85); border: 1px solid rgba(255,255,255,0.18); box-sizing: border-box">
                 <button type="button" 
                         @click="activeVideo = null" 
                         aria-label="Close modal"
-                        style="position: absolute; top: 12px; right: 12px; z-index: 10; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.65); border: 1px solid rgba(255,255,255,0.25); color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s">
+                        style="position: absolute; top: 12px; right: 12px; z-index: 50; width: 42px; height: 42px; border-radius: 50%; background: rgba(7, 28, 51, 0.85); border: 1px solid rgba(255,255,255,0.3); color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.5)">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
                 <div style="position: relative; width: 100%; padding-top: 56.25%">
