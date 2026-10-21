@@ -5,8 +5,8 @@
     $isIdLocale = app()->getLocale() === 'id';
     $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Seamless omnichannel', 'main' => 'customer experience.']);
     $heroSubtitle = $page?->block('hero_subtitle', 'From marketing campaigns and customer support to operational updates, Kouventa helps businesses connect, respond, and communicate more effectively.');
-    $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Siap meningkatkan setiap percakapan dengan pelanggan?' : 'Ready to improve every customer conversation?');
-    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Jadwalkan demo dan kami tunjukkan bagaimana Kouventa menghubungkan channel Anda, mengotomasi balasan, dan menjaga tim Anda tetap memegang kendali.' : "Book a demo and we'll walk you through how Kouventa connects your channels, automates replies, and keeps your team in control.");
+    $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Siap meningkatkan kualitas percakapan dengan pelanggan?' : 'Ready to improve every customer conversation?');
+    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Ceritakan kebutuhan tim Anda, dan kami tunjukkan bagaimana Kouventa bisa membantu.' : "Tell us about your team's needs and we'll show you how Kouventa fits.");
 @endphp
 <div class="kv-canvas-wrap" x-data="{
     tab: 0,
