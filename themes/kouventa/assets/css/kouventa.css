@@ -4559,3 +4559,12 @@ body {
     background: rgba(255, 255, 255, 0.06);
 }
 
+/* Standardized Logo Cards (for 300x100 canvas standard) */
+.kv-logo-card img {
+    max-height: 44px;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+

@@ -342,22 +342,22 @@
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $partnersTitle }}</h2>
 <div class="kv-partner-grid" style="width: 100%; display: grid; gap: 16px">
 <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/meta-logo-white.png') }}" alt="Meta" title="Meta" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/meta-logo-white.png') }}" alt="Meta" title="Meta" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/partner-aws-v2.svg') }}" alt="AWS" title="Amazon Web Services" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/partner-aws-v2.svg') }}" alt="AWS" title="Amazon Web Services" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/partner-azure.svg') . '?v=4' }}" alt="Azure OpenAI" title="Microsoft Azure" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/partner-azure.svg') . '?v=4' }}" alt="Azure OpenAI" title="Microsoft Azure" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/partner-tokenku.png') }}" alt="TokenKu" title="TokenKu.ai" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/partner-tokenku.png') }}" alt="TokenKu" title="TokenKu.ai" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/partner-motadata-v2.svg') }}" alt="Motadata" title="Motadata" style="max-height: 30px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/partner-motadata-v2.svg') }}" alt="Motadata" title="Motadata" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/partner-deka-llm.png') }}" alt="Deka LLM" title="Lintasarta Cloudeka" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/partner-deka-llm.png') }}" alt="Deka LLM" title="Lintasarta Cloudeka" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 </div>
 </div>
@@ -368,28 +368,28 @@
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $customersTitle }}</h2>
 <div class="kv-customer-grid" style="width: 100%; display: grid; gap: 16px">
 <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-pakedriver.png') }}" alt="PakeDriver" title="PakeDriver" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/customer-pakedriver.png') }}" alt="PakeDriver" title="PakeDriver" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
     <img src="{{ theme_asset('images/logos/customer-lunas-doughnuts.png') }}" alt="Luna's Doughnuts" title="Luna's Doughnuts" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-astra-otoparts.png') }}" alt="Astra Otoparts" title="Astra Otoparts" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/customer-astra-otoparts.png') }}" alt="Astra Otoparts" title="Astra Otoparts" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-navios.png') }}" alt="Navios" title="Navios" style="max-height: 30px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/customer-navios.png') }}" alt="Navios" title="Navios" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-toqco.png') }}" alt="Toqco" title="Toqco" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/customer-toqco.png') }}" alt="Toqco" title="Toqco" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-mitra-mandiri.png') }}" alt="Mitra Mandiri Informatika" title="Mitra Mandiri Informatika" style="max-height: 38px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/customer-mitra-mandiri.png') }}" alt="Mitra Mandiri Informatika" title="Mitra Mandiri Informatika" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/customer-liberta-hotels.png') }}" alt="Liberta Hotels" title="Liberta Hotels" style="max-height: 38px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/customer-liberta-hotels.png') }}" alt="Liberta Hotels" title="Liberta Hotels" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-    <img src="{{ theme_asset('images/logos/logo-dpay.png') }}" alt="DPay" title="DPay" style="max-height: 36px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/logo-dpay.png') }}" alt="DPay" title="DPay" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 </div>
 </section>
