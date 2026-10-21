@@ -397,6 +397,9 @@
 <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
     <img src="{{ theme_asset('images/logos/logo-dpay.png') }}" alt="DPay" title="DPay" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
+<div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+    <img src="{{ theme_asset('images/logos/customer-rs-pluit.png') }}" alt="RS Pluit" title="Rumah Sakit Pluit" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+</div>
 </div>
 </section>
 
