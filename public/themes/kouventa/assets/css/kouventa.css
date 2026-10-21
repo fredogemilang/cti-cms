@@ -2005,6 +2005,50 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
     transition-duration: 0.1s;
 }
 
+/* YouTube Video Slider */
+.kv-video-slider {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 10px 4px 20px;
+    margin: -10px -4px -20px;
+}
+.kv-video-slider::-webkit-scrollbar {
+    display: none;
+}
+.kv-video-slider .kv-video-card {
+    flex: 0 0 calc((100% - 40px) / 3);
+    min-width: 320px;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+}
+.kv-video-card:hover .kv-video-thumb {
+    transform: scale(1.05);
+}
+.kv-slider-nav-btn:hover:not(:disabled) {
+    background: #F4F6F5 !important;
+    border-color: #0E1A24 !important;
+    color: #0E1A24 !important;
+}
+
+@media (max-width: 1024px) {
+    .kv-video-slider .kv-video-card {
+        flex: 0 0 calc((100% - 20px) / 2);
+        min-width: 280px;
+    }
+}
+
+@media (max-width: 640px) {
+    .kv-video-slider .kv-video-card {
+        flex: 0 0 86%;
+        min-width: 250px;
+    }
+}
+
 /* --- Professional Buttons & CTAs Hover Effects --- */
 .kv-btn-action,
 .kv-btn-primary,

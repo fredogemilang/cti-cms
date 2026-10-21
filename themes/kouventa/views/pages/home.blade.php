@@ -180,6 +180,68 @@
     $ctaDemoBtn = $page?->buttonBlock('cta_demo_button', ['text' => 'Book a demo', 'url' => '/book-demo']);
     $ctaPricingBtn = $page?->buttonBlock('cta_pricing_button', ['text' => 'See pricing', 'url' => '/pricing']);
     $videosTitle = $page?->block('videos_title', 'See Kouventa in action.');
+    $videos = [
+        [
+            'id' => 'oOY1BnbQPUc',
+            'url' => 'https://www.youtube.com/watch?v=oOY1BnbQPUc',
+            'title' => 'Tim Finance Masih Perlu Workflow Manual di Era Agentic AI?',
+            'category' => 'Artificial Intelligence',
+        ],
+        [
+            'id' => 'N76UFyc7v9s',
+            'url' => 'https://www.youtube.com/watch?v=N76UFyc7v9s',
+            'title' => 'Kouventa Agentic AI | A New Generation of AI for Business',
+            'category' => 'Artificial Intelligence',
+        ],
+        [
+            'id' => '6_6n4erRFXQ',
+            'url' => 'https://www.youtube.com/watch?v=6_6n4erRFXQ',
+            'title' => 'Cara Mendapatkan Centang Biru di WhatsApp untuk Akun Bisnis!',
+            'category' => 'Customer Engagement',
+        ],
+        [
+            'id' => 'w1OtL8yThnc',
+            'url' => 'https://www.youtube.com/watch?v=w1OtL8yThnc',
+            'title' => 'Stop Kirim Pesan Manual! Ini Cara Upgrade CRM Otomatis Tanpa Ribet',
+            'category' => 'Customer Engagement',
+        ],
+        [
+            'id' => '9lcV7QXol_g',
+            'url' => 'https://www.youtube.com/watch?v=9lcV7QXol_g',
+            'title' => '5 MASALAH CUSTOMER SERVICE WHATSAPP | Live Chat Agent',
+            'category' => 'Customer Engagement',
+        ],
+        [
+            'id' => 'O0E_XfPl5CE',
+            'url' => 'https://www.youtube.com/watch?v=O0E_XfPl5CE',
+            'title' => 'Evolusi Cara Bisnis Melayani Pelanggan: Kenapa Omnichannel Jadi Penting?',
+            'category' => 'Customer Engagement',
+        ],
+        [
+            'id' => '1xvLiyz3zJk',
+            'url' => 'https://www.youtube.com/watch?v=1xvLiyz3zJk',
+            'title' => 'RAHASIA CS NGGAK KEWALAHAN SAAT ACARA KANTOR!',
+            'category' => 'Customer Engagement',
+        ],
+        [
+            'id' => 'DbQ0ZBY_XSs',
+            'url' => 'https://www.youtube.com/watch?v=DbQ0ZBY_XSs',
+            'title' => 'Tim HR/IT Pusing Ticketing? Ini Cara Tracking Tanpa Ribet!',
+            'category' => 'Artificial Intelligence',
+        ],
+        [
+            'id' => '21WZzU5uou4',
+            'url' => 'https://www.youtube.com/watch?v=21WZzU5uou4',
+            'title' => 'STOP Pakai WhatsApp Biasa untuk Bisnis! Ini Alasannya',
+            'category' => 'Customer Engagement',
+        ],
+        [
+            'id' => 'UbcQOWUxJHI',
+            'url' => 'https://www.youtube.com/watch?v=UbcQOWUxJHI',
+            'title' => 'JANGAN SEMBARANGAN INPUT DATA KE AI! Data Kantormu Bisa Bocor',
+            'category' => 'Artificial Intelligence',
+        ],
+    ];
 @endphp
 
 
@@ -544,43 +606,119 @@
 </section>
 
 <!-- ============ VIDEOS ============ -->
-<section style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 32px">
-    <div style="display: flex; justify-content: space-between; align-items: end; gap: 24px">
-        <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $videosTitle }}</h2>
-        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-btn-action kv-btn-outline" style="display: inline-flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 700; color: #0E1A24; padding: 12px 18px; border-radius: 12px; border: 1px solid #C9D2CE; background: #FFFFFF; white-space: nowrap; text-decoration: none">
-            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" fill="#FF0033"></rect><path d="M10 9v6l5-3Z" fill="#FFFFFF"></path></svg>
-            {{ t('kouventa.Watch more on YouTube', 'Watch more on YouTube') }}
-        </a>
+<section 
+    x-data="{
+        activeVideo: null,
+        canPrev: false,
+        canNext: true,
+        scrollPrev() {
+            const el = this.$refs.slider;
+            if (!el) return;
+            el.scrollBy({ left: -el.clientWidth * 0.75, behavior: 'smooth' });
+        },
+        scrollNext() {
+            const el = this.$refs.slider;
+            if (!el) return;
+            el.scrollBy({ left: el.clientWidth * 0.75, behavior: 'smooth' });
+        },
+        checkScroll() {
+            const el = this.$refs.slider;
+            if (!el) return;
+            this.canPrev = el.scrollLeft > 10;
+            this.canNext = el.scrollLeft < (el.scrollWidth - el.clientWidth - 10);
+        }
+    }"
+    x-init="setTimeout(() => checkScroll(), 100); window.addEventListener('resize', () => checkScroll())"
+    style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 32px"
+>
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap">
+        <div>
+            <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $videosTitle }}</h2>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+            <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-btn-action kv-btn-outline" style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: #0E1A24; padding: 10px 18px; border-radius: 12px; border: 1px solid #C9D2CE; background: #FFFFFF; white-space: nowrap; text-decoration: none">
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" fill="#FF0033"></rect><path d="M10 9v6l5-3Z" fill="#FFFFFF"></path></svg>
+                {{ t('kouventa.Watch more on YouTube', 'Watch more on YouTube') }}
+            </a>
+            <div style="display: flex; gap: 8px">
+                <button type="button" 
+                        @click="scrollPrev()" 
+                        :disabled="!canPrev" 
+                        class="kv-slider-nav-btn" 
+                        style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease" 
+                        :style="!canPrev ? 'opacity: 0.35; cursor: not-allowed' : ''" 
+                        aria-label="Previous video">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button type="button" 
+                        @click="scrollNext()" 
+                        :disabled="!canNext" 
+                        class="kv-slider-nav-btn" 
+                        style="width: 44px; height: 44px; border-radius: 12px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease" 
+                        :style="!canNext ? 'opacity: 0.35; cursor: not-allowed' : ''" 
+                        aria-label="Next video">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+            </div>
+        </div>
     </div>
-    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
-        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-video-card kv-card kv-hover" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
-            <div role="img" aria-label="Video thumbnail placeholder" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
-                <span class="kv-play-btn" style="width: 64px; height: 44px; border-radius: 12px; background: #FF0033; display: flex; align-items: center; justify-content: center">
+
+    <!-- Horizontal Video Slider -->
+    <div class="kv-video-slider" x-ref="slider" @scroll.passive="checkScroll()">
+        @foreach($videos as $video)
+        <a href="{{ $video['url'] }}" 
+           @click.prevent="activeVideo = '{{ $video['id'] }}'" 
+           class="kv-video-card kv-card kv-hover" 
+           style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none; cursor: pointer"
+           title="{{ $video['title'] }}">
+            <div role="img" aria-label="{{ $video['title'] }}" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
+                <img src="{{ theme_asset('images/youtube/' . $video['id'] . '.jpg') }}" 
+                     onerror="this.onerror=null; this.src='https://i.ytimg.com/vi/{{ $video['id'] }}/hqdefault.jpg';" 
+                     alt="{{ $video['title'] }}" 
+                     class="kv-video-thumb"
+                     loading="lazy" 
+                     style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease">
+                <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,28,51,0.05) 0%, rgba(7,28,51,0.45) 100%); pointer-events: none"></div>
+                <span class="kv-play-btn" style="position: absolute; width: 58px; height: 40px; border-radius: 12px; background: #FF0033; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.3); transition: all 0.25s ease">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7Z"></path></svg>
                 </span>
             </div>
-            <span style="align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C; margin: 0 6px">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
-            <span style="font-size: 17px; line-height: 1.4; font-weight: 700; margin: 0 6px">{{ t('kouventa.AI Company Wikipedia: instant answers from your company knowledge', 'AI Company Wikipedia: instant answers from your company knowledge') }}</span>
+            <span style="align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: {{ $video['category'] === 'Artificial Intelligence' ? '#EAF7EF' : '#E6F0FA' }}; color: {{ $video['category'] === 'Artificial Intelligence' ? '#0B5E2C' : '#0F4C81' }}; margin: 0 6px">
+                {{ t('kouventa.' . $video['category'], $video['category']) }}
+            </span>
+            <span style="font-size: 16px; line-height: 1.4; font-weight: 700; margin: 0 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 44px">
+                {{ $video['title'] }}
+            </span>
         </a>
-        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-video-card kv-card kv-hover" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
-            <div role="img" aria-label="Video thumbnail placeholder" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
-                <span class="kv-play-btn" style="width: 64px; height: 44px; border-radius: 12px; background: #FF0033; display: flex; align-items: center; justify-content: center">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7Z"></path></svg>
-                </span>
-            </div>
-            <span style="align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C; margin: 0 6px">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
-            <span style="font-size: 17px; line-height: 1.4; font-weight: 700; margin: 0 6px">{{ t('kouventa.AI Task Force: automate invoice reconciliation with human approval', 'AI Task Force: automate invoice reconciliation with human approval') }}</span>
-        </a>
-        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-video-card kv-card kv-hover" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
-            <div role="img" aria-label="Video thumbnail placeholder" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
-                <span class="kv-play-btn" style="width: 64px; height: 44px; border-radius: 12px; background: #FF0033; display: flex; align-items: center; justify-content: center">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7Z"></path></svg>
-                </span>
-            </div>
-            <span style="align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C; margin: 0 6px">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</span>
-            <span style="font-size: 17px; line-height: 1.4; font-weight: 700; margin: 0 6px">{{ t('kouventa.Omnichannel inbox: from Instagram DM to WhatsApp campaign', 'Omnichannel inbox: from Instagram DM to WhatsApp campaign') }}</span>
-        </a>
+        @endforeach
     </div>
+
+    <!-- Video Player Modal -->
+    <template x-teleport="body">
+        <div x-show="activeVideo" 
+             x-cloak 
+             @keydown.escape.window="activeVideo = null"
+             style="position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(7, 28, 51, 0.85); backdrop-filter: blur(8px)">
+            <div @click.outside="activeVideo = null" 
+                 style="position: relative; width: 100%; max-width: 920px; background: #000000; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); border: 1px solid rgba(255,255,255,0.15)">
+                <button type="button" 
+                        @click="activeVideo = null" 
+                        aria-label="Close modal"
+                        style="position: absolute; top: 12px; right: 12px; z-index: 10; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,0,0,0.65); border: 1px solid rgba(255,255,255,0.25); color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                <div style="position: relative; width: 100%; padding-top: 56.25%">
+                    <template x-if="activeVideo">
+                        <iframe :src="'https://www.youtube-nocookie.com/embed/' + activeVideo + '?autoplay=1&rel=0'" 
+                                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                        </iframe>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </template>
 </section>
 
 <!-- ============ FOOTER ============ -->
