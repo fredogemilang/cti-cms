@@ -6,6 +6,7 @@
                 $footerSiteName = setting('site_name', 'Kouventa');
                 $instagramUrl = setting('social_instagram', 'https://instagram.com/kouventa.ai');
                 $linkedinUrl = setting('social_linkedin', 'https://linkedin.com/company/kouventa');
+                $youtubeUrl = setting('social_youtube', 'https://www.youtube.com/@heliosinformatikanusantara4415');
             @endphp
             <img src="{{ $footerLogo }}" alt="{{ $footerSiteName }}" style="height: 40px; width: auto; align-self: flex-start">
             <div style="display: flex; gap: 10px">
@@ -14,6 +15,9 @@
                 </a>
                 <a href="{{ $linkedinUrl }}" target="_blank" rel="noopener" aria-label="Kouventa on LinkedIn" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M8 10v7M8 7h.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"></path></svg>
+                </a>
+                <a href="{{ $youtubeUrl }}" target="_blank" rel="noopener" aria-label="Kouventa on YouTube" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor"></polygon></svg>
                 </a>
             </div>
         </div>
