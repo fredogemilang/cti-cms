@@ -97,8 +97,8 @@ class KouventaPageBlocksSeeder extends Seeder
                 'name' => 'path1_desc',
                 'type' => 'textarea',
                 'label' => 'Path 1 Description',
-                'en' => 'Instant answers from your company knowledge, and agents that take routine tasks off your teams.',
-                'id' => 'Jawaban instan dari knowledge perusahaan Anda, dan agen yang mengambil alih tugas rutin tim Anda.',
+                'en' => 'Instant answer from your company knowledge, and AI agents that take routine tasks off your teams',
+                'id' => 'jawaban instan dari knowledge perusahaan Anda, dan AI agen yang mengambil alih tugas rutin Anda',
             ],
             [
                 'name' => 'path1_button',

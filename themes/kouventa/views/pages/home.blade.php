@@ -163,7 +163,7 @@
     $pathsTitle = $page?->titleBlock('paths_title', ['main' => 'Where do you want to start?']);
     $path1Badge = $page?->block('path1_badge', 'AI that works');
     $path1Title = $page?->titleBlock('path1_title', ['prefix' => 'Inside your', 'main' => 'organization.']);
-    $path1Desc = $page?->block('path1_desc', 'Instant answers from your company knowledge, and agents that take routine tasks off your teams.');
+    $path1Desc = $page?->block('path1_desc', 'Instant answer from your company knowledge, and AI agents that take routine tasks off your teams');
     $path1Btn = $page?->buttonBlock('path1_button', ['text' => 'Explore more', 'url' => '/product/ai']);
     $path2Badge = $page?->block('path2_badge', 'AI that engages');
     $path2Title = $page?->titleBlock('path2_title', ['prefix' => 'With your', 'main' => 'customers.']);

@@ -34,7 +34,7 @@
                 {"name": "paths_title", "type": "title", "label": "Two Paths Title", "default": {"prefix": "", "main": "Where do you want to start?"}},
                 {"name": "path1_badge", "type": "text", "label": "Path 1 Badge", "default": "AI that works"},
                 {"name": "path1_title", "type": "title", "label": "Path 1 Title", "default": {"prefix": "Inside your", "main": "organization."}},
-                {"name": "path1_desc", "type": "textarea", "label": "Path 1 Description", "default": "Instant answers from your company knowledge, and agents that take routine tasks off your teams."},
+                {"name": "path1_desc", "type": "textarea", "label": "Path 1 Description", "default": "Instant answer from your company knowledge, and AI agents that take routine tasks off your teams"},
                 {"name": "path1_button", "type": "button", "label": "Path 1 Link", "default": {"text": "Explore more", "url": "/product/ai"}},
                 {"name": "path2_badge", "type": "text", "label": "Path 2 Badge", "default": "AI that engages"},
                 {"name": "path2_title", "type": "title", "label": "Path 2 Title", "default": {"prefix": "With your", "main": "customers."}},
