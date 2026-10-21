@@ -614,23 +614,92 @@
         scrollPrev() {
             const el = this.$refs.slider;
             if (!el) return;
-            el.scrollBy({ left: -el.clientWidth * 0.75, behavior: 'smooth' });
+            const card = el.querySelector('.kv-video-card');
+            const step = card ? (card.offsetWidth + 20) * 3 : (el.clientWidth || 900);
+            el.scrollBy({ left: -step, behavior: 'smooth' });
         },
         scrollNext() {
             const el = this.$refs.slider;
             if (!el) return;
-            el.scrollBy({ left: el.clientWidth * 0.75, behavior: 'smooth' });
+            const card = el.querySelector('.kv-video-card');
+            const step = card ? (card.offsetWidth + 20) * 3 : (el.clientWidth || 900);
+            el.scrollBy({ left: step, behavior: 'smooth' });
         },
         checkScroll() {
             const el = this.$refs.slider;
             if (!el) return;
             this.canPrev = el.scrollLeft > 10;
-            this.canNext = el.scrollLeft < (el.scrollWidth - el.clientWidth - 10);
+            this.canNext = el.scrollLeft < (el.scrollWidth - el.clientWidth - 15);
         }
     }"
     x-init="setTimeout(() => checkScroll(), 100); window.addEventListener('resize', () => checkScroll())"
     style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 32px"
 >
+    <style>
+        .kv-video-slider {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 20px !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            scroll-snap-type: x mandatory !important;
+            scroll-behavior: smooth !important;
+            -webkit-overflow-scrolling: touch !important;
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+            padding: 10px 4px 20px !important;
+            margin: -10px -4px -20px !important;
+        }
+        .kv-video-slider::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+        .kv-video-slider .kv-video-card {
+            flex: 0 0 calc((100% - 40px) / 3) !important;
+            width: calc((100% - 40px) / 3) !important;
+            max-width: calc((100% - 40px) / 3) !important;
+            min-width: 300px !important;
+            box-sizing: border-box !important;
+            scroll-snap-align: start !important;
+            transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease !important;
+        }
+        .kv-video-slider .kv-video-card:hover {
+            transform: translateY(-4px) !important;
+            border-color: #0E1A24 !important;
+            box-shadow: 0 16px 36px -12px rgba(14, 26, 36, 0.16), 0 0 0 1px #0E1A24 !important;
+        }
+        .kv-video-slider .kv-video-card:hover .kv-video-thumb {
+            transform: scale(1.05) !important;
+        }
+        .kv-video-slider .kv-video-card:hover .kv-play-btn {
+            transform: scale(1.1) !important;
+            box-shadow: 0 8px 24px rgba(255, 0, 51, 0.45) !important;
+            filter: brightness(1.08) !important;
+        }
+        .kv-slider-nav-btn:hover:not(:disabled) {
+            background: #F4F6F5 !important;
+            border-color: #0E1A24 !important;
+            color: #0E1A24 !important;
+        }
+        @media (max-width: 1024px) {
+            .kv-video-slider .kv-video-card {
+                flex: 0 0 calc((100% - 20px) / 2) !important;
+                width: calc((100% - 20px) / 2) !important;
+                max-width: calc((100% - 20px) / 2) !important;
+                min-width: 260px !important;
+            }
+        }
+        @media (max-width: 640px) {
+            .kv-video-slider .kv-video-card {
+                flex: 0 0 86% !important;
+                width: 86% !important;
+                max-width: 86% !important;
+                min-width: 240px !important;
+            }
+        }
+    </style>
     <div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap">
         <div>
             <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $videosTitle }}</h2>
@@ -664,12 +733,15 @@
     </div>
 
     <!-- Horizontal Video Slider -->
-    <div class="kv-video-slider" x-ref="slider" @scroll.passive="checkScroll()">
+    <div class="kv-video-slider" 
+         x-ref="slider" 
+         @scroll.passive="checkScroll()"
+         style="display: flex; flex-direction: row; flex-wrap: nowrap; gap: 20px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 10px 4px 20px; margin: -10px -4px -20px">
         @foreach($videos as $video)
         <a href="{{ $video['url'] }}" 
            @click.prevent="activeVideo = '{{ $video['id'] }}'" 
            class="kv-video-card kv-card kv-hover" 
-           style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none; cursor: pointer"
+           style="flex: 0 0 calc((100% - 40px) / 3); width: calc((100% - 40px) / 3); max-width: calc((100% - 40px) / 3); min-width: 300px; box-sizing: border-box; scroll-snap-align: start; display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none; cursor: pointer"
            title="{{ $video['title'] }}">
             <div role="img" aria-label="{{ $video['title'] }}" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
                 <img src="{{ theme_asset('images/youtube/' . $video['id'] . '.jpg') }}" 
