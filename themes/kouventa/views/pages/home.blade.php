@@ -636,7 +636,7 @@
             <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $videosTitle }}</h2>
         </div>
         <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
-            <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-btn-action kv-btn-outline" style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: #0E1A24; padding: 10px 18px; border-radius: 12px; border: 1px solid #C9D2CE; background: #FFFFFF; white-space: nowrap; text-decoration: none">
+            <a href="{{ setting('social_youtube', 'https://www.youtube.com/@heliosinformatikanusantara4415') }}" target="_blank" rel="noopener noreferrer" class="kv-btn-action kv-btn-outline" style="display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: #0E1A24; padding: 10px 18px; border-radius: 12px; border: 1px solid #C9D2CE; background: #FFFFFF; white-space: nowrap; text-decoration: none">
                 <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" fill="#FF0033"></rect><path d="M10 9v6l5-3Z" fill="#FFFFFF"></path></svg>
                 {{ t('kouventa.Watch more on YouTube', 'Watch more on YouTube') }}
             </a>
