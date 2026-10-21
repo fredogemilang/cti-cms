@@ -2763,7 +2763,9 @@ body {
     div[style*="grid-template-columns: repeat(4, minmax(0, 1fr))"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
     div[style*="grid-template-columns: repeat(4, 1fr)"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
     div[style*="grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr)"],
+    .kv-sol-split-grid,
     div[style*="grid-template-columns: minmax(0, 1fr) 600px"],
+    div[style*="grid-template-columns: repeat(2, minmax(0, 1fr))"],
     div[role="tabpanel"][style*="grid-template-columns"] {
         grid-template-columns: 1fr !important;
         gap: 24px !important;
@@ -4329,6 +4331,14 @@ body {
     color: #4A5866;
 }
 
+.kv-sol-split-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    column-gap: 24px !important;
+    row-gap: 18px !important;
+    align-items: stretch !important;
+}
+
 /* Solution Responsive Layout */
 @media (max-width: 1023px) {
     #solution-tabs {
@@ -4372,7 +4382,9 @@ body {
     }
 
     /* "How Kouventa AI/CE helps" 2-col to 1-col */
-    div[style*="grid-template-columns: minmax(0, 1fr) 600px"] {
+    .kv-sol-split-grid,
+    div[style*="grid-template-columns: minmax(0, 1fr) 600px"],
+    div[style*="grid-template-columns: repeat(2, minmax(0, 1fr))"] {
         grid-template-columns: 1fr !important;
         gap: 24px !important;
     }
