@@ -2375,8 +2375,15 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
 .kv-customer-grid {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 16px;
+}
+
+@media (max-width: 1200px) {
+    .kv-customer-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 14px !important;
+    }
 }
 
 @media (max-width: 1024px) {
@@ -2384,6 +2391,12 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
         gap: 14px !important;
     }
+}
+
+.kv-more-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 26px -6px rgba(7, 28, 51, 0.09) !important;
+    border-color: #2BD46A !important;
 }
 
 @media (max-width: 640px) {
