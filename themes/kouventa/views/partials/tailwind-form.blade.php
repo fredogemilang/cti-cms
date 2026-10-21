@@ -53,8 +53,8 @@
                     @elseif($field->type === 'select')
                         <select id="f-{{ $fieldId }}" name="{{ $fieldId }}"
                                 {{ $field->is_required ? 'required' : '' }}
-                                class="kv-in"
-                                style="box-sizing: border-box; width: 100%; height: 52px; padding: 0 16px; border-radius: 12px; border: 1px solid #DCE3E0; background: #F7F9F8; font-size: 15px; color: #0E1A24">
+                                class="kv-in kv-select"
+                                style="box-sizing: border-box; width: 100%; height: 52px; padding: 0 42px 0 16px; border-radius: 12px; border: 1px solid #DCE3E0; background-color: #F7F9F8; background-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234A5866' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E&quot;); background-repeat: no-repeat; background-position: right 16px center; appearance: none; -webkit-appearance: none; -moz-appearance: none; font-size: 15px; color: #0E1A24; cursor: pointer; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease">
                             <option value="">{{ $placeholder ?: t('kouventa.Select an option', 'Select an option') }}</option>
                             @foreach($field->options ?? [] as $opt)
                                 @php

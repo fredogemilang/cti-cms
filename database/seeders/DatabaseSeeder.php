@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
             EmailTemplateSeeder::class,
             FormsSeeder::class,
             WhatsAppFormSeeder::class,
+            BookDemoFormSeeder::class,
             StringTranslationsSeeder::class,
             TestimonialSeeder::class,
         ]);
