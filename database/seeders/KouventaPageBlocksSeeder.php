@@ -436,14 +436,14 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Hero Main Title',
                 'en' => ['prefix' => 'One AI platform is', 'main' => 'all you need.'],
-                'id' => ['prefix' => 'Satu platform AI adalah', 'main' => 'semua yang Anda butuhkan.'],
+                'id' => ['prefix' => 'Satu platform AI', 'main' => 'sudah cukup.'],
             ],
             [
                 'name' => 'hero_subtitle',
                 'type' => 'textarea',
                 'label' => 'Hero Subtitle',
                 'en' => 'Build AI agents with ease and put them to work on what your organization needs, with control you can measure.',
-                'id' => 'Bangun AI agent dengan mudah dan pekerjakan untuk kebutuhan organisasi Anda, dengan kendali terukur.',
+                'id' => 'Bangun AI agent dengan mudah dan gunakan untuk kebutuhan organisasi Anda, dengan kontrol yang terukur.',
             ],
             [
                 'name' => 'hero_cta',
@@ -464,7 +464,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Challenges Section Title',
                 'en' => ['prefix' => 'Too many AI tools,', 'main' => 'too little control.'],
-                'id' => ['prefix' => 'Terlalu banyak AI tool,', 'main' => 'terlalu minim kendali.'],
+                'id' => ['prefix' => 'Terlalu banyak tools AI,', 'main' => 'terlalu sedikit kontrol.'],
             ],
             [
                 'name' => 'products_title',

@@ -743,12 +743,45 @@ $productsList = [
     ]
 ];
 
+$isIdLocale = app()->getLocale() === 'id';
+
 // ── Page Blocks from CMS Content Builder ──────────────
-$heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'One AI platform is', 'main' => 'all you need.']);
-$heroSubtitle = $page?->block('hero_subtitle', 'Build AI agents with ease and put them to work on what your organization needs, with control you can measure.');
+$heroTitle = $page?->titleBlock('hero_title', [
+    'prefix' => $isIdLocale ? 'Satu platform AI' : 'One AI platform is',
+    'main' => $isIdLocale ? 'sudah cukup.' : 'all you need.'
+]);
+if ($isIdLocale) {
+    if (($heroTitle['prefix'] ?? '') === 'Satu platform AI adalah') {
+        $heroTitle['prefix'] = 'Satu platform AI';
+    }
+    if (($heroTitle['main'] ?? '') === 'semua yang Anda butuhkan.') {
+        $heroTitle['main'] = 'sudah cukup.';
+    }
+}
+
+$heroSubtitle = $page?->block('hero_subtitle', $isIdLocale
+    ? 'Bangun AI agent dengan mudah dan gunakan untuk kebutuhan organisasi Anda, dengan kontrol yang terukur.'
+    : 'Build AI agents with ease and put them to work on what your organization needs, with control you can measure.');
+if ($isIdLocale && $heroSubtitle === 'Bangun AI agent dengan mudah dan pekerjakan untuk kebutuhan organisasi Anda, dengan kendali terukur.') {
+    $heroSubtitle = 'Bangun AI agent dengan mudah dan gunakan untuk kebutuhan organisasi Anda, dengan kontrol yang terukur.';
+}
+
 $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Book a demo', 'url' => '/book-demo']);
 $heroSecondaryCta = $page?->buttonBlock('hero_secondary_cta', ['text' => 'Explore products', 'url' => '#ai-products']);
-$challengesTitle = $page?->titleBlock('challenges_title', ['prefix' => 'Too many AI tools,', 'main' => 'too little control.']);
+
+$challengesTitle = $page?->titleBlock('challenges_title', [
+    'prefix' => $isIdLocale ? 'Terlalu banyak tools AI,' : 'Too many AI tools,',
+    'main' => $isIdLocale ? 'terlalu sedikit kontrol.' : 'too little control.'
+]);
+if ($isIdLocale) {
+    if (($challengesTitle['prefix'] ?? '') === 'Terlalu banyak AI tool,') {
+        $challengesTitle['prefix'] = 'Terlalu banyak tools AI,';
+    }
+    if (($challengesTitle['main'] ?? '') === 'terlalu minim kendali.') {
+        $challengesTitle['main'] = 'terlalu sedikit kontrol.';
+    }
+}
+
 $productsTitle = $page?->block('products_title', 'Four specialized products, one unified platform.');
 $bottomCtaTitle = $page?->block('bottom_cta_title', 'Ready to take control of AI in your organization?');
 $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see how Kouventa unifies AI adoption with enterprise control.');
@@ -833,7 +866,17 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see ho
 <!-- ============ ENTERPRISE AI JOURNEY ============ -->
 <section id="journey" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 14px; max-width: 900px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Bring your AI together,', 'Bring your AI together,') }} <span style="color: #13803F; display: block">{{ t('kouventa.from answers to action.', 'from answers to action.') }}</span></h2>
+@php
+    $journeyPrefix = t('kouventa.Bring your AI together,', $isIdLocale ? 'Semua AI Anda di satu tempat,' : 'Bring your AI together,');
+    if ($isIdLocale && ($journeyPrefix === 'Satukan AI Anda,' || $journeyPrefix === 'Bring your AI together,' || empty($journeyPrefix))) {
+        $journeyPrefix = 'Semua AI Anda di satu tempat,';
+    }
+    $journeyMain = t('kouventa.from answers to action.', $isIdLocale ? 'dari menjawab sampai bertindak.' : 'from answers to action.');
+    if ($isIdLocale && ($journeyMain === 'dari jawaban hingga aksi.' || $journeyMain === 'from answers to action.' || empty($journeyMain))) {
+        $journeyMain = 'dari menjawab sampai bertindak.';
+    }
+@endphp
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $journeyPrefix }} <span style="color: #13803F; display: block">{{ $journeyMain }}</span></h2>
 <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.', 'Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.') }}</p>
 </div>
 
