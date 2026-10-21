@@ -45,8 +45,8 @@
         <p class="text-sm text-[#4A5866] max-w-md">
             {{ t('kouventa.Book a working session with our solution team. We\'ll map your use cases to the right tier and deployment.', 'Book a working session with our solution team. We\'ll map your use cases to the right tier and deployment.') }}
         </p>
-        <a href="mailto:{{ $emailAddress }}" class="inline-block mt-2 px-6 py-3 rounded-xl bg-[#2BD46A] text-[#06251A] font-bold text-sm">
-            {{ t('kouventa.Contact sales', 'Contact sales') }} ({{ $emailAddress }})
+        <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="inline-block mt-2 px-6 py-3 rounded-xl bg-[#2BD46A] text-[#06251A] font-bold text-sm cursor-pointer">
+            {{ t('kouventa.Contact sales', 'Contact sales') }}
         </a>
     </div>
 @endif

@@ -32,6 +32,15 @@
             });
         }
     },
+    open() {
+        this.waOpen = true;
+        this.errorMessage = '';
+        this.errors = {};
+        this.$nextTick(() => {
+            const firstInput = this.$refs.waCard?.querySelector('input:not([type=hidden])');
+            if (firstInput) firstInput.focus();
+        });
+    },
     close() {
         this.waOpen = false;
     },
@@ -127,7 +136,9 @@
     }
 }" 
 class="kv-wa-widget-container"
-@keydown.escape.window="close()">
+@keydown.escape.window="close()"
+@open-whatsapp-modal.window="open()"
+@open-whatsapp.window="open()">
 
     <!-- Popup Card Form -->
     <div x-show="waOpen"
@@ -336,3 +347,23 @@ class="kv-wa-widget-container"
         <span class="kv-wa-text">{{ t('kouventa.Chat on WhatsApp', 'Chat on WhatsApp') }}</span>
     </button>
 </div>
+
+<script>
+window.openWhatsAppModal = function() {
+    window.dispatchEvent(new CustomEvent('open-whatsapp-modal'));
+};
+
+document.addEventListener('click', function(e) {
+    var trigger = e.target.closest('[data-open-whatsapp], a[href="#whatsapp"]');
+    if (trigger) {
+        e.preventDefault();
+        window.openWhatsAppModal();
+    }
+});
+
+if (window.location.hash === '#whatsapp') {
+    setTimeout(function() {
+        window.openWhatsAppModal();
+    }, 400);
+}
+</script>

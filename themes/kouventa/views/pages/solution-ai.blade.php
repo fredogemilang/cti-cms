@@ -1091,7 +1091,7 @@
 </div>
 <div style="display: flex; gap: 12px; flex-shrink: 0; flex-wrap: wrap">
 <a href="#solution-tabs" @click.prevent="pickTab(0, true)" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ t('kouventa.Find your first use case', 'Find your first use case') }}</a>
-<a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; white-space: nowrap; text-decoration: none">{{ t('kouventa.Talk to Sales', 'Talk to Sales') }}</a>
+<a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; white-space: nowrap; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to Sales', 'Talk to Sales') }}</a>
 </div>
 </div>
 </section>

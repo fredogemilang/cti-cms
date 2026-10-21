@@ -1122,7 +1122,7 @@ class="kv-canvas-wrap">
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.AI guardrails & PII masking', 'AI guardrails & PII masking') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Livechat delivery, SDK access', 'Livechat delivery, SDK access') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-navy" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- AI Grow (Most Popular) -->
@@ -1148,7 +1148,7 @@ class="kv-canvas-wrap">
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.500 GB storage, chat playground', '500 GB storage, chat playground') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.File & chart generation tools', 'File & chart generation tools') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-primary" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-primary" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- AI Scale -->
@@ -1173,7 +1173,7 @@ class="kv-canvas-wrap">
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Dedicated engineering pod', 'Dedicated engineering pod') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Audit trail & change approval gates', 'Audit trail & change approval gates') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-outline" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
         </div>
 
@@ -1201,7 +1201,7 @@ class="kv-canvas-wrap">
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Analytics, role-based access, MFA', 'Analytics, role-based access, MFA') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.SaaS cloud deployment', 'SaaS cloud deployment') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-navy" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- CE Professional (Most Popular) -->
@@ -1227,7 +1227,7 @@ class="kv-canvas-wrap">
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Broadcast scheduling & CSAT', 'Broadcast scheduling & CSAT') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Standard 9×5 support, 99.5% uptime', 'Standard 9×5 support, 99.5% uptime') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-primary" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-primary" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- CE Enterprise -->
@@ -1252,7 +1252,7 @@ class="kv-canvas-wrap">
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Dedicated implementation team', 'Dedicated implementation team') }}</span></li>
                     <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Data masking & audit trail', 'Data masking & audit trail') }}</span></li>
                 </ul>
-                <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-outline" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
         </div>
     </div>
@@ -1406,7 +1406,7 @@ class="kv-canvas-wrap">
 
         <p style="margin: 0; font-size: 16px; color: #4A5866">
             {{ t('kouventa.Available across all plans.', 'Available across all plans.') }}
-            <a href="{{ localized_url('/book-demo') }}" style="font-weight: 700; color: #0E1A24; text-decoration: underline">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+            <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp style="font-weight: 700; color: #0E1A24; text-decoration: underline; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             {{ t('kouventa.for scoping and pricing.', 'for scoping and pricing.') }}
         </p>
     </div>
@@ -1556,7 +1556,7 @@ class="kv-canvas-wrap">
                             <span style="font-size: 26px; line-height: 1.25; font-weight: 800">{{ t('kouventa.More than 15,000 active users?', 'More than 15,000 active users?') }}</span>
                             <span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ t("kouventa.You're ready for an enterprise setup. Talk to our team for a plan tailored to your volume, channels and integrations.", "You're ready for an enterprise setup. Talk to our team for a plan tailored to your volume, channels and integrations.") }}</span>
                         </div>
-                        <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-primary" style="margin-top: 6px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                        <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-primary" style="margin-top: 6px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
                     </div>
                 </template>
             </div>
@@ -1573,7 +1573,7 @@ class="kv-canvas-wrap">
         </div>
         <div style="display: flex; gap: 12px; flex-shrink: 0">
             <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a working session', 'Book a working session') }}</a>
-            <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none">{{ t('kouventa.Contact sales', 'Contact sales') }}</a>
+            <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none; cursor: pointer">{{ t('kouventa.Contact sales', 'Contact sales') }}</a>
         </div>
     </div>
 </section>
