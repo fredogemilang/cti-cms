@@ -744,13 +744,16 @@
             width: 100vw !important;
             height: 100vh !important;
             z-index: 999999 !important;
-            display: grid !important;
-            place-items: center !important;
+            display: grid;
+            place-items: center;
             padding: 24px !important;
             box-sizing: border-box !important;
             background: rgba(7, 28, 51, 0.88) !important;
             backdrop-filter: blur(10px) !important;
             -webkit-backdrop-filter: blur(10px) !important;
+        }
+        .kv-video-modal-backdrop[style*="display: none"] {
+            display: none !important;
         }
         .kv-video-modal-container {
             position: relative !important;
@@ -852,26 +855,25 @@
              @keydown.escape.window="activeVideo = null"
              @click.self="activeVideo = null"
              class="kv-video-modal-backdrop"
-             style="position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 999999; display: grid; place-items: center; padding: 24px; box-sizing: border-box; background: rgba(7, 28, 51, 0.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px)">
-            <div @click.outside="activeVideo = null" 
-                 class="kv-video-modal-container"
-                 style="position: relative; width: 100%; max-width: 960px; margin: auto; background: #000000; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85); border: 1px solid rgba(255,255,255,0.18); box-sizing: border-box">
-                <button type="button" 
-                        @click="activeVideo = null" 
-                        aria-label="Close modal"
-                        style="position: absolute; top: 12px; right: 12px; z-index: 50; width: 42px; height: 42px; border-radius: 50%; background: rgba(7, 28, 51, 0.85); border: 1px solid rgba(255,255,255,0.3); color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.5)">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-                <div style="position: relative; width: 100%; padding-top: 56.25%">
-                    <template x-if="activeVideo">
+             style="display: none;">
+            <template x-if="activeVideo">
+                <div @click.outside="activeVideo = null" 
+                     class="kv-video-modal-container">
+                    <button type="button" 
+                            @click="activeVideo = null" 
+                            aria-label="Close modal"
+                            style="position: absolute; top: 12px; right: 12px; z-index: 50; width: 42px; height: 42px; border-radius: 50%; background: rgba(7, 28, 51, 0.85); border: 1px solid rgba(255,255,255,0.3); color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.5)">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                    <div style="position: relative; width: 100%; padding-top: 56.25%">
                         <iframe :src="'https://www.youtube-nocookie.com/embed/' + activeVideo + '?autoplay=1&rel=0'" 
                                 style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                 allowfullscreen>
                         </iframe>
-                    </template>
+                    </div>
                 </div>
-            </div>
+            </template>
         </div>
     </template>
 </section>

@@ -2060,13 +2060,16 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
     width: 100vw !important;
     height: 100vh !important;
     z-index: 999999 !important;
-    display: grid !important;
-    place-items: center !important;
+    display: grid;
+    place-items: center;
     padding: 24px !important;
     box-sizing: border-box !important;
     background: rgba(7, 28, 51, 0.88) !important;
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px) !important;
+}
+.kv-video-modal-backdrop[style*="display: none"] {
+    display: none !important;
 }
 .kv-video-modal-container {
     position: relative !important;
