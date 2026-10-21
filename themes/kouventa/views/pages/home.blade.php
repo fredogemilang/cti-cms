@@ -283,7 +283,7 @@
 <a href="{{ localized_url('/solutions/ai') }}" class="kv-card-link" style="align-self: flex-start; font-size: 16px; font-weight: 700; color: #13803F; text-decoration: none">{{ t('kouventa.See how it works', 'See how it works') }} <span class="kv-arrow">→</span></a>
 </div>
 <div style="background: #F4F6F5; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px; min-height: 290px">
-<span style="font-size: 13px; font-weight: 600; color: #4A5866; padding-bottom: 4px">{{ t('kouventa.Your agent handles', 'Your agent handles') }}</span>
+<span style="font-size: 13px; font-weight: 600; color: #4A5866; padding-bottom: 4px">{{ t('kouventa.Your AI agent handles', 'Your AI agent handles') }}</span>
 
 <template x-for="(task, idx) in teams[activeTeam].tasks" :key="idx">
 
