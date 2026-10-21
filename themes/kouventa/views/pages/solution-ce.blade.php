@@ -4,9 +4,8 @@
 @php
     $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Seamless omnichannel', 'main' => 'customer experience.']);
     $heroSubtitle = $page?->block('hero_subtitle', 'From marketing campaigns and customer support to operational updates, Kouventa helps businesses connect, respond, and communicate more effectively.');
-    $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Request a Demo', 'url' => '/book-demo']);
-    $bottomCtaTitle = $page?->block('bottom_cta_title', 'Ready to elevate customer conversations?');
-    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', "Tell us about your team's needs and we'll show you how Kouventa fits.");
+    $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Siap meningkatkan setiap percakapan dengan pelanggan?' : 'Ready to improve every customer conversation?');
+    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Jadwalkan demo dan kami tunjukkan bagaimana Kouventa menghubungkan channel Anda, mengotomasi balasan, dan menjaga tim Anda tetap memegang kendali.' : "Book a demo and we'll walk you through how Kouventa connects your channels, automates replies, and keeps your team in control.");
 @endphp
 <div class="kv-canvas-wrap" x-data="{
     tab: 0,
