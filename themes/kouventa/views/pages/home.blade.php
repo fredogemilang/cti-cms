@@ -354,10 +354,10 @@
     <img src="{{ theme_asset('images/logos/partner-tokenku.png') }}" alt="TokenKu" title="TokenKu.ai" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/partner-deka-llm.png') }}" alt="Deka LLM" title="Lintasarta Cloudeka" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/partner-motadata-v2.svg') }}" alt="Motadata" title="Motadata" style="max-height: 30px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/partner-motadata-v2.svg') }}" alt="Motadata" title="Motadata" style="max-height: 30px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    <img src="{{ theme_asset('images/logos/partner-deka-llm.png') }}" alt="Deka LLM" title="Lintasarta Cloudeka" style="max-height: 34px; max-width: 100%; width: auto; height: auto; object-fit: contain">
 </div>
 </div>
 </div>
