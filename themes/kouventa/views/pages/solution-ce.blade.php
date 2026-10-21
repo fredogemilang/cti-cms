@@ -2,6 +2,7 @@
 
 @section('content')
 @php
+    $isIdLocale = app()->getLocale() === 'id';
     $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Seamless omnichannel', 'main' => 'customer experience.']);
     $heroSubtitle = $page?->block('hero_subtitle', 'From marketing campaigns and customer support to operational updates, Kouventa helps businesses connect, respond, and communicate more effectively.');
     $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Siap meningkatkan setiap percakapan dengan pelanggan?' : 'Ready to improve every customer conversation?');
