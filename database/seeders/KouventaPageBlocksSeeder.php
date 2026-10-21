@@ -20,7 +20,7 @@ class KouventaPageBlocksSeeder extends Seeder
         $this->seedSolutionAiPage();
         $this->seedSolutionCePage();
 
-        $this->command->info('Kouventa PageBlocks seeded successfully for all 9 pages.');
+        $this->command?->info('Kouventa PageBlocks seeded successfully for all 9 pages.');
     }
 
     protected function saveBlock(int $pageId, string $name, string $type, string $label, $enValue, $idValue, int $order): void
@@ -97,8 +97,8 @@ class KouventaPageBlocksSeeder extends Seeder
                 'name' => 'path1_desc',
                 'type' => 'textarea',
                 'label' => 'Path 1 Description',
-                'en' => 'Instant answer from your company knowledge, and AI agents that take routine tasks off your teams',
-                'id' => 'jawaban instan dari knowledge perusahaan Anda, dan AI agen yang mengambil alih tugas rutin Anda',
+                'en' => 'Instant answers from your company knowledge, and agents that take routine tasks off your teams.',
+                'id' => 'Jawaban instan dari pengetahuan perusahaan Anda, dan agent yang mengambil alih tugas rutin tim Anda.',
             ],
             [
                 'name' => 'path1_button',
@@ -119,14 +119,14 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Path 2 Title',
                 'en' => ['prefix' => 'With your', 'main' => 'customers.'],
-                'id' => ['prefix' => 'Dengan', 'main' => 'pelanggan Anda.'],
+                'id' => ['prefix' => 'Bersama', 'main' => 'pelanggan Anda.'],
             ],
             [
                 'name' => 'path2_desc',
                 'type' => 'textarea',
                 'label' => 'Path 2 Description',
                 'en' => 'Chatbots reply first on WhatsApp, Instagram, Facebook and Live Chat, then hand off to your agents when needed.',
-                'id' => 'Chatbot membalas lebih dulu di WhatsApp, Instagram, Facebook dan Live Chat, lalu meneruskan ke agen Anda jika diperlukan.',
+                'id' => 'Chatbot membalas lebih dulu di WhatsApp, Instagram, Facebook, dan Live Chat, lalu meneruskan ke agen Anda saat diperlukan.',
             ],
             [
                 'name' => 'path2_button',
