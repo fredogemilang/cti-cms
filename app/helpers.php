@@ -600,6 +600,14 @@ if (! function_exists('t')) {
         $dictionary = StringTranslation::getDictionary($locale);
         $translation = $dictionary[$key] ?? null;
 
+        if ($translation === null) {
+            if (str_starts_with($key, 'kouventa.')) {
+                $translation = $dictionary[substr($key, 9)] ?? null;
+            } else {
+                $translation = $dictionary['kouventa.' . $key] ?? null;
+            }
+        }
+
         if (empty($translation)) {
             $translation = $default ?? $key;
         }

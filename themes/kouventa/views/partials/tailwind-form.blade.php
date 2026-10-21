@@ -31,8 +31,8 @@
                 @php
                     $isFullWidth = in_array($field->type, ['textarea', 'gdpr', 'terms', 'checkbox', 'radio', 'html', 'section']) || ((int) $field->column_width === 12);
                     $fieldId = $field->field_id;
-                    $label = $field->localizedLabel() ?: $field->label;
-                    $placeholder = $field->localizedPlaceholder() ?: ($field->placeholder ?? '');
+                    $label = $field->localizedLabel() ?: t('kouventa.' . $field->label, $field->label);
+                    $placeholder = $field->localizedPlaceholder() ?: ($field->placeholder ? t('kouventa.' . $field->placeholder, $field->placeholder) : '');
                 @endphp
 
                 <div style="display: flex; flex-direction: column; gap: 8px; align-self: start; {{ $isFullWidth ? 'grid-column: 1 / -1;' : '' }}">
@@ -431,25 +431,25 @@
                                     <template x-if="isVerified">
                                         <span style="display: inline-flex; align-items: center; gap: 6px;">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg>
-                                            <span>Verified</span>
+                                            <span>{{ t('kouventa.Verified', 'Verified') }}</span>
                                         </span>
                                     </template>
                                     <template x-if="!isVerified && loading">
                                         <span style="display: inline-flex; align-items: center; gap: 8px;">
                                             <svg style="animation: spin 1s linear infinite;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path></svg>
-                                            <span>Sending...</span>
+                                            <span>{{ t('kouventa.Sending...', 'Sending...') }}</span>
                                         </span>
                                     </template>
                                     <template x-if="!isVerified && !loading && cooldown > 0">
                                         <span style="display: inline-flex; align-items: center; gap: 6px;">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                            <span x-text="'Resend (' + cooldown + 's)'"></span>
+                                            <span x-text="'{{ t('kouventa.Resend', 'Resend') }} (' + cooldown + 's)'"></span>
                                         </span>
                                     </template>
                                     <template x-if="!isVerified && !loading && cooldown === 0">
                                         <span style="display: inline-flex; align-items: center; gap: 6px;">
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
-                                            <span x-text="showOtpInput ? 'Resend' : 'Verify'"></span>
+                                            <span x-text="showOtpInput ? '{{ t('kouventa.Resend', 'Resend') }}' : '{{ t('kouventa.Verify', 'Verify') }}'"></span>
                                         </span>
                                     </template>
                                 </button>
@@ -483,7 +483,7 @@
                                     </div>
                                     <span class="kv-otp-badge-active">
                                         <span class="kv-otp-badge-dot"></span>
-                                        <span>Sent</span>
+                                        <span>{{ t('kouventa.Sent', 'Sent') }}</span>
                                     </span>
                                 </div>
 
@@ -594,7 +594,7 @@
         <button type="submit"
                 style="height: 56px; border: 0; border-radius: 12px; background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; cursor: pointer; transition: all 0.2s ease"
                 onmouseover="this.style.background='#22be5c'" onmouseout="this.style.background='#2BD46A'">
-            {{ $form->submit_button_text ?: t('kouventa.Submit', 'Submit') }}
+            {{ t('kouventa.' . ($form->submit_button_text ?: 'Submit'), $form->submit_button_text ?: 'Submit') }}
         </button>
     </form>
 

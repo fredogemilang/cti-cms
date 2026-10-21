@@ -63,7 +63,11 @@ class StringTranslation extends Model
             // Base initialization with default_value
             foreach ($keys as $k) {
                 $fullKey = static::resolveFullKey($k->group, $k->key);
-                $dictionary[$fullKey] = $k->default_value ?: $k->key;
+                $val = $k->default_value ?: $k->key;
+                $dictionary[$fullKey] = $val;
+                if ($fullKey !== $k->key) {
+                    $dictionary[$k->key] ??= $val;
+                }
             }
 
             // 2. Override with Fallback Locale values if requested locale is different
@@ -78,6 +82,9 @@ class StringTranslation extends Model
                     if ($ft->key) {
                         $fullKey = static::resolveFullKey($ft->key->group, $ft->key->key);
                         $dictionary[$fullKey] = $ft->value;
+                        if ($fullKey !== $ft->key->key) {
+                            $dictionary[$ft->key->key] = $ft->value;
+                        }
                     }
                 }
             }
@@ -93,6 +100,9 @@ class StringTranslation extends Model
                 if ($rt->key) {
                     $fullKey = static::resolveFullKey($rt->key->group, $rt->key->key);
                     $dictionary[$fullKey] = $rt->value;
+                    if ($fullKey !== $rt->key->key) {
+                        $dictionary[$rt->key->key] = $rt->value;
+                    }
                 }
             }
 

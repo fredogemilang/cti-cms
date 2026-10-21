@@ -32,6 +32,11 @@
     <!-- Local Motion & Scroll Reveal Engine (Rule 10: No External CDN) -->
     <script defer src="{{ theme_asset('js/kouventa-motion.js') }}?v={{ time() }}"></script>
 
+    @if(app()->getLocale() === 'id')
+        <!-- Local Localization Engine for Indonesian (Rule 10: No External CDN) -->
+        <script defer src="{{ theme_asset('js/kouventa-i18n-id.js') }}?v={{ file_exists(theme_path('assets/js/kouventa-i18n-id.js')) ? filemtime(theme_path('assets/js/kouventa-i18n-id.js')) : time() }}"></script>
+    @endif
+
     @stack('styles')
 </head>
 <body class="bg-[#F4F6F5] text-[#0E1A24] antialiased">
