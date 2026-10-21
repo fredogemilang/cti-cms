@@ -309,7 +309,7 @@
 <div class="kv-card kv-card-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05)">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 0 1-.5-9A6 6 0 0 1 18 8a4 4 0 0 1-1 10H7Z"></path></svg></span>
 <span style="font-size: 22px; font-weight: 800; letter-spacing: -0.01em; padding-top: 4px">{{ t('kouventa.Deploy anywhere', 'Deploy anywhere') }}</span>
-<span style="font-size: 16px; color: #4A5866; line-height: 1.6; flex-grow: 1">{{ t('kouventa.Run Kouventa in the cloud or on-premise on your own servers, so it fits your IT policies, infrastructure and data residency needs.', 'Run Kouventa in the cloud or on-premise on your own servers, so it fits your IT policies, infrastructure and data residency needs.') }}</span>
+<span style="font-size: 16px; color: #4A5866; line-height: 1.6; flex-grow: 1">{{ t('kouventa.Run Kouventa in the cloud, on-premise on your own servers, or hybrid, so it fits your IT policies, infrastructure and data residency needs.', 'Run Kouventa in the cloud, on-premise on your own servers, or hybrid, so it fits your IT policies, infrastructure and data residency needs.') }}</span>
 <span style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px"><span style="font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C">{{ t('kouventa.Cloud', 'Cloud') }}</span><span style="font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C">{{ t('kouventa.On-premise', 'On-premise') }}</span><span style="font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C">{{ t('kouventa.Hybrid', 'Hybrid') }}</span></span>
 </div>
 <div class="kv-card kv-card-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05)">
@@ -386,7 +386,7 @@
 </section>
 
 <!-- ============ STORIES (carousel) ============ -->
-<section style="padding: 72px 80px 104px; display: flex; flex-direction: column; gap: 32px" 
+<section style="padding: 80px 80px 64px; display: flex; flex-direction: column; gap: 32px" 
          x-data="{
              activeStory: 0,
              totalStories: {{ count($stories) }},
@@ -535,7 +535,7 @@
         </a>
     </div>
     <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px">
-        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-video-card kv-card" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
+        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-video-card kv-card kv-hover" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
             <div role="img" aria-label="Video thumbnail placeholder" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
                 <span class="kv-play-btn" style="width: 64px; height: 44px; border-radius: 12px; background: #FF0033; display: flex; align-items: center; justify-content: center">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7Z"></path></svg>
@@ -544,7 +544,7 @@
             <span style="align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C; margin: 0 6px">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
             <span style="font-size: 17px; line-height: 1.4; font-weight: 700; margin: 0 6px">{{ t('kouventa.AI Company Wikipedia: instant answers from your company knowledge', 'AI Company Wikipedia: instant answers from your company knowledge') }}</span>
         </a>
-        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-video-card kv-card" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
+        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-video-card kv-card kv-hover" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
             <div role="img" aria-label="Video thumbnail placeholder" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
                 <span class="kv-play-btn" style="width: 64px; height: 44px; border-radius: 12px; background: #FF0033; display: flex; align-items: center; justify-content: center">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7Z"></path></svg>
@@ -553,7 +553,7 @@
             <span style="align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C; margin: 0 6px">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
             <span style="font-size: 17px; line-height: 1.4; font-weight: 700; margin: 0 6px">{{ t('kouventa.AI Task Force: automate invoice reconciliation with human approval', 'AI Task Force: automate invoice reconciliation with human approval') }}</span>
         </a>
-        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-video-card kv-card" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
+        <a href="https://www.youtube.com/@kouventa" target="_blank" rel="noopener noreferrer" class="kv-video-card kv-card kv-hover" style="display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none">
             <div role="img" aria-label="Video thumbnail placeholder" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
                 <span class="kv-play-btn" style="width: 64px; height: 44px; border-radius: 12px; background: #FF0033; display: flex; align-items: center; justify-content: center">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7Z"></path></svg>

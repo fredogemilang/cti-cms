@@ -833,7 +833,7 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Book a demo to see ho
 <!-- ============ ENTERPRISE AI JOURNEY ============ -->
 <section id="journey" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 14px; max-width: 900px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Bring your AI together,', 'Bring your AI together,') }} <span style="color: #13803F">{{ t('kouventa.from answers to action.', 'from answers to action.') }}</span></h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Bring your AI together,', 'Bring your AI together,') }} <span style="color: #13803F; display: block">{{ t('kouventa.from answers to action.', 'from answers to action.') }}</span></h2>
 <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.', 'Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.') }}</p>
 </div>
 

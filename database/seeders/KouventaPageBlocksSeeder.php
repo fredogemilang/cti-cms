@@ -182,7 +182,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'text',
                 'label' => 'Bottom CTA Title',
                 'en' => 'Ready to see it work for your business?',
-                'id' => 'Siap melihatnya bekerja untuk bisnis Anda?',
+                'id' => 'Siap mengubah cara bisnis Anda beroperasi dengan AI?',
             ],
             [
                 'name' => 'cta_subtitle',
@@ -210,7 +210,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'text',
                 'label' => 'Videos Section Title',
                 'en' => 'See Kouventa in action.',
-                'id' => 'Lihat aksi Kouventa secara langsung.',
+                'id' => 'Lihat cara kerja Kouventa.',
             ],
         ];
 
