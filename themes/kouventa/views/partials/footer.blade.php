@@ -54,13 +54,9 @@
         
         <div style="display: flex; flex-direction: column; gap: 14px">
             <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Certified & Registered', 'Certified & Registered') }}</span>
-            <div style="display: flex; gap: 12px; align-items: center">
-                <div style="background: #FFFFFF; border-radius: 10px; height: 80px; width: 96px; box-sizing: border-box; padding: 8px; display: flex; align-items: center; justify-content: center">
-                    <img src="{{ theme_asset('images/badge-iso-27001.png') }}" alt="ISO 27001 — KAN accredited" style="width: 100%; height: auto">
-                </div>
-                <div style="background: #FFFFFF; border-radius: 10px; height: 80px; width: 80px; box-sizing: border-box; padding: 6px; display: flex; align-items: center; justify-content: center">
-                    <img src="{{ theme_asset('images/badge-kominfo.png') }}" alt="Terdaftar di Kominfo" style="height: 100%; width: auto">
-                </div>
+            <div style="display: flex; gap: 16px; align-items: center">
+                <img src="{{ theme_asset('images/badge-iso-27001.png') }}" alt="ISO 27001 — KAN accredited" style="height: 48px; width: auto; object-fit: contain" loading="lazy">
+                <img src="{{ theme_asset('images/badge-kominfo.png') }}" alt="Terdaftar di Kominfo" style="height: 54px; width: auto; object-fit: contain" loading="lazy">
             </div>
         </div>
     </div>
