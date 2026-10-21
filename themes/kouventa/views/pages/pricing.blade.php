@@ -1029,6 +1029,14 @@
 <div x-data="{
     product: (new URLSearchParams(window.location.search).get('tab') === 'ai' ? 'ai' : 'ce'),
     openCats: { 'ai_0': true, 'ce_0': true },
+    setTab(tab) {
+        this.product = tab;
+        try {
+            const u = new URL(window.location);
+            u.searchParams.set('tab', tab);
+            history.replaceState(null, '', u.pathname + u.search + u.hash);
+        } catch (e) {}
+    },
     toggleCat(key) {
         this.openCats[key] = !this.openCats[key];
     },
@@ -1045,7 +1053,9 @@
         this.openCats = {};
     },
     ...whatsappCalculator()
-}" class="kv-canvas-wrap">
+}" 
+x-init="window.addEventListener('popstate', () => { const t = new URLSearchParams(window.location.search).get('tab'); if (t === 'ai' || t === 'ce') product = t; })"
+class="kv-canvas-wrap">
 
 <!-- ============ HERO & PLATFORM TOGGLE ============ -->
 <section style="background: #071C33; color: #FFFFFF; padding: 96px 80px 104px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 24px; position: relative">
@@ -1065,12 +1075,12 @@
 
     <!-- Platform Toggle -->
     <div id="pricing-toggle" role="group" aria-label="Choose a platform" style="align-self: center; display: flex; padding: 5px; background: rgba(255,255,255,0.08); border-radius: 14px; gap: 4px; margin-top: 12px; z-index: 10">
-        <button type="button" @click="product = 'ai'"
+        <button type="button" @click="setTab('ai')"
                 :class="{ 'is-active': product === 'ai' }"
                 class="kv-toggle-btn">
             {{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}
         </button>
-        <button type="button" @click="product = 'ce'"
+        <button type="button" @click="setTab('ce')"
                 :class="{ 'is-active': product === 'ce' }"
                 class="kv-toggle-btn">
             {{ t('kouventa.Customer Engagement', 'Customer Engagement') }}
