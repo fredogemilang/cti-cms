@@ -264,11 +264,18 @@ class="kv-wa-widget-container"
                             <label for="wa-job-role" class="kv-wa-label">Job Role <span class="kv-wa-req">*</span></label>
                             <select id="wa-job-role" x-model="formData.job_role" class="kv-wa-select" :class="{ 'has-error': errors.job_role }">
                                 <option value="">Choose Job Role</option>
-                                <option value="Director / C-Level">Director / C-Level</option>
-                                <option value="VP / Head of Department">VP / Head of Department</option>
-                                <option value="Manager / Team Lead">Manager / Team Lead</option>
-                                <option value="Specialist / Senior Staff">Specialist / Senior Staff</option>
-                                <option value="Staff / Officer">Staff / Officer</option>
+                                <option value="Developer/DBA/System Analysis">Developer/DBA/System Analysis</option>
+                                <option value="Finance">Finance</option>
+                                <option value="HR">HR</option>
+                                <option value="IT/MIS">IT/MIS</option>
+                                <option value="Legal">Legal</option>
+                                <option value="Logistic/Purchasing">Logistic/Purchasing</option>
+                                <option value="Management Operational">Management Operational</option>
+                                <option value="Media">Media</option>
+                                <option value="Pre-Sales">Pre-Sales</option>
+                                <option value="Sales/Frontliner">Sales/Frontliner</option>
+                                <option value="System Engineer">System Engineer</option>
+                                <option value="User">User</option>
                                 <option value="Other">Other</option>
                             </select>
                             <template x-if="errors.job_role"><span class="kv-wa-field-error" x-text="errors.job_role"></span></template>
@@ -277,13 +284,12 @@ class="kv-wa-widget-container"
                             <label for="wa-position" class="kv-wa-label">Position <span class="kv-wa-req">*</span></label>
                             <select id="wa-position" x-model="formData.position" class="kv-wa-select" :class="{ 'has-error': errors.position }">
                                 <option value="">Choose Your Position</option>
-                                <option value="IT / Engineering">IT / Engineering</option>
-                                <option value="Customer Service / Support">Customer Service / Support</option>
-                                <option value="Sales & Marketing">Sales & Marketing</option>
-                                <option value="Operations">Operations</option>
-                                <option value="Finance & Accounting">Finance & Accounting</option>
-                                <option value="Human Resources">Human Resources</option>
-                                <option value="Other">Other</option>
+                                <option value="President Director">President Director</option>
+                                <option value="C-Level">C-Level</option>
+                                <option value="General Manager">General Manager</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Supervisor/Team Leader">Supervisor/Team Leader</option>
+                                <option value="Staff">Staff</option>
                             </select>
                             <template x-if="errors.position"><span class="kv-wa-field-error" x-text="errors.position"></span></template>
                         </div>

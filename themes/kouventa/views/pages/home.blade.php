@@ -7,6 +7,7 @@
             'name' => t('kouventa.Customer Service', 'Customer Service'),
             'line' => t('kouventa.Resolve routine inquiries, route the rest.', 'Resolve routine inquiries, route the rest.'),
             'tab' => 0,
+            'url' => localized_url('/solutions/ai?dept=0#solution-tabs'),
             'tasks' => [
                 t('kouventa.Answer routine questions from your knowledge', 'Answer routine questions from your knowledge'),
                 t('kouventa.Create and assign support tickets', 'Create and assign support tickets'),
@@ -17,6 +18,7 @@
             'name' => t('kouventa.Recruitment', 'Recruitment'),
             'line' => t('kouventa.Hire faster, with less admin.', 'Hire faster, with less admin.'),
             'tab' => 1,
+            'url' => localized_url('/solutions/ai?dept=1#solution-tabs'),
             'tasks' => [
                 t('kouventa.Candidate screening and sourcing', 'Candidate screening and sourcing'),
                 t('kouventa.Interview scheduling', 'Interview scheduling'),
@@ -27,6 +29,7 @@
             'name' => t('kouventa.Sales & Marketing', 'Sales & Marketing'),
             'line' => t('kouventa.Reply faster, follow up, close more.', 'Reply faster, follow up, close more.'),
             'tab' => 2,
+            'url' => localized_url('/solutions/ai?dept=2#solution-tabs'),
             'tasks' => [
                 t('kouventa.Product and availability answers', 'Product and availability answers'),
                 t('kouventa.Order and payment confirmation', 'Order and payment confirmation'),
@@ -37,6 +40,7 @@
             'name' => t('kouventa.Business Operations', 'Business Operations'),
             'line' => t('kouventa.Answers from your SOPs, actions in your systems.', 'Answers from your SOPs, actions in your systems.'),
             'tab' => 3,
+            'url' => localized_url('/solutions/ai?dept=3#solution-tabs'),
             'tasks' => [
                 t('kouventa.Answers from policies and SOPs', 'Answers from policies and SOPs'),
                 t('kouventa.Requests submitted on your behalf', 'Requests submitted on your behalf'),
@@ -47,6 +51,7 @@
             'name' => t('kouventa.Finance', 'Finance'),
             'line' => t('kouventa.Reconcile in minutes, with reasons.', 'Reconcile in minutes, with reasons.'),
             'tab' => 4,
+            'url' => localized_url('/solutions/ai?dept=4#solution-tabs'),
             'tasks' => [
                 t('kouventa.Payment prioritization', 'Payment prioritization'),
                 t('kouventa.Transaction matching', 'Transaction matching'),
@@ -57,6 +62,7 @@
             'name' => t('kouventa.Legal & Compliance', 'Legal & Compliance'),
             'line' => t('kouventa.Never miss a clause or regulation.', 'Never miss a clause or regulation.'),
             'tab' => 5,
+            'url' => localized_url('/solutions/ai?dept=6#solution-tabs'),
             'tasks' => [
                 t('kouventa.Ask your documents', 'Ask your documents'),
                 t('kouventa.Summarize key terms', 'Summarize key terms'),
@@ -280,7 +286,7 @@
 <div style="display: flex; flex-direction: column; gap: 20px">
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F"><span x-text="teams[activeTeam].name">{{ $teams[0]['name'] ?? '' }}</span></span>
 <span style="font-size: 38px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em"><span x-text="teams[activeTeam].line">{{ $teams[0]['line'] ?? '' }}</span></span>
-<a href="{{ localized_url('/solutions/ai') }}" class="kv-card-link" style="align-self: flex-start; font-size: 16px; font-weight: 700; color: #13803F; text-decoration: none">{{ t('kouventa.See how it works', 'See how it works') }} <span class="kv-arrow">→</span></a>
+<a :href="teams[activeTeam].url" href="{{ localized_url('/solutions/ai?dept=0#solution-tabs') }}" class="kv-card-link" style="align-self: flex-start; font-size: 16px; font-weight: 700; color: #13803F; text-decoration: none">{{ t('kouventa.See how it works', 'See how it works') }} <span class="kv-arrow">→</span></a>
 </div>
 <div style="background: #F4F6F5; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 10px; min-height: 290px">
 <span style="font-size: 13px; font-weight: 600; color: #4A5866; padding-bottom: 4px">{{ t('kouventa.Your AI agent handles', 'Your AI agent handles') }}</span>
