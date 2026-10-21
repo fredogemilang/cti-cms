@@ -77,7 +77,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Two Paths Title',
                 'en' => ['prefix' => '', 'main' => 'Where do you want to start?'],
-                'id' => ['prefix' => '', 'main' => 'Di mana Anda ingin memulai?'],
+                'id' => ['prefix' => '', 'main' => 'Mau mulai dari mana?'],
             ],
             [
                 'name' => 'path1_badge',
@@ -154,7 +154,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Why Section Title',
                 'en' => ['prefix' => 'Enterprise ready', 'main' => 'from day one.'],
-                'id' => ['prefix' => 'Enterprise ready', 'main' => 'sejak hari pertama.'],
+                'id' => ['prefix' => 'Siap untuk skala enterprise', 'main' => 'sejak hari pertama.'],
             ],
             [
                 'name' => 'partners_title',
@@ -168,7 +168,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'text',
                 'label' => 'Customers Section Title',
                 'en' => 'They trusted us.',
-                'id' => 'Mereka mempercayai kami.',
+                'id' => 'Mereka sudah percaya.',
             ],
             [
                 'name' => 'results_title',
@@ -182,7 +182,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'text',
                 'label' => 'Bottom CTA Title',
                 'en' => 'Ready to see it work for your business?',
-                'id' => 'Siap mengubah cara bisnis Anda beroperasi dengan AI?',
+                'id' => 'Siap lihat langsung hasilnya untuk bisnis Anda?',
             ],
             [
                 'name' => 'cta_subtitle',

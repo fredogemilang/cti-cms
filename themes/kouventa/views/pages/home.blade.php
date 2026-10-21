@@ -2,6 +2,7 @@
 
 
 @php
+    $isIdLocale = app()->getLocale() === 'id';
     $teams = [
         [
             'name' => t('kouventa.Customer Service', 'Customer Service'),
@@ -160,7 +161,7 @@
     $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'AI adoption,', 'main' => 'done right.']);
     $heroSubtitle = $page?->block('hero_subtitle', "For your customers. For your teams.\nOne enterprise AI platform, your organization’s rules.");
     $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'See how it fits your business', 'url' => '#pick-team']);
-    $pathsTitle = $page?->titleBlock('paths_title', ['main' => 'Where do you want to start?']);
+    $pathsTitle = $page?->titleBlock('paths_title', ['main' => $isIdLocale ? 'Mau mulai dari mana?' : 'Where do you want to start?']);
     $path1Badge = $page?->block('path1_badge', 'AI that works');
     $path1Title = $page?->titleBlock('path1_title', ['prefix' => 'Inside your', 'main' => 'organization.']);
     $path1Desc = $page?->block('path1_desc', 'Instant answer from your company knowledge, and AI agents that take routine tasks off your teams');
@@ -174,11 +175,20 @@
     $seeHowItWorksRaw = t('kouventa.See how it works →', 'See how it works →');
     $seeHowItWorksHasArrow = str_ends_with($seeHowItWorksRaw, '→') || str_ends_with($seeHowItWorksRaw, '->');
     $seeHowItWorksText = $seeHowItWorksHasArrow ? rtrim(str_replace(['→', '->'], '', $seeHowItWorksRaw)) : $seeHowItWorksRaw;
-    $whyTitle = $page?->titleBlock('why_title', ['prefix' => 'Enterprise ready', 'main' => 'from day one.']);
+    $whyTitle = $page?->titleBlock('why_title', [
+        'prefix' => $isIdLocale ? 'Siap untuk skala enterprise' : 'Enterprise ready',
+        'main' => $isIdLocale ? 'sejak hari pertama.' : 'from day one.'
+    ]);
     $partnersTitle = $page?->block('partners_title', 'Technology Partners');
-    $customersTitle = $page?->block('customers_title', 'They trusted us.');
+    $customersTitle = $page?->block('customers_title', $isIdLocale ? 'Mereka sudah percaya.' : 'They trusted us.');
+    if ($isIdLocale && ($customersTitle === 'They trusted us.' || $customersTitle === 'Mereka mempercayai kami.' || empty($customersTitle))) {
+        $customersTitle = 'Mereka sudah percaya.';
+    }
     $resultsTitle = $page?->block('results_title', 'Real results, in their words.');
-    $ctaTitle = $page?->block('cta_title', 'Ready to see it work for your business?');
+    $ctaTitle = $page?->block('cta_title', $isIdLocale ? 'Siap lihat langsung hasilnya untuk bisnis Anda?' : 'Ready to see it work for your business?');
+    if ($isIdLocale && ($ctaTitle === 'Ready to see it work for your business?' || $ctaTitle === 'Siap mengubah cara bisnis Anda beroperasi dengan AI?' || empty($ctaTitle))) {
+        $ctaTitle = 'Siap lihat langsung hasilnya untuk bisnis Anda?';
+    }
     $ctaSubtitle = $page?->block('cta_subtitle', "Book a demo and we'll walk you through it with your own use case.");
     $ctaDemoBtn = $page?->buttonBlock('cta_demo_button', ['text' => 'Book a demo', 'url' => '/book-demo']);
     $ctaPricingBtn = $page?->buttonBlock('cta_pricing_button', ['text' => 'See pricing', 'url' => '/pricing']);
@@ -286,7 +296,13 @@
 
 <!-- ============ TWO PATHS ============ -->
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $pathsTitle['main'] ?? 'Where do you want to start?' }}</h2>
+@php
+    $pathsMain = $pathsTitle['main'] ?? ($isIdLocale ? 'Mau mulai dari mana?' : 'Where do you want to start?');
+    if ($isIdLocale && ($pathsMain === 'Where do you want to start?' || $pathsMain === 'Di mana Anda ingin memulai?' || empty($pathsMain))) {
+        $pathsMain = 'Mau mulai dari mana?';
+    }
+@endphp
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $pathsMain }}</h2>
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
 <a href="{{ localized_url($path1Btn['url'] ?? '/product/ai') }}" class="kv-card kv-card-dark" style="background: #071C33; border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; text-decoration: none">
 <span style="display: flex; align-items: center; gap: 14px">
@@ -377,8 +393,23 @@
 </section>
 
 <!-- ============ WHY ============ -->
+@php
+    $whyPrefix = $whyTitle['prefix'] ?? ($isIdLocale ? 'Siap untuk skala enterprise' : 'Enterprise ready');
+    if ($isIdLocale && ($whyPrefix === 'Enterprise ready' || empty($whyPrefix))) {
+        $whyPrefix = 'Siap untuk skala enterprise';
+    } else {
+        $whyPrefix = t('kouventa.' . $whyPrefix, $whyPrefix);
+    }
+
+    $whyMain = $whyTitle['main'] ?? ($isIdLocale ? 'sejak hari pertama.' : 'from day one.');
+    if ($isIdLocale && ($whyMain === 'from day one.' || empty($whyMain))) {
+        $whyMain = 'sejak hari pertama.';
+    } else {
+        $whyMain = t('kouventa.' . $whyMain, $whyMain);
+    }
+@endphp
 <section style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 40px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $whyTitle['prefix'] ?? 'Enterprise ready' }} <span style="color: #13803F">{{ $whyTitle['main'] ?? 'from day one.' }}</span></h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $whyPrefix }} <span style="color: #13803F">{{ $whyMain }}</span></h2>
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; align-items: stretch">
 <div class="kv-card kv-card-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05)">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
