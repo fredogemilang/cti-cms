@@ -44,7 +44,7 @@
             </a>
             <a href="https://wa.me/628118496889" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" style="color: #B9C6D3; font-size: 15px; display: flex; gap: 10px; align-items: center; text-decoration: none">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M3 21l1.65-4.6A9 9 0 1 1 8.6 20.1Z"></path><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-2.3-2.3l.8-1-1-2Z"></path></svg>
-                <span>+62 811 8496 889</span>
+                <span>+62 8118 4968 89</span>
             </a>
             <a href="mailto:kouventa@helios.id" aria-label="Send an email" style="color: #B9C6D3; font-size: 15px; display: flex; gap: 10px; align-items: center; text-decoration: none">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>

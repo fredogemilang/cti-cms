@@ -237,7 +237,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Hero Main Title',
                 'en' => ['prefix' => 'From business communication', 'main' => 'to enterprise AI.'],
-                'id' => ['prefix' => 'Dari komunikasi bisnis', 'main' => 'menuju enterprise AI.'],
+                'id' => ['prefix' => 'Dari komunikasi bisnis', 'main' => 'menuju AI untuk enterprise.'],
             ],
             [
                 'name' => 'values_badge',
@@ -251,7 +251,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'text',
                 'label' => 'History Section Title',
                 'en' => 'History',
-                'id' => 'Perjalanan Kami',
+                'id' => 'Sejarah',
             ],
         ];
 
@@ -305,8 +305,8 @@ class KouventaPageBlocksSeeder extends Seeder
                 'name' => 'phone_number',
                 'type' => 'text',
                 'label' => 'Phone Number',
-                'en' => '+62 811 8496 889',
-                'id' => '+62 811 8496 889',
+                'en' => '+62 8118 4968 89',
+                'id' => '+62 8118 4968 89',
             ],
             [
                 'name' => 'email_title',
@@ -373,15 +373,15 @@ class KouventaPageBlocksSeeder extends Seeder
                 'name' => 'hero_title',
                 'type' => 'title',
                 'label' => 'Hero Main Title',
-                'en' => ['prefix' => 'Intelligence you', 'main' => 'control, priced for how you grow.'],
-                'id' => ['prefix' => 'Kecerdasan dalam', 'main' => 'kendali Anda, dengan harga yang mengikuti pertumbuhan bisnis.'],
+                'en' => ['prefix' => 'Intelligence you control,', 'main' => 'priced as you grow.'],
+                'id' => ['prefix' => 'AI yang Anda kendalikan,', 'main' => 'dengan harga sesuai pertumbuhan Anda.'],
             ],
             [
                 'name' => 'hero_subtitle',
                 'type' => 'textarea',
                 'label' => 'Hero Subtitle',
-                'en' => 'Two platforms, three tiers each. Start where your team is today, and scale without switching vendors.',
-                'id' => 'Dua platform, masing-masing tiga paket. Mulai dari kebutuhan tim Anda saat ini, dan tingkatkan tanpa perlu ganti vendor.',
+                'en' => 'Two platforms, three tiers each. Start where your team is today, then scale without switching vendors.',
+                'id' => 'Dua platform, masing-masing tiga paket. Mulai sesuai kondisi tim Anda sekarang, lalu kembangkan tanpa perlu ganti vendor.',
             ],
             [
                 'name' => 'calc_title',
@@ -526,14 +526,14 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Hero Main Title',
                 'en' => ['prefix' => 'The smarter way to', 'main' => 'engage customers.'],
-                'id' => ['prefix' => 'Cara lebih cerdas untuk', 'main' => 'berinteraksi dengan pelanggan.'],
+                'id' => ['prefix' => 'Cara lebih cerdas untuk', 'main' => 'terhubung dengan pelanggan.'],
             ],
             [
                 'name' => 'hero_subtitle',
                 'type' => 'textarea',
                 'label' => 'Hero Subtitle',
-                'en' => 'Reach more customers, respond faster, and keep every conversation seamless — on WhatsApp and beyond.',
-                'id' => 'Jangkau lebih banyak pelanggan, tanggapi lebih cepat, dan jaga setiap percakapan tetap mulus — di WhatsApp dan seterusnya.',
+                'en' => 'Reach more customers, respond faster, and keep conversations seamless on WhatsApp and beyond.',
+                'id' => 'Jangkau lebih banyak pelanggan, balas lebih cepat, dan jaga percakapan tetap lancar di WhatsApp dan channel lainnya.',
             ],
             [
                 'name' => 'hero_cta',
@@ -561,7 +561,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Why CE Section Title',
                 'en' => ['prefix' => 'Why Kouventa for customer', 'main' => 'engagement'],
-                'id' => ['prefix' => 'Mengapa Kouventa untuk customer', 'main' => 'engagement'],
+                'id' => ['prefix' => 'Kenapa Kouventa untuk customer', 'main' => 'engagement'],
             ],
             [
                 'name' => 'bottom_cta_title',
@@ -595,14 +595,14 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Hero Main Title',
                 'en' => ['prefix' => 'From knowledge to action', 'main' => 'with AI.'],
-                'id' => ['prefix' => 'Dari pengetahuan ke tindakan', 'main' => 'dengan AI.'],
+                'id' => ['prefix' => 'Dari pengetahuan ke aksi', 'main' => 'dengan AI.'],
             ],
             [
                 'name' => 'hero_subtitle',
                 'type' => 'textarea',
                 'label' => 'Hero Subtitle',
                 'en' => 'From knowledge retrieval to process automation, Kouventa AI helps businesses turn information into actionable insights and automate business processes with AI-powered autonomous agents.',
-                'id' => 'Mulai dari pencarian informasi hingga otomatisasi proses, Kouventa AI membantu bisnis mengubah data menjadi wawasan yang dapat ditindaklanjuti dan mengotomatiskan proses bisnis dengan AI autonomous agent.',
+                'id' => 'Dari pencarian pengetahuan hingga otomasi proses, Kouventa AI membantu bisnis mengubah informasi menjadi insight yang bisa ditindaklanjuti dan mengotomasi proses bisnis dengan agent AI yang otonom.',
             ],
             [
                 'name' => 'hero_cta',
@@ -616,14 +616,14 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'text',
                 'label' => 'Bottom CTA Title',
                 'en' => 'Start simple. Scale with confidence.',
-                'id' => 'Mulai dengan sederhana. Berkembang dengan percaya diri.',
+                'id' => 'Mulai dari yang sederhana. Kembangkan dengan yakin.',
             ],
             [
                 'name' => 'bottom_cta_subtitle',
                 'type' => 'textarea',
                 'label' => 'Bottom CTA Subtitle',
                 'en' => "Begin with everyday AI for your employees, governed by your organization. Grow into AI agents when you're ready.",
-                'id' => 'Mulai dengan AI harian untuk karyawan Anda, yang dikelola sesuai aturan organisasi. Kembangkan ke AI agent saat Anda siap.',
+                'id' => 'Mulai dengan AI untuk pekerjaan sehari-hari karyawan, dengan tata kelola dari organisasi Anda. Kembangkan ke agent AI saat Anda siap.',
             ],
         ];
 
@@ -650,7 +650,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'textarea',
                 'label' => 'Hero Subtitle',
                 'en' => 'From marketing campaigns and customer support to operational updates, Kouventa helps businesses connect, respond, and communicate more effectively.',
-                'id' => 'Mulai dari kampanye pemasaran dan dukungan pelanggan hingga pembaruan operasional, Kouventa membantu bisnis terhubung, merespons, dan berkomunikasi lebih efektif.',
+                'id' => 'Dari kampanye marketing dan customer support hingga update operasional, Kouventa membantu bisnis terhubung, merespons, dan berkomunikasi dengan lebih efektif.',
             ],
             [
                 'name' => 'hero_cta',
@@ -663,15 +663,15 @@ class KouventaPageBlocksSeeder extends Seeder
                 'name' => 'bottom_cta_title',
                 'type' => 'text',
                 'label' => 'Bottom CTA Title',
-                'en' => 'Ready to improve every customer conversation?',
-                'id' => 'Siap meningkatkan setiap percakapan pelanggan?',
+                'en' => 'Ready to elevate customer conversations?',
+                'id' => 'Siap meningkatkan kualitas percakapan dengan pelanggan?',
             ],
             [
                 'name' => 'bottom_cta_subtitle',
                 'type' => 'textarea',
                 'label' => 'Bottom CTA Subtitle',
                 'en' => "Tell us about your team's needs and we'll show you how Kouventa fits.",
-                'id' => 'Ceritakan kebutuhan tim Anda dan kami akan tunjukkan bagaimana Kouventa dapat membantu.',
+                'id' => 'Ceritakan kebutuhan tim Anda, dan kami tunjukkan bagaimana Kouventa bisa membantu.',
             ],
         ];
 

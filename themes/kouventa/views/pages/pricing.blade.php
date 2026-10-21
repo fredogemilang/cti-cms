@@ -2,8 +2,8 @@
 
 @php
     $heroBadge = $page?->block('hero_badge', 'PRICING');
-    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Intelligence you control,', 'main' => 'priced for how you grow.']);
-    $heroSubtitle = $page?->block('hero_subtitle', 'Two platforms, three tiers each. Start where your team is today, and scale without switching vendors.');
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Intelligence you control,', 'main' => 'priced as you grow.']);
+    $heroSubtitle = $page?->block('hero_subtitle', 'Two platforms, three tiers each. Start where your team is today, then scale without switching vendors.');
     $calcTitle = $page?->block('calc_title', 'Estimate your WhatsApp cost');
     $calcSubtitle = $page?->block('calc_subtitle', 'Enter your expected monthly conversations per category to see your estimated monthly and yearly cost.');
     $ctaTitle = $page?->block('cta_title', 'Ready to see how your team would use it?');
