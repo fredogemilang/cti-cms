@@ -131,6 +131,8 @@
       var tablists = section.querySelectorAll('[role="tablist"]');
       tablists.forEach(function (tablist) {
         if (tablist.hasAttribute('data-motion-observed')) return;
+        // Skip product tabs which manage their own dynamic state / opacity
+        if (tablist.classList.contains('kv-product-tablist') || tablist.querySelector('.kv-product-tab') || tablist.closest('#products, #ai-products')) return;
         tablist.setAttribute('data-motion-observed', 'true');
         tablist.classList.add('kv-reveal-grid');
         targetsToObserve.push(tablist);

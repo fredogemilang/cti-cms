@@ -1819,7 +1819,7 @@ html.js-motion .is-revealed .kv-reveal,
 .kv-above-fold,
 .kv-above-fold .kv-reveal-item,
 .kv-above-fold .kv-reveal {
-    opacity: 1 !important;
+    opacity: 1;
     transform: translateY(0);
 }
 

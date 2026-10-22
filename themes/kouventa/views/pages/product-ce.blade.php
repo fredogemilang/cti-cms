@@ -612,7 +612,7 @@
     seeTools() {
         this.linked = true;
         this.product = this.stages[this.stage].defaultTool;
-        $nextTick(() => {
+        this.$nextTick(() => {
             const el = document.getElementById('products');
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
