@@ -501,6 +501,39 @@
     100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+.kv-ce-control-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 20px;
+}
+.kv-control-card {
+    background: #FFFFFF;
+    border: 1px solid #E3E8E6;
+    border-radius: 20px;
+    padding: 28px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.kv-control-card:hover {
+    border-color: #13803F;
+    box-shadow: 0 12px 30px rgba(7,28,51,0.06);
+    transform: translateY(-2px);
+}
+@media (max-width: 1024px) {
+    .kv-ce-control-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+    }
+}
+@media (max-width: 640px) {
+    .kv-ce-control-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+}
+
 </style>
 @endpush
 
@@ -1392,26 +1425,56 @@ Kouventa AI · WhatsApp · 09:12
 
 <!-- ============ PLATFORM CONTROL ============ -->
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 32px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Stay in control of every conversation.', 'Stay in control of every conversation.') }}</h2>
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px">
-<article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 36px 32px; display: flex; flex-direction: column; gap: 14px">
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F">{{ t('kouventa.Supervisor mode', 'Supervisor mode') }}</span>
-<h3 style="margin: 0; font-size: 24px; font-weight: 800">{{ t('kouventa.Role-based access', 'Role-based access') }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Leads see their team\'s chats. Agents see only their own.', 'Leads see their team\'s chats. Agents see only their own.') }}</p>
-<ul style="margin: 0; padding: 14px 0 0; list-style: none; border-top: 1px solid #E3E8E6; display: flex; flex-direction: column; gap: 10px; font-size: 15px; color: #4A5866">
-<li style="display: flex; gap: 10px; align-items: center"><span style="width: 18px; height: 18px; border-radius: 50%; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">✓</span>{{ t('kouventa.Every chat stored for visibility and follow-up.', 'Every chat stored for visibility and follow-up.') }}</li>
-<li style="display: flex; gap: 10px; align-items: center"><span style="width: 18px; height: 18px; border-radius: 50%; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">✓</span>{{ t('kouventa.Decide who can use which modules, features and accounts.', 'Decide who can use which modules, features and accounts.') }}</li>
-</ul>
-</article>
-<article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 36px 32px; display: flex; flex-direction: column; gap: 14px">
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F">{{ t('kouventa.Multi-account', 'Multi-account') }}</span>
-<h3 style="margin: 0; font-size: 24px; font-weight: 800">{{ t('kouventa.All business accounts and numbers, one platform.', 'All business accounts and numbers, one platform.') }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Manage multiple brands, entities or branches under a single roof.', 'Manage multiple brands, entities or branches under a single roof.') }}</p>
-<ul style="margin: 0; padding: 14px 0 0; list-style: none; border-top: 1px solid #E3E8E6; display: flex; flex-direction: column; gap: 10px; font-size: 15px; color: #4A5866">
-<li style="display: flex; gap: 10px; align-items: center"><span style="width: 18px; height: 18px; border-radius: 50%; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">✓</span>{{ t('kouventa.Multi-brand and branch organization structure.', 'Multi-brand and branch organization structure.') }}</li>
-<li style="display: flex; gap: 10px; align-items: center"><span style="width: 18px; height: 18px; border-radius: 50%; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">✓</span>{{ t('kouventa.Shared templates and unified governance.', 'Shared templates and unified governance.') }}</li>
-</ul>
-</article>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">
+    {{ $isIdLocale ? 'Semua percakapan, tetap dalam kendali Anda.' : t('kouventa.Stay in control of every conversation.', 'Stay in control of every conversation.') }}
+</h2>
+<div class="kv-ce-control-grid">
+
+    <!-- Card 1: Mode supervisor -->
+    <article class="kv-control-card">
+        <div style="color: #13803F; display: flex; align-items: center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </div>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $isIdLocale ? 'Mode supervisor' : t('kouventa.Supervisor mode', 'Supervisor mode') }}</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $isIdLocale ? 'Lead melihat chat timnya. Agent hanya melihat chat miliknya.' : t('kouventa.Leads see their team\'s chats. Agents see only their own.', 'Leads see their team\'s chats. Agents see only their own.') }}</p>
+    </article>
+
+    <!-- Card 2: Multi-akun -->
+    <article class="kv-control-card">
+        <div style="color: #13803F; display: flex; align-items: center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"></rect><rect width="7" height="7" x="14" y="3" rx="1.5"></rect><rect width="7" height="7" x="14" y="14" rx="1.5"></rect><rect width="7" height="7" x="3" y="14" rx="1.5"></rect></svg>
+        </div>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $isIdLocale ? 'Multi-akun' : t('kouventa.Multi-account', 'Multi-account') }}</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $isIdLocale ? 'Semua akun dan nomor bisnis, dalam satu platform.' : t('kouventa.All business accounts and numbers, one platform.', 'All business accounts and numbers, one platform.') }}</p>
+    </article>
+
+    <!-- Card 3: Akses berbasis peran -->
+    <article class="kv-control-card">
+        <div style="color: #13803F; display: flex; align-items: center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $isIdLocale ? 'Akses berbasis peran' : t('kouventa.Role-based access', 'Role-based access') }}</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $isIdLocale ? 'Atur siapa yang bisa memakai modul, fitur, dan akun tertentu.' : t('kouventa.Decide who can use which modules, features and accounts.', 'Decide who can use which modules, features and accounts.') }}</p>
+    </article>
+
+    <!-- Card 4: Riwayat percakapan -->
+    <article class="kv-control-card">
+        <div style="color: #13803F; display: flex; align-items: center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path></svg>
+        </div>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $isIdLocale ? 'Riwayat percakapan' : t('kouventa.Conversation history', 'Conversation history') }}</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $isIdLocale ? 'Semua chat tersimpan untuk visibilitas dan follow-up.' : t('kouventa.Every chat stored for visibility and follow-up.', 'Every chat stored for visibility and follow-up.') }}</p>
+    </article>
+
+    <!-- Card 5: Ticketing -->
+    <article class="kv-control-card">
+        <div style="color: #13803F; display: flex; align-items: center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><path d="M13 5v2"></path><path d="M13 17v2"></path><path d="M13 11v2"></path></svg>
+        </div>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $isIdLocale ? 'Ticketing' : t('kouventa.Ticketing', 'Ticketing') }}</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $isIdLocale ? 'Chat dengan agent? Tiket otomatis dibuat.' : t('kouventa.Chat with an agent? A ticket is created automatically.', 'Chat with an agent? A ticket is created automatically.') }}</p>
+    </article>
+
 </div>
 </section>
 
