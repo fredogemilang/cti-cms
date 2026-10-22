@@ -1191,9 +1191,9 @@ Kouventa AI · WhatsApp · 09:12
 <div style="background: #FFFFFF; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(7,28,51,0.08)">
 <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700"><span>{{ t('kouventa.Campaign report', 'Campaign report') }}</span><span style="color: #4A5866; font-weight: 500">{{ t('kouventa.Scheduled · Sat 09:00', 'Scheduled · Sat 09:00') }}</span></div>
 <div style="display: grid; grid-template-columns: 70px minmax(0, 1fr) 36px; gap: 8px 10px; align-items: center; font-size: 12px; color: #4A5866">
-<span>{{ t('kouventa.Delivered', 'Delivered') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px"><div style="height: 8px; border-radius: 999px; background: #13803F; --w: 92%; animation: kvGrow 6s ease infinite both"></div></div><span style="text-align: right; font-weight: 700; color: #0E1A24; font-variant-numeric: tabular-nums" x-text="p1 + '%'">92%</span>
-<span>{{ t('kouventa.Read', 'Read') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px"><div style="height: 8px; border-radius: 999px; background: #2E9E5B; --w: 70%; animation: kvGrow 6s ease 0.3s infinite both"></div></div><span style="text-align: right; font-weight: 700; color: #0E1A24; font-variant-numeric: tabular-nums" x-text="p2 + '%'">70%</span>
-<span>{{ t('kouventa.Clicked', 'Clicked') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px"><div style="height: 8px; border-radius: 999px; background: #071C33; --w: 38%; animation: kvGrow 6s ease 0.6s infinite both"></div></div><span style="text-align: right; font-weight: 700; color: #0E1A24; font-variant-numeric: tabular-nums" x-text="p3 + '%'">38%</span>
+<span>{{ t('kouventa.Delivered', 'Delivered') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px; overflow: hidden"><div :style="{ width: p1 + '%' }" style="width: 0%; height: 8px; border-radius: 999px; background: #13803F"></div></div><span style="text-align: right; font-weight: 700; color: #0E1A24; font-variant-numeric: tabular-nums" x-text="p1 + '%'">0%</span>
+<span>{{ t('kouventa.Read', 'Read') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px; overflow: hidden"><div :style="{ width: p2 + '%' }" style="width: 0%; height: 8px; border-radius: 999px; background: #2E9E5B"></div></div><span style="text-align: right; font-weight: 700; color: #0E1A24; font-variant-numeric: tabular-nums" x-text="p2 + '%'">0%</span>
+<span>{{ t('kouventa.Clicked', 'Clicked') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px; overflow: hidden"><div :style="{ width: p3 + '%' }" style="width: 0%; height: 8px; border-radius: 999px; background: #071C33"></div></div><span style="text-align: right; font-weight: 700; color: #0E1A24; font-variant-numeric: tabular-nums" x-text="p3 + '%'">0%</span>
 </div>
 </div>
 </div>
@@ -1440,33 +1440,39 @@ window.kvBroadcastCounter = function() {
             let startTime = null;
             const tick = (now) => {
                 if (!startTime) startTime = now;
-                const elapsed = (now - startTime) % 6000;
+                const elapsed = (now - startTime) % 6500;
 
-                // Bar 1: delay 0s -> 0..600ms: 0%, 600..3300ms: 0..92%, 3300..5400ms: 92%, 5400..6000ms: 92%
-                if (elapsed < 600) {
+                // Bar 1 (Terkirim, max 92%)
+                if (elapsed < 400) {
                     this.p1 = 0;
-                } else if (elapsed < 3300) {
-                    this.p1 = Math.round(92 * ease((elapsed - 600) / 2700));
-                } else {
+                } else if (elapsed < 2400) {
+                    this.p1 = Math.round(92 * ease((elapsed - 400) / 2000));
+                } else if (elapsed < 5800) {
                     this.p1 = 92;
+                } else {
+                    this.p1 = Math.round(92 * (1 - (elapsed - 5800) / 700));
                 }
 
-                // Bar 2: delay 0.3s -> 0..900ms: 0%, 900..3600ms: 0..70%, 3600..5700ms: 70%
-                if (elapsed < 900) {
+                // Bar 2 (Dibaca, max 70%)
+                if (elapsed < 700) {
                     this.p2 = 0;
-                } else if (elapsed < 3600) {
-                    this.p2 = Math.round(70 * ease((elapsed - 900) / 2700));
-                } else {
+                } else if (elapsed < 2700) {
+                    this.p2 = Math.round(70 * ease((elapsed - 700) / 2000));
+                } else if (elapsed < 5800) {
                     this.p2 = 70;
+                } else {
+                    this.p2 = Math.round(70 * (1 - (elapsed - 5800) / 700));
                 }
 
-                // Bar 3: delay 0.6s -> 0..1200ms: 0%, 1200..3900ms: 0..38%, 3900..6000ms: 38%
-                if (elapsed < 1200) {
+                // Bar 3 (Diklik, max 38%)
+                if (elapsed < 1000) {
                     this.p3 = 0;
-                } else if (elapsed < 3900) {
-                    this.p3 = Math.round(38 * ease((elapsed - 1200) / 2700));
-                } else {
+                } else if (elapsed < 3000) {
+                    this.p3 = Math.round(38 * ease((elapsed - 1000) / 2000));
+                } else if (elapsed < 5800) {
                     this.p3 = 38;
+                } else {
+                    this.p3 = Math.round(38 * (1 - (elapsed - 5800) / 700));
                 }
 
                 requestAnimationFrame(tick);
