@@ -159,7 +159,12 @@
 
     // ── Page Blocks from CMS Content Builder ──────────────
     $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'AI adoption,', 'main' => 'done right.']);
-    $heroSubtitle = $page?->block('hero_subtitle', "For your customers. For your teams.\nOne enterprise AI platform, your organization’s rules.");
+    $heroSubtitle = $page?->block('hero_subtitle', $isIdLocale
+        ? "Untuk pelanggan Anda. Untuk tim Anda.\nSatu platform AI enterprise, dengan aturan organisasi Anda."
+        : "For your customers. For your teams.\nOne enterprise AI platform, your organization’s rules.");
+    if ($isIdLocale && (str_contains($heroSubtitle, 'For your customers') || empty($heroSubtitle))) {
+        $heroSubtitle = "Untuk pelanggan Anda. Untuk tim Anda.\nSatu platform AI enterprise, dengan aturan organisasi Anda.";
+    }
     $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'See how it fits your business', 'url' => '#pick-team']);
     $pathsTitle = $page?->titleBlock('paths_title', ['main' => $isIdLocale ? 'Mau mulai dari mana?' : 'Where do you want to start?']);
     $path1Badge = $page?->block('path1_badge', $isIdLocale ? 'AI yang bekerja' : 'AI that works');
