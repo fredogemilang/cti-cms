@@ -534,6 +534,159 @@
     }
 }
 
+/* ============ WHY SECTION & CARDS HOVER EFFECT ============ */
+.kv-why-section {
+    padding: 104px 80px;
+    background: #071C33;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 104px;
+}
+.kv-why-heading {
+    margin: 0;
+    font-size: 44px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    position: relative;
+    color: #FFFFFF;
+}
+.kv-why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+    position: relative;
+}
+.kv-why-card {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 270px;
+    box-sizing: border-box;
+    cursor: default;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.25s ease,
+                background-color 0.25s ease;
+    will-change: transform, box-shadow;
+}
+.kv-why-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #2BD46A, transparent);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+}
+.kv-why-card::after {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(43, 212, 106, 0.18) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    border-radius: 50%;
+}
+.kv-why-card:hover {
+    transform: translateY(-8px);
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(43, 212, 106, 0.45);
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.65), 0 0 24px rgba(43, 212, 106, 0.15);
+}
+.kv-why-card:hover::before,
+.kv-why-card:hover::after {
+    opacity: 1;
+}
+.kv-why-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: #2BD46A;
+    color: #06251A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(43, 212, 106, 0.3);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.kv-why-card:hover .kv-why-icon {
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 14px 34px rgba(43, 212, 106, 0.5);
+}
+.kv-why-icon svg {
+    transition: transform 0.3s ease;
+}
+.kv-why-card:hover .kv-why-icon svg {
+    transform: scale(1.06);
+}
+.kv-why-title {
+    font-size: 20px;
+    line-height: 1.25;
+    font-weight: 800;
+    color: #FFFFFF;
+    padding-top: 6px;
+    margin: 0;
+}
+.kv-why-desc {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #94A3B8;
+    margin: 0;
+}
+@media (max-width: 1024px) {
+    .kv-why-section {
+        padding: 80px 32px !important;
+        gap: 36px !important;
+    }
+    .kv-why-heading {
+        font-size: 34px !important;
+    }
+    .kv-why-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 16px !important;
+    }
+    .kv-why-card {
+        padding: 24px !important;
+        min-height: auto !important;
+    }
+}
+@media (max-width: 640px) {
+    .kv-why-section {
+        padding: 60px 20px !important;
+        gap: 28px !important;
+    }
+    .kv-why-heading {
+        font-size: 28px !important;
+        line-height: 1.2 !important;
+    }
+    .kv-why-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+    }
+    .kv-why-card {
+        padding: 20px !important;
+    }
+}
+
 </style>
 @endpush
 
@@ -551,7 +704,7 @@
     $heroCta = $page?->buttonBlock('hero_cta', ['text' => $isIdLocale ? 'Jadwalkan demo' : 'Book a demo', 'url' => '/book-demo']);
     $channelsTitle = $page?->titleBlock('channels_title', ['prefix' => $isIdLocale ? 'Tiap pesan yang terlewat adalah' : 'Every missed message is a', 'main' => $isIdLocale ? 'penjualan yang hilang.' : 'missed sale.']);
     $featuresTitle = $page?->titleBlock('features_title', ['prefix' => $isIdLocale ? 'Satu platform.' : 'One platform.', 'main' => $isIdLocale ? 'Tanpa pesan yang terlewat.' : 'Zero missed messages.']);
-    $whyTitle = $page?->titleBlock('why_title', ['prefix' => $isIdLocale ? 'Mengapa Kouventa untuk' : 'Why Kouventa for customer', 'main' => $isIdLocale ? 'customer engagement' : 'engagement']);
+    $whyTitle = $page?->titleBlock('why_title', ['prefix' => $isIdLocale ? 'Kenapa Kouventa untuk customer' : 'Why Kouventa for customer', 'main' => 'engagement']);
     $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Mulai berinteraksi dengan pelanggan di WhatsApp.' : 'Start engaging customers on WhatsApp.');
     $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Hubungi tim kami untuk menyiapkan akun WhatsApp Business Platform, template khusus, dan verified badge.' : 'Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge.');
 @endphp
@@ -1479,32 +1632,71 @@ Kouventa AI · WhatsApp · 09:12
 </section>
 
 <!-- ============ WHY ============ -->
-<section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
-<div style="display: flex; flex-direction: column; gap: 12px">
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F">{{ t('kouventa.Why Kouventa', 'Why Kouventa') }}</span>
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $whyTitle['prefix'] ?? 'Why Kouventa for customer' }} <span style="color: #13803F">{{ $whyTitle['main'] ?? 'engagement' }}</span></h2>
-</div>
-<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px">
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 14px">
-<span style="width: 48px; height: 48px; border-radius: 14px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
-<h3 style="margin: 0; font-size: 20px; font-weight: 800">{{ t('kouventa.Official partner', 'Official partner') }}</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Trusted access to the WhatsApp Business Platform.', 'Trusted access to the WhatsApp Business Platform.') }}</p>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 14px">
-<span style="width: 48px; height: 48px; border-radius: 14px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></span>
-<h3 style="margin: 0; font-size: 20px; font-weight: 800">{{ t('kouventa.Built around your business', 'Built around your business') }}</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Customized to your industry, flows and systems.', 'Customized to your industry, flows and systems.') }}</p>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 14px">
-<span style="width: 48px; height: 48px; border-radius: 14px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg></span>
-<h3 style="margin: 0; font-size: 20px; font-weight: 800">{{ t('kouventa.Post-paid messaging', 'Post-paid messaging') }}</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Send first. Pay later, for what you actually use.', 'Send first. Pay later, for what you actually use.') }}</p>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 14px">
-<span style="width: 48px; height: 48px; border-radius: 14px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
-<h3 style="margin: 0; font-size: 20px; font-weight: 800">{{ t('kouventa.Secure & trusted', 'Secure & trusted') }}</h3>
-<p style="margin: 0; font-size: 15px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Enterprise-grade security for business and customer data.', 'Enterprise-grade security for business and customer data.') }}</p>
-</div>
+<section class="kv-why-section">
+<div aria-hidden="true" style="position: absolute; left: -200px; bottom: -320px; width: 700px; height: 700px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
+<div aria-hidden="true" style="position: absolute; right: -160px; top: -260px; width: 560px; height: 560px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
+<div aria-hidden="true" style="position: absolute; right: -240px; top: -340px; width: 800px; height: 800px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.04); pointer-events: none"></div>
+
+<h2 class="kv-why-heading">
+    {{ $isIdLocale ? 'Kenapa Kouventa untuk customer' : 'Why Kouventa for customer' }} <span style="color: #2BD46A">engagement</span>
+</h2>
+
+<div class="kv-why-grid">
+    <!-- Card 1: Official Meta Business Solution Provider -->
+    <div class="kv-why-card">
+        <span class="kv-why-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="6"></circle>
+                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
+            </svg>
+        </span>
+        <h3 class="kv-why-title">Official Meta Business Solution Provider</h3>
+        <p class="kv-why-desc">{{ $isIdLocale ? 'Akses resmi ke WhatsApp Business Platform.' : t('kouventa.Trusted access to the WhatsApp Business Platform.', 'Trusted access to the WhatsApp Business Platform.') }}</p>
+    </div>
+
+    <!-- Card 2: Built around your business -->
+    <div class="kv-why-card">
+        <span class="kv-why-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="21" x2="14" y1="4" y2="4"></line>
+                <line x1="10" x2="3" y1="4" y2="4"></line>
+                <line x1="21" x2="12" y1="12" y2="12"></line>
+                <line x1="8" x2="3" y1="12" y2="12"></line>
+                <line x1="21" x2="16" y1="20" y2="20"></line>
+                <line x1="12" x2="3" y1="20" y2="20"></line>
+                <line x1="14" x2="14" y1="2" y2="6"></line>
+                <line x1="8" x2="8" y1="10" y2="14"></line>
+                <line x1="16" x2="16" y1="18" y2="22"></line>
+            </svg>
+        </span>
+        <h3 class="kv-why-title">{{ $isIdLocale ? 'Dibangun sesuai bisnis Anda' : t('kouventa.Built around your business', 'Built around your business') }}</h3>
+        <p class="kv-why-desc">{{ $isIdLocale ? 'Disesuaikan dengan industri, alur, dan sistem Anda.' : t('kouventa.Customized to your industry, flows and systems.', 'Customized to your industry, flows and systems.') }}</p>
+    </div>
+
+    <!-- Card 3: Secure & trusted -->
+    <div class="kv-why-card">
+        <span class="kv-why-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="m9 12 2 2 4-4"></path>
+            </svg>
+        </span>
+        <h3 class="kv-why-title">{{ $isIdLocale ? 'Aman & terpercaya' : t('kouventa.Secure & trusted', 'Secure & trusted') }}</h3>
+        <p class="kv-why-desc">{{ $isIdLocale ? 'Keamanan kelas enterprise untuk data bisnis dan pelanggan.' : t('kouventa.Enterprise-grade security for business and customer data.', 'Enterprise-grade security for business and customer data.') }}</p>
+    </div>
+
+    <!-- Card 4: Post-paid messaging -->
+    <div class="kv-why-card">
+        <span class="kv-why-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="14" x="2" y="5" rx="2"></rect>
+                <line x1="2" x2="22" y1="10" y2="10"></line>
+                <line x1="6" x2="10" y1="15" y2="15"></line>
+            </svg>
+        </span>
+        <h3 class="kv-why-title">{{ $isIdLocale ? 'Pesan pascabayar' : t('kouventa.Post-paid messaging', 'Post-paid messaging') }}</h3>
+        <p class="kv-why-desc">{{ $isIdLocale ? 'Kirim dulu. Bayar belakangan, sesuai pemakaian.' : t('kouventa.Send first. Pay later, for what you actually use.', 'Send first. Pay later, for what you actually use.') }}</p>
+    </div>
 </div>
 </section>
 
