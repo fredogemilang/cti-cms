@@ -453,6 +453,49 @@
     }
 }
 
+/* Flows Mockup Styles */
+.kv-flow-type-active {
+    background: #FFFFFF !important;
+    color: #0E1A24 !important;
+    box-shadow: 0 1px 3px rgba(7,28,51,0.12) !important;
+}
+.kv-flow-type-inactive {
+    background: transparent !important;
+    color: #4A5866 !important;
+    box-shadow: none !important;
+}
+
+.kv-flow-check-active {
+    background: #25D366 !important;
+    border: 1.5px solid #25D366 !important;
+}
+.kv-flow-check-idle {
+    background: #FFFFFF !important;
+    border: 1.5px solid #D5DDD9 !important;
+}
+
+.kv-flow-btn-press {
+    transform: scale(0.96) !important;
+    background: #1EBE5D !important;
+}
+.kv-flow-btn-loading {
+    background: #1EBE5D !important;
+}
+
+@keyframes kvPopIn {
+    0% { opacity: 0; transform: scale(0.7); }
+    70% { transform: scale(1.08); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes kvBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.kv-spin { animation: kvSpin 0.9s linear infinite; }
+.kv-pop-in { animation: kvPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+
 </style>
 @endpush
 
@@ -1126,7 +1169,7 @@ Kouventa AI · WhatsApp · 09:12
 </div>
 
 <!-- Broadcast Illustration -->
-<div class="kv-flex-col kv-mockup-broadcast" x-show="product === 'broadcast'" style="width: 400px; gap: 22px">
+<div class="kv-flex-col kv-mockup-broadcast" x-show="product === 'broadcast'" x-data="kvBroadcastCounter()" style="width: 400px; gap: 22px">
 <div style="display: flex; align-items: center; gap: 0">
 <div style="width: 150px; flex-shrink: 0; background: #FFFFFF; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.08); animation: kvPulse 2.4s ease infinite">
 <div style="height: 54px; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px">PROMO</div>
@@ -1147,10 +1190,10 @@ Kouventa AI · WhatsApp · 09:12
 </div>
 <div style="background: #FFFFFF; border-radius: 14px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(7,28,51,0.08)">
 <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700"><span>{{ t('kouventa.Campaign report', 'Campaign report') }}</span><span style="color: #4A5866; font-weight: 500">{{ t('kouventa.Scheduled · Sat 09:00', 'Scheduled · Sat 09:00') }}</span></div>
-<div style="display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 8px 10px; align-items: center; font-size: 12px; color: #4A5866">
-<span>{{ t('kouventa.Delivered', 'Delivered') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px"><div style="height: 8px; border-radius: 999px; background: #13803F; --w: 92%; animation: kvGrow 6s ease infinite both"></div></div>
-<span>{{ t('kouventa.Read', 'Read') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px"><div style="height: 8px; border-radius: 999px; background: #2E9E5B; --w: 70%; animation: kvGrow 6s ease 0.3s infinite both"></div></div>
-<span>{{ t('kouventa.Clicked', 'Clicked') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px"><div style="height: 8px; border-radius: 999px; background: #071C33; --w: 38%; animation: kvGrow 6s ease 0.6s infinite both"></div></div>
+<div style="display: grid; grid-template-columns: 70px minmax(0, 1fr) 36px; gap: 8px 10px; align-items: center; font-size: 12px; color: #4A5866">
+<span>{{ t('kouventa.Delivered', 'Delivered') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px"><div style="height: 8px; border-radius: 999px; background: #13803F; --w: 92%; animation: kvGrow 6s ease infinite both"></div></div><span style="text-align: right; font-weight: 700; color: #0E1A24; font-variant-numeric: tabular-nums" x-text="p1 + '%'">92%</span>
+<span>{{ t('kouventa.Read', 'Read') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px"><div style="height: 8px; border-radius: 999px; background: #2E9E5B; --w: 70%; animation: kvGrow 6s ease 0.3s infinite both"></div></div><span style="text-align: right; font-weight: 700; color: #0E1A24; font-variant-numeric: tabular-nums" x-text="p2 + '%'">70%</span>
+<span>{{ t('kouventa.Clicked', 'Clicked') }}</span><div style="height: 8px; background: #EEF2F0; border-radius: 999px"><div style="height: 8px; border-radius: 999px; background: #071C33; --w: 38%; animation: kvGrow 6s ease 0.6s infinite both"></div></div><span style="text-align: right; font-weight: 700; color: #0E1A24; font-variant-numeric: tabular-nums" x-text="p3 + '%'">38%</span>
 </div>
 </div>
 </div>
@@ -1177,7 +1220,9 @@ Kouventa AI · WhatsApp · 09:12
 <span style="display: flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: #4A5866"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>{{ t('kouventa.via Webhook', 'via Webhook') }}</span>
 </div>
 <div style="flex-grow: 1; height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #13803F; --d: 34px; animation: kvTravel 1.6s linear infinite"></span></div>
-<div style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 16px; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 22px; animation: kvPulse 2.4s ease infinite">K</div>
+<div style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 16px; background: #071C33; display: flex; align-items: center; justify-content: center; animation: kvPulse 2.4s ease infinite">
+<img src="{{ theme_asset('images/favicon.png') }}" alt="Kouventa" style="width: 28px; height: 28px; object-fit: contain; display: block">
+</div>
 <div style="flex-grow: 1; height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #13803F; --d: 34px; animation: kvTravel 1.6s linear 0.8s infinite"></span></div>
 <div style="width: 160px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; font-size: 12px; line-height: 1.45">
 <div style="background: #FFFFFF; border-radius: 4px 12px 12px 12px; padding: 10px 12px; box-shadow: 0 10px 30px rgba(7,28,51,0.08); animation: kvLoop 6s ease 1.4s infinite both">{{ t('kouventa.Hi Rina, your order is on the way.', 'Hi Rina, your order is on the way.') }} <span style="color: #13803F; font-weight: 700">{{ t('kouventa.Track order', 'Track order') }}</span></div>
@@ -1187,16 +1232,97 @@ Kouventa AI · WhatsApp · 09:12
 </div>
 
 <!-- Flows Illustration -->
-<div class="kv-flex-col kv-mockup-flows" x-show="product === 'flows'" style="width: 300px; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1)">
-<div style="background: #071C33; color: #FFFFFF; padding: 14px 16px; font-size: 14px; font-weight: 700">{{ t('kouventa.Open an account', 'Open an account') }}</div>
-<div style="padding: 16px; display: flex; flex-direction: column; gap: 12px">
-<div style="display: flex; flex-direction: column; gap: 5px"><span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.Full name', 'Full name') }}</span><div style="height: 36px; border-radius: 8px; border: 1px solid #E3E8E6; padding: 0 10px; display: flex; align-items: center"><div style="height: 8px; border-radius: 4px; background: #0E1A24; --w: 60%; animation: kvGrow 7s ease 0.2s infinite both"></div></div></div>
-<div style="display: flex; flex-direction: column; gap: 5px"><span style="font-size: 11px; font-weight: 700; color: #4A5866">Email</span><div style="height: 36px; border-radius: 8px; border: 1px solid #E3E8E6; padding: 0 10px; display: flex; align-items: center"><div style="height: 8px; border-radius: 4px; background: #0E1A24; --w: 80%; animation: kvGrow 7s ease 1s infinite both"></div></div></div>
-<div style="display: flex; flex-direction: column; gap: 5px"><span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.City', 'City') }}</span><div style="height: 36px; border-radius: 8px; border: 1px solid #E3E8E6; padding: 0 10px; display: flex; align-items: center"><div style="height: 8px; border-radius: 4px; background: #0E1A24; --w: 40%; animation: kvGrow 7s ease 1.8s infinite both"></div></div></div>
-<div style="display: flex; gap: 8px; font-size: 12px"><span style="padding: 6px 10px; border-radius: 999px; background: #071C33; color: #FFFFFF; font-weight: 600; animation: kvLoop 7s ease 2.4s infinite both">Personal</span><span style="padding: 6px 10px; border-radius: 999px; border: 1px solid #E3E8E6">Business</span></div>
-<div style="height: 42px; border-radius: 10px; background: #13803F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700">{{ t('kouventa.Submit', 'Submit') }}</div>
-<div style="align-self: center; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #0B5E2C; animation: kvPop 7s ease 2.6s infinite both"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>{{ t('kouventa.Data received — without leaving the chat', 'Data received — without leaving the chat') }}</div>
-</div>
+<div class="kv-flex-col kv-mockup-flows" x-show="product === 'flows'" x-data="kvFlowsDemo()" style="width: 330px; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1); display: flex; flex-direction: column">
+    <!-- Header -->
+    <div style="padding: 10px 14px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #E9EDEF">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#54656F" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        <span style="display: flex; flex-direction: column; flex-grow: 1">
+            <span style="font-size: 14px; font-weight: 800; color: #0E1A24">{{ t('kouventa.Open an account', app()->getLocale() === 'id' ? 'Buka rekening' : 'Open an account') }}</span>
+            <span style="font-size: 11px; color: #667781">Your Brand · WhatsApp Flows</span>
+        </span>
+        <span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.Step 1 of 2', app()->getLocale() === 'id' ? 'Langkah 1 dari 2' : 'Step 1 of 2') }}</span>
+    </div>
+
+    <!-- Progress bar -->
+    <div style="height: 3px; background: #E9EDEF">
+        <div style="height: 3px; width: 50%; background: #25D366"></div>
+    </div>
+
+    <!-- Body -->
+    <div style="padding: 12px 16px 14px; display: flex; flex-direction: column; gap: 9px">
+        <!-- 1. Full name -->
+        <div style="display: flex; flex-direction: column; gap: 3px">
+            <span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.Full name', app()->getLocale() === 'id' ? 'Nama lengkap' : 'Full name') }}</span>
+            <div style="height: 32px; box-sizing: border-box; border-radius: 8px; border: 1px solid #D5DDD9; padding: 0 10px; display: flex; align-items: center; gap: 2px; font-size: 13px; color: #0E1A24; overflow: hidden">
+                <span x-text="name" style="white-space: nowrap"></span>
+                <span x-show="isTypingName" style="display: inline-block; width: 1.5px; height: 14px; background: #13803F; animation: kvBlink 0.6s infinite"></span>
+            </div>
+        </div>
+
+        <!-- 2. Phone number (static from start) -->
+        <div style="display: flex; flex-direction: column; gap: 3px">
+            <span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.Phone number', app()->getLocale() === 'id' ? 'Nomor HP' : 'Phone number') }}</span>
+            <div style="height: 32px; box-sizing: border-box; border-radius: 8px; border: 1px solid #D5DDD9; padding: 0 10px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: #0E1A24; background: #F4F6F5">
+                <span style="flex-grow: 1">+62 812-3456-7890</span>
+                <span style="font-size: 10px; font-weight: 700; color: #0B5E2C; background: #DDF3E4; padding: 2px 6px; border-radius: 999px">{{ t('kouventa.From WhatsApp', app()->getLocale() === 'id' ? 'Dari WhatsApp' : 'From WhatsApp') }}</span>
+            </div>
+        </div>
+
+        <!-- 3. Email -->
+        <div style="display: flex; flex-direction: column; gap: 3px">
+            <span style="font-size: 11px; font-weight: 700; color: #4A5866">Email</span>
+            <div style="height: 32px; box-sizing: border-box; border-radius: 8px; border: 1px solid #D5DDD9; padding: 0 10px; display: flex; align-items: center; gap: 2px; font-size: 13px; color: #0E1A24; overflow: hidden">
+                <span x-text="email" style="white-space: nowrap"></span>
+                <span x-show="isTypingEmail" style="display: inline-block; width: 1.5px; height: 14px; background: #13803F; animation: kvBlink 0.6s infinite"></span>
+            </div>
+        </div>
+
+        <!-- 4. City & 5. Account type -->
+        <div style="display: flex; gap: 10px">
+            <!-- City -->
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 3px">
+                <span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.City', app()->getLocale() === 'id' ? 'Kota' : 'City') }}</span>
+                <div style="height: 32px; box-sizing: border-box; border-radius: 8px; border: 1px solid #D5DDD9; padding: 0 10px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: #0E1A24; justify-content: space-between">
+                    <span>Jakarta</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4A5866" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+                </div>
+            </div>
+
+            <!-- Account type -->
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 3px">
+                <span style="font-size: 11px; font-weight: 700; color: #4A5866">{{ t('kouventa.Account type', app()->getLocale() === 'id' ? 'Jenis akun' : 'Account type') }}</span>
+                <div style="height: 32px; box-sizing: border-box; display: flex; padding: 2px; border-radius: 8px; background: #EEF1F0; font-size: 12px; font-weight: 700; gap: 2px">
+                    <span :class="accountType === 'personal' ? 'kv-flow-type-active' : 'kv-flow-type-inactive'" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; transition: all 0.25s ease">{{ t('kouventa.Personal', app()->getLocale() === 'id' ? 'Pribadi' : 'Personal') }}</span>
+                    <span :class="accountType === 'business' ? 'kv-flow-type-active' : 'kv-flow-type-inactive'" style="flex: 1 1 0%; min-width: 0; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; transition: all 0.25s ease">{{ t('kouventa.Business', app()->getLocale() === 'id' ? 'Bisnis' : 'Business') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Agreement checkbox -->
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #4A5866">
+            <span :class="agreed ? 'kv-flow-check-active' : 'kv-flow-check-idle'" style="width: 16px; height: 16px; flex-shrink: 0; border-radius: 4px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; transition: all 0.25s ease">
+                <svg x-show="agreed" x-transition.scale.origin.center class="kv-pop-in" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+            </span>
+            <span>{{ t('kouventa.I agree to the terms & privacy policy', app()->getLocale() === 'id' ? 'Saya setuju dengan syarat & kebijakan privasi' : 'I agree to the terms & privacy policy') }}</span>
+        </div>
+
+        <!-- 7. Submit button -->
+        <div :class="{ 'kv-flow-btn-press': btnPressed, 'kv-flow-btn-loading': isProcessing }" style="height: 36px; border-radius: 999px; background: #25D366; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; position: relative; overflow: hidden; transition: all 0.2s ease">
+            <span x-show="!isProcessing" x-transition.opacity>{{ t('kouventa.Continue', app()->getLocale() === 'id' ? 'Lanjut' : 'Continue') }}</span>
+            <span x-show="isProcessing" x-transition.opacity style="display: flex; align-items: center; gap: 6px">
+                <svg class="kv-spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+                <span>{{ t('kouventa.Processing...', app()->getLocale() === 'id' ? 'Memproses...' : 'Processing...') }}</span>
+            </span>
+        </div>
+
+        <!-- 8. Data received notification -->
+        <div style="min-height: 22px; display: flex; align-items: center; justify-content: center">
+            <div x-show="dataReceived" x-transition.opacity.duration.300ms class="kv-pop-in" style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: #0B5E2C">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                <span>{{ t('kouventa.Data received, without leaving the chat', app()->getLocale() === 'id' ? 'Data diterima, tanpa keluar dari chat' : 'Data received, without leaving the chat') }}</span>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Omni Illustration -->
@@ -1301,3 +1427,137 @@ Kouventa AI · WhatsApp · 09:12
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+window.kvBroadcastCounter = function() {
+    return {
+        p1: 0,
+        p2: 0,
+        p3: 0,
+        init() {
+            const ease = t => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+            let startTime = null;
+            const tick = (now) => {
+                if (!startTime) startTime = now;
+                const elapsed = (now - startTime) % 6000;
+
+                // Bar 1: delay 0s -> 0..600ms: 0%, 600..3300ms: 0..92%, 3300..5400ms: 92%, 5400..6000ms: 92%
+                if (elapsed < 600) {
+                    this.p1 = 0;
+                } else if (elapsed < 3300) {
+                    this.p1 = Math.round(92 * ease((elapsed - 600) / 2700));
+                } else {
+                    this.p1 = 92;
+                }
+
+                // Bar 2: delay 0.3s -> 0..900ms: 0%, 900..3600ms: 0..70%, 3600..5700ms: 70%
+                if (elapsed < 900) {
+                    this.p2 = 0;
+                } else if (elapsed < 3600) {
+                    this.p2 = Math.round(70 * ease((elapsed - 900) / 2700));
+                } else {
+                    this.p2 = 70;
+                }
+
+                // Bar 3: delay 0.6s -> 0..1200ms: 0%, 1200..3900ms: 0..38%, 3900..6000ms: 38%
+                if (elapsed < 1200) {
+                    this.p3 = 0;
+                } else if (elapsed < 3900) {
+                    this.p3 = Math.round(38 * ease((elapsed - 1200) / 2700));
+                } else {
+                    this.p3 = 38;
+                }
+
+                requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+        }
+    };
+};
+
+window.kvFlowsDemo = function() {
+    return {
+        name: '',
+        isTypingName: false,
+        email: '',
+        isTypingEmail: false,
+        accountType: 'business',
+        agreed: false,
+        btnPressed: false,
+        isProcessing: false,
+        dataReceived: false,
+
+        init() {
+            this.startLoop();
+        },
+
+        async startLoop() {
+            const fullName = 'Rina Saraswati';
+            const fullEmail = 'rina.saraswati@mail.com';
+            const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+            while (true) {
+                // Reset state
+                this.name = '';
+                this.isTypingName = false;
+                this.email = '';
+                this.isTypingEmail = false;
+                this.accountType = 'business';
+                this.agreed = false;
+                this.btnPressed = false;
+                this.isProcessing = false;
+                this.dataReceived = false;
+
+                await sleep(500);
+
+                // 1. Type name
+                this.isTypingName = true;
+                for (let i = 1; i <= fullName.length; i++) {
+                    this.name = fullName.slice(0, i);
+                    await sleep(55);
+                }
+                this.isTypingName = false;
+                await sleep(350);
+
+                // 2. Type email
+                this.isTypingEmail = true;
+                for (let i = 1; i <= fullEmail.length; i++) {
+                    this.email = fullEmail.slice(0, i);
+                    await sleep(40);
+                }
+                this.isTypingEmail = false;
+                await sleep(450);
+
+                // 3. Switch account type from business to personal
+                this.accountType = 'personal';
+                await sleep(600);
+
+                // 4. Check agreement
+                this.agreed = true;
+                await sleep(600);
+
+                // 5. Click Lanjut
+                this.btnPressed = true;
+                await sleep(150);
+                this.btnPressed = false;
+                this.isProcessing = true;
+                await sleep(1200);
+
+                // 6. Data received
+                this.isProcessing = false;
+                this.dataReceived = true;
+
+                // 7. Pause to view completed state
+                await sleep(2500);
+            }
+        }
+    };
+};
+
+document.addEventListener('alpine:init', () => {
+    Alpine.data('kvBroadcastCounter', window.kvBroadcastCounter);
+    Alpine.data('kvFlowsDemo', window.kvFlowsDemo);
+});
+</script>
+@endpush

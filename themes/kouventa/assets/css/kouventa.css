@@ -4759,4 +4759,34 @@ body {
     100% { transform: none; }
 }
 
+/* Flows Mockup Styles */
+.kv-flow-type-active {
+    background: #FFFFFF !important;
+    color: #0E1A24 !important;
+    box-shadow: 0 1px 3px rgba(7,28,51,0.12) !important;
+}
+.kv-flow-type-inactive {
+    background: transparent !important;
+    color: #4A5866 !important;
+    box-shadow: none !important;
+}
+
+.kv-flow-check-active {
+    background: #25D366 !important;
+    border: 1.5px solid #25D366 !important;
+}
+.kv-flow-check-idle {
+    background: #FFFFFF !important;
+    border: 1.5px solid #D5DDD9 !important;
+}
+
+.kv-flow-btn-press {
+    transform: scale(0.96) !important;
+    background: #1EBE5D !important;
+}
+.kv-flow-btn-loading {
+    background: #1EBE5D !important;
+}
+
+
 
