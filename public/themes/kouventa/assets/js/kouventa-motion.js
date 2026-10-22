@@ -67,7 +67,7 @@
             subtitle.style.setProperty('--kv-delay', '70ms');
           }
           var actionLink = headerWrapper.querySelector('a, button');
-          if (actionLink) {
+          if (actionLink && !actionLink.closest('.kv-linked-pill, .kv-unlinked-pill, .kv-pill')) {
             actionLink.classList.add('kv-reveal-item');
             actionLink.style.setProperty('--kv-delay', '120ms');
           }

@@ -126,7 +126,7 @@
 .kv-linked-pill {
     min-height: 48px;
     box-sizing: border-box;
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     gap: 10px;
     padding: 6px 6px 6px 16px;
@@ -179,7 +179,7 @@
 }
 .kv-unlinked-pill {
     min-height: 48px;
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     font-size: 15px;
@@ -1077,7 +1077,7 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Jadwalk
 <span class="kv-linked-pill" x-show="linked" x-cloak>
     <span class="kv-pill-dot"></span>
     <span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ $stages[0]['name'] }}</strong></span>
-    <button type="button" @click="linked = false" class="kv-btn-show-all">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+    <button type="button" @click="unlink()" class="kv-btn-show-all">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
 </span>
 <span class="kv-unlinked-pill" x-show="!linked">
     <a href="#journey" @click.prevent="document.getElementById('journey')?.scrollIntoView({ behavior: 'smooth' })" class="kv-unlinked-link">
@@ -1498,7 +1498,7 @@ $channelsDbl = array_merge($channels, $channels);
         Alpine.data('productAiPage', () => ({
             stage: 0,
             product: 'wiki',
-            linked: false,
+            linked: true,
             heroOn: true,
             heroKey: 0,
             jOn: true,
@@ -1528,6 +1528,9 @@ $channelsDbl = array_merge($channels, $channels);
                 this.linked = true;
                 this.replayJourney();
                 this.replayProduct();
+            },
+            unlink() {
+                this.linked = false;
             },
             seeTools(prod) {
                 this.linked = true;

@@ -24,7 +24,7 @@
 .kv-linked-pill {
     min-height: 48px;
     box-sizing: border-box;
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     gap: 10px;
     padding: 6px 6px 6px 16px;
@@ -77,7 +77,7 @@
 }
 .kv-unlinked-pill {
     min-height: 48px;
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     font-size: 15px;
@@ -479,7 +479,7 @@
 <div class="kv-canvas-wrap" x-data="{
     stage: 0,
     product: 'broadcast',
-    linked: false,
+    linked: true,
     stages: [
         {
             name: '{{ t('kouventa.Prospecting', 'Prospecting') }}',
@@ -624,6 +624,9 @@
     getToolRole(toolId) {
         if (!this.linked) return '';
         return this.stages[this.stage].tools[toolId] || '';
+    },
+    unlink() {
+        this.linked = false;
     }
 }">
 <!-- ============ NAV + HERO ============ -->
@@ -932,12 +935,12 @@ Kouventa AI · WhatsApp · 09:12
 <section id="products" class="kv-ce-products-section" style="padding: 48px 80px 104px; display: flex; flex-direction: column; gap: 32px">
 <div class="kv-products-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
 <h2 class="kv-products-heading" style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">@if(!empty($featuresTitle['prefix'])){{ $featuresTitle['prefix'] }} <span style="color: #13803F">{{ $featuresTitle['main'] }}</span>@else{{ $featuresTitle['main'] ?? $featuresTitle }}@endif</h2>
-<span class="kv-linked-pill" x-show="linked" x-cloak style="min-height: 48px; box-sizing: border-box; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
+<span class="kv-linked-pill" x-show="linked" x-cloak style="min-height: 48px; box-sizing: border-box; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
 <span class="kv-pill-dot" style="width: 10px; height: 10px; border-radius: 50%; background: #13803F; flex-shrink: 0; display: inline-block"></span>
 <span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ t('kouventa.Prospecting', 'Prospecting') }}</strong></span>
-<button type="button" @click="linked = false" class="kv-btn-show-all" style="margin-left: 6px; white-space: nowrap; flex-shrink: 0; min-height: 36px; padding: 6px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+<button type="button" @click="unlink()" class="kv-btn-show-all" style="margin-left: 6px; white-space: nowrap; flex-shrink: 0; min-height: 36px; padding: 6px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
 </span>
-<span class="kv-unlinked-pill" x-show="!linked" style="min-height: 48px; display: inline-flex; align-items: center; font-size: 15px; color: #4A5866">
+<span class="kv-unlinked-pill" x-show="!linked" style="min-height: 48px; align-items: center; font-size: 15px; color: #4A5866">
 <a href="#journey" @click.prevent="document.getElementById('journey')?.scrollIntoView({ behavior: 'smooth' })" class="kv-unlinked-link" style="display: inline-flex; align-items: center; gap: 8px; color: #4A5866; text-decoration: none; cursor: pointer">
 <span>{{ t('kouventa.Pick a journey stage above to see which products help', 'Pick a journey stage above to see which products help') }}</span>
 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
