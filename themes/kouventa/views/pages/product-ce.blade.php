@@ -495,6 +495,11 @@
 
 .kv-spin { animation: kvSpin 0.9s linear infinite; }
 .kv-pop-in { animation: kvPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+.kv-chat-bubble-in { animation: kvBubbleIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes kvBubbleIn {
+    0% { opacity: 0; transform: translateY(10px) scale(0.97); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
 
 </style>
 @endpush
@@ -1201,16 +1206,45 @@ Kouventa AI · WhatsApp · 09:12
 </div>
 
 <!-- Chatbot Illustration -->
-<div class="kv-flex-col kv-mockup-chatbot" x-show="product === 'chatbot'" style="width: 350px; gap: 8px; font-size: 12.5px; line-height: 1.45">
-<div style="align-self: flex-start; max-width: 88%; background: #FFFFFF; padding: 10px 12px; border-radius: 4px 14px 14px 14px; display: flex; flex-direction: column; gap: 8px; animation: kvLoop 12s ease 0.3s infinite both">
-<span><span style="font-size: 10.5px; font-weight: 800; color: #4A5866">{{ t('kouventa.STATIC BOT', 'STATIC BOT') }}</span><br>{{ t('kouventa.Hi! How can we help you today?', 'Hi! How can we help you today?') }}</span>
-<div style="display: flex; gap: 6px; flex-wrap: wrap"><span style="font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 999px; border: 1px solid #13803F; color: #13803F">{{ t('kouventa.Track order', 'Track order') }}</span><span style="font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 999px; border: 1px solid #13803F; color: #13803F">Promo</span><span style="font-size: 11px; font-weight: 700; padding: 5px 9px; border-radius: 999px; border: 1px solid #13803F; color: #13803F">{{ t('kouventa.Store hours', 'Store hours') }}</span></div>
-</div>
-<div style="align-self: flex-end; max-width: 80%; background: #071C33; color: #FFFFFF; padding: 9px 12px; border-radius: 14px 4px 14px 14px; animation: kvLoop 12s ease 1.6s infinite both">{{ t('kouventa.My package says delivered, but I don\'t have it.', 'My package says delivered, but I don\'t have it.') }}</div>
-<div style="align-self: flex-start; max-width: 88%; background: #FFFFFF; padding: 9px 12px; border-radius: 4px 14px 14px 14px; animation: kvLoop 12s ease 2.8s infinite both"><span style="font-size: 10.5px; font-weight: 800; color: #13803F">{{ t('kouventa.AI BOT · TOOK OVER', 'AI BOT · TOOK OVER') }}</span><br>{{ t('kouventa.I checked your order: it was left at the front desk at 14:10. Want me to connect you to our team?', 'I checked your order: it was left at the front desk at 14:10. Want me to connect you to our team?') }}</div>
-<div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 9px 12px; border-radius: 14px 4px 14px 14px; animation: kvLoop 12s ease 4.2s infinite both">{{ t('kouventa.Yes, please.', 'Yes, please.') }}</div>
-<div style="align-self: center; background: #DDF3E4; color: #0B5E2C; padding: 7px 14px; border-radius: 999px; font-size: 11.5px; font-weight: 800; animation: kvLoop 12s ease 5.2s infinite both">{{ t('kouventa.Handed over to human agent · Ticket created', 'Handed over to human agent · Ticket created') }}</div>
-<div style="align-self: flex-start; max-width: 88%; background: #FFFFFF; padding: 9px 12px; border-radius: 4px 14px 14px 14px; animation: kvLoop 12s ease 6.2s infinite both"><span style="font-size: 10.5px; font-weight: 800; color: #071C33">DEWI · SUPPORT AGENT</span><br>{{ t('kouventa.Hi, I can see the full chat. Let me sort this out with the courier.', 'Hi, I can see the full chat. Let me sort this out with the courier.') }}</div>
+<div class="kv-flex-col kv-mockup-chatbot" x-show="product === 'chatbot'" x-data="kvChatbotDemo()" style="width: 100%; max-width: 380px; gap: 7px; font-size: 12px; line-height: 1.4; transition: opacity 0.35s ease" :style="{ opacity: isResetting ? 0 : 1 }">
+
+    <!-- Bubble 1: Automation Flow -->
+    <div x-show="step >= 1" class="kv-chat-bubble-in" style="align-self: flex-start; max-width: 90%; background: #FFFFFF; padding: 9px 13px; border-radius: 13px; box-shadow: 0 4px 18px rgba(7,28,51,0.04)">
+        <div style="font-size: 10px; font-weight: 800; color: #4A5866; letter-spacing: 0.04em; margin-bottom: 3px">CHAT AUTOMATION FLOW</div>
+        <div style="color: #0E1A24; font-weight: 500; font-size: 12.5px; line-height: 1.35">{{ $isIdLocale ? 'Halo! Ada yang bisa kami bantu hari ini?' : t('kouventa.Hi! How can we help you today?', 'Hi! How can we help you today?') }}</div>
+        <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px">
+            <span style="font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #13803F; color: #FFFFFF; border: 1px solid #13803F">{{ $isIdLocale ? 'Lacak pesanan' : t('kouventa.Track order', 'Track order') }}</span>
+            <span style="font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #FFFFFF; color: #13803F; border: 1px solid #13803F">Promo</span>
+            <span style="font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #FFFFFF; color: #13803F; border: 1px solid #13803F">{{ $isIdLocale ? 'Jam buka toko' : t('kouventa.Store hours', 'Store hours') }}</span>
+        </div>
+    </div>
+
+    <!-- Bubble 2: User Inquiry -->
+    <div x-show="step >= 2" class="kv-chat-bubble-in" style="align-self: flex-end; max-width: 82%; background: #071C33; color: #FFFFFF; padding: 8px 13px; border-radius: 13px 4px 13px 13px; font-size: 12px; line-height: 1.4; box-shadow: 0 4px 14px rgba(7,28,51,0.08)">
+        {{ $isIdLocale ? 'Status paket saya terkirim, tapi saya belum menerimanya.' : t('kouventa.My package says delivered, but I don\'t have it.', 'My package says delivered, but I don\'t have it.') }}
+    </div>
+
+    <!-- Bubble 3: AI Bot Handover -->
+    <div x-show="step >= 3" class="kv-chat-bubble-in" style="align-self: flex-start; max-width: 90%; background: #FFFFFF; padding: 9px 13px; border-radius: 4px 13px 13px 13px; box-shadow: 0 4px 18px rgba(7,28,51,0.04)">
+        <div style="font-size: 10px; font-weight: 800; color: #13803F; letter-spacing: 0.04em; margin-bottom: 3px">{{ $isIdLocale ? 'BOT AI · MENGAMBIL ALIH' : t('kouventa.AI BOT · TOOK OVER', 'AI BOT · TOOK OVER') }}</div>
+        <div style="color: #0E1A24; font-size: 12px; line-height: 1.4">{{ $isIdLocale ? 'Saya sudah cek pesanan Anda: paket dititipkan di resepsionis pukul 14.10. Mau saya hubungkan dengan tim kami?' : t('kouventa.I checked your order: it was left at the front desk at 14:10. Want me to connect you to our team?', 'I checked your order: it was left at the front desk at 14:10. Want me to connect you to our team?') }}</div>
+    </div>
+
+    <!-- Bubble 4: User Response -->
+    <div x-show="step >= 4" class="kv-chat-bubble-in" style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 7px 13px; border-radius: 13px 4px 13px 13px; font-size: 12px; line-height: 1.4; box-shadow: 0 4px 14px rgba(7,28,51,0.08)">
+        {{ $isIdLocale ? 'Boleh, tolong ya.' : t('kouventa.Yes, please.', 'Yes, please.') }}
+    </div>
+
+    <!-- Bubble 5: System Handover Badge -->
+    <div x-show="step >= 5" class="kv-chat-bubble-in" style="align-self: center; background: #E1F4E7; color: #0B5E2C; padding: 5px 14px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.01em">
+        {{ $isIdLocale ? 'Dialihkan ke agent · Tiket dibuat' : t('kouventa.Transferred to agent · Ticket created', 'Transferred to agent · Ticket created') }}
+    </div>
+
+    <!-- Bubble 6: Support Agent -->
+    <div x-show="step >= 6" class="kv-chat-bubble-in" style="align-self: flex-start; max-width: 90%; background: #FFFFFF; padding: 9px 13px; border-radius: 4px 13px 13px 13px; box-shadow: 0 4px 18px rgba(7,28,51,0.04)">
+        <div style="font-size: 10px; font-weight: 800; color: #071C33; letter-spacing: 0.04em; margin-bottom: 3px">DEWI · {{ $isIdLocale ? 'SUPPORT AGENT' : t('kouventa.SUPPORT AGENT', 'SUPPORT AGENT') }}</div>
+        <div style="color: #0E1A24; font-size: 12px; line-height: 1.4">{{ $isIdLocale ? 'Halo, saya bisa lihat seluruh chat-nya. Saya bantu urus dengan kurirnya ya.' : t('kouventa.Hi, I can see the full chat. Let me sort this out with the courier.', 'Hi, I can see the full chat. Let me sort this out with the courier.') }}</div>
+    </div>
 </div>
 
 <!-- Integration Illustration -->
@@ -1563,9 +1597,56 @@ window.kvFlowsDemo = function() {
     };
 };
 
+window.kvChatbotDemo = function() {
+    return {
+        step: 0,
+        isResetting: false,
+        init() {
+            this.startLoop();
+        },
+        async startLoop() {
+            const sleep = ms => new Promise(r => setTimeout(r, ms));
+            while (true) {
+                // Reset full
+                this.isResetting = true;
+                this.step = 0;
+                await sleep(350);
+                this.isResetting = false;
+                await sleep(250);
+
+                // Step 1: Automation Flow greeting + quick replies
+                this.step = 1;
+                await sleep(1400);
+
+                // Step 2: User inquiry
+                this.step = 2;
+                await sleep(1400);
+
+                // Step 3: AI Bot takeover
+                this.step = 3;
+                await sleep(1600);
+
+                // Step 4: User confirmation
+                this.step = 4;
+                await sleep(1100);
+
+                // Step 5: System ticket handover badge
+                this.step = 5;
+                await sleep(1100);
+
+                // Step 6: Human support agent responds
+                this.step = 6;
+                // Hold reading view for 4 seconds after chat terakhir muncul
+                await sleep(4000);
+            }
+        }
+    };
+};
+
 document.addEventListener('alpine:init', () => {
     Alpine.data('kvBroadcastCounter', window.kvBroadcastCounter);
     Alpine.data('kvFlowsDemo', window.kvFlowsDemo);
+    Alpine.data('kvChatbotDemo', window.kvChatbotDemo);
 });
 </script>
 @endpush
