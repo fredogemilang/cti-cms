@@ -459,14 +459,20 @@
 @extends('kouventa::layouts.app')
 
 @php
-    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'The smarter way to', 'main' => 'engage customers.']);
-    $heroSubtitle = $page?->block('hero_subtitle', 'Reach more customers, respond faster, and keep every conversation seamless — on WhatsApp and beyond.');
-    $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Book a demo', 'url' => '/book-demo']);
-    $channelsTitle = $page?->titleBlock('channels_title', ['prefix' => 'Every missed message is a', 'main' => 'missed sale.']);
-    $featuresTitle = $page?->titleBlock('features_title', ['prefix' => 'One platform.', 'main' => 'Zero missed messages.']);
-    $whyTitle = $page?->titleBlock('why_title', ['prefix' => 'Why Kouventa for customer', 'main' => 'engagement']);
-    $bottomCtaTitle = $page?->block('bottom_cta_title', 'Start engaging customers on WhatsApp.');
-    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', 'Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge.');
+    $isIdLocale = app()->getLocale() === 'id';
+    $heroTitle = $page?->titleBlock('hero_title', [
+        'prefix' => $isIdLocale ? 'Cara lebih cerdas untuk' : 'The smarter way to',
+        'main' => $isIdLocale ? 'berinteraksi dengan pelanggan.' : 'engage customers.'
+    ]);
+    $heroSubtitle = $page?->block('hero_subtitle', $isIdLocale
+        ? 'Jangkau lebih banyak pelanggan, balas lebih cepat, dan buat percakapan lancar di WhatsApp dan channel lainnya.'
+        : 'Reach more customers, respond faster, and keep conversations seamless on WhatsApp and beyond.');
+    $heroCta = $page?->buttonBlock('hero_cta', ['text' => $isIdLocale ? 'Jadwalkan demo' : 'Book a demo', 'url' => '/book-demo']);
+    $channelsTitle = $page?->titleBlock('channels_title', ['prefix' => $isIdLocale ? 'Tiap pesan yang terlewat adalah' : 'Every missed message is a', 'main' => $isIdLocale ? 'penjualan yang hilang.' : 'missed sale.']);
+    $featuresTitle = $page?->titleBlock('features_title', ['prefix' => $isIdLocale ? 'Satu platform.' : 'One platform.', 'main' => $isIdLocale ? 'Tanpa pesan yang terlewat.' : 'Zero missed messages.']);
+    $whyTitle = $page?->titleBlock('why_title', ['prefix' => $isIdLocale ? 'Mengapa Kouventa untuk' : 'Why Kouventa for customer', 'main' => $isIdLocale ? 'customer engagement' : 'engagement']);
+    $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Mulai berinteraksi dengan pelanggan di WhatsApp.' : 'Start engaging customers on WhatsApp.');
+    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Hubungi tim kami untuk menyiapkan akun WhatsApp Business Platform, template khusus, dan verified badge.' : 'Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge.');
 @endphp
 
 @section('content')
@@ -629,7 +635,7 @@
 <a href="{{ localized_url('/product/customer-engagement') }}" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</a>
 </nav>
 
-<div style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 80px; align-items: center; position: relative">
+<div style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 600px; gap: 56px; align-items: center; position: relative">
 <div style="display: flex; flex-direction: column; gap: 26px">
 <span style="align-self: flex-start; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>{{ t('kouventa.Official Meta Business Solution Provider', 'Official Meta Business Solution Provider') }}</span>
 <h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'The smarter way to' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'engage customers.' }}</span></h1>
@@ -639,37 +645,166 @@
 </div>
 </div>
 
-<!-- hero phone -->
-<div role="img" aria-label="Animated illustration: a customer receives a promotion, asks a question, gets an instant answer and a verification code on WhatsApp" style="width: 340px; height: 560px; justify-self: center; background: #0C2A48; border-radius: 44px; padding: 12px; box-sizing: border-box; box-shadow: 0 40px 80px rgba(0,0,0,0.4); animation: kvFloat 6s ease-in-out infinite">
-<div style="width: 100%; height: 100%; background: #EFEAE2; border-radius: 34px; overflow: hidden; display: flex; flex-direction: column">
-<div style="background: #FFFFFF; color: #111B21; padding: 22px 14px 10px 10px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #E9EDEF; flex-shrink: 0">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#54656F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
-<span style="width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px">YB</span>
-<div style="display: flex; flex-direction: column; min-width: 0; flex-grow: 1"><span style="display: flex; align-items: center; gap: 4px; font-size: 14.5px; font-weight: 700">Your Brand<svg width="15" height="15" viewBox="0 0 24 24" aria-label="Verified business" style="flex-shrink: 0"><path d="M12 1.8l2.4 1.8 3-.2.9 2.9 2.5 1.7-.9 2.9.9 2.9-2.5 1.7-.9 2.9-3-.2L12 20.2l-2.4-1.8-3 .2-.9-2.9-2.5-1.7.9-2.9-.9-2.9 2.5-1.7.9-2.9 3 .2Z" fill="#1D9BF0"></path><path d="M8 11.5l2.6 2.6L16 8.8" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="font-size: 11px; color: #667781">{{ t('kouventa.Official business account', 'Official business account') }}</span></div>
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#54656F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"></path></svg>
-<svg width="16" height="16" viewBox="0 0 24 24" fill="#54656F" aria-hidden="true"><circle cx="12" cy="5" r="2"></circle><circle cx="12" cy="12" r="2"></circle><circle cx="12" cy="19" r="2"></circle></svg>
+<!-- hero dashboard: Omnichannel Unified Inbox -->
+<div role="img" aria-label="Animated illustration: the Kouventa dashboard shows conversations from WhatsApp, Instagram, Facebook and Live Chat in one inbox. One customer starts on Instagram DM, is answered by an agent, then followed up by a WhatsApp broadcast and answered by Kouventa AI." data-kv-fit="600" style="width: 600px; justify-self: end; background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.4); color: #0E1A24; display: flex; flex-direction: column; animation: kvFloat 6s ease-in-out infinite">
+<div style="height: 44px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid #E3E8E6">
+<svg width="17.5" height="22" viewBox="0 0 96 121" role="img" aria-label="Kouventa" style="display: block; flex-shrink: 0"><rect x="0" y="0" width="40" height="121" fill="#12BB3A"></rect><path d="M40 0H96L40 60.5L96 121H40Z" fill="#82D48B"></path></svg>
+<span style="font-size: 13px; font-weight: 800">Kouventa</span>
+<span style="font-size: 12px; color: #4A5866">Interactions › Chat</span>
+<span style="margin-left: auto; display: flex; align-items: center; gap: 6px">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="Instagram" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-facebook.png') }}" alt="Facebook" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-livechat.png') }}" alt="Live Chat" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
+</span>
 </div>
-<div style="flex-grow: 1; min-height: 0; overflow: hidden; padding: 8px 10px; display: flex; flex-direction: column; gap: 7px; font-size: 13.5px; line-height: 1.45; color: #0E1A24">
-<div style="align-self: flex-start; width: 82%; background: #FFFFFF; border-radius: 4px 14px 14px 14px; overflow: hidden; flex-shrink: 0; animation: kvH1 16s ease infinite both">
-<div style="height: 46px; background: #071C33; display: flex; align-items: center; justify-content: center; color: #2BD46A; font-weight: 800; font-size: 17px">WEEKEND SALE</div>
-<div style="padding: 9px 12px 7px">{{ t('kouventa.New collection is live. Tap below to shop.', 'New collection is live. Tap below to shop.') }}<span style="float: right; margin: 7px 0 -3px 10px; font-size: 10.5px; color: #667781; display: inline-flex; align-items: center; gap: 3px">10:20</span></div>
-<div style="border-top: 1px solid #E9EDEF; padding: 9px; display: flex; align-items: center; justify-content: center; gap: 6px; color: #027EB5; font-weight: 600"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path></svg>{{ t('kouventa.Shop now', 'Shop now') }}</div>
+<div style="display: flex; gap: 18px; padding: 0 16px; font-size: 12px; border-bottom: 1px solid #E3E8E6; flex-shrink: 0">
+<span style="padding: 10px 2px; color: #13803F; font-weight: 700; border-bottom: 2px solid #13803F">{{ $isIdLocale ? 'Semua channel' : t('kouventa.All channels', 'All channels') }}</span>
+<span style="padding: 10px 2px; color: #4A5866; border-bottom: 2px solid transparent">WhatsApp</span>
+<span style="padding: 10px 2px; color: #4A5866; border-bottom: 2px solid transparent">Instagram</span>
+<span style="padding: 10px 2px; color: #4A5866; border-bottom: 2px solid transparent">Facebook</span>
+<span style="padding: 10px 2px; color: #4A5866; border-bottom: 2px solid transparent">Live Chat</span>
 </div>
-<div style="align-self: flex-end; max-width: 75%; background: #D9FDD3; color: #111B21; padding: 7px 10px 7px 12px; border-radius: 12px 4px 12px 12px; box-shadow: 0 1px 1px rgba(0,0,0,0.06); animation: kvH2 16s ease infinite both">{{ t('kouventa.Is size M still available?', 'Is size M still available?') }}<span style="float: right; margin: 7px 0 -3px 10px; font-size: 10.5px; color: #667781; display: inline-flex; align-items: center; gap: 3px">10:21<svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="#53BDEB" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-label="Read" style="vertical-align: -1px"><path d="M1 6l3 3 6-7"></path><path d="M6 9l1 1 6-8"></path></svg></span></div>
-<div style="display: grid">
-<div style="grid-area: 1 / 1; align-self: start; justify-self: start; background: #FFFFFF; padding: 11px 12px; border-radius: 4px 14px 14px 14px; display: flex; gap: 4px; animation: kvHt1 16s ease infinite both"><span style="width: 6px; height: 6px; border-radius: 50%; background: #4A5866; animation: kvBlink 1s ease infinite"></span><span style="width: 6px; height: 6px; border-radius: 50%; background: #4A5866; animation: kvBlink 1s ease .2s infinite"></span><span style="width: 6px; height: 6px; border-radius: 50%; background: #4A5866; animation: kvBlink 1s ease .4s infinite"></span></div>
-<div style="grid-area: 1 / 1; justify-self: start; max-width: 82%; background: #FFFFFF; padding: 8px 12px; border-radius: 4px 14px 14px 14px; animation: kvH3 16s ease infinite both">{{ t('kouventa.Yes, size M is in stock. Want me to reserve it for you?', 'Yes, size M is in stock. Want me to reserve it for you?') }}<span style="float: right; margin: 7px 0 -3px 10px; font-size: 10.5px; color: #667781; display: inline-flex; align-items: center; gap: 3px">10:21</span></div>
+<div style="display: grid; grid-template-columns: 208px minmax(0, 1fr); grid-template-rows: 492px">
+<div style="border-right: 1px solid #E3E8E6; padding: 8px 6px; display: flex; flex-direction: column; gap: 2px; overflow: hidden">
+<div style="display: flex; gap: 8px; padding: 9px 10px; border-radius: 10px; background: #EEF6F1">
+<span style="width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: #DDF3E4; color: #0B5E2C; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center">RS</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0; flex-grow: 1">
+<span style="font-size: 12px; font-weight: 700; color: #0E1A24">Rina S.</span>
+<span style="font-size: 11px; color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ $isIdLocale ? 'Ukuran M masih ada?' : t('kouventa.Is size M still available?', 'Is size M still available?') }}</span>
+<span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866; white-space: nowrap">
+<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="Instagram" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+Instagram · WhatsApp
+</span>
+</span>
 </div>
-<div style="align-self: flex-end; max-width: 75%; background: #D9FDD3; color: #111B21; padding: 7px 10px 7px 12px; border-radius: 12px 4px 12px 12px; box-shadow: 0 1px 1px rgba(0,0,0,0.06); animation: kvH4 16s ease infinite both">{{ t('kouventa.Yes, please!', 'Yes, please!') }}<span style="float: right; margin: 7px 0 -3px 10px; font-size: 10.5px; color: #667781; display: inline-flex; align-items: center; gap: 3px">10:22<svg width="16" height="11" viewBox="0 0 16 11" fill="none" stroke="#53BDEB" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-label="Read" style="vertical-align: -1px"><path d="M1 6l3 3 6-7"></path><path d="M6 9l1 1 6-8"></path></svg></span></div>
-<div style="display: grid">
-<div style="grid-area: 1 / 1; align-self: start; justify-self: start; background: #FFFFFF; padding: 11px 12px; border-radius: 4px 14px 14px 14px; display: flex; gap: 4px; animation: kvHt2 16s ease infinite both"><span style="width: 6px; height: 6px; border-radius: 50%; background: #4A5866; animation: kvBlink 1s ease infinite"></span><span style="width: 6px; height: 6px; border-radius: 50%; background: #4A5866; animation: kvBlink 1s ease .2s infinite"></span><span style="width: 6px; height: 6px; border-radius: 50%; background: #4A5866; animation: kvBlink 1s ease .4s infinite"></span></div>
-<div style="grid-area: 1 / 1; justify-self: start; max-width: 85%; background: #FFFFFF; padding: 8px 12px; border-radius: 4px 14px 14px 14px; animation: kvH5 16s ease infinite both">{{ t('kouventa.Reserved! To confirm, your verification code is', 'Reserved! To confirm, your verification code is') }} <strong style="font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em">482 917</strong><span style="float: right; margin: 7px 0 -3px 10px; font-size: 10.5px; color: #667781; display: inline-flex; align-items: center; gap: 3px">10:22</span></div>
+<div style="display: flex; gap: 8px; padding: 9px 10px; border-radius: 10px">
+<span style="width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: #E3ECF7; color: #1E4E8C; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center">BU</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0; flex-grow: 1">
+<span style="font-size: 12px; font-weight: 700; color: #0E1A24">Budi</span>
+<span style="font-size: 11px; color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ $isIdLocale ? 'Pesanan #2219 saya di mana?' : t('kouventa.Where is my order #2219?', 'Where is my order #2219?') }}</span>
+<span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+WhatsApp
+</span>
+</span>
 </div>
-<div style="align-self: center; display: flex; align-items: center; gap: 8px; background: #DDF3E4; color: #0B5E2C; padding: 8px 14px; border-radius: 999px; font-size: 12px; font-weight: 800; animation: kvH6 16s ease infinite both"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{ t('kouventa.Verified · Order reserved', 'Verified · Order reserved') }}</div>
+<div style="display: flex; gap: 8px; padding: 9px 10px; border-radius: 10px">
+<span style="width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: #F6E3EC; color: #8C1E4E; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center">SA</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0; flex-grow: 1">
+<span style="font-size: 12px; font-weight: 700; color: #0E1A24">Sari</span>
+<span style="font-size: 11px; color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ $isIdLocale ? 'Ongkir ke Bandung gratis?' : t('kouventa.Is delivery free to Bandung?', 'Is delivery free to Bandung?') }}</span>
+<span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
+<img src="{{ theme_asset('images/icon-facebook.png') }}" alt="Facebook" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+Facebook
+</span>
+</span>
 </div>
-<div style="flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 6px 10px 10px">
-<span style="flex-grow: 1; height: 38px; border-radius: 999px; background: #FFFFFF; display: flex; align-items: center; padding: 0 14px; font-size: 13px; color: #8696A0">{{ t('kouventa.Message', 'Message') }}</span>
-<span style="width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; background: #25D366; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg></span>
+<div style="display: flex; gap: 8px; padding: 9px 10px; border-radius: 10px">
+<span style="width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: #F2EBDC; color: #7A5A12; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center">DI</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0; flex-grow: 1">
+<span style="font-size: 12px; font-weight: 700; color: #0E1A24">Dimas</span>
+<span style="font-size: 11px; color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ $isIdLocale ? 'Halo, saya butuh bantuan untuk akun saya' : t('kouventa.Hi, I need help with my account', 'Hi, I need help with my account') }}</span>
+<span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
+<img src="{{ theme_asset('images/icon-livechat.png') }}" alt="Live Chat" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+Live Chat
+</span>
+</span>
+</div>
+<div style="display: flex; gap: 8px; padding: 9px 10px; border-radius: 10px">
+<span style="width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: #E6E9F7; color: #3B3F8C; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center">MA</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0; flex-grow: 1">
+<span style="font-size: 12px; font-weight: 700; color: #0E1A24">Maya</span>
+<span style="font-size: 11px; color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ $isIdLocale ? 'Terima kasih, sudah diterima!' : t('kouventa.Thanks, received!', 'Thanks, received!') }}</span>
+<span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+WhatsApp
+</span>
+</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; min-width: 0; min-height: 0; background: #F7F9F8">
+<div style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #FFFFFF; border-bottom: 1px solid #E3E8E6">
+<span style="width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%; background: #DDF3E4; color: #0B5E2C; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center">RS</span>
+<span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
+<span style="font-size: 12.5px; font-weight: 700">Rina S.</span>
+<span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
+<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="Instagram" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+{{ $isIdLocale ? 'Satu profil, dua channel' : t('kouventa.One profile, two channels', 'One profile, two channels') }}
+</span>
+</span>
+<span style="font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 7px; background: #F2C230; color: #3A2A00">{{ $isIdLocale ? 'Ringkas' : t('kouventa.Summarize', 'Summarize') }}</span>
+</div>
+
+<div style="flex-grow: 1; min-height: 0; overflow: hidden; padding: 10px 14px; display: flex; flex-direction: column; gap: 7px">
+<div style="align-self: flex-start; max-width: 78%; display: flex; flex-direction: column; gap: 3px; animation: kvM1 16s ease infinite both">
+<span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
+<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="Instagram" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+{{ $isIdLocale ? 'DM Instagram · 10:02' : 'Instagram DM · 10:02' }}
+</span>
+<span style="background: #FFFFFF; border: 1px solid #E3E8E6; padding: 7px 10px; border-radius: 4px 12px 12px; font-size: 12px; line-height: 1.45; color: #0E1A24">
+{{ $isIdLocale ? 'Halo! Weekend Sale masih berlaku?' : t('kouventa.Hi! Is the Weekend Sale still on?', 'Hi! Is the Weekend Sale still on?') }}
+</span>
+</div>
+
+<div style="align-self: flex-end; max-width: 78%; display: flex; flex-direction: column; gap: 3px; animation: kvM2 16s ease infinite both">
+<span style="align-self: flex-end; display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
+<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="Instagram" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+{{ $isIdLocale ? 'Agen · DM Instagram · 10:04' : 'Agent · Instagram DM · 10:04' }}
+</span>
+<span style="background: #DDF3E4; padding: 7px 10px; border-radius: 12px 4px 12px 12px; font-size: 12px; line-height: 1.45; color: #0E1A24">
+{{ $isIdLocale ? 'Masih, sampai Minggu! Mau akses awal lewat WhatsApp?' : t('kouventa.Yes, until Sunday! Want early access on WhatsApp?', 'Yes, until Sunday! Want early access on WhatsApp?') }}
+</span>
+</div>
+
+<div style="display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; color: #4A5866; animation: kvM3 16s ease infinite both">
+<span style="flex-grow: 1; height: 1px; background: #E3E8E6"></span>
+{{ $isIdLocale ? 'Esok hari · campaign WhatsApp' : t('kouventa.Next day · WhatsApp campaign', 'Next day · WhatsApp campaign') }}
+<span style="flex-grow: 1; height: 1px; background: #E3E8E6"></span>
+</div>
+
+<div style="align-self: flex-end; width: 62%; display: flex; flex-direction: column; gap: 3px; animation: kvM3 16s ease infinite both">
+<span style="align-self: flex-end; display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+{{ $isIdLocale ? 'Broadcast campaign · WhatsApp · 09:00' : 'Campaign broadcast · WhatsApp · 09:00' }}
+</span>
+<span style="background: #DDF3E4; border-radius: 12px 4px 12px 12px; overflow: hidden; font-size: 12px; line-height: 1.45; color: #0E1A24">
+<span style="display: block; background: #071C33; color: #2BD46A; font-weight: 800; font-size: 12px; text-align: center; padding: 7px">WEEKEND SALE</span>
+<span style="display: block; padding: 7px 10px">{{ $isIdLocale ? 'Halo Rina, akses awal Anda sudah dibuka: diskon 30% sampai Minggu.' : t('kouventa.Hi Rina, your early access is open: 30% off until Sunday.', 'Hi Rina, your early access is open: 30% off until Sunday.') }}</span>
+</span>
+</div>
+
+<div style="align-self: flex-start; max-width: 78%; display: flex; flex-direction: column; gap: 3px; animation: kvM4 16s ease infinite both">
+<span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+WhatsApp · 09:12
+</span>
+<span style="background: #FFFFFF; border: 1px solid #E3E8E6; padding: 7px 10px; border-radius: 4px 12px 12px; font-size: 12px; line-height: 1.45; color: #0E1A24">
+{{ $isIdLocale ? 'Ukuran M masih ada?' : t('kouventa.Is size M still available?', 'Is size M still available?') }}
+</span>
+</div>
+
+<div style="align-self: flex-end; max-width: 78%; display: flex; flex-direction: column; gap: 3px; animation: kvM5 16s ease infinite both">
+<span style="align-self: flex-end; display: flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; color: #13803F">
+<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 6.5l1.7 4.8 4.8 1.7-4.8 1.7L10 19.5l-1.7-4.8L3.5 13l4.8-1.7Z"></path><path d="M18 3.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"></path></svg>
+Kouventa AI · WhatsApp · 09:12
+</span>
+<span style="background: #DDF3E4; padding: 7px 10px; border-radius: 12px 4px 12px 12px; font-size: 12px; line-height: 1.45; color: #0E1A24">
+{{ $isIdLocale ? 'Ukuran M masih tersedia. Sudah saya simpankan untuk Anda.' : t("kouventa.Yes, size M is in stock. I've reserved it for you.", "Yes, size M is in stock. I've reserved it for you.") }}
+</span>
+</div>
+</div>
+
+<div style="flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 8px 14px 12px">
+<span style="flex-grow: 1; height: 32px; border-radius: 8px; background: #FFFFFF; border: 1px solid #E3E8E6; display: flex; align-items: center; gap: 6px; padding: 0 10px; font-size: 11.5px; color: #8696A0">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 12px; height: 12px; object-fit: contain; display: block; flex-shrink: 0">
+{{ $isIdLocale ? 'Balas di WhatsApp…' : t('kouventa.Reply on WhatsApp…', 'Reply on WhatsApp…') }}
+</span>
+<span style="height: 32px; padding: 0 14px; border-radius: 8px; background: #13803F; color: #FFFFFF; font-size: 11.5px; font-weight: 700; display: flex; align-items: center">{{ $isIdLocale ? 'Kirim' : t('kouventa.Send', 'Send') }}</span>
+</div>
 </div>
 </div>
 </div>
