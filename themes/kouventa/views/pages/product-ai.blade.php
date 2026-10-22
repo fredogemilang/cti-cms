@@ -1417,14 +1417,13 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Jadwalk
 <span style="font-size: 19px; font-weight: 700">{{ t('kouventa.Integrate with Any Channel', 'Integrate with Any Channel') }}</span>
 <span style="font-size: 15px; color: #B9C6D3">{{ t('kouventa.Plug your AI into any app or channel your teams and customers already use.', 'Plug your AI into any app or channel your teams and customers already use.') }}</span>
 </div>
-<div aria-label="Example channels: WhatsApp, Email, Slack, Microsoft Teams, Telegram, SAP, Salesforce, internal apps" role="img" style="overflow: hidden">
+<div aria-label="Example channels: WhatsApp, Email, Slack, Telegram, SAP, Salesforce, internal apps" role="img" style="overflow: hidden">
 <div style="display: flex; gap: 14px; width: max-content; animation: kvMarquee 40s linear infinite">
 @php
 $channels = [
     ['name' => 'WhatsApp', 'icon' => 'images/channels/whatsapp.svg'],
     ['name' => 'Email', 'icon' => 'images/channels/email.svg'],
     ['name' => 'Slack', 'icon' => 'images/channels/slack.svg'],
-    ['name' => 'Microsoft Teams', 'icon' => 'images/channels/teams.svg'],
     ['name' => 'Telegram', 'icon' => 'images/channels/telegram.svg'],
     ['name' => 'SAP', 'icon' => 'images/channels/sap.svg'],
     ['name' => 'Salesforce', 'icon' => 'images/channels/salesforce.svg'],
