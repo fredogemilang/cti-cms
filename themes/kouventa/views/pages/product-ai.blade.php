@@ -648,6 +648,8 @@
 @extends('kouventa::layouts.app')
 
 @php
+$isIdLocale = app()->getLocale() === 'id';
+
 $stages = [
     [
         'key' => 'answer',
@@ -742,8 +744,6 @@ $productsList = [
         'svg' => '<rect x="3" y="3" width="7" height="6" rx="1.5"></rect><rect x="14" y="15" width="7" height="6" rx="1.5"></rect><path d="M6.5 9v3a3 3 0 0 0 3 3H14"></path>'
     ]
 ];
-
-$isIdLocale = app()->getLocale() === 'id';
 
 // ── Page Blocks from CMS Content Builder ──────────────
 $heroTitle = $page?->titleBlock('hero_title', [
