@@ -694,7 +694,7 @@ $stageButtons = [
         'num' => '01',
         'name' => t('kouventa.Answer', 'Answer'),
         'left' => '16.667%',
-        'svg' => '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path><path d="M10 9.5a2 2 0 1 1 2.8 1.8c-.5.3-.8.7-.8 1.2v.5M12 16h.01"></path>'
+        'svg' => '<path d="M12 21a9 9 0 1 0-9-9c0 1.6.4 3.1 1.2 4.4L3 21l4.8-1.1A8.9 8.9 0 0 0 12 21Z"></path><path d="M9.8 9.2a2.3 2.3 0 0 1 4.4.8c0 1.5-2.2 2.2-2.2 3.5"></path><path d="M12 17h.01"></path>'
     ],
     [
         'key' => 'analyze',
@@ -965,7 +965,7 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Jadwalk
               color: stage === {{ $idx }} ? '#2BD46A' : (stage > {{ $idx }} ? '#13803F' : '#6B7A88'),
               animation: stage === {{ $idx }} ? 'kvPulse 2s ease-out infinite' : 'none'
           }">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             {!! $btn['svg'] !!}
         </svg>
     </span>
