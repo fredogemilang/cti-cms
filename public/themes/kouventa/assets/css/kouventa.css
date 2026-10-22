@@ -1703,7 +1703,7 @@ html{scroll-padding-top:0}
 .kv-linked-pill {
     min-height: 48px;
     box-sizing: border-box;
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     gap: 10px;
     padding: 6px 6px 6px 16px;
@@ -1756,7 +1756,7 @@ html{scroll-padding-top:0}
 }
 .kv-unlinked-pill {
     min-height: 48px;
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     font-size: 15px;
