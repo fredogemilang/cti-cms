@@ -163,7 +163,7 @@
                     this.implSeen = true;
                     io.disconnect();
                 }
-            }, { threshold: 0.25 });
+            }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
             io.observe(el);
         });
     }
@@ -1049,10 +1049,10 @@
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px">
 
 <!-- Step 1: Discover -->
-<button type="button" @click="replayStep(0)" aria-label="Step 1: Discover (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24">
-<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="{ animation: implSeen ? ('kvGrowW 1.6s linear ' + (replayed[0] ? '0s' : '0s') + ' 1 both') : 'none', width: implSeen ? '' : '0' }"></span></div>
-<div style="height: 150px; background: #F4F6F5; position: relative; overflow: hidden">
-<div x-show="stepOn[0]" style="position: absolute; inset: 0">
+<button type="button" @click="replayStep(0)" aria-label="Step 1: Discover (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
+<div style="height: 156px; background: #F4F6F5; position: relative; overflow: hidden">
+<template x-if="implSeen && stepOn[0]">
+<div style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 10px">
 <span style="width: 50px; height: 34px; border-radius: 8px; background: #FFFFFF; border: 1px solid #E3E8E6"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
 <span style="width: 50px; height: 34px; border-radius: 8px; border: 1px solid #E3E8E6;" :style="{ animation: 'kvAmber .3s ease ' + (replayed[0] ? '0.6s' : '0.6s') + ' both' }"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
@@ -1060,18 +1060,19 @@
 </div>
 <span style="position: absolute; left: 24px; top: 46px; --d: 170px;" :style="{ animation: 'kvScan 1.4s ease ' + (replayed[0] ? '0.1s' : '0.1s') + ' 1 both' }"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#071C33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"></circle><path d="m20 20-4.5-4.5"></path></svg></span>
 </div>
+</template>
 </div>
 <div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; animation: kvStepOn .3s ease 0s both">1</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Discover', 'Discover') }}</span></span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[0] ? '0s' : '0s') + ' both') : 'none' }">1</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Discover', 'Discover') }}</span></span>
 <span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Our team will map existing business processes, pain points, and requirements to identify where Agentic AI can create value.', 'Our team will map existing business processes, pain points, and requirements to identify where Agentic AI can create value.') }}</span>
 </div>
 </button>
 
 <!-- Step 2: Connect -->
-<button type="button" @click="replayStep(1)" aria-label="Step 2: Connect (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24">
-<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="{ animation: implSeen ? ('kvGrowW 1.6s linear ' + (replayed[1] ? '0s' : '2s') + ' 1 both') : 'none', width: implSeen ? '' : '0' }"></span></div>
-<div style="height: 150px; background: #F4F6F5; position: relative; overflow: hidden">
-<div x-show="stepOn[1]" style="position: absolute; inset: 0">
+<button type="button" @click="replayStep(1)" aria-label="Step 2: Connect (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
+<div style="height: 156px; background: #F4F6F5; position: relative; overflow: hidden">
+<template x-if="implSeen && stepOn[1]">
+<div style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 14px">
 <div style="display: flex; flex-direction: column; gap: 5px">
 <span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '0.1s' : '2.1s') + ' both' }">{{ t('kouventa.Documents', 'Documents') }}</span>
@@ -1083,18 +1084,19 @@
 <span style="width: 52px; height: 52px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800">AGENT</span>
 </div>
 </div>
+</template>
 </div>
 <div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; animation: kvStepOn .3s ease 2s both">2</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Connect', 'Connect') }}</span></span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[1] ? '0s' : '2s') + ' both') : 'none' }">2</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Connect', 'Connect') }}</span></span>
 <span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Connect relevant data sources, applications, and systems required for the agent to perform its tasks.', 'Connect relevant data sources, applications, and systems required for the agent to perform its tasks.') }}</span>
 </div>
 </button>
 
 <!-- Step 3: Configure -->
-<button type="button" @click="replayStep(2)" aria-label="Step 3: Configure (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24">
-<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="{ animation: implSeen ? ('kvGrowW 1.6s linear ' + (replayed[2] ? '0s' : '4s') + ' 1 both') : 'none', width: implSeen ? '' : '0' }"></span></div>
-<div style="height: 150px; background: #F4F6F5; position: relative; overflow: hidden">
-<div x-show="stepOn[2]" style="position: absolute; inset: 0">
+<button type="button" @click="replayStep(2)" aria-label="Step 3: Configure (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
+<div style="height: 156px; background: #F4F6F5; position: relative; overflow: hidden">
+<template x-if="implSeen && stepOn[2]">
+<div style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 16px">
 <div style="display: flex; flex-direction: column; gap: 5px; width: 90px">
 <span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #E3E8E6;" :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '0.1s' : '4.1s') + ' both' }"></span>
@@ -1108,18 +1110,19 @@
 </div>
 </div>
 </div>
+</template>
 </div>
 <div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; animation: kvStepOn .3s ease 4s both">3</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Configure', 'Configure') }}</span></span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[2] ? '0s' : '4s') + ' both') : 'none' }">3</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Configure', 'Configure') }}</span></span>
 <span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Define workflows, business rules, actions, and guardrails based on your business processes.', 'Define workflows, business rules, actions, and guardrails based on your business processes.') }}</span>
 </div>
 </button>
 
 <!-- Step 4: Deploy & Scale -->
-<button type="button" @click="replayStep(3)" aria-label="Step 4: Deploy & Scale (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24">
-<div style="height: 6px; background: #E3E8E6; position: relative"><span style="position: absolute; left: 0; top: 0; height: 6px; background: #13803F; --w: 100%;" :style="{ animation: implSeen ? ('kvGrowW 1.6s linear ' + (replayed[3] ? '0s' : '6s') + ' 1 both') : 'none', width: implSeen ? '' : '0' }"></span></div>
-<div style="height: 150px; background: #F4F6F5; position: relative; overflow: hidden">
-<div x-show="stepOn[3]" style="position: absolute; inset: 0">
+<button type="button" @click="replayStep(3)" aria-label="Step 4: Deploy & Scale (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
+<div style="height: 156px; background: #F4F6F5; position: relative; overflow: hidden">
+<template x-if="implSeen && stepOn[3]">
+<div style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 16px">
 <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
 <span style="width: 44px; height: 24px; border-radius: 999px; background: #C9D2CE; padding: 2px; box-sizing: border-box; display: flex;" :style="{ animation: 'kvGreen .3s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both' }"><span style="width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF;" :style="{ animation: 'kvKnob .3s ease ' + (replayed[3] ? '0.1s' : '6.1s') + ' both' }"></span></span>
@@ -1136,9 +1139,10 @@
 </div>
 </div>
 </div>
+</template>
 </div>
 <div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; animation: kvStepOn .3s ease 6s both">4</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Deploy & Scale', 'Deploy & Scale') }}</span></span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[3] ? '0s' : '6s') + ' both') : 'none' }">4</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Deploy & Scale', 'Deploy & Scale') }}</span></span>
 <span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Launch your agent into production, monitor its performance, and expand AI agents across more processes.', 'Launch your agent into production, monitor its performance, and expand AI agents across more processes.') }}</span>
 </div>
 </button>
