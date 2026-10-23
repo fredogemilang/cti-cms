@@ -739,7 +739,7 @@ $productsList = [
     [
         'id' => 'workflow',
         'name' => 'TaskO',
-        'tag' => $isIdLocale ? 'Part of AI Task Force' : t('kouventa.Part of AI Task Force', 'Part of AI Task Force'),
+        'tag' => $isIdLocale ? 'Bagian dari AI Task Force' : t('kouventa.Part of AI Task Force', 'Part of AI Task Force'),
         'soon' => true,
         'svg' => '<rect x="3" y="3" width="7" height="6" rx="1.5"></rect><rect x="14" y="15" width="7" height="6" rx="1.5"></rect><path d="M6.5 9v3a3 3 0 0 0 3 3H14"></path>'
     ]
@@ -1136,7 +1136,6 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 <!-- Wiki Info -->
 <div class="kv-product-info" x-show="product === 'wiki'">
     <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">AI Company Wikipedia</span>
-    <span style="font-size: 13px; font-weight: 700; color: #13803F">{{ $isIdLocale ? 'Asisten pengetahuan' : t('kouventa.Knowledge assistant', 'Knowledge assistant') }}</span>
     <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $isIdLocale ? 'Chatbot berbasis AI yang memahami konteks pertanyaan Anda dan memberi jawaban cepat dan akurat dalam hitungan detik, bersumber dari pengetahuan perusahaan, website, database, dan sumber data lain yang terhubung.' : t('kouventa.An AI chatbot that understands the context of your questions and delivers fast, accurate answers in seconds, drawing from your company knowledge, websites, databases, and other connected data sources.', 'An AI chatbot that understands the context of your questions and delivers fast, accurate answers in seconds, drawing from your company knowledge, websites, databases, and other connected data sources.') }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
         <div style="display: flex; gap: 12px; align-items: flex-start">
@@ -1161,7 +1160,6 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 <!-- Task Force Info -->
 <div class="kv-product-info" x-show="product === 'taskforce'" x-cloak>
     <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">AI Task Force</span>
-    <span style="font-size: 13px; font-weight: 700; color: #13803F">{{ $isIdLocale ? 'Agentic AI' : t('kouventa.Agentic AI', 'Agentic AI') }}</span>
     <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $isIdLocale ? 'Solusi berbasis Agentic AI yang memahami tujuan bisnis Anda dan menjalankan workflow kompleks di sistem bisnis yang terhubung, menalar setiap tugas dan meminta persetujuan Anda di tahap penting.' : t('kouventa.An Agentic AI solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.', 'An Agentic AI solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.') }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
         <div style="display: flex; gap: 12px; align-items: flex-start">
@@ -1217,7 +1215,7 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
         <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">TaskO</span>
         <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.06em; padding: 6px 10px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ $isIdLocale ? 'SEGERA HADIR' : t('kouventa.COMING SOON', 'COMING SOON') }}</span>
     </div>
-    <span style="font-size: 13px; font-weight: 700; color: #13803F">{{ $isIdLocale ? 'Part of AI Task Force' : t('kouventa.Part of AI Task Force', 'Part of AI Task Force') }}</span>
+    <span style="font-size: 13px; font-weight: 700; color: #13803F">{{ $isIdLocale ? 'Bagian dari AI Task Force' : t('kouventa.Part of AI Task Force', 'Part of AI Task Force') }}</span>
     <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $isIdLocale ? 'TaskO (Task Automation) memungkinkan bisnis merancang dan mengotomasi proses secara menyeluruh dengan menghubungkan tugas, agent AI, sistem bisnis, dan data, tanpa coding yang rumit.' : t('kouventa.TaskO (Task Automation) lets businesses design and automate entire processes by connecting tasks, AI agents, business systems, and data, without complex coding.', 'TaskO (Task Automation) lets businesses design and automate entire processes by connecting tasks, AI agents, business systems, and data, without complex coding.') }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
         <div style="display: flex; gap: 12px; align-items: flex-start">
