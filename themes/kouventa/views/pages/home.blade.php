@@ -533,9 +533,9 @@
     <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
         <img src="{{ theme_asset('images/logos/customer-liberta-hotels.png') }}" alt="Liberta Hotels" title="Liberta Hotels" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
     </div>
-    <!-- 5. My Password -->
+    <!-- 5. DPay -->
     <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-        <img src="{{ theme_asset('images/logos/customer-my-password.png') }}" alt="My Password" title="My Password" style="max-height: 28px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+        <img src="{{ theme_asset('images/logos/logo-dpay.png') }}" alt="DPay" title="DPay" style="max-height: 42px; max-width: 100%; width: auto; height: auto; object-fit: contain">
     </div>
     <!-- 6. PakeDriver -->
     <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
