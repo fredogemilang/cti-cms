@@ -1375,7 +1375,7 @@ class="kv-canvas-wrap">
         </div>
 
         <!-- CE Addons -->
-        <div x-show="product === 'ce'" class="kv-addon-grid">
+        <div x-show="product === 'ce'" x-cloak class="kv-addon-grid">
             @foreach ($ceAddons as $addon)
                 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 8px">
                     <span style="font-size: 16px; font-weight: 800; color: #0E1A24">{{ t('kouventa.' . $addon[0], $addon[0]) }}</span>
@@ -1385,7 +1385,7 @@ class="kv-canvas-wrap">
         </div>
 
         <!-- AI Addons -->
-        <div x-show="product === 'ai'" class="kv-addon-grid">
+        <div x-show="product === 'ai'" x-cloak class="kv-addon-grid">
             @foreach ($aiAddons as $addon)
                 @php
                     $isId = app()->getLocale() === 'id';
