@@ -568,7 +568,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'text',
                 'label' => 'Bottom CTA Title',
                 'en' => 'Start engaging customers on WhatsApp.',
-                'id' => 'Mulai berinteraksi dengan pelanggan di WhatsApp.',
+                'id' => 'Mulai terhubung dengan pelanggan lewat WhatsApp.',
             ],
             [
                 'name' => 'bottom_cta_subtitle',

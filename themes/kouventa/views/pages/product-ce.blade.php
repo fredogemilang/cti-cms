@@ -712,8 +712,10 @@
         }
     }
     $featuresTitle = $page?->titleBlock('features_title', ['prefix' => $isIdLocale ? 'Satu platform.' : 'One platform.', 'main' => $isIdLocale ? 'Tanpa pesan yang terlewat.' : 'Zero missed messages.']);
-    $whyTitle = $page?->titleBlock('why_title', ['prefix' => $isIdLocale ? 'Kenapa Kouventa untuk customer' : 'Why Kouventa for customer', 'main' => 'engagement']);
-    $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Mulai berinteraksi dengan pelanggan di WhatsApp.' : 'Start engaging customers on WhatsApp.');
+    $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Mulai terhubung dengan pelanggan lewat WhatsApp.' : 'Start engaging customers on WhatsApp.');
+    if ($isIdLocale && $bottomCtaTitle === 'Mulai berinteraksi dengan pelanggan di WhatsApp.') {
+        $bottomCtaTitle = 'Mulai terhubung dengan pelanggan lewat WhatsApp.';
+    }
 @endphp
 
 @section('content')
