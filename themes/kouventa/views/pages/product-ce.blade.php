@@ -729,7 +729,7 @@
         {
             name: '{{ t('kouventa.Onboarding', 'Onboarding') }}',
             headline: '{{ t('kouventa.Make onboarding effortless.', 'Make onboarding effortless.') }}',
-            sub: '{{ t('kouventa.Guide new customers through registration, verification and data submission — all in chat.', 'Guide new customers through registration, verification and data submission — all in chat.') }}',
+            sub: '{{ t('kouventa.Guide new customers through registration, verification and data submission, all in chat.', 'Guide new customers through registration, verification and data submission, all in chat.') }}',
             tools: {
                 flows: '{{ t('kouventa.Simple registration and data entry', 'Simple registration and data entry') }}',
                 auth: '{{ t('kouventa.Verify identity securely', 'Verify identity securely') }}',
