@@ -739,7 +739,7 @@ $productsList = [
     [
         'id' => 'workflow',
         'name' => 'TaskO',
-        'tag' => $isIdLocale ? 'Task Automation' : t('kouventa.Task Automation', 'Task Automation'),
+        'tag' => $isIdLocale ? 'Part of AI Task Force' : t('kouventa.Part of AI Task Force', 'Part of AI Task Force'),
         'soon' => true,
         'svg' => '<rect x="3" y="3" width="7" height="6" rx="1.5"></rect><rect x="14" y="15" width="7" height="6" rx="1.5"></rect><path d="M6.5 9v3a3 3 0 0 0 3 3H14"></path>'
     ]
@@ -784,7 +784,6 @@ if ($isIdLocale) {
 
 $productsTitle = $page?->block('products_title', $isIdLocale ? 'Produk yang membuat Anda tetap memegang kendali.' : 'The products that put you in control.');
 $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform untuk semua kebutuhan AI organisasi Anda.' : 'Bring all your AI into one platform.');
-$bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Jadwalkan demo untuk melihat bagaimana Kouventa menghubungkan pengetahuan perusahaan Anda, mengotomasi tugas rutin, dan menjaga Anda tetap memegang kendali.' : 'Book a demo to see how Kouventa connects your company knowledge, automates routine tasks, and keeps you in control.');
 @endphp
 
 @section('content')
@@ -1218,7 +1217,7 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Jadwalk
         <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">TaskO</span>
         <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.06em; padding: 6px 10px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ $isIdLocale ? 'SEGERA HADIR' : t('kouventa.COMING SOON', 'COMING SOON') }}</span>
     </div>
-    <span style="font-size: 13px; font-weight: 700; color: #13803F">{{ $isIdLocale ? 'Task Automation' : t('kouventa.Task Automation', 'Task Automation') }}</span>
+    <span style="font-size: 13px; font-weight: 700; color: #13803F">{{ $isIdLocale ? 'Part of AI Task Force' : t('kouventa.Part of AI Task Force', 'Part of AI Task Force') }}</span>
     <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $isIdLocale ? 'TaskO (Task Automation) memungkinkan bisnis merancang dan mengotomasi proses secara menyeluruh dengan menghubungkan tugas, agent AI, sistem bisnis, dan data, tanpa coding yang rumit.' : t('kouventa.TaskO (Task Automation) lets businesses design and automate entire processes by connecting tasks, AI agents, business systems, and data, without complex coding.', 'TaskO (Task Automation) lets businesses design and automate entire processes by connecting tasks, AI agents, business systems, and data, without complex coding.') }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
         <div style="display: flex; gap: 12px; align-items: flex-start">
@@ -1471,7 +1470,6 @@ $channelsDbl = array_merge($channels, $channels);
 <section style="padding: 104px 80px">
 <div class="kv-panel" style="background: #2BD46A; border-radius: 28px; padding: 72px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 32px; color: #06251A">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.55; max-width: 680px">{!! nl2br(e($bottomCtaSubtitle)) !!}</p>
 <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap">
 <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
 <a href="{{ localized_url('/pricing?tab=ai') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>
