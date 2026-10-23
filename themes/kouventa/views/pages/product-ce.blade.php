@@ -788,7 +788,7 @@
         chatbot: {
             name: '{{ t('kouventa.Chatbot', 'Chatbot') }}',
             headline: '{{ t('kouventa.AI-powered customer support.', 'AI-powered customer support.') }}',
-            desc: '{{ t('kouventa.AI and predefined chatbots answer fast, and hand over to a human when needed.', 'AI and predefined chatbots answer fast, and hand over to a human when needed.') }}',
+            desc: '{{ t('kouventa.Static and AI chatbots answer fast, and hand over to a human when needed.', 'Static and AI chatbots answer fast, and hand over to a human when needed.') }}',
             tag: '{{ t('kouventa.AI & predefined chatbots', 'AI & predefined chatbots') }}',
             bullets: [
                 '{{ t('kouventa.Resolve inquiries faster', 'Resolve inquiries faster') }}',
