@@ -1033,7 +1033,7 @@
 
 @section('content')
 <div x-data="{
-    product: (new URLSearchParams(window.location.search).get('tab') === 'ai' ? 'ai' : 'ce'),
+    product: (window.location.hash === '#calculator' ? 'ce' : (new URLSearchParams(window.location.search).get('tab') === 'ai' ? 'ai' : 'ce')),
     openCats: { 'ai_0': true, 'ce_0': true },
     setTab(tab) {
         this.product = tab;
@@ -1058,9 +1058,38 @@
     collapseAll() {
         this.openCats = {};
     },
+    scrollToCalculator() {
+        this.setTab('ce');
+        setTimeout(() => {
+            const el = document.getElementById('calculator');
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 150);
+    },
     ...whatsappCalculator()
 }" 
-x-init="window.addEventListener('popstate', () => { const t = new URLSearchParams(window.location.search).get('tab'); if (t === 'ai' || t === 'ce') product = t; })"
+x-init="
+    if (window.location.hash === '#calculator') {
+        scrollToCalculator();
+    }
+    window.addEventListener('hashchange', () => {
+        if (window.location.hash === '#calculator') {
+            scrollToCalculator();
+        }
+    });
+    window.addEventListener('open-calculator', () => {
+        scrollToCalculator();
+    });
+    window.addEventListener('switch-pricing-tab', (e) => {
+        if (e.detail === 'ai' || e.detail === 'ce') setTab(e.detail);
+    });
+    window.addEventListener('popstate', () => {
+        const t = new URLSearchParams(window.location.search).get('tab');
+        if (t === 'ai' || t === 'ce') product = t;
+        if (window.location.hash === '#calculator') scrollToCalculator();
+    });
+"
 class="kv-canvas-wrap">
 
 <!-- ============ HERO & PLATFORM TOGGLE ============ -->
@@ -1476,7 +1505,7 @@ class="kv-canvas-wrap">
     </div>
 
     <!-- ============ WHATSAPP CALCULATOR (CE ONLY) ============ -->
-    <div x-show="product === 'ce'" style="display: flex; flex-direction: column; gap: 32px">
+    <div id="calculator" x-show="product === 'ce'" style="scroll-margin-top: 100px; display: flex; flex-direction: column; gap: 32px">
         <div style="display: flex; flex-direction: column; gap: 10px">
             <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; color: #0E1A24">{{ $calcTitle }}</h2>
             <p style="margin: 0; font-size: 16px; color: #4A5866">{{ $calcSubtitle }}</p>

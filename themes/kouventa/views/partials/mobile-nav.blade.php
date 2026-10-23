@@ -259,7 +259,9 @@
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 8px;">
-            <a href="{{ localized_url('/pricing?tab=ai') }}" @click="activeSheet = null" class="kv-sheet-card">
+            <a href="{{ localized_url('/pricing?tab=ai') }}" 
+               @click="activeSheet = null; if (window.location.pathname.replace(/\/$/, '').endsWith('/pricing')) { window.dispatchEvent(new CustomEvent('switch-pricing-tab', { detail: 'ai' })); }" 
+               class="kv-sheet-card">
                 <div style="flex: 1;">
                     <div style="font-weight: 700; color: #FFFFFF; font-size: 15px;">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</div>
                     <div style="font-size: 12px; color: #B9C6D3; margin-top: 2px;">Starter · Grow · Scale</div>
@@ -267,7 +269,9 @@
                 <span style="color: #2BD46A; font-weight: 700;">→</span>
             </a>
 
-            <a href="{{ localized_url('/pricing?tab=ce') }}" @click="activeSheet = null" class="kv-sheet-card">
+            <a href="{{ localized_url('/pricing?tab=ce') }}" 
+               @click="activeSheet = null; if (window.location.pathname.replace(/\/$/, '').endsWith('/pricing')) { window.dispatchEvent(new CustomEvent('switch-pricing-tab', { detail: 'ce' })); }" 
+               class="kv-sheet-card">
                 <div style="flex: 1;">
                     <div style="font-weight: 700; color: #FFFFFF; font-size: 15px;">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</div>
                     <div style="font-size: 12px; color: #B9C6D3; margin-top: 2px;">Starter · Professional · Enterprise</div>
@@ -275,7 +279,9 @@
                 <span style="color: #2BD46A; font-weight: 700;">→</span>
             </a>
 
-            <a href="{{ localized_url('/pricing#calculator') }}" @click="activeSheet = null" class="kv-sheet-card" style="background: rgba(43,212,106,0.12); border-color: rgba(43,212,106,0.3);">
+            <a href="{{ localized_url('/pricing?tab=ce#calculator') }}" 
+               @click="activeSheet = null; if (window.location.pathname.replace(/\/$/, '').endsWith('/pricing')) { window.dispatchEvent(new CustomEvent('open-calculator')); }" 
+               class="kv-sheet-card" style="background: rgba(43,212,106,0.12); border-color: rgba(43,212,106,0.3);">
                 <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
                     <span style="width: 32px; height: 32px; border-radius: 8px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;">Rp</span>
                     <div>
