@@ -669,11 +669,11 @@ html{scroll-padding-top:0}
   outline: none;
 }
 .kv-toggle-btn.is-active {
-  background: #2BD46A !important;
-  color: #06251A !important;
+  background: #FFFFFF !important;
+  color: #071C33 !important;
 }
 .kv-toggle-btn:hover:not(.is-active) {
-  background: rgba(255, 255, 255, 0.16) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
   color: #FFFFFF !important;
 }
 

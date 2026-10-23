@@ -408,15 +408,15 @@ class KouventaPageBlocksSeeder extends Seeder
                 'name' => 'cta_title',
                 'type' => 'text',
                 'label' => 'Custom Setup CTA Title',
-                'en' => 'Need a custom deployment or on-premise setup?',
-                'id' => 'Butuh deployment khusus atau instalasi on-premise?',
+                'en' => 'Ready to see how your team would use it?',
+                'id' => 'Siap melihat bagaimana tim Anda akan memakainya?',
             ],
             [
                 'name' => 'cta_subtitle',
                 'type' => 'textarea',
                 'label' => 'Custom Setup CTA Subtitle',
-                'en' => 'Talk to our solution architects about compliance, private cloud, and volume pricing.',
-                'id' => 'Konsultasikan dengan tim solution architect kami mengenai kepatuhan regulasi, private cloud, dan harga volume.',
+                'en' => "Book a working session with our solution team. We'll map your use cases to the right tier and deployment.",
+                'id' => 'Jadwalkan sesi kerja dengan tim solusi kami. Kami bantu memetakan use case Anda ke paket dan deployment yang tepat.',
             ],
         ];
 

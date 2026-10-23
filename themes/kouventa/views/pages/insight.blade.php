@@ -62,9 +62,6 @@
             {{ $heroTitle['prefix'] ?? 'Explore the newest articles' }}<br>
             <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'in our blog.' }}</span>
         </h1>
-        <p class="kv-hero-desc">
-            {{ $heroDescription }}
-        </p>
     </div>
 </section>
 

@@ -1,13 +1,29 @@
 @extends('kouventa::layouts.app')
 
 @php
-    $heroBadge = $page?->block('hero_badge', 'PRICING');
-    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Intelligence you control,', 'main' => 'priced as you grow.']);
-    $heroSubtitle = $page?->block('hero_subtitle', 'Two platforms, three tiers each. Start where your team is today, then scale without switching vendors.');
-    $calcTitle = $page?->block('calc_title', 'Estimate your WhatsApp cost');
-    $calcSubtitle = $page?->block('calc_subtitle', 'Enter your expected monthly conversations per category to see your estimated monthly and yearly cost.');
-    $ctaTitle = $page?->block('cta_title', 'Ready to see how your team would use it?');
-    $ctaSubtitle = $page?->block('cta_subtitle', "Book a working session with our solution team. We'll map your use cases to the right tier and deployment.");
+    $isIdLocale = app()->getLocale() === 'id';
+    $heroBadge = $page?->block('hero_badge', '');
+    
+    // Bottom CTA setup
+    $defaultCtaTitle = $isIdLocale
+        ? 'Siap melihat bagaimana tim Anda akan memakainya?'
+        : 'Ready to see how your team would use it?';
+    $defaultCtaSubtitle = $isIdLocale
+        ? 'Jadwalkan sesi kerja dengan tim solusi kami. Kami bantu memetakan use case Anda ke paket dan deployment yang tepat.'
+        : "Book a working session with our solution team. We'll map your use cases to the right tier and deployment.";
+
+    $ctaTitle = $page?->block('cta_title', $defaultCtaTitle);
+    if ($ctaTitle === 'Need a custom deployment or on-premise setup?' || $ctaTitle === 'Butuh deployment khusus atau instalasi on-premise?' || empty($ctaTitle)) {
+        $ctaTitle = $defaultCtaTitle;
+    }
+
+    $ctaSubtitle = $page?->block('cta_subtitle', $defaultCtaSubtitle);
+    if (str_contains($ctaSubtitle ?? '', 'Talk to our solution architects') || str_contains($ctaSubtitle ?? '', 'Konsultasikan dengan tim solution architect') || empty($ctaSubtitle)) {
+        $ctaSubtitle = $defaultCtaSubtitle;
+    }
+
+    $calcTitle = $page?->block('calc_title', $isIdLocale ? 'Estimasi biaya WhatsApp Anda' : 'Estimate your WhatsApp cost');
+    $calcSubtitle = $page?->block('calc_subtitle', $isIdLocale ? 'Masukkan perkiraan percakapan bulanan Anda per kategori untuk melihat perkiraan biaya bulanan dan tahunan.' : 'Enter your expected monthly conversations per category to see your estimated monthly and yearly cost.');
 
     // Structured comparison data
     $ceCategories = array (
@@ -1053,14 +1069,24 @@ class="kv-canvas-wrap">
         <div style="position: absolute; left: 50%; top: -200px; width: 1000px; height: 1000px; margin-left: -500px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div>
     </div>
     
-    <span style="font-size: 13px; font-weight: 800; letter-spacing: 0.1em; color: #2BD46A; text-transform: uppercase">{{ $heroBadge }}</span>
+    @if(!empty($heroBadge) && !in_array(strtoupper(trim($heroBadge)), ['PRICING', 'HARGA']))
+        <span style="font-size: 13px; font-weight: 800; letter-spacing: 0.1em; color: #2BD46A; text-transform: uppercase">{{ $heroBadge }}</span>
+    @endif
     
     <h1 style="margin: 0; font-size: 72px; line-height: 1.04; font-weight: 800; letter-spacing: -0.035em; max-width: 960px">
-        {{ $heroTitle['prefix'] ?? 'Intelligence you control,' }}<br><span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'priced for how you grow.' }}</span>
+        @if($isIdLocale)
+            AI yang Anda <span style="color: #67D175">kendalikan,</span><br>dengan harga sesuai<br>pertumbuhan Anda.
+        @else
+            Intelligence you <span style="color: #67D175">control,</span><br>priced for how you grow.
+        @endif
     </h1>
     
-    <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 660px">
-        {!! nl2br(e($heroSubtitle)) !!}
+    <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 720px">
+        @if($isIdLocale)
+            Dua platform, masing-masing tiga paket. Mulai sesuai kondisi tim<br>Anda sekarang, lalu kembangkan tanpa perlu ganti vendor.
+        @else
+            Two platforms, three tiers each. Start where your team is today, and<br>scale without switching vendors.
+        @endif
     </p>
 
     <!-- Platform Toggle -->
@@ -1567,8 +1593,8 @@ class="kv-canvas-wrap">
             <p style="margin: 0; font-size: 18px; line-height: 1.55">{!! nl2br(e($ctaSubtitle)) !!}</p>
         </div>
         <div style="display: flex; gap: 12px; flex-shrink: 0">
-            <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a working session', 'Book a working session') }}</a>
-            <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none; cursor: pointer">{{ t('kouventa.Contact sales', 'Contact sales') }}</a>
+            <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a working session', $isIdLocale ? 'Jadwalkan sesi kerja' : 'Book a working session') }}</a>
+            <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none; cursor: pointer">{{ t('kouventa.Contact sales', $isIdLocale ? 'Hubungi sales' : 'Contact sales') }}</a>
         </div>
     </div>
 </section>

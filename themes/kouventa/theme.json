@@ -110,14 +110,14 @@
             "label": "Pricing",
             "description": "Pricing tiers and WhatsApp conversation cost calculator",
             "blocks": [
-                {"name": "hero_badge", "type": "text", "label": "Hero Badge", "default": "PRICING"},
-                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "Intelligence you", "main": "control, priced for how you grow."}},
-                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "Two platforms, three tiers each. Start where your team is today, and scale without switching vendors."},
+                {"name": "hero_badge", "type": "text", "label": "Hero Badge", "default": ""},
+                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "Intelligence you control,", "main": "priced for how you grow."}},
+                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "Two platforms, three tiers each. Start where your team is today, and\nscale without switching vendors."},
                 {"name": "calc_title", "type": "text", "label": "Calculator Section Title", "default": "Estimate your monthly WhatsApp costs."},
                 {"name": "calc_subtitle", "type": "textarea", "label": "Calculator Section Subtitle", "default": "Kouventa passes Meta conversation fees at cost with zero markup."},
                 {"name": "faq_title", "type": "text", "label": "FAQ Section Title", "default": "Frequently asked questions"},
-                {"name": "cta_title", "type": "text", "label": "Custom Setup CTA Title", "default": "Need a custom deployment or on-premise setup?"},
-                {"name": "cta_subtitle", "type": "textarea", "label": "Custom Setup CTA Subtitle", "default": "Talk to our solution architects about compliance, private cloud, and volume pricing."}
+                {"name": "cta_title", "type": "text", "label": "Custom Setup CTA Title", "default": "Ready to see how your team would use it?"},
+                {"name": "cta_subtitle", "type": "textarea", "label": "Custom Setup CTA Subtitle", "default": "Book a working session with our solution team. We'll map your use cases to the right tier and deployment."}
             ]
         },
         "about": {
