@@ -1191,7 +1191,6 @@ $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Jadwalk
 <!-- Playground Info -->
 <div class="kv-product-info" x-show="product === 'playground'" x-cloak>
     <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">Chat Playground</span>
-    <span style="font-size: 13px; font-weight: 700; color: #13803F">{{ $isIdLocale ? 'Bekerja dengan Wikipedia & Task Force' : t('kouventa.Works with Wikipedia & Task Force', 'Works with Wikipedia & Task Force') }}</span>
     <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $isIdLocale ? 'Chat Playground adalah workspace terkontrol untuk chat dengan AI Company Wikipedia, serta memicu, menjalankan, dan memantau agent AI Task Force, secara aman, efisien, dan sesuai batasan Anda.' : t('kouventa.Chat Playground is your controlled workspace to chat with AI Company Wikipedia, and to trigger, run, and monitor AI Task Force agents, securely, efficiently, and within your boundaries.', 'Chat Playground is your controlled workspace to chat with AI Company Wikipedia, and to trigger, run, and monitor AI Task Force agents, securely, efficiently, and within your boundaries.') }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
         <div style="display: flex; gap: 12px; align-items: flex-start">
