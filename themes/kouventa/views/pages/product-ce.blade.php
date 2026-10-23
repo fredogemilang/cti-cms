@@ -800,7 +800,7 @@
         integration: {
             name: '{{ t('kouventa.Cross Platform Integration', 'Cross Platform Integration') }}',
             headline: '{{ t('kouventa.Keep customers updated, automatically.', 'Keep customers updated, automatically.') }}',
-            desc: '{{ t('kouventa.Trigger WhatsApp messages from your business systems — reminders, orders, deliveries, appointments.', 'Trigger WhatsApp messages from your business systems — reminders, orders, deliveries, appointments.') }}',
+            desc: '{{ t('kouventa.Trigger WhatsApp messages from your business systems: reminders, orders, deliveries, appointments.', 'Trigger WhatsApp messages from your business systems: reminders, orders, deliveries, appointments.') }}',
             tag: '{{ t('kouventa.Automated system updates', 'Automated system updates') }}',
             bullets: [
                 '{{ t('kouventa.Messages triggered by business events', 'Messages triggered by business events') }}',
