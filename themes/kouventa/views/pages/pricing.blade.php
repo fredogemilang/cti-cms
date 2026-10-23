@@ -1505,7 +1505,7 @@ class="kv-canvas-wrap">
     </div>
 
     <!-- ============ WHATSAPP CALCULATOR (CE ONLY) ============ -->
-    <div id="calculator" x-show="product === 'ce'" style="scroll-margin-top: 100px; display: flex; flex-direction: column; gap: 32px">
+    <div id="calculator" x-show="product === 'ce'" style="scroll-margin-top: 130px; display: flex; flex-direction: column; gap: 32px">
         <div style="display: flex; flex-direction: column; gap: 10px">
             <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; color: #0E1A24">{{ $calcTitle }}</h2>
             <p style="margin: 0; font-size: 16px; color: #4A5866">{{ $calcSubtitle }}</p>
