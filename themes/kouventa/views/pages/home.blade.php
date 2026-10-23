@@ -511,11 +511,11 @@
     }
     @media (max-width: 768px) {
         .kv-customer-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 12px 10px !important;
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
         }
         .kv-customer-grid .kv-more-card {
-            grid-column: span 2 !important;
+            grid-column: auto !important;
         }
     }
 </style>

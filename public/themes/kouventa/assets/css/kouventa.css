@@ -2398,15 +2398,21 @@ html.js-motion .kv-reveal-item.is-revealed.kv-video-card:hover {
 
 @media (max-width: 768px) {
     .kv-customer-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 12px 10px !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    .kv-customer-grid .kv-more-card {
+        grid-column: auto !important;
     }
 }
 
 @media (max-width: 640px) {
     .kv-customer-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 12px 10px !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    .kv-customer-grid .kv-more-card {
+        grid-column: auto !important;
     }
     .kv-customer-card {
         height: 72px !important;
@@ -2867,16 +2873,15 @@ body {
     div[style*="grid-template-columns: 480px minmax(0, 1fr)"],
     div[style*="grid-template-columns: minmax(0, 1fr) 340px"],
     div[style*="grid-template-columns: 340px minmax(0, 1fr)"],
-    div[style*="grid-template-columns: repeat(2, minmax(0, 1fr))"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
-    div[style*="grid-template-columns: repeat(2, 1fr)"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
-    div[style*="grid-template-columns: repeat(3, minmax(0, 1fr))"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
-    div[style*="grid-template-columns: repeat(3, 1fr)"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
-    div[style*="grid-template-columns: repeat(4, minmax(0, 1fr))"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
-    div[style*="grid-template-columns: repeat(4, 1fr)"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid),
+    div[style*="grid-template-columns: repeat(2, minmax(0, 1fr))"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid):not(.kv-hero-tools-grid):not(.kv-hero-diagram-canvas *):not(.kv-stage-wrap *):not(.kv-mockup-wrap *),
+    div[style*="grid-template-columns: repeat(2, 1fr)"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid):not(.kv-hero-tools-grid):not(.kv-hero-diagram-canvas *):not(.kv-stage-wrap *):not(.kv-mockup-wrap *),
+    div[style*="grid-template-columns: repeat(3, minmax(0, 1fr))"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid):not(.kv-hero-tools-grid):not(.kv-hero-diagram-canvas *):not(.kv-stage-wrap *):not(.kv-mockup-wrap *),
+    div[style*="grid-template-columns: repeat(3, 1fr)"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid):not(.kv-hero-tools-grid):not(.kv-hero-diagram-canvas *):not(.kv-stage-wrap *):not(.kv-mockup-wrap *),
+    div[style*="grid-template-columns: repeat(4, minmax(0, 1fr))"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid):not(.kv-hero-tools-grid):not(.kv-hero-diagram-canvas *):not(.kv-stage-wrap *):not(.kv-mockup-wrap *),
+    div[style*="grid-template-columns: repeat(4, 1fr)"]:not(.kv-industry-grid):not(.kv-partner-grid):not(.kv-customer-grid):not(.kv-hero-tools-grid):not(.kv-hero-diagram-canvas *):not(.kv-stage-wrap *):not(.kv-mockup-wrap *),
     div[style*="grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr)"],
     .kv-sol-split-grid,
     div[style*="grid-template-columns: minmax(0, 1fr) 600px"],
-    div[style*="grid-template-columns: repeat(2, minmax(0, 1fr))"],
     div[role="tabpanel"][style*="grid-template-columns"] {
         grid-template-columns: 1fr !important;
         gap: 24px !important;
@@ -3180,9 +3185,13 @@ body {
     .kv-customer-grid,
     div.kv-customer-grid {
         display: grid !important;
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 12px 10px !important;
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
         width: 100% !important;
+    }
+    .kv-customer-grid .kv-more-card,
+    div.kv-customer-grid .kv-more-card {
+        grid-column: auto !important;
     }
 
     .kv-industry-card {
@@ -4543,8 +4552,7 @@ body {
 
     /* "How Kouventa AI/CE helps" 2-col to 1-col */
     .kv-sol-split-grid,
-    div[style*="grid-template-columns: minmax(0, 1fr) 600px"],
-    div[style*="grid-template-columns: repeat(2, minmax(0, 1fr))"] {
+    div[style*="grid-template-columns: minmax(0, 1fr) 600px"] {
         grid-template-columns: 1fr !important;
         gap: 24px !important;
     }

@@ -1,3 +1,5 @@
+@extends('kouventa::layouts.app')
+
 @push('styles')
 <style>
 .kv-ce-track-fill {
@@ -799,8 +801,6 @@
 }
 </style>
 @endpush
-
-@extends('kouventa::layouts.app')
 
 @php
     $isIdLocale = app()->getLocale() === 'id';

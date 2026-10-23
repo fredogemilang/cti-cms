@@ -1,3 +1,5 @@
+@extends('kouventa::layouts.app')
+
 @push('styles')
 <style>
 .kv-stage-wrap { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
@@ -664,6 +666,12 @@
         transform-origin: top center !important;
         margin: 0 auto -155px !important;
     }
+    .kv-hero-tools-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        width: 100% !important;
+    }
 
     /* Journey Section */
     .kv-journey-section {
@@ -736,15 +744,20 @@
         font-size: 14px !important;
         line-height: 1.55 !important;
     }
-    .kv-journey-tabpanel button {
+    .kv-journey-tabpanel .kv-btn-stage-action {
         width: 100% !important;
         justify-content: center !important;
         font-size: 14px !important;
         padding: 12px 18px !important;
         min-height: 46px !important;
     }
+    .kv-journey-tabpanel .kv-btn-replay {
+        width: auto !important;
+        align-self: flex-end !important;
+    }
 
     /* Journey Stages Animation Viewport */
+    .kv-journey-stage-screen,
     .kv-journey-tabpanel div[role="img"] {
         height: 340px !important;
         width: 100% !important;
@@ -787,7 +800,7 @@
         width: 470px !important;
         max-width: none !important;
         flex-shrink: 0 !important;
-        display: flex !important;
+        display: flex;
         align-items: center !important;
         transform: scale(0.66) !important;
         transform-origin: center center !important;
@@ -798,11 +811,20 @@
         width: 420px !important;
         max-width: none !important;
         flex-shrink: 0 !important;
-        display: flex !important;
+        display: flex;
         flex-direction: column !important;
         gap: 16px !important;
         transform: scale(0.72) !important;
         transform-origin: center center !important;
+    }
+
+    .kv-stage-0[style*="display: none"],
+    .kv-stage-1[style*="display: none"],
+    .kv-stage-2[style*="display: none"],
+    .kv-stage-0[style*="display:none"],
+    .kv-stage-1[style*="display:none"],
+    .kv-stage-2[style*="display:none"] {
+        display: none !important;
     }
 }
 
@@ -820,8 +842,6 @@
 }
 </style>
 @endpush
-
-@extends('kouventa::layouts.app')
 
 @php
 $isIdLocale = app()->getLocale() === 'id';
@@ -1002,7 +1022,7 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 <span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: #FFFFFF"><svg width="13" height="16" viewBox="0 0 96 121"><rect x="0" y="0" width="40" height="121" fill="#12BB3A"></rect><path d="M40 0H96L40 60.5L96 121H40Z" fill="#82D48B"></path></svg>Kouventa AI</span>
 <span style="font-size: 10.5px; font-weight: 700; padding: 4px 8px; border-radius: 999px; background: rgba(43,212,106,0.15); color: #2BD46A">{{ $isIdLocale ? 'Semua model' : t('kouventa.All models', 'All models') }}</span>
 </div>
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<div class="kv-hero-tools-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
 <span style="height: 52px; box-sizing: border-box; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 8px 10px; display: flex; align-items: center; gap: 8px; font-size: 11.5px; line-height: 1.25; font-weight: 700; color: #FFFFFF; animation: kvTileOn 0.45s ease 3.1s 1 forwards">
 <span style="width: 26px; height: 26px; border-radius: 8px; background: rgba(43,212,106,0.14); display: flex; align-items: center; justify-content: center; flex-shrink: 0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14Z"></path><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"></path></svg></span>
 <span style="flex-grow: 1">{{ t('kouventa.AI Company Wikipedia', 'AI Company Wikipedia') }}</span>
@@ -1159,14 +1179,14 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 <div style="display: flex; flex-direction: column; gap: 16px">
 <span style="font-size: 30px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em" x-text="stages[stage].headline">{{ $stages[0]['headline'] }}</span>
 <span style="font-size: 16px; line-height: 1.6; color: #4A5866" x-text="stages[stage].sub">{{ $stages[0]['sub'] }}</span>
-<button type="button" @click="seeTools(stages[stage].defaultProduct)" style="align-self: flex-start; margin-top: 8px; min-height: 52px; padding: 14px 22px; border-radius: 12px; border: 0; background: #071C33; color: #FFFFFF; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; cursor: pointer">
+<button type="button" class="kv-btn-stage-action" @click="seeTools(stages[stage].defaultProduct)" style="align-self: flex-start; margin-top: 8px; min-height: 52px; padding: 14px 22px; border-radius: 12px; border: 0; background: #071C33; color: #FFFFFF; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; cursor: pointer">
 <span>{{ t('kouventa.See the products for', 'See the products for') }} <span x-text="stages[stage].name">{{ $stages[0]['name'] }}</span></span>
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"></path></svg>
 </button>
 </div>
 
 <div style="display: flex; flex-direction: column; gap: 10px">
-<div role="img" style="height: 400px; border-radius: 18px; background: #F4F6F5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
+<div role="img" class="kv-journey-stage-screen" style="height: 400px; border-radius: 18px; background: #F4F6F5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
 <div class="kv-stage-wrap" x-show="jOn">
 
 <!-- Stage 0: Answer Animation -->
@@ -1237,7 +1257,7 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 </div>
 </div>
 
-<button type="button" @click="replayJourney()" style="align-self: flex-end; min-height: 40px; padding: 8px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #4A5866; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer">
+<button type="button" class="kv-btn-replay" @click="replayJourney()" style="align-self: flex-end; min-height: 40px; padding: 8px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #4A5866; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>
     {{ t('kouventa.Replay', 'Replay') }}
 </button>
