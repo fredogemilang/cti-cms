@@ -1167,7 +1167,6 @@ Kouventa AI · WhatsApp · 09:12
 </div>
 </div>
 </div>
-</div>
 </section>
 
 <!-- ============ CHALLENGES ============ -->
