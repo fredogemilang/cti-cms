@@ -668,6 +668,8 @@
         min-width: 0 !important;
         display: flex !important;
         flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
         gap: 16px !important;
         box-sizing: border-box !important;
     }
@@ -675,22 +677,31 @@
         font-size: clamp(28px, 7vw, 36px) !important;
         line-height: 1.15 !important;
         letter-spacing: -0.025em !important;
+        text-align: center !important;
         word-break: break-word !important;
         overflow-wrap: break-word !important;
         max-width: 100% !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
     .kv-hero-content p {
         font-size: 15px !important;
         line-height: 1.5 !important;
         color: #B9C6D3 !important;
+        text-align: center !important;
         max-width: 100% !important;
         word-break: break-word !important;
         overflow-wrap: break-word !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
     .kv-hero-content div[style*="display: flex; gap: 12px"] {
         flex-direction: column !important;
         width: 100% !important;
+        max-width: 360px !important;
+        margin: 0 auto !important;
         gap: 10px !important;
+        align-items: center !important;
     }
     .kv-hero-content div[style*="display: flex; gap: 12px"] a {
         width: 100% !important;
@@ -709,6 +720,7 @@
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
+        justify-content: center !important;
         box-sizing: border-box !important;
     }
     .kv-hero-diagram-canvas {
@@ -717,8 +729,12 @@
         height: 440px !important;
         flex-shrink: 0 !important;
         transform: scale(0.64) !important;
-        transform-origin: top center !important;
-        margin: 0 auto -155px !important;
+        transform-origin: center top !important;
+        margin-left: calc((100% - 520px) / 2) !important;
+        margin-right: calc((100% - 520px) / 2) !important;
+        margin-top: 0 !important;
+        margin-bottom: -158px !important;
+        align-self: center !important;
     }
     .kv-hero-tools-grid {
         display: grid !important;
@@ -885,7 +901,12 @@
 @media (max-width: 380px) {
     .kv-hero-diagram-canvas {
         transform: scale(0.56) !important;
-        margin: 0 auto -190px !important;
+        transform-origin: center top !important;
+        margin-left: calc((100% - 520px) / 2) !important;
+        margin-right: calc((100% - 520px) / 2) !important;
+        margin-top: 0 !important;
+        margin-bottom: -193px !important;
+        align-self: center !important;
     }
     .kv-stage-1 {
         transform: scale(0.58) !important;

@@ -1002,6 +1002,7 @@
 </div>
 
 <!-- hero dashboard: Omnichannel Unified Inbox -->
+<div class="kv-ce-hero-dashboard-wrap" style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center">
 <div role="img" class="kv-ce-hero-dashboard" aria-label="Animated illustration: the Kouventa dashboard shows conversations from WhatsApp, Instagram, Facebook and Live Chat in one inbox. One customer starts on Instagram DM, is answered by an agent, then followed up by a WhatsApp broadcast and answered by Kouventa AI." data-kv-fit="600" style="width: 600px; justify-self: end; background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.4); color: #0E1A24; display: flex; flex-direction: column; animation: kvFloat 6s ease-in-out infinite">
 <div style="height: 44px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid #E3E8E6">
 <svg width="17.5" height="22" viewBox="0 0 96 121" role="img" aria-label="Kouventa" style="display: block; flex-shrink: 0"><rect x="0" y="0" width="40" height="121" fill="#12BB3A"></rect><path d="M40 0H96L40 60.5L96 121H40Z" fill="#82D48B"></path></svg>
@@ -1160,6 +1161,8 @@ Kouventa AI · WhatsApp · 09:12
 {{ $isIdLocale ? 'Balas di WhatsApp…' : t('kouventa.Reply on WhatsApp…', 'Reply on WhatsApp…') }}
 </span>
 <span style="height: 32px; padding: 0 14px; border-radius: 8px; background: #13803F; color: #FFFFFF; font-size: 11.5px; font-weight: 700; display: flex; align-items: center">{{ $isIdLocale ? 'Kirim' : t('kouventa.Send', 'Send') }}</span>
+</div>
+</div>
 </div>
 </div>
 </div>
