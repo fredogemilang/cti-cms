@@ -547,7 +547,7 @@ class KouventaPageBlocksSeeder extends Seeder
                 'type' => 'title',
                 'label' => 'Channels Section Title',
                 'en' => ['prefix' => 'Every missed message is a', 'main' => 'missed sale.'],
-                'id' => ['prefix' => 'Setiap pesan yang terlewat adalah', 'main' => 'penjualan yang hilang.'],
+                'id' => ['prefix' => 'Setiap pesan yang terlewat adalah', 'main' => 'peluang yang hilang.'],
             ],
             [
                 'name' => 'features_title',

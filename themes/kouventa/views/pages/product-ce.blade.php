@@ -702,7 +702,15 @@
         ? 'Jangkau lebih banyak pelanggan, balas lebih cepat, dan buat percakapan lancar di WhatsApp dan channel lainnya.'
         : 'Reach more customers, respond faster, and keep conversations seamless on WhatsApp and beyond.');
     $heroCta = $page?->buttonBlock('hero_cta', ['text' => $isIdLocale ? 'Jadwalkan demo' : 'Book a demo', 'url' => '/book-demo']);
-    $channelsTitle = $page?->titleBlock('channels_title', ['prefix' => $isIdLocale ? 'Tiap pesan yang terlewat adalah' : 'Every missed message is a', 'main' => $isIdLocale ? 'penjualan yang hilang.' : 'missed sale.']);
+    $channelsTitle = $page?->titleBlock('channels_title', ['prefix' => $isIdLocale ? 'Setiap pesan yang terlewat adalah' : 'Every missed message is a', 'main' => $isIdLocale ? 'peluang yang hilang.' : 'missed sale.']);
+    if ($isIdLocale) {
+        if (($channelsTitle['main'] ?? '') === 'penjualan yang hilang.') {
+            $channelsTitle['main'] = 'peluang yang hilang.';
+        }
+        if (($channelsTitle['prefix'] ?? '') === 'Tiap pesan yang terlewat adalah') {
+            $channelsTitle['prefix'] = 'Setiap pesan yang terlewat adalah';
+        }
+    }
     $featuresTitle = $page?->titleBlock('features_title', ['prefix' => $isIdLocale ? 'Satu platform.' : 'One platform.', 'main' => $isIdLocale ? 'Tanpa pesan yang terlewat.' : 'Zero missed messages.']);
     $whyTitle = $page?->titleBlock('why_title', ['prefix' => $isIdLocale ? 'Kenapa Kouventa untuk customer' : 'Why Kouventa for customer', 'main' => 'engagement']);
     $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Mulai berinteraksi dengan pelanggan di WhatsApp.' : 'Start engaging customers on WhatsApp.');
