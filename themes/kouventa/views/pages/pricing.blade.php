@@ -948,58 +948,48 @@
     1 => 'Custom APIs, dashboards, channels, or integrations.',
   ),
 );
-    $aiAddons = array (
-  0 => 
-  array (
-    0 => 'Customer Engagement platform',
-    1 => 'Add WhatsApp delivery channel with omnichannel inbox.',
-  ),
-  1 => 
-  array (
-    0 => 'Additional Task Force use case',
-    1 => 'Deploy more agentic workflows beyond your plan\'s included quota.',
-  ),
-  2 => 
-  array (
-    0 => 'AI token pack',
-    1 => 'Additional token capacity for curated model usage.',
-  ),
-  3 => 
-  array (
-    0 => 'API call token pack',
-    1 => 'Expand your monthly API call quota.',
-  ),
-  4 => 
-  array (
-    0 => 'Extended storage',
-    1 => 'Additional storage capacity for datasources and embeddings.',
-  ),
-  5 => 
-  array (
-    0 => 'Extended data retention',
-    1 => 'Keep conversation history and audit logs beyond 365 days.',
-  ),
-  6 => 
-  array (
-    0 => 'Golden 9×5 support',
-    1 => 'Extended business-hours support with change request tickets.',
-  ),
-  7 => 
-  array (
-    0 => 'Platinum 24×7 support',
-    1 => 'Round-the-clock coverage with prioritized change requests.',
-  ),
-  8 => 
-  array (
-    0 => 'Training sessions',
-    1 => 'Guided onboarding for your team, online or in Jabodetabek.',
-  ),
-  9 => 
-  array (
-    0 => 'Custom development',
-    1 => 'Custom APIs, dashboards, channels, or integrations.',
-  ),
-);
+    $aiAddons = [
+        [
+            'en' => ['Customer Engagement platform', 'Add WhatsApp delivery channel with omnichannel inbox.'],
+            'id' => ['Platform Customer Engagement', 'Tambahkan channel WhatsApp dengan inbox omnichannel.'],
+        ],
+        [
+            'en' => ['Additional Task Force use case', 'Deploy more agentic workflows beyond your plan\'s included quota.'],
+            'id' => ['Tambahan use case Task Force', 'Jalankan lebih banyak workflow agentic di luar kuota paket Anda.'],
+        ],
+        [
+            'en' => ['AI token pack', 'Additional token capacity for curated model usage.'],
+            'id' => ['Paket token AI', 'Tambahan kapasitas token untuk pemakaian model terkurasi.'],
+        ],
+        [
+            'en' => ['API call token pack', 'Expand your monthly API call quota.'],
+            'id' => ['Paket token API call', 'Tambah kuota API call bulanan Anda.'],
+        ],
+        [
+            'en' => ['Extended storage', 'Additional storage capacity for datasources and embeddings.'],
+            'id' => ['Tambahan storage', 'Tambahan kapasitas storage untuk sumber data dan embedding.'],
+        ],
+        [
+            'en' => ['Extended data retention', 'Keep conversation history and audit logs beyond 365 days.'],
+            'id' => ['Tambahan masa simpan data', 'Simpan riwayat percakapan dan log audit lebih dari 365 hari.'],
+        ],
+        [
+            'en' => ['Golden 9×5 support', 'Extended business-hours support with change request tickets.'],
+            'id' => ['Dukungan Golden 9×5', 'Dukungan jam kerja yang lebih panjang dengan tiket change request.'],
+        ],
+        [
+            'en' => ['Platinum 24×7 support', 'Round-the-clock coverage with prioritized change requests.'],
+            'id' => ['Dukungan Platinum 24×7', 'Dukungan 24 jam dengan change request yang diprioritaskan.'],
+        ],
+        [
+            'en' => ['Training sessions', 'Guided onboarding for your team, online or in Jabodetabek.'],
+            'id' => ['Sesi pelatihan', 'Onboarding terpandu untuk tim Anda, online atau di Jabodetabek.'],
+        ],
+        [
+            'en' => ['Custom development', 'Custom APIs, dashboards, channels, or integrations.'],
+            'id' => ['Pengembangan khusus', 'API, dashboard, channel, atau integrasi khusus.'],
+        ],
+    ];
 
     $templates = [
         [
@@ -1376,11 +1366,11 @@ class="kv-canvas-wrap">
     <div style="display: flex; flex-direction: column; gap: 32px">
         <div style="display: flex; flex-direction: column; gap: 10px">
             <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; color: #0E1A24">
-                {{ t('kouventa.Extend your plan', 'Extend your plan') }}
+                {{ t('kouventa.Extend your plan', app()->getLocale() === 'id' ? 'Perluas paket Anda' : 'Extend your plan') }}
             </h2>
             <p style="margin: 0; font-size: 16px; color: #4A5866"
-               x-text="product === 'ai' ? '{{ t('kouventa.Add capabilities as your AI adoption grows.', 'Add capabilities as your AI adoption grows.') }}' : '{{ t('kouventa.Add capabilities as you need them, on any tier.', 'Add capabilities as you need them, on any tier.') }}'">
-                {{ t('kouventa.Add capabilities as you need them, on any tier.', 'Add capabilities as you need them, on any tier.') }}
+               x-text="product === 'ai' ? '{{ t('kouventa.Add capabilities as your AI adoption grows.', app()->getLocale() === 'id' ? 'Tambahkan kemampuan seiring adopsi AI Anda berkembang.' : 'Add capabilities as your AI adoption grows.') }}' : '{{ t('kouventa.Add capabilities as you need them, on any tier.', app()->getLocale() === 'id' ? 'Tambahkan kemampuan sesuai kebutuhan, di paket mana pun.' : 'Add capabilities as you need them, on any tier.') }}'">
+                {{ t('kouventa.Add capabilities as you need them, on any tier.', app()->getLocale() === 'id' ? 'Tambahkan kemampuan sesuai kebutuhan, di paket mana pun.' : 'Add capabilities as you need them, on any tier.') }}
             </p>
         </div>
 
@@ -1397,17 +1387,22 @@ class="kv-canvas-wrap">
         <!-- AI Addons -->
         <div x-show="product === 'ai'" class="kv-addon-grid">
             @foreach ($aiAddons as $addon)
+                @php
+                    $isId = app()->getLocale() === 'id';
+                    $defaultTitle = $isId ? $addon['id'][0] : $addon['en'][0];
+                    $defaultDesc = $isId ? $addon['id'][1] : $addon['en'][1];
+                @endphp
                 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 8px">
-                    <span style="font-size: 16px; font-weight: 800; color: #0E1A24">{{ t('kouventa.' . $addon[0], $addon[0]) }}</span>
-                    <span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.' . $addon[1], $addon[1]) }}</span>
+                    <span style="font-size: 16px; font-weight: 800; color: #0E1A24">{{ t('kouventa.' . $addon['en'][0], $defaultTitle) }}</span>
+                    <span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.' . $addon['en'][1], $defaultDesc) }}</span>
                 </div>
             @endforeach
         </div>
 
         <p style="margin: 0; font-size: 16px; color: #4A5866">
-            {{ t('kouventa.Available across all plans.', 'Available across all plans.') }}
-            <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp style="font-weight: 700; color: #0E1A24; text-decoration: underline; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
-            {{ t('kouventa.for scoping and pricing.', 'for scoping and pricing.') }}
+            {{ t('kouventa.Available across all plans.', app()->getLocale() === 'id' ? 'Tersedia di semua paket.' : 'Available across all plans.') }}
+            <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp style="font-weight: 700; color: #13803F; text-decoration: none; cursor: pointer">{{ app()->getLocale() === 'id' ? t('kouventa.Talk to Sales', 'Hubungi sales') : 'Talk to sales' }}</a>
+            {{ t('kouventa.for scoping and pricing.', app()->getLocale() === 'id' ? 'untuk cakupan dan harga.' : 'for scoping and pricing.') }}
         </p>
     </div>
 
