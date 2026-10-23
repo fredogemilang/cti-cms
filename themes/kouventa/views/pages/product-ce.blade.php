@@ -706,7 +706,6 @@
     $featuresTitle = $page?->titleBlock('features_title', ['prefix' => $isIdLocale ? 'Satu platform.' : 'One platform.', 'main' => $isIdLocale ? 'Tanpa pesan yang terlewat.' : 'Zero missed messages.']);
     $whyTitle = $page?->titleBlock('why_title', ['prefix' => $isIdLocale ? 'Kenapa Kouventa untuk customer' : 'Why Kouventa for customer', 'main' => 'engagement']);
     $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Mulai berinteraksi dengan pelanggan di WhatsApp.' : 'Start engaging customers on WhatsApp.');
-    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Hubungi tim kami untuk menyiapkan akun WhatsApp Business Platform, template khusus, dan verified badge.' : 'Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge.');
 @endphp
 
 @section('content')
@@ -1701,17 +1700,12 @@ Kouventa AI · WhatsApp · 09:12
 </section>
 
 <!-- ============ CTA ============ -->
-<section style="padding: 104px 80px 104px">
-<div style="background: #071C33; color: #FFFFFF; border-radius: 28px; padding: 56px 64px; display: flex; justify-content: space-between; align-items: center; gap: 40px; position: relative; overflow: hidden">
-<div style="position: absolute; right: -120px; top: -140px; width: 440px; height: 440px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.06); pointer-events: none"></div>
-<div style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; position: relative; z-index: 2">
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #2BD46A">{{ t('kouventa.Certified & Registered', 'Certified & Registered') }}</span>
-<h2 style="margin: 0; font-size: 40px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
-<p style="margin: 0; font-size: 17px; line-height: 1.6; color: #B9C6D3">{!! nl2br(e($bottomCtaSubtitle)) !!}</p>
-</div>
-<div style="display: flex; gap: 14px; position: relative; z-index: 2; flex-shrink: 0; flex-wrap: wrap">
-<a href="{{ localized_url('/pricing?tab=ce') }}" class="kv-btn-action kv-btn-outline-white" style="font-size: 16px; font-weight: 700; padding: 16px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>
-<a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-primary" style="background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 26px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
+<section style="padding: 104px 80px">
+<div class="kv-panel" style="background: #2BD46A; border-radius: 28px; padding: 72px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 32px; color: #06251A">
+<h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
+<div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap">
+<a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
+<a href="{{ localized_url('/pricing?tab=ce') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>
 </div>
 </div>
 </section>
