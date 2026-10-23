@@ -650,12 +650,66 @@
    ============================================================ */
 @media (max-width: 768px) {
     /* Hero section */
+    .kv-hero-section {
+        height: auto !important;
+        min-height: auto !important;
+        padding: 24px 20px 32px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: clip !important;
+    }
+    .kv-hero-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+        box-sizing: border-box !important;
+    }
+    .kv-hero-content h1 {
+        font-size: clamp(28px, 7vw, 36px) !important;
+        line-height: 1.15 !important;
+        letter-spacing: -0.025em !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        max-width: 100% !important;
+    }
+    .kv-hero-content p {
+        font-size: 15px !important;
+        line-height: 1.5 !important;
+        color: #B9C6D3 !important;
+        max-width: 100% !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+    .kv-hero-content div[style*="display: flex; gap: 12px"] {
+        flex-direction: column !important;
+        width: 100% !important;
+        gap: 10px !important;
+    }
+    .kv-hero-content div[style*="display: flex; gap: 12px"] a {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        text-align: center !important;
+        justify-content: center !important;
+        padding: 13px 20px !important;
+        font-size: 15px !important;
+        border-radius: 12px !important;
+    }
     .kv-hero-diagram-wrap {
         width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
         overflow: hidden !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
+        box-sizing: border-box !important;
     }
     .kv-hero-diagram-canvas {
         width: 520px !important;
@@ -993,8 +1047,8 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 <a href="{{ localized_url('/product/customer-engagement') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</a>
 </nav>
 
-<div style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 64px; align-items: center; position: relative">
-<div style="display: flex; flex-direction: column; gap: 26px">
+<div class="kv-hero-section" style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 64px; align-items: center; position: relative">
+<div class="kv-hero-content" style="display: flex; flex-direction: column; gap: 26px">
 <h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'One AI platform is' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'all you need.' }}</span></h1>
 <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 600px">{!! nl2br(e($heroSubtitle)) !!}</p>
 <div style="display: flex; gap: 12px; padding-top: 4px">

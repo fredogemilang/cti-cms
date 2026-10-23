@@ -2903,49 +2903,94 @@ body {
     }
 
     /* 5. Hero Sections with fixed 704px desktop height */
-    div[style*="height: 704px"] {
+    div[style*="height: 704px"],
+    .kv-hero-section {
         height: auto !important;
         min-height: auto !important;
-        padding-top: 40px !important;
-        padding-bottom: 40px !important;
+        padding-top: 24px !important;
+        padding-bottom: 32px !important;
         padding-left: 20px !important;
         padding-right: 20px !important;
-        grid-template-columns: 1fr !important;
-        gap: 32px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 20px !important;
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
+        overflow-x: clip !important;
     }
 
-    div[style*="height: 704px"] div[style*="display: flex; gap: 12px"] {
+    div[style*="height: 704px"] > div:first-child,
+    .kv-hero-section > div:first-child,
+    .kv-hero-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+        box-sizing: border-box !important;
+    }
+
+    div[style*="height: 704px"] h1,
+    .kv-hero-section h1 {
+        font-size: clamp(28px, 7vw, 36px) !important;
+        line-height: 1.15 !important;
+        letter-spacing: -0.025em !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        max-width: 100% !important;
+    }
+
+    div[style*="height: 704px"] p,
+    .kv-hero-section p {
+        font-size: 15px !important;
+        line-height: 1.5 !important;
+        color: #B9C6D3 !important;
+        max-width: 100% !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+
+    div[style*="height: 704px"] div[style*="display: flex; gap: 12px"],
+    .kv-hero-section div[style*="display: flex; gap: 12px"] {
         flex-direction: column !important;
         width: 100% !important;
         gap: 10px !important;
     }
 
-    div[style*="height: 704px"] div[style*="display: flex; gap: 12px"] a {
+    div[style*="height: 704px"] div[style*="display: flex; gap: 12px"] a,
+    div[style*="height: 704px"] div[style*="display: flex; gap: 12px"] button,
+    .kv-hero-section div[style*="display: flex; gap: 12px"] a,
+    .kv-hero-section div[style*="display: flex; gap: 12px"] button {
         width: 100% !important;
         box-sizing: border-box !important;
         text-align: center !important;
         justify-content: center !important;
-        padding: 14px 20px !important;
+        padding: 13px 20px !important;
         font-size: 15px !important;
+        border-radius: 12px !important;
     }
 
-    div[style*="height: 704px"] > div:last-child {
+    div[style*="height: 704px"] > div:last-child,
+    .kv-hero-diagram-wrap {
         width: 100% !important;
         max-width: 100% !important;
-        overflow: visible !important;
+        min-width: 0 !important;
+        overflow: hidden !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
+        box-sizing: border-box !important;
     }
 
     /* Hero stage container on Product AI & CE (preserves coordinate systems) */
     div[style*="height: 704px"] div[role="img"][data-kv-fit="520"],
     div[role="img"][data-kv-fit="520"],
     div[role="img"][style*="width: 520px; height: 440px"],
-    div[role="img"][style*="520px"][style*="440px"] {
+    div[role="img"][style*="520px"][style*="440px"],
+    .kv-hero-diagram-canvas {
         width: 520px !important;
         max-width: none !important;
         height: 440px !important;
