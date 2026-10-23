@@ -15,6 +15,57 @@
     stepOn: [true, true, true, true],
     replayed: [false, false, false, false],
     implSeen: false,
+    _lockT: null,
+    aiSols: {
+        0: [{ delay: 1.0, dur: 1.6 }, { delay: 2.8, dur: 2.8 }],
+        1: [{ delay: 0.2, dur: 3.4 }, { delay: 3.9, dur: 1.1 }, { delay: 5.0, dur: 1.4 }, { delay: 6.5, dur: 1.5 }],
+        2: [{ delay: 0.3, dur: 3.7 }, { delay: 4.2, dur: 1.5 }, { delay: 5.8, dur: 2.2 }],
+        3: [{ delay: 1.5, dur: 1.7 }, { delay: 3.2, dur: 3.4 }],
+        4: [{ delay: 0.2, dur: 7.4 }],
+        5: [{ delay: 0.3, dur: 1.6 }, { delay: 2.0, dur: 1.8 }, { delay: 4.1, dur: 3.0 }, { delay: 7.1, dur: 1.0 }],
+        6: [{ delay: 0.3, dur: 2.2 }, { delay: 2.5, dur: 1.5 }, { delay: 4.1, dur: 2.5 }]
+    },
+    aiIllIds: {
+        0: 'kv-ill-cs',
+        1: 'kv-ill-rec',
+        2: 'kv-ill-sales',
+        3: 'kv-ill-ops',
+        4: 'kv-ill-pp',
+        5: 'kv-ill-br',
+        6: 'kv-ill-legal'
+    },
+    lockSol(i) {
+        const sols = this.aiSols[this.tab];
+        const illId = this.aiIllIds[this.tab];
+        if (!sols || !sols[i]) return;
+        const s = sols[i];
+        const st = parseFloat(s.delay) * 1000;
+        let en = (parseFloat(s.delay) + parseFloat(s.dur)) * 1000 + 250;
+        if (sols[i + 1]) {
+            en = Math.min(en, parseFloat(sols[i + 1].delay) * 1000 - 20);
+        }
+        this.sol = i;
+        clearTimeout(this._lockT);
+        setTimeout(() => {
+            try {
+                const root = document.getElementById(illId);
+                if (!root || !root.getAnimations) return;
+                const an = root.getAnimations({ subtree: true });
+                an.forEach((a) => {
+                    a.currentTime = st;
+                    a.play();
+                });
+                this._lockT = setTimeout(() => {
+                    an.forEach((a) => {
+                        const tm = a.effect && a.effect.getTiming ? a.effect.getTiming() : {};
+                        if (tm.iterations === Infinity) return;
+                        a.pause();
+                        a.currentTime = en;
+                    });
+                }, Math.max(0, en - st));
+            } catch (e) {}
+        }, 30);
+    },
     parseTabFromUrl(url = window.location.href) {
         try {
             const u = new URL(url, window.location.origin);
@@ -29,6 +80,7 @@
         return 0;
     },
     pickTab(i, scroll = false) {
+        clearTimeout(this._lockT);
         this.panelOn = false;
         this.tab = i;
         this.sol = -1;
@@ -91,6 +143,7 @@
         });
 
         window.addEventListener('popstate', () => {
+            clearTimeout(this._lockT);
             this.panelOn = false;
             this.tab = this.parseTabFromUrl();
             this.sol = -1;
@@ -308,14 +361,14 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 1s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 1s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="14" width="5" height="6" rx="2"></rect><rect x="17" y="14" width="5" height="6" rx="2"></rect></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Customer Support Agent', 'Customer Support Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.', 'Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 1" :aria-pressed="sol === 1" style="animation: kvHi 2.8s ease 2.8s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 2.8s ease 2.8s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M13 6v2M13 11v2M13 16v2"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Ticket Management Agent', 'Ticket Management Agent') }}</span>
@@ -397,28 +450,28 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 3.4s ease 0.2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 3.4s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="4"></circle><path d="M2 21a8 8 0 0 1 10.5-7.6"></path><circle cx="17.5" cy="17.5" r="3"></circle><path d="m22 22-2.3-2.3"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Candidate Screening and Sourcing Agent', 'Candidate Screening and Sourcing Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Source candidates from multiple job portals, then screen and match candidates based on job requirements and qualifications.', 'Source candidates from multiple job portals, then screen and match candidates based on job requirements and qualifications.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 1" :aria-pressed="sol === 1" style="animation: kvHi 1.1s ease 3.9s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.1s ease 3.9s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Candidate Communication Agent', 'Candidate Communication Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Send interview and psychotest invitations, provide recruitment updates, and answer candidate questions throughout the hiring process.', 'Send interview and psychotest invitations, provide recruitment updates, and answer candidate questions throughout the hiring process.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 2" :aria-pressed="sol === 2" style="animation: kvHi 1.4s ease 5s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 1.4s ease 5s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Candidate Scheduling Agent', 'Candidate Scheduling Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Coordinate and schedule interviews and psychotests based on the availability of HR, interviewers, and candidates.', 'Coordinate and schedule interviews and psychotests based on the availability of HR, interviewers, and candidates.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 3" :aria-pressed="sol === 3" style="animation: kvHi 1.5s ease 6.5s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="sol === 3" style="animation: kvHi 1.5s ease 6.5s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Recruitment Insight Agent', 'Recruitment Insight Agent') }}</span>
@@ -509,21 +562,21 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 3.7s ease 0.3s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 3.7s ease 0.3s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M2 3h3l2.5 12h11L21 7H6"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Sales Assistant Agent', 'Sales Assistant Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.', 'Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 1" :aria-pressed="sol === 1" style="animation: kvHi 1.5s ease 4.2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.5s ease 4.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5Z"></path><path d="M3 8l9 5 9-5M12 13v8"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Order Agent', 'Order Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Create orders, process payments, verify transactions, and confirm purchases.', 'Create orders, process payments, verify transactions, and confirm purchases.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 2" :aria-pressed="sol === 2" style="animation: kvHi 2.2s ease 5.8s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 2.2s ease 5.8s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Shipment Tracking Agent', 'Shipment Tracking Agent') }}</span>
@@ -609,14 +662,14 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 1.7s ease 1.5s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.7s ease 1.5s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5Z"></path><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Knowledge Assistant Agent', 'Knowledge Assistant Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Find and explain information from the company\'s internal documents, policies, SOPs, and business knowledge.', 'Find and explain information from the company\'s internal documents, policies, SOPs, and business knowledge.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 1" :aria-pressed="sol === 1" style="animation: kvHi 3.4s ease 3.2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 3.4s ease 3.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Action Agent', 'Action Agent') }}</span>
@@ -690,7 +743,7 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="align-items: flex-start; max-height: none; flex: 0 0 auto; animation: kvHi 7.4s ease 0.2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="align-items: flex-start; max-height: none; flex: 0 0 auto; animation: kvHi 7.4s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h15V7"></path><path d="M16 14h.01"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Payment Prioritization Agent', 'Payment Prioritization Agent') }}</span>
@@ -792,28 +845,28 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 0.3s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 0.3s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Transaction Matching Agent', 'Transaction Matching Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Automatically matches bank transactions with invoices, including partial and bulk transactions.', 'Automatically matches bank transactions with invoices, including partial and bulk transactions.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 1" :aria-pressed="sol === 1" style="animation: kvHi 1.8s ease 2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.8s ease 2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Reconciliation Analysis Agent', 'Reconciliation Analysis Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.', 'Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 2" :aria-pressed="sol === 2" style="animation: kvHi 3s ease 4.1s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 3s ease 4.1s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Clearing Agent', 'Clearing Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Prepares clearing proposals and executes ERP clearing.', 'Prepares clearing proposals and executes ERP clearing.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 3" :aria-pressed="sol === 3" style="animation: kvHi 1s ease 7.1s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="sol === 3" style="animation: kvHi 1s ease 7.1s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Audit & Notification Agent', 'Audit & Notification Agent') }}</span>
@@ -910,21 +963,21 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 2.2s ease 0.3s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 2.2s ease 0.3s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Contract Review Agent', 'Contract Review Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Review contracts and identify key clauses, terms, and potential issues.', 'Review contracts and identify key clauses, terms, and potential issues.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 1" :aria-pressed="sol === 1" style="animation: kvHi 1.5s ease 2.5s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.5s ease 2.5s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Legal Research Agent', 'Legal Research Agent') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Find relevant policies, regulations, and legal information based on the context of the contract.', 'Find relevant policies, regulations, and legal information based on the context of the contract.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 2" :aria-pressed="sol === 2" style="animation: kvHi 2.5s ease 4.1s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 2.5s ease 4.1s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Contract Insights Agent', 'Contract Insights Agent') }}</span>

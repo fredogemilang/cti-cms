@@ -12,6 +12,62 @@
     tab: 0,
     sol: -1,
     panelOn: true,
+    _lockT: null,
+    ceSols: {
+        0: [
+            { delay: 0.2, dur: 1.6 },
+            { delay: 1.8, dur: 2.2 },
+            { delay: 4.4, dur: 1.2 },
+            { delay: 5.6, dur: 1.1 },
+            { delay: 6.8, dur: 1.4 }
+        ],
+        1: [
+            { delay: 0.2, dur: 1.2 },
+            { delay: 1.4, dur: 1.8 },
+            { delay: 3.2, dur: 1.3 },
+            { delay: 4.6, dur: 1.5 }
+        ],
+        2: [
+            { delay: 0.3, dur: 5.2 }
+        ]
+    },
+    ceIllIds: {
+        0: 'kv-ill-sales',
+        1: 'kv-ill-cs',
+        2: 'kv-ill-ops'
+    },
+    lockSol(i) {
+        const sols = this.ceSols[this.tab];
+        const illId = this.ceIllIds[this.tab];
+        if (!sols || !sols[i]) return;
+        const s = sols[i];
+        const st = parseFloat(s.delay) * 1000;
+        let en = (parseFloat(s.delay) + parseFloat(s.dur)) * 1000 + 250;
+        if (sols[i + 1]) {
+            en = Math.min(en, parseFloat(sols[i + 1].delay) * 1000 - 20);
+        }
+        this.sol = i;
+        clearTimeout(this._lockT);
+        setTimeout(() => {
+            try {
+                const root = document.getElementById(illId);
+                if (!root || !root.getAnimations) return;
+                const an = root.getAnimations({ subtree: true });
+                an.forEach((a) => {
+                    a.currentTime = st;
+                    a.play();
+                });
+                this._lockT = setTimeout(() => {
+                    an.forEach((a) => {
+                        const tm = a.effect && a.effect.getTiming ? a.effect.getTiming() : {};
+                        if (tm.iterations === Infinity) return;
+                        a.pause();
+                        a.currentTime = en;
+                    });
+                }, Math.max(0, en - st));
+            } catch (e) {}
+        }, 30);
+    },
     parseTabFromUrl(url = window.location.href) {
         try {
             const u = new URL(url, window.location.origin);
@@ -25,6 +81,7 @@
         return 0;
     },
     pickTab(i, scroll = false) {
+        clearTimeout(this._lockT);
         this.panelOn = false;
         this.tab = i;
         this.sol = -1;
@@ -80,6 +137,7 @@
         });
 
         window.addEventListener('popstate', () => {
+            clearTimeout(this._lockT);
             this.panelOn = false;
             this.tab = this.parseTabFromUrl();
             this.sol = -1;
@@ -200,35 +258,35 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa helps', 'How Kouventa helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 0.2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1Z"></path><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.WhatsApp Broadcast', 'WhatsApp Broadcast') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Send promotional campaigns, product launches, and seasonal offers to customers at scale.', 'Send promotional campaigns, product launches, and seasonal offers to customers at scale.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 1" :aria-pressed="sol === 1" style="animation: kvHi 2.2s ease 1.8s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 2.2s ease 1.8s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V5M9 13h.01M15 13h.01M10 17h4"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Chatbot', 'Chatbot') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Answer product and service inquiries with predefined or AI chatbots, or escalate to a human agent for more complex requests.', 'Answer product and service inquiries with predefined or AI chatbots, or escalate to a human agent for more complex requests.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 2" :aria-pressed="sol === 2" style="animation: kvHi 1.2s ease 4.4s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 1.2s ease 4.4s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Omnichannel', 'Omnichannel') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Manage customer conversations and respond to comments from WhatsApp, Instagram, Facebook, and Live Chat in one platform.', 'Manage customer conversations and respond to comments from WhatsApp, Instagram, Facebook, and Live Chat in one platform.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 3" :aria-pressed="sol === 3" style="animation: kvHi 1.1s ease 5.6s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="sol === 3" style="animation: kvHi 1.1s ease 5.6s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Authentication', 'Authentication') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Secure customer logins and transactions with fast, seamless WhatsApp OTP verification.', 'Secure customer logins and transactions with fast, seamless WhatsApp OTP verification.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 4" :aria-pressed="sol === 4" style="animation: kvHi 1.4s ease 6.8s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(4)" :aria-pressed="sol === 4" style="animation: kvHi 1.4s ease 6.8s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h3"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.WhatsApp Flows', 'WhatsApp Flows') }}</span>
@@ -345,28 +403,28 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa helps', 'How Kouventa helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 1.2s ease 0.2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.2s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Omnichannel', 'Omnichannel') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Centralize customer complaints from WhatsApp, Instagram, Facebook, and Live Chat in one platform, making it easier to track and respond to every issue.', 'Centralize customer complaints from WhatsApp, Instagram, Facebook, and Live Chat in one platform, making it easier to track and respond to every issue.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 1" :aria-pressed="sol === 1" style="animation: kvHi 1.8s ease 1.4s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.8s ease 1.4s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V5M9 13h.01M15 13h.01M10 17h4"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Chatbot', 'Chatbot') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Handle common customer complaints instantly with predefined or AI-powered chatbots, while escalating complex issues to human agents when needed.', 'Handle common customer complaints instantly with predefined or AI-powered chatbots, while escalating complex issues to human agents when needed.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 2" :aria-pressed="sol === 2" style="animation: kvHi 1.3s ease 3.2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 1.3s ease 3.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M13 6v2M13 11v2M13 16v2"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Ticket Creation', 'Ticket Creation') }}</span>
 <span class="kv-help-sol-desc">{{ t('kouventa.Create support tickets from customer complaints, reducing manual work and minimizing errors or miscommunication during issue handling.', 'Create support tickets from customer complaints, reducing manual work and minimizing errors or miscommunication during issue handling.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="sol = 3" :aria-pressed="sol === 3" style="animation: kvHi 1.5s ease 4.6s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="sol === 3" style="animation: kvHi 1.5s ease 4.6s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.CSAT Survey', 'CSAT Survey') }}</span>
@@ -452,7 +510,7 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa helps', 'How Kouventa helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 5.2s ease 0.3s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 5.2s ease 0.3s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10H7z"></path><path d="M3 9h4M3 15h4M17 9h4M17 15h4M9 3v4M15 3v4M9 17v4M15 17v4"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Cross Platform Integrations', 'Cross Platform Integrations') }}</span>
