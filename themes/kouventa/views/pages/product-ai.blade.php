@@ -805,6 +805,22 @@
         display: flex !important;
         flex-direction: column !important;
         gap: 24px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+    .kv-journey-tabpanel > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    .kv-journey-stage-column {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
     }
     .kv-journey-tabpanel span[x-text*="headline"] {
         font-size: 24px !important;
@@ -831,19 +847,27 @@
     .kv-journey-tabpanel div[role="img"] {
         height: 340px !important;
         width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
         border-radius: 14px !important;
         overflow: hidden !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        position: relative !important;
     }
     .kv-stage-wrap {
         width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
         height: 100% !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         overflow: hidden !important;
+        position: relative !important;
     }
 
     /* Stage 0: Answer */
@@ -865,27 +889,33 @@
         padding: 11px 13px !important;
     }
 
-    /* Stage 1: Analyze (470px scaled uniformly to preserve columns & chart) */
+    /* Stage 1: Analyze (470px scaled uniformly, mathematically centered, no parent blowout) */
     .kv-stage-1 {
         width: 470px !important;
         max-width: none !important;
         flex-shrink: 0 !important;
-        display: flex;
+        display: flex !important;
         align-items: center !important;
-        transform: scale(0.66) !important;
+        transform: scale(0.72) !important;
         transform-origin: center center !important;
+        margin-left: calc((100% - 470px) / 2) !important;
+        margin-right: calc((100% - 470px) / 2) !important;
+        align-self: center !important;
     }
 
-    /* Stage 2: Execute (420px scaled uniformly) */
+    /* Stage 2: Execute (420px scaled uniformly, mathematically centered, no parent blowout) */
     .kv-stage-2 {
         width: 420px !important;
         max-width: none !important;
         flex-shrink: 0 !important;
-        display: flex;
+        display: flex !important;
         flex-direction: column !important;
         gap: 16px !important;
-        transform: scale(0.72) !important;
+        transform: scale(0.78) !important;
         transform-origin: center center !important;
+        margin-left: calc((100% - 420px) / 2) !important;
+        margin-right: calc((100% - 420px) / 2) !important;
+        align-self: center !important;
     }
 
     .kv-stage-0[style*="display: none"],
@@ -895,6 +925,15 @@
     .kv-stage-1[style*="display:none"],
     .kv-stage-2[style*="display:none"] {
         display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .kv-stage-1 {
+        transform: scale(0.64) !important;
+    }
+    .kv-stage-2 {
+        transform: scale(0.70) !important;
     }
 }
 
@@ -909,10 +948,10 @@
         align-self: center !important;
     }
     .kv-stage-1 {
-        transform: scale(0.58) !important;
+        transform: scale(0.54) !important;
     }
     .kv-stage-2 {
-        transform: scale(0.64) !important;
+        transform: scale(0.60) !important;
     }
 }
 </style>
@@ -1260,7 +1299,7 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 </button>
 </div>
 
-<div style="display: flex; flex-direction: column; gap: 10px">
+<div class="kv-journey-stage-column" style="display: flex; flex-direction: column; gap: 10px">
 <div role="img" class="kv-journey-stage-screen" style="height: 400px; border-radius: 18px; background: #F4F6F5; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center">
 <div class="kv-stage-wrap" x-show="jOn">
 
