@@ -10,7 +10,8 @@
 @endphp
 <div class="kv-canvas-wrap" x-data="{
     tab: 0,
-    sol: 0,
+    sol: -1,
+    panelOn: true,
     stepOn: [true, true, true, true],
     replayed: [false, false, false, false],
     implSeen: false,
@@ -28,13 +29,17 @@
         return 0;
     },
     pickTab(i, scroll = false) {
+        this.panelOn = false;
         this.tab = i;
-        this.sol = 0;
+        this.sol = -1;
+        setTimeout(() => {
+            this.panelOn = true;
+        }, 40);
         if (scroll) {
-            this.$nextTick(() => {
+            setTimeout(() => {
                 const el = document.getElementById('solution-tabs');
                 if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
+            }, 50);
         }
     },
     replayStep(i) {
@@ -45,6 +50,8 @@
     },
     init() {
         this.tab = this.parseTabFromUrl();
+        this.sol = -1;
+        this.panelOn = true;
 
         // If landing with dept, tab, or #solution-tabs, scroll smoothly to tabs section
         const p = new URLSearchParams(window.location.search);
@@ -84,8 +91,10 @@
         });
 
         window.addEventListener('popstate', () => {
+            this.panelOn = false;
             this.tab = this.parseTabFromUrl();
             this.sol = -1;
+            setTimeout(() => { this.panelOn = true; }, 40);
             const el = document.getElementById('solution-tabs');
             if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
@@ -274,6 +283,8 @@
 </div>
 </div>
 
+<template x-if="panelOn">
+<div>
 <!-- ===== TAB 0: Customer Service ===== -->
 <div role="tabpanel" x-show="tab === 0" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
@@ -294,7 +305,7 @@
 </div>
 </div>
 
-<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 18px; align-items: stretch">
+<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
 <button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 1s 1 both">
@@ -383,7 +394,7 @@
 </div>
 </div>
 
-<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 18px; align-items: stretch">
+<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
 <button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 3.4s ease 0.2s 1 both">
@@ -495,7 +506,7 @@
 </div>
 </div>
 
-<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 18px; align-items: stretch">
+<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
 <button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 3.7s ease 0.3s 1 both">
@@ -595,7 +606,7 @@
 </div>
 </div>
 
-<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 18px; align-items: stretch">
+<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
 <button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 1.7s ease 1.5s 1 both">
@@ -676,10 +687,10 @@
 </div>
 </div>
 
-<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 18px; align-items: stretch">
+<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="align-items: flex-start; max-height: none; animation: kvHi 7.4s ease 0.2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="align-items: flex-start; max-height: none; flex: 0 0 auto; animation: kvHi 7.4s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h15V7"></path><path d="M16 14h.01"></path></svg></span>
 <span class="kv-help-sol-text">
 <span class="kv-help-sol-title">{{ t('kouventa.Payment Prioritization Agent', 'Payment Prioritization Agent') }}</span>
@@ -778,7 +789,7 @@
 </div>
 </div>
 
-<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 18px; align-items: stretch">
+<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
 <button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 0.3s 1 both">
@@ -896,7 +907,7 @@
 </div>
 </div>
 
-<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; row-gap: 18px; align-items: stretch">
+<div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
 <button type="button" class="kv-help-sol-btn" @click="sol = 0" :aria-pressed="sol === 0" style="animation: kvHi 2.2s ease 0.3s 1 both">
@@ -975,8 +986,8 @@
 </div>
 </div>
 </div>
-
 </div>
+</template>
 </section>
 
 <!-- ============ IMPLEMENTATION JOURNEY ============ -->

@@ -4273,11 +4273,13 @@ body {
     flex-direction: column;
     justify-content: center;
     gap: 10px;
+    height: 100%;
 }
 
 .kv-help-sol-btn {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     min-height: 88px;
+    max-height: 150px;
     box-sizing: border-box;
     width: 100%;
     text-align: left;
@@ -4287,7 +4289,7 @@ body {
     border: 1px solid #E3E8E6;
     background: #FFFFFF;
     border-radius: 16px;
-    padding: 16px 20px;
+    padding: 14px 20px;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -4437,12 +4439,22 @@ body {
     color: #4A5866;
 }
 
+#solution-tabs {
+    min-height: 800px;
+}
+
 .kv-sol-split-grid {
     display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-columns: minmax(0, 1fr) 600px !important;
     column-gap: 24px !important;
     row-gap: 18px !important;
     align-items: stretch !important;
+}
+
+@media (max-width: 1199px) and (min-width: 1024px) {
+    .kv-sol-split-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
 }
 
 /* Solution Responsive Layout */
