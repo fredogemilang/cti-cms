@@ -500,12 +500,12 @@
     .kv-customer-grid {
         width: 100% !important;
         display: grid !important;
-        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
         gap: 16px !important;
     }
     @media (max-width: 1024px) {
         .kv-customer-grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
             gap: 14px !important;
         }
     }
@@ -514,9 +514,12 @@
             grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
             gap: 12px 10px !important;
         }
+        .kv-customer-grid .kv-more-card {
+            grid-column: span 2 !important;
+        }
     }
 </style>
-<div class="kv-customer-grid" style="width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<div class="kv-customer-grid" style="width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
     <!-- 1. Navios -->
     <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
         <img src="{{ theme_asset('images/logos/customer-navios.png') }}" alt="Navios" title="Navios" style="max-height: 32px; max-width: 100%; width: auto; height: auto; object-fit: contain">
@@ -548,6 +551,16 @@
     <!-- 8. Astra Otoparts -->
     <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
         <img src="{{ theme_asset('images/logos/customer-astra-otoparts.png') }}" alt="Astra Otoparts" title="Astra Otoparts" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+    </div>
+    <!-- 9. And many more -->
+    <div class="kv-logo-card kv-customer-card kv-more-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #D4EFE0; background: #EAF7EF; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02); color: #0B5E2C; transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1); cursor: default">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span style="font-size: 16px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap">
+            {{ t('kouventa.And many more', 'And many more') }}
+        </span>
     </div>
 </div>
 </section>

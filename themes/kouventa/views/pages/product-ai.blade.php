@@ -642,6 +642,182 @@
         margin: -55px 0;
     }
 }
+
+/* ============================================================
+   RESPONSIVE MEDIA QUERIES FOR HERO & JOURNEY SECTIONS (MOBILE)
+   ============================================================ */
+@media (max-width: 768px) {
+    /* Hero section */
+    .kv-hero-diagram-wrap {
+        width: 100% !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    .kv-hero-diagram-canvas {
+        width: 520px !important;
+        max-width: none !important;
+        height: 440px !important;
+        flex-shrink: 0 !important;
+        transform: scale(0.64) !important;
+        transform-origin: top center !important;
+        margin: 0 auto -155px !important;
+    }
+
+    /* Journey Section */
+    .kv-journey-section {
+        padding: 56px 20px 0 !important;
+        gap: 20px !important;
+    }
+    .kv-journey-section h2 {
+        font-size: 32px !important;
+        line-height: 1.15 !important;
+    }
+    .kv-journey-section p {
+        font-size: 15px !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Journey Tablist Track */
+    .kv-journey-tablist-wrap {
+        padding: 18px 8px 16px !important;
+        border-radius: 18px !important;
+    }
+    .kv-journey-track-container {
+        height: 104px !important;
+    }
+    .kv-journey-track-bg,
+    .kv-journey-track-fill {
+        top: 36px !important;
+        height: 3px !important;
+    }
+    .kv-journey-pointer {
+        display: none !important;
+    }
+
+    /* Journey Tab Buttons */
+    .kv-journey-tab-btn {
+        top: 14px !important;
+        width: 86px !important;
+        gap: 3px !important;
+        padding: 0 !important;
+    }
+    .kv-journey-tab-btn > span:first-child {
+        width: 44px !important;
+        height: 44px !important;
+    }
+    .kv-journey-tab-btn > span:first-child svg {
+        width: 20px !important;
+        height: 20px !important;
+    }
+    .kv-journey-tab-btn > span:nth-child(2) {
+        font-size: 10px !important;
+    }
+    .kv-journey-tab-btn > span:last-child {
+        font-size: 13.5px !important;
+        line-height: 1.15 !important;
+    }
+
+    /* Journey Tabpanel Card */
+    .kv-journey-tabpanel {
+        padding: 24px 16px !important;
+        border-radius: 18px !important;
+        grid-template-columns: 1fr !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 24px !important;
+    }
+    .kv-journey-tabpanel span[x-text*="headline"] {
+        font-size: 24px !important;
+        line-height: 1.2 !important;
+    }
+    .kv-journey-tabpanel span[x-text*="sub"] {
+        font-size: 14px !important;
+        line-height: 1.55 !important;
+    }
+    .kv-journey-tabpanel button {
+        width: 100% !important;
+        justify-content: center !important;
+        font-size: 14px !important;
+        padding: 12px 18px !important;
+        min-height: 46px !important;
+    }
+
+    /* Journey Stages Animation Viewport */
+    .kv-journey-tabpanel div[role="img"] {
+        height: 340px !important;
+        width: 100% !important;
+        border-radius: 14px !important;
+        overflow: hidden !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    .kv-stage-wrap {
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+    }
+
+    /* Stage 0: Answer */
+    .kv-stage-0 {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 14px !important;
+        box-sizing: border-box !important;
+        font-size: 12.5px !important;
+        line-height: 1.4 !important;
+    }
+    .kv-stage-0 > div:first-child {
+        max-width: 85% !important;
+        font-size: 12.5px !important;
+        padding: 9px 12px !important;
+    }
+    .kv-stage-0 > div:last-child > div:last-child {
+        max-width: 100% !important;
+        padding: 11px 13px !important;
+    }
+
+    /* Stage 1: Analyze (470px scaled uniformly to preserve columns & chart) */
+    .kv-stage-1 {
+        width: 470px !important;
+        max-width: none !important;
+        flex-shrink: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        transform: scale(0.66) !important;
+        transform-origin: center center !important;
+    }
+
+    /* Stage 2: Execute (420px scaled uniformly) */
+    .kv-stage-2 {
+        width: 420px !important;
+        max-width: none !important;
+        flex-shrink: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+        transform: scale(0.72) !important;
+        transform-origin: center center !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .kv-hero-diagram-canvas {
+        transform: scale(0.56) !important;
+        margin: 0 auto -190px !important;
+    }
+    .kv-stage-1 {
+        transform: scale(0.58) !important;
+    }
+    .kv-stage-2 {
+        transform: scale(0.64) !important;
+    }
+}
 </style>
 @endpush
 
@@ -808,8 +984,8 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 </div>
 
 <!-- hero: scattered tools converge into one platform -->
-<div style="display: flex; flex-direction: column; align-items: center; gap: 12px">
-<div role="img" aria-label="Animated illustration: scattered AI tools merge into Kouventa AI with AI Company Wikipedia, AI Task Force, Chat Playground and TaskO, governance controls lock around it, and an approved, logged result goes out to channels like WhatsApp, Slack, email, internal apps and ERP, with email highlighted" data-kv-fit="520" style="width: 520px; height: 440px; position: relative">
+<div class="kv-hero-diagram-wrap" style="display: flex; flex-direction: column; align-items: center; gap: 12px">
+<div role="img" class="kv-hero-diagram-canvas" aria-label="Animated illustration: scattered AI tools merge into Kouventa AI with AI Company Wikipedia, AI Task Force, Chat Playground and TaskO, governance controls lock around it, and an approved, logged result goes out to channels like WhatsApp, Slack, email, internal apps and ERP, with email highlighted" data-kv-fit="520" style="width: 520px; height: 440px; position: relative">
 <div style="position: absolute; left: 50%; top: 160px; width: 360px; height: 360px; margin: -180px 0 0 -180px; border-radius: 50%; border: 1px dashed rgba(255,255,255,0.12)"></div>
 <div style="position: absolute; left: 50%; top: 160px; width: 230px; height: 230px; margin: -115px 0 0 -115px; border-radius: 50%; border: 1px dashed rgba(255,255,255,0.12)"></div>
 
@@ -915,7 +1091,7 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 </section>
 
 <!-- ============ ENTERPRISE AI JOURNEY ============ -->
-<section id="journey" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 28px">
+<section id="journey" class="kv-journey-section" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 14px; max-width: 900px">
 @php
     $journeyPrefix = t('kouventa.Bring your AI together,', $isIdLocale ? 'Semua AI Anda di satu tempat,' : 'Bring your AI together,');
@@ -932,17 +1108,17 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 </div>
 
 <!-- Journey Tablist -->
-<div role="tablist" aria-label="Enterprise AI journey" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 28px 0 26px">
-<div style="position: relative; height: 176px">
+<div role="tablist" class="kv-journey-tablist-wrap" aria-label="Enterprise AI journey" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 28px 0 26px">
+<div class="kv-journey-track-container" style="position: relative; height: 176px">
 <!-- Dashed background track -->
-<span aria-hidden="true" style="position: absolute; top: 76px; left: 16.667%; width: 66.667%; height: 4px; border-radius: 4px; background: repeating-linear-gradient(90deg, #C9D2CE 0 10px, transparent 10px 18px)"></span>
+<span aria-hidden="true" class="kv-journey-track-bg" style="position: absolute; top: 76px; left: 16.667%; width: 66.667%; height: 4px; border-radius: 4px; background: repeating-linear-gradient(90deg, #C9D2CE 0 10px, transparent 10px 18px)"></span>
 
 <!-- Active green progress bar -->
-<span aria-hidden="true" style="position: absolute; top: 76px; left: 16.667%; height: 4px; border-radius: 4px; background: #13803F; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1)"
+<span aria-hidden="true" class="kv-journey-track-fill" style="position: absolute; top: 76px; left: 16.667%; height: 4px; border-radius: 4px; background: #13803F; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1)"
       :style="{ width: stage === 0 ? '0%' : (stage === 1 ? '33.333%' : '66.667%') }"></span>
 
 <!-- Floating badge "Your AI needs" -->
-<span aria-hidden="true" style="position: absolute; top: 0; transform: translateX(-50%); transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; z-index: 10"
+<span aria-hidden="true" class="kv-journey-pointer" style="position: absolute; top: 0; transform: translateX(-50%); transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; z-index: 10"
       :style="{ left: stage === 0 ? '16.667%' : (stage === 1 ? '50%' : '83.333%') }">
 <span style="animation: kvFloat 2.4s ease-in-out infinite; display: flex; flex-direction: column; align-items: center">
 <span style="display: flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; border-radius: 999px; background: #071C33; color: #FFFFFF; font-size: 13px; font-weight: 700; white-space: nowrap; box-shadow: 0 6px 16px rgba(7, 28, 51, 0.18)">
@@ -955,7 +1131,7 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 </span>
 
 @foreach($stageButtons as $idx => $btn)
-<button type="button" role="tab" :aria-selected="stage === {{ $idx }}" @click="pickStage({{ $idx }})"
+<button type="button" role="tab" class="kv-journey-tab-btn" :aria-selected="stage === {{ $idx }}" @click="pickStage({{ $idx }})"
         style="position: absolute; top: 50px; left: {{ $btn['left'] }}; transform: translateX(-50%); width: 240px; padding: 0; border: 0; background: transparent; color: #0E1A24; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; cursor: pointer">
     <span style="width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.3s, border-color 0.3s, color 0.3s; {{ $idx === 0 ? 'background: #071C33; border: 2px solid #071C33; color: #2BD46A; animation: kvPulse 2s ease-out infinite;' : 'background: #FFFFFF; border: 2px solid #C9D2CE; color: #6B7A88;' }}"
           :style="{
@@ -979,7 +1155,7 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 </div>
 
 <!-- Journey Tabpanel -->
-<div role="tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 44px; display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 48px; align-items: center">
+<div role="tabpanel" class="kv-journey-tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 44px; display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 48px; align-items: center">
 <div style="display: flex; flex-direction: column; gap: 16px">
 <span style="font-size: 30px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em" x-text="stages[stage].headline">{{ $stages[0]['headline'] }}</span>
 <span style="font-size: 16px; line-height: 1.6; color: #4A5866" x-text="stages[stage].sub">{{ $stages[0]['sub'] }}</span>

@@ -129,14 +129,14 @@
                 <div class="kv-sheet-card-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a8 8 0 0 0-8 8c0 3.3 2 6.1 5 7.4V20a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2.6c3-1.3 5-4.1 5-7.4a8 8 0 0 0-8-8z"></path><path d="M9 22h6"></path></svg>
                 </div>
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-weight: 700; color: #FFFFFF; font-size: 15px;">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
-                        <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; background: rgba(43,212,106,0.18); color: #2BD46A; padding: 2px 8px; border-radius: 999px;">AI Platform</span>
+                <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="font-weight: 700; color: #FFFFFF; font-size: 15px; line-height: 1.25;">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
+                        <span style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; background: rgba(43,212,106,0.18); color: #2BD46A; padding: 2px 7px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center;">AI Platform</span>
                     </div>
                     <p style="margin: 4px 0 0; font-size: 12px; color: #B9C6D3; line-height: 1.4;">{{ t('kouventa.Knowledge & automation agents', 'Knowledge & automation agents for enterprise teams.') }}</p>
                 </div>
-                <span style="color: #2BD46A; font-size: 16px; font-weight: 700;">→</span>
+                <span style="color: #2BD46A; font-size: 16px; font-weight: 700; flex-shrink: 0;">→</span>
             </a>
 
             <!-- Product CE -->
@@ -144,14 +144,14 @@
                 <div class="kv-sheet-card-icon">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                 </div>
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-weight: 700; color: #FFFFFF; font-size: 15px;">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</span>
-                        <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; background: rgba(43,212,106,0.18); color: #2BD46A; padding: 2px 8px; border-radius: 999px;">WhatsApp API</span>
+                <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <span style="font-weight: 700; color: #FFFFFF; font-size: 15px; line-height: 1.25;">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</span>
+                        <span style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; background: rgba(43,212,106,0.18); color: #2BD46A; padding: 2px 7px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center;">WhatsApp API</span>
                     </div>
                     <p style="margin: 4px 0 0; font-size: 12px; color: #B9C6D3; line-height: 1.4;">{{ t('kouventa.WhatsApp & omnichannel', 'WhatsApp & omnichannel chatbots with human handoff.') }}</p>
                 </div>
-                <span style="color: #2BD46A; font-size: 16px; font-weight: 700;">→</span>
+                <span style="color: #2BD46A; font-size: 16px; font-weight: 700; flex-shrink: 0;">→</span>
             </a>
         </div>
     </div>

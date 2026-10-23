@@ -2936,52 +2936,89 @@ body {
         align-items: center !important;
     }
 
-    /* Hero stage container on Product AI & CE */
-    div[style*="height: 704px"] div[role="img"][style*="520px"],
+    /* Hero stage container on Product AI & CE (preserves coordinate systems) */
+    div[style*="height: 704px"] div[role="img"][data-kv-fit="520"],
+    div[role="img"][data-kv-fit="520"],
     div[role="img"][style*="width: 520px; height: 440px"],
     div[role="img"][style*="520px"][style*="440px"] {
-        width: 100% !important;
-        max-width: 360px !important;
-        height: 360px !important;
-        margin: 0 auto !important;
-        transform: scale(0.72) !important;
-        transform-origin: center center !important;
+        width: 520px !important;
+        max-width: none !important;
+        height: 440px !important;
+        flex-shrink: 0 !important;
+        transform: scale(0.64) !important;
+        transform-origin: top center !important;
+        margin: 0 auto -155px !important;
+    }
+
+    div[style*="height: 704px"] div[role="img"][data-kv-fit="600"],
+    div[role="img"][data-kv-fit="600"] {
+        width: 600px !important;
+        max-width: none !important;
+        flex-shrink: 0 !important;
+        transform: scale(0.55) !important;
+        transform-origin: top center !important;
+        margin: 0 auto -250px !important;
     }
 
     div[role="img"][style*="width: 340px; height: 560px"] {
-        width: 100% !important;
-        max-width: 320px !important;
-        height: 520px !important;
+        width: 340px !important;
+        max-width: none !important;
+        height: 560px !important;
         margin: 0 auto !important;
-    }
-
-    /* Interactive Illustrations and Mockups on Product/Solution pages */
-    div[role="img"][style*="width: 420px"]:not(.kv-sol-ce-hero-desktop):not(.kv-sol-ce-hero-mobile),
-    div[role="img"][style*="width: 440px"]:not(.kv-sol-ai-hero-desktop):not(.kv-sol-ai-hero-ill),
-    div[role="img"][style*="width: 520px"],
-    .kv-stage-1,
-    .kv-stage-2,
-    .kv-mockup-wiki,
-    .kv-mockup-taskforce,
-    .kv-mockup-playground,
-    .kv-mockup-workflow,
-    div[class*="kv-flex"][style*="width: 400px"],
-    div[class*="kv-flex"][style*="width: 420px"] {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-    }
-
-    .kv-mockup-taskforce,
-    .kv-mockup-playground,
-    .kv-mockup-workflow,
-    .kv-mockup-wiki {
         transform: scale(0.85) !important;
+        transform-origin: top center !important;
+    }
+
+    /* Product Mockup Containers */
+    .kv-product-mockup-container {
+        height: 380px !important;
+        width: 100% !important;
+        overflow: hidden !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .kv-mockup-wrap {
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+    }
+
+    .kv-mockup-wiki {
+        width: 380px !important;
+        max-width: none !important;
+        flex-shrink: 0 !important;
+        transform: scale(0.80) !important;
+        transform-origin: center center !important;
+    }
+
+    .kv-mockup-taskforce {
+        width: 400px !important;
+        max-width: none !important;
+        flex-shrink: 0 !important;
+        transform: scale(0.74) !important;
+        transform-origin: center center !important;
+    }
+
+    .kv-mockup-playground {
+        width: 410px !important;
+        max-width: none !important;
+        flex-shrink: 0 !important;
+        transform: scale(0.73) !important;
         transform-origin: center center !important;
     }
 
     .kv-mockup-workflow {
-        height: 320px !important;
+        width: 420px !important;
+        max-width: none !important;
+        height: 380px !important;
+        flex-shrink: 0 !important;
+        transform: scale(0.74) !important;
+        transform-origin: center center !important;
     }
 
     /* Horizontal Scrollable Solution Tabs */

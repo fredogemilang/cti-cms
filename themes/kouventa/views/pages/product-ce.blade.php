@@ -687,6 +687,116 @@
     }
 }
 
+/* ============================================================
+   RESPONSIVE MEDIA QUERIES FOR HERO & JOURNEY SECTIONS (MOBILE)
+   ============================================================ */
+@media (max-width: 768px) {
+    /* Hero section dashboard */
+    .kv-ce-hero-dashboard {
+        width: 600px !important;
+        max-width: none !important;
+        flex-shrink: 0 !important;
+        transform: scale(0.55) !important;
+        transform-origin: top center !important;
+        margin: 0 auto -250px !important;
+    }
+
+    /* Journey Section */
+    .kv-journey-section {
+        padding: 56px 20px 0 !important;
+        gap: 20px !important;
+    }
+    .kv-journey-section h2 {
+        font-size: 32px !important;
+        line-height: 1.15 !important;
+    }
+    .kv-journey-section p {
+        font-size: 15px !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Journey Tablist Track */
+    .kv-journey-tablist-wrap {
+        padding: 18px 6px 16px !important;
+        border-radius: 18px !important;
+    }
+    .kv-journey-track-container {
+        height: 104px !important;
+    }
+    .kv-journey-track-bg,
+    .kv-journey-track-fill {
+        top: 34px !important;
+        height: 3px !important;
+    }
+    .kv-journey-pointer {
+        display: none !important;
+    }
+
+    /* Journey Tab Buttons (4 stages) */
+    .kv-journey-tab-btn {
+        top: 14px !important;
+        width: 72px !important;
+        gap: 3px !important;
+        padding: 0 !important;
+    }
+    .kv-journey-tab-btn > span:first-child {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    .kv-journey-tab-btn > span:first-child svg {
+        width: 17px !important;
+        height: 17px !important;
+    }
+    .kv-journey-tab-btn > span:nth-child(2) {
+        font-size: 9.5px !important;
+    }
+    .kv-journey-tab-btn > span:last-child {
+        font-size: 11.5px !important;
+        line-height: 1.15 !important;
+        word-break: break-word !important;
+    }
+
+    /* Journey Tabpanel Card */
+    .kv-journey-tabpanel {
+        padding: 24px 16px !important;
+        border-radius: 18px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+    .kv-journey-tabpanel span[x-text*="headline"] {
+        font-size: 24px !important;
+        line-height: 1.2 !important;
+    }
+    .kv-journey-tabpanel span[x-text*="sub"] {
+        font-size: 14px !important;
+        line-height: 1.55 !important;
+    }
+    .kv-journey-tabpanel button {
+        width: 100% !important;
+        justify-content: center !important;
+        font-size: 14px !important;
+        padding: 12px 18px !important;
+        min-height: 46px !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .kv-ce-hero-dashboard {
+        transform: scale(0.48) !important;
+        margin: 0 auto -290px !important;
+    }
+    .kv-journey-tab-btn {
+        width: 66px !important;
+    }
+    .kv-journey-tab-btn > span:first-child {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    .kv-journey-tab-btn > span:last-child {
+        font-size: 10.5px !important;
+    }
+}
 </style>
 @endpush
 
@@ -892,7 +1002,7 @@
 </div>
 
 <!-- hero dashboard: Omnichannel Unified Inbox -->
-<div role="img" aria-label="Animated illustration: the Kouventa dashboard shows conversations from WhatsApp, Instagram, Facebook and Live Chat in one inbox. One customer starts on Instagram DM, is answered by an agent, then followed up by a WhatsApp broadcast and answered by Kouventa AI." data-kv-fit="600" style="width: 600px; justify-self: end; background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.4); color: #0E1A24; display: flex; flex-direction: column; animation: kvFloat 6s ease-in-out infinite">
+<div role="img" class="kv-ce-hero-dashboard" aria-label="Animated illustration: the Kouventa dashboard shows conversations from WhatsApp, Instagram, Facebook and Live Chat in one inbox. One customer starts on Instagram DM, is answered by an agent, then followed up by a WhatsApp broadcast and answered by Kouventa AI." data-kv-fit="600" style="width: 600px; justify-self: end; background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.4); color: #0E1A24; display: flex; flex-direction: column; animation: kvFloat 6s ease-in-out infinite">
 <div style="height: 44px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid #E3E8E6">
 <svg width="17.5" height="22" viewBox="0 0 96 121" role="img" aria-label="Kouventa" style="display: block; flex-shrink: 0"><rect x="0" y="0" width="40" height="121" fill="#12BB3A"></rect><path d="M40 0H96L40 60.5L96 121H40Z" fill="#82D48B"></path></svg>
 <span style="font-size: 13px; font-weight: 800">Kouventa</span>
@@ -1090,16 +1200,16 @@ Kouventa AI · WhatsApp · 09:12
 </section>
 
 <!-- ============ JOURNEY ============ -->
-<section id="journey" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 32px">
+<section id="journey" class="kv-journey-section" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; gap: 14px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Never miss a', 'Never miss a') }} <span style="color: #13803F">{{ t('kouventa.message.', 'message.') }}</span></h2>
 <p style="margin: 0; font-size: 18px; line-height: 1.5; color: #4A5866">{{ t('kouventa.From first hello to after-sales. Pick a stage to see which products help.', 'From first hello to after-sales. Pick a stage to see which products help.') }}</p>
 </div>
-<div role="tablist" aria-label="Customer journey stage" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 28px 0 26px">
-<div style="position: relative; height: 176px">
-<span aria-hidden="true" style="position: absolute; top: 76px; left: 12.5%; width: 75%; height: 4px; border-radius: 4px; background: repeating-linear-gradient(90deg, #C9D2CE 0 10px, transparent 10px 18px)"></span>
-<span aria-hidden="true" class="kv-ce-track-fill" style="position: absolute; top: 76px; left: 12.5%; height: 4px; border-radius: 4px; background: #13803F; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1)" :style="{ width: (stage * 25) + '%' }"></span>
-<span aria-hidden="true" class="kv-ce-customer-pointer" style="position: absolute; top: 0; transform: translateX(-50%); transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; z-index: 10" :style="{ left: (12.5 + stage * 25) + '%' }">
+<div role="tablist" class="kv-journey-tablist-wrap" aria-label="Customer journey stage" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 28px 0 26px">
+<div class="kv-journey-track-container" style="position: relative; height: 176px">
+<span aria-hidden="true" class="kv-journey-track-bg" style="position: absolute; top: 76px; left: 12.5%; width: 75%; height: 4px; border-radius: 4px; background: repeating-linear-gradient(90deg, #C9D2CE 0 10px, transparent 10px 18px)"></span>
+<span aria-hidden="true" class="kv-ce-track-fill kv-journey-track-fill" style="position: absolute; top: 76px; left: 12.5%; height: 4px; border-radius: 4px; background: #13803F; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1)" :style="{ width: (stage * 25) + '%' }"></span>
+<span aria-hidden="true" class="kv-ce-customer-pointer kv-journey-pointer" style="position: absolute; top: 0; transform: translateX(-50%); transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; z-index: 10" :style="{ left: (12.5 + stage * 25) + '%' }">
 <span style="animation: kvFloat 2.4s ease-in-out infinite; display: flex; flex-direction: column; align-items: center">
 <span style="display: flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; border-radius: 999px; background: #071C33; color: #FFFFFF; font-size: 13px; font-weight: 700; white-space: nowrap; box-shadow: 0 6px 16px rgba(7, 28, 51, 0.18)"><span style="width: 26px; height: 26px; border-radius: 50%; background: #2BD46A; color: #071C33; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg></span>{{ t('kouventa.Your customer', 'Your customer') }}</span>
 <span style="width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 7px solid #071C33"></span>
@@ -1107,7 +1217,7 @@ Kouventa AI · WhatsApp · 09:12
 </span>
 
 <!-- Stage 0: Prospecting -->
-<button type="button" role="tab" :aria-selected="stage === 0" @click="pickStage(0)" style="position: absolute; top: 50px; left: 12.5%; transform: translateX(-50%); width: 220px; padding: 0; border: 0; background: transparent; color: #0E1A24; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; cursor: pointer">
+<button type="button" role="tab" class="kv-journey-tab-btn" :aria-selected="stage === 0" @click="pickStage(0)" style="position: absolute; top: 50px; left: 12.5%; transform: translateX(-50%); width: 220px; padding: 0; border: 0; background: transparent; color: #0E1A24; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; cursor: pointer">
 <span :style="{
     background: stage === 0 ? '#071C33' : (stage > 0 ? '#EAF7EF' : '#FFFFFF'),
     borderColor: stage === 0 ? '#071C33' : (stage > 0 ? '#13803F' : '#C9D2CE'),
@@ -1121,7 +1231,7 @@ Kouventa AI · WhatsApp · 09:12
 </button>
 
 <!-- Stage 1: Onboarding -->
-<button type="button" role="tab" :aria-selected="stage === 1" @click="pickStage(1)" style="position: absolute; top: 50px; left: 37.5%; transform: translateX(-50%); width: 220px; padding: 0; border: 0; background: transparent; color: #0E1A24; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; cursor: pointer">
+<button type="button" role="tab" class="kv-journey-tab-btn" :aria-selected="stage === 1" @click="pickStage(1)" style="position: absolute; top: 50px; left: 37.5%; transform: translateX(-50%); width: 220px; padding: 0; border: 0; background: transparent; color: #0E1A24; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; cursor: pointer">
 <span :style="{
     background: stage === 1 ? '#071C33' : (stage > 1 ? '#EAF7EF' : '#FFFFFF'),
     borderColor: stage === 1 ? '#071C33' : (stage > 1 ? '#13803F' : '#C9D2CE'),
@@ -1135,7 +1245,7 @@ Kouventa AI · WhatsApp · 09:12
 </button>
 
 <!-- Stage 2: Upselling -->
-<button type="button" role="tab" :aria-selected="stage === 2" @click="pickStage(2)" style="position: absolute; top: 50px; left: 62.5%; transform: translateX(-50%); width: 220px; padding: 0; border: 0; background: transparent; color: #0E1A24; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; cursor: pointer">
+<button type="button" role="tab" class="kv-journey-tab-btn" :aria-selected="stage === 2" @click="pickStage(2)" style="position: absolute; top: 50px; left: 62.5%; transform: translateX(-50%); width: 220px; padding: 0; border: 0; background: transparent; color: #0E1A24; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; cursor: pointer">
 <span :style="{
     background: stage === 2 ? '#071C33' : (stage > 2 ? '#EAF7EF' : '#FFFFFF'),
     borderColor: stage === 2 ? '#071C33' : (stage > 2 ? '#13803F' : '#C9D2CE'),
@@ -1149,7 +1259,7 @@ Kouventa AI · WhatsApp · 09:12
 </button>
 
 <!-- Stage 3: Support -->
-<button type="button" role="tab" :aria-selected="stage === 3" @click="pickStage(3)" style="position: absolute; top: 50px; left: 87.5%; transform: translateX(-50%); width: 220px; padding: 0; border: 0; background: transparent; color: #0E1A24; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; cursor: pointer">
+<button type="button" role="tab" class="kv-journey-tab-btn" :aria-selected="stage === 3" @click="pickStage(3)" style="position: absolute; top: 50px; left: 87.5%; transform: translateX(-50%); width: 220px; padding: 0; border: 0; background: transparent; color: #0E1A24; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; cursor: pointer">
 <span :style="{
     background: stage === 3 ? '#071C33' : '#FFFFFF',
     borderColor: stage === 3 ? '#071C33' : '#C9D2CE',
@@ -1164,7 +1274,7 @@ Kouventa AI · WhatsApp · 09:12
 </div>
 </div>
 
-<div role="tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px 44px; display: flex; justify-content: space-between; align-items: center; gap: 48px">
+<div role="tabpanel" class="kv-journey-tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px 44px; display: flex; justify-content: space-between; align-items: center; gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 10px; max-width: 760px">
 <span x-text="stages[stage].headline" style="font-size: 30px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em">{{ t('kouventa.Turn prospects into customers.', 'Turn prospects into customers.') }}</span>
 <span x-text="stages[stage].sub" style="font-size: 17px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Reach and engage potential customers with targeted campaigns across channels.', 'Reach and engage potential customers with targeted campaigns across channels.') }}</span>
