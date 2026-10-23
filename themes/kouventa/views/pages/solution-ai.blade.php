@@ -1049,14 +1049,14 @@
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px">
 
 <!-- Step 1: Discover -->
-<button type="button" @click="replayStep(0)" aria-label="Step 1: Discover (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
-<div style="height: 156px; background: #F4F6F5; position: relative; overflow: hidden">
+<button type="button" @click="replayStep(0)" aria-label="Step 1: Discover (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.06); display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
+<div style="height: 156px; background: #E8F3EC; position: relative; overflow: hidden">
 <template x-if="implSeen && stepOn[0]">
 <div style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 10px">
-<span style="width: 50px; height: 34px; border-radius: 8px; background: #FFFFFF; border: 1px solid #E3E8E6"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
-<span style="width: 50px; height: 34px; border-radius: 8px; border: 1px solid #E3E8E6;" :style="{ animation: 'kvAmber .3s ease ' + (replayed[0] ? '0.6s' : '0.6s') + ' both' }"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
-<span style="width: 50px; height: 34px; border-radius: 8px; background: #FFFFFF; border: 1px solid #E3E8E6"></span>
+<span style="width: 50px; height: 34px; border-radius: 8px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08)"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
+<span style="width: 50px; height: 34px; border-radius: 8px; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: 'kvAmber .3s ease ' + (replayed[0] ? '0.6s' : '0.6s') + ' both' }"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
+<span style="width: 50px; height: 34px; border-radius: 8px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08)"></span>
 </div>
 <span style="position: absolute; left: 24px; top: 46px; --d: 170px;" :style="{ animation: 'kvScan 1.4s ease ' + (replayed[0] ? '0.1s' : '0.1s') + ' 1 both' }"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#071C33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"></circle><path d="m20 20-4.5-4.5"></path></svg></span>
 </div>
@@ -1069,16 +1069,16 @@
 </button>
 
 <!-- Step 2: Connect -->
-<button type="button" @click="replayStep(1)" aria-label="Step 2: Connect (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
-<div style="height: 156px; background: #F4F6F5; position: relative; overflow: hidden">
+<button type="button" @click="replayStep(1)" aria-label="Step 2: Connect (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.06); display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
+<div style="height: 156px; background: #E8F3EC; position: relative; overflow: hidden">
 <template x-if="implSeen && stepOn[1]">
 <div style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 14px">
 <div style="display: flex; flex-direction: column; gap: 5px">
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '0.1s' : '2.1s') + ' both' }">{{ t('kouventa.Documents', 'Documents') }}</span>
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '0.6s' : '2.6s') + ' both' }">CRM</span>
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '1.0s' : '3.0s') + ' both' }">ERP</span>
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF;" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '1.4s' : '3.4s') + ' both' }">Ticketing</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '0.1s' : '2.1s') + ' both' }">{{ t('kouventa.Documents', 'Documents') }}</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '0.6s' : '2.6s') + ' both' }">CRM</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '1.0s' : '3.0s') + ' both' }">ERP</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: 'kvIn .25s ease ' + (replayed[1] ? '1.4s' : '3.4s') + ' both' }">Ticketing</span>
 </div>
 <div style="width: 40px; height: 2px; background: #13803F; --w: 40px;" :style="{ animation: 'kvGrowW .4s ease ' + (replayed[1] ? '1.4s' : '3.4s') + ' both' }"></div>
 <span style="width: 52px; height: 52px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800">AGENT</span>
@@ -1093,15 +1093,15 @@
 </button>
 
 <!-- Step 3: Configure -->
-<button type="button" @click="replayStep(2)" aria-label="Step 3: Configure (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
-<div style="height: 156px; background: #F4F6F5; position: relative; overflow: hidden">
+<button type="button" @click="replayStep(2)" aria-label="Step 3: Configure (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.06); display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
+<div style="height: 156px; background: #E8F3EC; position: relative; overflow: hidden">
 <template x-if="implSeen && stepOn[2]">
 <div style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 16px">
 <div style="display: flex; flex-direction: column; gap: 5px; width: 90px">
-<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #E3E8E6;" :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '0.1s' : '4.1s') + ' both' }"></span>
+<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '0.1s' : '4.1s') + ' both' }"></span>
 <span style="height: 18px; border-radius: 5px; background: #FFF6E5; border: 1px solid #F2C46D; font-size: 9px; font-weight: 800; color: #7A4A00; display: flex; align-items: center; justify-content: center;" :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '0.6s' : '4.6s') + ' both' }">{{ t('kouventa.Approval', 'Approval') }}</span>
-<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #E3E8E6;" :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '1.0s' : '5.0s') + ' both' }"></span>
+<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '1.0s' : '5.0s') + ' both' }"></span>
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px; font-size: 10px; font-weight: 700">
 <span :style="{ animation: 'kvIn .25s ease ' + (replayed[2] ? '0.6s' : '4.6s') + ' both' }">✓ {{ t('kouventa.Rules', 'Rules') }}</span>
@@ -1119,16 +1119,16 @@
 </button>
 
 <!-- Step 4: Deploy & Scale -->
-<button type="button" @click="replayStep(3)" aria-label="Step 4: Deploy & Scale (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
-<div style="height: 156px; background: #F4F6F5; position: relative; overflow: hidden">
+<button type="button" @click="replayStep(3)" aria-label="Step 4: Deploy & Scale (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.06); display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
+<div style="height: 156px; background: #E8F3EC; position: relative; overflow: hidden">
 <template x-if="implSeen && stepOn[3]">
 <div style="position: absolute; inset: 0">
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 16px">
 <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
-<span style="width: 44px; height: 24px; border-radius: 999px; background: #C9D2CE; padding: 2px; box-sizing: border-box; display: flex;" :style="{ animation: 'kvGreen .3s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both' }"><span style="width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF;" :style="{ animation: 'kvKnob .3s ease ' + (replayed[3] ? '0.1s' : '6.1s') + ' both' }"></span></span>
+<span style="width: 44px; height: 24px; border-radius: 999px; background: #9AA8A2; padding: 2px; box-sizing: border-box; display: flex;" :style="{ animation: 'kvLiveOn .3s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both' }"><span style="width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 3px rgba(7,28,51,0.3);" :style="{ animation: 'kvKnob .3s ease ' + (replayed[3] ? '0.1s' : '6.1s') + ' both' }"></span></span>
 <span style="font-size: 11px; font-weight: 800; color: #0B5E2C;" :style="{ animation: 'kvIn .25s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both' }">Live</span>
 </div>
-<div style="display: flex; align-items: flex-end; gap: 4px; height: 40px;" :style="{ animation: 'kvIn .25s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both' }"><span style="width: 8px; height: 14px; background: #9ED3B0; border-radius: 2px"></span><span style="width: 8px; height: 24px; background: #5BB880; border-radius: 2px"></span><span style="width: 8px; height: 32px; background: #13803F; border-radius: 2px"></span></div>
+<div style="display: flex; align-items: flex-end; gap: 4px; height: 40px;" :style="{ animation: 'kvIn .25s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both' }"><span style="width: 8px; height: 14px; background: #4FAE74; border-radius: 2px"></span><span style="width: 8px; height: 24px; background: #2A8F52; border-radius: 2px"></span><span style="width: 8px; height: 32px; background: #0B5E2C; border-radius: 2px"></span></div>
 <div style="display: grid; grid-template-columns: repeat(3, 16px); gap: 5px">
 <span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33"></span>
 <span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: 'kvPopIn .25s ease ' + (replayed[3] ? '1.0s' : '7.0s') + ' both' }"></span>
