@@ -439,79 +439,136 @@
         max-width: 88% !important;
     }
 
+    /* Integration - Vertical Mobile Pipeline */
     .kv-mockup-integration {
         width: 100% !important;
-        max-width: 100% !important;
+        max-width: 280px !important;
         box-sizing: border-box !important;
         transform: none !important;
-        margin: 0 !important;
+        margin: 0 auto !important;
     }
 
     .kv-mockup-integration:not([style*="display: none"]) {
         display: flex !important;
+        flex-direction: column !important;
         align-items: center !important;
-        justify-content: space-between !important;
+        justify-content: center !important;
+        gap: 0 !important;
     }
 
-    .kv-mockup-integration > div:first-child {
-        width: 102px !important;
-        padding: 10px 8px !important;
+    .kv-mockup-integration .kv-integration-source {
+        width: 100% !important;
+        max-width: 270px !important;
+        padding: 10px 14px !important;
         border-radius: 12px !important;
         box-sizing: border-box !important;
         flex-shrink: 0 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 8px !important;
     }
 
-    .kv-mockup-integration > div:first-child > span:first-child {
-        font-size: 11px !important;
+    .kv-mockup-integration .kv-integration-source-header {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2px !important;
+        text-align: left !important;
+        min-width: 0 !important;
     }
 
-    .kv-mockup-integration > div:first-child > span:nth-child(2) {
-        font-size: 9.5px !important;
+    .kv-mockup-integration .kv-integration-source-header span:first-child {
+        font-size: 11.5px !important;
+        font-weight: 700 !important;
     }
 
-    .kv-mockup-integration > div:first-child > span:nth-child(3) {
+    .kv-mockup-integration .kv-integration-source-header span:last-child {
         font-size: 10px !important;
-        padding: 4px 6px !important;
+        color: #4A5866 !important;
     }
 
-    .kv-mockup-integration > div:first-child > span:last-child {
-        font-size: 9px !important;
-    }
-
-    .kv-mockup-integration > div:nth-child(2) {
-        flex-grow: 1 !important;
-        min-width: 16px !important;
-        margin: 0 4px !important;
-    }
-
-    .kv-mockup-integration > div:nth-child(3) {
-        width: 40px !important;
-        height: 40px !important;
-        border-radius: 11px !important;
+    .kv-mockup-integration .kv-integration-source-badge {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 3px !important;
+        align-items: flex-end !important;
         flex-shrink: 0 !important;
     }
 
-    .kv-mockup-integration > div:nth-child(3) img {
-        width: 20px !important;
-        height: 20px !important;
+    .kv-mockup-integration .kv-integration-source-badge span:first-child {
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        padding: 4px 7px !important;
+        border-radius: 6px !important;
     }
 
-    .kv-mockup-integration > div:nth-child(4) {
-        flex-grow: 1 !important;
-        min-width: 16px !important;
-        margin: 0 4px !important;
+    .kv-mockup-integration .kv-integration-source-badge span:last-child {
+        font-size: 9px !important;
+        font-family: 'JetBrains Mono', monospace !important;
     }
 
-    .kv-mockup-integration > div:last-child {
-        width: 144px !important;
+    .kv-mockup-integration .kv-integration-connector {
+        width: 2px !important;
+        height: 18px !important;
+        flex-grow: 0 !important;
+        background: #DCE3E0 !important;
+        position: relative !important;
+        margin: 0 auto !important;
+    }
+
+    .kv-mockup-integration .kv-integration-connector > span {
+        position: absolute !important;
+        left: -3px !important;
+        top: 0 !important;
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        background: #13803F !important;
+        --d: 18px !important;
+        animation: kvTravelY 1.6s linear infinite !important;
+    }
+
+    .kv-mockup-integration .kv-connector-2 > span {
+        animation-delay: 0.8s !important;
+    }
+
+    .kv-mockup-integration .kv-integration-node {
+        width: 44px !important;
+        height: 44px !important;
+        border-radius: 13px !important;
+        flex-shrink: 0 !important;
+        margin: 0 auto !important;
+    }
+
+    .kv-mockup-integration .kv-integration-node img {
+        width: 22px !important;
+        height: 22px !important;
+    }
+
+    .kv-mockup-integration .kv-integration-target {
+        width: 100% !important;
+        max-width: 270px !important;
         box-sizing: border-box !important;
         flex-shrink: 0 !important;
-        font-size: 11px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 7px !important;
+        font-size: 11.5px !important;
+        line-height: 1.4 !important;
     }
 
-    .kv-mockup-integration > div:last-child > div {
-        padding: 7px 9px !important;
-        font-size: 11px !important;
+    .kv-mockup-integration .kv-integration-target > div {
+        padding: 8px 12px !important;
+        font-size: 11.5px !important;
+        border-radius: 4px 12px 12px 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-integration .kv-integration-target > span {
+        font-size: 9.5px !important;
+        color: #4A5866 !important;
+        text-align: left !important;
     }
 
     .kv-mockup-flows {
@@ -522,60 +579,111 @@
         margin: 0 !important;
     }
 
+    /* Omni - Vertical Mobile Pipeline */
     .kv-mockup-omni {
         width: 100% !important;
-        max-width: 100% !important;
+        max-width: 280px !important;
         box-sizing: border-box !important;
         transform: none !important;
-        margin: 0 !important;
+        margin: 0 auto !important;
     }
 
     .kv-mockup-omni:not([style*="display: none"]) {
         display: flex !important;
+        flex-direction: column !important;
         align-items: center !important;
-        justify-content: space-between !important;
+        justify-content: center !important;
+        gap: 0 !important;
     }
 
-    .kv-mockup-omni > div:first-child {
-        width: 96px !important;
-        flex-shrink: 0 !important;
-        gap: 7px !important;
-    }
-
-    .kv-mockup-omni > div:first-child > span {
-        padding: 5px 6px !important;
+    .kv-mockup-omni .kv-omni-channels {
+        width: 100% !important;
+        max-width: 280px !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         gap: 5px !important;
-        font-size: 10.5px !important;
+        box-sizing: border-box !important;
     }
 
-    .kv-mockup-omni > div:first-child > span img {
+    .kv-mockup-omni .kv-omni-ch-item {
+        padding: 5px 7px !important;
+        gap: 5px !important;
+        border-radius: 8px !important;
+        font-size: 10.5px !important;
+        box-sizing: border-box !important;
+        align-items: center !important;
+        min-width: 0 !important;
+    }
+
+    .kv-mockup-omni .kv-omni-ch-item img {
         width: 15px !important;
         height: 15px !important;
-    }
-
-    .kv-mockup-omni > div:nth-child(2) {
-        width: 24px !important;
         flex-shrink: 0 !important;
-        margin: 0 2px !important;
     }
 
-    .kv-mockup-omni > div:last-child {
-        flex-grow: 1 !important;
-        min-width: 0 !important;
+    .kv-mockup-omni .kv-omni-ch-item span span:first-child {
+        font-size: 10.5px !important;
+        font-weight: 700 !important;
+    }
+
+    .kv-mockup-omni .kv-omni-ch-item span span:last-child {
+        font-size: 8.5px !important;
+        color: #4A5866 !important;
+    }
+
+    .kv-mockup-omni .kv-omni-connectors {
+        display: none !important;
+    }
+
+    .kv-mockup-omni .kv-omni-v-connector {
+        display: block !important;
+        width: 2px !important;
+        height: 16px !important;
+        background: #DCE3E0 !important;
+        position: relative !important;
+        margin: 3px auto !important;
+    }
+
+    .kv-mockup-omni .kv-omni-v-connector span {
+        position: absolute !important;
+        left: -3px !important;
+        top: 0 !important;
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        background: #13803F !important;
+        --d: 16px !important;
+        animation: kvTravelY 1.5s linear infinite !important;
+    }
+
+    .kv-mockup-omni .kv-omni-inbox {
+        width: 100% !important;
+        max-width: 280px !important;
         box-sizing: border-box !important;
         padding: 10px 10px !important;
         gap: 6px !important;
+        border-radius: 14px !important;
     }
 
-    .kv-mockup-omni > div:last-child > div[style*="border-radius: 8px"] {
-        padding: 5px 6px !important;
-        font-size: 10px !important;
-        gap: 5px !important;
+    .kv-mockup-omni .kv-omni-inbox > span:first-child {
+        font-size: 11.5px !important;
+        font-weight: 700 !important;
     }
 
-    .kv-mockup-omni > div:last-child img {
+    .kv-mockup-omni .kv-omni-inbox > div[style*="border-radius: 8px"] {
+        padding: 5px 8px !important;
+        font-size: 10.5px !important;
+        gap: 6px !important;
+    }
+
+    .kv-mockup-omni .kv-omni-inbox img {
         width: 15px !important;
         height: 15px !important;
+    }
+
+    .kv-mockup-omni .kv-omni-inbox span[style*="font-size: 9.5px"] {
+        font-size: 9px !important;
+        padding: 1px 4px !important;
     }
 }
 
@@ -609,8 +717,8 @@
     }
 
     .kv-mockup-integration {
-        transform: scale(0.92) !important;
-        transform-origin: center center !important;
+        transform: none !important;
+        max-width: 270px !important;
     }
 
     .kv-mockup-flows {
@@ -619,8 +727,23 @@
     }
 
     .kv-mockup-omni {
-        transform: scale(0.92) !important;
-        transform-origin: center center !important;
+        transform: none !important;
+        max-width: 270px !important;
+    }
+}
+
+/* Smallest Screens (<= 350px) */
+@media (max-width: 350px) {
+    .kv-mockup-integration,
+    .kv-mockup-integration .kv-integration-source,
+    .kv-mockup-integration .kv-integration-target {
+        max-width: 250px !important;
+    }
+
+    .kv-mockup-omni,
+    .kv-mockup-omni .kv-omni-channels,
+    .kv-mockup-omni .kv-omni-inbox {
+        max-width: 250px !important;
     }
 }
 
@@ -1733,18 +1856,22 @@ Kouventa AI · WhatsApp · 09:12
 
 <!-- Integration Illustration -->
 <div class="kv-flex kv-items-center kv-mockup-integration" x-show="product === 'integration'" style="width: 420px">
-<div style="width: 118px; flex-shrink: 0; background: #FFFFFF; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 10px 30px rgba(7,28,51,0.08)">
+<div class="kv-integration-source" style="width: 118px; flex-shrink: 0; background: #FFFFFF; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 10px 30px rgba(7,28,51,0.08)">
+<div class="kv-integration-source-header" style="display: flex; flex-direction: column; gap: 2px;">
 <span style="font-size: 12px; font-weight: 700">{{ t('kouventa.Your system', 'Your system') }}</span>
 <span style="font-size: 11px; color: #4A5866">ERP · CRM · POS</span>
+</div>
+<div class="kv-integration-source-badge" style="display: flex; flex-direction: column; gap: 4px;">
 <span style="font-size: 11px; font-weight: 700; padding: 6px 8px; border-radius: 8px; background: #DDF3E4; color: #0B5E2C; animation: kvLoop 6s ease 0.2s infinite both">{{ t('kouventa.Order shipped', 'Order shipped') }}</span>
 <span style="display: flex; align-items: center; gap: 5px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: #4A5866"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>{{ t('kouventa.via Webhook', 'via Webhook') }}</span>
 </div>
-<div style="flex-grow: 1; height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #13803F; --d: 34px; animation: kvTravel 1.6s linear infinite"></span></div>
-<div style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 16px; background: #071C33; display: flex; align-items: center; justify-content: center; animation: kvPulse 2.4s ease infinite">
+</div>
+<div class="kv-integration-connector kv-connector-1" style="flex-grow: 1; height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #13803F; --d: 34px; animation: kvTravel 1.6s linear infinite"></span></div>
+<div class="kv-integration-node" style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 16px; background: #071C33; display: flex; align-items: center; justify-content: center; animation: kvPulse 2.4s ease infinite">
 <img src="{{ theme_asset('images/favicon.png') }}" alt="Kouventa" style="width: 28px; height: 28px; object-fit: contain; display: block">
 </div>
-<div style="flex-grow: 1; height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #13803F; --d: 34px; animation: kvTravel 1.6s linear 0.8s infinite"></span></div>
-<div style="width: 160px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; font-size: 12px; line-height: 1.45">
+<div class="kv-integration-connector kv-connector-2" style="flex-grow: 1; height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #13803F; --d: 34px; animation: kvTravel 1.6s linear 0.8s infinite"></span></div>
+<div class="kv-integration-target" style="width: 160px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; font-size: 12px; line-height: 1.45">
 <div style="background: #FFFFFF; border-radius: 4px 12px 12px 12px; padding: 10px 12px; box-shadow: 0 10px 30px rgba(7,28,51,0.08); animation: kvLoop 6s ease 1.4s infinite both">{{ t('kouventa.Hi Rina, your order is on the way.', 'Hi Rina, your order is on the way.') }} <span style="color: #13803F; font-weight: 700">{{ t('kouventa.Track order', 'Track order') }}</span></div>
 <div style="background: #FFFFFF; border-radius: 4px 12px 12px 12px; padding: 10px 12px; box-shadow: 0 10px 30px rgba(7,28,51,0.08); animation: kvLoop 6s ease 2.4s infinite both">{{ t('kouventa.Reminder: your appointment is tomorrow, 10:00.', 'Reminder: your appointment is tomorrow, 10:00.') }}</div>
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #4A5866">template: order_update</span>
@@ -1847,19 +1974,23 @@ Kouventa AI · WhatsApp · 09:12
 
 <!-- Omni Illustration -->
 <div class="kv-flex kv-items-center kv-mockup-omni" x-show="product === 'omni'" style="width: 420px; gap: 0">
-<div style="width: 118px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px">
-<span style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>WhatsApp</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">Chat</span></span></span>
-<span style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-1.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Instagram</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.DM & comments', 'DM & comments') }}</span></span></span>
-<span style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-2.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Facebook</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.DM & comments', 'DM & comments') }}</span></span></span>
-<span style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-3.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Live Chat</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.Website chat', 'Website chat') }}</span></span></span>
+<div class="kv-omni-channels" style="width: 118px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px">
+<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>WhatsApp</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">Chat</span></span></span>
+<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-1.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Instagram</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.DM & comments', 'DM & comments') }}</span></span></span>
+<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-2.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Facebook</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.DM & comments', 'DM & comments') }}</span></span></span>
+<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-3.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Live Chat</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.Website chat', 'Website chat') }}</span></span></span>
 </div>
-<div style="width: 50px; flex-shrink: 0; height: 214px; display: flex; flex-direction: column; justify-content: space-around">
+<div class="kv-omni-connectors" style="width: 50px; flex-shrink: 0; height: 214px; display: flex; flex-direction: column; justify-content: space-around">
 <div style="height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: #13803F; --d: 42px; animation: kvTravel 1.8s linear 0s infinite"></span></div>
 <div style="height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: #13803F; --d: 42px; animation: kvTravel 1.8s linear 0.45s infinite"></span></div>
 <div style="height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: #13803F; --d: 42px; animation: kvTravel 1.8s linear 0.9s infinite"></span></div>
 <div style="height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: #13803F; --d: 42px; animation: kvTravel 1.8s linear 1.35s infinite"></span></div>
 </div>
-<div style="flex-grow: 1; background: #FFFFFF; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 10px 30px rgba(7,28,51,0.08)">
+<!-- Vertical connector for mobile -->
+<div class="kv-omni-v-connector" style="display: none;">
+<div style="width: 2px; height: 18px; background: #DCE3E0; position: relative; margin: 0 auto;"><span style="position: absolute; left: -3px; top: 0; width: 8px; height: 8px; border-radius: 50%; background: #13803F; --d: 18px; animation: kvTravelY 1.5s linear infinite;"></span></div>
+</div>
+<div class="kv-omni-inbox" style="flex-grow: 1; background: #FFFFFF; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 10px 30px rgba(7,28,51,0.08)">
 <span style="font-size: 12px; font-weight: 700">{{ t('kouventa.Unified inbox', 'Unified inbox') }}</span>
 <div style="display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; background: #F4F6F5; font-size: 11px; animation: kvLoop 8s ease 0.4s infinite both"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0; flex-grow: 1"><span style="display: flex; align-items: center; gap: 6px"><strong style="font-weight: 700">Rina</strong><span style="padding: 1px 6px; border-radius: 5px; background: #E6EAEE; color: #33414E; font-size: 9.5px; font-weight: 800">Chat</span></span><span style="color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ t('kouventa.Where\'s my order?', 'Where\'s my order?') }}</span></span></div>
 <div style="display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; background: #F4F6F5; font-size: 11px; animation: kvLoop 8s ease 1s infinite both"><img src="{{ theme_asset('images/icon-channel-1.png') }}" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0; flex-grow: 1"><span style="display: flex; align-items: center; gap: 6px"><strong style="font-weight: 700">Sari</strong><span style="padding: 1px 6px; border-radius: 5px; background: #FFF1D6; color: #8A5A00; font-size: 9.5px; font-weight: 800">{{ t('kouventa.Comment', 'Comment') }}</span></span><span style="color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ t('kouventa.Is this available in size M?', 'Is this available in size M?') }}</span></span></div>
