@@ -8,9 +8,9 @@
 .kv-stage-2 { width: 420px; display: flex; flex-direction: column; gap: 16px; }
 .kv-product-info { display: flex; flex-direction: column; gap: 16px; }
 .kv-mockup-wrap { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
-.kv-mockup-wiki { width: 380px; max-width: 100%; background: #FFFFFF; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1); display: flex; flex-direction: column; }
+.kv-mockup-wiki { width: 380px; max-width: 100%; display: flex; flex-direction: column; align-items: center; }
 .kv-mockup-taskforce { width: 400px; max-width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.kv-mockup-playground { width: 410px; max-width: 100%; background: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1); display: grid; grid-template-columns: 118px minmax(0, 1fr); font-size: 11px; color: #0E1A24; }
+.kv-mockup-playground { width: 410px; max-width: 100%; display: flex; justify-content: center; }
 .kv-mockup-workflow { width: 100%; height: 100%; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
 
 /* --- AI Products Section Layout & Components --- */
@@ -548,31 +548,156 @@
     }
 
     .kv-product-mockup-container {
-        min-height: 360px !important;
-        padding: 16px 8px !important;
+        min-height: 400px !important;
+        height: auto !important;
+        padding: 20px 10px !important;
+        border-radius: 16px !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
+    .kv-product-mockup-container [style*="display: none"] {
+        display: none !important;
+    }
+
+    .kv-mockup-wrap {
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+        position: relative !important;
+    }
+
+    /* Mockups scaling - fills the box with minimal wasted margin to match CE */
     .kv-mockup-wiki {
+        max-width: 100% !important;
         width: 100% !important;
-        max-width: 360px !important;
+        box-sizing: border-box !important;
+        transform: none !important;
+        margin: 0 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
     }
 
-    .kv-mockup-taskforce {
+    .kv-mockup-wiki > div {
         width: 100% !important;
-        max-width: 380px !important;
-        padding: 0 4px !important;
+        max-width: 100% !important;
         box-sizing: border-box !important;
     }
 
-    .kv-mockup-playground {
+    .kv-mockup-taskforce {
+        max-width: 100% !important;
         width: 100% !important;
-        max-width: 360px !important;
+        box-sizing: border-box !important;
+        transform: none !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+    }
+
+    .kv-mockup-taskforce > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        gap: 14px !important;
+    }
+
+    .kv-mockup-taskforce > div > div:first-child {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-taskforce > div > div:first-child span[style*="font-size: 10px"] {
+        font-size: 8.5px !important;
+    }
+
+    .kv-mockup-taskforce > div > div:last-child {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        height: auto !important;
+        min-height: 350px !important;
+    }
+
+    .kv-mockup-playground {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        transform: none !important;
+        margin: 0 auto !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    .kv-playground-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        display: grid !important;
+        grid-template-columns: 108px minmax(0, 1fr) !important;
+        height: 392px !important;
+    }
+
+    .kv-playground-sidebar {
+        width: 108px !important;
+        min-width: 108px !important;
+        max-width: 108px !important;
+        padding: 10px 6px !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-playground-chat {
+        min-width: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    .kv-playground-chat div[style*="left: 114px"] {
+        left: auto !important;
+        right: 6px !important;
+        max-width: 150px !important;
+    }
+
+    .kv-playground-chat div[style*="left: 12px"] {
+        left: 6px !important;
+        max-width: 140px !important;
     }
 
     .kv-mockup-workflow {
-        transform: scale(0.82);
-        transform-origin: center center;
-        margin: -25px 0;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: 420px !important;
+        min-height: 400px !important;
+        position: relative !important;
+        inset: auto !important;
+        transform: none !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-workflow > div:first-child {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-workflow div[style*="width: 384px"] {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .kv-mockup-workflow div[style*="left: 206px"] {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
     }
 }
 
@@ -623,25 +748,32 @@
         border-radius: 16px !important;
         gap: 20px !important;
     }
-
-    .kv-mockup-workflow {
-        transform: scale(0.70);
-        transform-origin: center center;
-        margin: -40px 0;
-    }
 }
 
 /* Extra Small (<= 360px) */
 @media (max-width: 360px) {
+    .kv-product-mockup-container {
+        padding: 16px 6px !important;
+    }
+
     .kv-product-tablist {
         grid-template-columns: 1fr !important;
         gap: 8px !important;
     }
 
-    .kv-mockup-workflow {
-        transform: scale(0.60);
-        transform-origin: center center;
-        margin: -55px 0;
+    .kv-playground-card {
+        grid-template-columns: 88px minmax(0, 1fr) !important;
+    }
+
+    .kv-playground-sidebar {
+        width: 88px !important;
+        min-width: 88px !important;
+        max-width: 88px !important;
+        padding: 8px 4px !important;
+    }
+
+    .kv-mockup-taskforce > div > div:first-child span[style*="font-size: 10px"] {
+        font-size: 7.5px !important;
     }
 }
 
@@ -1588,8 +1720,8 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 
 <!-- Mockup Playground -->
 <div class="kv-mockup-playground" x-show="product === 'playground'" x-cloak>
-<div style="width: 410px; height: 392px; background: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1); display: grid; grid-template-columns: 118px minmax(0, 1fr); font-size: 11px; color: #0E1A24">
-<div style="background: #F7F8F8; border-right: 1px solid #ECEFEE; padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<div class="kv-playground-card" style="width: 410px; height: 392px; background: #FFFFFF; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(7,28,51,0.1); display: grid; grid-template-columns: 118px minmax(0, 1fr); font-size: 11px; color: #0E1A24">
+<div class="kv-playground-sidebar" style="background: #F7F8F8; border-right: 1px solid #ECEFEE; padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; min-width: 0">
 <span style="font-size: 13px; font-weight: 800; padding: 0 6px 8px">{{ $isIdLocale ? 'Chat' : t('kouventa.Chats', 'Chats') }}</span>
 <span style="display: flex; align-items: center; gap: 5px; padding: 5px 4px; border-radius: 6px; white-space: nowrap; font-size: 10px; color: #0E1A24"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="12" cy="12" r="9"></circle><path d="m8.5 12 2.5 2.5 4.5-5"></path></svg>{{ $isIdLocale ? 'Permintaan Persetujuan' : t('kouventa.Approval Request', 'Approval Request') }}</span>
 <span style="display: flex; align-items: center; gap: 5px; padding: 5px 4px; border-radius: 6px; white-space: nowrap; font-size: 10px; color: #0E1A24"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path></svg>{{ $isIdLocale ? 'Proyek' : t('kouventa.Projects', 'Projects') }}</span>
@@ -1600,7 +1732,7 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 <span style="padding: 4px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ $isIdLocale ? 'Kebijakan klaim perjalanan' : t('kouventa.Travel claim policy', 'Travel claim policy') }}</span>
 <span style="margin-top: auto; display: flex; align-items: center; gap: 6px; padding: 6px"><span style="width: 20px; height: 20px; flex-shrink: 0; border-radius: 50%; background: #DDF3E4; color: #0B5E2C; font-size: 9px; font-weight: 800; display: flex; align-items: center; justify-content: center">DA</span><span style="display: flex; flex-direction: column; min-width: 0"><span style="font-weight: 700">Dina</span><span style="font-size: 9.5px; color: #4A5866">Finance</span></span></span>
 </div>
-<div style="position: relative; display: flex; flex-direction: column; min-width: 0; padding: 10px 12px 12px">
+<div class="kv-playground-chat" style="position: relative; display: flex; flex-direction: column; min-width: 0; padding: 10px 12px 12px">
 <div style="display: flex; align-items: center; gap: 6px">
 <span style="display: grid">
 <span style="grid-area: 1 / 1; display: flex; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 8px; border: 1px solid #DCE3E0; font-weight: 700; animation: kvOut .2s ease 2.4s 1 forwards"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 4v4M9 13h.01M15 13h.01"></path></svg>{{ $isIdLocale ? 'Pilih agent' : t('kouventa.Choose an agent', 'Choose an agent') }}<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 9 4-4 4 4M8 15l4 4 4-4"></path></svg></span>

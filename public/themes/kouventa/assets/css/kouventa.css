@@ -3052,8 +3052,12 @@ body {
 
     /* Product Mockup Containers */
     .kv-product-mockup-container {
-        height: 380px !important;
+        height: auto !important;
+        min-height: 400px !important;
         width: 100% !important;
+        padding: 20px 10px !important;
+        border-radius: 16px !important;
+        box-sizing: border-box !important;
         overflow: hidden !important;
         display: flex !important;
         align-items: center !important;
@@ -3067,39 +3071,133 @@ body {
         align-items: center !important;
         justify-content: center !important;
         overflow: hidden !important;
+        position: relative !important;
     }
 
     .kv-mockup-wiki {
-        width: 380px !important;
-        max-width: none !important;
-        flex-shrink: 0 !important;
-        transform: scale(0.80) !important;
-        transform-origin: center center !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        transform: none !important;
+        margin: 0 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    .kv-mockup-wiki > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     .kv-mockup-taskforce {
-        width: 400px !important;
-        max-width: none !important;
-        flex-shrink: 0 !important;
-        transform: scale(0.74) !important;
-        transform-origin: center center !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        transform: none !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+    }
+
+    .kv-mockup-taskforce > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        gap: 14px !important;
+    }
+
+    .kv-mockup-taskforce > div > div:first-child {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-taskforce > div > div:first-child span[style*="font-size: 10px"] {
+        font-size: 8.5px !important;
+    }
+
+    .kv-mockup-taskforce > div > div:last-child {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        height: auto !important;
+        min-height: 350px !important;
     }
 
     .kv-mockup-playground {
-        width: 410px !important;
-        max-width: none !important;
-        flex-shrink: 0 !important;
-        transform: scale(0.73) !important;
-        transform-origin: center center !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        transform: none !important;
+        margin: 0 auto !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    .kv-playground-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        display: grid !important;
+        grid-template-columns: 108px minmax(0, 1fr) !important;
+        height: 392px !important;
+    }
+
+    .kv-playground-sidebar {
+        width: 108px !important;
+        min-width: 108px !important;
+        max-width: 108px !important;
+        padding: 10px 6px !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-playground-chat {
+        min-width: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    .kv-playground-chat div[style*="left: 114px"] {
+        left: auto !important;
+        right: 6px !important;
+        max-width: 150px !important;
+    }
+
+    .kv-playground-chat div[style*="left: 12px"] {
+        left: 6px !important;
+        max-width: 140px !important;
     }
 
     .kv-mockup-workflow {
-        width: 420px !important;
-        max-width: none !important;
-        height: 380px !important;
-        flex-shrink: 0 !important;
-        transform: scale(0.74) !important;
-        transform-origin: center center !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: 420px !important;
+        min-height: 400px !important;
+        position: relative !important;
+        inset: auto !important;
+        transform: none !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-workflow > div:first-child {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-workflow div[style*="width: 384px"] {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .kv-mockup-workflow div[style*="left: 206px"] {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
     }
 
     /* Horizontal Scrollable Solution Tabs */
@@ -3651,27 +3749,156 @@ body {
         line-height: 1.5 !important;
     }
     .kv-product-mockup-container {
-        min-height: 360px !important;
-        padding: 16px 8px !important;
+        min-height: 400px !important;
+        height: auto !important;
+        padding: 20px 10px !important;
+        border-radius: 16px !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
+
+    .kv-product-mockup-container [style*="display: none"] {
+        display: none !important;
+    }
+
+    .kv-mockup-wrap {
+        width: 100% !important;
+        height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: hidden !important;
+        position: relative !important;
+    }
+
+    /* Mockups scaling - fills the box with minimal wasted margin to match CE */
     .kv-mockup-wiki {
+        max-width: 100% !important;
         width: 100% !important;
-        max-width: 360px !important;
+        box-sizing: border-box !important;
+        transform: none !important;
+        margin: 0 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
     }
-    .kv-mockup-taskforce {
+
+    .kv-mockup-wiki > div {
         width: 100% !important;
-        max-width: 380px !important;
-        padding: 0 4px !important;
+        max-width: 100% !important;
         box-sizing: border-box !important;
     }
-    .kv-mockup-playground {
+
+    .kv-mockup-taskforce {
+        max-width: 100% !important;
         width: 100% !important;
-        max-width: 360px !important;
+        box-sizing: border-box !important;
+        transform: none !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
     }
+
+    .kv-mockup-taskforce > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        gap: 14px !important;
+    }
+
+    .kv-mockup-taskforce > div > div:first-child {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-taskforce > div > div:first-child span[style*="font-size: 10px"] {
+        font-size: 8.5px !important;
+    }
+
+    .kv-mockup-taskforce > div > div:last-child {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        height: auto !important;
+        min-height: 350px !important;
+    }
+
+    .kv-mockup-playground {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        transform: none !important;
+        margin: 0 auto !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    .kv-playground-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        display: grid !important;
+        grid-template-columns: 108px minmax(0, 1fr) !important;
+        height: 392px !important;
+    }
+
+    .kv-playground-sidebar {
+        width: 108px !important;
+        min-width: 108px !important;
+        max-width: 108px !important;
+        padding: 10px 6px !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-playground-chat {
+        min-width: 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    .kv-playground-chat div[style*="left: 114px"] {
+        left: auto !important;
+        right: 6px !important;
+        max-width: 150px !important;
+    }
+
+    .kv-playground-chat div[style*="left: 12px"] {
+        left: 6px !important;
+        max-width: 140px !important;
+    }
+
     .kv-mockup-workflow {
-        transform: scale(0.82);
-        transform-origin: center center;
-        margin: -25px 0;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: 420px !important;
+        min-height: 400px !important;
+        position: relative !important;
+        inset: auto !important;
+        transform: none !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-workflow > div:first-child {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .kv-mockup-workflow div[style*="width: 384px"] {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .kv-mockup-workflow div[style*="left: 206px"] {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
     }
 }
 
@@ -3713,22 +3940,27 @@ body {
         border-radius: 16px !important;
         gap: 20px !important;
     }
-    .kv-mockup-workflow {
-        transform: scale(0.70);
-        transform-origin: center center;
-        margin: -40px 0;
-    }
 }
 
 @media (max-width: 360px) {
+    .kv-product-mockup-container {
+        padding: 16px 6px !important;
+    }
     .kv-product-tablist {
         grid-template-columns: 1fr !important;
         gap: 8px !important;
     }
-    .kv-mockup-workflow {
-        transform: scale(0.60);
-        transform-origin: center center;
-        margin: -55px 0;
+    .kv-playground-card {
+        grid-template-columns: 88px minmax(0, 1fr) !important;
+    }
+    .kv-playground-sidebar {
+        width: 88px !important;
+        min-width: 88px !important;
+        max-width: 88px !important;
+        padding: 8px 4px !important;
+    }
+    .kv-mockup-taskforce > div > div:first-child span[style*="font-size: 10px"] {
+        font-size: 7.5px !important;
     }
 }
 
