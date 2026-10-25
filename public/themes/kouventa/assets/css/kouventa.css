@@ -2757,6 +2757,15 @@ body {
         padding-right: 20px !important;
     }
 
+    /* Hero sections with dark backgrounds manage internal hero padding without double padding */
+    .kv-canvas-wrap > section[style*="background: #071C33"],
+    .kv-canvas-wrap > section:has(div[style*="height: 704px"]),
+    .kv-canvas-wrap > section:has(.kv-hero-section),
+    section.kv-hero-container {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
     section[style*="padding: 88px 80px 112px"] {
         padding: 48px 20px 64px !important;
     }
@@ -3004,6 +3013,12 @@ body {
         align-items: center !important;
         justify-content: center !important;
         box-sizing: border-box !important;
+    }
+
+    /* Exception for solution hero wraps to allow shadows/glows without clipping */
+    .kv-sol-ai-hero-wrap,
+    .kv-sol-ce-hero-wrap {
+        overflow: visible !important;
     }
 
     /* Hero stage container on Product AI & CE (preserves coordinate systems & centered) */
@@ -4988,11 +5003,19 @@ body {
         display: none !important;
     }
 
+    .kv-sol-ai-hero-wrap {
+        overflow: visible !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
     .kv-sol-ai-hero-mobile {
         display: block !important;
         width: 330px !important;
-        min-width: 330px !important;
-        max-width: 330px !important;
+        max-width: 100% !important;
         height: 365px !important;
         position: relative !important;
         flex-shrink: 0 !important;
@@ -5000,11 +5023,11 @@ body {
     }
 }
 
-@media (max-width: 350px) {
+@media (max-width: 360px) {
     .kv-sol-ai-hero-mobile {
-        transform: scale(0.92) !important;
+        transform: scale(calc((100vw - 24px) / 330)) !important;
         transform-origin: top center !important;
-        margin-bottom: -28px !important;
+        margin-bottom: calc((365px * (1 - ((100vw - 24px) / 330))) * -1) !important;
     }
 }
 
@@ -5036,11 +5059,19 @@ body {
         display: none !important;
     }
 
+    .kv-sol-ce-hero-wrap {
+        overflow: visible !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
     .kv-sol-ce-hero-mobile {
         display: block !important;
         width: 320px !important;
-        min-width: 320px !important;
-        max-width: 320px !important;
+        max-width: 100% !important;
         height: 340px !important;
         position: relative !important;
         flex-shrink: 0 !important;
@@ -5048,12 +5079,13 @@ body {
     }
 }
 
-@media (max-width: 340px) {
+@media (max-width: 350px) {
     .kv-sol-ce-hero-mobile {
-        margin-left: calc((100% - 320px) / 2) !important;
-        transform: scale(calc((100vw - 20px) / 320)) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        transform: scale(calc((100vw - 24px) / 320)) !important;
         transform-origin: top center !important;
-        margin-bottom: calc((340px * (1 - ((100vw - 20px) / 320))) * -1) !important;
+        margin-bottom: calc((340px * (1 - ((100vw - 24px) / 320))) * -1) !important;
     }
 }
 
