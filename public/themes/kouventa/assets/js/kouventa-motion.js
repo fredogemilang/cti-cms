@@ -254,7 +254,33 @@
         });
       }
     });
+
+    // Auto-fit responsive solution illustration canvases
+    updateSolutionCanvases();
   }
+
+  function updateSolutionCanvases() {
+    var wraps = document.querySelectorAll('.kv-sol-ill-wrap');
+    if (!wraps.length) return;
+    wraps.forEach(function (wrap) {
+      var w = wrap.clientWidth;
+      if (w > 0) {
+        wrap.style.setProperty('--ill-scale', Math.min(1, w / 600));
+      }
+    });
+  }
+  window.updateSolutionCanvases = updateSolutionCanvases;
+
+  if (typeof ResizeObserver !== 'undefined') {
+    var solRo = new ResizeObserver(function () {
+      updateSolutionCanvases();
+    });
+    var solSection = document.getElementById('solution-tabs');
+    if (solSection) {
+      solRo.observe(solSection);
+    }
+  }
+  window.addEventListener('resize', updateSolutionCanvases);
 
   // Run on DOM ready
   if (document.readyState === 'loading') {
