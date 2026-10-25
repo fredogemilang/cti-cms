@@ -377,6 +377,7 @@
 </button>
 </div>
 
+<div class="kv-sol-ill-wrap">
 <div id="kv-ill-cs" role="img" aria-label="Animated illustration: a routine question is answered with a knowledge source and resolved, while a complex complaint becomes a ticket assigned to the right team" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 <div style="position: absolute; inset: 0; padding: 28px; display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 18px; align-content: center">
 <div style="display: flex; flex-direction: column; gap: 14px">
@@ -400,6 +401,7 @@
 <div style="position: absolute; left: 0; right: 0; top: 300px; border: 1.5px dashed #C9D2CE; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px; animation: kvIn .3s ease 4.2s both">
 <span style="width: 36px; height: 36px; border-radius: 10px; background: #EAF7EF; color: #0B5E2C; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">BIL</span>
 <span style="display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 800">Billing team</span><span style="font-size: 11px; font-weight: 700; color: #13803F; animation: kvIn .3s ease 5.3s both">Assigned</span></span>
+</div>
 </div>
 </div>
 </div>
@@ -480,6 +482,7 @@
 </button>
 </div>
 
+<div class="kv-sol-ill-wrap">
 <div id="kv-ill-rec" role="img" aria-label="Animated illustration: CVs from job portals are ranked by match score, invitations are sent, a common interview slot is locked, and a candidate insight with a recommendation appears" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 <div style="position: absolute; inset: 0; padding: 28px; display: grid; grid-template-columns: 120px 70px minmax(0, 1fr); align-items: center; animation: kvOut .4s ease 3.6s 1 forwards">
 <div style="display: flex; flex-direction: column; gap: 10px">
@@ -513,6 +516,7 @@
 <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">CANDIDATE INSIGHT · RANI P.</span>
 <span>Interview: strong problem-solving and communication. Psychotest: high attention to detail.</span>
 <span style="font-weight: 800; color: #2BD46A">Recommendation: proceed to final interview</span>
+</div>
 </div>
 </div>
 </div>
@@ -585,6 +589,7 @@
 </button>
 </div>
 
+<div class="kv-sol-ill-wrap">
 <div id="kv-ill-sales" role="img" aria-label="Animated illustration: after hours, an agent answers a product question, follows up when the customer goes quiet, confirms the order and payment, then answers a shipment status question" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 <div style="position: absolute; inset: 0; padding: 28px; display: flex; flex-direction: column; justify-content: center; gap: 12px; font-size: 13px; line-height: 1.5; animation: kvOut .4s ease 4.0s 1 forwards">
 <span style="align-self: center; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 999px; background: #071C33; color: #FFFFFF; animation: kvIn .3s ease .1s both"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>22:30 · outside working hours</span>
@@ -611,6 +616,7 @@
 </div>
 <div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 10px 13px; border-radius: 14px 4px 14px 14px; animation: kvIn .3s ease 6.8s both">Where is my order?</div>
 <div style="align-self: flex-start; max-width: 80%; background: #F4F6F5; padding: 10px 13px; border-radius: 4px 14px 14px 14px; animation: kvIn .3s ease 7.3s both"><strong style="font-size: 11px; color: #13803F">Shipment Tracking Agent</strong><br>It's out for delivery and should arrive today.</div>
+</div>
 </div>
 </div>
 </div>
@@ -678,6 +684,7 @@
 </button>
 </div>
 
+<div class="kv-sol-ill-wrap">
 <div id="kv-ill-ops" role="img" aria-label="Animated illustration: scattered documents, SOPs and systems are pulled into one agent, which answers a policy question with a source, then prepares a leave request that is approved and submitted" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 <div style="position: absolute; left: 0; right: 0; top: 0; height: 150px">
 <span style="position: absolute; left: 50%; top: 60px; margin-left: -40px; width: 80px; padding: 6px 0; text-align: center; border-radius: 8px; background: #F4F6F5; font-size: 11px; font-weight: 800; --x: -200px; --y: -30px; animation: kvConverge 1.3s ease .1s 1 forwards">Documents</span>
@@ -695,6 +702,7 @@
 <span style="position: relative; display: grid; flex-shrink: 0"><span style="grid-area: 1 / 1; padding: 8px 14px; border-radius: 8px; background: #071C33; color: #FFFFFF; font-size: 12px; font-weight: 800">Approve</span><span style="grid-area: 1 / 1; padding: 8px 10px; border-radius: 8px; background: #13803F; color: #FFFFFF; font-size: 12px; font-weight: 800; text-align: center; animation: kvPopIn .3s ease 4.6s both">Approved</span><span aria-hidden="true" style="position: absolute; left: 50%; top: 55%; animation: kvCursor 1.2s ease 3.7s 1 both"><svg width="20" height="20" viewBox="0 0 24 24" fill="#0E1A24" stroke="#FFFFFF" stroke-width="1.2"><path d="M5 3l14 8-6 1.5L10 19z"></path></svg></span></span>
 </div>
 <span style="align-self: flex-start; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; padding: 7px 12px; border-radius: 999px; background: #DDF3E4; color: #0B5E2C; animation: kvPopIn .3s ease 5.8s both"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Submitted to HRIS</span>
+</div>
 </div>
 </div>
 </div>
@@ -757,6 +765,7 @@
 </button>
 </div>
 
+<div class="kv-sol-ill-wrap">
 <div id="kv-ill-pp" role="img" aria-label="Animated illustration: invoices, cash flow and vendor data flow into an agent, invoices are re-ordered by priority, a payment batch is approved by a person and paid through the ERP" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 <div style="position: absolute; inset: 0; padding: 36px 32px; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: center">
 <div style="display: flex; flex-direction: column; gap: 10px; position: relative">
@@ -795,6 +804,7 @@
 <div style="display: flex; align-items: center; gap: 10px; animation: kvIn .3s ease 5.8s both">
 <span style="padding: 10px 14px; border-radius: 10px; background: #071C33; color: #FFFFFF; font-size: 12px; font-weight: 800">ERP</span>
 <span style="font-size: 13px; font-weight: 700">Executing approved payments</span>
+</div>
 </div>
 </div>
 </div>
@@ -875,6 +885,7 @@
 </button>
 </div>
 
+<div class="kv-sol-ill-wrap">
 <div id="kv-ill-br" role="img" aria-label="Animated illustration: bank transactions are matched to invoices including a split payment, an FX discrepancy is explained, a clearing proposal is approved and cleared in the ERP, and the activity is logged and notified" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 <div style="position: absolute; inset: 0; animation: kvOut .4s ease 3.9s 1 forwards">
 <span style="position: absolute; left: 28px; top: 28px; font-size: 12px; font-weight: 800; color: #4A5866">Bank transactions</span>
@@ -914,6 +925,7 @@
 <div style="display: flex; gap: 10px">
 <span style="flex-grow: 1; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 10px 12px; border-radius: 10px; background: #071C33; color: #D5DEE8; animation: kvIn .3s ease 7.2s both">log · 4 items cleared · approved by Finance Mgr</span>
 <span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; padding: 10px 12px; border-radius: 10px; background: #DDF3E4; color: #0B5E2C; animation: kvPopIn .3s ease 7.6s both"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>Finance team notified</span>
+</div>
 </div>
 </div>
 </div>
@@ -986,6 +998,7 @@
 </button>
 </div>
 
+<div class="kv-sol-ill-wrap">
 <div id="kv-ill-legal" role="img" aria-label="Animated illustration: an agent highlights key clauses in a long contract, flags an auto-renewal clause with related policy references, then answers a notice period question with a clause reference and a key terms summary" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 <div style="position: absolute; inset: 0; padding: 28px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 22px; align-content: center">
 <div style="background: #F4F6F5; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; position: relative">
@@ -1015,6 +1028,7 @@
 <div style="background: #071C33; color: #FFFFFF; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; animation: kvIn .35s ease 5.5s both">
 <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">KEY TERMS SUMMARY</span>
 <span>Term 24 months · Auto-renewal · Notice 30 days · Uptime 99.5%</span>
+</div>
 </div>
 </div>
 </div>

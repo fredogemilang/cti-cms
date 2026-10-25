@@ -295,6 +295,7 @@
 </button>
 </div>
 
+<div class="kv-sol-ill-wrap">
 <div id="kv-ill-sales" role="img" aria-label="Animated illustration: a campaign reaches many customers, a chatbot answers a lead instantly, conversations flow into one inbox, a customer is verified by OTP and registers through a form in chat" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 <div style="position: absolute; inset: 0; padding: 28px; display: flex; flex-direction: column; gap: 18px; animation: kvOut .4s ease 4.2s 1 forwards">
 <div style="display: flex; align-items: center; gap: 14px">
@@ -350,6 +351,7 @@
 <div style="background: #FFFFFF; border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 10px; font-weight: 700; color: #4A5866">Name</span><div style="height: 7px; border-radius: 4px; background: #0E1A24; --w: 70%; animation: kvGrowW .5s ease 7.0s both"></div></div>
 <div style="background: #FFFFFF; border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 10px; font-weight: 700; color: #4A5866">Member no.</span><div style="height: 7px; border-radius: 4px; background: #0E1A24; --w: 50%; animation: kvGrowW .5s ease 7.3s both"></div></div>
 <span style="align-self: flex-start; font-size: 13px; font-weight: 800; padding: 7px 12px; border-radius: 999px; border: 1px solid #E3E8E6; animation: kvLit .3s ease 7.8s both">Registered</span>
+</div>
 </div>
 </div>
 </div>
@@ -433,6 +435,7 @@
 </button>
 </div>
 
+<div class="kv-sol-ill-wrap">
 <div id="kv-ill-cs" role="img" aria-label="Animated illustration: two complaints arrive in one inbox, the chatbot resolves one, the other is escalated to an agent with an auto-created ticket, and the customer gives a five-star rating" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 <div style="position: absolute; inset: 0; padding: 28px; display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 18px">
 <div style="display: flex; flex-direction: column; gap: 12px">
@@ -461,6 +464,7 @@
 <span style="color: #D5DCD9; animation: kvStar .3s ease 4.9s both">★</span><span style="color: #D5DCD9; animation: kvStar .3s ease 5.05s both">★</span><span style="color: #D5DCD9; animation: kvStar .3s ease 5.2s both">★</span><span style="color: #D5DCD9; animation: kvStar .3s ease 5.35s both">★</span><span style="color: #D5DCD9; animation: kvStar .3s ease 5.5s both">★</span>
 </div>
 <span style="font-size: 13px; font-weight: 800; color: #0B5E2C; animation: kvIn .3s ease 5.8s both">CSAT 5/5</span>
+</div>
 </div>
 </div>
 </div>
@@ -519,6 +523,7 @@
 </button>
 </div>
 
+<div class="kv-sol-ill-wrap">
 <div id="kv-ill-ops" role="img" aria-label="Animated illustration: order, delivery, payment and schedule events in business systems automatically become WhatsApp updates on a customer phone" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 <div style="position: absolute; inset: 0; padding: 32px 28px; display: grid; grid-template-columns: 150px 90px minmax(0, 1fr); align-items: center">
 <div style="display: flex; flex-direction: column; gap: 38px">
@@ -541,6 +546,7 @@
 <span style="align-self: flex-start; background: #FFFFFF; padding: 9px 12px; border-radius: 4px 12px 12px 12px; display: flex; gap: 10px; animation: kvIn .35s ease 2.2s both">Out for delivery<span style="color: #13803F; font-weight: 800">✓✓</span></span>
 <span style="align-self: flex-start; background: #FFFFFF; padding: 9px 12px; border-radius: 4px 12px 12px 12px; display: flex; gap: 10px; animation: kvIn .35s ease 3.4s both">Payment reminder<span style="color: #13803F; font-weight: 800">✓✓</span></span>
 <span style="align-self: flex-start; background: #FFFFFF; padding: 9px 12px; border-radius: 4px 12px 12px 12px; display: flex; gap: 10px; animation: kvIn .35s ease 4.6s both">Appointment tomorrow, 10:00<span style="color: #13803F; font-weight: 800">✓✓</span></span>
+</div>
 </div>
 </div>
 </div>
