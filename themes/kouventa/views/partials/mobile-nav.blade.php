@@ -283,11 +283,8 @@
                @click="activeSheet = null; if (window.location.pathname.replace(/\/$/, '').endsWith('/pricing')) { window.dispatchEvent(new CustomEvent('open-calculator')); }" 
                class="kv-sheet-card" style="background: rgba(43,212,106,0.12); border-color: rgba(43,212,106,0.3);">
                 <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                    <span style="width: 32px; height: 32px; border-radius: 8px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px;">Rp</span>
-                    <div>
-                        <div style="font-weight: 700; color: #2BD46A; font-size: 14px;">{{ t('kouventa.WhatsApp Cost Calculator', 'WhatsApp Cost Calculator') }}</div>
-                        <div style="font-size: 11px; color: #B9C6D3;">Zero markup on Meta conversation fees</div>
-                    </div>
+                    <span style="width: 32px; height: 32px; border-radius: 8px; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">Rp</span>
+                    <div style="font-weight: 700; color: #2BD46A; font-size: 14px;">{{ t('kouventa.WhatsApp Cost Calculator', 'WhatsApp Cost Calculator') }}</div>
                 </div>
                 <span style="color: #2BD46A; font-weight: 700;">→</span>
             </a>
