@@ -967,9 +967,11 @@ html{scroll-padding-top:0}
 @keyframes kvDraw{0%{stroke-dashoffset:var(--len)}100%{stroke-dashoffset:0}}
 @keyframes kvFade{0%{opacity:0}100%{opacity:1}}
 @keyframes kvPath{0%{offset-distance:0%;opacity:0}10%{opacity:1}90%{opacity:1}100%{offset-distance:100%;opacity:0}}
-@keyframes kvIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:none}}
+@keyframes kvIn{0%{opacity:0;transform:translateY(10px);-webkit-transform:translateY(10px)}100%{opacity:1;transform:none;-webkit-transform:none}}
+@-webkit-keyframes kvIn{0%{opacity:0;-webkit-transform:translateY(10px)}100%{opacity:1;-webkit-transform:none}}
 @keyframes kvOut{0%{opacity:1}100%{opacity:0}}
-@keyframes kvPopIn{0%{opacity:0;transform:scale(.6)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes kvPopIn{0%{opacity:0;transform:scale(.6);-webkit-transform:scale(.6)}70%{opacity:1;transform:scale(1.06);-webkit-transform:scale(1.06)}100%{opacity:1;transform:scale(1);-webkit-transform:scale(1)}}
+@-webkit-keyframes kvPopIn{0%{opacity:0;-webkit-transform:scale(.6)}70%{opacity:1;-webkit-transform:scale(1.06)}100%{opacity:1;-webkit-transform:scale(1)}}
 @keyframes kvDrop{0%{opacity:0;transform:translateY(-28px) scale(1.04)}100%{opacity:1;transform:none}}
 @keyframes kvBlink{0%,100%{opacity:.25}50%{opacity:1}}
 @keyframes kvGrowW{0%{width:0}100%{width:var(--w)}}
@@ -1209,8 +1211,10 @@ html{scroll-padding-top:0}
 @keyframes kvAmber{0%{background:#FFFFFF}100%{background:#FFF1D6}}
 @keyframes kvMark{0%{background:transparent}100%{background:var(--c)}}
 @keyframes kvMove{0%{transform:none}100%{transform:translate(var(--mx),var(--my))}}
-@keyframes kvScan{0%{transform:translateX(0)}100%{transform:translateX(var(--d))}}
-@keyframes kvKnob{0%{transform:translateX(0)}100%{transform:translateX(20px)}}
+@keyframes kvScan{0%{transform:translateX(0);-webkit-transform:translateX(0)}100%{transform:translateX(var(--d, 170px));-webkit-transform:translateX(var(--d, 170px))}}
+@-webkit-keyframes kvScan{0%{-webkit-transform:translateX(0)}100%{-webkit-transform:translateX(170px)}}
+@keyframes kvKnob{0%{transform:translateX(0);-webkit-transform:translateX(0)}100%{transform:translateX(20px);-webkit-transform:translateX(20px)}}
+@-webkit-keyframes kvKnob{0%{-webkit-transform:translateX(0)}100%{-webkit-transform:translateX(20px)}}
 @keyframes kvRoleHi{0%,100%{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.16)}2%,14%{background:rgba(43,212,106,0.18);border-color:#2BD46A}17%{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.16)}}
 @keyframes kvLineHi{0%{opacity:0}2%,14%{opacity:1}17%,100%{opacity:0}}
 @keyframes kvToast{0%{opacity:0;transform:translateY(8px)}3%,14%{opacity:1;transform:none}16.6%,100%{opacity:0;transform:none}}
