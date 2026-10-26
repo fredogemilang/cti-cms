@@ -1868,7 +1868,7 @@ Kouventa AI · WhatsApp · 09:12
 </div>
 <div class="kv-integration-connector kv-connector-1" style="flex-grow: 1; height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #13803F; --d: 34px; animation: kvTravel 1.6s linear infinite"></span></div>
 <div class="kv-integration-node" style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 16px; background: #071C33; display: flex; align-items: center; justify-content: center; animation: kvPulse 2.4s ease infinite">
-<img src="{{ theme_asset('images/favicon.png') }}" alt="Kouventa" style="width: 28px; height: 28px; object-fit: contain; display: block">
+<img src="{{ resolve_block_asset(setting('site_favicon', 'media/kouventa-favicon-1792137759-KNT6XRpc.webp')) }}" alt="Kouventa" style="width: 28px; height: 28px; object-fit: contain; display: block">
 </div>
 <div class="kv-integration-connector kv-connector-2" style="flex-grow: 1; height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #13803F; --d: 34px; animation: kvTravel 1.6s linear 0.8s infinite"></span></div>
 <div class="kv-integration-target" style="width: 160px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; font-size: 12px; line-height: 1.45">
