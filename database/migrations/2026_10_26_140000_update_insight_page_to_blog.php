@@ -108,6 +108,45 @@ return new class extends Migration
                 );
             }
         }
+
+        // 4. Update posts plugin archive settings to 'blog'
+        if (class_exists(\Plugins\Posts\Models\Setting::class)) {
+            \Plugins\Posts\Models\Setting::set('archive_slug', 'blog');
+            \Plugins\Posts\Models\Setting::set('archive_slug_id', 'blog');
+            \Plugins\Posts\Models\Setting::set('archive_title', 'Blog');
+        }
+        if (class_exists(\App\Models\Setting::class)) {
+            \App\Models\Setting::set('permalink_post_base', 'blog');
+        }
+
+        // 5. Also redirect old /blog-news to /blog
+        if (Schema::hasTable('redirects')) {
+            DB::table('redirects')->updateOrInsert(
+                ['from_path' => '/blog-news'],
+                [
+                    'to_url' => '/blog',
+                    'status_code' => 301,
+                    'is_active' => 1,
+                    'is_regex' => 0,
+                    'notes' => 'Permanent redirect /blog-news to /blog',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+            DB::table('redirects')->updateOrInsert(
+                ['from_path' => '/id/blog-news'],
+                [
+                    'to_url' => '/id/blog',
+                    'status_code' => 301,
+                    'is_active' => 1,
+                    'is_regex' => 0,
+                    'notes' => 'Permanent redirect /id/blog-news to /id/blog',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+            Cache::forget('redirects:active');
+        }
     }
 
     public function down(): void

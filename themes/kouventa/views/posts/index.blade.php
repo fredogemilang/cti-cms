@@ -1,1 +1,1 @@
-@include('kouventa::pages.insight')
+@include('kouventa::pages.blog')
