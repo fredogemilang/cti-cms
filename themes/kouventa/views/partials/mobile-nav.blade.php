@@ -376,6 +376,13 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Legal links -->
+            <div style="display: flex; gap: 16px; justify-content: center; margin-top: 8px;">
+                <a href="{{ localized_url('/terms-conditions') }}" @click="activeSheet = null" style="font-size: 11px; color: #93A4B6; text-decoration: none;">{{ t('kouventa.Terms & Conditions', 'Terms & Conditions') }}</a>
+                <span style="font-size: 11px; color: rgba(255,255,255,0.2);">•</span>
+                <a href="{{ localized_url('/privacy-policy') }}" @click="activeSheet = null" style="font-size: 11px; color: #93A4B6; text-decoration: none;">{{ t('kouventa.Privacy Policy', 'Privacy Policy') }}</a>
+            </div>
         </div>
     </div>
     <div class="h-20 w-full"></div>

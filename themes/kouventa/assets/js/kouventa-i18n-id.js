@@ -1006,6 +1006,8 @@
     "Tell us what you'd like to see in the demo": "Ceritakan apa yang ingin Anda lihat di demo",
     "Term 24 months · Auto-renewal · Notice 30 days · Uptime 99.5%": "Jangka 24 bulan · Perpanjangan otomatis · Pemberitahuan 30 hari · Uptime 99,5%",
     "Term:": "Jangka waktu:",
+    "Terms & Conditions": "Syarat & Ketentuan",
+    "Terms & conditions": "Syarat & ketentuan",
     "Terms of Service": "Syarat Layanan",
     "Terms of service": "Syarat & ketentuan",
     "Test and fine-tune before you publish.": "Uji dan sempurnakan sebelum dipublish.",

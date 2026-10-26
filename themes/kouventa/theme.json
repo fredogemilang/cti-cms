@@ -151,6 +151,16 @@
                 {"name": "email_title", "type": "text", "label": "Email Label", "default": "Email"},
                 {"name": "email_address", "type": "text", "label": "Email Address", "default": "kouventa@helios.id"}
             ]
+        },
+        "terms-conditions": {
+            "label": "Terms & Conditions",
+            "description": "Terms of service and user agreements for Kouventa enterprise platform",
+            "blocks": []
+        },
+        "privacy-policy": {
+            "label": "Privacy Policy",
+            "description": "Privacy policy, data protection, and cookie notice for Kouventa",
+            "blocks": []
         }
     },
     "seed_pages": [
@@ -216,6 +226,20 @@
             "template": "book-demo",
             "status": "published",
             "menu_order": 8
+        },
+        {
+            "title": "Terms & Conditions",
+            "slug": "terms-conditions",
+            "template": "terms-conditions",
+            "status": "published",
+            "menu_order": 9
+        },
+        {
+            "title": "Privacy Policy",
+            "slug": "privacy-policy",
+            "template": "privacy-policy",
+            "status": "published",
+            "menu_order": 10
         }
     ],
     "archive_settings": {

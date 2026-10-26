@@ -32,8 +32,8 @@
             <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Insights', 'Insights') }}</span>
             <a href="{{ localized_url('/about') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.About us', 'About us') }}</a>
             <a href="{{ localized_url('/insight') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Blog', 'Blog') }}</a>
-            <a href="#" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Terms of service', 'Terms of service') }}</a>
-            <a href="#" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Privacy policy', 'Privacy policy') }}</a>
+            <a href="{{ localized_url('/terms-conditions') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Terms & Conditions', 'Terms & Conditions') }}</a>
+            <a href="{{ localized_url('/privacy-policy') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Privacy Policy', 'Privacy Policy') }}</a>
         </div>
         
         <div style="display: flex; flex-direction: column; gap: 14px">
