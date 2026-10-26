@@ -196,12 +196,12 @@
                         <h4 class="kv-post-nav-title">{{ $prevPost->title }}</h4>
                     </a>
                     @else
-                    <a href="{{ localized_url('/insight') }}" class="kv-post-nav-card kv-post-nav-prev">
+                    <a href="{{ localized_url('/blog') }}" class="kv-post-nav-card kv-post-nav-prev">
                         <div class="kv-post-nav-label">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                             <span>{{ t('All Articles') }}</span>
                         </div>
-                        <h4 class="kv-post-nav-title">{{ t('Back to Insight & Blog') }}</h4>
+                        <h4 class="kv-post-nav-title">{{ t('kouventa.Back to Blog', 'Back to Blog') }}</h4>
                     </a>
                     @endif
 
@@ -214,12 +214,12 @@
                         <h4 class="kv-post-nav-title">{{ $nextPost->title }}</h4>
                     </a>
                     @else
-                    <a href="{{ localized_url('/insight') }}" class="kv-post-nav-card kv-post-nav-next">
+                    <a href="{{ localized_url('/blog') }}" class="kv-post-nav-card kv-post-nav-next">
                         <div class="kv-post-nav-label">
                             <span>{{ t('All Articles') }}</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                         </div>
-                        <h4 class="kv-post-nav-title">{{ t('Back to Insight & Blog') }}</h4>
+                        <h4 class="kv-post-nav-title">{{ t('kouventa.Back to Blog', 'Back to Blog') }}</h4>
                     </a>
                     @endif
                 </nav>
@@ -278,8 +278,8 @@
                     <span class="kv-related-eyebrow">{{ t('READ NEXT') }}</span>
                     <h2 class="kv-related-title">{{ t('Related Articles') }}</h2>
                 </div>
-                <a href="{{ localized_url('/insight') }}" class="kv-related-viewall">
-                    <span>{{ t('View all insights') }}</span>
+                <a href="{{ localized_url('/blog') }}" class="kv-related-viewall">
+                    <span>{{ t('kouventa.View all articles', 'View all articles') }}</span>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                 </a>
             </div>

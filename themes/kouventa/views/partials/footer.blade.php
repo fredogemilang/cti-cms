@@ -31,7 +31,7 @@
         <div style="display: flex; flex-direction: column; gap: 14px">
             <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Insights', 'Insights') }}</span>
             <a href="{{ localized_url('/about') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.About us', 'About us') }}</a>
-            <a href="{{ localized_url('/insight') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Blog', 'Blog') }}</a>
+            <a href="{{ localized_url('/blog') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Blog', 'Blog') }}</a>
             <a href="{{ localized_url('/terms-conditions') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Terms & Conditions', 'Terms & Conditions') }}</a>
             <a href="{{ localized_url('/privacy-policy') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Privacy Policy', 'Privacy Policy') }}</a>
         </div>
@@ -54,9 +54,13 @@
         
         <div style="display: flex; flex-direction: column; gap: 14px">
             <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Certified & Registered', 'Certified & Registered') }}</span>
-            <div style="display: flex; gap: 16px; align-items: center">
-                <img src="{{ theme_asset('images/badge-iso-27001.png') }}?v=20261021" alt="ISO 27001 — KAN accredited" style="height: 48px; width: auto; object-fit: contain" loading="lazy">
-                <img src="{{ theme_asset('images/badge-kominfo.png') }}?v=20261021" alt="Terdaftar di Kominfo" style="height: 54px; width: auto; object-fit: contain" loading="lazy">
+            <div style="display: flex; gap: 12px; align-items: center">
+                <div style="background: #FFFFFF; border-radius: 10px; padding: 6px; display: inline-flex; align-items: center; justify-content: center; height: 50px; width: 50px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.2)">
+                    <img src="{{ theme_asset('images/badge-iso-27001.webp') }}?v=20261026" alt="ISO/IEC 27001 System Certification" style="height: 38px; width: 38px; object-fit: contain; display: block" loading="lazy">
+                </div>
+                <div style="background: #FFFFFF; border-radius: 10px; padding: 6px; display: inline-flex; align-items: center; justify-content: center; height: 50px; width: 50px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.2)">
+                    <img src="{{ theme_asset('images/badge-komdigi.webp') }}?v=20261026" alt="Terdaftar di Komdigi" style="height: 38px; width: 38px; object-fit: contain; display: block" loading="lazy">
+                </div>
             </div>
         </div>
     </div>

@@ -332,13 +332,13 @@
                 <span style="color: #B9C6D3;">→</span>
             </a>
 
-            <!-- Insight / Blog -->
-            <a href="{{ localized_url('/insight') }}" @click="activeSheet = null" class="kv-sheet-card">
+            <!-- Blog -->
+            <a href="{{ localized_url('/blog') }}" @click="activeSheet = null" class="kv-sheet-card">
                 <div class="kv-sheet-card-icon">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path></svg>
                 </div>
                 <div style="flex: 1;">
-                    <div style="font-weight: 700; color: #FFFFFF; font-size: 14px;">{{ t('kouventa.Insight', 'Insight (Blog)') }}</div>
+                    <div style="font-weight: 700; color: #FFFFFF; font-size: 14px;">{{ t('kouventa.Blog', 'Blog') }}</div>
                     <div style="font-size: 11px; color: #B9C6D3;">Articles, case studies & updates</div>
                 </div>
                 <span style="color: #B9C6D3;">→</span>

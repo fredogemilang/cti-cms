@@ -24,8 +24,8 @@
 </div>
 
 <!-- Desktop Header -->
-<header x-data="{ productOpen: false, solutionOpen: false, pricingOpen: false }"
-        @click.away="productOpen = false; solutionOpen = false; pricingOpen = false"
+<header x-data="{ productOpen: false, solutionOpen: false, pricingOpen: false, insightOpen: false }"
+        @click.away="productOpen = false; solutionOpen = false; pricingOpen = false; insightOpen = false"
         class="kv-desktop-header"
         style="height: 80px; padding: 0 80px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; flex-shrink: 0; box-sizing: border-box; background: #071C33; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.06)">
     
@@ -41,7 +41,7 @@
     <nav aria-label="Main" style="display: flex; gap: 40px; align-items: center">
         <!-- Product Dropdown -->
         <div style="position: relative">
-            <button type="button" @click="productOpen = !productOpen; solutionOpen = false; pricingOpen = false"
+            <button type="button" @click="productOpen = !productOpen; solutionOpen = false; pricingOpen = false; insightOpen = false"
                     :aria-expanded="productOpen"
                     style="background: transparent; border: 0; padding: 12px 0; font-size: 15px; color: #D5DEE8; font-weight: 500; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; cursor: pointer">
                 {{ t('kouventa.Product', 'Product') }}
@@ -63,7 +63,7 @@
 
         <!-- Solution Dropdown -->
         <div style="position: relative">
-            <button type="button" @click="solutionOpen = !solutionOpen; productOpen = false; pricingOpen = false"
+            <button type="button" @click="solutionOpen = !solutionOpen; productOpen = false; pricingOpen = false; insightOpen = false"
                     :aria-expanded="solutionOpen"
                     style="background: transparent; border: 0; padding: 12px 0; font-size: 15px; color: #D5DEE8; font-weight: 500; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; cursor: pointer">
                 {{ t('kouventa.Solution', 'Solution') }}
@@ -92,7 +92,7 @@
 
         <!-- Pricing Dropdown -->
         <div style="position: relative">
-            <button type="button" @click="pricingOpen = !pricingOpen; productOpen = false; solutionOpen = false"
+            <button type="button" @click="pricingOpen = !pricingOpen; productOpen = false; solutionOpen = false; insightOpen = false"
                     :aria-expanded="pricingOpen"
                     style="background: transparent; border: 0; padding: 12px 0; font-size: 15px; color: #D5DEE8; font-weight: 500; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; cursor: pointer">
                 {{ t('kouventa.Pricing', 'Pricing') }}
@@ -112,8 +112,27 @@
             </div>
         </div>
 
-        <a href="{{ localized_url('/about') }}" style="color: #D5DEE8; font-size: 15px; font-weight: 500; text-decoration: none">{{ t('kouventa.About us', 'About us') }}</a>
-        <a href="{{ localized_url('/insight') }}" style="color: #D5DEE8; font-size: 15px; font-weight: 500; text-decoration: none">{{ t('kouventa.Insight', 'Insight') }}</a>
+        <!-- Insight Dropdown (Submenu: Blog & About us) -->
+        <div style="position: relative">
+            <button type="button" @click="insightOpen = !insightOpen; productOpen = false; solutionOpen = false; pricingOpen = false"
+                    :aria-expanded="insightOpen"
+                    style="background: transparent; border: 0; padding: 12px 0; font-size: 15px; color: #D5DEE8; font-weight: 500; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; cursor: pointer">
+                {{ t('kouventa.Insight', 'Insight') }}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" :style="insightOpen ? 'transform: rotate(180deg)' : ''" style="transition: transform 0.2s ease"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <div x-show="insightOpen" x-transition x-cloak
+                 class="kv-dropdown-menu"
+                 style="position: absolute; top: 52px; left: -16px; width: 300px; background: #FFFFFF; border-radius: 14px; padding: 8px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); z-index: 20">
+                <a href="{{ localized_url('/blog') }}" @click="insightOpen = false" style="background: transparent; padding: 14px 16px; border-radius: 10px; color: #0E1A24; display: flex; flex-direction: column; gap: 2px; text-decoration: none">
+                    <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Blog', 'Blog') }}</span>
+                    <span style="font-size: 13px; color: #4A5866">{{ t('kouventa.Thought leadership & AI articles', 'Thought leadership & AI articles') }}</span>
+                </a>
+                <a href="{{ localized_url('/about') }}" @click="insightOpen = false" style="background: transparent; padding: 14px 16px; border-radius: 10px; color: #0E1A24; display: flex; flex-direction: column; gap: 2px; text-decoration: none">
+                    <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.About us', 'About us') }}</span>
+                    <span style="font-size: 13px; color: #4A5866">{{ t('kouventa.Our story, team & enterprise mission', 'Our story, team & enterprise mission') }}</span>
+                </a>
+            </div>
+        </div>
     </nav>
 
     <!-- Header Actions (Lang Switcher & Book Demo) -->

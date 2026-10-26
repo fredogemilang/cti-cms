@@ -277,11 +277,11 @@
                         {{ $isIdLocale ? 'STANDAR KEPATUHAN' : 'COMPLIANCE STANDARDS' }}
                     </span>
                     <div style="display: flex; gap: 14px; align-items: center">
-                        <img src="{{ theme_asset('images/badge-iso-27001.png') }}?v=20261021" alt="ISO 27001 Certified" style="height: 40px; width: auto; object-fit: contain">
-                        <img src="{{ theme_asset('images/badge-kominfo.png') }}?v=20261021" alt="Terdaftar di Kominfo" style="height: 44px; width: auto; object-fit: contain">
+                        <img src="{{ theme_asset('images/badge-iso-27001.webp') }}?v=20261026" alt="ISO/IEC 27001 Certified" style="height: 48px; width: 48px; object-fit: contain">
+                        <img src="{{ theme_asset('images/badge-komdigi.webp') }}?v=20261026" alt="Terdaftar di Komdigi" style="height: 48px; width: 48px; object-fit: contain">
                     </div>
                     <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #64748B">
-                        {{ $isIdLocale ? 'Sistem Manajemen Keamanan Informasi ISO/IEC 27001 terakreditasi KAN & Terdaftar Resmi di Kominfo.' : 'ISO/IEC 27001 Information Security Management accredited & registered with Kominfo.' }}
+                        {{ $isIdLocale ? 'Sistem Manajemen Keamanan Informasi ISO/IEC 27001 terakreditasi CBQA Global & Terdaftar Resmi di Komdigi.' : 'ISO/IEC 27001 Information Security Management accredited by CBQA Global & registered with Komdigi.' }}
                     </p>
                 </div>
 

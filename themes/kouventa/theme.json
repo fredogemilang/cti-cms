@@ -130,6 +130,14 @@
                 {"name": "history_title", "type": "text", "label": "History Section Title", "default": "History"}
             ]
         },
+        "blog": {
+            "label": "Blog",
+            "description": "Thought leadership and AI insight articles",
+            "blocks": [
+                {"name": "hero_badge", "type": "text", "label": "Hero Badge", "default": "Blog"},
+                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "Explore the newest articles", "main": "in our blog."}}
+            ]
+        },
         "insight": {
             "label": "Insight (Blog)",
             "description": "Thought leadership and AI insight articles",
@@ -214,9 +222,9 @@
             "menu_order": 6
         },
         {
-            "title": "Insight",
-            "slug": "insight",
-            "template": "insight",
+            "title": "Blog",
+            "slug": "blog",
+            "template": "blog",
             "status": "published",
             "menu_order": 7
         },

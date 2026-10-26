@@ -1,7 +1,7 @@
 @extends('kouventa::layouts.app')
 
 @php
-    $page = $page ?? (class_exists(\App\Models\Page::class) ? \App\Models\Page::where('slug', 'insight')->first() : null);
+    $page = $page ?? (class_exists(\App\Models\Page::class) ? \App\Models\Page::whereIn('slug', ['blog', 'insight'])->first() : null);
     $selectedCategory = $selectedCategory ?? null;
     $selectedTag = $selectedTag ?? null;
     $searchQuery = $searchQuery ?? null;
