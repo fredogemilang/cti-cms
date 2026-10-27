@@ -1032,65 +1032,7 @@
 @endphp
 
 @section('content')
-<div x-data="{
-    product: (window.location.hash === '#calculator' ? 'ce' : (new URLSearchParams(window.location.search).get('tab') === 'ai' ? 'ai' : 'ce')),
-    openCats: { 'ai_0': true, 'ce_0': true },
-    setTab(tab) {
-        this.product = tab;
-        try {
-            const u = new URL(window.location);
-            u.searchParams.set('tab', tab);
-            history.replaceState(null, '', u.pathname + u.search + u.hash);
-        } catch (e) {}
-    },
-    toggleCat(key) {
-        this.openCats[key] = !this.openCats[key];
-    },
-    isCatOpen(key, defaultVal = false) {
-        return this.openCats[key] !== undefined ? this.openCats[key] : defaultVal;
-    },
-    expandAll() {
-        for (let i = 0; i < 20; i++) {
-            this.openCats['ai_' + i] = true;
-            this.openCats['ce_' + i] = true;
-        }
-    },
-    collapseAll() {
-        this.openCats = {};
-    },
-    scrollToCalculator() {
-        this.setTab('ce');
-        setTimeout(() => {
-            const el = document.getElementById('calculator');
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }, 150);
-    },
-    ...whatsappCalculator()
-}" 
-x-init="
-    if (window.location.hash === '#calculator') {
-        scrollToCalculator();
-    }
-    window.addEventListener('hashchange', () => {
-        if (window.location.hash === '#calculator') {
-            scrollToCalculator();
-        }
-    });
-    window.addEventListener('open-calculator', () => {
-        scrollToCalculator();
-    });
-    window.addEventListener('switch-pricing-tab', (e) => {
-        if (e.detail === 'ai' || e.detail === 'ce') setTab(e.detail);
-    });
-    window.addEventListener('popstate', () => {
-        const t = new URLSearchParams(window.location.search).get('tab');
-        if (t === 'ai' || t === 'ce') product = t;
-        if (window.location.hash === '#calculator') scrollToCalculator();
-    });
-"
-class="kv-canvas-wrap">
+<div x-data="pricingPage" class="kv-canvas-wrap">
 
 <!-- ============ HERO & PLATFORM TOGGLE ============ -->
 <section style="background: #071C33; color: #FFFFFF; padding: 96px 80px 104px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 24px; position: relative">
@@ -1521,7 +1463,7 @@ class="kv-canvas-wrap">
                 <div style="display: flex; flex-direction: column; gap: 8px">
                     <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Marketing', 'Marketing') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
-                        <input type="number" min="0" inputmode="numeric" aria-label="Marketing conversations per month" x-model.number="mk" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
+                        <input type="number" min="0" inputmode="numeric" aria-label="Marketing conversations per month" x-model.number="mk" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
                         <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">616</span>
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">=</span>
@@ -1533,7 +1475,7 @@ class="kv-canvas-wrap">
                 <div style="display: flex; flex-direction: column; gap: 8px">
                     <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Utility', 'Utility') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
-                        <input type="number" min="0" inputmode="numeric" aria-label="Utility conversations per month" x-model.number="ut" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
+                        <input type="number" min="0" inputmode="numeric" aria-label="Utility conversations per month" x-model.number="ut" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
                         <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">375</span>
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">=</span>
@@ -1545,7 +1487,7 @@ class="kv-canvas-wrap">
                 <div style="display: flex; flex-direction: column; gap: 8px">
                     <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Authentication', 'Authentication') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
-                        <input type="number" min="0" inputmode="numeric" aria-label="Authentication conversations per month" x-model.number="au" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
+                        <input type="number" min="0" inputmode="numeric" aria-label="Authentication conversations per month" x-model.number="au" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
                         <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">375</span>
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">=</span>
@@ -1557,7 +1499,7 @@ class="kv-canvas-wrap">
                 <div style="display: flex; flex-direction: column; gap: 8px">
                     <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Service', 'Service') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
-                        <input type="number" min="0" inputmode="numeric" aria-label="Service conversations per month" x-model.number="sv" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
+                        <input type="number" min="0" inputmode="numeric" aria-label="Service conversations per month" x-model.number="sv" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
                         <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">375</span>
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">=</span>
@@ -1569,9 +1511,9 @@ class="kv-canvas-wrap">
                 <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px dashed #C9D2CE">
                     <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Monthly active users', 'Monthly active users') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr) 24px minmax(0, 1fr); gap: 8px; align-items: end">
-                        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #6B7A88">{{ t('kouventa.Unique numbers broadcast to', 'Unique numbers broadcast to') }}<input type="number" min="0" inputmode="numeric" x-model.number="bc" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px"></label>
+                        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #6B7A88">{{ t('kouventa.Unique numbers broadcast to', 'Unique numbers broadcast to') }}<input type="number" min="0" inputmode="numeric" x-model.number="bc" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px"></label>
                         <span style="height: 52px; display: flex; align-items: center; justify-content: center; color: #6B7A88; font-weight: 700">+</span>
-                        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #6B7A88">{{ t('kouventa.Unique inbound numbers', 'Unique inbound numbers') }}<input type="number" min="0" inputmode="numeric" x-model.number="ib" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px"></label>
+                        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #6B7A88">{{ t('kouventa.Unique inbound numbers', 'Unique inbound numbers') }}<input type="number" min="0" inputmode="numeric" x-model.number="ib" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px"></label>
                         <span style="height: 52px; display: flex; align-items: center; justify-content: center; color: #6B7A88; font-weight: 700">=</span>
                         <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #0E1A24; display: flex; align-items: center; justify-content: flex-end; padding: 0 16px" x-text="fmtNum(mau)">0</span>
                     </div>
@@ -1632,24 +1574,136 @@ class="kv-canvas-wrap">
 
 @push('scripts')
 <script>
-function whatsappCalculator() {
-    return {
-        mk: 0, ut: 0, au: 0, sv: 0, bc: 0, ib: 0,
-        get mau() { return (Number(this.bc) || 0) + (Number(this.ib) || 0); },
-        get isOver() { return this.mau > 15000; },
-        get plan() { return this.isOver ? 'Enterprise' : (this.mau > 3000 ? 'Professional' : 'Starter'); },
-        get platformFee() { return this.isOver ? 0 : (this.mau > 3000 ? 4499000 : 1499000); },
-        get subMk() { return (Number(this.mk) || 0) * 616; },
-        get subUt() { return (Number(this.ut) || 0) * 375; },
-        get subAu() { return (Number(this.au) || 0) * 375; },
-        get subSv() { return (Number(this.sv) || 0) * 375; },
-        get convTotal() { return this.subMk + this.subUt + this.subAu + this.subSv; },
-        get monthlyTotal() { return this.platformFee + this.convTotal; },
-        get yearlyTotal() { return this.monthlyTotal * 12; },
-        fmt(num) { return 'Rp ' + Math.round(num).toLocaleString('id-ID'); },
-        fmtNum(num) { return Math.round(num).toLocaleString('id-ID'); }
-    };
-}
+(() => {
+    function pricingPage() {
+        return {
+            product: (() => {
+                if (window.location.hash === '#calculator') return 'ce';
+                const tab = new URLSearchParams(window.location.search).get('tab');
+                return tab === 'ce' ? 'ce' : (tab === 'ai' ? 'ai' : 'ce');
+            })(),
+            openCats: { 'ai_0': true, 'ce_0': true },
+
+            init() {
+                if (window.location.hash === '#calculator') {
+                    this.scrollToCalculator();
+                }
+                window.addEventListener('hashchange', () => {
+                    if (window.location.hash === '#calculator') {
+                        this.scrollToCalculator();
+                    }
+                });
+                window.addEventListener('open-calculator', () => {
+                    this.scrollToCalculator();
+                });
+                window.addEventListener('switch-pricing-tab', (e) => {
+                    if (e.detail === 'ai' || e.detail === 'ce') this.setTab(e.detail);
+                });
+                window.addEventListener('popstate', () => {
+                    const t = new URLSearchParams(window.location.search).get('tab');
+                    if (t === 'ai' || t === 'ce') this.product = t;
+                    if (window.location.hash === '#calculator') this.scrollToCalculator();
+                });
+            },
+
+            setTab(tab) {
+                this.product = tab;
+                try {
+                    const u = new URL(window.location);
+                    u.searchParams.set('tab', tab);
+                    history.replaceState(null, '', u.pathname + u.search + u.hash);
+                } catch (e) {}
+            },
+            toggleCat(key) {
+                this.openCats[key] = !this.openCats[key];
+            },
+            isCatOpen(key, defaultVal = false) {
+                return this.openCats[key] !== undefined ? this.openCats[key] : defaultVal;
+            },
+            expandAll() {
+                for (let i = 0; i < 20; i++) {
+                    this.openCats['ai_' + i] = true;
+                    this.openCats['ce_' + i] = true;
+                }
+            },
+            collapseAll() {
+                this.openCats = {};
+            },
+            scrollToCalculator() {
+                this.setTab('ce');
+                setTimeout(() => {
+                    const el = document.getElementById('calculator');
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 150);
+            },
+
+            // WhatsApp Cost Calculator (1-to-1 matching Kouventa prototype calculation)
+            mk: 0,
+            ut: 0,
+            au: 0,
+            sv: 0,
+            bc: 0,
+            ib: 0,
+
+            parseQty(val) {
+                const n = parseInt(val, 10);
+                return (isNaN(n) || n < 0) ? 0 : n;
+            },
+
+            get subMk() {
+                return this.parseQty(this.mk) * 616;
+            },
+            get subUt() {
+                return this.parseQty(this.ut) * 375;
+            },
+            get subAu() {
+                return this.parseQty(this.au) * 375;
+            },
+            get subSv() {
+                return this.parseQty(this.sv) * 375;
+            },
+            get convTotal() {
+                return this.subMk + this.subUt + this.subAu + this.subSv;
+            },
+            get mau() {
+                return this.parseQty(this.bc) + this.parseQty(this.ib);
+            },
+            get isOver() {
+                return this.mau > 15000;
+            },
+            get plan() {
+                return this.isOver ? 'Enterprise' : (this.mau > 3000 ? 'Professional' : 'Starter');
+            },
+            get platformFee() {
+                return this.isOver ? 0 : (this.mau > 3000 ? 4499000 : 1499000);
+            },
+            get monthlyTotal() {
+                return this.platformFee + this.convTotal;
+            },
+            get yearlyTotal() {
+                return this.monthlyTotal * 12;
+            },
+            fmt(num) {
+                return 'Rp ' + Math.round(Number(num) || 0).toLocaleString('id-ID');
+            },
+            fmtNum(num) {
+                return Math.round(Number(num) || 0).toLocaleString('id-ID');
+            }
+        };
+    }
+
+    window.pricingPage = pricingPage;
+
+    if (window.Alpine) {
+        Alpine.data('pricingPage', pricingPage);
+    } else {
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('pricingPage', pricingPage);
+        });
+    }
+})();
 </script>
 @endpush
 @endsection
