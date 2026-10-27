@@ -52,7 +52,7 @@
         s.setAttribute('data-avatar-url', 'https://teddy.centraldatatech.com:3001/api/system/logo?theme=default');
         s.setAttribute('data-widget-bottom', '120');
         s.setAttribute('data-widget-right', '20');
-        s.src = "{{ theme_asset('teddy/chatWidget.js') }}";
+        s.src = "{{ theme_asset('teddy/chatWidget.js') }}?v={{ @filemtime(public_path('themes/cdt/assets/teddy/chatWidget.js')) ?: '2' }}";
         s.defer = true;
         document.body.appendChild(s);
 
