@@ -1090,7 +1090,7 @@
             <!-- AI Starter -->
             <article style="background: #FFFFFF; color: #0E1A24; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <span style="font-size: 30px; font-weight: 800">{{ t('kouventa.Starter', 'Starter') }}</span>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Starter', 'Starter') }}</h3>
                 </div>
                 <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ t('kouventa.Bring AI to your first workflow.', 'Bring AI to your first workflow.') }}</span>
                 <div style="display: flex; flex-direction: column; gap: 4px">
@@ -1115,7 +1115,7 @@
             <!-- AI Grow (Most Popular) -->
             <article style="background: #071C33; color: #FFFFFF; border: 1px solid #071C33; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative; box-shadow: 0 24px 60px rgba(7,28,51,0.2)">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <span style="font-size: 30px; font-weight: 800">{{ t('kouventa.Grow', 'Grow') }}</span>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Grow', 'Grow') }}</h3>
                     <span style="font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 999px; background: #2BD46A; color: #06251A">{{ t('kouventa.Most popular', 'Most popular') }}</span>
                 </div>
                 <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #B9C6D3">{{ t('kouventa.Add agentic capability across your teams.', 'Add agentic capability across your teams.') }}</span>
@@ -1141,7 +1141,7 @@
             <!-- AI Scale -->
             <article style="background: #FFFFFF; color: #0E1A24; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <span style="font-size: 30px; font-weight: 800">{{ t('kouventa.Scale', 'Scale') }}</span>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Scale', 'Scale') }}</h3>
                 </div>
                 <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ t('kouventa.Enterprise AI, fully orchestrated.', 'Enterprise AI, fully orchestrated.') }}</span>
                 <div style="display: flex; flex-direction: column; gap: 4px">
@@ -1169,7 +1169,7 @@
             <!-- CE Starter -->
             <article style="background: #FFFFFF; color: #0E1A24; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <span style="font-size: 30px; font-weight: 800">{{ t('kouventa.Starter', 'Starter') }}</span>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Starter', 'Starter') }}</h3>
                 </div>
                 <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ t('kouventa.For teams starting their omnichannel journey.', 'For teams starting their omnichannel journey.') }}</span>
                 <div style="display: flex; flex-direction: column; gap: 4px">
@@ -1194,7 +1194,7 @@
             <!-- CE Professional (Most Popular) -->
             <article style="background: #071C33; color: #FFFFFF; border: 1px solid #071C33; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative; box-shadow: 0 24px 60px rgba(7,28,51,0.2)">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <span style="font-size: 30px; font-weight: 800">{{ t('kouventa.Professional', 'Professional') }}</span>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Professional', 'Professional') }}</h3>
                     <span style="font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 999px; background: #2BD46A; color: #06251A">{{ t('kouventa.Most popular', 'Most popular') }}</span>
                 </div>
                 <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #B9C6D3">{{ t('kouventa.For growing teams scaling engagement across channels.', 'For growing teams scaling engagement across channels.') }}</span>
@@ -1220,7 +1220,7 @@
             <!-- CE Enterprise -->
             <article style="background: #FFFFFF; color: #0E1A24; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <span style="font-size: 30px; font-weight: 800">{{ t('kouventa.Enterprise', 'Enterprise') }}</span>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Enterprise', 'Enterprise') }}</h3>
                 </div>
                 <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ t('kouventa.Full control for enterprise-scale operations.', 'Full control for enterprise-scale operations.') }}</span>
                 <div style="display: flex; flex-direction: column; gap: 4px">
@@ -1461,7 +1461,7 @@
 
                 <!-- Marketing -->
                 <div style="display: flex; flex-direction: column; gap: 8px">
-                    <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Marketing', 'Marketing') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>
+                    <h3 style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Marketing', 'Marketing') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></h3>
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
                         <input type="number" min="0" inputmode="numeric" aria-label="Marketing conversations per month" x-model.number="mk" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
@@ -1473,7 +1473,7 @@
 
                 <!-- Utility -->
                 <div style="display: flex; flex-direction: column; gap: 8px">
-                    <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Utility', 'Utility') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>
+                    <h3 style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Utility', 'Utility') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></h3>
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
                         <input type="number" min="0" inputmode="numeric" aria-label="Utility conversations per month" x-model.number="ut" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
@@ -1485,7 +1485,7 @@
 
                 <!-- Authentication -->
                 <div style="display: flex; flex-direction: column; gap: 8px">
-                    <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Authentication', 'Authentication') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>
+                    <h3 style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Authentication', 'Authentication') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></h3>
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
                         <input type="number" min="0" inputmode="numeric" aria-label="Authentication conversations per month" x-model.number="au" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
@@ -1497,7 +1497,7 @@
 
                 <!-- Service -->
                 <div style="display: flex; flex-direction: column; gap: 8px">
-                    <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Service', 'Service') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>
+                    <h3 style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Service', 'Service') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></h3>
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
                         <input type="number" min="0" inputmode="numeric" aria-label="Service conversations per month" x-model.number="sv" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
@@ -1509,7 +1509,7 @@
 
                 <!-- MAU row -->
                 <div style="display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px dashed #C9D2CE">
-                    <span style="display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Monthly active users', 'Monthly active users') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>
+                    <h3 style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Monthly active users', 'Monthly active users') }}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></h3>
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr) 24px minmax(0, 1fr); gap: 8px; align-items: end">
                         <label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: #6B7A88">{{ t('kouventa.Unique numbers broadcast to', 'Unique numbers broadcast to') }}<input type="number" min="0" inputmode="numeric" x-model.number="bc" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px"></label>
                         <span style="height: 52px; display: flex; align-items: center; justify-content: center; color: #6B7A88; font-weight: 700">+</span>

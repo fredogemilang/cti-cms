@@ -238,19 +238,19 @@
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1Z"></path><path d="M16 9l5 6M21 9l-5 6"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Limited campaign reach and personalization', 'Limited campaign reach and personalization') }}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Limited campaign reach and personalization', 'Limited campaign reach and personalization') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Risk of losing leads due to slow responses', 'Risk of losing leads due to slow responses') }}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Risk of losing leads due to slow responses', 'Risk of losing leads due to slow responses') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-3 3V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2Z"></path><path d="M18 9h1a2 2 0 0 1 2 2v10l-3-3h-6a2 2 0 0 1-2-2v-1"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Customer conversations scattered across multiple channels', 'Customer conversations scattered across multiple channels') }}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Customer conversations scattered across multiple channels', 'Customer conversations scattered across multiple channels') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.60s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="M12 8v4M12 15.5h.01"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Customers need a fast and secure way to verify their identity without adding friction to the customer experience', 'Customers need a fast and secure way to verify their identity without adding friction to the customer experience') }}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Customers need a fast and secure way to verify their identity without adding friction to the customer experience', 'Customers need a fast and secure way to verify their identity without adding friction to the customer experience') }}</h4>
 </div>
 </div>
 </div>
@@ -261,35 +261,35 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1Z"></path><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"></path></svg></span>
 <span class="kv-help-sol-text">
-<span class="kv-help-sol-title">{{ t('kouventa.WhatsApp Broadcast', 'WhatsApp Broadcast') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.WhatsApp Broadcast', 'WhatsApp Broadcast') }}</h3>
 <span class="kv-help-sol-desc">{{ t('kouventa.Send promotional campaigns, product launches, and seasonal offers to customers at scale.', 'Send promotional campaigns, product launches, and seasonal offers to customers at scale.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 2.2s ease 1.8s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V5M9 13h.01M15 13h.01M10 17h4"></path></svg></span>
 <span class="kv-help-sol-text">
-<span class="kv-help-sol-title">{{ t('kouventa.Chatbot', 'Chatbot') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Chatbot', 'Chatbot') }}</h3>
 <span class="kv-help-sol-desc">{{ t('kouventa.Answer product and service inquiries with predefined or AI chatbots, or escalate to a human agent for more complex requests.', 'Answer product and service inquiries with predefined or AI chatbots, or escalate to a human agent for more complex requests.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 1.2s ease 4.4s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"></path></svg></span>
 <span class="kv-help-sol-text">
-<span class="kv-help-sol-title">{{ t('kouventa.Omnichannel', 'Omnichannel') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Omnichannel', 'Omnichannel') }}</h3>
 <span class="kv-help-sol-desc">{{ t('kouventa.Manage customer conversations and respond to comments from WhatsApp, Instagram, Facebook, and Live Chat in one platform.', 'Manage customer conversations and respond to comments from WhatsApp, Instagram, Facebook, and Live Chat in one platform.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="sol === 3" style="animation: kvHi 1.1s ease 5.6s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span>
 <span class="kv-help-sol-text">
-<span class="kv-help-sol-title">{{ t('kouventa.Authentication', 'Authentication') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Authentication', 'Authentication') }}</h3>
 <span class="kv-help-sol-desc">{{ t('kouventa.Secure customer logins and transactions with fast, seamless WhatsApp OTP verification.', 'Secure customer logins and transactions with fast, seamless WhatsApp OTP verification.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(4)" :aria-pressed="sol === 4" style="animation: kvHi 1.4s ease 6.8s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h3"></path></svg></span>
 <span class="kv-help-sol-text">
-<span class="kv-help-sol-title">{{ t('kouventa.WhatsApp Flows', 'WhatsApp Flows') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.WhatsApp Flows', 'WhatsApp Flows') }}</h3>
 <span class="kv-help-sol-desc">{{ t('kouventa.Simplify customer data collection for purchases, loyalty program registration, membership sign-ups, and more.', 'Simplify customer data collection for purchases, loyalty program registration, membership sign-ups, and more.') }}</span>
 </span>
 </button>
@@ -389,15 +389,15 @@
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><rect x="3" y="11" width="18" height="5" rx="1.5"></rect><path d="M7 20h10"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Customers expect their complaints to be handled quickly, while customer service teams manage multiple issues and requests at the same time', 'Customers expect their complaints to be handled quickly, while customer service teams manage multiple issues and requests at the same time') }}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Customers expect their complaints to be handled quickly, while customer service teams manage multiple issues and requests at the same time', 'Customers expect their complaints to be handled quickly, while customer service teams manage multiple issues and requests at the same time') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Customer service teams spend significant time handling repetitive questions, limiting their ability to focus on issues that require human assistance', 'Customer service teams spend significant time handling repetitive questions, limiting their ability to focus on issues that require human assistance') }}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Customer service teams spend significant time handling repetitive questions, limiting their ability to focus on issues that require human assistance', 'Customer service teams spend significant time handling repetitive questions, limiting their ability to focus on issues that require human assistance') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M12 12v3M12 18h.01"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Manually creating and recording support tickets can lead to human errors, incomplete information, and miscommunication during issue handling', 'Manually creating and recording support tickets can lead to human errors, incomplete information, and miscommunication during issue handling') }}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Manually creating and recording support tickets can lead to human errors, incomplete information, and miscommunication during issue handling', 'Manually creating and recording support tickets can lead to human errors, incomplete information, and miscommunication during issue handling') }}</h4>
 </div>
 </div>
 </div>
@@ -408,28 +408,28 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.2s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"></path></svg></span>
 <span class="kv-help-sol-text">
-<span class="kv-help-sol-title">{{ t('kouventa.Omnichannel', 'Omnichannel') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Omnichannel', 'Omnichannel') }}</h3>
 <span class="kv-help-sol-desc">{{ t('kouventa.Centralize customer complaints from WhatsApp, Instagram, Facebook, and Live Chat in one platform, making it easier to track and respond to every issue.', 'Centralize customer complaints from WhatsApp, Instagram, Facebook, and Live Chat in one platform, making it easier to track and respond to every issue.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.8s ease 1.4s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V5M9 13h.01M15 13h.01M10 17h4"></path></svg></span>
 <span class="kv-help-sol-text">
-<span class="kv-help-sol-title">{{ t('kouventa.Chatbot', 'Chatbot') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Chatbot', 'Chatbot') }}</h3>
 <span class="kv-help-sol-desc">{{ t('kouventa.Handle common customer complaints instantly with predefined or AI-powered chatbots, while escalating complex issues to human agents when needed.', 'Handle common customer complaints instantly with predefined or AI-powered chatbots, while escalating complex issues to human agents when needed.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 1.3s ease 3.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M13 6v2M13 11v2M13 16v2"></path></svg></span>
 <span class="kv-help-sol-text">
-<span class="kv-help-sol-title">{{ t('kouventa.Ticket Creation', 'Ticket Creation') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Ticket Creation', 'Ticket Creation') }}</h3>
 <span class="kv-help-sol-desc">{{ t('kouventa.Create support tickets from customer complaints, reducing manual work and minimizing errors or miscommunication during issue handling.', 'Create support tickets from customer complaints, reducing manual work and minimizing errors or miscommunication during issue handling.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="sol === 3" style="animation: kvHi 1.5s ease 4.6s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"></path></svg></span>
 <span class="kv-help-sol-text">
-<span class="kv-help-sol-title">{{ t('kouventa.CSAT Survey', 'CSAT Survey') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.CSAT Survey', 'CSAT Survey') }}</h3>
 <span class="kv-help-sol-desc">{{ t('kouventa.Automatically collect customer feedback after complaint resolution to measure satisfaction and identify opportunities to improve service quality.', 'Automatically collect customer feedback after complaint resolution to measure satisfaction and identify opportunities to improve service quality.') }}</span>
 </span>
 </button>
@@ -502,11 +502,11 @@
 <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 3A6 6 0 0 1 18 8c0 2.6.5 4.4 1.2 5.7M17 17H3s3-2 3-9c0-.8.1-1.5.4-2.2"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0M2 2l20 20"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Sending order, delivery, payment, and appointment updates manually can be time-consuming and may lead to delays, errors, or missed customer notifications', 'Sending order, delivery, payment, and appointment updates manually can be time-consuming and may lead to delays, errors, or missed customer notifications') }}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Sending order, delivery, payment, and appointment updates manually can be time-consuming and may lead to delays, errors, or missed customer notifications', 'Sending order, delivery, payment, and appointment updates manually can be time-consuming and may lead to delays, errors, or missed customer notifications') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 15l4-4 3 3 6-7"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.As transaction volumes grow, manually sending recurring notifications becomes harder to manage consistently and on time', 'As transaction volumes grow, manually sending recurring notifications becomes harder to manage consistently and on time') }}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.As transaction volumes grow, manually sending recurring notifications becomes harder to manage consistently and on time', 'As transaction volumes grow, manually sending recurring notifications becomes harder to manage consistently and on time') }}</h4>
 </div>
 </div>
 </div>
@@ -517,7 +517,7 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 5.2s ease 0.3s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10H7z"></path><path d="M3 9h4M3 15h4M17 9h4M17 15h4M9 3v4M15 3v4M9 17v4M15 17v4"></path></svg></span>
 <span class="kv-help-sol-text">
-<span class="kv-help-sol-title">{{ t('kouventa.Cross Platform Integrations', 'Cross Platform Integrations') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Cross Platform Integrations', 'Cross Platform Integrations') }}</h3>
 <span class="kv-help-sol-desc">{{ t('kouventa.Trigger WhatsApp messages from business systems based on operational events, such as order confirmations, delivery updates, payment reminders, and appointment notifications.', 'Trigger WhatsApp messages from business systems based on operational events, such as order confirmations, delivery updates, payment reminders, and appointment notifications.') }}</span>
 </span>
 </button>

@@ -56,3 +56,11 @@ error_log
 */error_log
 .user.ini
 
+# Excel reports & temp files
+*.xlsx
+*.xls
+~*.xlsx
+~*.xls
+*.csv
+
+

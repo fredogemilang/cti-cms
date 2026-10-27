@@ -1881,25 +1881,25 @@ $channelsDbl = array_merge($channels, $channels);
 <div class="kv-why-grid">
 <div class="kv-why-card">
 <span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span>
-<span class="kv-why-title">Multi-Model AI</span>
+<h3 class="kv-why-title" style="margin: 0">Multi-Model AI</h3>
 <span class="kv-why-desc">{{ t('kouventa.Access multiple AI models and choose the right model for each business need, all in one platform.', 'Access multiple AI models and choose the right model for each business need, all in one platform.') }}</span>
 <span class="kv-why-badge">{{ t('kouventa.Solves: scattered AI tools', 'Solves: scattered AI tools') }}</span>
 </div>
 <div class="kv-why-card">
 <span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg></span>
-<span class="kv-why-title">{{ t('kouventa.Controlled AI', 'Controlled AI') }}</span>
+<h3 class="kv-why-title" style="margin: 0">{{ t('kouventa.Controlled AI', 'Controlled AI') }}</h3>
 <span class="kv-why-desc">{{ t('kouventa.Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.', 'Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.') }}</span>
 <span class="kv-why-badge">{{ t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
 </div>
 <div class="kv-why-card">
 <span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
-<span class="kv-why-title">{{ t('kouventa.Secure AI', 'Secure AI') }}</span>
+<h3 class="kv-why-title" style="margin: 0">{{ t('kouventa.Secure AI', 'Secure AI') }}</h3>
 <span class="kv-why-desc">{{ t('kouventa.Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.', 'Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.') }}</span>
 <span class="kv-why-badge">{{ t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
 </div>
 <div class="kv-why-card">
 <span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg></span>
-<span class="kv-why-title">{{ t('kouventa.Budget Management', 'Budget Management') }}</span>
+<h3 class="kv-why-title" style="margin: 0">{{ t('kouventa.Budget Management', 'Budget Management') }}</h3>
 <span class="kv-why-desc">{{ t('kouventa.Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.', 'Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.') }}</span>
 <span class="kv-why-badge">{{ t('kouventa.Solves: hard-to-manage billing', 'Solves: hard-to-manage billing') }}</span>
 </div>
