@@ -277,8 +277,8 @@
                         {{ $isIdLocale ? 'STANDAR KEPATUHAN' : 'COMPLIANCE STANDARDS' }}
                     </span>
                     <div style="display: flex; gap: 14px; align-items: center">
-                        <img src="{{ theme_asset('images/badge-iso-27001.webp') }}?v=20261026" alt="ISO/IEC 27001 Certified" style="height: 48px; width: 48px; object-fit: contain">
-                        <img src="{{ theme_asset('images/badge-komdigi.webp') }}?v=20261026" alt="Terdaftar di Komdigi" style="height: 48px; width: 48px; object-fit: contain">
+                        <img src="{{ theme_asset('images/badge-iso-27001.webp') }}?v=20261026" alt="{{ t('kouventa.Sertifikasi Keamanan Informasi ISO/IEC 27001 Resmi Kouventa', 'Sertifikasi Keamanan Informasi ISO/IEC 27001 Resmi Kouventa') }}" style="height: 48px; width: 48px; object-fit: contain">
+                        <img src="{{ theme_asset('images/badge-komdigi.webp') }}?v=20261026" alt="{{ t('kouventa.Tanda Daftar Penyelenggara Sistem Elektronik Resmi Kementerian Komunikasi dan Digital (Komdigi)', 'Tanda Daftar Penyelenggara Sistem Elektronik Resmi Kementerian Komunikasi dan Digital (Komdigi)') }}" style="height: 48px; width: 48px; object-fit: contain">
                     </div>
                     <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #64748B">
                         {{ $isIdLocale ? 'Sistem Manajemen Keamanan Informasi ISO/IEC 27001 terakreditasi CBQA Global & Terdaftar Resmi di Komdigi.' : 'ISO/IEC 27001 Information Security Management accredited by CBQA Global & registered with Komdigi.' }}

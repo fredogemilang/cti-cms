@@ -1864,7 +1864,7 @@ $channelsDbl = array_merge($channels, $channels);
 @endphp
 @foreach($channelsDbl as $ch)
 <span class="kv-channel-card" style="width: 168px; height: 96px; flex-shrink: 0; box-sizing: border-box; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease">
-    <img src="{{ theme_asset($ch['icon']) }}" alt="{{ $ch['name'] }}" style="width: 32px; height: 32px; object-fit: contain; display: block" loading="lazy">
+    <img src="{{ theme_asset($ch['icon']) }}" alt="{{ t('kouventa.Integrasi Saluran ' . $ch['name'] . ' pada Kouventa AI Platform', 'Integrasi Saluran ' . $ch['name'] . ' pada Kouventa AI Platform') }}" style="width: 32px; height: 32px; object-fit: contain; display: block" loading="lazy">
     <span style="font-size: 13px; font-weight: 700; color: #D5DEE8; text-align: center; line-height: 1.3">{{ $ch['name'] }}</span>
 </span>
 @endforeach

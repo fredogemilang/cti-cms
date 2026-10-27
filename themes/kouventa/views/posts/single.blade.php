@@ -104,7 +104,7 @@
         <!-- Hero Featured Image (Native 2560 x 871 Aspect Ratio) -->
         @if($imgUrl)
         <div class="kv-single-cover-wrap">
-            <img src="{{ $imgUrl }}" alt="{{ $postTitle }}" class="kv-single-cover-img" fetchpriority="high">
+            <img src="{{ $imgUrl }}" alt="{{ $postTitle }} - Solusi Kouventa AI" class="kv-single-cover-img" fetchpriority="high">
         </div>
         @endif
 
@@ -300,7 +300,7 @@
                 <article class="kv-rel-card">
                     <a href="{{ $relPost->getUrl() }}" class="kv-rel-img-wrap" tabindex="-1" aria-hidden="true">
                         @if($relImg)
-                            <img src="{{ $relImg }}" alt="{{ $relPost->title }}" class="kv-rel-img" loading="lazy">
+                            <img src="{{ $relImg }}" alt="{{ $relPost->title }} - Artikel Terkait Kouventa AI" class="kv-rel-img" loading="lazy">
                         @else
                             <div class="kv-rel-placeholder">Kouventa</div>
                         @endif

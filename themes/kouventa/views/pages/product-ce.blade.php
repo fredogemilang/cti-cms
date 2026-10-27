@@ -1309,10 +1309,10 @@
 <span style="font-size: 13px; font-weight: 800">Kouventa</span>
 <span style="font-size: 12px; color: #4A5866">Interactions › Chat</span>
 <span style="margin-left: auto; display: flex; align-items: center; gap: 6px">
-<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
-<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="Instagram" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
-<img src="{{ theme_asset('images/icon-facebook.png') }}" alt="Facebook" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
-<img src="{{ theme_asset('images/icon-livechat.png') }}" alt="Live Chat" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon Resmi WhatsApp Business API untuk Komunikasi Pelanggan Otomatis', 'Ikon Resmi WhatsApp Business API untuk Komunikasi Pelanggan Otomatis') }}" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-channel-1.png') }}" alt="{{ t('kouventa.Ikon Kanal Pesan Instagram Direct Message (DM) Terintegrasi Kouventa', 'Ikon Kanal Pesan Instagram Direct Message (DM) Terintegrasi Kouventa') }}" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-channel-2.png') }}" alt="{{ t('kouventa.Ikon Kanal Pesan Facebook Messenger Omnichannel Kouventa', 'Ikon Kanal Pesan Facebook Messenger Omnichannel Kouventa') }}" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-channel-3.png') }}" alt="{{ t('kouventa.Ikon Web Live Chat Widget Interaktif Situs Web Kouventa', 'Ikon Web Live Chat Widget Interaktif Situs Web Kouventa') }}" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
 </span>
 </div>
 <div style="display: flex; gap: 18px; padding: 0 16px; font-size: 12px; border-bottom: 1px solid #E3E8E6; flex-shrink: 0">
@@ -1330,8 +1330,8 @@
 <span style="font-size: 12px; font-weight: 700; color: #0E1A24">Rina S.</span>
 <span style="font-size: 11px; color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ $isIdLocale ? 'Ukuran M masih ada?' : t('kouventa.Is size M still available?', 'Is size M still available?') }}</span>
 <span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866; white-space: nowrap">
-<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="Instagram" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
-<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="{{ t('kouventa.Ikon Instagram - Saluran Komunikasi Terintegrasi', 'Ikon Instagram - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon WhatsApp - Saluran Komunikasi Terintegrasi', 'Ikon WhatsApp - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
 Instagram · WhatsApp
 </span>
 </span>
@@ -1342,7 +1342,7 @@ Instagram · WhatsApp
 <span style="font-size: 12px; font-weight: 700; color: #0E1A24">Budi</span>
 <span style="font-size: 11px; color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ $isIdLocale ? 'Pesanan #2219 saya di mana?' : t('kouventa.Where is my order #2219?', 'Where is my order #2219?') }}</span>
 <span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
-<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon WhatsApp - Saluran Komunikasi Terintegrasi', 'Ikon WhatsApp - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
 WhatsApp
 </span>
 </span>
@@ -1353,7 +1353,7 @@ WhatsApp
 <span style="font-size: 12px; font-weight: 700; color: #0E1A24">Sari</span>
 <span style="font-size: 11px; color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ $isIdLocale ? 'Ongkir ke Bandung gratis?' : t('kouventa.Is delivery free to Bandung?', 'Is delivery free to Bandung?') }}</span>
 <span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
-<img src="{{ theme_asset('images/icon-facebook.png') }}" alt="Facebook" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-facebook.png') }}" alt="{{ t('kouventa.Ikon Facebook - Saluran Komunikasi Terintegrasi', 'Ikon Facebook - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
 Facebook
 </span>
 </span>
@@ -1364,7 +1364,7 @@ Facebook
 <span style="font-size: 12px; font-weight: 700; color: #0E1A24">Dimas</span>
 <span style="font-size: 11px; color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ $isIdLocale ? 'Halo, saya butuh bantuan untuk akun saya' : t('kouventa.Hi, I need help with my account', 'Hi, I need help with my account') }}</span>
 <span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
-<img src="{{ theme_asset('images/icon-livechat.png') }}" alt="Live Chat" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-livechat.png') }}" alt="{{ t('kouventa.Ikon Live Chat - Saluran Komunikasi Terintegrasi', 'Ikon Live Chat - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
 Live Chat
 </span>
 </span>
@@ -1375,7 +1375,7 @@ Live Chat
 <span style="font-size: 12px; font-weight: 700; color: #0E1A24">Maya</span>
 <span style="font-size: 11px; color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ $isIdLocale ? 'Terima kasih, sudah diterima!' : t('kouventa.Thanks, received!', 'Thanks, received!') }}</span>
 <span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
-<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon WhatsApp - Saluran Komunikasi Terintegrasi', 'Ikon WhatsApp - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
 WhatsApp
 </span>
 </span>
@@ -1388,8 +1388,8 @@ WhatsApp
 <span style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
 <span style="font-size: 12.5px; font-weight: 700">Rina S.</span>
 <span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
-<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="Instagram" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
-<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="{{ t('kouventa.Ikon Instagram - Saluran Komunikasi Terintegrasi', 'Ikon Instagram - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon WhatsApp - Saluran Komunikasi Terintegrasi', 'Ikon WhatsApp - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
 {{ $isIdLocale ? 'Satu profil, dua channel' : t('kouventa.One profile, two channels', 'One profile, two channels') }}
 </span>
 </span>
@@ -1399,7 +1399,7 @@ WhatsApp
 <div style="flex-grow: 1; min-height: 0; overflow: hidden; padding: 10px 14px; display: flex; flex-direction: column; gap: 7px">
 <div style="align-self: flex-start; max-width: 78%; display: flex; flex-direction: column; gap: 3px; animation: kvM1 16s ease infinite both">
 <span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
-<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="Instagram" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="{{ t('kouventa.Ikon Instagram - Saluran Komunikasi Terintegrasi', 'Ikon Instagram - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
 {{ $isIdLocale ? 'DM Instagram · 10:02' : 'Instagram DM · 10:02' }}
 </span>
 <span style="background: #FFFFFF; border: 1px solid #E3E8E6; padding: 7px 10px; border-radius: 4px 12px 12px; font-size: 12px; line-height: 1.45; color: #0E1A24">
@@ -1409,7 +1409,7 @@ WhatsApp
 
 <div style="align-self: flex-end; max-width: 78%; display: flex; flex-direction: column; gap: 3px; animation: kvM2 16s ease infinite both">
 <span style="align-self: flex-end; display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
-<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="Instagram" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-instagram.png') }}" alt="{{ t('kouventa.Ikon Instagram - Saluran Komunikasi Terintegrasi', 'Ikon Instagram - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
 {{ $isIdLocale ? 'Agen · DM Instagram · 10:04' : 'Agent · Instagram DM · 10:04' }}
 </span>
 <span style="background: #DDF3E4; padding: 7px 10px; border-radius: 12px 4px 12px 12px; font-size: 12px; line-height: 1.45; color: #0E1A24">
@@ -1425,7 +1425,7 @@ WhatsApp
 
 <div style="align-self: flex-end; width: 62%; display: flex; flex-direction: column; gap: 3px; animation: kvM3 16s ease infinite both">
 <span style="align-self: flex-end; display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
-<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon WhatsApp - Saluran Komunikasi Terintegrasi', 'Ikon WhatsApp - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
 {{ $isIdLocale ? 'Broadcast campaign · WhatsApp · 09:00' : 'Campaign broadcast · WhatsApp · 09:00' }}
 </span>
 <span style="background: #DDF3E4; border-radius: 12px 4px 12px 12px; overflow: hidden; font-size: 12px; line-height: 1.45; color: #0E1A24">
@@ -1436,7 +1436,7 @@ WhatsApp
 
 <div style="align-self: flex-start; max-width: 78%; display: flex; flex-direction: column; gap: 3px; animation: kvM4 16s ease infinite both">
 <span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
-<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon WhatsApp - Saluran Komunikasi Terintegrasi', 'Ikon WhatsApp - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
 WhatsApp · 09:12
 </span>
 <span style="background: #FFFFFF; border: 1px solid #E3E8E6; padding: 7px 10px; border-radius: 4px 12px 12px; font-size: 12px; line-height: 1.45; color: #0E1A24">
@@ -1457,7 +1457,7 @@ Kouventa AI · WhatsApp · 09:12
 
 <div style="flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 8px 14px 12px">
 <span style="flex-grow: 1; height: 32px; border-radius: 8px; background: #FFFFFF; border: 1px solid #E3E8E6; display: flex; align-items: center; gap: 6px; padding: 0 10px; font-size: 11.5px; color: #8696A0">
-<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="WhatsApp" style="width: 12px; height: 12px; object-fit: contain; display: block; flex-shrink: 0">
+<img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon WhatsApp - Saluran Komunikasi Terintegrasi', 'Ikon WhatsApp - Saluran Komunikasi Terintegrasi') }}" style="width: 12px; height: 12px; object-fit: contain; display: block; flex-shrink: 0">
 {{ $isIdLocale ? 'Balas di WhatsApp…' : t('kouventa.Reply on WhatsApp…', 'Reply on WhatsApp…') }}
 </span>
 <span style="height: 32px; padding: 0 14px; border-radius: 8px; background: #13803F; color: #FFFFFF; font-size: 11.5px; font-weight: 700; display: flex; align-items: center">{{ $isIdLocale ? 'Kirim' : t('kouventa.Send', 'Send') }}</span>
@@ -1868,7 +1868,7 @@ Kouventa AI · WhatsApp · 09:12
 </div>
 <div class="kv-integration-connector kv-connector-1" style="flex-grow: 1; height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #13803F; --d: 34px; animation: kvTravel 1.6s linear infinite"></span></div>
 <div class="kv-integration-node" style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 16px; background: #071C33; display: flex; align-items: center; justify-content: center; animation: kvPulse 2.4s ease infinite">
-<img src="{{ resolve_block_asset(setting('site_favicon', 'media/kouventa-favicon-1792137759-KNT6XRpc.webp')) }}" alt="Kouventa" style="width: 28px; height: 28px; object-fit: contain; display: block">
+<img src="{{ resolve_block_asset(setting('site_favicon', 'media/kouventa-favicon-1792137759-KNT6XRpc.webp')) }}" alt="{{ t('kouventa.Logo Favicon Kouventa AI - Enterprise AI Platform', 'Logo Favicon Kouventa AI - Enterprise AI Platform') }}" style="width: 28px; height: 28px; object-fit: contain; display: block">
 </div>
 <div class="kv-integration-connector kv-connector-2" style="flex-grow: 1; height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -4px; left: 0; width: 10px; height: 10px; border-radius: 50%; background: #13803F; --d: 34px; animation: kvTravel 1.6s linear 0.8s infinite"></span></div>
 <div class="kv-integration-target" style="width: 160px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; font-size: 12px; line-height: 1.45">
@@ -1975,10 +1975,10 @@ Kouventa AI · WhatsApp · 09:12
 <!-- Omni Illustration -->
 <div class="kv-flex kv-items-center kv-mockup-omni" x-show="product === 'omni'" style="width: 420px; gap: 0">
 <div class="kv-omni-channels" style="width: 118px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px">
-<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>WhatsApp</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">Chat</span></span></span>
-<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-1.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Instagram</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.DM & comments', 'DM & comments') }}</span></span></span>
-<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-2.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Facebook</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.DM & comments', 'DM & comments') }}</span></span></span>
-<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-3.png') }}" alt="" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Live Chat</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.Website chat', 'Website chat') }}</span></span></span>
+<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon Resmi WhatsApp Business API untuk Komunikasi Pelanggan Otomatis', 'Ikon Resmi WhatsApp Business API untuk Komunikasi Pelanggan Otomatis') }}" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>WhatsApp</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">Chat</span></span></span>
+<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-1.png') }}" alt="{{ t('kouventa.Ikon Kanal Pesan Instagram Direct Message (DM) Terintegrasi Kouventa', 'Ikon Kanal Pesan Instagram Direct Message (DM) Terintegrasi Kouventa') }}" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Instagram</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.DM & comments', 'DM & comments') }}</span></span></span>
+<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-2.png') }}" alt="{{ t('kouventa.Ikon Kanal Pesan Facebook Messenger Omnichannel Kouventa', 'Ikon Kanal Pesan Facebook Messenger Omnichannel Kouventa') }}" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Facebook</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.DM & comments', 'DM & comments') }}</span></span></span>
+<span class="kv-omni-ch-item" style="font-size: 12px; font-weight: 700; padding: 7px 8px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 6px 16px rgba(7,28,51,0.06); display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-channel-3.png') }}" alt="{{ t('kouventa.Ikon Web Live Chat Widget Interaktif Situs Web Kouventa', 'Ikon Web Live Chat Widget Interaktif Situs Web Kouventa') }}" style="width: 20px; height: 20px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0"><span>Live Chat</span><span style="font-size: 10px; font-weight: 600; color: #4A5866; white-space: nowrap">{{ t('kouventa.Website chat', 'Website chat') }}</span></span></span>
 </div>
 <div class="kv-omni-connectors" style="width: 50px; flex-shrink: 0; height: 214px; display: flex; flex-direction: column; justify-content: space-around">
 <div style="height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: #13803F; --d: 42px; animation: kvTravel 1.8s linear 0s infinite"></span></div>
@@ -1992,10 +1992,10 @@ Kouventa AI · WhatsApp · 09:12
 </div>
 <div class="kv-omni-inbox" style="flex-grow: 1; background: #FFFFFF; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 10px 30px rgba(7,28,51,0.08)">
 <span style="font-size: 12px; font-weight: 700">{{ t('kouventa.Unified inbox', 'Unified inbox') }}</span>
-<div style="display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; background: #F4F6F5; font-size: 11px; animation: kvLoop 8s ease 0.4s infinite both"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0; flex-grow: 1"><span style="display: flex; align-items: center; gap: 6px"><strong style="font-weight: 700">Rina</strong><span style="padding: 1px 6px; border-radius: 5px; background: #E6EAEE; color: #33414E; font-size: 9.5px; font-weight: 800">Chat</span></span><span style="color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ t('kouventa.Where\'s my order?', 'Where\'s my order?') }}</span></span></div>
-<div style="display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; background: #F4F6F5; font-size: 11px; animation: kvLoop 8s ease 1s infinite both"><img src="{{ theme_asset('images/icon-channel-1.png') }}" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0; flex-grow: 1"><span style="display: flex; align-items: center; gap: 6px"><strong style="font-weight: 700">Sari</strong><span style="padding: 1px 6px; border-radius: 5px; background: #FFF1D6; color: #8A5A00; font-size: 9.5px; font-weight: 800">{{ t('kouventa.Comment', 'Comment') }}</span></span><span style="color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ t('kouventa.Is this available in size M?', 'Is this available in size M?') }}</span></span></div>
-<div style="display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; background: #F4F6F5; font-size: 11px; animation: kvLoop 8s ease 1.6s infinite both"><img src="{{ theme_asset('images/icon-channel-2.png') }}" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0; flex-grow: 1"><span style="display: flex; align-items: center; gap: 6px"><strong style="font-weight: 700">Budi</strong><span style="padding: 1px 6px; border-radius: 5px; background: #FFF1D6; color: #8A5A00; font-size: 9.5px; font-weight: 800">{{ t('kouventa.Comment', 'Comment') }}</span></span><span style="color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ t('kouventa.How much for 2 pcs?', 'How much for 2 pcs?') }}</span></span></div>
-<div style="display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; background: #F4F6F5; font-size: 11px; animation: kvLoop 8s ease 2.2s infinite both"><img src="{{ theme_asset('images/icon-channel-3.png') }}" alt="" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0; flex-grow: 1"><span style="display: flex; align-items: center; gap: 6px"><strong style="font-weight: 700">Andi</strong><span style="padding: 1px 6px; border-radius: 5px; background: #E6EAEE; color: #33414E; font-size: 9.5px; font-weight: 800">Chat</span></span><span style="color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ t('kouventa.Can I change my address?', 'Can I change my address?') }}</span></span></div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; background: #F4F6F5; font-size: 11px; animation: kvLoop 8s ease 0.4s infinite both"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon Saluran WhatsApp - Pesan Masuk Pelanggan', 'Ikon Saluran WhatsApp - Pesan Masuk Pelanggan') }}" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0; flex-grow: 1"><span style="display: flex; align-items: center; gap: 6px"><strong style="font-weight: 700">Rina</strong><span style="padding: 1px 6px; border-radius: 5px; background: #E6EAEE; color: #33414E; font-size: 9.5px; font-weight: 800">Chat</span></span><span style="color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ t('kouventa.Where\'s my order?', 'Where\'s my order?') }}</span></span></div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; background: #F4F6F5; font-size: 11px; animation: kvLoop 8s ease 1s infinite both"><img src="{{ theme_asset('images/icon-channel-1.png') }}" alt="{{ t('kouventa.Ikon Saluran Instagram - Komentar Masuk Pelanggan', 'Ikon Saluran Instagram - Komentar Masuk Pelanggan') }}" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0; flex-grow: 1"><span style="display: flex; align-items: center; gap: 6px"><strong style="font-weight: 700">Sari</strong><span style="padding: 1px 6px; border-radius: 5px; background: #FFF1D6; color: #8A5A00; font-size: 9.5px; font-weight: 800">{{ t('kouventa.Comment', 'Comment') }}</span></span><span style="color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ t('kouventa.Is this available in size M?', 'Is this available in size M?') }}</span></span></div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; background: #F4F6F5; font-size: 11px; animation: kvLoop 8s ease 1.6s infinite both"><img src="{{ theme_asset('images/icon-channel-2.png') }}" alt="{{ t('kouventa.Ikon Saluran Facebook - Komentar Masuk Pelanggan', 'Ikon Saluran Facebook - Komentar Masuk Pelanggan') }}" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0; flex-grow: 1"><span style="display: flex; align-items: center; gap: 6px"><strong style="font-weight: 700">Budi</strong><span style="padding: 1px 6px; border-radius: 5px; background: #FFF1D6; color: #8A5A00; font-size: 9.5px; font-weight: 800">{{ t('kouventa.Comment', 'Comment') }}</span></span><span style="color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ t('kouventa.How much for 2 pcs?', 'How much for 2 pcs?') }}</span></span></div>
+<div style="display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; background: #F4F6F5; font-size: 11px; animation: kvLoop 8s ease 2.2s infinite both"><img src="{{ theme_asset('images/icon-channel-3.png') }}" alt="{{ t('kouventa.Ikon Saluran Web Live Chat - Pesan Langsung Pengunjung', 'Ikon Saluran Web Live Chat - Pesan Langsung Pengunjung') }}" style="width: 18px; height: 18px; flex-shrink: 0; object-fit: contain"><span style="display: flex; flex-direction: column; gap: 1px; min-width: 0; flex-grow: 1"><span style="display: flex; align-items: center; gap: 6px"><strong style="font-weight: 700">Andi</strong><span style="padding: 1px 6px; border-radius: 5px; background: #E6EAEE; color: #33414E; font-size: 9.5px; font-weight: 800">Chat</span></span><span style="color: #4A5866; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ t('kouventa.Can I change my address?', 'Can I change my address?') }}</span></span></div>
 <div style="display: flex; gap: 6px; padding-top: 4px; font-size: 10px; font-weight: 700"><span style="padding: 4px 8px; border-radius: 999px; background: #DDF3E4; color: #0B5E2C">{{ t('kouventa.SLA on track', 'SLA on track') }}</span><span style="padding: 4px 8px; border-radius: 999px; background: #071C33; color: #FFFFFF">{{ t('kouventa.CSAT collected', 'CSAT collected') }}</span></div>
 </div>
 </div>

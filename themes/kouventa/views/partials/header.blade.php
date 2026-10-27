@@ -8,7 +8,7 @@
 <div class="kv-mobile-header" style="position: sticky; top: 0; z-index: 100; background: #071C33; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); box-sizing: border-box; width: 100%;">
     <!-- Logo -->
     <a href="{{ localized_url('/') }}" style="flex-shrink: 0; display: flex; align-items: center; text-decoration: none">
-        <img src="{{ $siteLogo }}" alt="{{ $siteName }}" style="height: 32px; width: auto; display: block">
+        <img src="{{ $siteLogo }}" alt="{{ t('kouventa.Logo Kouventa AI - Platform Enterprise AI dan Customer Engagement Indonesia', 'Logo Kouventa AI - Platform Enterprise AI dan Customer Engagement Indonesia') }}" style="height: 32px; width: auto; display: block">
     </a>
 
     <!-- Right Actions: Language Switcher & Book Demo -->
@@ -34,7 +34,7 @@
         $siteName = setting('site_name', 'Kouventa');
     @endphp
     <a href="{{ localized_url('/') }}" style="display: flex; align-items: center; text-decoration: none">
-        <img src="{{ $siteLogo }}" alt="{{ $siteName }} home" style="height: 34px; width: auto; display: block">
+        <img src="{{ $siteLogo }}" alt="{{ t('kouventa.Logo Kouventa AI - Platform Enterprise AI dan Customer Engagement Indonesia', 'Logo Kouventa AI - Platform Enterprise AI dan Customer Engagement Indonesia') }}" style="height: 34px; width: auto; display: block">
     </a>
 
     <!-- Desktop Nav -->

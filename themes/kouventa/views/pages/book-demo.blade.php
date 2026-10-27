@@ -16,9 +16,9 @@
 <!-- ============ NAV + HERO ============ -->
 <section style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative">
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
-<div aria-hidden="true" style="position: absolute; right: 60px; bottom: 0; width: 500px; height: 440px; pointer-events: none">
+<div style="position: absolute; right: 60px; bottom: 0; width: 500px; height: 440px; pointer-events: none">
 <div style="position: absolute; left: 50%; top: 70px; width: 400px; height: 400px; margin-left: -200px; border-radius: 50%; background: radial-gradient(circle, rgba(43,212,106,0.22) 0%, rgba(43,212,106,0.07) 45%, rgba(43,212,106,0) 70%)"></div>
-<img src="{{ theme_asset('images/hero-ce-mockup.png') }}" alt="" style="position: absolute; left: 50%; bottom: 0; height: 360px; width: auto; transform: translateX(-50%); display: block; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.35))">
+<img src="{{ theme_asset('images/hero-ce-mockup.png') }}" alt="{{ t('kouventa.Antarmuka Dasbor Omnichannel Customer Engagement Kouventa menampilkan percakapan multi-channel', 'Antarmuka Dasbor Omnichannel Customer Engagement Kouventa menampilkan percakapan multi-channel') }}" style="position: absolute; left: 50%; bottom: 0; height: 360px; width: auto; transform: translateX(-50%); display: block; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.35))">
 </div>
 <div style="padding: 80px 80px 220px; display: flex; flex-direction: column; gap: 18px; position: relative">
 <h1 style="margin: 0; font-size: 64px; line-height: 1.05; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'Get in touch' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'with us.' }}</span></h1>

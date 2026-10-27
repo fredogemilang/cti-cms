@@ -8,7 +8,7 @@
                 $linkedinUrl = setting('social_linkedin', 'https://linkedin.com/company/kouventa');
                 $youtubeUrl = setting('social_youtube', 'https://www.youtube.com/@heliosinformatikanusantara4415');
             @endphp
-            <img src="{{ $footerLogo }}" alt="{{ $footerSiteName }}" style="height: 40px; width: auto; align-self: flex-start">
+            <img src="{{ $footerLogo }}" alt="{{ t('kouventa.Logo Kouventa AI - Platform Enterprise AI dan Customer Engagement Indonesia', 'Logo Kouventa AI - Platform Enterprise AI dan Customer Engagement Indonesia') }}" style="height: 40px; width: auto; align-self: flex-start">
             <div style="display: flex; gap: 10px">
                 <a href="{{ $instagramUrl }}" target="_blank" rel="noopener" aria-label="Kouventa on Instagram" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><path d="M17.5 6.5h.01"></path></svg>
@@ -56,10 +56,10 @@
             <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Certified & Registered', 'Certified & Registered') }}</span>
             <div style="display: flex; gap: 12px; align-items: center">
                 <div style="background: #FFFFFF; border-radius: 10px; padding: 6px; display: inline-flex; align-items: center; justify-content: center; height: 50px; width: 50px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.2)">
-                    <img src="{{ theme_asset('images/badge-iso-27001.webp') }}?v=20261026" alt="ISO/IEC 27001 System Certification" style="height: 38px; width: 38px; object-fit: contain; display: block" loading="lazy">
+                    <img src="{{ theme_asset('images/badge-iso-27001.webp') }}?v=20261026" alt="{{ t('kouventa.Sertifikasi Keamanan Informasi ISO/IEC 27001 Resmi Kouventa', 'Sertifikasi Keamanan Informasi ISO/IEC 27001 Resmi Kouventa') }}" style="height: 38px; width: 38px; object-fit: contain; display: block" loading="lazy">
                 </div>
                 <div style="background: #FFFFFF; border-radius: 10px; padding: 6px; display: inline-flex; align-items: center; justify-content: center; height: 50px; width: 50px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.2)">
-                    <img src="{{ theme_asset('images/badge-komdigi.webp') }}?v=20261026" alt="Terdaftar di Komdigi" style="height: 38px; width: 38px; object-fit: contain; display: block" loading="lazy">
+                    <img src="{{ theme_asset('images/badge-komdigi.webp') }}?v=20261026" alt="{{ t('kouventa.Tanda Daftar Penyelenggara Sistem Elektronik Resmi Kementerian Komunikasi dan Digital (Komdigi)', 'Tanda Daftar Penyelenggara Sistem Elektronik Resmi Kementerian Komunikasi dan Digital (Komdigi)') }}" style="height: 38px; width: 38px; object-fit: contain; display: block" loading="lazy">
                 </div>
             </div>
         </div>

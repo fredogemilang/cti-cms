@@ -21,7 +21,7 @@
 <!-- ============ TEAM + VALUES ============ -->
 <section style="padding: 0 80px; margin-top: -170px; position: relative; z-index: 2">
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 24px; align-items: stretch">
-<img src="{{ theme_asset('images/kouventa-team.png') }}" alt="The Kouventa team" style="width: 100%; height: 100%; max-height: 640px; object-fit: cover; object-position: center top; border-radius: 22px; display: block; box-shadow: 0 24px 60px rgba(7,28,51,0.18)">
+<img src="{{ theme_asset('images/kouventa-team.png') }}" alt="{{ t('kouventa.Tim Profesional dan Solution Architect Kouventa Indonesia', 'Tim Profesional dan Solution Architect Kouventa Indonesia') }}" style="width: 100%; height: 100%; max-height: 640px; object-fit: cover; object-position: center top; border-radius: 22px; display: block; box-shadow: 0 24px 60px rgba(7,28,51,0.18)">
 <div style="display: flex; flex-direction: column; gap: 16px">
 <span style="height: 24px; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #93A4B6; text-align: right">{{ $valuesBadge }}</span>
 <div style="flex: 1 1 0; background: #FFFFFF; border-radius: 18px; padding: 24px 26px; display: flex; flex-direction: column; justify-content: center; gap: 12px; box-shadow: 0 18px 40px rgba(7,28,51,0.12)">
@@ -62,7 +62,7 @@
     <div class="kv-tl-row" data-year="2014">
         <span class="kv-tl-year">2014</span>
         <span class="kv-tl-dot-wrap"><span class="kv-tl-dot"></span></span>
-        <img src="{{ theme_asset('images/about-milestone-office.webp') }}" alt="Established 2014" class="kv-tl-img">
+        <img src="{{ theme_asset('images/about-milestone-office.webp') }}" alt="{{ t('kouventa.Dokumentasi Awal Pendirian Kouventa pada Tahun 2014 Berfokus pada Komunikasi Bisnis', 'Dokumentasi Awal Pendirian Kouventa pada Tahun 2014 Berfokus pada Komunikasi Bisnis') }}" class="kv-tl-img">
         <div class="kv-tl-content">
             <h3 class="kv-tl-title">{{ t('kouventa.Established', 'Established') }}</h3>
             <p class="kv-tl-desc">{{ t('kouventa.PT Helios Informatika Nusantara (Helios) was established in 2014 as IT Value Added Distributor (VAD). As a member of PT Computrade Technology International (CTI Group), Helios collaborates with some of the world\'s leading IT global companies to provide our clients with cutting-edge and innovative technologies.', 'PT Helios Informatika Nusantara (Helios) was established in 2014 as IT Value Added Distributor (VAD). As a member of PT Computrade Technology International (CTI Group), Helios collaborates with some of the world\'s leading IT global companies to provide our clients with cutting-edge and innovative technologies.') }}</p>
@@ -73,7 +73,7 @@
     <div class="kv-tl-row" data-year="2021">
         <span class="kv-tl-year">2021</span>
         <span class="kv-tl-dot-wrap"><span class="kv-tl-dot"></span></span>
-        <img src="{{ theme_asset('images/about-milestone-planning.webp') }}" alt="Embracing The Digital Era 2021" class="kv-tl-img">
+        <img src="{{ theme_asset('images/about-milestone-planning.webp') }}" alt="{{ t('kouventa.Transformasi Digital dan Perluasan Layanan Omnichannel Kouventa Tahun 2021', 'Transformasi Digital dan Perluasan Layanan Omnichannel Kouventa Tahun 2021') }}" class="kv-tl-img">
         <div class="kv-tl-content">
             <h3 class="kv-tl-title">{{ t('kouventa.Embracing The Digital Era', 'Embracing The Digital Era') }}</h3>
             <p class="kv-tl-desc">{{ t('kouventa.We created Kouventa, an All-In-One Customer Engagement solution, to help businesses maintain and grow their customer engagement. We are also committed to providing great service and support to our clients who wish to maximize the usefulness of technology such as Generative AI technology, and API Integration.', 'We created Kouventa, an All-In-One Customer Engagement solution, to help businesses maintain and grow their customer engagement. We are also committed to providing great service and support to our clients who wish to maximize the usefulness of technology such as Generative AI technology, and API Integration.') }}</p>
@@ -84,7 +84,7 @@
     <div class="kv-tl-row" data-year="2022">
         <span class="kv-tl-year">2022</span>
         <span class="kv-tl-dot-wrap"><span class="kv-tl-dot"></span></span>
-        <img src="{{ theme_asset('images/about-milestone-genai.webp') }}" alt="Advancing The Generative AI Solutions 2022" class="kv-tl-img">
+        <img src="{{ theme_asset('images/about-milestone-genai.webp') }}" alt="{{ t('kouventa.Peluncuran Platform Generative AI dan Company Wikipedia Kouventa Tahun 2024', 'Peluncuran Platform Generative AI dan Company Wikipedia Kouventa Tahun 2024') }}" class="kv-tl-img">
         <div class="kv-tl-content">
             <h3 class="kv-tl-title">{{ t('kouventa.Advancing The Generative AI Solutions', 'Advancing The Generative AI Solutions') }}</h3>
             <p class="kv-tl-desc">{{ t('kouventa.Kouventa provides an AI Company Wikipedia solution based on Gen-AI technology, crafted to address enterprise demands for advanced AI adoption in complex operations.', 'Kouventa provides an AI Company Wikipedia solution based on Gen-AI technology, crafted to address enterprise demands for advanced AI adoption in complex operations.') }}</p>
@@ -95,7 +95,7 @@
     <div class="kv-tl-row" data-year="2026">
         <span class="kv-tl-year">2026</span>
         <span class="kv-tl-dot-wrap"><span class="kv-tl-dot"></span></span>
-        <img src="{{ theme_asset('images/about-milestone-agentic.webp') }}" alt="Agentic AI with AI Task Force 2026" class="kv-tl-img">
+        <img src="{{ theme_asset('images/about-milestone-agentic.webp') }}" alt="{{ t('kouventa.Penerapan Solusi Agentic AI Mandiri dengan AI Task Force Kouventa Tahun 2026', 'Penerapan Solusi Agentic AI Mandiri dengan AI Task Force Kouventa Tahun 2026') }}" class="kv-tl-img">
         <div class="kv-tl-content">
             <h3 class="kv-tl-title">{{ t('kouventa.Agentic AI with AI Task Force', 'Agentic AI with AI Task Force') }}</h3>
             <p class="kv-tl-desc">{{ t('kouventa.Kouventa launched AI Task Force, its Agentic AI solution, allowing intelligent agents to reason, plan, and take action across enterprise applications to automate business processes from start to finish.', 'Kouventa launched AI Task Force, its Agentic AI solution, allowing intelligent agents to reason, plan, and take action across enterprise applications to automate business processes from start to finish.') }}</p>

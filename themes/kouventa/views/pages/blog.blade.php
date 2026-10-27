@@ -602,7 +602,7 @@ function initInsightBlog(initialCat = 'All') {
                  class="kv-insight-card">
             <a href="{{ $post->getUrl() }}" class="kv-card-img-wrap" tabindex="-1" aria-hidden="true">
                 @if($imgUrl)
-                    <img src="{{ $imgUrl }}" alt="{{ $post->title }}" class="kv-insight-card-img" loading="lazy">
+                    <img src="{{ $imgUrl }}" alt="{{ $post->title }} - Artikel Solusi Kouventa AI" class="kv-insight-card-img" loading="lazy">
                 @else
                     <div class="kv-card-img-placeholder">
                         <span style="font-weight: 700; font-size: 18px">Kouventa</span>
