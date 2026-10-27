@@ -8,9 +8,59 @@
 		bottom: 30px !important;
 		transform: scale(1.3) !important;
 		right: 50px !important;
+		border: none !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		cursor: pointer !important;
+		padding: 0 !important;
+		transition: transform 0.2s ease !important;
 	}
 	#chat-button:hover {
 		background-color: transparent !important;
+	}
+	#chat-button.chat-open,
+	body:has(#chat-widget.active) #chat-button {
+		width: 60px !important;
+		height: 60px !important;
+		transform: none !important;
+		bottom: 40px !important;
+		right: 40px !important;
+	}
+	#chat-button .open-icon {
+		width: 100% !important;
+		height: 100% !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+	}
+	#chat-button .open-icon img {
+		width: 100% !important;
+		height: auto !important;
+		max-width: none !important;
+	}
+	#chat-button.chat-open .open-icon,
+	body:has(#chat-widget.active) #chat-button .open-icon {
+		display: none !important;
+	}
+	#chat-button .close-icon {
+		background: rgb(28, 142, 249) !important;
+		border-radius: 50% !important;
+		width: 50px !important;
+		height: 50px !important;
+		display: none !important;
+		align-items: center !important;
+		justify-content: center !important;
+		box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15) !important;
+	}
+	#chat-button.chat-open .close-icon,
+	body:has(#chat-widget.active) #chat-button .close-icon {
+		display: flex !important;
+	}
+	#chat-button .close-icon img {
+		width: 24px !important;
+		height: 24px !important;
+		padding: 0 !important;
 	}
 	.chat-widget {
 		bottom: 100px !important;
@@ -18,15 +68,6 @@
 	}	
 	.chat-body {
 		overscroll-behavior: contain !important;
-	}
-	.close-icon {
-		background: rgb(28, 142, 249) !important;
-		border-radius: 50% !important;
-	}
-	#chat-button .close-icon img {
-		width: 120px !important;
-		height: auto !important;
-		padding: 3px !important;
 	}
 </style>
 

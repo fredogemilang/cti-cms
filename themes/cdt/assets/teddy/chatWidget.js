@@ -366,8 +366,8 @@ function getParameters() {
   const bottomChatButton = parseInt(scriptParams.getAttribute('data-widget-bottom')) || 120;
   const rightChatButton = parseInt(scriptParams.getAttribute('data-widget-right')) || 20;
   const buttonSize = parseInt(scriptParams.getAttribute('data-button-size')) || 60;
-  let appUrl = scriptParams.getAttribute('src');
-  appUrl = appUrl.replace(/[^/]+\.js$/, '');
+  let appUrl = scriptParams.getAttribute('src') || '';
+  appUrl = appUrl.split('?')[0].replace(/[^/]+\.js$/, '');
 
   return {
     avatarImageUrl: avatarImageUrl,
@@ -398,24 +398,38 @@ function initImages(appUrl) {
 const observer = new MutationObserver(function (mutations) {
   const openIcon = document.querySelector(".open-icon");
   const closeIcon = document.querySelector(".close-icon");
+  const chatButton = document.querySelector("#chat-button");
   mutations.forEach(function (mutation) {
 
     if (mutation.target.classList.contains('active')) {
-      openIcon.style.visibility = "hidden";
-      openIcon.style.opacity = 0;
-      openIcon.style.transform = "translateX(0)";
+      if (chatButton) chatButton.classList.add('chat-open');
+      if (openIcon) {
+        openIcon.style.display = "none";
+        openIcon.style.visibility = "hidden";
+        openIcon.style.opacity = 0;
+      }
 
-      closeIcon.style.visibility = "visible";
-      closeIcon.style.opacity = 1;
-      closeIcon.style.transform = "translateX(-12px)";
+      if (closeIcon) {
+        closeIcon.style.display = "flex";
+        closeIcon.style.visibility = "visible";
+        closeIcon.style.opacity = 1;
+        closeIcon.style.transform = "translateX(0)";
+      }
     } else {
-      openIcon.style.visibility = "visible";
-      openIcon.style.opacity = 1;
-      openIcon.style.transform = "translateX(12px)";
+      if (chatButton) chatButton.classList.remove('chat-open');
+      if (closeIcon) {
+        closeIcon.style.display = "none";
+        closeIcon.style.visibility = "hidden";
+        closeIcon.style.opacity = 0;
+        closeIcon.style.transform = "translateX(0)";
+      }
 
-      closeIcon.style.visibility = "hidden";
-      closeIcon.style.opacity = 0;
-      closeIcon.style.transform = "translateX(0px)";
+      if (openIcon) {
+        openIcon.style.display = "flex";
+        openIcon.style.visibility = "visible";
+        openIcon.style.opacity = 1;
+        openIcon.style.transform = "translateX(0)";
+      }
     }
   });
 });
@@ -448,10 +462,14 @@ const observer = new MutationObserver(function (mutations) {
 
     if (openIcon) {
       openIcon.innerHTML = bubbleChatSVG;
+      openIcon.style.display = "flex";
+      openIcon.style.visibility = "visible";
+      openIcon.style.opacity = 1;
     }
 
     if (closeIcon) {
       closeIcon.innerHTML = closeChatSVG;
+      closeIcon.style.display = "none";
       closeIcon.style.visibility = "hidden";
       closeIcon.style.opacity = 0;
       closeIcon.style.transform = "translateX(0px)";
