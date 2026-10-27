@@ -3,10 +3,10 @@
 @section('content')
 @php
     $isIdLocale = app()->getLocale() === 'id';
-    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Seamless omnichannel', 'main' => 'customer experience.']);
-    $heroSubtitle = $page?->block('hero_subtitle', 'From marketing campaigns and customer support to operational updates, Kouventa helps businesses connect, respond, and communicate more effectively.');
-    $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Siap meningkatkan kualitas percakapan dengan pelanggan?' : 'Ready to improve every customer conversation?');
-    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', $isIdLocale ? 'Ceritakan kebutuhan tim Anda, dan kami tunjukkan bagaimana Kouventa bisa membantu.' : "Tell us about your team's needs and we'll show you how Kouventa fits.");
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Seamless omnichannel', 'main' => 'customer experience']);
+    $heroSubtitle = rtrim($page?->block('hero_subtitle', 'From marketing campaigns and customer support to operational updates, Kouventa helps businesses connect, respond, and communicate more effectively'), '.');
+    $bottomCtaTitle = rtrim($page?->block('bottom_cta_title', $isIdLocale ? 'Siap meningkatkan kualitas percakapan dengan pelanggan?' : 'Ready to improve every customer conversation?'), '.');
+    $bottomCtaSubtitle = rtrim($page?->block('bottom_cta_subtitle', $isIdLocale ? 'Ceritakan kebutuhan tim Anda, dan kami tunjukkan bagaimana Kouventa bisa membantu' : "Tell us about your team's needs and we'll show you how Kouventa fits"), '.');
 @endphp
 <div class="kv-canvas-wrap" x-data="{
     tab: 0,

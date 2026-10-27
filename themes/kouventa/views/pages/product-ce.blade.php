@@ -1106,26 +1106,28 @@
     $isIdLocale = app()->getLocale() === 'id';
     $heroTitle = $page?->titleBlock('hero_title', [
         'prefix' => $isIdLocale ? 'Cara lebih cerdas untuk' : 'The smarter way to',
-        'main' => $isIdLocale ? 'berinteraksi dengan pelanggan.' : 'engage customers.'
+        'main' => $isIdLocale ? 'berinteraksi dengan pelanggan' : 'engage customers'
     ]);
     $heroSubtitle = $page?->block('hero_subtitle', $isIdLocale
-        ? 'Jangkau lebih banyak pelanggan, balas lebih cepat, dan buat percakapan lancar di WhatsApp dan channel lainnya.'
-        : 'Reach more customers, respond faster, and keep conversations seamless on WhatsApp and beyond.');
+        ? 'Jangkau lebih banyak pelanggan, balas lebih cepat, dan buat percakapan lancar di WhatsApp dan channel lainnya'
+        : 'Reach more customers, respond faster, and keep conversations seamless on WhatsApp and beyond');
+    $heroSubtitle = rtrim($heroSubtitle, '.');
     $heroCta = $page?->buttonBlock('hero_cta', ['text' => $isIdLocale ? 'Jadwalkan demo' : 'Book a demo', 'url' => '/book-demo']);
-    $channelsTitle = $page?->titleBlock('channels_title', ['prefix' => $isIdLocale ? 'Setiap pesan yang terlewat adalah' : 'Every missed message is a', 'main' => $isIdLocale ? 'peluang yang hilang.' : 'missed sale.']);
+    $channelsTitle = $page?->titleBlock('channels_title', ['prefix' => $isIdLocale ? 'Setiap pesan yang terlewat adalah' : 'Every missed message is a', 'main' => $isIdLocale ? 'peluang yang hilang' : 'missed sale']);
     if ($isIdLocale) {
-        if (($channelsTitle['main'] ?? '') === 'penjualan yang hilang.') {
-            $channelsTitle['main'] = 'peluang yang hilang.';
+        if (($channelsTitle['main'] ?? '') === 'penjualan yang hilang.' || ($channelsTitle['main'] ?? '') === 'penjualan yang hilang' || ($channelsTitle['main'] ?? '') === 'peluang yang hilang.') {
+            $channelsTitle['main'] = 'peluang yang hilang';
         }
         if (($channelsTitle['prefix'] ?? '') === 'Tiap pesan yang terlewat adalah') {
             $channelsTitle['prefix'] = 'Setiap pesan yang terlewat adalah';
         }
     }
-    $featuresTitle = $page?->titleBlock('features_title', ['prefix' => $isIdLocale ? 'Satu platform.' : 'One platform.', 'main' => $isIdLocale ? 'Tanpa pesan yang terlewat.' : 'Zero missed messages.']);
-    $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Mulai terhubung dengan pelanggan lewat WhatsApp.' : 'Start engaging customers on WhatsApp.');
-    if ($isIdLocale && $bottomCtaTitle === 'Mulai berinteraksi dengan pelanggan di WhatsApp.') {
-        $bottomCtaTitle = 'Mulai terhubung dengan pelanggan lewat WhatsApp.';
+    $featuresTitle = $page?->titleBlock('features_title', ['prefix' => $isIdLocale ? 'Satu platform' : 'One platform', 'main' => $isIdLocale ? 'Tanpa pesan yang terlewat' : 'Zero missed messages']);
+    $bottomCtaTitle = rtrim($page?->block('bottom_cta_title', $isIdLocale ? 'Mulai terhubung dengan pelanggan lewat WhatsApp' : 'Start engaging customers on WhatsApp'), '.');
+    if ($isIdLocale && ($bottomCtaTitle === 'Mulai berinteraksi dengan pelanggan di WhatsApp.' || $bottomCtaTitle === 'Mulai berinteraksi dengan pelanggan di WhatsApp')) {
+        $bottomCtaTitle = 'Mulai terhubung dengan pelanggan lewat WhatsApp';
     }
+    $bottomCtaTitle = rtrim($bottomCtaTitle, '.');
 @endphp
 
 @section('content')
@@ -1294,7 +1296,7 @@
 <div class="kv-hero-section" style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 600px; gap: 56px; align-items: center; position: relative">
 <div class="kv-hero-content" style="display: flex; flex-direction: column; gap: 26px">
 <span style="align-self: flex-start; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>{{ t('kouventa.Official Meta Business Solution Provider', 'Official Meta Business Solution Provider') }}</span>
-<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'The smarter way to' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'engage customers.' }}</span></h1>
+<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'The smarter way to' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'engage customers' }}</span></h1>
 <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{!! nl2br(e($heroSubtitle)) !!}</p>
 <div style="display: flex; gap: 12px; padding-top: 4px">
 <a href="{{ localized_url($heroCta['url'] ?? '/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ $heroCta['text'] ?? 'Book a demo' }}</a>

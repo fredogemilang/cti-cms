@@ -2,11 +2,11 @@
 
 @section('content')
 @php
-    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'From knowledge to action', 'main' => 'with AI.']);
-    $heroSubtitle = $page?->block('hero_subtitle', 'From knowledge retrieval to process automation, Kouventa AI helps businesses turn information into actionable insights and automate business processes with AI-powered autonomous agents.');
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'From knowledge to action', 'main' => 'with AI']);
+    $heroSubtitle = rtrim($page?->block('hero_subtitle', 'From knowledge retrieval to process automation, Kouventa AI helps businesses turn information into actionable insights and automate business processes with AI-powered autonomous agents'), '.');
     $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Request a Demo', 'url' => '/book-demo']);
-    $bottomCtaTitle = $page?->block('bottom_cta_title', 'Start simple. Scale with confidence.');
-    $bottomCtaSubtitle = $page?->block('bottom_cta_subtitle', "Begin with everyday AI for your employees, governed by your organization. Grow into AI agents when you're ready.");
+    $bottomCtaTitle = rtrim($page?->block('bottom_cta_title', 'Start simple. Scale with confidence'), '.');
+    $bottomCtaSubtitle = rtrim($page?->block('bottom_cta_subtitle', "Begin with everyday AI for your employees, governed by your organization. Grow into AI agents when you're ready"), '.');
 @endphp
 <div class="kv-canvas-wrap" x-data="{
     tab: 0,

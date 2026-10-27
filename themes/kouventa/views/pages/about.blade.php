@@ -2,7 +2,7 @@
 
 @php
     $heroBadge = $page?->block('hero_badge', 'About us');
-    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'From business communication', 'main' => 'to enterprise AI.']);
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'From business communication', 'main' => 'to enterprise AI']);
     $valuesBadge = $page?->block('values_badge', 'Our value');
     $historyTitle = $page?->block('history_title', 'History');
 @endphp
@@ -14,7 +14,7 @@
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
 <div style="padding: 88px 80px 240px; display: flex; flex-direction: column; gap: 18px; position: relative">
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #93A4B6">{{ $heroBadge }}</span>
-<h1 style="margin: 0; font-size: 64px; line-height: 1.05; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'From business communication' }}<br><span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'to enterprise AI.' }}</span></h1>
+<h1 style="margin: 0; font-size: 64px; line-height: 1.05; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'From business communication' }}<br><span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'to enterprise AI' }}</span></h1>
 </div>
 </section>
 

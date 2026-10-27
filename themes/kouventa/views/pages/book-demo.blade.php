@@ -1,7 +1,7 @@
 @extends('kouventa::layouts.app')
 
 @php
-    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Get in touch', 'main' => 'with us.']);
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'Get in touch', 'main' => 'with us']);
     $heroBadge = $page?->block('hero_badge', 'Enjoy a 30-day free trial');
     $locationTitle = $page?->block('location_title', 'Location');
     $locationText = $page?->block('location_text', 'Centennial Tower, 12th Floor, Jl. Jend. Gatot Subroto Kav. 24-25, Jakarta');
@@ -21,7 +21,7 @@
 <img src="{{ theme_asset('images/hero-ce-mockup.png') }}" alt="{{ t('kouventa.Antarmuka Dasbor Omnichannel Customer Engagement Kouventa menampilkan percakapan multi-channel', 'Antarmuka Dasbor Omnichannel Customer Engagement Kouventa menampilkan percakapan multi-channel') }}" style="position: absolute; left: 50%; bottom: 0; height: 360px; width: auto; transform: translateX(-50%); display: block; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.35))">
 </div>
 <div style="padding: 80px 80px 220px; display: flex; flex-direction: column; gap: 18px; position: relative">
-<h1 style="margin: 0; font-size: 64px; line-height: 1.05; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'Get in touch' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'with us.' }}</span></h1>
+<h1 style="margin: 0; font-size: 64px; line-height: 1.05; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'Get in touch' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'with us' }}</span></h1>
 <span style="display: flex; align-items: center; gap: 10px; font-size: 18px; color: #B9C6D3"><span style="width: 24px; height: 24px; border-radius: 50%; background: #2BD46A; color: #06251A; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"></path></svg></span>{{ $heroBadge }}</span>
 </div>
 </section>

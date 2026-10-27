@@ -253,14 +253,18 @@ class Page extends Model
         }
 
         if (is_array($value)) {
-            return array_merge($default, array_filter($value, fn ($v) => $v !== null && $v !== ''));
+            $res = array_merge($default, array_filter($value, fn ($v) => $v !== null && $v !== ''));
+        } elseif (is_string($value) && ! empty($value)) {
+            $res = array_merge($default, ['main' => $value]);
+        } else {
+            $res = $default;
         }
 
-        if (is_string($value) && ! empty($value)) {
-            return array_merge($default, ['main' => $value]);
+        if (isset($res['main']) && is_string($res['main'])) {
+            $res['main'] = rtrim($res['main'], '.');
         }
 
-        return $default;
+        return $res;
     }
 
     /**

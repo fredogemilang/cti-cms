@@ -1190,42 +1190,43 @@ $productsList = [
 // ── Page Blocks from CMS Content Builder ──────────────
 $heroTitle = $page?->titleBlock('hero_title', [
     'prefix' => $isIdLocale ? 'Satu platform AI' : 'One AI platform is',
-    'main' => $isIdLocale ? 'sudah cukup.' : 'all you need.'
+    'main' => $isIdLocale ? 'sudah cukup' : 'all you need'
 ]);
 if ($isIdLocale) {
     if (($heroTitle['prefix'] ?? '') === 'Satu platform AI adalah') {
         $heroTitle['prefix'] = 'Satu platform AI';
     }
-    if (($heroTitle['main'] ?? '') === 'semua yang Anda butuhkan.') {
-        $heroTitle['main'] = 'sudah cukup.';
+    if (($heroTitle['main'] ?? '') === 'semua yang Anda butuhkan.' || ($heroTitle['main'] ?? '') === 'semua yang Anda butuhkan' || ($heroTitle['main'] ?? '') === 'sudah cukup.') {
+        $heroTitle['main'] = 'sudah cukup';
     }
 }
 
 $heroSubtitle = $page?->block('hero_subtitle', $isIdLocale
-    ? 'Bangun AI agent dengan mudah dan gunakan untuk kebutuhan organisasi Anda, dengan kontrol yang terukur.'
-    : 'Build AI agents with ease and put them to work on what your organization needs, with control you can measure.');
-if ($isIdLocale && $heroSubtitle === 'Bangun AI agent dengan mudah dan pekerjakan untuk kebutuhan organisasi Anda, dengan kendali terukur.') {
-    $heroSubtitle = 'Bangun AI agent dengan mudah dan gunakan untuk kebutuhan organisasi Anda, dengan kontrol yang terukur.';
+    ? 'Bangun AI agent dengan mudah dan gunakan untuk kebutuhan organisasi Anda, dengan kontrol yang terukur'
+    : 'Build AI agents with ease and put them to work on what your organization needs, with control you can measure');
+if ($isIdLocale && ($heroSubtitle === 'Bangun AI agent dengan mudah dan pekerjakan untuk kebutuhan organisasi Anda, dengan kendali terukur.' || $heroSubtitle === 'Bangun AI agent dengan mudah dan pekerjakan untuk kebutuhan organisasi Anda, dengan kendali terukur')) {
+    $heroSubtitle = 'Bangun AI agent dengan mudah dan gunakan untuk kebutuhan organisasi Anda, dengan kontrol yang terukur';
 }
+$heroSubtitle = rtrim($heroSubtitle, '.');
 
 $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Book a demo', 'url' => '/book-demo']);
 $heroSecondaryCta = $page?->buttonBlock('hero_secondary_cta', ['text' => 'Explore products', 'url' => '#ai-products']);
 
 $challengesTitle = $page?->titleBlock('challenges_title', [
     'prefix' => $isIdLocale ? 'Terlalu banyak tools AI,' : 'Too many AI tools,',
-    'main' => $isIdLocale ? 'terlalu sedikit kontrol.' : 'too little control.'
+    'main' => $isIdLocale ? 'terlalu sedikit kontrol' : 'too little control'
 ]);
 if ($isIdLocale) {
     if (($challengesTitle['prefix'] ?? '') === 'Terlalu banyak AI tool,') {
         $challengesTitle['prefix'] = 'Terlalu banyak tools AI,';
     }
-    if (($challengesTitle['main'] ?? '') === 'terlalu minim kendali.') {
-        $challengesTitle['main'] = 'terlalu sedikit kontrol.';
+    if (($challengesTitle['main'] ?? '') === 'terlalu minim kendali.' || ($challengesTitle['main'] ?? '') === 'terlalu minim kendali' || ($challengesTitle['main'] ?? '') === 'terlalu sedikit kontrol.') {
+        $challengesTitle['main'] = 'terlalu sedikit kontrol';
     }
 }
 
-$productsTitle = $page?->block('products_title', $isIdLocale ? 'Produk yang membuat Anda tetap memegang kendali.' : 'The products that put you in control.');
-$bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform untuk semua kebutuhan AI organisasi Anda.' : 'Bring all your AI into one platform.');
+$productsTitle = rtrim($page?->block('products_title', $isIdLocale ? 'Produk yang membuat Anda tetap memegang kendali' : 'The products that put you in control'), '.');
+$bottomCtaTitle = rtrim($page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform untuk semua kebutuhan AI organisasi Anda' : 'Bring all your AI into one platform'), '.');
 @endphp
 
 @section('content')
@@ -1241,7 +1242,7 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
 
 <div class="kv-hero-section" style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 64px; align-items: center; position: relative">
 <div class="kv-hero-content" style="display: flex; flex-direction: column; gap: 26px">
-<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'One AI platform is' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'all you need.' }}</span></h1>
+<h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'One AI platform is' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'all you need' }}</span></h1>
 <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 600px">{!! nl2br(e($heroSubtitle)) !!}</p>
 <div style="display: flex; gap: 12px; padding-top: 4px">
 <a href="{{ localized_url($heroCta['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-primary" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ $heroCta['text'] ?? 'Book a demo' }}</a>
@@ -1364,10 +1365,11 @@ $bottomCtaTitle = $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform
     if ($isIdLocale && ($journeyPrefix === 'Satukan AI Anda,' || $journeyPrefix === 'Bring your AI together,' || empty($journeyPrefix))) {
         $journeyPrefix = 'Semua AI Anda di satu tempat,';
     }
-    $journeyMain = t('kouventa.from answers to action.', $isIdLocale ? 'dari menjawab sampai bertindak.' : 'from answers to action.');
-    if ($isIdLocale && ($journeyMain === 'dari jawaban hingga aksi.' || $journeyMain === 'from answers to action.' || empty($journeyMain))) {
-        $journeyMain = 'dari menjawab sampai bertindak.';
+    $journeyMain = rtrim(t('kouventa.from answers to action', $isIdLocale ? 'dari menjawab sampai bertindak' : 'from answers to action'), '.');
+    if ($isIdLocale && ($journeyMain === 'dari jawaban hingga aksi' || $journeyMain === 'from answers to action' || empty($journeyMain) || $journeyMain === 'dari menjawab sampai bertindak.')) {
+        $journeyMain = 'dari menjawab sampai bertindak';
     }
+    $journeyMain = rtrim($journeyMain, '.');
 @endphp
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $journeyPrefix }} <span style="color: #13803F; display: block">{{ $journeyMain }}</span></h2>
 <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.', 'Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.') }}</p>
@@ -1877,7 +1879,7 @@ $channelsDbl = array_merge($channels, $channels);
 <section class="kv-why-section">
 <div aria-hidden="true" style="position: absolute; left: -200px; bottom: -320px; width: 700px; height: 700px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
 <div aria-hidden="true" style="position: absolute; right: -160px; top: -260px; width: 560px; height: 560px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
-<h2 class="kv-why-heading">{{ t('kouventa.What held your AI back,', 'What held your AI back,') }} <span style="color: #2BD46A">{{ t('kouventa.now solved.', 'now solved.') }}</span></h2>
+<h2 class="kv-why-heading">{{ t('kouventa.What held your AI back,', 'What held your AI back,') }} <span style="color: #2BD46A">{{ rtrim(t('kouventa.now solved', 'now solved'), '.') }}</span></h2>
 <div class="kv-why-grid">
 <div class="kv-why-card">
 <span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span>

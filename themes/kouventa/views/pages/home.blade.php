@@ -158,12 +158,12 @@
     }
 
     // ── Page Blocks from CMS Content Builder ──────────────
-    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'AI adoption,', 'main' => 'done right.']);
+    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'AI adoption,', 'main' => 'done right']);
     $heroSubtitle = $page?->block('hero_subtitle', $isIdLocale
-        ? "Untuk pelanggan Anda. Untuk tim Anda.\nSatu platform AI enterprise, dengan aturan organisasi Anda."
-        : "For your customers. For your teams.\nOne enterprise AI platform, your organization’s rules.");
+        ? "Untuk pelanggan Anda. Untuk tim Anda.\nSatu platform AI enterprise, dengan aturan organisasi Anda"
+        : "For your customers. For your teams.\nOne enterprise AI platform, your organization’s rules");
     if ($isIdLocale && (str_contains($heroSubtitle, 'For your customers') || empty($heroSubtitle))) {
-        $heroSubtitle = "Untuk pelanggan Anda. Untuk tim Anda.\nSatu platform AI enterprise, dengan aturan organisasi Anda.";
+        $heroSubtitle = "Untuk pelanggan Anda. Untuk tim Anda.\nSatu platform AI enterprise, dengan aturan organisasi Anda";
     }
     if ($heroSubtitle) {
         $heroSubtitle = str_replace(
@@ -171,13 +171,14 @@
             ["For your customers. For your teams.\n", "Untuk pelanggan Anda. Untuk tim Anda.\n"],
             $heroSubtitle
         );
+        $heroSubtitle = rtrim($heroSubtitle, '.');
     }
     $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'See how it fits your business', 'url' => '#pick-team']);
     $pathsTitle = $page?->titleBlock('paths_title', ['main' => $isIdLocale ? 'Mau mulai dari mana?' : 'Where do you want to start?']);
     $path1Badge = $page?->block('path1_badge', $isIdLocale ? 'AI yang bekerja' : 'AI that works');
     $path1Title = $page?->titleBlock('path1_title', [
         'prefix' => $isIdLocale ? 'Di dalam' : 'Inside your',
-        'main' => $isIdLocale ? 'organisasi Anda.' : 'organization.'
+        'main' => $isIdLocale ? 'organisasi Anda' : 'organization'
     ]);
     $path1Desc = $page?->block('path1_desc', $isIdLocale
         ? 'Jawaban instan dari pengetahuan perusahaan Anda, dan agent yang mengambil alih tugas rutin tim Anda.'
@@ -189,7 +190,7 @@
     $path2Badge = $page?->block('path2_badge', $isIdLocale ? 'AI yang berinteraksi' : 'AI that engages');
     $path2Title = $page?->titleBlock('path2_title', [
         'prefix' => $isIdLocale ? 'Bersama' : 'With your',
-        'main' => $isIdLocale ? 'pelanggan Anda.' : 'customers.'
+        'main' => $isIdLocale ? 'pelanggan Anda' : 'customers'
     ]);
     $path2Desc = $page?->block('path2_desc', $isIdLocale
         ? 'Chatbot membalas lebih dulu di WhatsApp, Instagram, Facebook, dan Live Chat, lalu meneruskan ke agen Anda saat diperlukan.'
@@ -198,29 +199,29 @@
         'text' => $isIdLocale ? 'Pelajari lebih lanjut' : 'Explore more',
         'url' => '/product/customer-engagement'
     ]);
-    $industriesTitle = $page?->block('industries_title', $isIdLocale ? 'Terbukti di berbagai industri.' : 'Proven across industries.');
-    $teamsTitle = $page?->block('teams_title', $isIdLocale ? 'Pilih tim Anda untuk melihat cara kerjanya di organisasi Anda.' : 'Pick your team to see how it works for your organization.');
+    $industriesTitle = rtrim($page?->block('industries_title', $isIdLocale ? 'Terbukti di berbagai industri' : 'Proven across industries'), '.');
+    $teamsTitle = rtrim($page?->block('teams_title', $isIdLocale ? 'Pilih tim Anda untuk melihat cara kerjanya di organisasi Anda' : 'Pick your team to see how it works for your organization'), '.');
     $seeHowItWorksRaw = t('kouventa.See how it works →', 'See how it works →');
     $seeHowItWorksHasArrow = str_ends_with($seeHowItWorksRaw, '→') || str_ends_with($seeHowItWorksRaw, '->');
     $seeHowItWorksText = $seeHowItWorksHasArrow ? rtrim(str_replace(['→', '->'], '', $seeHowItWorksRaw)) : $seeHowItWorksRaw;
     $whyTitle = $page?->titleBlock('why_title', [
         'prefix' => $isIdLocale ? 'Siap untuk skala enterprise' : 'Enterprise ready',
-        'main' => $isIdLocale ? 'sejak hari pertama.' : 'from day one.'
+        'main' => $isIdLocale ? 'sejak hari pertama' : 'from day one'
     ]);
-    $partnersTitle = $page?->block('partners_title', 'Technology Partners');
-    $customersTitle = $page?->block('customers_title', $isIdLocale ? 'Mereka sudah percaya.' : 'They trusted us.');
-    if ($isIdLocale && ($customersTitle === 'They trusted us.' || $customersTitle === 'Mereka mempercayai kami.' || empty($customersTitle))) {
-        $customersTitle = 'Mereka sudah percaya.';
+    $partnersTitle = rtrim($page?->block('partners_title', 'Technology Partners'), '.');
+    $customersTitle = rtrim($page?->block('customers_title', $isIdLocale ? 'Mereka sudah percaya' : 'They trusted us'), '.');
+    if ($isIdLocale && ($customersTitle === 'They trusted us' || $customersTitle === 'They trusted us.' || $customersTitle === 'Mereka mempercayai kami.' || $customersTitle === 'Mereka mempercayai kami' || empty($customersTitle))) {
+        $customersTitle = 'Mereka sudah percaya';
     }
-    $resultsTitle = $page?->block('results_title', $isIdLocale ? 'Hasil nyata, dari cerita mereka.' : 'Real results, in their words.');
-    $ctaTitle = $page?->block('cta_title', $isIdLocale ? 'Siap lihat langsung hasilnya untuk bisnis Anda?' : 'Ready to see it work for your business?');
+    $resultsTitle = rtrim($page?->block('results_title', $isIdLocale ? 'Hasil nyata, dari cerita mereka' : 'Real results, in their words'), '.');
+    $ctaTitle = rtrim($page?->block('cta_title', $isIdLocale ? 'Siap lihat langsung hasilnya untuk bisnis Anda?' : 'Ready to see it work for your business?'), '.');
     if ($isIdLocale && ($ctaTitle === 'Ready to see it work for your business?' || $ctaTitle === 'Siap mengubah cara bisnis Anda beroperasi dengan AI?' || empty($ctaTitle))) {
         $ctaTitle = 'Siap lihat langsung hasilnya untuk bisnis Anda?';
     }
-    $ctaSubtitle = $page?->block('cta_subtitle', $isIdLocale ? 'Jadwalkan demo dan kami tunjukkan langsung dengan use case Anda sendiri.' : "Book a demo and we'll walk you through it with your own use case.");
+    $ctaSubtitle = rtrim($page?->block('cta_subtitle', $isIdLocale ? 'Jadwalkan demo dan kami tunjukkan langsung dengan use case Anda sendiri' : "Book a demo and we'll walk you through it with your own use case"), '.');
     $ctaDemoBtn = $page?->buttonBlock('cta_demo_button', ['text' => $isIdLocale ? 'Jadwalkan demo' : 'Book a demo', 'url' => '/book-demo']);
     $ctaPricingBtn = $page?->buttonBlock('cta_pricing_button', ['text' => $isIdLocale ? 'Lihat harga' : 'See pricing', 'url' => '/pricing']);
-    $videosTitle = $page?->block('videos_title', $isIdLocale ? 'Lihat cara kerja Kouventa.' : 'See Kouventa in action.');
+    $videosTitle = rtrim($page?->block('videos_title', $isIdLocale ? 'Lihat cara kerja Kouventa' : 'See Kouventa in action'), '.');
     $videos = [
         [
             'id' => 'oOY1BnbQPUc',
@@ -291,7 +292,7 @@
 <!-- ============ NAV + HERO ============ -->
 <section style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative; overflow: hidden">
 <div style="padding: 88px 80px 112px; display: flex; flex-direction: column; align-items: center; gap: 28px; position: relative">
-<h1 style="margin: 0; font-size: 96px; line-height: 1.0; text-align: center; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'AI adoption,' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'done right.' }}</span></h1>
+<h1 style="margin: 0; font-size: 96px; line-height: 1.0; text-align: center; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'AI adoption,' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'done right' }}</span></h1>
 <p style="margin: 0; text-align: center; font-size: 24px; line-height: 1.5; color: #B9C6D3">{!! nl2br(e($heroSubtitle)) !!}</p>
 <div style="position: relative; width: 1080px; height: 500px; margin-top: 8px">
 <span aria-hidden="true" style="position: absolute; left: 50%; bottom: 40px; width: 520px; height: 520px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.30), rgba(43, 212, 106, 0) 66%)"></span>
@@ -337,7 +338,7 @@
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14"></path><path d="M9 21v-6h6v6M9 10h.01M15 10h.01"></path></svg></span>
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #2BD46A">{{ $path1Badge }}</span>
 </span>
-<h3 style="margin: 0; font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $path1Title['prefix'] ?? 'Inside your' }} <span style="color: #2BD46A">{{ $path1Title['main'] ?? 'organization.' }}</span></h3>
+<h3 style="margin: 0; font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $path1Title['prefix'] ?? 'Inside your' }} <span style="color: #2BD46A">{{ $path1Title['main'] ?? 'organization' }}</span></h3>
 <span style="font-size: 18px; line-height: 1.55; color: #B9C6D3">{{ $path1Desc }}</span>
 <span class="kv-card-link" style="font-size: 16px; font-weight: 700; color: #2BD46A; padding-top: 8px">{{ $path1Btn['text'] ?? 'Explore more' }} <span class="kv-arrow">→</span></span>
 </a>
@@ -346,7 +347,7 @@
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path><path d="M8 11h.01M12 11h.01M16 11h.01"></path></svg></span>
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #13803F">{{ $path2Badge }}</span>
 </span>
-<h3 style="margin: 0; font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $path2Title['prefix'] ?? 'With your' }} <span style="color: #13803F">{{ $path2Title['main'] ?? 'customers.' }}</span></h3>
+<h3 style="margin: 0; font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $path2Title['prefix'] ?? 'With your' }} <span style="color: #13803F">{{ $path2Title['main'] ?? 'customers' }}</span></h3>
 <span style="font-size: 18px; line-height: 1.55; color: #4A5866">{{ $path2Desc }}</span>
 <span class="kv-card-link" style="font-size: 16px; font-weight: 700; color: #13803F; padding-top: 8px">{{ $path2Btn['text'] ?? 'Explore more' }} <span class="kv-arrow">→</span></span>
 </a>
@@ -360,16 +361,16 @@
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $industriesTitle }}</h2>
 </div>
 <div class="kv-industry-grid" style="width: 100%; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px">
-<div class="kv-industry-card" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V10M19 21V10M9 21V10M15 21V10M2 10l10-6 10 6"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Government', 'Government') }}</h3></div>
-<div class="kv-industry-card" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20M6 15h4"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.BFSI', 'BFSI') }}</h3></div>
-<div class="kv-industry-card" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 9 12 4 2 9l10 5 10-5Z"></path><path d="M6 11v5c3 2 9 2 12 0v-5"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Education', 'Education') }}</h3></div>
-<div class="kv-industry-card" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z"></path><path d="M12 10v4M10 12h4"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Healthcare', 'Healthcare') }}</h3></div>
-<div class="kv-industry-card" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1 14H5L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Retail', 'Retail') }}</h3></div>
-<div class="kv-industry-card" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21V10l6 4V10l6 4V6h6v15H3Z"></path><path d="M7 17h2M13 17h2"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Manufacturing', 'Manufacturing') }}</h3></div>
-<div class="kv-industry-card" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18V7M3 13h18v5M21 18v-5a3 3 0 0 0-3-3h-7v3"></path><circle cx="7" cy="10" r="2"></circle></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Hospitality', 'Hospitality') }}</h3></div>
-<div class="kv-industry-card" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v8a3 3 0 0 0 6 0V3M7 3v18M17 3c-2 0-3 2-3 5s1 4 3 4v9"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.F&B', 'F&B') }}</h3></div>
-<div class="kv-industry-card" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Services', 'Services') }}</h3></div>
-<div class="kv-industry-card" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Transportation', 'Transportation') }}</h3></div>
+<a href="{{ localized_url('/solutions/ai') }}" class="kv-industry-card kv-hover" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: all 0.2s ease"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M5 21V10M19 21V10M9 21V10M15 21V10M2 10l10-6 10 6"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Government', 'Government') }}</h3></a>
+<a href="{{ localized_url('/solutions/ai') }}" class="kv-industry-card kv-hover" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: all 0.2s ease"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20M6 15h4"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.BFSI', 'BFSI') }}</h3></a>
+<a href="{{ localized_url('/solutions/ai') }}" class="kv-industry-card kv-hover" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: all 0.2s ease"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 9 12 4 2 9l10 5 10-5Z"></path><path d="M6 11v5c3 2 9 2 12 0v-5"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Education', 'Education') }}</h3></a>
+<a href="{{ localized_url('/solutions/ai') }}" class="kv-industry-card kv-hover" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: all 0.2s ease"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z"></path><path d="M12 10v4M10 12h4"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Healthcare', 'Healthcare') }}</h3></a>
+<a href="{{ localized_url('/solutions/ai') }}" class="kv-industry-card kv-hover" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: all 0.2s ease"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l1 14H5L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Retail', 'Retail') }}</h3></a>
+<a href="{{ localized_url('/solutions/ai') }}" class="kv-industry-card kv-hover" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: all 0.2s ease"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21V10l6 4V10l6 4V6h6v15H3Z"></path><path d="M7 17h2M13 17h2"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Manufacturing', 'Manufacturing') }}</h3></a>
+<a href="{{ localized_url('/solutions/ai') }}" class="kv-industry-card kv-hover" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: all 0.2s ease"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18V7M3 13h18v5M21 18v-5a3 3 0 0 0-3-3h-7v3"></path><circle cx="7" cy="10" r="2"></circle></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Hospitality', 'Hospitality') }}</h3></a>
+<a href="{{ localized_url('/solutions/ai') }}" class="kv-industry-card kv-hover" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: all 0.2s ease"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v8a3 3 0 0 0 6 0V3M7 3v18M17 3c-2 0-3 2-3 5s1 4 3 4v9"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.F&B', 'F&B') }}</h3></a>
+<a href="{{ localized_url('/solutions/ai') }}" class="kv-industry-card kv-hover" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: all 0.2s ease"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"></path></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Services', 'Services') }}</h3></a>
+<a href="{{ localized_url('/solutions/ai') }}" class="kv-industry-card kv-hover" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: all 0.2s ease"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Transportation', 'Transportation') }}</h3></a>
 </div>
 </div>
 </section>
@@ -429,12 +430,13 @@
         $whyPrefix = t('kouventa.' . $whyPrefix, $whyPrefix);
     }
 
-    $whyMain = $whyTitle['main'] ?? ($isIdLocale ? 'sejak hari pertama.' : 'from day one.');
-    if ($isIdLocale && ($whyMain === 'from day one.' || empty($whyMain))) {
-        $whyMain = 'sejak hari pertama.';
+    $whyMain = $whyTitle['main'] ?? ($isIdLocale ? 'sejak hari pertama' : 'from day one');
+    if ($isIdLocale && ($whyMain === 'from day one' || $whyMain === 'from day one.' || empty($whyMain))) {
+        $whyMain = 'sejak hari pertama';
     } else {
         $whyMain = t('kouventa.' . $whyMain, $whyMain);
     }
+    $whyMain = rtrim($whyMain, '.');
 @endphp
 <section style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 40px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $whyPrefix }} <span style="color: #13803F">{{ $whyMain }}</span></h2>

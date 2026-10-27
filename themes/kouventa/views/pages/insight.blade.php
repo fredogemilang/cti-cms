@@ -36,10 +36,10 @@
         $heroBadge = $page?->block('hero_badge', 'Blog') ?? 'BLOG';
         $heroTitle = $page?->titleBlock('hero_title', [
             'prefix' => 'Explore the newest articles',
-            'main' => 'in our blog.',
+            'main' => 'in our blog',
         ]) ?? [
             'prefix' => 'Explore the newest articles',
-            'main' => 'in our blog.',
+            'main' => 'in our blog',
         ];
         $heroDescription = $page?->block('hero_desc', t('kouventa.insight_desc', 'Explore our latest thinking on Agentic AI, WhatsApp Business automation, and generative AI innovations.'));
     }
@@ -60,7 +60,7 @@
         </div>
         <h1 class="kv-hero-heading">
             {{ $heroTitle['prefix'] ?? 'Explore the newest articles' }}<br>
-            <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'in our blog.' }}</span>
+            <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'in our blog' }}</span>
         </h1>
     </div>
 </section>
