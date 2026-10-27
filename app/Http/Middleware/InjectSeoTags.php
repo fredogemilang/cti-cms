@@ -253,12 +253,16 @@ class InjectSeoTags
             }
         }
 
-        // Fallback 3: Single page path, CPT archive path, or single CPT entry path
-        if ($cleanPath && ! str_contains($cleanPath, '/')) {
-            $page = Page::findByLocalizedSlug($cleanPath);
+        // Fallback 3: Page lookup (supports both single and multi-segment slugs like product/ai)
+        if ($cleanPath) {
+            $page = Page::where('slug', $cleanPath)->first() ?: Page::findByLocalizedSlug($cleanPath);
             if ($page) {
                 return $page;
             }
+        }
+
+        // Fallback 4: CPT archive path, or single CPT entry path
+        if ($cleanPath && ! str_contains($cleanPath, '/')) {
             if (class_exists(CustomPostType::class)) {
                 $cpt = CustomPostType::where('slug', $cleanPath)
                     ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$cleanPath])

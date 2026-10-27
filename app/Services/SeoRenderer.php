@@ -68,9 +68,18 @@ class SeoRenderer
         $termName = $entity->name ?? $rawTitle;
         $termDescription = $entity->description ?? '';
 
-        if (strtolower(trim((string) $rawTitle)) === strtolower(trim((string) $siteName))) {
+        $siteNameClean = strtolower(trim((string) $siteName));
+        $rawTitleClean = strtolower(trim((string) $rawTitle));
+
+        if ($rawTitleClean === $siteNameClean) {
             $title = $siteName.($tagline ? " {$titleSeparator} {$tagline}" : '');
-        } elseif (str_ends_with(strtolower(trim((string) $rawTitle)), strtolower(trim((string) $siteName)))) {
+        } elseif (
+            str_ends_with($rawTitleClean, $siteNameClean) ||
+            str_contains($rawTitleClean, ' | '.$siteNameClean) ||
+            str_contains($rawTitleClean, ' - '.$siteNameClean) ||
+            str_contains($rawTitleClean, ' — '.$siteNameClean) ||
+            str_contains($rawTitleClean, ' '.$siteNameClean.' ')
+        ) {
             $title = $rawTitle;
         } else {
             $title = strtr($titleTemplate, [
@@ -383,10 +392,10 @@ class SeoRenderer
         if (! $meta && isset($entity->seo) && is_array($entity->seo) && ! empty($entity->seo)) {
             $seo = $entity->seo;
             $meta = new SeoMeta([
-                'title' => $seo['meta_title'] ?? null,
-                'description' => $seo['meta_description'] ?? null,
-                'og_title' => $seo['og_title'] ?? null,
-                'og_description' => $seo['og_description'] ?? null,
+                'title' => $seo['title'] ?? $seo['meta_title'] ?? null,
+                'description' => $seo['description'] ?? $seo['meta_description'] ?? null,
+                'og_title' => $seo['og_title'] ?? $seo['title'] ?? null,
+                'og_description' => $seo['og_description'] ?? $seo['description'] ?? null,
             ]);
         }
 
@@ -394,10 +403,10 @@ class SeoRenderer
         if (! $meta && isset($entity->meta) && is_array($entity->meta) && ! empty($entity->meta)) {
             $m = $entity->meta;
             $meta = new SeoMeta([
-                'title' => $m['meta_title'] ?? null,
-                'description' => $m['meta_description'] ?? null,
-                'og_title' => $m['og_title'] ?? null,
-                'og_description' => $m['og_description'] ?? null,
+                'title' => $m['title'] ?? $m['meta_title'] ?? null,
+                'description' => $m['description'] ?? $m['meta_description'] ?? null,
+                'og_title' => $m['og_title'] ?? $m['title'] ?? null,
+                'og_description' => $m['og_description'] ?? $m['description'] ?? null,
             ]);
         }
 

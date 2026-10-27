@@ -62,6 +62,7 @@ class PageController extends Controller
         }]);
 
         View::share('page', $page);
+        request()->attributes->set('page', $page);
 
         $viewName = $this->resolveTemplate($page->template, $page->slug);
 
