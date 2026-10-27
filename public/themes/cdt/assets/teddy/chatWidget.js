@@ -204,20 +204,20 @@ function showWAForm() {
                 </div>
                 <div id="form-group-wrapper">
                   <div class="form-group">
-                      <input type="text" id="full_name" name="full_name" oninput="setInputLabel(this)" required>
-                      <label for="full_name">${whatsAppFormLabel.name}</label>
+                      <input type="text" id="wa_full_name" name="full_name" oninput="setInputLabel(this)" required>
+                      <label for="wa_full_name">${whatsAppFormLabel.name}</label>
                   </div>
                   <div class="form-group">
-                      <input type="email" id="email" name="email" oninput="setInputLabel(this)" required >
-                      <label for="email">${whatsAppFormLabel.email}</label>
+                      <input type="email" id="wa_email" name="email" oninput="setInputLabel(this)" required >
+                      <label for="wa_email">${whatsAppFormLabel.email}</label>
                   </div>
                   <div class="form-group">
-                      <input type="tel" id="phone_number" name="phone_number" oninput="setInputLabel(this)" required >
-                      <label for="phone_number">${whatsAppFormLabel.whatsapp_number}</label>
+                      <input type="tel" id="wa_phone_number" name="phone_number" oninput="setInputLabel(this)" required >
+                      <label for="wa_phone_number">${whatsAppFormLabel.whatsapp_number}</label>
                   </div>
                   <div class="form-checkbox">
-                      <input type="checkbox" id="data_agreement" name="data_agreement" required >
-                      <label for="data_agreement">${whatsAppFormLabel.checkbox_policy}</label>
+                      <input type="checkbox" id="wa_data_agreement" name="data_agreement" required >
+                      <label for="wa_data_agreement">${whatsAppFormLabel.checkbox_policy}</label>
                   </div>
                   <div class="form-privacy-policy">
                       <p>${whatsAppFormLabel.privacy_policy}</p>
@@ -274,14 +274,13 @@ function closeWAForm() {
 }
 
 async function submitWAForm() {
-  const full_name = document.getElementById("full_name").value;
-  const email = document.getElementById("email").value;
-  const phone_number = document.getElementById("phone_number").value;
+  const waForm = document.getElementById("wa-form");
+  if (!waForm) return;
 
-  // if (!full_name || !email || !phone_number) {
-  //     alert("Harap isi semua field!");
-  //     return;
-  // }
+  const full_name = (waForm.querySelector('#wa_full_name')?.value || waForm.querySelector('[name="full_name"]')?.value || '').trim();
+  const email = (waForm.querySelector('#wa_email')?.value || waForm.querySelector('[name="email"]')?.value || '').trim();
+  const phone_number = (waForm.querySelector('#wa_phone_number')?.value || waForm.querySelector('[name="phone_number"]')?.value || '').trim();
+
   const scriptParams = getParameters();
   const apiUrl = scriptParams.apiUrl;
   const embedId = scriptParams.embedId;
@@ -289,16 +288,16 @@ async function submitWAForm() {
   let sesId = localStorage.getItem(`allm_${embedId}_session_id`);
 
   const submitButton = document.getElementById("submit-wa-form");
-  const closeButton = document.getElementById("close-wa-form")
+  const closeButton = document.getElementById("close-wa-form");
   const formGroupWrapper = document.getElementById("form-group-wrapper");
-  formGroupWrapper.className = ""
-  setWAFormAlert("", "")
+  formGroupWrapper.className = "";
+  setWAFormAlert("", "");
 
   try {
     submitButton.disabled = true;
     closeButton.disabled = true;
 
-    const response = await fetch(`${apiUrl}/embed/${embedId}/${sesId}/submit-contact`, { // Ganti dengan URL API Anda
+    const response = await fetch(`${apiUrl}/embed/${embedId}/${sesId}/submit-contact`, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'
@@ -307,19 +306,30 @@ async function submitWAForm() {
     });
 
     if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        let errMsg = `HTTP error! status: ${response.status}`;
+        try {
+            const errData = await response.json();
+            if (errData?.error) {
+                errMsg = errData.error;
+            } else if (errData?.message) {
+                errMsg = errData.message;
+            }
+        } catch(e) {}
+        throw new Error(errMsg);
     }
 
     const data = await response.json();
 
-    formGroupWrapper.className = "hidden"
+    formGroupWrapper.className = "hidden";
 
     setWAFormAlert(whatsAppFormLabel.success_message, 'success');
 
-    setTimeout(closeWAForm, 5000)
+    setTimeout(closeWAForm, 5000);
 
   } catch (error) {
-    setWAFormAlert(whatsAppFormLabel.error_message, 'error');
+    const isGenericHttp = !error.message || error.message.startsWith('HTTP error') || error.message.includes('Failed to fetch');
+    const displayMsg = isGenericHttp ? whatsAppFormLabel.error_message : error.message;
+    setWAFormAlert(displayMsg, 'error');
   } finally {
     submitButton.disabled = false;
     closeButton.disabled = false;
