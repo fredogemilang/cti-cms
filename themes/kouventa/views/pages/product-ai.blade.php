@@ -1148,7 +1148,7 @@ $challengesCards = $challengesSec['cards'] ?? [
     ],
     [
         'title' => $isIdLocale ? 'Pemakaian & tagihan AI sulit dikelola' : 'AI usage & billing are hard to manage',
-        'desc' => $isIdLocale ? 'Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.' : 'Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.',
+        'desc' => $isIdLocale ? 'Langganan banyak tools AI sekaligus menyulitkan pemusatan pemakaian, pengelolaan langganan, dan pemantauan biaya di seluruh tim.' : 'Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.',
     ],
 ];
 
@@ -1607,7 +1607,7 @@ $ctaSecondary = $ctaSec['secondary_cta'] ?? ['text' => $isIdLocale ? 'Lihat harg
         <span style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
             <span class="kv-product-tab-name">{{ $p['name'] }}</span>
             @if($p['soon'])
-                <span class="kv-product-tab-badge">{{ t('kouventa.COMING SOON', 'COMING SOON') }}</span>
+                <span class="kv-product-tab-badge">{{ $productItems[$p['id']]['badge'] ?? t('kouventa.COMING SOON', 'COMING SOON') }}</span>
             @endif
         </span>
         <span class="kv-product-tab-role" x-show="hasRole('{{ $p['id'] }}')" x-text="getRole('{{ $p['id'] }}')"></span>
@@ -1652,7 +1652,7 @@ $ctaSecondary = $ctaSec['secondary_cta'] ?? ['text' => $isIdLocale ? 'Lihat harg
 
 <!-- Task Force Info -->
 <div class="kv-product-info" x-show="product === 'taskforce'" x-cloak>
-    <span style="font-size: 30px; line-line: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $productItems['taskforce']['name'] ?? 'AI Task Force' }}</span>
+    <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $productItems['taskforce']['name'] ?? 'AI Task Force' }}</span>
     <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $productItems['taskforce']['headline'] ?? ($isIdLocale ? 'Solusi berbasis Agentic AI yang memahami tujuan bisnis Anda dan menjalankan workflow kompleks di sistem bisnis yang terhubung, menalar setiap tugas dan meminta persetujuan Anda di tahap penting.' : t('kouventa.An Agentic AI solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.', 'An Agentic AI solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.')) }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
         @php

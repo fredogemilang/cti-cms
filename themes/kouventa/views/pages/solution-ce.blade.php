@@ -248,15 +248,15 @@
 <section id="solution-tabs" style="padding: 88px 80px 104px; display: flex; flex-direction: column; gap: 40px">
 <div role="tablist" aria-label="Solutions by role" class="kv-sol-ce-tablist">
 <button type="button" role="tab" class="kv-sol-ce-tab" :aria-selected="tab === 0" @click="pickTab(0)">
-<span class="kv-ce-tab-badge">S&amp;M</span>
+<span class="kv-ce-tab-badge">{{ $roleSm['badge'] ?? 'S&M' }}</span>
 <span class="kv-ce-tab-title">{{ $roleSm['name'] ?? ($isIdLocale ? 'Sales & Marketing' : 'Sales & Marketing') }}</span>
 </button>
 <button type="button" role="tab" class="kv-sol-ce-tab" :aria-selected="tab === 1" @click="pickTab(1)">
-<span class="kv-ce-tab-badge">CS</span>
+<span class="kv-ce-tab-badge">{{ $roleCs['badge'] ?? 'CS' }}</span>
 <span class="kv-ce-tab-title">{{ $roleCs['name'] ?? ($isIdLocale ? 'Customer Service' : 'Customer Service') }}</span>
 </button>
 <button type="button" role="tab" class="kv-sol-ce-tab" :aria-selected="tab === 2" @click="pickTab(2)">
-<span class="kv-ce-tab-badge">OPS</span>
+<span class="kv-ce-tab-badge">{{ $roleOps['badge'] ?? 'OPS' }}</span>
 <span class="kv-ce-tab-title">{{ $roleOps['name'] ?? ($isIdLocale ? 'Operasional' : 'Operations') }}</span>
 </button>
 </div>
@@ -395,19 +395,19 @@
 <div style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][0]['text'] ?? t('kouventa.Reach more customers, more effectively', 'Reach more customers, more effectively') }}</span>
+<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][0]['title'] ?? $roleSm['impacts'][0]['text'] ?? t('kouventa.Reach more customers, more effectively', 'Reach more customers, more effectively') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 12 0V3h-4v7a2 2 0 0 1-4 0V3Z"></path><path d="M6 7h4M14 7h4"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][1]['text'] ?? t('kouventa.Minimize lost leads and enhance customer experience', 'Minimize lost leads and enhance customer experience') }}</span>
+<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][1]['title'] ?? $roleSm['impacts'][1]['text'] ?? t('kouventa.Minimize lost leads and enhance customer experience', 'Minimize lost leads and enhance customer experience') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][2]['text'] ?? t('kouventa.More efficient sales and marketing operations', 'More efficient sales and marketing operations') }}</span>
+<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][2]['title'] ?? $roleSm['impacts'][2]['text'] ?? t('kouventa.More efficient sales and marketing operations', 'More efficient sales and marketing operations') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.65s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][3]['text'] ?? t('kouventa.Improve customer engagement across channels', 'Improve customer engagement across channels') }}</span>
+<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][3]['title'] ?? $roleSm['impacts'][3]['text'] ?? t('kouventa.Improve customer engagement across channels', 'Improve customer engagement across channels') }}</span>
 </div>
 </div>
 </div>
@@ -440,14 +440,14 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.2s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleSm['solutions'][2]['title'] ?? t('kouventa.Omnichannel', 'Omnichannel') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleCs['solutions'][0]['title'] ?? t('kouventa.Omnichannel', 'Omnichannel') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleCs['solutions'][0]['desc'] ?? t('kouventa.Centralize customer complaints from WhatsApp, Instagram, Facebook, and Live Chat in one platform, making it easier to track and respond to every issue.', 'Centralize customer complaints from WhatsApp, Instagram, Facebook, and Live Chat in one platform, making it easier to track and respond to every issue.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.8s ease 1.4s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V5M9 13h.01M15 13h.01M10 17h4"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleSm['solutions'][1]['title'] ?? t('kouventa.Chatbot', 'Chatbot') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleCs['solutions'][1]['title'] ?? t('kouventa.Chatbot', 'Chatbot') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleCs['solutions'][1]['desc'] ?? t('kouventa.Handle common customer complaints instantly with predefined or AI-powered chatbots, while escalating complex issues to human agents when needed.', 'Handle common customer complaints instantly with predefined or AI-powered chatbots, while escalating complex issues to human agents when needed.') }}</span>
 </span>
 </button>

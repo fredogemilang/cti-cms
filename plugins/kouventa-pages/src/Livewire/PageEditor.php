@@ -36,6 +36,10 @@ class PageEditor extends Component
 
     public array $sections = [];
 
+    public array $enSectionsBuffer = [];
+
+    public string $enTitleBuffer = '';
+
     public array $translations = [];
 
     public array $tabs = [];
@@ -49,13 +53,19 @@ class PageEditor extends Component
         $this->pageId = $pageId;
         $this->page = KouventaPage::findOrFail($pageId);
 
-        $this->title = (string) $this->page->getRawAttribute('title');
+        $this->enTitleBuffer = (string) $this->page->getRawAttribute('title');
         $this->slug = (string) $this->page->slug;
         $this->status = (string) ($this->page->status ?? 'published');
         $this->translations = $this->page->translations ?? [];
+        $this->enSectionsBuffer = $this->resolveSectionsForLocale('en');
 
         $this->tabs = $this->resolveTabs();
-        $this->sections = $this->resolveSectionsForLocale($this->editingLocale);
+        $this->sections = $this->editingLocale === 'en'
+            ? $this->enSectionsBuffer
+            : $this->resolveSectionsForLocale($this->editingLocale);
+        $this->title = $this->editingLocale === 'en'
+            ? $this->enTitleBuffer
+            : (string) ($this->translations[$this->editingLocale]['title'] ?? $this->enTitleBuffer);
         $this->refreshRevisions();
 
         if (empty($this->activeTab) || ! collect($this->tabs)->contains('id', $this->activeTab)) {
@@ -74,14 +84,22 @@ class PageEditor extends Component
             return;
         }
 
-        // 1. Stash current working sections into the active locale buffer
+        // 1. Stash current working sections & title into the active locale buffer
         $this->stashCurrentLocaleData();
 
         // 2. Switch locale
         $this->editingLocale = $locale;
 
-        // 3. Load sections for the new locale
-        $this->sections = $this->resolveSectionsForLocale($locale);
+        // 3. Load sections & title for the new locale from buffer
+        if ($locale === 'en') {
+            $this->sections = ! empty($this->enSectionsBuffer)
+                ? $this->enSectionsBuffer
+                : $this->resolveSectionsForLocale('en');
+            $this->title = $this->enTitleBuffer ?: (string) $this->page->getRawAttribute('title');
+        } else {
+            $this->sections = $this->resolveSectionsForLocale($locale);
+            $this->title = (string) ($this->translations[$locale]['title'] ?? $this->enTitleBuffer);
+        }
 
         // 4. Notify SEO box
         $this->dispatch('seo-locale-switched', locale: $locale);
@@ -93,8 +111,8 @@ class PageEditor extends Component
     protected function stashCurrentLocaleData(): void
     {
         if ($this->editingLocale === 'en') {
-            // Default locale stored in primary sections array
-            // Handled when saving
+            $this->enSectionsBuffer = $this->sections;
+            $this->enTitleBuffer = $this->title;
         } else {
             $this->translations[$this->editingLocale]['sections'] = $this->sections;
             $this->translations[$this->editingLocale]['title'] = $this->title;
@@ -106,7 +124,9 @@ class PageEditor extends Component
      */
     public function copyFromEn(): void
     {
-        $enSections = $this->page->getRawAttribute('sections') ?? $this->getSchemaDefaults('en');
+        $enSections = ! empty($this->enSectionsBuffer)
+            ? $this->enSectionsBuffer
+            : ($this->page->getRawAttribute('sections') ?? $this->getSchemaDefaults('en'));
         $this->sections = $enSections;
 
         $this->dispatch('notify', [
@@ -116,14 +136,16 @@ class PageEditor extends Component
     }
 
     /**
-     * Reset a single section back to its schema defaults.
+     * Reset a single section (supports dot-notation like 'departments.cs') back to its schema defaults.
      */
     public function resetSection(string $sectionName): void
     {
         $defaults = $this->getSchemaDefaults($this->editingLocale);
+        $defaultSection = data_get($defaults, $sectionName);
 
-        if (isset($defaults[$sectionName])) {
-            $this->sections[$sectionName] = $defaults[$sectionName];
+        if ($defaultSection !== null) {
+            data_set($this->sections, $sectionName, $defaultSection);
+            $this->stashCurrentLocaleData();
 
             $this->dispatch('notify', [
                 'type' => 'success',
@@ -143,11 +165,16 @@ class PageEditor extends Component
         }
 
         $this->page->sections = $rev->sections ?? [];
+        $this->enSectionsBuffer = $rev->sections ?? [];
+        $this->enTitleBuffer = (string) ($rev->title ?: $this->page->getRawAttribute('title'));
         $this->translations = $rev->translations ?? [];
 
         $this->sections = $this->editingLocale === 'en'
-            ? ($rev->sections ?? [])
-            : ($rev->translations[$this->editingLocale]['sections'] ?? $rev->sections ?? []);
+            ? $this->enSectionsBuffer
+            : ($this->translations[$this->editingLocale]['sections'] ?? $this->enSectionsBuffer);
+        $this->title = $this->editingLocale === 'en'
+            ? $this->enTitleBuffer
+            : (string) ($this->translations[$this->editingLocale]['title'] ?? $this->enTitleBuffer);
 
         $this->dispatch('notify', [
             'type' => 'success',
@@ -165,16 +192,17 @@ class PageEditor extends Component
 
         $this->isSaving = true;
 
-        // 1. Sync current locale data
+        // 1. Sync current locale data into memory buffer
         $this->stashCurrentLocaleData();
 
-        // 2. Determine primary (EN) sections vs translated (ID) sections
-        $enSections = ($this->editingLocale === 'en')
-            ? $this->sections
+        // 2. Determine primary (EN) sections & title vs translated (ID) sections
+        $enSections = ! empty($this->enSectionsBuffer)
+            ? $this->enSectionsBuffer
             : ($this->page->getRawAttribute('sections') ?? $this->getSchemaDefaults('en'));
+        $enTitle = $this->enTitleBuffer ?: (string) $this->page->getRawAttribute('title');
 
         // 3. Update database
-        $this->page->title = $this->title;
+        $this->page->title = $enTitle;
         $this->page->slug = $this->slug;
         $this->page->status = $this->status;
         $this->page->sections = $enSections;
@@ -186,12 +214,12 @@ class PageEditor extends Component
         $this->page->saveRevision("Updated via admin editor ({$this->editingLocale})");
         $this->refreshRevisions();
 
-        // 5. Purge Caches & reindex search
+        // 5. Purge Caches & reindex search across all locales
         try {
             PageCache::purgeAll();
             CacheManager::purgeAll();
             SitemapBuilder::clearCache();
-            IndexSearchable::dispatch(KouventaPage::class, $this->page->id);
+            $this->page->syncSearchIndex();
         } catch (\Throwable $e) {
             // cache purge shouldn't break saving
         }
@@ -208,8 +236,8 @@ class PageEditor extends Component
     {
         $this->stashCurrentLocaleData();
 
-        $enSections = ($this->editingLocale === 'en')
-            ? $this->sections
+        $enSections = ! empty($this->enSectionsBuffer)
+            ? $this->enSectionsBuffer
             : ($this->page->getRawAttribute('sections') ?? []);
 
         $this->page->sections = $enSections;

@@ -212,6 +212,12 @@
                             <label class="block text-[11px] font-bold text-[#6F767E] mb-1">Role / Sub-tag</label>
                             <input type="text" wire:model.defer="sections.products.items.{{ $pk }}.tag" class="w-full h-9 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-transparent text-xs font-medium">
                         </div>
+                        @if($pk === 'workflow')
+                        <div class="md:col-span-2">
+                            <label class="block text-[11px] font-bold text-[#6F767E] mb-1">Badge Text (e.g. COMING SOON / SEGERA HADIR)</label>
+                            <input type="text" wire:model.defer="sections.products.items.workflow.badge" class="w-full max-w-xs h-9 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-transparent text-xs font-bold text-amber-600">
+                        </div>
+                        @endif
                     </div>
 
                     <div>

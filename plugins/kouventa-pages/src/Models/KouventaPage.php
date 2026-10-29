@@ -186,5 +186,53 @@ class KouventaPage extends Model
 
         return $revision;
     }
+
+    /**
+     * Synchronize localized search index entries (EN & ID) for this page.
+     */
+    public function syncSearchIndex(): void
+    {
+        if (! \Illuminate\Support\Facades\Schema::hasTable('search_index')) {
+            return;
+        }
+
+        if ($this->status !== 'published') {
+            \App\Models\SearchIndex::where('searchable_type', self::class)
+                ->where('searchable_id', $this->id)
+                ->delete();
+
+            return;
+        }
+
+        $locales = function_exists('available_locales') ? available_locales() : ['en', 'id'];
+        $originalLocale = app()->getLocale();
+
+        try {
+            foreach ($locales as $locale) {
+                app()->setLocale($locale);
+
+                $title = (string) ($this->title ?? '');
+                $body = (string) $this->content;
+                $excerpt = \Illuminate\Support\Str::limit($body, 220);
+
+                \App\Models\SearchIndex::updateOrCreate(
+                    [
+                        'searchable_type' => self::class,
+                        'searchable_id' => $this->id,
+                        'locale' => $locale,
+                    ],
+                    [
+                        'title' => $title,
+                        'excerpt' => $excerpt,
+                        'body' => $body,
+                        'url' => $this->getUrl($locale),
+                        'indexed_at' => now(),
+                    ]
+                );
+            }
+        } finally {
+            app()->setLocale($originalLocale);
+        }
+    }
 }
 

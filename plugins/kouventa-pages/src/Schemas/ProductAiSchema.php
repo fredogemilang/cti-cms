@@ -254,7 +254,7 @@ class ProductAiSchema
             ],
 
             'governance' => [
-                'title' => $isId ? 'Tata kelola AI untuk organisasi Anda.' : 'Govern AI across your organization.',
+                'title' => $isId ? 'Tata kelola AI untuk organisasi Anda' : 'Govern AI across your organization',
                 'cards' => [
                     [
                         'id' => 'guardrails',

@@ -13,9 +13,15 @@
 {{-- ==================== TAB: HERO ==================== --}}
 @if($activeTab === 'hero')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Hero Section & Platform Toggle</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Edit main pricing headline, subtitle, and platform toggle buttons.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Hero Section & Platform Toggle</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Edit main pricing headline, subtitle, and platform toggle buttons.</p>
+        </div>
+        <button type="button" wire:click="resetSection('hero')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div>
@@ -64,9 +70,15 @@
 {{-- ==================== TAB: TIERS AI ==================== --}}
 @if($activeTab === 'tiers_ai')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Artificial Intelligence Pricing Plans</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Configure Starter, Grow, and Scale packages for AI platform.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Artificial Intelligence Pricing Plans</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Configure Starter, Grow, and Scale packages for AI platform.</p>
+        </div>
+        <button type="button" wire:click="resetSection('tiers_ai')" wire:confirm="Reset AI pricing tiers to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     @foreach(['starter' => 'Starter Plan', 'grow' => 'Grow Plan (Featured)', 'scale' => 'Scale Plan'] as $tKey => $tLabel)
@@ -139,9 +151,15 @@
 {{-- ==================== TAB: TIERS CE ==================== --}}
 @if($activeTab === 'tiers_ce')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Customer Engagement Pricing Plans</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Configure Starter, Professional, and Enterprise packages for CE platform.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Customer Engagement Pricing Plans</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Configure Starter, Professional, and Enterprise packages for CE platform.</p>
+        </div>
+        <button type="button" wire:click="resetSection('tiers_ce')" wire:confirm="Reset CE pricing tiers to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     @foreach(['starter' => 'Starter Plan', 'pro' => 'Professional Plan (Featured)', 'enterprise' => 'Enterprise Plan'] as $tKey => $tLabel)
@@ -214,9 +232,15 @@
 {{-- ==================== TAB: ADD-ONS ==================== --}}
 @if($activeTab === 'addons')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Extend Your Plan (Add-ons)</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Edit add-on titles, descriptions, and callout text.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Extend Your Plan (Add-ons)</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Edit add-on titles, descriptions, and callout text.</p>
+        </div>
+        <button type="button" wire:click="resetSection('addons')" wire:confirm="Reset Add-ons to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -277,9 +301,15 @@
 {{-- ==================== TAB: TEMPLATES ==================== --}}
 @if($activeTab === 'templates')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">WhatsApp Message Templates</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Configure 4 template categories (Marketing, Utility, Authentication, Service).</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">WhatsApp Message Templates</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Configure 4 template categories (Marketing, Utility, Authentication, Service).</p>
+        </div>
+        <button type="button" wire:click="resetSection('templates')" wire:confirm="Reset WhatsApp Templates to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -321,9 +351,15 @@
 {{-- ==================== TAB: CALCULATOR ==================== --}}
 @if($activeTab === 'calculator')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">WhatsApp Cost Calculator Rates</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Set conversation fees and tier platform thresholds used in the interactive cost estimator.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">WhatsApp Cost Calculator Rates</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Set conversation fees and tier platform thresholds used in the interactive cost estimator.</p>
+        </div>
+        <button type="button" wire:click="resetSection('calculator')" wire:confirm="Reset Calculator rates to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -399,9 +435,15 @@
 {{-- ==================== TAB: CTA ==================== --}}
 @if($activeTab === 'cta')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Bottom Call to Action</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Edit closing banner headline, subtitle, and action buttons.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Bottom Call to Action</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Edit closing banner headline, subtitle, and action buttons.</p>
+        </div>
+        <button type="button" wire:click="resetSection('cta')" wire:confirm="Reset CTA section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div>
@@ -441,3 +483,4 @@
     </div>
 </div>
 @endif
+

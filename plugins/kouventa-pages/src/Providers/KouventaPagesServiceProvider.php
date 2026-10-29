@@ -5,6 +5,8 @@ namespace Plugins\KouventaPages\Providers;
 use App\Events\BuildSitemap;
 use App\Events\RenderAdminMenu;
 use App\Providers\CmsPluginServiceProvider;
+use App\Services\Ai\AiResourceRegistry;
+use App\Services\Sitemap\SitemapBuilder;
 use App\Support\Action;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -12,6 +14,7 @@ use Plugins\KouventaPages\Http\Controllers\KouventaPageController;
 use Plugins\KouventaPages\Livewire\PageEditor;
 use Plugins\KouventaPages\Livewire\PageIndex;
 use Plugins\KouventaPages\Models\KouventaPage;
+use Plugins\KouventaPages\Services\KouventaSitemapBuilder;
 
 class KouventaPagesServiceProvider extends CmsPluginServiceProvider
 {
@@ -22,9 +25,30 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
         'plugins.kouventa-pages.page-editor' => PageEditor::class,
     ];
 
+    public function register(): void
+    {
+        parent::register();
+
+        $this->app->bind(SitemapBuilder::class, KouventaSitemapBuilder::class);
+    }
+
     public function boot(): void
     {
         parent::boot();
+
+        $this->app->bind(SitemapBuilder::class, KouventaSitemapBuilder::class);
+
+        $this->app->resolving(AiResourceRegistry::class, function (AiResourceRegistry $registry) {
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('kouventa_pages')) {
+                    foreach (KouventaPage::published()->get(['id', 'title', 'slug']) as $page) {
+                        $registry->registerResource($page->title, $page->getUrl('en'), 'Interactive Product / Solution Page');
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Ignore if table not ready
+            }
+        });
 
         // 1. Hook frontend routes before Core catch-all page route
         Action::add('routes.before_catch_all', function (string $adminPath, string $localePattern) {
@@ -66,7 +90,7 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
 
                 foreach ($pages as $p) {
                     foreach ($locales as $loc) {
-                        $event->addUrl(
+                        $event->add(
                             $p->getUrl($loc),
                             $p->updated_at ?? now(),
                             'weekly',

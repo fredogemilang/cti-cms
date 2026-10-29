@@ -206,14 +206,17 @@ class SolutionAiSchema
         0 => 
         array (
           'text' => 'Tingkatkan Pengalaman Pelanggan',
+          'desc' => 'Respons instan serta informasi produk, pesanan, dan pengiriman yang akurat.',
         ),
         1 => 
         array (
           'text' => 'Tingkatkan Produktivitas Sales',
+          'desc' => 'Lebih sedikit pertanyaan berulang dan follow-up manual, sehingga tim sales bisa fokus pada peluang yang lebih bernilai.',
         ),
         2 => 
         array (
           'text' => 'Tingkatkan Konversi & Retensi Pelanggan',
+          'desc' => 'Follow-up yang proaktif dan dukungan mulus di sepanjang proses pembelian.',
         ),
       ),
     ),
@@ -658,14 +661,17 @@ class SolutionAiSchema
         0 => 
         array (
           'text' => 'Enhance Customer Experiences',
+          'desc' => 'Instant responses and accurate product, order, and shipment information.',
         ),
         1 => 
         array (
           'text' => 'Increase Sales Productivity',
+          'desc' => 'Fewer repetitive inquiries and manual follow-ups, allowing sales teams to focus on higher-value opportunities.',
         ),
         2 => 
         array (
           'text' => 'Improve Customer Conversion & Retention',
+          'desc' => 'Proactive follow-ups and seamless support throughout the purchase journey.',
         ),
       ),
     ),

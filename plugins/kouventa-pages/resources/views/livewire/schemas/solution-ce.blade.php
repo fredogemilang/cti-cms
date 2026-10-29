@@ -11,9 +11,15 @@
 {{-- ==================== TAB: HERO ==================== --}}
 @if($activeTab === 'hero')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Hero Section</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Edit hero title, subtitle, CTA buttons, and top sub-navigation.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Hero Section</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Edit hero title, subtitle, CTA buttons, and top sub-navigation.</p>
+        </div>
+        <button type="button" wire:click="resetSection('hero')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     {{-- Subnav --}}
@@ -81,9 +87,15 @@
 {{-- ==================== TAB: SALES & MARKETING ==================== --}}
 @if($activeTab === 'role_sales')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Sales & Marketing Solutions</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Configure challenges, CE solutions, and business impact for Sales & Marketing.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Sales & Marketing Solutions</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Configure challenges, CE solutions, and business impact for Sales & Marketing.</p>
+        </div>
+        <button type="button" wire:click="resetSection('roles.sales_marketing')" wire:confirm="Reset Sales & Marketing to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -150,9 +162,15 @@
 {{-- ==================== TAB: CUSTOMER SERVICE ==================== --}}
 @if($activeTab === 'role_cs')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Customer Service Solutions</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Configure challenges, CE solutions, and business impact for Customer Service.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Customer Service Solutions</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Configure challenges, CE solutions, and business impact for Customer Service.</p>
+        </div>
+        <button type="button" wire:click="resetSection('roles.customer_service')" wire:confirm="Reset Customer Service to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -179,9 +197,9 @@
         </div>
     </div>
 
-    {{-- Solutions (3 Items) --}}
+    {{-- Solutions (4 Items) --}}
     <div class="space-y-3">
-        <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">How Kouventa Helps (3 Solutions)</h3>
+        <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">How Kouventa Helps (4 Solutions)</h3>
         <div class="space-y-3">
             @foreach($sections['roles']['customer_service']['solutions'] ?? [] as $sIdx => $sol)
                 <div class="p-4 bg-gray-50 dark:bg-[#202428] rounded-xl border border-gray-100 dark:border-[#272B30] space-y-3">
@@ -220,9 +238,15 @@
 {{-- ==================== TAB: OPERATIONS ==================== --}}
 @if($activeTab === 'role_ops')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Operations Solutions</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Configure challenges, CE solutions, and business impact for Operations.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Operations Solutions</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Configure challenges, CE solutions, and business impact for Operations.</p>
+        </div>
+        <button type="button" wire:click="resetSection('roles.operations')" wire:confirm="Reset Operations to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -290,9 +314,15 @@
 {{-- ==================== TAB: CTA ==================== --}}
 @if($activeTab === 'cta')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Bottom Closing CTA</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Edit closing banner heading, copy, and call-to-action buttons.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Bottom Closing CTA</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Edit closing banner heading, copy, and call-to-action buttons.</p>
+        </div>
+        <button type="button" wire:click="resetSection('cta')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div>
@@ -332,3 +362,4 @@
     </div>
 </div>
 @endif
+

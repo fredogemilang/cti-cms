@@ -336,6 +336,11 @@ class KouventaPagesSeeder extends Seeder
                 ->where('searchable_id', 6)
                 ->delete();
         }
+
+        // 7. Synchronize SearchIndex for all 5 Kouventa interactive pages (EN & ID)
+        foreach ([$kouventaAiPage, $kouventaCePage, $kouventaSolAiPage, $kouventaSolCePage, $kouventaPricingPage] as $kPage) {
+            $kPage->syncSearchIndex();
+        }
     }
 }
 

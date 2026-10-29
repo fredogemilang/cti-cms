@@ -15,9 +15,15 @@
 {{-- ==================== TAB: HERO ==================== --}}
 @if($activeTab === 'hero')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Hero Section</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Edit hero title, subtitle, CTA buttons, and top sub-navigation.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Hero Section</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Edit hero title, subtitle, CTA buttons, and top sub-navigation.</p>
+        </div>
+        <button type="button" wire:click="resetSection('hero')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     {{-- Subnav --}}
@@ -96,9 +102,15 @@
 @if(isset($deptKeys[$activeTab]))
 @php $dKey = $deptKeys[$activeTab]; @endphp
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $sections['departments'][$dKey]['name'] ?? 'Department' }} Use Case</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Configure challenges, AI agent solutions, and business impact for this team.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $sections['departments'][$dKey]['name'] ?? 'Department' }} Use Case</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Configure challenges, AI agent solutions, and business impact for this team.</p>
+        </div>
+        <button type="button" wire:click="resetSection('departments.{{ $dKey }}')" wire:confirm="Reset this department to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div>
@@ -148,7 +160,10 @@
             @for($i = 0; $i < 3; $i++)
                 <div class="p-3.5 bg-gray-50 dark:bg-[#202428] rounded-xl border border-gray-100 dark:border-[#272B30] space-y-2">
                     <span class="text-[11px] font-bold text-blue-500 uppercase">Impact {{ $i + 1 }}</span>
-                    <textarea wire:model.defer="sections.departments.{{ $dKey }}.impacts.{{ $i }}.text" rows="3" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium"></textarea>
+                    <textarea wire:model.defer="sections.departments.{{ $dKey }}.impacts.{{ $i }}.text" rows="{{ $dKey === 'sales_marketing' ? 2 : 3 }}" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium" placeholder="Impact Headline"></textarea>
+                    @if($dKey === 'sales_marketing')
+                        <textarea wire:model.defer="sections.departments.sales_marketing.impacts.{{ $i }}.desc" rows="3" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium" placeholder="Impact Subtitle / Description"></textarea>
+                    @endif
                 </div>
             @endfor
         </div>
@@ -159,9 +174,21 @@
 {{-- ==================== TAB: FINANCE (2 SUB-CASES) ==================== --}}
 @if($activeTab === 'dept_finance')
 <div class="space-y-8">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Finance Solutions (2 Use Cases)</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Configure Payment Prioritization and Bank Reconciliation use cases.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Finance Solutions (2 Use Cases)</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Configure Payment Prioritization and Bank Reconciliation use cases.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button type="button" wire:click="resetSection('departments.payment_prioritization')" wire:confirm="Reset Payment Prioritization to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">restart_alt</span>
+                Reset Payment
+            </button>
+            <button type="button" wire:click="resetSection('departments.bank_reconciliation')" wire:confirm="Reset Bank Reconciliation to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">restart_alt</span>
+                Reset Reconciliation
+            </button>
+        </div>
     </div>
 
     {{-- Case 1: Payment Prioritization --}}
@@ -224,17 +251,24 @@
             </div>
         </div>
 
-        <div class="space-y-2">
-            <span class="text-xs font-bold text-[#6F767E] uppercase">AI Solution Agent</span>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div>
-                    <label class="block text-xs font-semibold text-[#6F767E] mb-1">Agent Title</label>
-                    <input type="text" wire:model.defer="sections.departments.bank_reconciliation.solutions.0.title" class="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] text-xs font-medium">
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold text-[#6F767E] mb-1">Agent Description</label>
-                    <textarea wire:model.defer="sections.departments.bank_reconciliation.solutions.0.desc" rows="2" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] text-xs font-medium"></textarea>
-                </div>
+        <div class="space-y-3">
+            <span class="text-xs font-bold text-[#6F767E] uppercase">AI Solution Agents (4 Agents)</span>
+            <div class="space-y-3">
+                @foreach($sections['departments']['bank_reconciliation']['solutions'] ?? [] as $sIdx => $sol)
+                    <div class="p-4 bg-gray-50 dark:bg-[#1A1A1A] rounded-xl border border-gray-100 dark:border-[#272B30] space-y-2">
+                        <span class="text-[11px] font-bold text-green-600 uppercase">AI Agent #{{ $sIdx + 1 }}</span>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-[#6F767E] mb-1">Agent Title</label>
+                                <input type="text" wire:model.defer="sections.departments.bank_reconciliation.solutions.{{ $sIdx }}.title" class="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#202428] text-xs font-medium">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-semibold text-[#6F767E] mb-1">Agent Description</label>
+                                <textarea wire:model.defer="sections.departments.bank_reconciliation.solutions.{{ $sIdx }}.desc" rows="2" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#202428] text-xs font-medium"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
 
@@ -253,9 +287,15 @@
 {{-- ==================== TAB: JOURNEY ==================== --}}
 @if($activeTab === 'journey')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Implementation Journey (4 Steps)</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Configure implementation roadmap title and descriptions.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Implementation Journey (4 Steps)</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Configure implementation roadmap title and descriptions.</p>
+        </div>
+        <button type="button" wire:click="resetSection('journey')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div>
@@ -284,9 +324,15 @@
 {{-- ==================== TAB: CTA ==================== --}}
 @if($activeTab === 'cta')
 <div class="space-y-6">
-    <div class="border-b border-gray-100 dark:border-[#272B30] pb-4">
-        <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Bottom Closing CTA</h2>
-        <p class="text-xs text-[#6F767E] mt-0.5">Edit closing banner heading, copy, and call-to-action buttons.</p>
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
+        <div>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Bottom Closing CTA</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Edit closing banner heading, copy, and call-to-action buttons.</p>
+        </div>
+        <button type="button" wire:click="resetSection('cta')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">restart_alt</span>
+            Reset Section
+        </button>
     </div>
 
     <div>
