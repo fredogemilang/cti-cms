@@ -34,6 +34,7 @@
 !/plugins/posts
 !/plugins/google-site-kit
 !/plugins/whatsapp-verifier
+!/plugins/kouventa-pages
 
 Homestead.json
 Homestead.yaml

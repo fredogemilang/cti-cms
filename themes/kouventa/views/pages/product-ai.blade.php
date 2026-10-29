@@ -1092,30 +1092,110 @@
 @php
 $isIdLocale = app()->getLocale() === 'id';
 
+// Section 1: Hero
+$heroSec = $page?->section('hero') ?? [];
+$subnav = $heroSec['subnav'] ?? [];
+$heroSubnavLabel = $subnav['label'] ?? ($isIdLocale ? 'Produk' : 'Products');
+$heroSubnavAi = $subnav['ai_label'] ?? 'Artificial Intelligence';
+$heroSubnavCe = $subnav['ce_label'] ?? 'Customer Engagement';
+
+$heroTitle = $heroSec['title'] ?? $page?->titleBlock('hero_title', [
+    'prefix' => $isIdLocale ? 'Satu platform AI' : 'One AI platform is',
+    'main' => $isIdLocale ? 'sudah cukup' : 'all you need'
+]);
+if ($isIdLocale) {
+    if (($heroTitle['prefix'] ?? '') === 'Satu platform AI adalah') {
+        $heroTitle['prefix'] = 'Satu platform AI';
+    }
+    if (($heroTitle['main'] ?? '') === 'semua yang Anda butuhkan.' || ($heroTitle['main'] ?? '') === 'semua yang Anda butuhkan' || ($heroTitle['main'] ?? '') === 'sudah cukup.') {
+        $heroTitle['main'] = 'sudah cukup';
+    }
+}
+
+$heroSubtitle = $heroSec['subtitle'] ?? $page?->block('hero_subtitle', $isIdLocale
+    ? 'Bangun AI agent dengan mudah dan gunakan untuk kebutuhan organisasi Anda, dengan kontrol yang terukur'
+    : 'Build AI agents with ease and put them to work on what your organization needs, with control you can measure');
+if ($isIdLocale && ($heroSubtitle === 'Bangun AI agent dengan mudah dan pekerjakan untuk kebutuhan organisasi Anda, dengan kendali terukur.' || $heroSubtitle === 'Bangun AI agent dengan mudah dan pekerjakan untuk kebutuhan organisasi Anda, dengan kendali terukur')) {
+    $heroSubtitle = 'Bangun AI agent dengan mudah dan gunakan untuk kebutuhan organisasi Anda, dengan kontrol yang terukur';
+}
+$heroSubtitle = rtrim($heroSubtitle, '.');
+
+$heroCta = $heroSec['primary_cta'] ?? $page?->buttonBlock('hero_cta', ['text' => $isIdLocale ? 'Jadwalkan demo' : 'Book a demo', 'url' => '/book-demo']);
+$heroSecondaryCta = $heroSec['secondary_cta'] ?? $page?->buttonBlock('hero_secondary_cta', ['text' => $isIdLocale ? 'Jelajahi produk' : 'Explore products', 'url' => '#ai-products']);
+
+// Section 2: Challenges
+$challengesSec = $page?->section('challenges') ?? [];
+$challengesTitle = $challengesSec['title'] ?? $page?->titleBlock('challenges_title', [
+    'prefix' => $isIdLocale ? 'Terlalu banyak tools AI,' : 'Too many AI tools,',
+    'main' => $isIdLocale ? 'terlalu sedikit kontrol' : 'too little control'
+]);
+if ($isIdLocale) {
+    if (($challengesTitle['prefix'] ?? '') === 'Terlalu banyak AI tool,') {
+        $challengesTitle['prefix'] = 'Terlalu banyak tools AI,';
+    }
+    if (($challengesTitle['main'] ?? '') === 'terlalu minim kendali.' || ($challengesTitle['main'] ?? '') === 'terlalu minim kendali' || ($challengesTitle['main'] ?? '') === 'terlalu sedikit kontrol.') {
+        $challengesTitle['main'] = 'terlalu sedikit kontrol';
+    }
+}
+$challengesCards = $challengesSec['cards'] ?? [
+    [
+        'title' => $isIdLocale ? 'Tools AI tersebar di banyak tim' : 'AI tools are scattered across teams',
+        'desc' => $isIdLocale ? 'Setiap tim memakai tools AI yang berbeda sesuai kebutuhannya, sehingga pemakaian AI di organisasi jadi terpecah-pecah.' : 'Different teams use different AI tools based on their needs, creating a fragmented AI environment across the organization.',
+    ],
+    [
+        'title' => $isIdLocale ? 'Kontrol pemakaian AI terbatas' : 'Limited control over AI usage',
+        'desc' => $isIdLocale ? 'Karena tools AI dikelola terpisah, Anda sulit mengontrol cara pakainya dan memastikan data bisnis tetap aman.' : 'With AI tools managed separately, it becomes harder to control how AI is used and ensure business data is handled securely.',
+    ],
+    [
+        'title' => $isIdLocale ? 'Pemakaian & tagihan AI sulit dikelola' : 'AI usage & billing are hard to manage',
+        'desc' => $isIdLocale ? 'Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.' : 'Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.',
+    ],
+];
+
+// Section 3: Journey
+$journeySec = $page?->section('journey') ?? [];
+$journeyTitle = $journeySec['title'] ?? [];
+$journeyPrefix = $journeyTitle['prefix'] ?? t('kouventa.Bring your AI together,', $isIdLocale ? 'Semua AI Anda di satu tempat,' : 'Bring your AI together,');
+if ($isIdLocale && ($journeyPrefix === 'Satukan AI Anda,' || $journeyPrefix === 'Bring your AI together,' || empty($journeyPrefix))) {
+    $journeyPrefix = 'Semua AI Anda di satu tempat,';
+}
+$journeyMain = rtrim($journeyTitle['main'] ?? t('kouventa.from answers to action', $isIdLocale ? 'dari menjawab sampai bertindak' : 'from answers to action'), '.');
+if ($isIdLocale && ($journeyMain === 'dari jawaban hingga aksi' || $journeyMain === 'from answers to action' || empty($journeyMain) || $journeyMain === 'dari menjawab sampai bertindak.')) {
+    $journeyMain = 'dari menjawab sampai bertindak';
+}
+$journeyMain = rtrim($journeyMain, '.');
+
+$journeySubtitle = $journeySec['subtitle'] ?? t('kouventa.Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.', $isIdLocale ? 'Kouventa AI membantu bisnis mengubah AI menjadi hasil nyata, mulai dari menjawab pertanyaan dan menggali insight, hingga menjalankan proses bisnis secara otonom lintas sistem.' : 'Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.');
+
+$journeyStagesData = $journeySec['stages'] ?? [];
+
 $stages = [
     [
         'key' => 'answer',
-        'num' => '01',
-        'name' => t('kouventa.Answer', 'Answer'),
-        'headline' => t('kouventa.Give everyone fast, accurate answers from your own knowledge.', 'Give everyone fast, accurate answers from your own knowledge.'),
-        'sub' => t("kouventa.Kouventa AI turns your company's documents and knowledge into an AI assistant that helps customers and employees find the right information instantly, without searching through files or waiting for another team.", "Kouventa AI turns your company's documents and knowledge into an AI assistant that helps customers and employees find the right information instantly, without searching through files or waiting for another team."),
-        'defaultProduct' => 'wiki'
+        'num' => $journeyStagesData[0]['number'] ?? '01',
+        'name' => $journeyStagesData[0]['name'] ?? ($isIdLocale ? 'Tanya Jawab' : t('kouventa.Answer', 'Answer')),
+        'headline' => $journeyStagesData[0]['headline'] ?? t('kouventa.Give everyone fast, accurate answers from your own knowledge.', $isIdLocale ? 'Beri semua orang jawaban yang cepat dan akurat dari pengetahuan perusahaan Anda sendiri.' : 'Give everyone fast, accurate answers from your own knowledge.'),
+        'sub' => $journeyStagesData[0]['sub'] ?? t("kouventa.Kouventa AI turns your company's documents and knowledge into an AI assistant that helps customers and employees find the right information instantly, without searching through files or waiting for another team.", $isIdLocale ? 'Kouventa AI mengubah dokumen dan pengetahuan perusahaan menjadi asisten AI yang membantu pelanggan dan karyawan menemukan informasi yang tepat secara instan, tanpa harus mencari di banyak file atau menunggu tim lain.' : "Kouventa AI turns your company's documents and knowledge into an AI assistant that helps customers and employees find the right information instantly, without searching through files or waiting for another team."),
+        'cta_text' => $journeyStagesData[0]['cta']['text'] ?? ($isIdLocale ? 'Lihat produk untuk Tanya Jawab' : 'See the products for Answer'),
+        'defaultProduct' => $journeyStagesData[0]['cta']['default_product'] ?? 'wiki'
     ],
     [
         'key' => 'analyze',
-        'num' => '02',
-        'name' => t('kouventa.Analyze', 'Analyze'),
-        'headline' => t('kouventa.Turn your data into insights that drive better decisions.', 'Turn your data into insights that drive better decisions.'),
-        'sub' => t('kouventa.Go beyond answering questions. Kouventa AI analyzes business data and conversations to uncover patterns, highlight risks and opportunities, and recommend what to do next.', 'Go beyond answering questions. Kouventa AI analyzes business data and conversations to uncover patterns, highlight risks and opportunities, and recommend what to do next.'),
-        'defaultProduct' => 'taskforce'
+        'num' => $journeyStagesData[1]['number'] ?? '02',
+        'name' => $journeyStagesData[1]['name'] ?? ($isIdLocale ? 'Analisis' : t('kouventa.Analyze', 'Analyze')),
+        'headline' => $journeyStagesData[1]['headline'] ?? t('kouventa.Turn your data into insights that drive better decisions.', $isIdLocale ? 'Ubah data Anda menjadi insight untuk keputusan yang lebih baik.' : 'Turn your data into insights that drive better decisions.'),
+        'sub' => $journeyStagesData[1]['sub'] ?? t('kouventa.Go beyond answering questions. Kouventa AI analyzes business data and conversations to uncover patterns, highlight risks and opportunities, and recommend what to do next.', $isIdLocale ? 'Lebih dari sekadar menjawab pertanyaan. Kouventa AI menganalisis data bisnis dan percakapan untuk menemukan pola, menyoroti risiko dan peluang, serta merekomendasikan langkah selanjutnya.' : 'Go beyond answering questions. Kouventa AI analyzes business data and conversations to uncover patterns, highlight risks and opportunities, and recommend what to do next.'),
+        'cta_text' => $journeyStagesData[1]['cta']['text'] ?? ($isIdLocale ? 'Lihat produk untuk Analisis' : 'See the products for Analyze'),
+        'defaultProduct' => $journeyStagesData[1]['cta']['default_product'] ?? 'taskforce'
     ],
     [
         'key' => 'execute',
-        'num' => '03',
-        'name' => t('kouventa.Execute', 'Execute'),
-        'headline' => t('kouventa.Let AI take action, with your approval.', 'Let AI take action, with your approval.'),
-        'sub' => t('kouventa.Once a recommendation is approved, Kouventa AI agents reason, plan, and carry out the task across connected systems, so insights turn into completed work.', 'Once a recommendation is approved, Kouventa AI agents reason, plan, and carry out the task across connected systems, so insights turn into completed work.'),
-        'defaultProduct' => 'taskforce'
+        'num' => $journeyStagesData[2]['number'] ?? '03',
+        'name' => $journeyStagesData[2]['name'] ?? ($isIdLocale ? 'Eksekusi' : t('kouventa.Execute', 'Execute')),
+        'headline' => $journeyStagesData[2]['headline'] ?? t('kouventa.Let AI take action, with your approval.', $isIdLocale ? 'Biarkan AI bertindak, dengan persetujuan Anda.' : 'Let AI take action, with your approval.'),
+        'sub' => $journeyStagesData[2]['sub'] ?? t('kouventa.Once a recommendation is approved, Kouventa AI agents reason, plan, and carry out the task across connected systems, so insights turn into completed work.', $isIdLocale ? 'Setelah rekomendasi disetujui, agent Kouventa AI menalar, merencanakan, dan mengerjakan tugasnya di sistem yang terhubung, sehingga insight berubah menjadi pekerjaan yang selesai.' : 'Once a recommendation is approved, Kouventa AI agents reason, plan, and carry out the task across connected systems, so insights turn into completed work.'),
+        'cta_text' => $journeyStagesData[2]['cta']['text'] ?? ($isIdLocale ? 'Lihat produk untuk Eksekusi' : 'See the products for Execute'),
+        'defaultProduct' => $journeyStagesData[2]['cta']['default_product'] ?? 'taskforce'
     ]
 ];
 
@@ -1135,98 +1215,80 @@ $stageRoles = [
 $stageButtons = [
     [
         'key' => 'answer',
-        'num' => '01',
-        'name' => t('kouventa.Answer', 'Answer'),
+        'num' => $stages[0]['num'],
+        'name' => $stages[0]['name'],
         'left' => '16.667%',
         'svg' => '<path d="M12 21a9 9 0 1 0-9-9c0 1.6.4 3.1 1.2 4.4L3 21l4.8-1.1A8.9 8.9 0 0 0 12 21Z"></path><path d="M9.8 9.2a2.3 2.3 0 0 1 4.4.8c0 1.5-2.2 2.2-2.2 3.5"></path><path d="M12 17h.01"></path>'
     ],
     [
         'key' => 'analyze',
-        'num' => '02',
-        'name' => t('kouventa.Analyze', 'Analyze'),
+        'num' => $stages[1]['num'],
+        'name' => $stages[1]['name'],
         'left' => '50%',
         'svg' => '<path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path>'
     ],
     [
         'key' => 'execute',
-        'num' => '03',
-        'name' => t('kouventa.Execute', 'Execute'),
+        'num' => $stages[2]['num'],
+        'name' => $stages[2]['name'],
         'left' => '83.333%',
         'svg' => '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path>'
     ]
 ];
 
+// Section 4: Products
+$productsSec = $page?->section('products') ?? [];
+$productsTitle = rtrim($productsSec['title'] ?? $page?->block('products_title', $isIdLocale ? 'Produk yang membuat Anda tetap memegang kendali' : 'The products that put you in control'), '.');
+$productItems = $productsSec['items'] ?? [];
+
 $productsList = [
     [
         'id' => 'wiki',
-        'name' => 'AI Company Wikipedia',
-        'tag' => $isIdLocale ? 'Asisten pengetahuan' : t('kouventa.Knowledge assistant', 'Knowledge assistant'),
+        'name' => $productItems['wiki']['name'] ?? 'AI Company Wikipedia',
+        'tag' => $productItems['wiki']['tag'] ?? ($isIdLocale ? 'Asisten pengetahuan' : t('kouventa.Knowledge assistant', 'Knowledge assistant')),
         'soon' => false,
         'svg' => '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14Z"></path><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"></path>'
     ],
     [
         'id' => 'taskforce',
-        'name' => 'AI Task Force',
-        'tag' => $isIdLocale ? 'Agentic AI' : t('kouventa.Agentic AI', 'Agentic AI'),
+        'name' => $productItems['taskforce']['name'] ?? 'AI Task Force',
+        'tag' => $productItems['taskforce']['tag'] ?? ($isIdLocale ? 'Agentic AI' : t('kouventa.Agentic AI', 'Agentic AI')),
         'soon' => false,
         'svg' => '<circle cx="12" cy="7" r="3"></circle><circle cx="5" cy="17" r="2.5"></circle><circle cx="19" cy="17" r="2.5"></circle><path d="M10 9.5 6.5 15M14 9.5l3.5 5.5"></path>'
     ],
     [
         'id' => 'playground',
-        'name' => 'Chat Playground',
-        'tag' => $isIdLocale ? 'Bekerja dengan Wikipedia & Task Force' : t('kouventa.Works with Wikipedia & Task Force', 'Works with Wikipedia & Task Force'),
+        'name' => $productItems['playground']['name'] ?? 'Chat Playground',
+        'tag' => $productItems['playground']['tag'] ?? ($isIdLocale ? 'Bekerja dengan Wikipedia & Task Force' : t('kouventa.Works with Wikipedia & Task Force', 'Works with Wikipedia & Task Force')),
         'soon' => false,
         'svg' => '<path d="M21 12a8 8 0 0 1-11.8 7L4 20l1-4.9A8 8 0 1 1 21 12Z"></path><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"></path>'
     ],
     [
         'id' => 'workflow',
-        'name' => 'TaskO',
-        'tag' => $isIdLocale ? 'Bagian dari AI Task Force' : t('kouventa.Part of AI Task Force', 'Part of AI Task Force'),
+        'name' => $productItems['workflow']['name'] ?? 'TaskO',
+        'tag' => $productItems['workflow']['tag'] ?? ($isIdLocale ? 'Bagian dari AI Task Force' : t('kouventa.Part of AI Task Force', 'Part of AI Task Force')),
         'soon' => true,
         'svg' => '<rect x="3" y="3" width="7" height="6" rx="1.5"></rect><rect x="14" y="15" width="7" height="6" rx="1.5"></rect><path d="M6.5 9v3a3 3 0 0 0 3 3H14"></path>'
     ]
 ];
 
-// ── Page Blocks from CMS Content Builder ──────────────
-$heroTitle = $page?->titleBlock('hero_title', [
-    'prefix' => $isIdLocale ? 'Satu platform AI' : 'One AI platform is',
-    'main' => $isIdLocale ? 'sudah cukup' : 'all you need'
-]);
-if ($isIdLocale) {
-    if (($heroTitle['prefix'] ?? '') === 'Satu platform AI adalah') {
-        $heroTitle['prefix'] = 'Satu platform AI';
-    }
-    if (($heroTitle['main'] ?? '') === 'semua yang Anda butuhkan.' || ($heroTitle['main'] ?? '') === 'semua yang Anda butuhkan' || ($heroTitle['main'] ?? '') === 'sudah cukup.') {
-        $heroTitle['main'] = 'sudah cukup';
-    }
-}
+// Section 5: Governance
+$governanceSec = $page?->section('governance') ?? [];
+$governanceTitle = $governanceSec['title'] ?? t('kouventa.Govern AI across your organization.', $isIdLocale ? 'Tata kelola AI untuk organisasi Anda.' : 'Govern AI across your organization.');
+$governanceCards = $governanceSec['cards'] ?? [];
 
-$heroSubtitle = $page?->block('hero_subtitle', $isIdLocale
-    ? 'Bangun AI agent dengan mudah dan gunakan untuk kebutuhan organisasi Anda, dengan kontrol yang terukur'
-    : 'Build AI agents with ease and put them to work on what your organization needs, with control you can measure');
-if ($isIdLocale && ($heroSubtitle === 'Bangun AI agent dengan mudah dan pekerjakan untuk kebutuhan organisasi Anda, dengan kendali terukur.' || $heroSubtitle === 'Bangun AI agent dengan mudah dan pekerjakan untuk kebutuhan organisasi Anda, dengan kendali terukur')) {
-    $heroSubtitle = 'Bangun AI agent dengan mudah dan gunakan untuk kebutuhan organisasi Anda, dengan kontrol yang terukur';
-}
-$heroSubtitle = rtrim($heroSubtitle, '.');
+// Section 6: Why Kouventa
+$whySec = $page?->section('why') ?? [];
+$whyTitle = $whySec['title'] ?? [];
+$whyPrefix = $whyTitle['prefix'] ?? t('kouventa.What held your AI back,', $isIdLocale ? 'Kendala adopsi AI,' : 'What held your AI back,');
+$whyMain = rtrim($whyTitle['main'] ?? t('kouventa.now solved', $isIdLocale ? 'kini terselesaikan' : 'now solved'), '.');
+$whyCards = $whySec['cards'] ?? [];
 
-$heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Book a demo', 'url' => '/book-demo']);
-$heroSecondaryCta = $page?->buttonBlock('hero_secondary_cta', ['text' => 'Explore products', 'url' => '#ai-products']);
-
-$challengesTitle = $page?->titleBlock('challenges_title', [
-    'prefix' => $isIdLocale ? 'Terlalu banyak tools AI,' : 'Too many AI tools,',
-    'main' => $isIdLocale ? 'terlalu sedikit kontrol' : 'too little control'
-]);
-if ($isIdLocale) {
-    if (($challengesTitle['prefix'] ?? '') === 'Terlalu banyak AI tool,') {
-        $challengesTitle['prefix'] = 'Terlalu banyak tools AI,';
-    }
-    if (($challengesTitle['main'] ?? '') === 'terlalu minim kendali.' || ($challengesTitle['main'] ?? '') === 'terlalu minim kendali' || ($challengesTitle['main'] ?? '') === 'terlalu sedikit kontrol.') {
-        $challengesTitle['main'] = 'terlalu sedikit kontrol';
-    }
-}
-
-$productsTitle = rtrim($page?->block('products_title', $isIdLocale ? 'Produk yang membuat Anda tetap memegang kendali' : 'The products that put you in control'), '.');
-$bottomCtaTitle = rtrim($page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform untuk semua kebutuhan AI organisasi Anda' : 'Bring all your AI into one platform'), '.');
+// Section 7: CTA
+$ctaSec = $page?->section('cta') ?? [];
+$bottomCtaTitle = rtrim($ctaSec['title'] ?? $page?->block('bottom_cta_title', $isIdLocale ? 'Satu platform untuk semua kebutuhan AI organisasi Anda' : 'Bring all your AI into one platform'), '.');
+$ctaPrimary = $ctaSec['primary_cta'] ?? ['text' => $isIdLocale ? 'Jadwalkan demo' : 'Book a demo', 'url' => '/book-demo'];
+$ctaSecondary = $ctaSec['secondary_cta'] ?? ['text' => $isIdLocale ? 'Lihat harga' : 'See pricing', 'url' => '/pricing?tab=ai'];
 @endphp
 
 @section('content')
@@ -1235,9 +1297,9 @@ $bottomCtaTitle = rtrim($page?->block('bottom_cta_title', $isIdLocale ? 'Satu pl
 <section class="kv-hero-container" style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative">
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
 <nav aria-label="Products" style="height: 56px; padding: 0 80px; display: flex; align-items: center; gap: 32px; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 4">
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #93A4B6">{{ t('kouventa.Products', 'Products') }}</span>
-<a href="{{ localized_url('/product/ai') }}" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</a>
-<a href="{{ localized_url('/product/customer-engagement') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</a>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #93A4B6">{{ $heroSubnavLabel }}</span>
+<a href="{{ localized_url('/product/ai') }}" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ $heroSubnavAi }}</a>
+<a href="{{ localized_url('/product/customer-engagement') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ $heroSubnavCe }}</a>
 </nav>
 
 <div class="kv-hero-section" style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 64px; align-items: center; position: relative">
@@ -1334,15 +1396,15 @@ $bottomCtaTitle = rtrim($page?->block('bottom_cta_title', $isIdLocale ? 'Satu pl
 <span style="position: absolute; left: 44px; top: 0; width: 34px; height: 34px; border-radius: 10px; background: #FBE6E1; border: 1px solid #F0C4BA; animation: kvScatterDrift2 2.8s ease-in-out .3s infinite alternate"></span>
 <span style="position: absolute; left: 86px; top: 18px; width: 34px; height: 34px; border-radius: 10px; background: #FBE6E1; border: 1px solid #F0C4BA; animation: kvScatterDrift3 3.5s ease-in-out .6s infinite alternate"></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ t('kouventa.AI tools are scattered across teams', 'AI tools are scattered across teams') }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Different teams use different AI tools based on their needs, creating a fragmented AI environment across the organization.', 'Different teams use different AI tools based on their needs, creating a fragmented AI environment across the organization.') }}</p>
+<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengesCards[0]['title'] ?? t('kouventa.AI tools are scattered across teams', 'AI tools are scattered across teams') }}</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengesCards[0]['desc'] ?? t('kouventa.Different teams use different AI tools based on their needs, creating a fragmented AI environment across the organization.', 'Different teams use different AI tools based on their needs, creating a fragmented AI environment across the organization.') }}</p>
 </article>
 <article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 0.8s both">
 <div aria-hidden="true" style="height: 56px; display: flex; align-items: center">
 <span style="width: 52px; height: 52px; border-radius: 14px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; transform-origin: 50% 80%; animation: kvWobbleLoop 3.2s ease-in-out infinite"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 7.5-2"></path></svg></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ t('kouventa.Limited control over AI usage', 'Limited control over AI usage') }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.With AI tools managed separately, it becomes harder to control how AI is used and ensure business data is handled securely.', 'With AI tools managed separately, it becomes harder to control how AI is used and ensure business data is handled securely.') }}</p>
+<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengesCards[1]['title'] ?? t('kouventa.Limited control over AI usage', 'Limited control over AI usage') }}</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengesCards[1]['desc'] ?? t('kouventa.With AI tools managed separately, it becomes harder to control how AI is used and ensure business data is handled securely.', 'With AI tools managed separately, it becomes harder to control how AI is used and ensure business data is handled securely.') }}</p>
 </article>
 <article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 1.4s both">
 <div aria-hidden="true" style="height: 56px; display: flex; align-items: flex-end; gap: 6px">
@@ -1351,8 +1413,8 @@ $bottomCtaTitle = rtrim($page?->block('bottom_cta_title', $isIdLocale ? 'Satu pl
 <span style="width: 16px; height: 42px; border-radius: 4px 4px 0 0; background: #D9735D; transform-origin: bottom; animation: kvBarFluctuate 2.3s ease-in-out .6s infinite alternate"></span>
 <span style="width: 16px; height: 56px; border-radius: 4px 4px 0 0; background: #B4412A; transform-origin: bottom; animation: kvBarFluctuate 2.7s ease-in-out .15s infinite alternate"></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ t('kouventa.AI usage & billing are hard to manage', 'AI usage & billing are hard to manage') }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.', 'Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.') }}</p>
+<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengesCards[2]['title'] ?? t('kouventa.AI usage & billing are hard to manage', 'AI usage & billing are hard to manage') }}</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengesCards[2]['desc'] ?? t('kouventa.Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.', 'Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.') }}</p>
 </article>
 </div>
 </section>
@@ -1360,19 +1422,8 @@ $bottomCtaTitle = rtrim($page?->block('bottom_cta_title', $isIdLocale ? 'Satu pl
 <!-- ============ ENTERPRISE AI JOURNEY ============ -->
 <section id="journey" class="kv-journey-section" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 14px; max-width: 900px">
-@php
-    $journeyPrefix = t('kouventa.Bring your AI together,', $isIdLocale ? 'Semua AI Anda di satu tempat,' : 'Bring your AI together,');
-    if ($isIdLocale && ($journeyPrefix === 'Satukan AI Anda,' || $journeyPrefix === 'Bring your AI together,' || empty($journeyPrefix))) {
-        $journeyPrefix = 'Semua AI Anda di satu tempat,';
-    }
-    $journeyMain = rtrim(t('kouventa.from answers to action', $isIdLocale ? 'dari menjawab sampai bertindak' : 'from answers to action'), '.');
-    if ($isIdLocale && ($journeyMain === 'dari jawaban hingga aksi' || $journeyMain === 'from answers to action' || empty($journeyMain) || $journeyMain === 'dari menjawab sampai bertindak.')) {
-        $journeyMain = 'dari menjawab sampai bertindak';
-    }
-    $journeyMain = rtrim($journeyMain, '.');
-@endphp
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $journeyPrefix }} <span style="color: #13803F; display: block">{{ $journeyMain }}</span></h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.', 'Kouventa AI helps businesses turn AI into practical business outcomes, from answering questions and uncovering insights to autonomously executing business processes across systems.') }}</p>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5866">{{ $journeySubtitle }}</p>
 </div>
 
 <!-- Journey Tablist -->
@@ -1579,105 +1630,94 @@ $bottomCtaTitle = rtrim($page?->block('bottom_cta_title', $isIdLocale ? 'Satu pl
 
 <!-- Wiki Info -->
 <div class="kv-product-info" x-show="product === 'wiki'">
-    <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">AI Company Wikipedia</span>
-    <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $isIdLocale ? 'Chatbot berbasis AI yang memahami konteks pertanyaan Anda dan memberi jawaban cepat dan akurat dalam hitungan detik, bersumber dari pengetahuan perusahaan, website, database, dan sumber data lain yang terhubung.' : t('kouventa.An AI chatbot that understands the context of your questions and delivers fast, accurate answers in seconds, drawing from your company knowledge, websites, databases, and other connected data sources.', 'An AI chatbot that understands the context of your questions and delivers fast, accurate answers in seconds, drawing from your company knowledge, websites, databases, and other connected data sources.') }}</span>
+    <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $productItems['wiki']['name'] ?? 'AI Company Wikipedia' }}</span>
+    <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $productItems['wiki']['headline'] ?? ($isIdLocale ? 'Chatbot berbasis AI yang memahami konteks pertanyaan Anda dan memberi jawaban cepat dan akurat dalam hitungan detik, bersumber dari pengetahuan perusahaan, website, database, dan sumber data lain yang terhubung.' : t('kouventa.An AI chatbot that understands the context of your questions and delivers fast, accurate answers in seconds, drawing from your company knowledge, websites, databases, and other connected data sources.', 'An AI chatbot that understands the context of your questions and delivers fast, accurate answers in seconds, drawing from your company knowledge, websites, databases, and other connected data sources.')) }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
+        @php
+            $wikiFeatures = $productItems['wiki']['features'] ?? [
+                ['title' => $isIdLocale ? 'Jawaban akurat, lebih cepat' : t('kouventa.Reliable answers, faster', 'Reliable answers, faster'), 'desc' => $isIdLocale ? 'Ajukan pertanyaan dan dapatkan informasi yang tepat dalam hitungan detik.' : t('kouventa.Ask a question and get the right information in seconds.', 'Ask a question and get the right information in seconds.')],
+                ['title' => $isIdLocale ? 'Sumber rujukan' : t('kouventa.Source citations', 'Source citations'), 'desc' => $isIdLocale ? 'Setiap jawaban disertai sumber agar lebih transparan.' : t('kouventa.Every answer is backed by sources for greater transparency.', 'Every answer is backed by sources for greater transparency.')],
+                ['title' => $isIdLocale ? '19+ format sumber data' : t('kouventa.19+ data source formats', '19+ data source formats'), 'desc' => $isIdLocale ? 'Cari di dokumen, database, website, dan sistem bisnis.' : t('kouventa.Search across documents, databases, websites, and business systems.', 'Search across documents, databases, websites, and business systems.')],
+                ['title' => $isIdLocale ? 'Pengalihan ke manusia' : t('kouventa.Human handover', 'Human handover'), 'desc' => $isIdLocale ? 'Alihkan percakapan ke agent manusia dengan mulus saat dibutuhkan.' : t('kouventa.Seamlessly hand conversations over to human agents when needed.', 'Seamlessly hand conversations over to human agents when needed.')],
+            ];
+        @endphp
+        @foreach($wikiFeatures as $wf)
         <div style="display: flex; gap: 12px; align-items: flex-start">
             <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Jawaban akurat, lebih cepat' : t('kouventa.Reliable answers, faster', 'Reliable answers, faster') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Ajukan pertanyaan dan dapatkan informasi yang tepat dalam hitungan detik.' : t('kouventa.Ask a question and get the right information in seconds.', 'Ask a question and get the right information in seconds.') }}</span></span>
+            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $wf['title'] }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $wf['desc'] }}</span></span>
         </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Sumber rujukan' : t('kouventa.Source citations', 'Source citations') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Setiap jawaban disertai sumber agar lebih transparan.' : t('kouventa.Every answer is backed by sources for greater transparency.', 'Every answer is backed by sources for greater transparency.') }}</span></span>
-        </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? '19+ format sumber data' : t('kouventa.19+ data source formats', '19+ data source formats') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Cari di dokumen, database, website, dan sistem bisnis.' : t('kouventa.Search across documents, databases, websites, and business systems.', 'Search across documents, databases, websites, and business systems.') }}</span></span>
-        </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Pengalihan ke manusia' : t('kouventa.Human handover', 'Human handover') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Alihkan percakapan ke agent manusia dengan mulus saat dibutuhkan.' : t('kouventa.Seamlessly hand conversations over to human agents when needed.', 'Seamlessly hand conversations over to human agents when needed.') }}</span></span>
-        </div>
+        @endforeach
     </div>
 </div>
 
 <!-- Task Force Info -->
 <div class="kv-product-info" x-show="product === 'taskforce'" x-cloak>
-    <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">AI Task Force</span>
-    <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $isIdLocale ? 'Solusi berbasis Agentic AI yang memahami tujuan bisnis Anda dan menjalankan workflow kompleks di sistem bisnis yang terhubung, menalar setiap tugas dan meminta persetujuan Anda di tahap penting.' : t('kouventa.An Agentic AI solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.', 'An Agentic AI solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.') }}</span>
+    <span style="font-size: 30px; line-line: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $productItems['taskforce']['name'] ?? 'AI Task Force' }}</span>
+    <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $productItems['taskforce']['headline'] ?? ($isIdLocale ? 'Solusi berbasis Agentic AI yang memahami tujuan bisnis Anda dan menjalankan workflow kompleks di sistem bisnis yang terhubung, menalar setiap tugas dan meminta persetujuan Anda di tahap penting.' : t('kouventa.An Agentic AI solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.', 'An Agentic AI solution that understands your business objectives and executes complex workflows across connected business systems, reasoning through tasks and seeking your approval at critical steps.')) }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
+        @php
+            $taskforceFeatures = $productItems['taskforce']['features'] ?? [
+                ['title' => $isIdLocale ? 'Otomasi proses menyeluruh' : t('kouventa.Full process automation', 'Full process automation'), 'desc' => $isIdLocale ? 'Otomasi proses bisnis lintas sistem.' : t('kouventa.Automate business processes across multiple systems.', 'Automate business processes across multiple systems.')],
+                ['title' => $isIdLocale ? 'Analisis yang memahami konteks' : t('kouventa.Contextual analysis', 'Contextual analysis'), 'desc' => $isIdLocale ? 'Menganalisis konteks dan data untuk menentukan langkah terbaik.' : t('kouventa.Analyze context and data to determine the best course of action.', 'Analyze context and data to determine the best course of action.')],
+                ['title' => $isIdLocale ? 'Kolaborasi multi agent' : t('kouventa.Multi agent collaboration', 'Multi agent collaboration'), 'desc' => $isIdLocale ? 'Agent dengan keahlian khusus bekerja sama menyelesaikan tugas kompleks.' : t('kouventa.Specialized agents work together to complete complex tasks.', 'Specialized agents work together to complete complex tasks.')],
+                ['title' => $isIdLocale ? 'Konektor MCP' : t('kouventa.MCP connectors', 'MCP connectors'), 'desc' => $isIdLocale ? 'Jalankan aksi di ERP, CRM, OMS, HRIS, dan lainnya.' : t('kouventa.Execute actions across ERP, CRM, OMS, HRIS, and more.', 'Execute actions across ERP, CRM, OMS, HRIS, and more.')],
+                ['title' => $isIdLocale ? 'Gerbang persetujuan manusia' : t('kouventa.Human approval gates', 'Human approval gates'), 'desc' => $isIdLocale ? 'Tinjau dan setujui aksi penting sebelum dijalankan.' : t('kouventa.Review and approve critical actions before they run.', 'Review and approve critical actions before they run.')],
+            ];
+        @endphp
+        @foreach($taskforceFeatures as $tf)
         <div style="display: flex; gap: 12px; align-items: flex-start">
             <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Otomasi proses menyeluruh' : t('kouventa.Full process automation', 'Full process automation') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Otomasi proses bisnis lintas sistem.' : t('kouventa.Automate business processes across multiple systems.', 'Automate business processes across multiple systems.') }}</span></span>
+            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $tf['title'] }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $tf['desc'] }}</span></span>
         </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Analisis yang memahami konteks' : t('kouventa.Contextual analysis', 'Contextual analysis') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Menganalisis konteks dan data untuk menentukan langkah terbaik.' : t('kouventa.Analyze context and data to determine the best course of action.', 'Analyze context and data to determine the best course of action.') }}</span></span>
-        </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Kolaborasi multi agent' : t('kouventa.Multi agent collaboration', 'Multi agent collaboration') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Agent dengan keahlian khusus bekerja sama menyelesaikan tugas kompleks.' : t('kouventa.Specialized agents work together to complete complex tasks.', 'Specialized agents work together to complete complex tasks.') }}</span></span>
-        </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Konektor MCP' : t('kouventa.MCP connectors', 'MCP connectors') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Jalankan aksi di ERP, CRM, OMS, HRIS, dan lainnya.' : t('kouventa.Execute actions across ERP, CRM, OMS, HRIS, and more.', 'Execute actions across ERP, CRM, OMS, HRIS, and more.') }}</span></span>
-        </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Gerbang persetujuan manusia' : t('kouventa.Human approval gates', 'Human approval gates') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Tinjau dan setujui aksi penting sebelum dijalankan.' : t('kouventa.Review and approve critical actions before they run.', 'Review and approve critical actions before they run.') }}</span></span>
-        </div>
+        @endforeach
     </div>
 </div>
 
 <!-- Playground Info -->
 <div class="kv-product-info" x-show="product === 'playground'" x-cloak>
-    <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">Chat Playground</span>
-    <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $isIdLocale ? 'Chat Playground adalah workspace terkontrol untuk chat dengan AI Company Wikipedia, serta memicu, menjalankan, dan memantau agent AI Task Force, secara aman, efisien, dan sesuai batasan Anda.' : t('kouventa.Chat Playground is your controlled workspace to chat with AI Company Wikipedia, and to trigger, run, and monitor AI Task Force agents, securely, efficiently, and within your boundaries.', 'Chat Playground is your controlled workspace to chat with AI Company Wikipedia, and to trigger, run, and monitor AI Task Force agents, securely, efficiently, and within your boundaries.') }}</span>
+    <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $productItems['playground']['name'] ?? 'Chat Playground' }}</span>
+    <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $productItems['playground']['headline'] ?? ($isIdLocale ? 'Chat Playground adalah workspace terkontrol untuk chat dengan AI Company Wikipedia, serta memicu, menjalankan, dan memantau agent AI Task Force, secara aman, efisien, dan sesuai batasan Anda.' : t('kouventa.Chat Playground is your controlled workspace to chat with AI Company Wikipedia, and to trigger, run, and monitor AI Task Force agents, securely, efficiently, and within your boundaries.', 'Chat Playground is your controlled workspace to chat with AI Company Wikipedia, and to trigger, run, and monitor AI Task Force agents, securely, efficiently, and within your boundaries.')) }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
+        @php
+            $playgroundFeatures = $productItems['playground']['features'] ?? [
+                ['title' => $isIdLocale ? 'Picu workflow agentic AI' : t('kouventa.Trigger agentic AI workflows', 'Trigger agentic AI workflows'), 'desc' => $isIdLocale ? 'Menganalisis, bertindak, dan memberi hasil di tools yang sudah Anda pakai, termasuk email, Slack, dashboard, dan lainnya.' : t('kouventa.Analyze, act, and deliver results across your existing tools, including email, Slack, dashboards, and more.', 'Analyze, act, and deliver results across your existing tools, including email, Slack, dashboards, and more.')],
+                ['title' => $isIdLocale ? 'Runner & agent yang terkontrol' : t('kouventa.Controlled runners & agents', 'Controlled runners & agents'), 'desc' => $isIdLocale ? 'Gunakan hanya yang sudah diizinkan admin, seperti runner yang disetujui dan agent yang diizinkan.' : t('kouventa.Use only what admins have authorized, such as approved runners and permitted agents.', 'Use only what admins have authorized, such as approved runners and permitted agents.')],
+                ['title' => $isIdLocale ? 'Akses berbasis hierarki peran' : t('kouventa.Access by role & hierarchy', 'Access by role & hierarchy'), 'desc' => $isIdLocale ? 'Beri akses yang tepat ke orang yang tepat berdasarkan peran, hierarki, dan departemen.' : t('kouventa.Give the right access to the right people based on role, hierarchy, and department.', 'Give the right access to the right people based on role, hierarchy, and department.')],
+                ['title' => $isIdLocale ? 'Kontrol biaya & manajemen budget' : t('kouventa.Cost control & budget management', 'Cost control & budget management'), 'desc' => $isIdLocale ? 'Pantau pemakaian dan pengeluaran secara real time dengan budget per pengguna, batas pemakaian, dan peringatan saat melebihi batas.' : t('kouventa.Track usage and spending in real time with budgets per user, limits, and overage alerts.', 'Track usage and spending in real time with budgets per user, limits, and overage alerts.')],
+            ];
+        @endphp
+        @foreach($playgroundFeatures as $pf)
         <div style="display: flex; gap: 12px; align-items: flex-start">
             <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Picu workflow agentic AI' : t('kouventa.Trigger agentic AI workflows', 'Trigger agentic AI workflows') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Menganalisis, bertindak, dan memberi hasil di tools yang sudah Anda pakai, termasuk email, Slack, dashboard, dan lainnya.' : t('kouventa.Analyze, act, and deliver results across your existing tools, including email, Slack, dashboards, and more.', 'Analyze, act, and deliver results across your existing tools, including email, Slack, dashboards, and more.') }}</span></span>
+            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $pf['title'] }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $pf['desc'] }}</span></span>
         </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Runner & agent yang terkontrol' : t('kouventa.Controlled runners & agents', 'Controlled runners & agents') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Gunakan hanya yang sudah diizinkan admin, seperti runner yang disetujui dan agent yang diizinkan.' : t('kouventa.Use only what admins have authorized, such as approved runners and permitted agents.', 'Use only what admins have authorized, such as approved runners and permitted agents.') }}</span></span>
-        </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Akses berbasis hierarki peran' : t('kouventa.Access by role & hierarchy', 'Access by role & hierarchy') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Beri akses yang tepat ke orang yang tepat berdasarkan peran, hierarki, dan departemen.' : t('kouventa.Give the right access to the right people based on role, hierarchy, and department.', 'Give the right access to the right people based on role, hierarchy, and department.') }}</span></span>
-        </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Kontrol biaya & manajemen budget' : t('kouventa.Cost control & budget management', 'Cost control & budget management') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Pantau pemakaian dan pengeluaran secara real time dengan budget per pengguna, batas pemakaian, dan peringatan saat melebihi batas.' : t('kouventa.Track usage and spending in real time with budgets per user, limits, and overage alerts.', 'Track usage and spending in real time with budgets per user, limits, and overage alerts.') }}</span></span>
-        </div>
+        @endforeach
     </div>
 </div>
 
 <!-- TaskO Info -->
 <div class="kv-product-info" x-show="product === 'workflow'" x-cloak>
     <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
-        <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">TaskO</span>
-        <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.06em; padding: 6px 10px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ $isIdLocale ? 'SEGERA HADIR' : t('kouventa.COMING SOON', 'COMING SOON') }}</span>
+        <span style="font-size: 30px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $productItems['workflow']['name'] ?? 'TaskO' }}</span>
+        <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.06em; padding: 6px 10px; border-radius: 999px; background: #FFE9C7; color: #7A4A00">{{ $productItems['workflow']['badge'] ?? ($isIdLocale ? 'SEGERA HADIR' : t('kouventa.COMING SOON', 'COMING SOON')) }}</span>
     </div>
-    <span style="font-size: 13px; font-weight: 700; color: #13803F">{{ $isIdLocale ? 'Bagian dari AI Task Force' : t('kouventa.Part of AI Task Force', 'Part of AI Task Force') }}</span>
-    <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $isIdLocale ? 'TaskO (Task Automation) memungkinkan bisnis merancang dan mengotomasi proses secara menyeluruh dengan menghubungkan tugas, agent AI, sistem bisnis, dan data, tanpa coding yang rumit.' : t('kouventa.TaskO (Task Automation) lets businesses design and automate entire processes by connecting tasks, AI agents, business systems, and data, without complex coding.', 'TaskO (Task Automation) lets businesses design and automate entire processes by connecting tasks, AI agents, business systems, and data, without complex coding.') }}</span>
+    <span style="font-size: 13px; font-weight: 700; color: #13803F">{{ $productItems['workflow']['tag'] ?? ($isIdLocale ? 'Bagian dari AI Task Force' : t('kouventa.Part of AI Task Force', 'Part of AI Task Force')) }}</span>
+    <span style="font-size: 16px; line-height: 1.6; color: #4A5866">{{ $productItems['workflow']['headline'] ?? ($isIdLocale ? 'TaskO (Task Automation) memungkinkan bisnis merancang dan mengotomasi proses secara menyeluruh dengan menghubungkan tugas, agent AI, sistem bisnis, dan data, tanpa coding yang rumit.' : t('kouventa.TaskO (Task Automation) lets businesses design and automate entire processes by connecting tasks, AI agents, business systems, and data, without complex coding.', 'TaskO (Task Automation) lets businesses design and automate entire processes by connecting tasks, AI agents, business systems, and data, without complex coding.')) }}</span>
     <div style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid #E3E8E6">
+        @php
+            $workflowFeatures = $productItems['workflow']['features'] ?? [
+                ['title' => $isIdLocale ? 'Builder visual drag & drop' : t('kouventa.Visual drag & drop builder', 'Visual drag & drop builder'), 'desc' => $isIdLocale ? 'Rancang workflow secara visual dengan blok dan konektor siap pakai.' : t('kouventa.Design workflows visually using prebuilt blocks and connectors.', 'Design workflows visually using prebuilt blocks and connectors.')],
+                ['title' => $isIdLocale ? 'Builder agent tanpa coding' : t('kouventa.No code agent builder', 'No code agent builder'), 'desc' => $isIdLocale ? 'Konfigurasikan agent AI sesuai peran, tentukan perilakunya, pasang guardrails, dan uji di skenario nyata.' : t('kouventa.Configure AI agents for specific roles, define behavior, set guardrails, and test in real scenarios.', 'Configure AI agents for specific roles, define behavior, set guardrails, and test in real scenarios.')],
+                ['title' => $isIdLocale ? 'Hubungkan sistem & data Anda' : t('kouventa.Connect your systems & data', 'Connect your systems & data'), 'desc' => $isIdLocale ? 'Integrasikan dengan database, API, aplikasi SaaS, dan sistem enterprise.' : t('kouventa.Integrate with databases, APIs, SaaS apps, and enterprise systems.', 'Integrate with databases, APIs, SaaS apps, and enterprise systems.')],
+                ['title' => $isIdLocale ? 'Guardrails & persetujuan' : t('kouventa.Guardrails & approvals', 'Guardrails & approvals'), 'desc' => $isIdLocale ? 'Tambahkan validasi, persetujuan manusia, dan kebijakan agar eksekusi aman dan sesuai aturan.' : t('kouventa.Add validations, human approvals, and policies to ensure safe and compliant execution.', 'Add validations, human approvals, and policies to ensure safe and compliant execution.')],
+            ];
+        @endphp
+        @foreach($workflowFeatures as $wf2)
         <div style="display: flex; gap: 12px; align-items: flex-start">
             <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Builder visual drag & drop' : t('kouventa.Visual drag & drop builder', 'Visual drag & drop builder') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Rancang workflow secara visual dengan blok dan konektor siap pakai.' : t('kouventa.Design workflows visually using prebuilt blocks and connectors.', 'Design workflows visually using prebuilt blocks and connectors.') }}</span></span>
+            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $wf2['title'] }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $wf2['desc'] }}</span></span>
         </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Builder agent tanpa coding' : t('kouventa.No code agent builder', 'No code agent builder') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Konfigurasikan agent AI sesuai peran, tentukan perilakunya, pasang guardrails, dan uji di skenario nyata.' : t('kouventa.Configure AI agents for specific roles, define behavior, set guardrails, and test in real scenarios.', 'Configure AI agents for specific roles, define behavior, set guardrails, and test in real scenarios.') }}</span></span>
-        </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Hubungkan sistem & data Anda' : t('kouventa.Connect your systems & data', 'Connect your systems & data') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Integrasikan dengan database, API, aplikasi SaaS, dan sistem enterprise.' : t('kouventa.Integrate with databases, APIs, SaaS apps, and enterprise systems.', 'Integrate with databases, APIs, SaaS apps, and enterprise systems.') }}</span></span>
-        </div>
-        <div style="display: flex; gap: 12px; align-items: flex-start">
-            <span style="width: 24px; height: 24px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
-            <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 700">{{ $isIdLocale ? 'Guardrails & persetujuan' : t('kouventa.Guardrails & approvals', 'Guardrails & approvals') }}</span><span style="font-size: 14px; line-height: 1.5; color: #4A5866">{{ $isIdLocale ? 'Tambahkan validasi, persetujuan manusia, dan kebijakan agar eksekusi aman dan sesuai aturan.' : t('kouventa.Add validations, human approvals, and policies to ensure safe and compliant execution.', 'Add validations, human approvals, and policies to ensure safe and compliant execution.') }}</span></span>
-        </div>
+        @endforeach
     </div>
 </div>
 
@@ -1812,37 +1852,37 @@ $bottomCtaTitle = rtrim($page?->block('bottom_cta_title', $isIdLocale ? 'Satu pl
 
 <!-- ============ PLATFORM CONTROL ============ -->
 <section style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 40px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Govern AI across your organization.', 'Govern AI across your organization.') }}</h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $governanceTitle }}</h2>
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="M9 12h6"></path></svg>
-<span style="font-size: 19px; font-weight: 700">AI Guardrails</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Control what AI can access, process, say, and do based on defined rules and boundaries, including masking sensitive personally identifiable information (PII).', 'Control what AI can access, process, say, and do based on defined rules and boundaries, including masking sensitive personally identifiable information (PII).') }}</span>
+<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[0]['title'] ?? 'AI Guardrails' }}</span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[0]['desc'] ?? t('kouventa.Control what AI can access, process, say, and do based on defined rules and boundaries, including masking sensitive personally identifiable information (PII).', 'Control what AI can access, process, say, and do based on defined rules and boundaries, including masking sensitive personally identifiable information (PII).') }}</span>
 </div>
 <div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
-<span style="font-size: 19px; font-weight: 700">{{ t('kouventa.Role-Based Access', 'Role-Based Access') }}</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Control access to AI resources and capabilities by user role, hierarchy, and permissions.', 'Control access to AI resources and capabilities by user role, hierarchy, and permissions.') }}</span>
+<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[1]['title'] ?? t('kouventa.Role-Based Access', 'Role-Based Access') }}</span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[1]['desc'] ?? t('kouventa.Control access to AI resources and capabilities by user role, hierarchy, and permissions.', 'Control access to AI resources and capabilities by user role, hierarchy, and permissions.') }}</span>
 </div>
 <div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>
-<span style="font-size: 19px; font-weight: 700">{{ t('kouventa.Usage Analytics', 'Usage Analytics') }}</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Track AI usage and activity to understand adoption, usage patterns, and resource consumption.', 'Track AI usage and activity to understand adoption, usage patterns, and resource consumption.') }}</span>
+<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[2]['title'] ?? t('kouventa.Usage Analytics', 'Usage Analytics') }}</span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[2]['desc'] ?? t('kouventa.Track AI usage and activity to understand adoption, usage patterns, and resource consumption.', 'Track AI usage and activity to understand adoption, usage patterns, and resource consumption.') }}</span>
 </div>
 <div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0-4 10.5V17h8v-3.5A6 6 0 0 0 12 3Z"></path><path d="M9 21h6"></path></svg>
-<span style="font-size: 19px; font-weight: 700">AI Learning</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Use feedback and corrections to continuously improve AI responses and performance.', 'Use feedback and corrections to continuously improve AI responses and performance.') }}</span>
+<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[3]['title'] ?? 'AI Learning' }}</span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[3]['desc'] ?? t('kouventa.Use feedback and corrections to continuously improve AI responses and performance.', 'Use feedback and corrections to continuously improve AI responses and performance.') }}</span>
 </div>
 <div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h10a1 1 0 0 1 1 1v15H8a3 3 0 0 1-3-3V8"></path><path d="M5 8a3 3 0 0 1 3-4M11 9h6M11 13h6M11 17h4"></path></svg>
-<span style="font-size: 19px; font-weight: 700">Audit Trail Logs</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Record user activities, access, actions, and outcomes for traceability and governance.', 'Record user activities, access, actions, and outcomes for traceability and governance.') }}</span>
+<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[4]['title'] ?? 'Audit Trail Logs' }}</span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[4]['desc'] ?? t('kouventa.Record user activities, access, actions, and outcomes for traceability and governance.', 'Record user activities, access, actions, and outcomes for traceability and governance.') }}</span>
 </div>
 <div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="m9 15 2 2 4-4"></path></svg>
-<span style="font-size: 19px; font-weight: 700">{{ t('kouventa.Knowledge Change Management', 'Knowledge Change Management') }}</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Require changes to AI resources to go through review and approval before they are applied.', 'Require changes to AI resources to go through review and approval before they are applied.') }}</span>
+<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[5]['title'] ?? t('kouventa.Knowledge Change Management', 'Knowledge Change Management') }}</span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[5]['desc'] ?? t('kouventa.Require changes to AI resources to go through review and approval before they are applied.', 'Require changes to AI resources to go through review and approval before they are applied.') }}</span>
 </div>
 </div>
 <div class="kv-hover kv-integrate-card" style="background: #071C33; color: #FFFFFF; border: 1px solid #071C33; border-radius: 18px; padding: 28px 0; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
@@ -1879,31 +1919,31 @@ $channelsDbl = array_merge($channels, $channels);
 <section class="kv-why-section">
 <div aria-hidden="true" style="position: absolute; left: -200px; bottom: -320px; width: 700px; height: 700px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
 <div aria-hidden="true" style="position: absolute; right: -160px; top: -260px; width: 560px; height: 560px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
-<h2 class="kv-why-heading">{{ t('kouventa.What held your AI back,', 'What held your AI back,') }} <span style="color: #2BD46A">{{ rtrim(t('kouventa.now solved', 'now solved'), '.') }}</span></h2>
+<h2 class="kv-why-heading">{{ $whyPrefix }} <span style="color: #2BD46A">{{ $whyMain }}</span></h2>
 <div class="kv-why-grid">
 <div class="kv-why-card">
 <span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span>
-<h3 class="kv-why-title" style="margin: 0">Multi-Model AI</h3>
-<span class="kv-why-desc">{{ t('kouventa.Access multiple AI models and choose the right model for each business need, all in one platform.', 'Access multiple AI models and choose the right model for each business need, all in one platform.') }}</span>
-<span class="kv-why-badge">{{ t('kouventa.Solves: scattered AI tools', 'Solves: scattered AI tools') }}</span>
+<h3 class="kv-why-title" style="margin: 0">{{ $whyCards[0]['title'] ?? 'Multi-Model AI' }}</h3>
+<span class="kv-why-desc">{{ $whyCards[0]['desc'] ?? t('kouventa.Access multiple AI models and choose the right model for each business need, all in one platform.', 'Access multiple AI models and choose the right model for each business need, all in one platform.') }}</span>
+<span class="kv-why-badge">{{ $whyCards[0]['badge'] ?? t('kouventa.Solves: scattered AI tools', 'Solves: scattered AI tools') }}</span>
 </div>
 <div class="kv-why-card">
 <span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg></span>
-<h3 class="kv-why-title" style="margin: 0">{{ t('kouventa.Controlled AI', 'Controlled AI') }}</h3>
-<span class="kv-why-desc">{{ t('kouventa.Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.', 'Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.') }}</span>
-<span class="kv-why-badge">{{ t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
+<h3 class="kv-why-title" style="margin: 0">{{ $whyCards[1]['title'] ?? t('kouventa.Controlled AI', 'Controlled AI') }}</h3>
+<span class="kv-why-desc">{{ $whyCards[1]['desc'] ?? t('kouventa.Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.', 'Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.') }}</span>
+<span class="kv-why-badge">{{ $whyCards[1]['badge'] ?? t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
 </div>
 <div class="kv-why-card">
 <span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
-<h3 class="kv-why-title" style="margin: 0">{{ t('kouventa.Secure AI', 'Secure AI') }}</h3>
-<span class="kv-why-desc">{{ t('kouventa.Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.', 'Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.') }}</span>
-<span class="kv-why-badge">{{ t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
+<h3 class="kv-why-title" style="margin: 0">{{ $whyCards[2]['title'] ?? t('kouventa.Secure AI', 'Secure AI') }}</h3>
+<span class="kv-why-desc">{{ $whyCards[2]['desc'] ?? t('kouventa.Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.', 'Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.') }}</span>
+<span class="kv-why-badge">{{ $whyCards[2]['badge'] ?? t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
 </div>
 <div class="kv-why-card">
 <span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg></span>
-<h3 class="kv-why-title" style="margin: 0">{{ t('kouventa.Budget Management', 'Budget Management') }}</h3>
-<span class="kv-why-desc">{{ t('kouventa.Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.', 'Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.') }}</span>
-<span class="kv-why-badge">{{ t('kouventa.Solves: hard-to-manage billing', 'Solves: hard-to-manage billing') }}</span>
+<h3 class="kv-why-title" style="margin: 0">{{ $whyCards[3]['title'] ?? t('kouventa.Budget Management', 'Budget Management') }}</h3>
+<span class="kv-why-desc">{{ $whyCards[3]['desc'] ?? t('kouventa.Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.', 'Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.') }}</span>
+<span class="kv-why-badge">{{ $whyCards[3]['badge'] ?? t('kouventa.Solves: hard-to-manage billing', 'Solves: hard-to-manage billing') }}</span>
 </div>
 </div>
 </section>
@@ -1913,8 +1953,8 @@ $channelsDbl = array_merge($channels, $channels);
 <div class="kv-panel" style="background: #2BD46A; border-radius: 28px; padding: 72px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 32px; color: #06251A">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
 <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap">
-<a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
-<a href="{{ localized_url('/pricing?tab=ai') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>
+<a href="{{ localized_url($ctaPrimary['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ $ctaPrimary['text'] ?? ($isIdLocale ? 'Jadwalkan demo' : t('kouventa.Book a demo', 'Book a demo')) }}</a>
+<a href="{{ localized_url($ctaSecondary['url'] ?? '/pricing?tab=ai') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ $ctaSecondary['text'] ?? ($isIdLocale ? 'Lihat harga' : t('kouventa.See pricing', 'See pricing')) }}</a>
 </div>
 </div>
 </section>

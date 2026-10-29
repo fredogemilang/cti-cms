@@ -1,0 +1,28 @@
+{
+    "name": "Kouventa Pages",
+    "slug": "kouventa-pages",
+    "version": "1.0.0",
+    "description": "Dedicated section and repeater management for Kouventa interactive product, solution, and pricing pages.",
+    "author": "Kouventa Team",
+    "namespace": "Plugins\\KouventaPages",
+    "provider": "Plugins\\KouventaPages\\Providers\\KouventaPagesServiceProvider",
+    "permissions": {
+        "resources": [
+            {
+                "module": "kouventa_pages",
+                "actions": [
+                    "view",
+                    "edit",
+                    "publish"
+                ],
+                "icon": "auto_stories",
+                "description": "Manage Kouventa interactive pages"
+            }
+        ]
+    },
+    "requires": {
+        "php": ">=8.2",
+        "cms": ">=1.0"
+    }
+}
+

@@ -42,6 +42,7 @@
             "Database\\Seeders\\": "database/seeders/",
             "Plugins\\GoogleSiteKit\\": "plugins/google-site-kit/src/",
             "Plugins\\Posts\\": "plugins/posts/src/",
+            "Plugins\\KouventaPages\\": "plugins/kouventa-pages/src/",
             "Plugins\\": "plugins/",
             "Themes\\": "themes/"
         },
