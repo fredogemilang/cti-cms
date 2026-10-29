@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Plugins\KouventaPages\Models\KouventaPage;
 use Plugins\KouventaPages\Schemas\ProductAiSchema;
 use Plugins\KouventaPages\Schemas\ProductCeSchema;
+use Plugins\KouventaPages\Schemas\SolutionAiSchema;
+use Plugins\KouventaPages\Schemas\SolutionCeSchema;
 
 class KouventaPagesSeeder extends Seeder
 {
@@ -154,6 +156,124 @@ class KouventaPagesSeeder extends Seeder
         if (\Illuminate\Support\Facades\Schema::hasTable('search_index')) {
             \App\Models\SearchIndex::where('searchable_type', Page::class)
                 ->where('searchable_id', 3)
+                ->delete();
+        }
+
+        // 4. Seed / Migrate: Solutions AI (ID 4 in pages)
+        $existingSolAiPage = Page::where('slug', 'solutions/ai')->first();
+
+        $enSolAiSections = SolutionAiSchema::getDefaults('en');
+        $idSolAiSections = SolutionAiSchema::getDefaults('id');
+
+        $kouventaSolAiPage = KouventaPage::updateOrCreate(
+            ['slug' => 'solutions/ai'],
+            [
+                'title' => 'AI Solutions',
+                'template' => 'solution-ai',
+                'status' => 'published',
+                'published_at' => now(),
+                'sections' => $enSolAiSections,
+                'translations' => [
+                    'id' => [
+                        'title' => 'AI Solutions',
+                        'slug' => 'solutions/ai',
+                        'sections' => $idSolAiSections,
+                    ],
+                ],
+                'seo' => $existingSolAiPage?->seo,
+            ]
+        );
+
+        if ($existingSolAiPage) {
+            $oldSeo = SeoMeta::where('seoable_type', Page::class)
+                ->where('seoable_id', $existingSolAiPage->id)
+                ->get();
+
+            foreach ($oldSeo as $seoRow) {
+                $seoAttrs = collect($seoRow->toArray())
+                    ->except(['id', 'seoable_type', 'seoable_id', 'created_at', 'updated_at'])
+                    ->toArray();
+
+                SeoMeta::updateOrCreate(
+                    [
+                        'seoable_type' => KouventaPage::class,
+                        'seoable_id' => $kouventaSolAiPage->id,
+                        'locale' => $seoRow->locale,
+                    ],
+                    $seoAttrs
+                );
+            }
+
+            $kouventaSolAiPage->saveRevision('Initial baseline migration from Core Page');
+
+            // Takeout: Delete old Page ID 4
+            DB::table('page_blocks')->where('page_id', $existingSolAiPage->id)->delete();
+            DB::table('page_revisions')->where('page_id', $existingSolAiPage->id)->delete();
+            DB::table('pages')->where('id', $existingSolAiPage->id)->delete();
+        }
+
+        if (\Illuminate\Support\Facades\Schema::hasTable('search_index')) {
+            \App\Models\SearchIndex::where('searchable_type', Page::class)
+                ->where('searchable_id', 4)
+                ->delete();
+        }
+
+        // 5. Seed / Migrate: Solutions Customer Engagement (ID 5 in pages)
+        $existingSolCePage = Page::where('slug', 'solutions/customer-engagement')->first();
+
+        $enSolCeSections = SolutionCeSchema::getDefaults('en');
+        $idSolCeSections = SolutionCeSchema::getDefaults('id');
+
+        $kouventaSolCePage = KouventaPage::updateOrCreate(
+            ['slug' => 'solutions/customer-engagement'],
+            [
+                'title' => 'Customer Engagement Solutions',
+                'template' => 'solution-ce',
+                'status' => 'published',
+                'published_at' => now(),
+                'sections' => $enSolCeSections,
+                'translations' => [
+                    'id' => [
+                        'title' => 'Customer Engagement Solutions',
+                        'slug' => 'solutions/customer-engagement',
+                        'sections' => $idSolCeSections,
+                    ],
+                ],
+                'seo' => $existingSolCePage?->seo,
+            ]
+        );
+
+        if ($existingSolCePage) {
+            $oldSeo = SeoMeta::where('seoable_type', Page::class)
+                ->where('seoable_id', $existingSolCePage->id)
+                ->get();
+
+            foreach ($oldSeo as $seoRow) {
+                $seoAttrs = collect($seoRow->toArray())
+                    ->except(['id', 'seoable_type', 'seoable_id', 'created_at', 'updated_at'])
+                    ->toArray();
+
+                SeoMeta::updateOrCreate(
+                    [
+                        'seoable_type' => KouventaPage::class,
+                        'seoable_id' => $kouventaSolCePage->id,
+                        'locale' => $seoRow->locale,
+                    ],
+                    $seoAttrs
+                );
+            }
+
+            $kouventaSolCePage->saveRevision('Initial baseline migration from Core Page');
+
+            // Takeout: Delete old Page ID 5
+            DB::table('page_blocks')->where('page_id', $existingSolCePage->id)->delete();
+            DB::table('page_revisions')->where('page_id', $existingSolCePage->id)->delete();
+            DB::table('pages')->where('id', $existingSolCePage->id)->delete();
+        }
+
+        if (\Illuminate\Support\Facades\Schema::hasTable('search_index')) {
+            \App\Models\SearchIndex::where('searchable_type', Page::class)
+                ->where('searchable_id', 5)
                 ->delete();
         }
     }

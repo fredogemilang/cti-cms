@@ -143,6 +143,10 @@
                     @include('kouventa-pages::livewire.schemas.product-ai')
                 @elseif($page->template === 'product-ce' || $page->slug === 'product/customer-engagement')
                     @include('kouventa-pages::livewire.schemas.product-ce')
+                @elseif($page->template === 'solution-ai' || $page->slug === 'solutions/ai')
+                    @include('kouventa-pages::livewire.schemas.solution-ai')
+                @elseif($page->template === 'solution-ce' || $page->slug === 'solutions/customer-engagement')
+                    @include('kouventa-pages::livewire.schemas.solution-ce')
                 @endif
             @endif
 

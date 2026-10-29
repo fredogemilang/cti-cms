@@ -12,6 +12,8 @@ use Plugins\KouventaPages\Models\KouventaPage;
 use Plugins\KouventaPages\Models\KouventaPageRevision;
 use Plugins\KouventaPages\Schemas\ProductAiSchema;
 use Plugins\KouventaPages\Schemas\ProductCeSchema;
+use Plugins\KouventaPages\Schemas\SolutionAiSchema;
+use Plugins\KouventaPages\Schemas\SolutionCeSchema;
 
 class PageEditor extends Component
 {
@@ -223,6 +225,14 @@ class PageEditor extends Component
             return ProductCeSchema::getTabs();
         }
 
+        if ($this->page->template === 'solution-ai' || $this->page->slug === 'solutions/ai') {
+            return SolutionAiSchema::getTabs();
+        }
+
+        if ($this->page->template === 'solution-ce' || $this->page->slug === 'solutions/customer-engagement') {
+            return SolutionCeSchema::getTabs();
+        }
+
         return [
             ['id' => 'hero', 'label' => 'Hero Section', 'icon' => 'home'],
             ['id' => 'seo', 'label' => 'SEO & Settings', 'icon' => 'travel_explore'],
@@ -237,6 +247,14 @@ class PageEditor extends Component
 
         if ($this->page->template === 'product-ce' || $this->page->slug === 'product/customer-engagement') {
             return ProductCeSchema::getDefaults($locale);
+        }
+
+        if ($this->page->template === 'solution-ai' || $this->page->slug === 'solutions/ai') {
+            return SolutionAiSchema::getDefaults($locale);
+        }
+
+        if ($this->page->template === 'solution-ce' || $this->page->slug === 'solutions/customer-engagement') {
+            return SolutionCeSchema::getDefaults($locale);
         }
 
         return [];

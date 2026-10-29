@@ -2,11 +2,52 @@
 
 @section('content')
 @php
-    $heroTitle = $page?->titleBlock('hero_title', ['prefix' => 'From knowledge to action', 'main' => 'with AI']);
-    $heroSubtitle = rtrim($page?->block('hero_subtitle', 'From knowledge retrieval to process automation, Kouventa AI helps businesses turn information into actionable insights and automate business processes with AI-powered autonomous agents'), '.');
-    $heroCta = $page?->buttonBlock('hero_cta', ['text' => 'Request a Demo', 'url' => '/book-demo']);
-    $bottomCtaTitle = rtrim($page?->block('bottom_cta_title', 'Start simple. Scale with confidence'), '.');
-    $bottomCtaSubtitle = rtrim($page?->block('bottom_cta_subtitle', "Begin with everyday AI for your employees, governed by your organization. Grow into AI agents when you're ready"), '.');
+    $isIdLocale = app()->getLocale() === 'id';
+    $isPluginActive = is_plugin_active('kouventa-pages');
+
+    // Section 1: Hero & Subnav
+    $sHero = $page?->section('hero', []);
+    $heroSubnavLabel = $sHero['subnav']['label'] ?? ($isIdLocale ? 'Solusi' : 'Solutions');
+    $heroSubnavAi = $sHero['subnav']['ai_label'] ?? 'Artificial Intelligence';
+    $heroSubnavCe = $sHero['subnav']['ce_label'] ?? 'Customer Engagement';
+    $heroTitle = $sHero['title'] ?? [
+        'prefix' => $isIdLocale ? 'Dari pengetahuan ke aksi' : 'From knowledge to action',
+        'main' => $isIdLocale ? 'dengan AI.' : 'with AI.',
+    ];
+    $heroSubtitle = rtrim($sHero['subtitle'] ?? ($isIdLocale
+        ? 'Dari pencarian pengetahuan hingga otomasi proses, Kouventa AI membantu bisnis mengubah informasi menjadi insight yang bisa ditindaklanjuti dan mengotomasi proses bisnis dengan agent AI yang otonom.'
+        : 'From knowledge retrieval to process automation, Kouventa AI helps businesses turn information into actionable insights and automate business processes with AI-powered autonomous agents.'), '.');
+    $heroCta = $sHero['primary_cta'] ?? [
+        'text' => $isIdLocale ? 'Minta Demo' : 'Request a Demo',
+        'url' => '/book-demo',
+    ];
+    $heroSecondaryBtn = $sHero['secondary_btn'] ?? [
+        'text' => $isIdLocale ? 'Lihat Cara Kerjanya' : 'See How It Works',
+    ];
+
+    // Section 2: Departments
+    $sDepts = $page?->section('departments', []);
+    $deptCs = $sDepts['cs'] ?? [];
+    $deptRec = $sDepts['recruitment'] ?? [];
+    $deptSales = $sDepts['sales_marketing'] ?? [];
+    $deptOps = $sDepts['operations'] ?? [];
+    $deptPp = $sDepts['payment_prioritization'] ?? [];
+    $deptBr = $sDepts['bank_reconciliation'] ?? [];
+    $deptLegal = $sDepts['legal_compliance'] ?? [];
+
+    // Section 3: Journey
+    $sJourney = $page?->section('journey', []);
+    $journeyTitle = $sJourney['title'] ?? ($isIdLocale ? 'Tahapan implementasi' : 'Implementation journey');
+    $journeySteps = $sJourney['steps'] ?? [];
+
+    // Section 4: Closing CTA
+    $sCta = $page?->section('cta', []);
+    $bottomCtaTitle = rtrim($sCta['title'] ?? ($isIdLocale ? 'Mulai dari yang sederhana. Kembangkan dengan yakin.' : 'Start simple. Scale with confidence.'), '.');
+    $bottomCtaSubtitle = rtrim($sCta['subtitle'] ?? ($isIdLocale
+        ? 'Mulai dengan AI untuk pekerjaan sehari-hari karyawan, dengan tata kelola dari organisasi Anda. Kembangkan ke agent AI saat Anda siap.'
+        : "Begin with everyday AI for your employees, governed by your organization. Grow into AI agents when you're ready."), '.');
+    $ctaPrimary = $sCta['primary_btn'] ?? ['text' => ($isIdLocale ? 'Temukan use case pertama Anda' : 'Find your first use case'), 'url' => '#solution-tabs'];
+    $ctaSecondary = $sCta['secondary_btn'] ?? ['text' => ($isIdLocale ? 'Hubungi sales' : 'Talk to Sales'), 'url' => '#whatsapp'];
 @endphp
 <div class="kv-canvas-wrap" x-data="{
     tab: 0,
@@ -212,9 +253,9 @@
 <section class="kv-hero-container" style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative">
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
 <nav aria-label="Solutions" style="height: 56px; padding: 0 80px; display: flex; align-items: center; gap: 32px; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 4">
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #93A4B6">{{ t('kouventa.Solutions', 'Solutions') }}</span>
-<a href="#" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</a>
-<a href="{{ localized_url('/solutions/customer-engagement') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</a>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #93A4B6">{{ $heroSubnavLabel }}</span>
+<a href="#" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ $heroSubnavAi }}</a>
+<a href="{{ localized_url('/solutions/customer-engagement') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ $heroSubnavCe }}</a>
 </nav>
 
 <div class="kv-hero-section" style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 64px; align-items: center; position: relative">
@@ -223,7 +264,7 @@
 <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{{ $heroSubtitle }}</p>
 <div style="display: flex; gap: 12px; padding-top: 4px">
 <a href="{{ localized_url($heroCta['url'] ?? '/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px">{{ $heroCta['text'] ?? 'Request a Demo' }}</a>
-<button type="button" @click="pickTab(tab, true)" style="background: transparent; color: #FFFFFF; font-size: 17px; font-weight: 600; padding: 17px 26px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28)">{{ t('kouventa.See How It Works', 'See How It Works') }}</button>
+<button type="button" @click="pickTab(tab, true)" style="background: transparent; color: #FFFFFF; font-size: 17px; font-weight: 600; padding: 17px 26px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.28)">{{ $heroSecondaryBtn['text'] ?? 'See How It Works' }}</button>
 </div>
 </div>
 
@@ -360,18 +401,18 @@
 <section id="solution-tabs" style="padding: 88px 80px 104px; display: flex; flex-direction: column; gap: 40px">
 <div style="display: flex; flex-direction: column; gap: 14px">
 <div role="tablist" aria-label="Solutions by role" class="kv-sol-ai-tablist">
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 0" @click="pickTab(0)">{{ t('kouventa.Customer Service', 'Customer Service') }}</button>
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 1" @click="pickTab(1)">{{ t('kouventa.Recruitment', 'Recruitment') }}</button>
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 2" @click="pickTab(2)">{{ t('kouventa.Sales & Marketing', 'Sales & Marketing') }}</button>
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 3" @click="pickTab(3)">{{ t('kouventa.Business Operations', 'Business Operations') }}</button>
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 4 || tab === 5" @click="if (tab !== 4 && tab !== 5) pickTab(4)">{{ t('kouventa.Finance', 'Finance') }}</button>
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 6" @click="pickTab(6)">{{ t('kouventa.Legal & Compliance', 'Legal & Compliance') }}</button>
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 0" @click="pickTab(0)">{{ $deptCs['name'] ?? ($isIdLocale ? 'Customer Service' : 'Customer Service') }}</button>
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 1" @click="pickTab(1)">{{ $deptRec['name'] ?? ($isIdLocale ? 'Rekrutmen' : 'Recruitment') }}</button>
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 2" @click="pickTab(2)">{{ $deptSales['name'] ?? ($isIdLocale ? 'Sales & Marketing' : 'Sales & Marketing') }}</button>
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 3" @click="pickTab(3)">{{ $deptOps['name'] ?? ($isIdLocale ? 'Operasional Bisnis' : 'Business Operations') }}</button>
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 4 || tab === 5" @click="if (tab !== 4 && tab !== 5) pickTab(4)">{{ $isIdLocale ? 'Finance' : 'Finance' }}</button>
+<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 6" @click="pickTab(6)">{{ $deptLegal['name'] ?? ($isIdLocale ? 'Legal & Compliance' : 'Legal & Compliance') }}</button>
 </div>
 
 <!-- Finance Sub-tabs Pill -->
 <div role="tablist" aria-label="Finance solutions" x-show="tab === 4 || tab === 5" class="kv-sol-fin-wrap">
-<button type="button" role="tab" class="kv-sol-fin-tab" :aria-selected="tab === 4" @click="pickTab(4)">{{ t('kouventa.Payment Prioritization', 'Payment Prioritization') }}</button>
-<button type="button" role="tab" class="kv-sol-fin-tab" :aria-selected="tab === 5" @click="pickTab(5)">{{ t('kouventa.Bank Reconciliation', 'Bank Reconciliation') }}</button>
+<button type="button" role="tab" class="kv-sol-fin-tab" :aria-selected="tab === 4" @click="pickTab(4)">{{ $deptPp['name'] ?? ($isIdLocale ? 'Prioritas pembayaran' : 'Payment Prioritization') }}</button>
+<button type="button" role="tab" class="kv-sol-fin-tab" :aria-selected="tab === 5" @click="pickTab(5)">{{ $deptBr['name'] ?? ($isIdLocale ? 'Rekonsiliasi Bank' : 'Bank Reconciliation') }}</button>
 </div>
 </div>
 
@@ -384,15 +425,15 @@
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Customer service agents spend too much time answering the same repetitive questions every day', 'Customer service agents spend too much time answering the same repetitive questions every day') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptCs['challenges'][0]['text'] ?? t('kouventa.Customer service agents spend too much time answering the same repetitive questions every day', 'Customer service agents spend too much time answering the same repetitive questions every day') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><rect x="3" y="11" width="18" height="5" rx="1.5"></rect><path d="M7 20h10"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Customers expect fast responses, while agents need to handle multiple conversations simultaneously', 'Customers expect fast responses, while agents need to handle multiple conversations simultaneously') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptCs['challenges'][1]['text'] ?? t('kouventa.Customers expect fast responses, while agents need to handle multiple conversations simultaneously', 'Customers expect fast responses, while agents need to handle multiple conversations simultaneously') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="8" height="8" rx="2"></rect><rect x="14" y="13" width="8" height="8" rx="2"></rect><path d="M14 7h4a2 2 0 0 1 2 2v1M10 17H6a2 2 0 0 1-2-2v-1"></path><path d="M18 8l2 2 2-2M6 16l-2-2-2 2"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Agents have to switch between CRM, ticketing systems, and other business applications to find the right information, slowing down issue resolution', 'Agents have to switch between CRM, ticketing systems, and other business applications to find the right information, slowing down issue resolution') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptCs['challenges'][2]['text'] ?? t('kouventa.Agents have to switch between CRM, ticketing systems, and other business applications to find the right information, slowing down issue resolution', 'Agents have to switch between CRM, ticketing systems, and other business applications to find the right information, slowing down issue resolution') }}</h4>
 </div>
 </div>
 </div>
@@ -403,15 +444,15 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 1s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="14" width="5" height="6" rx="2"></rect><rect x="17" y="14" width="5" height="6" rx="2"></rect></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Customer Support Agent', 'Customer Support Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.', 'Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptCs['solutions'][0]['title'] ?? t('kouventa.Customer Support Agent', 'Customer Support Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptCs['solutions'][0]['desc'] ?? t('kouventa.Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.', 'Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 2.8s ease 2.8s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M13 6v2M13 11v2M13 16v2"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Ticket Management Agent', 'Ticket Management Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Automatically create support tickets from customer conversations, capture the necessary details, and assign them to the right team.', 'Automatically create support tickets from customer conversations, capture the necessary details, and assign them to the right team.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptCs['solutions'][1]['title'] ?? t('kouventa.Ticket Management Agent', 'Ticket Management Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptCs['solutions'][1]['desc'] ?? t('kouventa.Automatically create support tickets from customer conversations, capture the necessary details, and assign them to the right team.', 'Automatically create support tickets from customer conversations, capture the necessary details, and assign them to the right team.') }}</span>
 </span>
 </button>
 </div>
@@ -453,15 +494,15 @@
 <div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Resolve customer inquiries and issues faster, improving customer experience', 'Resolve customer inquiries and issues faster, improving customer experience') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptCs['impacts'][0]['text'] ?? t('kouventa.Resolve customer inquiries and issues faster, improving customer experience', 'Resolve customer inquiries and issues faster, improving customer experience') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Reduce repetitive work so agents can focus on more complex cases', 'Reduce repetitive work so agents can focus on more complex cases') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptCs['impacts'][1]['text'] ?? t('kouventa.Reduce repetitive work so agents can focus on more complex cases', 'Reduce repetitive work so agents can focus on more complex cases') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Automate routine inquiries and manual ticket management', 'Automate routine inquiries and manual ticket management') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptCs['impacts'][2]['text'] ?? t('kouventa.Automate routine inquiries and manual ticket management', 'Automate routine inquiries and manual ticket management') }}</span>
 </div>
 </div>
 </div>
@@ -475,15 +516,15 @@
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.HR teams spend hours reviewing resumes, matching candidates to job requirements, ranking profiles, and evaluating test and interview results', 'HR teams spend hours reviewing resumes, matching candidates to job requirements, ranking profiles, and evaluating test and interview results') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptRec['challenges'][0]['text'] ?? t('kouventa.HR teams spend hours reviewing resumes, matching candidates to job requirements, ranking profiles, and evaluating test and interview results', 'HR teams spend hours reviewing resumes, matching candidates to job requirements, ranking profiles, and evaluating test and interview results') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="8" height="8" rx="2"></rect><rect x="14" y="13" width="8" height="8" rx="2"></rect><path d="M14 7h4a2 2 0 0 1 2 2v1M10 17H6a2 2 0 0 1-2-2v-1"></path><path d="M18 8l2 2 2-2M6 16l-2-2-2 2"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Recruiters have to switch between multiple platforms to find candidate information and track the hiring process', 'Recruiters have to switch between multiple platforms to find candidate information and track the hiring process') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptRec['challenges'][1]['text'] ?? t('kouventa.Recruiters have to switch between multiple platforms to find candidate information and track the hiring process', 'Recruiters have to switch between multiple platforms to find candidate information and track the hiring process') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Recruiters spend time on repetitive tasks such as data entry, document generation, interview scheduling, and candidate notifications', 'Recruiters spend time on repetitive tasks such as data entry, document generation, interview scheduling, and candidate notifications') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptRec['challenges'][2]['text'] ?? t('kouventa.Recruiters spend time on repetitive tasks such as data entry, document generation, interview scheduling, and candidate notifications', 'Recruiters spend time on repetitive tasks such as data entry, document generation, interview scheduling, and candidate notifications') }}</h4>
 </div>
 </div>
 </div>
@@ -494,29 +535,29 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 3.4s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="4"></circle><path d="M2 21a8 8 0 0 1 10.5-7.6"></path><circle cx="17.5" cy="17.5" r="3"></circle><path d="m22 22-2.3-2.3"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Candidate Screening and Sourcing Agent', 'Candidate Screening and Sourcing Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Source candidates from multiple job portals, then screen and match candidates based on job requirements and qualifications.', 'Source candidates from multiple job portals, then screen and match candidates based on job requirements and qualifications.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptRec['solutions'][0]['title'] ?? t('kouventa.Candidate Screening and Sourcing Agent', 'Candidate Screening and Sourcing Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptRec['solutions'][0]['desc'] ?? t('kouventa.Source candidates from multiple job portals, then screen and match candidates based on job requirements and qualifications.', 'Source candidates from multiple job portals, then screen and match candidates based on job requirements and qualifications.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.1s ease 3.9s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Candidate Communication Agent', 'Candidate Communication Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Send interview and psychotest invitations, provide recruitment updates, and answer candidate questions throughout the hiring process.', 'Send interview and psychotest invitations, provide recruitment updates, and answer candidate questions throughout the hiring process.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptRec['solutions'][1]['title'] ?? t('kouventa.Candidate Communication Agent', 'Candidate Communication Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptRec['solutions'][1]['desc'] ?? t('kouventa.Send interview and psychotest invitations, provide recruitment updates, and answer candidate questions throughout the hiring process.', 'Send interview and psychotest invitations, provide recruitment updates, and answer candidate questions throughout the hiring process.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 1.4s ease 5s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Candidate Scheduling Agent', 'Candidate Scheduling Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Coordinate and schedule interviews and psychotests based on the availability of HR, interviewers, and candidates.', 'Coordinate and schedule interviews and psychotests based on the availability of HR, interviewers, and candidates.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptRec['solutions'][2]['title'] ?? t('kouventa.Candidate Scheduling Agent', 'Candidate Scheduling Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptRec['solutions'][2]['desc'] ?? t('kouventa.Coordinate and schedule interviews and psychotests based on the availability of HR, interviewers, and candidates.', 'Coordinate and schedule interviews and psychotests based on the availability of HR, interviewers, and candidates.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="sol === 3" style="animation: kvHi 1.5s ease 6.5s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Recruitment Insight Agent', 'Recruitment Insight Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Analyze candidate profiles based on interview and psychotest results to identify key insights and provide recommendations.', 'Analyze candidate profiles based on interview and psychotest results to identify key insights and provide recommendations.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptRec['solutions'][3]['title'] ?? t('kouventa.Recruitment Insight Agent', 'Recruitment Insight Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptRec['solutions'][3]['desc'] ?? t('kouventa.Analyze candidate profiles based on interview and psychotest results to identify key insights and provide recommendations.', 'Analyze candidate profiles based on interview and psychotest results to identify key insights and provide recommendations.') }}</span>
 </span>
 </button>
 </div>
@@ -567,15 +608,15 @@
 <div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Spend less time screening candidates, and more time hiring the right ones', 'Spend less time screening candidates, and more time hiring the right ones') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptRec['impacts'][0]['text'] ?? t('kouventa.Spend less time screening candidates, and more time hiring the right ones', 'Spend less time screening candidates, and more time hiring the right ones') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Reduce HR workload by automating repetitive manual tasks', 'Reduce HR workload by automating repetitive manual tasks') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptRec['impacts'][1]['text'] ?? t('kouventa.Reduce HR workload by automating repetitive manual tasks', 'Reduce HR workload by automating repetitive manual tasks') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Make hiring decisions with greater confidence using insights from candidate data and evaluation results', 'Make hiring decisions with greater confidence using insights from candidate data and evaluation results') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptRec['impacts'][2]['text'] ?? t('kouventa.Make hiring decisions with greater confidence using insights from candidate data and evaluation results', 'Make hiring decisions with greater confidence using insights from candidate data and evaluation results') }}</span>
 </div>
 </div>
 </div>
@@ -589,15 +630,15 @@
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 3A6 6 0 0 1 18 8c0 2.6.5 4.4 1.2 5.7M17 17H3s3-2 3-9c0-.8.1-1.5.4-2.2"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0M2 2l20 20"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Missed leads from delayed responses, because customers expect quick responses even outside working hours', 'Missed leads from delayed responses, because customers expect quick responses even outside working hours') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptSales['challenges'][0]['text'] ?? t('kouventa.Missed leads from delayed responses, because customers expect quick responses even outside working hours', 'Missed leads from delayed responses, because customers expect quick responses even outside working hours') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3M11 8v3M11 14h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Sales teams have to answer repetitive questions while searching through multiple documents and systems to find the right information', 'Sales teams have to answer repetitive questions while searching through multiple documents and systems to find the right information') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptSales['challenges'][1]['text'] ?? t('kouventa.Sales teams have to answer repetitive questions while searching through multiple documents and systems to find the right information', 'Sales teams have to answer repetitive questions while searching through multiple documents and systems to find the right information') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M17 8l5 5M22 8l-5 5"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Sales teams have to manually follow up with unresponsive customers, and missed follow-ups can mean missed sales opportunities', 'Sales teams have to manually follow up with unresponsive customers, and missed follow-ups can mean missed sales opportunities') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptSales['challenges'][2]['text'] ?? t('kouventa.Sales teams have to manually follow up with unresponsive customers, and missed follow-ups can mean missed sales opportunities', 'Sales teams have to manually follow up with unresponsive customers, and missed follow-ups can mean missed sales opportunities') }}</h4>
 </div>
 </div>
 </div>
@@ -608,22 +649,22 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 3.7s ease 0.3s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M2 3h3l2.5 12h11L21 7H6"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Sales Assistant Agent', 'Sales Assistant Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.', 'Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptSales['solutions'][0]['title'] ?? t('kouventa.Sales Assistant Agent', 'Sales Assistant Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptSales['solutions'][0]['desc'] ?? t('kouventa.Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.', 'Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.5s ease 4.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5Z"></path><path d="M3 8l9 5 9-5M12 13v8"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Order Agent', 'Order Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Create orders, process payments, verify transactions, and confirm purchases.', 'Create orders, process payments, verify transactions, and confirm purchases.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptSales['solutions'][1]['title'] ?? t('kouventa.Order Agent', 'Order Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptSales['solutions'][1]['desc'] ?? t('kouventa.Create orders, process payments, verify transactions, and confirm purchases.', 'Create orders, process payments, verify transactions, and confirm purchases.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 2.2s ease 5.8s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Shipment Tracking Agent', 'Shipment Tracking Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Track order and shipment status, provide delivery updates, and answer post-purchase questions.', 'Track order and shipment status, provide delivery updates, and answer post-purchase questions.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptSales['solutions'][2]['title'] ?? t('kouventa.Shipment Tracking Agent', 'Shipment Tracking Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptSales['solutions'][2]['desc'] ?? t('kouventa.Track order and shipment status, provide delivery updates, and answer post-purchase questions.', 'Track order and shipment status, provide delivery updates, and answer post-purchase questions.') }}</span>
 </span>
 </button>
 </div>
@@ -666,17 +707,17 @@
 <div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Enhance Customer Experiences', 'Enhance Customer Experiences') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptSales['impacts'][0]['text'] ?? t('kouventa.Enhance Customer Experiences', 'Enhance Customer Experiences') }}</span>
 <span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ t('kouventa.Instant responses and accurate product, order, and shipment information.', 'Instant responses and accurate product, order, and shipment information.') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M14 7h7v7"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Increase Sales Productivity', 'Increase Sales Productivity') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptSales['impacts'][1]['text'] ?? t('kouventa.Increase Sales Productivity', 'Increase Sales Productivity') }}</span>
 <span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ t('kouventa.Fewer repetitive inquiries and manual follow-ups, allowing sales teams to focus on higher-value opportunities.', 'Fewer repetitive inquiries and manual follow-ups, allowing sales teams to focus on higher-value opportunities.') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 12 0V3h-4v7a2 2 0 0 1-4 0V3Z"></path><path d="M6 7h4M14 7h4"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Improve Customer Conversion & Retention', 'Improve Customer Conversion & Retention') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptSales['impacts'][2]['text'] ?? t('kouventa.Improve Customer Conversion & Retention', 'Improve Customer Conversion & Retention') }}</span>
 <span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ t('kouventa.Proactive follow-ups and seamless support throughout the purchase journey.', 'Proactive follow-ups and seamless support throughout the purchase journey.') }}</span>
 </div>
 </div>
@@ -691,15 +732,15 @@
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-3 3V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2Z"></path><path d="M18 9h1a2 2 0 0 1 2 2v10l-3-3h-6a2 2 0 0 1-2-2v-1"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Internal information is scattered across documents, systems, and sources, making it difficult for employees to find the right policies, SOPs, and business information', 'Internal information is scattered across documents, systems, and sources, making it difficult for employees to find the right policies, SOPs, and business information') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptOps['challenges'][0]['text'] ?? t('kouventa.Internal information is scattered across documents, systems, and sources, making it difficult for employees to find the right policies, SOPs, and business information', 'Internal information is scattered across documents, systems, and sources, making it difficult for employees to find the right policies, SOPs, and business information') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3M11 8v3M11 14h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Employees spend valuable time searching for answers when important information needs to be accessed immediately', 'Employees spend valuable time searching for answers when important information needs to be accessed immediately') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptOps['challenges'][1]['text'] ?? t('kouventa.Employees spend valuable time searching for answers when important information needs to be accessed immediately', 'Employees spend valuable time searching for answers when important information needs to be accessed immediately') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Support teams spend too much time answering the same internal questions about policies, procedures, and business information', 'Support teams spend too much time answering the same internal questions about policies, procedures, and business information') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptOps['challenges'][2]['text'] ?? t('kouventa.Support teams spend too much time answering the same internal questions about policies, procedures, and business information', 'Support teams spend too much time answering the same internal questions about policies, procedures, and business information') }}</h4>
 </div>
 </div>
 </div>
@@ -710,15 +751,15 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.7s ease 1.5s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5Z"></path><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Knowledge Assistant Agent', 'Knowledge Assistant Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Find and explain information from the company\'s internal documents, policies, SOPs, and business knowledge.', 'Find and explain information from the company\'s internal documents, policies, SOPs, and business knowledge.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptOps['solutions'][0]['title'] ?? t('kouventa.Knowledge Assistant Agent', 'Knowledge Assistant Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptOps['solutions'][0]['desc'] ?? t('kouventa.Find and explain information from the company\'s internal documents, policies, SOPs, and business knowledge.', 'Find and explain information from the company\'s internal documents, policies, SOPs, and business knowledge.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 3.4s ease 3.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Action Agent', 'Action Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Turn employee requests into actions by connecting with internal systems, submitting requests, and executing routine tasks with the required approvals.', 'Turn employee requests into actions by connecting with internal systems, submitting requests, and executing routine tasks with the required approvals.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptOps['solutions'][1]['title'] ?? t('kouventa.Action Agent', 'Action Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptOps['solutions'][1]['desc'] ?? t('kouventa.Turn employee requests into actions by connecting with internal systems, submitting requests, and executing routine tasks with the required approvals.', 'Turn employee requests into actions by connecting with internal systems, submitting requests, and executing routine tasks with the required approvals.') }}</span>
 </span>
 </button>
 </div>
@@ -752,15 +793,15 @@
 <div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Give employees instant access to the information they need, anytime', 'Give employees instant access to the information they need, anytime') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptOps['impacts'][0]['text'] ?? t('kouventa.Give employees instant access to the information they need, anytime', 'Give employees instant access to the information they need, anytime') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Reduce recurring internal questions and manual searches, reducing repetitive work for support teams', 'Reduce recurring internal questions and manual searches, reducing repetitive work for support teams') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptOps['impacts'][1]['text'] ?? t('kouventa.Reduce recurring internal questions and manual searches, reducing repetitive work for support teams', 'Reduce recurring internal questions and manual searches, reducing repetitive work for support teams') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Help employees spend less time searching for information and more time getting work done', 'Help employees spend less time searching for information and more time getting work done') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptOps['impacts'][2]['text'] ?? t('kouventa.Help employees spend less time searching for information and more time getting work done', 'Help employees spend less time searching for information and more time getting work done') }}</span>
 </div>
 </div>
 </div>
@@ -774,15 +815,15 @@
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Finance teams spend too much time reviewing invoices, due dates, cash flow, and vendor data before deciding what to pay first', 'Finance teams spend too much time reviewing invoices, due dates, cash flow, and vendor data before deciding what to pay first') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptPp['challenges'][0]['text'] ?? t('kouventa.Finance teams spend too much time reviewing invoices, due dates, cash flow, and vendor data before deciding what to pay first', 'Finance teams spend too much time reviewing invoices, due dates, cash flow, and vendor data before deciding what to pay first') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Finance teams need to analyze multiple data points manually to determine which payments should be prioritized', 'Finance teams need to analyze multiple data points manually to determine which payments should be prioritized') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptPp['challenges'][1]['text'] ?? t('kouventa.Finance teams need to analyze multiple data points manually to determine which payments should be prioritized', 'Finance teams need to analyze multiple data points manually to determine which payments should be prioritized') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M12 12v3M12 18h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Manual payment analysis and validation increase the risk of errors and inconsistent payment decisions', 'Manual payment analysis and validation increase the risk of errors and inconsistent payment decisions') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptPp['challenges'][2]['text'] ?? t('kouventa.Manual payment analysis and validation increase the risk of errors and inconsistent payment decisions', 'Manual payment analysis and validation increase the risk of errors and inconsistent payment decisions') }}</h4>
 </div>
 </div>
 </div>
@@ -793,12 +834,12 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="align-items: flex-start; max-height: none; flex: 0 0 auto; animation: kvHi 7.4s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h15V7"></path><path d="M16 14h.01"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Payment Prioritization Agent', 'Payment Prioritization Agent') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptPp['solutions'][0]['title'] ?? t('kouventa.Payment Prioritization Agent', 'Payment Prioritization Agent') }}</h3>
 <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px">
-<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ t('kouventa.Analyze invoices, due dates, cash flow, and vendor data', 'Analyze invoices, due dates, cash flow, and vendor data') }}</li>
-<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ t('kouventa.Prioritize payments based on business criteria', 'Prioritize payments based on business criteria') }}</li>
-<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ t('kouventa.Recommend payment batches for approval', 'Recommend payment batches for approval') }}</li>
-<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ t('kouventa.Execute approved payments through ERP', 'Execute approved payments through ERP') }}</li>
+<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ $deptPp['solutions'][0]['bullets'][0] ?? t('kouventa.Analyze invoices, due dates, cash flow, and vendor data', 'Analyze invoices, due dates, cash flow, and vendor data') }}</li>
+<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ $deptPp['solutions'][0]['bullets'][1] ?? t('kouventa.Prioritize payments based on business criteria', 'Prioritize payments based on business criteria') }}</li>
+<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ $deptPp['solutions'][0]['bullets'][2] ?? t('kouventa.Recommend payment batches for approval', 'Recommend payment batches for approval') }}</li>
+<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ $deptPp['solutions'][0]['bullets'][3] ?? t('kouventa.Execute approved payments through ERP', 'Execute approved payments through ERP') }}</li>
 </ul>
 </span>
 </button>
@@ -856,15 +897,15 @@
 <div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Enable finance teams to identify payment priorities faster and make timely, data-driven decisions', 'Enable finance teams to identify payment priorities faster and make timely, data-driven decisions') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptPp['impacts'][0]['text'] ?? t('kouventa.Enable finance teams to identify payment priorities faster and make timely, data-driven decisions', 'Enable finance teams to identify payment priorities faster and make timely, data-driven decisions') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Achieve higher operational efficiency by reducing manual analysis and streamlining the payment prioritization process', 'Achieve higher operational efficiency by reducing manual analysis and streamlining the payment prioritization process') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptPp['impacts'][1]['text'] ?? t('kouventa.Achieve higher operational efficiency by reducing manual analysis and streamlining the payment prioritization process', 'Achieve higher operational efficiency by reducing manual analysis and streamlining the payment prioritization process') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.6-1 2.9 1 2.9-2.5 1.6-.9 2.9-3-.2L12 20l-2.4-1.8-3 .2-.9-2.9-2.5-1.6 1-2.9-1-2.9 2.5-1.6.9-2.9 3 .2Z"></path><path d="M8.5 11.5l2.5 2.5 4.5-5"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Improve validation accuracy by analyzing invoice data consistently and reducing manual errors', 'Improve validation accuracy by analyzing invoice data consistently and reducing manual errors') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptPp['impacts'][2]['text'] ?? t('kouventa.Improve validation accuracy by analyzing invoice data consistently and reducing manual errors', 'Improve validation accuracy by analyzing invoice data consistently and reducing manual errors') }}</span>
 </div>
 </div>
 </div>
@@ -878,15 +919,15 @@
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M12 12v3M12 18h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Finance teams still rely on manual reconciliation to match bank transactions with invoices and financial records', 'Finance teams still rely on manual reconciliation to match bank transactions with invoices and financial records') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptBr['challenges'][0]['text'] ?? t('kouventa.Finance teams still rely on manual reconciliation to match bank transactions with invoices and financial records', 'Finance teams still rely on manual reconciliation to match bank transactions with invoices and financial records') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3M11 8v3M11 14h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Finance teams need to manually identify mismatches, trace transaction details, and determine the root cause to resolve reconciliation issues', 'Finance teams need to manually identify mismatches, trace transaction details, and determine the root cause to resolve reconciliation issues') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptBr['challenges'][1]['text'] ?? t('kouventa.Finance teams need to manually identify mismatches, trace transaction details, and determine the root cause to resolve reconciliation issues', 'Finance teams need to manually identify mismatches, trace transaction details, and determine the root cause to resolve reconciliation issues') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 15l4-4 3 3 6-7"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.As transaction volumes grow, manual reconciliation becomes harder to manage efficiently and scale', 'As transaction volumes grow, manual reconciliation becomes harder to manage efficiently and scale') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptBr['challenges'][2]['text'] ?? t('kouventa.As transaction volumes grow, manual reconciliation becomes harder to manage efficiently and scale', 'As transaction volumes grow, manual reconciliation becomes harder to manage efficiently and scale') }}</h4>
 </div>
 </div>
 </div>
@@ -897,29 +938,29 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 0.3s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Transaction Matching Agent', 'Transaction Matching Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Automatically matches bank transactions with invoices, including partial and bulk transactions.', 'Automatically matches bank transactions with invoices, including partial and bulk transactions.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptBr['solutions'][0]['title'] ?? t('kouventa.Transaction Matching Agent', 'Transaction Matching Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptBr['solutions'][0]['desc'] ?? t('kouventa.Automatically matches bank transactions with invoices, including partial and bulk transactions.', 'Automatically matches bank transactions with invoices, including partial and bulk transactions.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.8s ease 2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Reconciliation Analysis Agent', 'Reconciliation Analysis Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.', 'Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptBr['solutions'][1]['title'] ?? t('kouventa.Reconciliation Analysis Agent', 'Reconciliation Analysis Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptBr['solutions'][1]['desc'] ?? t('kouventa.Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.', 'Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 3s ease 4.1s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Clearing Agent', 'Clearing Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Prepares clearing proposals and executes ERP clearing.', 'Prepares clearing proposals and executes ERP clearing.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptBr['solutions'][2]['title'] ?? t('kouventa.Clearing Agent', 'Clearing Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptBr['solutions'][2]['desc'] ?? t('kouventa.Prepares clearing proposals and executes ERP clearing.', 'Prepares clearing proposals and executes ERP clearing.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="sol === 3" style="animation: kvHi 1s ease 7.1s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Audit & Notification Agent', 'Audit & Notification Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Logs activities and sends relevant notifications to related teams.', 'Logs activities and sends relevant notifications to related teams.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptBr['solutions'][3]['title'] ?? t('kouventa.Audit & Notification Agent', 'Audit & Notification Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptBr['solutions'][3]['desc'] ?? t('kouventa.Logs activities and sends relevant notifications to related teams.', 'Logs activities and sends relevant notifications to related teams.') }}</span>
 </span>
 </button>
 </div>
@@ -976,15 +1017,15 @@
 <div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Reduce manual finance activities by automating transaction matching and analysis', 'Reduce manual finance activities by automating transaction matching and analysis') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptBr['impacts'][0]['text'] ?? t('kouventa.Reduce manual finance activities by automating transaction matching and analysis', 'Reduce manual finance activities by automating transaction matching and analysis') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Accelerate reconciliation by helping finance teams identify and resolve discrepancies faster with clear root-cause explanations', 'Accelerate reconciliation by helping finance teams identify and resolve discrepancies faster with clear root-cause explanations') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptBr['impacts'][1]['text'] ?? t('kouventa.Accelerate reconciliation by helping finance teams identify and resolve discrepancies faster with clear root-cause explanations', 'Accelerate reconciliation by helping finance teams identify and resolve discrepancies faster with clear root-cause explanations') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M14 7h7v7"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Handle higher transaction volumes without increasing manual workload', 'Handle higher transaction volumes without increasing manual workload') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptBr['impacts'][2]['text'] ?? t('kouventa.Handle higher transaction volumes without increasing manual workload', 'Handle higher transaction volumes without increasing manual workload') }}</span>
 </div>
 </div>
 </div>
@@ -998,15 +1039,15 @@
 <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Contract reviews take too long, with legal teams manually searching lengthy documents for relevant clauses and terms', 'Contract reviews take too long, with legal teams manually searching lengthy documents for relevant clauses and terms') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptLegal['challenges'][0]['text'] ?? t('kouventa.Contract reviews take too long, with legal teams manually searching lengthy documents for relevant clauses and terms', 'Contract reviews take too long, with legal teams manually searching lengthy documents for relevant clauses and terms') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-3 3V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2Z"></path><path d="M18 9h1a2 2 0 0 1 2 2v10l-3-3h-6a2 2 0 0 1-2-2v-1"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Critical clauses, policies, and regulations are scattered across multiple documents, making it easy to miss what matters', 'Critical clauses, policies, and regulations are scattered across multiple documents, making it easy to miss what matters') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptLegal['challenges'][1]['text'] ?? t('kouventa.Critical clauses, policies, and regulations are scattered across multiple documents, making it easy to miss what matters', 'Critical clauses, policies, and regulations are scattered across multiple documents, making it easy to miss what matters') }}</h4>
 </div>
 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="M12 8v4M12 15.5h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ t('kouventa.Growing volumes of contracts and regulations increase the risk of missed compliance requirements and potential issues', 'Growing volumes of contracts and regulations increase the risk of missed compliance requirements and potential issues') }}</h4>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptLegal['challenges'][2]['text'] ?? t('kouventa.Growing volumes of contracts and regulations increase the risk of missed compliance requirements and potential issues', 'Growing volumes of contracts and regulations increase the risk of missed compliance requirements and potential issues') }}</h4>
 </div>
 </div>
 </div>
@@ -1017,22 +1058,22 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 2.2s ease 0.3s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Contract Review Agent', 'Contract Review Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Review contracts and identify key clauses, terms, and potential issues.', 'Review contracts and identify key clauses, terms, and potential issues.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptLegal['solutions'][0]['title'] ?? t('kouventa.Contract Review Agent', 'Contract Review Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptLegal['solutions'][0]['desc'] ?? t('kouventa.Review contracts and identify key clauses, terms, and potential issues.', 'Review contracts and identify key clauses, terms, and potential issues.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.5s ease 2.5s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Legal Research Agent', 'Legal Research Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Find relevant policies, regulations, and legal information based on the context of the contract.', 'Find relevant policies, regulations, and legal information based on the context of the contract.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptLegal['solutions'][1]['title'] ?? t('kouventa.Legal Research Agent', 'Legal Research Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptLegal['solutions'][1]['desc'] ?? t('kouventa.Find relevant policies, regulations, and legal information based on the context of the contract.', 'Find relevant policies, regulations, and legal information based on the context of the contract.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 2.5s ease 4.1s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ t('kouventa.Contract Insights Agent', 'Contract Insights Agent') }}</h3>
-<span class="kv-help-sol-desc">{{ t('kouventa.Answer questions and summarize key terms and important information from contracts.', 'Answer questions and summarize key terms and important information from contracts.') }}</span>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptLegal['solutions'][2]['title'] ?? t('kouventa.Contract Insights Agent', 'Contract Insights Agent') }}</h3>
+<span class="kv-help-sol-desc">{{ $deptLegal['solutions'][2]['desc'] ?? t('kouventa.Answer questions and summarize key terms and important information from contracts.', 'Answer questions and summarize key terms and important information from contracts.') }}</span>
 </span>
 </button>
 </div>
@@ -1080,15 +1121,15 @@
 <div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Improve compliance quality by identifying relevant clauses, key terms, and applicable policies while reducing the risk of missed requirements', 'Improve compliance quality by identifying relevant clauses, key terms, and applicable policies while reducing the risk of missed requirements') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptLegal['impacts'][0]['text'] ?? t('kouventa.Improve compliance quality by identifying relevant clauses, key terms, and applicable policies while reducing the risk of missed requirements', 'Improve compliance quality by identifying relevant clauses, key terms, and applicable policies while reducing the risk of missed requirements') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Review contracts faster by quickly finding key terms, clauses, and relevant policies, so legal teams spend less time reviewing', 'Review contracts faster by quickly finding key terms, clauses, and relevant policies, so legal teams spend less time reviewing') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptLegal['impacts'][1]['text'] ?? t('kouventa.Review contracts faster by quickly finding key terms, clauses, and relevant policies, so legal teams spend less time reviewing', 'Review contracts faster by quickly finding key terms, clauses, and relevant policies, so legal teams spend less time reviewing') }}</span>
 </div>
 <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
 <span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ t('kouventa.Reduce manual work by automating contract Q&A and summarization, allowing legal teams to focus on higher-value legal activities', 'Reduce manual work by automating contract Q&A and summarization, allowing legal teams to focus on higher-value legal activities') }}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptLegal['impacts'][2]['text'] ?? t('kouventa.Reduce manual work by automating contract Q&A and summarization, allowing legal teams to focus on higher-value legal activities', 'Reduce manual work by automating contract Q&A and summarization, allowing legal teams to focus on higher-value legal activities') }}</span>
 </div>
 </div>
 </div>
@@ -1098,7 +1139,7 @@
 
 <!-- ============ IMPLEMENTATION JOURNEY ============ -->
 <section id="impl-journey" style="padding: 0 80px 88px; display: flex; flex-direction: column; gap: 32px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Implementation journey', 'Implementation journey') }}</h2>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $journeyTitle }}</h2>
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px">
 
 <!-- Step 1: Discover -->
@@ -1116,8 +1157,8 @@
 </template>
 </div>
 <div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[0] ? '0s' : '0s') + ' both') : 'none' }">1</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Discover', 'Discover') }}</span></span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Our team will map existing business processes, pain points, and requirements to identify where Agentic AI can create value.', 'Our team will map existing business processes, pain points, and requirements to identify where Agentic AI can create value.') }}</span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[0] ? '0s' : '0s') + ' both') : 'none' }">1</span><span style="font-size: 20px; font-weight: 800">{{ $journeySteps[0]['title'] ?? ($isIdLocale ? 'Analisis' : 'Discover') }}</span></span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $journeySteps[0]['desc'] ?? '' }}</span>
 </div>
 </button>
 
@@ -1140,8 +1181,8 @@
 </template>
 </div>
 <div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[1] ? '0s' : '2s') + ' both') : 'none' }">2</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Connect', 'Connect') }}</span></span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Connect relevant data sources, applications, and systems required for the agent to perform its tasks.', 'Connect relevant data sources, applications, and systems required for the agent to perform its tasks.') }}</span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[1] ? '0s' : '2s') + ' both') : 'none' }">2</span><span style="font-size: 20px; font-weight: 800">{{ $journeySteps[1]['title'] ?? ($isIdLocale ? 'Integrasi' : 'Connect') }}</span></span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $journeySteps[1]['desc'] ?? '' }}</span>
 </div>
 </button>
 
@@ -1166,8 +1207,8 @@
 </template>
 </div>
 <div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[2] ? '0s' : '4s') + ' both') : 'none' }">3</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Configure', 'Configure') }}</span></span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Define workflows, business rules, actions, and guardrails based on your business processes.', 'Define workflows, business rules, actions, and guardrails based on your business processes.') }}</span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[2] ? '0s' : '4s') + ' both') : 'none' }">3</span><span style="font-size: 20px; font-weight: 800">{{ $journeySteps[2]['title'] ?? ($isIdLocale ? 'Konfigurasi' : 'Configure') }}</span></span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $journeySteps[2]['desc'] ?? '' }}</span>
 </div>
 </button>
 
@@ -1195,8 +1236,8 @@
 </template>
 </div>
 <div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[3] ? '0s' : '6s') + ' both') : 'none' }">4</span><span style="font-size: 20px; font-weight: 800">{{ t('kouventa.Deploy & Scale', 'Deploy & Scale') }}</span></span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ t('kouventa.Launch your agent into production, monitor its performance, and expand AI agents across more processes.', 'Launch your agent into production, monitor its performance, and expand AI agents across more processes.') }}</span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[3] ? '0s' : '6s') + ' both') : 'none' }">4</span><span style="font-size: 20px; font-weight: 800">{{ $journeySteps[3]['title'] ?? ($isIdLocale ? 'Deploy & Skalakan' : 'Deploy & Scale') }}</span></span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $journeySteps[3]['desc'] ?? '' }}</span>
 </div>
 </button>
 
@@ -1211,8 +1252,8 @@
 <p style="margin: 0; font-size: 18px; line-height: 1.55">{{ $bottomCtaSubtitle }}</p>
 </div>
 <div style="display: flex; gap: 12px; flex-shrink: 0; flex-wrap: wrap">
-<a href="#solution-tabs" @click.prevent="pickTab(0, true)" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ t('kouventa.Find your first use case', 'Find your first use case') }}</a>
-<a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; white-space: nowrap; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to Sales', 'Talk to Sales') }}</a>
+<a href="{{ $ctaPrimary['url'] ?? '#solution-tabs' }}" @click.prevent="pickTab(0, true)" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ $ctaPrimary['text'] ?? ($isIdLocale ? 'Temukan use case pertama Anda' : 'Find your first use case') }}</a>
+<a href="{{ $ctaSecondary['url'] ?? '#whatsapp' }}" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; white-space: nowrap; text-decoration: none; cursor: pointer">{{ $ctaSecondary['text'] ?? ($isIdLocale ? 'Hubungi sales' : 'Talk to Sales') }}</a>
 </div>
 </div>
 </section>
