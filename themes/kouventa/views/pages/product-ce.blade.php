@@ -1104,30 +1104,243 @@
 
 @php
     $isIdLocale = app()->getLocale() === 'id';
-    $heroTitle = $page?->titleBlock('hero_title', [
+    $isPluginActive = is_plugin_active('kouventa-pages');
+
+    // Section 1: Hero & Subnav
+    $sHero = $page?->section('hero', []);
+    $heroSubnavLabel = $sHero['subnav']['label'] ?? ($isIdLocale ? 'Produk' : 'Products');
+    $heroSubnavAi = $sHero['subnav']['ai_label'] ?? 'Artificial Intelligence';
+    $heroSubnavCe = $sHero['subnav']['ce_label'] ?? 'Customer Engagement';
+    $heroEyebrow = $sHero['eyebrow'] ?? 'Official Meta Business Solution Provider';
+    $heroTitle = $sHero['title'] ?? [
         'prefix' => $isIdLocale ? 'Cara lebih cerdas untuk' : 'The smarter way to',
-        'main' => $isIdLocale ? 'berinteraksi dengan pelanggan' : 'engage customers'
-    ]);
-    $heroSubtitle = $page?->block('hero_subtitle', $isIdLocale
+        'main' => $isIdLocale ? 'berinteraksi dengan pelanggan' : 'engage customers',
+    ];
+    $heroSubtitle = rtrim($sHero['subtitle'] ?? ($isIdLocale
         ? 'Jangkau lebih banyak pelanggan, balas lebih cepat, dan buat percakapan lancar di WhatsApp dan channel lainnya'
-        : 'Reach more customers, respond faster, and keep conversations seamless on WhatsApp and beyond');
-    $heroSubtitle = rtrim($heroSubtitle, '.');
-    $heroCta = $page?->buttonBlock('hero_cta', ['text' => $isIdLocale ? 'Jadwalkan demo' : 'Book a demo', 'url' => '/book-demo']);
-    $channelsTitle = $page?->titleBlock('channels_title', ['prefix' => $isIdLocale ? 'Setiap pesan yang terlewat adalah' : 'Every missed message is a', 'main' => $isIdLocale ? 'peluang yang hilang' : 'missed sale']);
-    if ($isIdLocale) {
-        if (($channelsTitle['main'] ?? '') === 'penjualan yang hilang.' || ($channelsTitle['main'] ?? '') === 'penjualan yang hilang' || ($channelsTitle['main'] ?? '') === 'peluang yang hilang.') {
-            $channelsTitle['main'] = 'peluang yang hilang';
-        }
-        if (($channelsTitle['prefix'] ?? '') === 'Tiap pesan yang terlewat adalah') {
-            $channelsTitle['prefix'] = 'Setiap pesan yang terlewat adalah';
-        }
-    }
-    $featuresTitle = $page?->titleBlock('features_title', ['prefix' => $isIdLocale ? 'Satu platform' : 'One platform', 'main' => $isIdLocale ? 'Tanpa pesan yang terlewat' : 'Zero missed messages']);
-    $bottomCtaTitle = rtrim($page?->block('bottom_cta_title', $isIdLocale ? 'Mulai terhubung dengan pelanggan lewat WhatsApp' : 'Start engaging customers on WhatsApp'), '.');
-    if ($isIdLocale && ($bottomCtaTitle === 'Mulai berinteraksi dengan pelanggan di WhatsApp.' || $bottomCtaTitle === 'Mulai berinteraksi dengan pelanggan di WhatsApp')) {
-        $bottomCtaTitle = 'Mulai terhubung dengan pelanggan lewat WhatsApp';
-    }
-    $bottomCtaTitle = rtrim($bottomCtaTitle, '.');
+        : 'Reach more customers, respond faster, and keep conversations seamless on WhatsApp and beyond'), '.');
+    $heroCta = $sHero['primary_cta'] ?? [
+        'text' => $isIdLocale ? 'Jadwalkan demo' : 'Book a demo',
+        'url' => '/book-demo',
+    ];
+    $heroMockup = $sHero['mockup'] ?? [];
+
+    // Section 2: Challenges (3 Cards)
+    $sChallenges = $page?->section('challenges', []);
+    $channelsTitle = $sChallenges['title'] ?? [
+        'prefix' => $isIdLocale ? 'Setiap pesan yang terlewat adalah' : 'Every missed message is a',
+        'main' => $isIdLocale ? 'peluang yang hilang' : 'missed sale',
+    ];
+    $challengeCards = $sChallenges['cards'] ?? [
+        [
+            'title' => $isIdLocale ? 'Pelanggan menunggu balasan terlalu lama' : 'Customers wait too long for a reply',
+            'desc' => $isIdLocale
+                ? 'Pertanyaan menumpuk lebih cepat dari kemampuan tim menjawab, padahal pelanggan berharap dibalas dalam hitungan menit, bahkan di luar jam kerja.'
+                : 'Questions pile up faster than your team can answer, and customers expect a response in minutes, even after working hours.',
+        ],
+        [
+            'title' => $isIdLocale ? 'Kampanye tidak sampai ke orang yang tepat' : "Campaigns don't reach the right people",
+            'desc' => $isIdLocale
+                ? 'Promo yang dikirim manual hanya menjangkau sedikit pelanggan, dan tidak jelas siapa yang menerima, membaca, atau menindaklanjutinya.'
+                : "Promotions sent manually reach too few customers, and there's no clear view of who received, read, or acted on them.",
+        ],
+        [
+            'title' => $isIdLocale ? 'Percakapan tersebar di banyak channel' : 'Conversations are scattered across channels',
+            'desc' => $isIdLocale
+                ? 'WhatsApp, Instagram, Facebook, dan web chat ada di inbox masing-masing, jadi konteks hilang dan follow-up terlewat.'
+                : 'WhatsApp, Instagram, Facebook, dan web chat each live in a separate inbox, so context gets lost and follow-ups slip through.',
+        ],
+    ];
+
+    // Section 3: Customer Journey (4 Stages)
+    $sJourney = $page?->section('journey', []);
+    $journeyTitle = $sJourney['title'] ?? [
+        'prefix' => $isIdLocale ? 'Tak ada lagi' : 'Never miss a',
+        'main' => $isIdLocale ? 'pesan yang terlewat.' : 'message.',
+    ];
+    $journeySubtitle = $sJourney['subtitle'] ?? ($isIdLocale
+        ? 'Dari sapaan pertama hingga purna jual. Pilih tahapnya untuk melihat produk yang membantu.'
+        : 'From first hello to after-sales. Pick a stage to see which products help.');
+    $customerBadge = $sJourney['customer_badge'] ?? ($isIdLocale ? 'Pelanggan Anda' : 'Your customer');
+    $seeProductsBtn = $sJourney['see_products_btn'] ?? ($isIdLocale ? 'Lihat produk untuk' : 'See the products for');
+    $stages = $sJourney['stages'] ?? [
+        [
+            'number' => '01',
+            'name' => 'Prospecting',
+            'headline' => $isIdLocale ? 'Ubah prospek menjadi pelanggan.' : 'Turn prospects into customers.',
+            'sub' => $isIdLocale
+                ? 'Jangkau dan libatkan calon pelanggan dengan kampanye yang tertarget di berbagai channel.'
+                : 'Reach and engage potential customers with targeted campaigns across channels.',
+            'defaultTool' => 'broadcast',
+            'tools' => [
+                'broadcast' => $isIdLocale ? 'Jangkau lebih banyak prospek dalam skala besar' : 'Reach more prospects at scale',
+                'chatbot' => $isIdLocale ? 'Respons prospek secara instan' : 'Engage prospects instantly',
+                'omni' => $isIdLocale ? 'Terhubung di semua channel' : 'Connect across channels',
+            ],
+        ],
+        [
+            'number' => '02',
+            'name' => 'Onboarding',
+            'headline' => $isIdLocale ? 'Onboarding jadi lebih mudah.' : 'Make onboarding effortless.',
+            'sub' => $isIdLocale
+                ? 'Pandu pelanggan baru melalui registrasi, verifikasi, dan pengisian data, semuanya lewat chat.'
+                : 'Guide new customers through registration, verification and data submission, all in chat.',
+            'defaultTool' => 'flows',
+            'tools' => [
+                'flows' => $isIdLocale ? 'Registrasi dan pengisian data yang simpel' : 'Simple registration and data entry',
+                'auth' => $isIdLocale ? 'Verifikasi identitas dengan aman' : 'Verify identity securely',
+                'integration' => $isIdLocale ? 'Sebagai Utility Messages: update onboarding tepat waktu' : 'As Utility Messages: Timely onboarding updates',
+                'chatbot' => $isIdLocale ? 'Pandu dan jawab pertanyaan' : 'Guide and answer questions',
+                'omni' => $isIdLocale ? 'Satu percakapan, semua channel' : 'One conversation, every channel',
+            ],
+        ],
+        [
+            'number' => '03',
+            'name' => 'Upselling',
+            'headline' => $isIdLocale ? 'Tingkatkan nilai dari setiap pelanggan.' : 'Grow value from every customer.',
+            'sub' => $isIdLocale
+                ? 'Kirim penawaran yang relevan dan rekomendasi personal sesuai minat pelanggan.'
+                : 'Send relevant offers and personalized recommendations based on what customers like.',
+            'defaultTool' => 'broadcast',
+            'tools' => [
+                'broadcast' => $isIdLocale ? 'Jangkau pelanggan dengan penawaran yang relevan' : 'Reach customers with relevant offers',
+                'chatbot' => $isIdLocale ? 'Rekomendasikan produk, tingkatkan engagement' : 'Recommend products, drive engagement',
+            ],
+        ],
+        [
+            'number' => '04',
+            'name' => 'Support',
+            'headline' => $isIdLocale ? 'Dukungan lebih cepat, setiap saat.' : 'Faster support, every time.',
+            'sub' => $isIdLocale
+                ? 'Bantu pelanggan menemukan jawaban, menyelesaikan masalah umum, dan menghubungi tim Anda dengan mudah.'
+                : 'Help customers find answers, fix common issues, and reach your team easily.',
+            'defaultTool' => 'chatbot',
+            'tools' => [
+                'chatbot' => $isIdLocale ? 'Jawab pertanyaan secara instan' : 'Resolve questions instantly',
+                'omni' => $isIdLocale ? 'Layani pelanggan di channel apa pun' : 'Support customers on any channel',
+            ],
+        ],
+    ];
+
+    // Section 4: Products (6 Products)
+    $sProducts = $page?->section('products', []);
+    $featuresTitle = $sProducts['title'] ?? [
+        'prefix' => $isIdLocale ? 'Satu platform' : 'One platform',
+        'main' => $isIdLocale ? 'Tanpa pesan yang terlewat' : 'Zero missed messages',
+    ];
+    $pillHighlighted = $sProducts['pill_highlighted'] ?? ($isIdLocale ? 'Disorot: peran tiap produk di tahap' : 'Highlighted: how each product helps in');
+    $btnShowAll = $sProducts['btn_show_all'] ?? ($isIdLocale ? 'Tampilkan semua produk' : 'Show all products');
+    $hintPickStage = $sProducts['hint_pick_stage'] ?? ($isIdLocale ? 'Pilih tahap journey di atas untuk melihat produk yang membantu' : 'Pick a journey stage above to see which products help');
+    $productItems = $sProducts['items'] ?? [
+        'auth' => [
+            'id' => 'auth',
+            'name' => 'Authentication',
+            'tag' => $isIdLocale ? 'Verifikasi OTP yang aman' : 'Secure OTP verification',
+            'headline' => $isIdLocale ? 'Amankan setiap login.' : 'Secure every login.',
+            'desc' => $isIdLocale ? 'Kirim kode OTP lewat WhatsApp untuk memverifikasi pengguna dengan cepat dan aman.' : 'Send one-time passwords on WhatsApp to verify users quickly and safely.',
+            'bullets' => [
+                $isIdLocale ? 'Verifikasi pengguna yang cepat dan aman' : 'Fast, secure user verification',
+                $isIdLocale ? 'Login OTP untuk semua akun' : 'OTP login for every account',
+                $isIdLocale ? 'Perlindungan dari akses tanpa izin' : 'Protection from unauthorized access',
+            ],
+            'alt' => $isIdLocale ? 'Ilustrasi animasi: one-time password masuk ke WhatsApp dan pengguna terverifikasi' : 'Animated illustration: a one-time password arrives on WhatsApp and the user is verified',
+        ],
+        'broadcast' => [
+            'id' => 'broadcast',
+            'name' => 'Broadcasting',
+            'tag' => $isIdLocale ? 'Kampanye skala besar' : 'Campaigns at scale',
+            'headline' => $isIdLocale ? 'Jangkau lebih banyak pelanggan, dalam skala besar.' : 'Reach more customers, at scale.',
+            'desc' => $isIdLocale ? 'Kirim promo, kampanye, dan permintaan feedback lewat WhatsApp.' : 'Send promotions, campaigns and feedback requests on WhatsApp.',
+            'bullets' => [
+                $isIdLocale ? 'Jadwalkan pengiriman pesan dan promo' : 'Schedule message and promo blasts',
+                $isIdLocale ? 'Laporan kampanye dan analitik bawaan' : 'Built-in campaign reports and analytics',
+                $isIdLocale ? 'Jangkauan dan awareness kampanye lebih baik' : 'Better campaign reach and awareness',
+            ],
+            'alt' => $isIdLocale ? 'Ilustrasi animasi: satu promo dikirim ke banyak pelanggan dan laporan kampanye terisi' : 'Animated illustration: one promotion is delivered to many customers and the campaign report fills in',
+        ],
+        'chatbot' => [
+            'id' => 'chatbot',
+            'name' => 'Chatbot',
+            'tag' => $isIdLocale ? 'Chatbot AI & predefined' : 'AI & predefined chatbots',
+            'headline' => $isIdLocale ? 'Customer support berbasis AI.' : 'AI-powered customer support.',
+            'desc' => $isIdLocale ? 'Chatbot statis dan AI menjawab dengan cepat, lalu mengalihkan ke manusia bila perlu.' : 'Static and AI chatbots answer fast, and hand over to a human when needed.',
+            'bullets' => [
+                $isIdLocale ? 'Selesaikan pertanyaan lebih cepat' : 'Resolve inquiries faster',
+                $isIdLocale ? 'Jawab pelanggan 24/7' : 'Answer customers 24/7',
+                $isIdLocale ? 'Ubah percakapan menjadi tiket support' : 'Turn conversations into support tickets',
+            ],
+            'alt' => $isIdLocale ? 'Ilustrasi animasi: bot statis menyapa pelanggan, bot AI mengambil alih pertanyaan teks bebas, lalu chat dialihkan ke agen manusia dengan tiket' : 'Animated illustration: a static bot greets the customer, an AI bot takes over the free-text question, then the chat is handed over to a human agent with a ticket',
+        ],
+        'integration' => [
+            'id' => 'integration',
+            'name' => 'Cross Platform Integration',
+            'tag' => $isIdLocale ? 'Update otomatis dari sistem' : 'Automated system updates',
+            'headline' => $isIdLocale ? 'Pelanggan selalu ter-update, secara otomatis.' : 'Keep customers updated, automatically.',
+            'desc' => $isIdLocale ? 'Kirim pesan WhatsApp otomatis dari sistem bisnis Anda: pengingat, pesanan, pengiriman, janji temu.' : 'Trigger WhatsApp messages from your business systems: reminders, orders, deliveries, appointments.',
+            'bullets' => [
+                $isIdLocale ? 'Pesan yang dipicu oleh event bisnis' : 'Messages triggered by business events',
+                $isIdLocale ? 'Template personal yang siap pakai' : 'Personalized, ready-to-use templates',
+                $isIdLocale ? 'Update pelanggan secara real-time' : 'Real-time customer updates',
+            ],
+            'alt' => $isIdLocale ? 'Ilustrasi animasi: pesanan di sistem bisnis memicu update WhatsApp otomatis' : 'Animated illustration: an order event in a business system becomes an automatic WhatsApp update',
+        ],
+        'flows' => [
+            'id' => 'flows',
+            'name' => 'WhatsApp Flows',
+            'tag' => $isIdLocale ? 'Formulir langsung di chat' : 'Forms inside the chat',
+            'headline' => $isIdLocale ? 'Kumpulkan data pelanggan langsung di chat.' : 'Collect customer data, right in the chat.',
+            'desc' => $isIdLocale ? 'Pelanggan mengisi formulir interaktif tanpa keluar dari WhatsApp.' : 'Customers fill in interactive forms without leaving WhatsApp.',
+            'bullets' => [
+                $isIdLocale ? 'Tanpa perlu aplikasi atau website' : 'No app or website needed',
+                $isIdLocale ? 'Formulir sesuai kebutuhan bisnis Anda' : 'Forms tailored to your business',
+                $isIdLocale ? 'Proses pengumpulan data yang lebih simpel' : 'A simpler data collection journey',
+            ],
+            'alt' => $isIdLocale ? 'Ilustrasi animasi: pelanggan mengisi form registrasi di dalam WhatsApp' : 'Animated illustration: a customer fills in a registration form inside WhatsApp',
+        ],
+        'omni' => [
+            'id' => 'omni',
+            'name' => 'Omnichannel',
+            'tag' => $isIdLocale ? 'Satu inbox untuk semua channel' : 'One inbox for all channels',
+            'headline' => $isIdLocale ? 'Semua percakapan, di satu tempat.' : 'All conversations, one place.',
+            'desc' => $isIdLocale ? 'Kelola chat, DM, dan komentar dari WhatsApp, Instagram, Facebook, dan Live Chat dalam satu platform.' : 'Manage chats, DMs and comments from WhatsApp, Instagram, Facebook and Live Chat in a single platform.',
+            'bullets' => [
+                $isIdLocale ? 'Satu inbox untuk semua channel' : 'One inbox for every channel',
+                $isIdLocale ? 'Pantau performa agent dan SLA' : 'Track agent performance and SLA',
+                $isIdLocale ? 'Ukur kepuasan dengan CSAT' : 'Measure satisfaction with CSAT',
+            ],
+            'alt' => $isIdLocale ? 'Ilustrasi animasi: pesan dari empat channel masuk ke satu inbox terpadu' : 'Animated illustration: messages from four channels flow into one unified inbox',
+        ],
+    ];
+
+    // Section 5: Platform Control (5 Cards)
+    $sControl = $page?->section('platform_control', []);
+    $controlTitle = $sControl['title'] ?? ($isIdLocale ? 'Semua percakapan, tetap dalam kendali Anda.' : 'Stay in control of every conversation.');
+    $controlCards = $sControl['cards'] ?? [
+        ['title' => $isIdLocale ? 'Mode supervisor' : 'Supervisor mode', 'desc' => $isIdLocale ? 'Lead melihat chat timnya. Agent hanya melihat chat miliknya.' : "Leads see their team's chats. Agents see only their own."],
+        ['title' => $isIdLocale ? 'Multi-akun' : 'Multi-account', 'desc' => $isIdLocale ? 'Semua akun dan nomor bisnis, dalam satu platform.' : 'All business accounts and numbers, one platform.'],
+        ['title' => $isIdLocale ? 'Akses berbasis peran' : 'Role-based access', 'desc' => $isIdLocale ? 'Atur siapa yang bisa memakai modul, fitur, dan akun tertentu.' : 'Decide who can use which modules, features and accounts.'],
+        ['title' => $isIdLocale ? 'Riwayat percakapan' : 'Conversation history', 'desc' => $isIdLocale ? 'Semua chat tersimpan untuk visibilitas dan follow-up.' : 'Every chat stored for visibility and follow-up.'],
+        ['title' => 'Ticketing', 'desc' => $isIdLocale ? 'Chat dengan agent? Tiket otomatis dibuat.' : 'Chat with an agent? A ticket is created automatically.'],
+    ];
+
+    // Section 6: Why Kouventa (4 Cards)
+    $sWhy = $page?->section('why', []);
+    $whyTitle = $sWhy['title'] ?? [
+        'prefix' => $isIdLocale ? 'Kenapa Kouventa untuk customer' : 'Why Kouventa for customer',
+        'main' => 'engagement',
+    ];
+    $whyCards = $sWhy['cards'] ?? [
+        ['title' => 'Official Meta Business Solution Provider', 'desc' => $isIdLocale ? 'Akses resmi ke WhatsApp Business Platform.' : 'Trusted access to the WhatsApp Business Platform.'],
+        ['title' => $isIdLocale ? 'Dibangun sesuai bisnis Anda' : 'Built around your business', 'desc' => $isIdLocale ? 'Disesuaikan dengan industri, alur, dan sistem Anda.' : 'Customized to your industry, flows and systems.'],
+        ['title' => $isIdLocale ? 'Aman & terpercaya' : 'Secure & trusted', 'desc' => $isIdLocale ? 'Keamanan kelas enterprise untuk data bisnis dan pelanggan.' : 'Enterprise-grade security for business and customer data.'],
+        ['title' => $isIdLocale ? 'Pesan pascabayar' : 'Post-paid messaging', 'desc' => $isIdLocale ? 'Kirim dulu. Bayar belakangan, sesuai pemakaian.' : 'Send first. Pay later, for what you actually use.'],
+    ];
+
+    // Section 7: Bottom CTA
+    $sCta = $page?->section('cta', []);
+    $bottomCtaTitle = rtrim($sCta['title'] ?? ($isIdLocale ? 'Mulai terhubung dengan pelanggan lewat WhatsApp' : 'Start engaging customers on WhatsApp'), '.');
+    $ctaPrimary = $sCta['primary_btn'] ?? ['text' => ($isIdLocale ? 'Jadwalkan demo' : 'Book a demo'), 'url' => '/book-demo'];
+    $ctaSecondary = $sCta['secondary_btn'] ?? ['text' => ($isIdLocale ? 'Lihat harga' : 'See pricing'), 'url' => '/pricing?tab=ce'];
 @endphp
 
 @section('content')
@@ -1135,126 +1348,8 @@
     stage: 0,
     product: 'broadcast',
     linked: true,
-    stages: [
-        {
-            name: '{{ t('kouventa.Prospecting', 'Prospecting') }}',
-            headline: '{{ t('kouventa.Turn prospects into customers.', 'Turn prospects into customers.') }}',
-            sub: '{{ t('kouventa.Reach and engage potential customers with targeted campaigns across channels.', 'Reach and engage potential customers with targeted campaigns across channels.') }}',
-            tools: {
-                broadcast: '{{ t('kouventa.Reach more prospects at scale', 'Reach more prospects at scale') }}',
-                chatbot: '{{ t('kouventa.Engage prospects instantly', 'Engage prospects instantly') }}',
-                omni: '{{ t('kouventa.Connect across channels', 'Connect across channels') }}'
-            },
-            defaultTool: 'broadcast'
-        },
-        {
-            name: '{{ t('kouventa.Onboarding', 'Onboarding') }}',
-            headline: '{{ t('kouventa.Make onboarding effortless.', 'Make onboarding effortless.') }}',
-            sub: '{{ t('kouventa.Guide new customers through registration, verification and data submission, all in chat.', 'Guide new customers through registration, verification and data submission, all in chat.') }}',
-            tools: {
-                flows: '{{ t('kouventa.Simple registration and data entry', 'Simple registration and data entry') }}',
-                auth: '{{ t('kouventa.Verify identity securely', 'Verify identity securely') }}',
-                integration: '{{ t('kouventa.As Utility Messages: Timely onboarding updates', 'As Utility Messages: Timely onboarding updates') }}',
-                chatbot: '{{ t('kouventa.Guide and answer questions', 'Guide and answer questions') }}',
-                omni: '{{ t('kouventa.One conversation, every channel', 'One conversation, every channel') }}'
-            },
-            defaultTool: 'flows'
-        },
-        {
-            name: '{{ t('kouventa.Upselling', 'Upselling') }}',
-            headline: '{{ t('kouventa.Grow value from every customer.', 'Grow value from every customer.') }}',
-            sub: '{{ t('kouventa.Send relevant offers and personalized recommendations based on what customers like.', 'Send relevant offers and personalized recommendations based on what customers like.') }}',
-            tools: {
-                broadcast: '{{ t('kouventa.Reach customers with relevant offers', 'Reach customers with relevant offers') }}',
-                chatbot: '{{ t('kouventa.Recommend products, drive engagement', 'Recommend products, drive engagement') }}'
-            },
-            defaultTool: 'broadcast'
-        },
-        {
-            name: '{{ t('kouventa.Support', 'Support') }}',
-            headline: '{{ t('kouventa.Faster support, every time.', 'Faster support, every time.') }}',
-            sub: '{{ t('kouventa.Help customers find answers, fix common issues, and reach your team easily.', 'Help customers find answers, fix common issues, and reach your team easily.') }}',
-            tools: {
-                chatbot: '{{ t('kouventa.Resolve questions instantly', 'Resolve questions instantly') }}',
-                omni: '{{ t('kouventa.Support customers on any channel', 'Support customers on any channel') }}'
-            },
-            defaultTool: 'chatbot'
-        }
-    ],
-    products: {
-        auth: {
-            name: '{{ t('kouventa.Authentication', 'Authentication') }}',
-            headline: '{{ t('kouventa.Secure every login.', 'Secure every login.') }}',
-            desc: '{{ t('kouventa.Send one-time passwords on WhatsApp to verify users quickly and safely.', 'Send one-time passwords on WhatsApp to verify users quickly and safely.') }}',
-            tag: '{{ t('kouventa.Secure OTP verification', 'Secure OTP verification') }}',
-            bullets: [
-                '{{ t('kouventa.Fast, secure user verification', 'Fast, secure user verification') }}',
-                '{{ t('kouventa.OTP login for every account', 'OTP login for every account') }}',
-                '{{ t('kouventa.Protection from unauthorized access', 'Protection from unauthorized access') }}'
-            ],
-            alt: '{{ t('kouventa.Animated illustration: a one-time password arrives on WhatsApp and the user is verified', 'Animated illustration: a one-time password arrives on WhatsApp and the user is verified') }}'
-        },
-        broadcast: {
-            name: '{{ t('kouventa.Broadcasting', 'Broadcasting') }}',
-            headline: '{{ t('kouventa.Reach more customers, at scale.', 'Reach more customers, at scale.') }}',
-            desc: '{{ t('kouventa.Send promotions, campaigns and feedback requests on WhatsApp.', 'Send promotions, campaigns and feedback requests on WhatsApp.') }}',
-            tag: '{{ t('kouventa.Campaigns at scale', 'Campaigns at scale') }}',
-            bullets: [
-                '{{ t('kouventa.Schedule message and promo blasts', 'Schedule message and promo blasts') }}',
-                '{{ t('kouventa.Built-in campaign reports and analytics', 'Built-in campaign reports and analytics') }}',
-                '{{ t('kouventa.Better campaign reach and awareness', 'Better campaign reach and awareness') }}'
-            ],
-            alt: '{{ t('kouventa.Animated illustration: one promotion is delivered to many customers and the campaign report fills in', 'Animated illustration: one promotion is delivered to many customers and the campaign report fills in') }}'
-        },
-        chatbot: {
-            name: '{{ t('kouventa.Chatbot', 'Chatbot') }}',
-            headline: '{{ t('kouventa.AI-powered customer support.', 'AI-powered customer support.') }}',
-            desc: '{{ t('kouventa.Static and AI chatbots answer fast, and hand over to a human when needed.', 'Static and AI chatbots answer fast, and hand over to a human when needed.') }}',
-            tag: '{{ t('kouventa.AI & predefined chatbots', 'AI & predefined chatbots') }}',
-            bullets: [
-                '{{ t('kouventa.Resolve inquiries faster', 'Resolve inquiries faster') }}',
-                '{{ t('kouventa.Answer customers 24/7', 'Answer customers 24/7') }}',
-                '{{ t('kouventa.Turn conversations into support tickets', 'Turn conversations into support tickets') }}'
-            ],
-            alt: '{{ t('kouventa.Animated illustration: a static bot greets the customer, an AI bot takes over the free-text question, then the chat is handed over to a human agent with a ticket', 'Animated illustration: a static bot greets the customer, an AI bot takes over the free-text question, then the chat is handed over to a human agent with a ticket') }}'
-        },
-        integration: {
-            name: '{{ t('kouventa.Cross Platform Integration', 'Cross Platform Integration') }}',
-            headline: '{{ t('kouventa.Keep customers updated, automatically.', 'Keep customers updated, automatically.') }}',
-            desc: '{{ t('kouventa.Trigger WhatsApp messages from your business systems: reminders, orders, deliveries, appointments.', 'Trigger WhatsApp messages from your business systems: reminders, orders, deliveries, appointments.') }}',
-            tag: '{{ t('kouventa.Automated system updates', 'Automated system updates') }}',
-            bullets: [
-                '{{ t('kouventa.Messages triggered by business events', 'Messages triggered by business events') }}',
-                '{{ t('kouventa.Personalized, ready-to-use templates', 'Personalized, ready-to-use templates') }}',
-                '{{ t('kouventa.Real-time customer updates', 'Real-time customer updates') }}'
-            ],
-            alt: '{{ t('kouventa.Animated illustration: an order event in a business system becomes an automatic WhatsApp update', 'Animated illustration: an order event in a business system becomes an automatic WhatsApp update') }}'
-        },
-        flows: {
-            name: '{{ t('kouventa.WhatsApp Flows', 'WhatsApp Flows') }}',
-            headline: '{{ t('kouventa.Collect customer data, right in the chat.', 'Collect customer data, right in the chat.') }}',
-            desc: '{{ t('kouventa.Customers fill in interactive forms without leaving WhatsApp.', 'Customers fill in interactive forms without leaving WhatsApp.') }}',
-            tag: '{{ t('kouventa.Forms inside the chat', 'Forms inside the chat') }}',
-            bullets: [
-                '{{ t('kouventa.No app or website needed', 'No app or website needed') }}',
-                '{{ t('kouventa.Forms tailored to your business', 'Forms tailored to your business') }}',
-                '{{ t('kouventa.A simpler data collection journey', 'A simpler data collection journey') }}'
-            ],
-            alt: '{{ t('kouventa.Animated illustration: a customer fills in a registration form inside WhatsApp', 'Animated illustration: a customer fills in a registration form inside WhatsApp') }}'
-        },
-        omni: {
-            name: '{{ t('kouventa.Omnichannel', 'Omnichannel') }}',
-            headline: '{{ t('kouventa.All conversations, one place.', 'All conversations, one place.') }}',
-            desc: '{{ t('kouventa.Manage chats, DMs and comments from WhatsApp, Instagram, Facebook and Live Chat in a single platform.', 'Manage chats, DMs and comments from WhatsApp, Instagram, Facebook and Live Chat in a single platform.') }}',
-            tag: '{{ t('kouventa.One inbox for all channels', 'One inbox for all channels') }}',
-            bullets: [
-                '{{ t('kouventa.One inbox for every channel', 'One inbox for every channel') }}',
-                '{{ t('kouventa.Track agent performance and SLA', 'Track agent performance and SLA') }}',
-                '{{ t('kouventa.Measure satisfaction with CSAT', 'Measure satisfaction with CSAT') }}'
-            ],
-            alt: '{{ t('kouventa.Animated illustration: messages from four channels flow into one unified inbox', 'Animated illustration: messages from four channels flow into one unified inbox') }}'
-        }
-    },
+    stages: @json($stages),
+    products: @json($productItems),
     pickStage(i) {
         if (this.linked && this.stage === i) {
             this.linked = false;
@@ -1288,14 +1383,14 @@
 <section class="kv-hero-container" style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative">
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
 <nav aria-label="Products" style="height: 56px; padding: 0 80px; display: flex; align-items: center; gap: 32px; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 4">
-<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #93A4B6">{{ t('kouventa.Products', 'Products') }}</span>
-<a href="{{ localized_url('/product/ai') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</a>
-<a href="{{ localized_url('/product/customer-engagement') }}" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</a>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #93A4B6">{{ $heroSubnavLabel }}</span>
+<a href="{{ localized_url('/product/ai') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ $heroSubnavAi }}</a>
+<a href="{{ localized_url('/product/customer-engagement') }}" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ $heroSubnavCe }}</a>
 </nav>
 
 <div class="kv-hero-section" style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 600px; gap: 56px; align-items: center; position: relative">
 <div class="kv-hero-content" style="display: flex; flex-direction: column; gap: 26px">
-<span style="align-self: flex-start; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>{{ t('kouventa.Official Meta Business Solution Provider', 'Official Meta Business Solution Provider') }}</span>
+<span style="align-self: flex-start; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>{{ $heroEyebrow }}</span>
 <h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'The smarter way to' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'engage customers' }}</span></h1>
 <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{!! nl2br(e($heroSubtitle)) !!}</p>
 <div style="display: flex; gap: 12px; padding-top: 4px">
@@ -1308,8 +1403,8 @@
 <div role="img" class="kv-ce-hero-dashboard" aria-label="Animated illustration: the Kouventa dashboard shows conversations from WhatsApp, Instagram, Facebook and Live Chat in one inbox. One customer starts on Instagram DM, is answered by an agent, then followed up by a WhatsApp broadcast and answered by Kouventa AI." data-kv-fit="600" style="width: 600px; justify-self: end; background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.4); color: #0E1A24; display: flex; flex-direction: column; animation: kvFloat 6s ease-in-out infinite">
 <div style="height: 44px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid #E3E8E6">
 <svg width="17.5" height="22" viewBox="0 0 96 121" role="img" aria-label="Kouventa" style="display: block; flex-shrink: 0"><rect x="0" y="0" width="40" height="121" fill="#12BB3A"></rect><path d="M40 0H96L40 60.5L96 121H40Z" fill="#82D48B"></path></svg>
-<span style="font-size: 13px; font-weight: 800">Kouventa</span>
-<span style="font-size: 12px; color: #4A5866">Interactions › Chat</span>
+<span style="font-size: 13px; font-weight: 800">{{ $heroMockup['header_title'] ?? 'Kouventa' }}</span>
+<span style="font-size: 12px; color: #4A5866">{{ $heroMockup['header_subtitle'] ?? 'Interactions › Chat' }}</span>
 <span style="margin-left: auto; display: flex; align-items: center; gap: 6px">
 <img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon Resmi WhatsApp Business API untuk Komunikasi Pelanggan Otomatis', 'Ikon Resmi WhatsApp Business API untuk Komunikasi Pelanggan Otomatis') }}" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
 <img src="{{ theme_asset('images/icon-channel-1.png') }}" alt="{{ t('kouventa.Ikon Kanal Pesan Instagram Direct Message (DM) Terintegrasi Kouventa', 'Ikon Kanal Pesan Instagram Direct Message (DM) Terintegrasi Kouventa') }}" style="width: 14px; height: 14px; object-fit: contain; display: block; flex-shrink: 0">
@@ -1318,7 +1413,7 @@
 </span>
 </div>
 <div style="display: flex; gap: 18px; padding: 0 16px; font-size: 12px; border-bottom: 1px solid #E3E8E6; flex-shrink: 0">
-<span style="padding: 10px 2px; color: #13803F; font-weight: 700; border-bottom: 2px solid #13803F">{{ $isIdLocale ? 'Semua channel' : t('kouventa.All channels', 'All channels') }}</span>
+<span style="padding: 10px 2px; color: #13803F; font-weight: 700; border-bottom: 2px solid #13803F">{{ $heroMockup['all_channels'] ?? ($isIdLocale ? 'Semua channel' : 'All channels') }}</span>
 <span style="padding: 10px 2px; color: #4A5866; border-bottom: 2px solid transparent">WhatsApp</span>
 <span style="padding: 10px 2px; color: #4A5866; border-bottom: 2px solid transparent">Instagram</span>
 <span style="padding: 10px 2px; color: #4A5866; border-bottom: 2px solid transparent">Facebook</span>
@@ -1392,10 +1487,10 @@ WhatsApp
 <span style="display: flex; align-items: center; gap: 4px; font-size: 10px; color: #4A5866">
 <img src="{{ theme_asset('images/icon-instagram.png') }}" alt="{{ t('kouventa.Ikon Instagram - Saluran Komunikasi Terintegrasi', 'Ikon Instagram - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
 <img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon WhatsApp - Saluran Komunikasi Terintegrasi', 'Ikon WhatsApp - Saluran Komunikasi Terintegrasi') }}" style="width: 11px; height: 11px; object-fit: contain; display: block; flex-shrink: 0">
-{{ $isIdLocale ? 'Satu profil, dua channel' : t('kouventa.One profile, two channels', 'One profile, two channels') }}
+{{ $heroMockup['profile_label'] ?? ($isIdLocale ? 'Satu profil, dua channel' : 'One profile, two channels') }}
 </span>
 </span>
-<span style="font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 7px; background: #F2C230; color: #3A2A00">{{ $isIdLocale ? 'Ringkas' : t('kouventa.Summarize', 'Summarize') }}</span>
+<span style="font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 7px; background: #F2C230; color: #3A2A00">{{ $heroMockup['summarize_btn'] ?? ($isIdLocale ? 'Ringkas' : 'Summarize') }}</span>
 </div>
 
 <div style="flex-grow: 1; min-height: 0; overflow: hidden; padding: 10px 14px; display: flex; flex-direction: column; gap: 7px">
@@ -1405,7 +1500,7 @@ WhatsApp
 {{ $isIdLocale ? 'DM Instagram · 10:02' : 'Instagram DM · 10:02' }}
 </span>
 <span style="background: #FFFFFF; border: 1px solid #E3E8E6; padding: 7px 10px; border-radius: 4px 12px 12px; font-size: 12px; line-height: 1.45; color: #0E1A24">
-{{ $isIdLocale ? 'Halo! Weekend Sale masih berlaku?' : t('kouventa.Hi! Is the Weekend Sale still on?', 'Hi! Is the Weekend Sale still on?') }}
+{{ $heroMockup['chat_m1'] ?? ($isIdLocale ? 'Halo! Weekend Sale masih berlaku?' : 'Hi! Is the Weekend Sale still on?') }}
 </span>
 </div>
 
@@ -1415,13 +1510,13 @@ WhatsApp
 {{ $isIdLocale ? 'Agen · DM Instagram · 10:04' : 'Agent · Instagram DM · 10:04' }}
 </span>
 <span style="background: #DDF3E4; padding: 7px 10px; border-radius: 12px 4px 12px 12px; font-size: 12px; line-height: 1.45; color: #0E1A24">
-{{ $isIdLocale ? 'Masih, sampai Minggu! Mau akses awal lewat WhatsApp?' : t('kouventa.Yes, until Sunday! Want early access on WhatsApp?', 'Yes, until Sunday! Want early access on WhatsApp?') }}
+{{ $heroMockup['chat_m2'] ?? ($isIdLocale ? 'Masih, sampai Minggu! Mau akses awal lewat WhatsApp?' : 'Yes, until Sunday! Want early access on WhatsApp?') }}
 </span>
 </div>
 
 <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 700; color: #4A5866; animation: kvM3 16s ease infinite both">
 <span style="flex-grow: 1; height: 1px; background: #E3E8E6"></span>
-{{ $isIdLocale ? 'Esok hari · campaign WhatsApp' : t('kouventa.Next day · WhatsApp campaign', 'Next day · WhatsApp campaign') }}
+{{ $heroMockup['chat_divider'] ?? ($isIdLocale ? 'Esok hari · campaign WhatsApp' : 'Next day · WhatsApp campaign') }}
 <span style="flex-grow: 1; height: 1px; background: #E3E8E6"></span>
 </div>
 
@@ -1431,8 +1526,8 @@ WhatsApp
 {{ $isIdLocale ? 'Broadcast campaign · WhatsApp · 09:00' : 'Campaign broadcast · WhatsApp · 09:00' }}
 </span>
 <span style="background: #DDF3E4; border-radius: 12px 4px 12px 12px; overflow: hidden; font-size: 12px; line-height: 1.45; color: #0E1A24">
-<span style="display: block; background: #071C33; color: #2BD46A; font-weight: 800; font-size: 12px; text-align: center; padding: 7px">WEEKEND SALE</span>
-<span style="display: block; padding: 7px 10px">{{ $isIdLocale ? 'Halo Rina, akses awal Anda sudah dibuka: diskon 30% sampai Minggu.' : t('kouventa.Hi Rina, your early access is open: 30% off until Sunday.', 'Hi Rina, your early access is open: 30% off until Sunday.') }}</span>
+<span style="display: block; background: #071C33; color: #2BD46A; font-weight: 800; font-size: 12px; text-align: center; padding: 7px">{{ $heroMockup['chat_m3_badge'] ?? 'WEEKEND SALE' }}</span>
+<span style="display: block; padding: 7px 10px">{{ $heroMockup['chat_m3_text'] ?? ($isIdLocale ? 'Halo Rina, akses awal Anda sudah dibuka: diskon 30% sampai Minggu.' : 'Hi Rina, your early access is open: 30% off until Sunday.') }}</span>
 </span>
 </div>
 
@@ -1442,7 +1537,7 @@ WhatsApp
 WhatsApp · 09:12
 </span>
 <span style="background: #FFFFFF; border: 1px solid #E3E8E6; padding: 7px 10px; border-radius: 4px 12px 12px; font-size: 12px; line-height: 1.45; color: #0E1A24">
-{{ $isIdLocale ? 'Ukuran M masih ada?' : t('kouventa.Is size M still available?', 'Is size M still available?') }}
+{{ $heroMockup['chat_m4'] ?? ($isIdLocale ? 'Ukuran M masih ada?' : 'Is size M still available?') }}
 </span>
 </div>
 
@@ -1452,7 +1547,7 @@ WhatsApp · 09:12
 Kouventa AI · WhatsApp · 09:12
 </span>
 <span style="background: #DDF3E4; padding: 7px 10px; border-radius: 12px 4px 12px 12px; font-size: 12px; line-height: 1.45; color: #0E1A24">
-{{ $isIdLocale ? 'Ukuran M masih tersedia. Sudah saya simpankan untuk Anda.' : t("kouventa.Yes, size M is in stock. I've reserved it for you.", "Yes, size M is in stock. I've reserved it for you.") }}
+{{ $heroMockup['chat_m5'] ?? ($isIdLocale ? 'Ukuran M masih tersedia. Sudah saya simpankan untuk Anda.' : "Yes, size M is in stock. I've reserved it for you.") }}
 </span>
 </div>
 </div>
@@ -1460,9 +1555,9 @@ Kouventa AI · WhatsApp · 09:12
 <div style="flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 8px 14px 12px">
 <span style="flex-grow: 1; height: 32px; border-radius: 8px; background: #FFFFFF; border: 1px solid #E3E8E6; display: flex; align-items: center; gap: 6px; padding: 0 10px; font-size: 11.5px; color: #8696A0">
 <img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon WhatsApp - Saluran Komunikasi Terintegrasi', 'Ikon WhatsApp - Saluran Komunikasi Terintegrasi') }}" style="width: 12px; height: 12px; object-fit: contain; display: block; flex-shrink: 0">
-{{ $isIdLocale ? 'Balas di WhatsApp…' : t('kouventa.Reply on WhatsApp…', 'Reply on WhatsApp…') }}
+{{ $heroMockup['input_placeholder'] ?? ($isIdLocale ? 'Balas di WhatsApp…' : 'Reply on WhatsApp…') }}
 </span>
-<span style="height: 32px; padding: 0 14px; border-radius: 8px; background: #13803F; color: #FFFFFF; font-size: 11.5px; font-weight: 700; display: flex; align-items: center">{{ $isIdLocale ? 'Kirim' : t('kouventa.Send', 'Send') }}</span>
+<span style="height: 32px; padding: 0 14px; border-radius: 8px; background: #13803F; color: #FFFFFF; font-size: 11.5px; font-weight: 700; display: flex; align-items: center">{{ $heroMockup['send_btn'] ?? ($isIdLocale ? 'Kirim' : 'Send') }}</span>
 </div>
 </div>
 </div>
@@ -1480,16 +1575,16 @@ Kouventa AI · WhatsApp · 09:12
 <span style="width: 52px; height: 52px; border-radius: 14px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; transform-origin: 50% 50%; animation: kvClockTick 3.2s ease-in-out infinite"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2M9 2h6"></path></svg></span>
 <span style="display: flex; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #E79F8E; animation: kvBlink 1s ease infinite"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #E79F8E; animation: kvBlink 1s ease .2s infinite"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #E79F8E; animation: kvBlink 1s ease .4s infinite"></span></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ t('kouventa.Customers wait too long for a reply', 'Customers wait too long for a reply') }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Questions pile up faster than your team can answer, and customers expect a response in minutes, even after working hours.', 'Questions pile up faster than your team can answer, and customers expect a response in minutes, even after working hours.') }}</p>
+<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengeCards[0]['title'] ?? '' }}</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengeCards[0]['desc'] ?? '' }}</p>
 </article>
 <article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 0.8s both">
 <div aria-hidden="true" style="height: 56px; display: flex; align-items: center; gap: 12px">
 <span style="width: 52px; height: 52px; border-radius: 14px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; animation: kvBlockedPulse 3.2s ease-in-out infinite"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="m4.9 4.9 14.2 14.2"></path></svg></span>
 <span style="display: flex; gap: 6px"><span style="width: 16px; height: 6px; border-radius: 3px; background: #F0C4BA; transform-origin: left; animation: kvSignalDash 1.8s ease-in-out infinite"></span><span style="width: 24px; height: 6px; border-radius: 3px; background: #E79F8E; transform-origin: left; animation: kvSignalDash 1.8s ease-in-out .3s infinite"></span><span style="width: 12px; height: 6px; border-radius: 3px; background: #F0C4BA; transform-origin: left; animation: kvSignalDash 1.8s ease-in-out .6s infinite"></span></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ t('kouventa.Campaigns don\'t reach the right people', 'Campaigns don\'t reach the right people') }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Promotions sent manually reach too few customers, and there\'s no clear view of who received, read, or acted on them.', 'Promotions sent manually reach too few customers, and there\'s no clear view of who received, read, or acted on them.') }}</p>
+<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengeCards[1]['title'] ?? '' }}</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengeCards[1]['desc'] ?? '' }}</p>
 </article>
 <article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 1.4s both">
 <div aria-hidden="true" style="height: 56px; position: relative; width: 140px">
@@ -1497,8 +1592,8 @@ Kouventa AI · WhatsApp · 09:12
 <span style="position: absolute; left: 44px; top: 0; width: 36px; height: 36px; border-radius: 10px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; animation: kvFloatDrift2 3.2s ease-in-out .4s infinite alternate"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></span>
 <span style="position: absolute; left: 88px; top: 16px; width: 36px; height: 36px; border-radius: 10px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; animation: kvFloatDrift3 2.5s ease-in-out .8s infinite alternate"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ t('kouventa.Conversations are scattered across channels', 'Conversations are scattered across channels') }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ t('kouventa.WhatsApp, Instagram, Facebook, and web chat each live in a separate inbox, so context gets lost and follow-ups slip through.', 'WhatsApp, Instagram, Facebook, and web chat each live in a separate inbox, so context gets lost and follow-ups slip through.') }}</p>
+<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengeCards[2]['title'] ?? '' }}</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengeCards[2]['desc'] ?? '' }}</p>
 </article>
 </div>
 </section>
@@ -1506,8 +1601,8 @@ Kouventa AI · WhatsApp · 09:12
 <!-- ============ JOURNEY ============ -->
 <section id="journey" class="kv-journey-section" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; gap: 14px">
-<h2 style="margin: 0; font-size: 44px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Never miss a', 'Never miss a') }} <span style="color: #13803F">{{ t('kouventa.message.', 'message.') }}</span></h2>
-<p style="margin: 0; font-size: 18px; line-height: 1.5; color: #4A5866">{{ t('kouventa.From first hello to after-sales. Pick a stage to see which products help.', 'From first hello to after-sales. Pick a stage to see which products help.') }}</p>
+<h2 style="margin: 0; font-size: 44px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $journeyTitle['prefix'] ?? 'Never miss a' }} <span style="color: #13803F">{{ $journeyTitle['main'] ?? 'message.' }}</span></h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.5; color: #4A5866">{{ $journeySubtitle }}</p>
 </div>
 <div role="tablist" class="kv-journey-tablist-wrap" aria-label="Customer journey stage" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 28px 0 26px">
 <div class="kv-journey-track-container" style="position: relative; height: 176px">
@@ -1515,7 +1610,7 @@ Kouventa AI · WhatsApp · 09:12
 <span aria-hidden="true" class="kv-ce-track-fill kv-journey-track-fill" style="position: absolute; top: 76px; left: 12.5%; height: 4px; border-radius: 4px; background: #13803F; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1)" :style="{ width: (stage * 25) + '%' }"></span>
 <span aria-hidden="true" class="kv-ce-customer-pointer kv-journey-pointer" style="position: absolute; top: 0; transform: translateX(-50%); transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; align-items: center; z-index: 10" :style="{ left: (12.5 + stage * 25) + '%' }">
 <span style="animation: kvFloat 2.4s ease-in-out infinite; display: flex; flex-direction: column; align-items: center">
-<span style="display: flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; border-radius: 999px; background: #071C33; color: #FFFFFF; font-size: 13px; font-weight: 700; white-space: nowrap; box-shadow: 0 6px 16px rgba(7, 28, 51, 0.18)"><span style="width: 26px; height: 26px; border-radius: 50%; background: #2BD46A; color: #071C33; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg></span>{{ t('kouventa.Your customer', 'Your customer') }}</span>
+<span style="display: flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; border-radius: 999px; background: #071C33; color: #FFFFFF; font-size: 13px; font-weight: 700; white-space: nowrap; box-shadow: 0 6px 16px rgba(7, 28, 51, 0.18)"><span style="width: 26px; height: 26px; border-radius: 50%; background: #2BD46A; color: #071C33; display: flex; align-items: center; justify-content: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg></span>{{ $customerBadge }}</span>
 <span style="width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 7px solid #071C33"></span>
 </span>
 </span>
@@ -1531,7 +1626,7 @@ Kouventa AI · WhatsApp · 09:12
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg>
 </span>
 <span :style="{ color: stage >= 0 ? '#13803F' : '#6B7A88' }" style="font-family: 'JetBrains Mono', monospace; font-size: 12px">01</span>
-<span :style="{ color: stage === 0 ? '#0E1A24' : '#4A5866' }" style="font-size: 20px; font-weight: 800">{{ t('kouventa.Prospecting', 'Prospecting') }}</span>
+<span :style="{ color: stage === 0 ? '#0E1A24' : '#4A5866' }" style="font-size: 20px; font-weight: 800" x-text="stages[0].name">{{ $stages[0]['name'] ?? 'Prospecting' }}</span>
 </button>
 
 <!-- Stage 1: Onboarding -->
@@ -1545,7 +1640,7 @@ Kouventa AI · WhatsApp · 09:12
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="8" r="4"></circle><path d="M2 21a8 8 0 0 1 13.3-6"></path><path d="M19 14v6M16 17h6"></path></svg>
 </span>
 <span :style="{ color: stage >= 1 ? '#13803F' : '#6B7A88' }" style="font-family: 'JetBrains Mono', monospace; font-size: 12px">02</span>
-<span :style="{ color: stage === 1 ? '#0E1A24' : '#4A5866' }" style="font-size: 20px; font-weight: 800">{{ t('kouventa.Onboarding', 'Onboarding') }}</span>
+<span :style="{ color: stage === 1 ? '#0E1A24' : '#4A5866' }" style="font-size: 20px; font-weight: 800" x-text="stages[1].name">{{ $stages[1]['name'] ?? 'Onboarding' }}</span>
 </button>
 
 <!-- Stage 2: Upselling -->
@@ -1559,7 +1654,7 @@ Kouventa AI · WhatsApp · 09:12
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg>
 </span>
 <span :style="{ color: stage >= 2 ? '#13803F' : '#6B7A88' }" style="font-family: 'JetBrains Mono', monospace; font-size: 12px">03</span>
-<span :style="{ color: stage === 2 ? '#0E1A24' : '#4A5866' }" style="font-size: 20px; font-weight: 800">{{ t('kouventa.Upselling', 'Upselling') }}</span>
+<span :style="{ color: stage === 2 ? '#0E1A24' : '#4A5866' }" style="font-size: 20px; font-weight: 800" x-text="stages[2].name">{{ $stages[2]['name'] ?? 'Upselling' }}</span>
 </button>
 
 <!-- Stage 3: Support -->
@@ -1573,18 +1668,18 @@ Kouventa AI · WhatsApp · 09:12
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="14" width="5" height="6" rx="2"></rect><rect x="17" y="14" width="5" height="6" rx="2"></rect><path d="M20 20a3 3 0 0 1-3 3h-3"></path></svg>
 </span>
 <span :style="{ color: stage >= 3 ? '#13803F' : '#6B7A88' }" style="font-family: 'JetBrains Mono', monospace; font-size: 12px">04</span>
-<span :style="{ color: stage === 3 ? '#0E1A24' : '#4A5866' }" style="font-size: 20px; font-weight: 800">{{ t('kouventa.Support', 'Support') }}</span>
+<span :style="{ color: stage === 3 ? '#0E1A24' : '#4A5866' }" style="font-size: 20px; font-weight: 800" x-text="stages[3].name">{{ $stages[3]['name'] ?? 'Support' }}</span>
 </button>
 </div>
 </div>
 
 <div role="tabpanel" class="kv-journey-tabpanel" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px 44px; display: flex; justify-content: space-between; align-items: center; gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 10px; max-width: 760px">
-<span x-text="stages[stage].headline" style="font-size: 30px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em">{{ t('kouventa.Turn prospects into customers.', 'Turn prospects into customers.') }}</span>
-<span x-text="stages[stage].sub" style="font-size: 17px; line-height: 1.6; color: #4A5866">{{ t('kouventa.Reach and engage potential customers with targeted campaigns across channels.', 'Reach and engage potential customers with targeted campaigns across channels.') }}</span>
+<span x-text="stages[stage].headline" style="font-size: 30px; line-height: 1.2; font-weight: 800; letter-spacing: -0.01em">{{ $stages[0]['headline'] ?? '' }}</span>
+<span x-text="stages[stage].sub" style="font-size: 17px; line-height: 1.6; color: #4A5866">{{ $stages[0]['sub'] ?? '' }}</span>
 </div>
 <button type="button" @click="seeTools()" style="flex-shrink: 0; min-height: 52px; padding: 14px 22px; border-radius: 12px; border: 0; background: #071C33; color: #FFFFFF; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; cursor: pointer">
-<span>{{ t('kouventa.See the products for', 'See the products for') }} <span x-text="stages[stage].name">{{ t('kouventa.Prospecting', 'Prospecting') }}</span></span>
+<span>{{ $seeProductsBtn }} <span x-text="stages[stage].name">{{ $stages[0]['name'] ?? 'Prospecting' }}</span></span>
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"></path></svg>
 </button>
 </div>
@@ -1596,12 +1691,12 @@ Kouventa AI · WhatsApp · 09:12
 <h2 class="kv-products-heading" style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">@if(!empty($featuresTitle['prefix'])){{ $featuresTitle['prefix'] }} <span style="color: #13803F">{{ $featuresTitle['main'] }}</span>@else{{ $featuresTitle['main'] ?? $featuresTitle }}@endif</h2>
 <span class="kv-linked-pill" x-show="linked" x-cloak style="min-height: 48px; box-sizing: border-box; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
 <span class="kv-pill-dot" style="width: 10px; height: 10px; border-radius: 50%; background: #13803F; flex-shrink: 0; display: inline-block"></span>
-<span>{{ t('kouventa.Highlighted: how each product helps in', 'Highlighted: how each product helps in') }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ t('kouventa.Prospecting', 'Prospecting') }}</strong></span>
-<button type="button" @click="unlink()" class="kv-btn-show-all" style="margin-left: 6px; white-space: nowrap; flex-shrink: 0; min-height: 36px; padding: 6px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer">{{ t('kouventa.Show all products', 'Show all products') }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+<span>{{ $pillHighlighted }} <strong style="color: #0E1A24" x-text="stages[stage].name">{{ $stages[0]['name'] ?? 'Prospecting' }}</strong></span>
+<button type="button" @click="unlink()" class="kv-btn-show-all" style="margin-left: 6px; white-space: nowrap; flex-shrink: 0; min-height: 36px; padding: 6px 14px; border-radius: 999px; border: 1px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer">{{ $btnShowAll }}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
 </span>
 <span class="kv-unlinked-pill" x-show="!linked" style="min-height: 48px; align-items: center; font-size: 15px; color: #4A5866">
 <a href="#journey" @click.prevent="document.getElementById('journey')?.scrollIntoView({ behavior: 'smooth' })" class="kv-unlinked-link" style="display: inline-flex; align-items: center; gap: 8px; color: #4A5866; text-decoration: none; cursor: pointer">
-<span>{{ t('kouventa.Pick a journey stage above to see which products help', 'Pick a journey stage above to see which products help') }}</span>
+<span>{{ $hintPickStage }}</span>
 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </a>
 </span>
@@ -1626,9 +1721,9 @@ Kouventa AI · WhatsApp · 09:12
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
 </span>
 <span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.Authentication', 'Authentication') }}</span>
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800" x-text="products['auth'].name">{{ $productItems['auth']['name'] ?? 'Authentication' }}</span>
 <span class="kv-product-tab-role" x-show="isToolInStage('auth')" x-text="getToolRole('auth')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span class="kv-product-tab-role" x-show="!isToolInStage('auth')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Secure OTP verification', 'Secure OTP verification') }}</span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('auth')" style="font-size: 13px; line-height: 1.4; opacity: 0.75" x-text="products['auth'].tag">{{ $productItems['auth']['tag'] ?? 'Secure OTP verification' }}</span>
 </span>
 <span class="kv-product-tab-dot" :style="{ background: isToolInStage('auth') ? (product === 'auth' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
@@ -1649,9 +1744,9 @@ Kouventa AI · WhatsApp · 09:12
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1Z"></path><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"></path></svg>
 </span>
 <span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.Broadcasting', 'Broadcasting') }}</span>
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800" x-text="products['broadcast'].name">{{ $productItems['broadcast']['name'] ?? 'Broadcasting' }}</span>
 <span class="kv-product-tab-role" x-show="isToolInStage('broadcast')" x-text="getToolRole('broadcast')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span class="kv-product-tab-role" x-show="!isToolInStage('broadcast')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Campaigns at scale', 'Campaigns at scale') }}</span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('broadcast')" style="font-size: 13px; line-height: 1.4; opacity: 0.75" x-text="products['broadcast'].tag">{{ $productItems['broadcast']['tag'] ?? 'Campaigns at scale' }}</span>
 </span>
 <span class="kv-product-tab-dot" :style="{ background: isToolInStage('broadcast') ? (product === 'broadcast' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
@@ -1672,9 +1767,9 @@ Kouventa AI · WhatsApp · 09:12
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V5M9 13h.01M15 13h.01M10 17h4"></path></svg>
 </span>
 <span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.Chatbot', 'Chatbot') }}</span>
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800" x-text="products['chatbot'].name">{{ $productItems['chatbot']['name'] ?? 'Chatbot' }}</span>
 <span class="kv-product-tab-role" x-show="isToolInStage('chatbot')" x-text="getToolRole('chatbot')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span class="kv-product-tab-role" x-show="!isToolInStage('chatbot')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.AI & predefined chatbots', 'AI & predefined chatbots') }}</span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('chatbot')" style="font-size: 13px; line-height: 1.4; opacity: 0.75" x-text="products['chatbot'].tag">{{ $productItems['chatbot']['tag'] ?? 'AI & predefined chatbots' }}</span>
 </span>
 <span class="kv-product-tab-dot" :style="{ background: isToolInStage('chatbot') ? (product === 'chatbot' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
@@ -1695,9 +1790,9 @@ Kouventa AI · WhatsApp · 09:12
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10H7z"></path><path d="M3 9h4M3 15h4M17 9h4M17 15h4M9 3v4M15 3v4M9 17v4M15 17v4"></path></svg>
 </span>
 <span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.Cross Platform Integration', 'Cross Platform Integration') }}</span>
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800" x-text="products['integration'].name">{{ $productItems['integration']['name'] ?? 'Cross Platform Integration' }}</span>
 <span class="kv-product-tab-role" x-show="isToolInStage('integration')" x-text="getToolRole('integration')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span class="kv-product-tab-role" x-show="!isToolInStage('integration')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Automated system updates', 'Automated system updates') }}</span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('integration')" style="font-size: 13px; line-height: 1.4; opacity: 0.75" x-text="products['integration'].tag">{{ $productItems['integration']['tag'] ?? 'Automated system updates' }}</span>
 </span>
 <span class="kv-product-tab-dot" :style="{ background: isToolInStage('integration') ? (product === 'integration' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
@@ -1718,9 +1813,9 @@ Kouventa AI · WhatsApp · 09:12
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h3"></path></svg>
 </span>
 <span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.WhatsApp Flows', 'WhatsApp Flows') }}</span>
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800" x-text="products['flows'].name">{{ $productItems['flows']['name'] ?? 'WhatsApp Flows' }}</span>
 <span class="kv-product-tab-role" x-show="isToolInStage('flows')" x-text="getToolRole('flows')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span class="kv-product-tab-role" x-show="!isToolInStage('flows')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.Forms inside the chat', 'Forms inside the chat') }}</span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('flows')" style="font-size: 13px; line-height: 1.4; opacity: 0.75" x-text="products['flows'].tag">{{ $productItems['flows']['tag'] ?? 'Forms inside the chat' }}</span>
 </span>
 <span class="kv-product-tab-dot" :style="{ background: isToolInStage('flows') ? (product === 'flows' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
@@ -1741,9 +1836,9 @@ Kouventa AI · WhatsApp · 09:12
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"></path></svg>
 </span>
 <span class="kv-product-tab-text" style="flex-grow: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0">
-<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800">{{ t('kouventa.Omnichannel', 'Omnichannel') }}</span>
+<span class="kv-product-tab-name" style="font-size: 16px; font-weight: 800" x-text="products['omni'].name">{{ $productItems['omni']['name'] ?? 'Omnichannel' }}</span>
 <span class="kv-product-tab-role" x-show="isToolInStage('omni')" x-text="getToolRole('omni')" style="font-size: 13px; line-height: 1.4; font-weight: 500; opacity: 0.85"></span>
-<span class="kv-product-tab-role" x-show="!isToolInStage('omni')" style="font-size: 13px; line-height: 1.4; opacity: 0.75">{{ t('kouventa.One inbox for all channels', 'One inbox for all channels') }}</span>
+<span class="kv-product-tab-role" x-show="!isToolInStage('omni')" style="font-size: 13px; line-height: 1.4; opacity: 0.75" x-text="products['omni'].tag">{{ $productItems['omni']['tag'] ?? 'One inbox for all channels' }}</span>
 </span>
 <span class="kv-product-tab-dot" :style="{ background: isToolInStage('omni') ? (product === 'omni' ? '#2BD46A' : '#13803F') : 'transparent' }" style="width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0"></span>
 </button>
@@ -2010,7 +2105,7 @@ Kouventa AI · WhatsApp · 09:12
 <!-- ============ PLATFORM CONTROL ============ -->
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 32px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">
-    {{ $isIdLocale ? 'Semua percakapan, tetap dalam kendali Anda.' : t('kouventa.Stay in control of every conversation.', 'Stay in control of every conversation.') }}
+    {{ $controlTitle }}
 </h2>
 <div class="kv-ce-control-grid">
 
@@ -2019,8 +2114,8 @@ Kouventa AI · WhatsApp · 09:12
         <div style="color: #13803F; display: flex; align-items: center">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
         </div>
-        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $isIdLocale ? 'Mode supervisor' : t('kouventa.Supervisor mode', 'Supervisor mode') }}</h3>
-        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $isIdLocale ? 'Lead melihat chat timnya. Agent hanya melihat chat miliknya.' : t('kouventa.Leads see their team\'s chats. Agents see only their own.', 'Leads see their team\'s chats. Agents see only their own.') }}</p>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $controlCards[0]['title'] ?? ($isIdLocale ? 'Mode supervisor' : 'Supervisor mode') }}</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $controlCards[0]['desc'] ?? '' }}</p>
     </article>
 
     <!-- Card 2: Multi-akun -->
@@ -2028,8 +2123,8 @@ Kouventa AI · WhatsApp · 09:12
         <div style="color: #13803F; display: flex; align-items: center">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"></rect><rect width="7" height="7" x="14" y="3" rx="1.5"></rect><rect width="7" height="7" x="14" y="14" rx="1.5"></rect><rect width="7" height="7" x="3" y="14" rx="1.5"></rect></svg>
         </div>
-        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $isIdLocale ? 'Multi-akun' : t('kouventa.Multi-account', 'Multi-account') }}</h3>
-        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $isIdLocale ? 'Semua akun dan nomor bisnis, dalam satu platform.' : t('kouventa.All business accounts and numbers, one platform.', 'All business accounts and numbers, one platform.') }}</p>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $controlCards[1]['title'] ?? ($isIdLocale ? 'Multi-akun' : 'Multi-account') }}</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $controlCards[1]['desc'] ?? '' }}</p>
     </article>
 
     <!-- Card 3: Akses berbasis peran -->
@@ -2037,8 +2132,8 @@ Kouventa AI · WhatsApp · 09:12
         <div style="color: #13803F; display: flex; align-items: center">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         </div>
-        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $isIdLocale ? 'Akses berbasis peran' : t('kouventa.Role-based access', 'Role-based access') }}</h3>
-        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $isIdLocale ? 'Atur siapa yang bisa memakai modul, fitur, dan akun tertentu.' : t('kouventa.Decide who can use which modules, features and accounts.', 'Decide who can use which modules, features and accounts.') }}</p>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $controlCards[2]['title'] ?? ($isIdLocale ? 'Akses berbasis peran' : 'Role-based access') }}</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $controlCards[2]['desc'] ?? '' }}</p>
     </article>
 
     <!-- Card 4: Riwayat percakapan -->
@@ -2046,8 +2141,8 @@ Kouventa AI · WhatsApp · 09:12
         <div style="color: #13803F; display: flex; align-items: center">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path></svg>
         </div>
-        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $isIdLocale ? 'Riwayat percakapan' : t('kouventa.Conversation history', 'Conversation history') }}</h3>
-        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $isIdLocale ? 'Semua chat tersimpan untuk visibilitas dan follow-up.' : t('kouventa.Every chat stored for visibility and follow-up.', 'Every chat stored for visibility and follow-up.') }}</p>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $controlCards[3]['title'] ?? ($isIdLocale ? 'Riwayat percakapan' : 'Conversation history') }}</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $controlCards[3]['desc'] ?? '' }}</p>
     </article>
 
     <!-- Card 5: Ticketing -->
@@ -2055,8 +2150,8 @@ Kouventa AI · WhatsApp · 09:12
         <div style="color: #13803F; display: flex; align-items: center">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><path d="M13 5v2"></path><path d="M13 17v2"></path><path d="M13 11v2"></path></svg>
         </div>
-        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $isIdLocale ? 'Ticketing' : t('kouventa.Ticketing', 'Ticketing') }}</h3>
-        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $isIdLocale ? 'Chat dengan agent? Tiket otomatis dibuat.' : t('kouventa.Chat with an agent? A ticket is created automatically.', 'Chat with an agent? A ticket is created automatically.') }}</p>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $controlCards[4]['title'] ?? 'Ticketing' }}</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $controlCards[4]['desc'] ?? '' }}</p>
     </article>
 
 </div>
@@ -2069,7 +2164,7 @@ Kouventa AI · WhatsApp · 09:12
 <div aria-hidden="true" style="position: absolute; right: -240px; top: -340px; width: 800px; height: 800px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.04); pointer-events: none"></div>
 
 <h2 class="kv-why-heading">
-    {{ $isIdLocale ? 'Kenapa Kouventa untuk customer' : 'Why Kouventa for customer' }} <span style="color: #2BD46A">engagement</span>
+    {{ $whyTitle['prefix'] ?? ($isIdLocale ? 'Kenapa Kouventa untuk customer' : 'Why Kouventa for customer') }} <span style="color: #2BD46A">{{ $whyTitle['main'] ?? 'engagement' }}</span>
 </h2>
 
 <div class="kv-why-grid">
@@ -2081,8 +2176,8 @@ Kouventa AI · WhatsApp · 09:12
                 <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
             </svg>
         </span>
-        <h3 class="kv-why-title">Official Meta Business Solution Provider</h3>
-        <p class="kv-why-desc">{{ $isIdLocale ? 'Akses resmi ke WhatsApp Business Platform.' : t('kouventa.Trusted access to the WhatsApp Business Platform.', 'Trusted access to the WhatsApp Business Platform.') }}</p>
+        <h3 class="kv-why-title">{{ $whyCards[0]['title'] ?? 'Official Meta Business Solution Provider' }}</h3>
+        <p class="kv-why-desc">{{ $whyCards[0]['desc'] ?? '' }}</p>
     </div>
 
     <!-- Card 2: Built around your business -->
@@ -2100,8 +2195,8 @@ Kouventa AI · WhatsApp · 09:12
                 <line x1="16" x2="16" y1="18" y2="22"></line>
             </svg>
         </span>
-        <h3 class="kv-why-title">{{ $isIdLocale ? 'Dibangun sesuai bisnis Anda' : t('kouventa.Built around your business', 'Built around your business') }}</h3>
-        <p class="kv-why-desc">{{ $isIdLocale ? 'Disesuaikan dengan industri, alur, dan sistem Anda.' : t('kouventa.Customized to your industry, flows and systems.', 'Customized to your industry, flows and systems.') }}</p>
+        <h3 class="kv-why-title">{{ $whyCards[1]['title'] ?? ($isIdLocale ? 'Dibangun sesuai bisnis Anda' : 'Built around your business') }}</h3>
+        <p class="kv-why-desc">{{ $whyCards[1]['desc'] ?? '' }}</p>
     </div>
 
     <!-- Card 3: Secure & trusted -->
@@ -2112,8 +2207,8 @@ Kouventa AI · WhatsApp · 09:12
                 <path d="m9 12 2 2 4-4"></path>
             </svg>
         </span>
-        <h3 class="kv-why-title">{{ $isIdLocale ? 'Aman & terpercaya' : t('kouventa.Secure & trusted', 'Secure & trusted') }}</h3>
-        <p class="kv-why-desc">{{ $isIdLocale ? 'Keamanan kelas enterprise untuk data bisnis dan pelanggan.' : t('kouventa.Enterprise-grade security for business and customer data.', 'Enterprise-grade security for business and customer data.') }}</p>
+        <h3 class="kv-why-title">{{ $whyCards[2]['title'] ?? ($isIdLocale ? 'Aman & terpercaya' : 'Secure & trusted') }}</h3>
+        <p class="kv-why-desc">{{ $whyCards[2]['desc'] ?? '' }}</p>
     </div>
 
     <!-- Card 4: Post-paid messaging -->
@@ -2125,8 +2220,8 @@ Kouventa AI · WhatsApp · 09:12
                 <line x1="6" x2="10" y1="15" y2="15"></line>
             </svg>
         </span>
-        <h3 class="kv-why-title">{{ $isIdLocale ? 'Pesan pascabayar' : t('kouventa.Post-paid messaging', 'Post-paid messaging') }}</h3>
-        <p class="kv-why-desc">{{ $isIdLocale ? 'Kirim dulu. Bayar belakangan, sesuai pemakaian.' : t('kouventa.Send first. Pay later, for what you actually use.', 'Send first. Pay later, for what you actually use.') }}</p>
+        <h3 class="kv-why-title">{{ $whyCards[3]['title'] ?? ($isIdLocale ? 'Pesan pascabayar' : 'Post-paid messaging') }}</h3>
+        <p class="kv-why-desc">{{ $whyCards[3]['desc'] ?? '' }}</p>
     </div>
 </div>
 </section>
@@ -2136,8 +2231,8 @@ Kouventa AI · WhatsApp · 09:12
 <div class="kv-panel" style="background: #2BD46A; border-radius: 28px; padding: 72px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 32px; color: #06251A">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
 <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap">
-<a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ t('kouventa.Book a demo', 'Book a demo') }}</a>
-<a href="{{ localized_url('/pricing?tab=ce') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ t('kouventa.See pricing', 'See pricing') }}</a>
+<a href="{{ localized_url($ctaPrimary['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ $ctaPrimary['text'] ?? ($isIdLocale ? 'Jadwalkan demo' : 'Book a demo') }}</a>
+<a href="{{ localized_url($ctaSecondary['url'] ?? '/pricing?tab=ce') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ $ctaSecondary['text'] ?? ($isIdLocale ? 'Lihat harga' : 'See pricing') }}</a>
 </div>
 </div>
 </section>

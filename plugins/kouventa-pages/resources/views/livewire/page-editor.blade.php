@@ -141,6 +141,8 @@
                 {{-- Content Section Schemas --}}
                 @if($page->template === 'product-ai' || $page->slug === 'product/ai')
                     @include('kouventa-pages::livewire.schemas.product-ai')
+                @elseif($page->template === 'product-ce' || $page->slug === 'product/customer-engagement')
+                    @include('kouventa-pages::livewire.schemas.product-ce')
                 @endif
             @endif
 

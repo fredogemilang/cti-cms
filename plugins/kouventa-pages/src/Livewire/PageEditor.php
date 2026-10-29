@@ -11,6 +11,7 @@ use Livewire\Component;
 use Plugins\KouventaPages\Models\KouventaPage;
 use Plugins\KouventaPages\Models\KouventaPageRevision;
 use Plugins\KouventaPages\Schemas\ProductAiSchema;
+use Plugins\KouventaPages\Schemas\ProductCeSchema;
 
 class PageEditor extends Component
 {
@@ -102,7 +103,7 @@ class PageEditor extends Component
      */
     public function copyFromEn(): void
     {
-        $enSections = $this->page->getRawAttribute('sections') ?? ProductAiSchema::getDefaults('en');
+        $enSections = $this->page->getRawAttribute('sections') ?? $this->getSchemaDefaults('en');
         $this->sections = $enSections;
 
         $this->dispatch('notify', [
@@ -166,7 +167,7 @@ class PageEditor extends Component
         // 2. Determine primary (EN) sections vs translated (ID) sections
         $enSections = ($this->editingLocale === 'en')
             ? $this->sections
-            : ($this->page->getRawAttribute('sections') ?? ProductAiSchema::getDefaults('en'));
+            : ($this->page->getRawAttribute('sections') ?? $this->getSchemaDefaults('en'));
 
         // 3. Update database
         $this->page->title = $this->title;
@@ -218,6 +219,10 @@ class PageEditor extends Component
             return ProductAiSchema::getTabs();
         }
 
+        if ($this->page->template === 'product-ce' || $this->page->slug === 'product/customer-engagement') {
+            return ProductCeSchema::getTabs();
+        }
+
         return [
             ['id' => 'hero', 'label' => 'Hero Section', 'icon' => 'home'],
             ['id' => 'seo', 'label' => 'SEO & Settings', 'icon' => 'travel_explore'],
@@ -228,6 +233,10 @@ class PageEditor extends Component
     {
         if ($this->page->template === 'product-ai' || $this->page->slug === 'product/ai') {
             return ProductAiSchema::getDefaults($locale);
+        }
+
+        if ($this->page->template === 'product-ce' || $this->page->slug === 'product/customer-engagement') {
+            return ProductCeSchema::getDefaults($locale);
         }
 
         return [];
