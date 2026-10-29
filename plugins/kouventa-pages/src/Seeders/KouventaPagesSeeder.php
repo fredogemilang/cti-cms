@@ -8,6 +8,7 @@ use App\Models\SeoMeta;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Plugins\KouventaPages\Models\KouventaPage;
+use Plugins\KouventaPages\Schemas\PricingSchema;
 use Plugins\KouventaPages\Schemas\ProductAiSchema;
 use Plugins\KouventaPages\Schemas\ProductCeSchema;
 use Plugins\KouventaPages\Schemas\SolutionAiSchema;
@@ -274,6 +275,65 @@ class KouventaPagesSeeder extends Seeder
         if (\Illuminate\Support\Facades\Schema::hasTable('search_index')) {
             \App\Models\SearchIndex::where('searchable_type', Page::class)
                 ->where('searchable_id', 5)
+                ->delete();
+        }
+
+        // 6. Seed / Migrate: Pricing (ID 6 in pages)
+        $existingPricingPage = Page::where('slug', 'pricing')->first();
+
+        $enPricingSections = PricingSchema::getDefaults('en');
+        $idPricingSections = PricingSchema::getDefaults('id');
+
+        $kouventaPricingPage = KouventaPage::updateOrCreate(
+            ['slug' => 'pricing'],
+            [
+                'title' => 'Pricing',
+                'template' => 'pricing',
+                'status' => 'published',
+                'published_at' => now(),
+                'sections' => $enPricingSections,
+                'translations' => [
+                    'id' => [
+                        'title' => 'Pricing',
+                        'slug' => 'pricing',
+                        'sections' => $idPricingSections,
+                    ],
+                ],
+                'seo' => $existingPricingPage?->seo,
+            ]
+        );
+
+        if ($existingPricingPage) {
+            $oldSeo = SeoMeta::where('seoable_type', Page::class)
+                ->where('seoable_id', $existingPricingPage->id)
+                ->get();
+
+            foreach ($oldSeo as $seoRow) {
+                $seoAttrs = collect($seoRow->toArray())
+                    ->except(['id', 'seoable_type', 'seoable_id', 'created_at', 'updated_at'])
+                    ->toArray();
+
+                SeoMeta::updateOrCreate(
+                    [
+                        'seoable_type' => KouventaPage::class,
+                        'seoable_id' => $kouventaPricingPage->id,
+                        'locale' => $seoRow->locale,
+                    ],
+                    $seoAttrs
+                );
+            }
+
+            $kouventaPricingPage->saveRevision('Initial baseline migration from Core Page');
+
+            // Takeout: Delete old Page ID 6
+            DB::table('page_blocks')->where('page_id', $existingPricingPage->id)->delete();
+            DB::table('page_revisions')->where('page_id', $existingPricingPage->id)->delete();
+            DB::table('pages')->where('id', $existingPricingPage->id)->delete();
+        }
+
+        if (\Illuminate\Support\Facades\Schema::hasTable('search_index')) {
+            \App\Models\SearchIndex::where('searchable_type', Page::class)
+                ->where('searchable_id', 6)
                 ->delete();
         }
     }

@@ -10,6 +10,7 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Plugins\KouventaPages\Models\KouventaPage;
 use Plugins\KouventaPages\Models\KouventaPageRevision;
+use Plugins\KouventaPages\Schemas\PricingSchema;
 use Plugins\KouventaPages\Schemas\ProductAiSchema;
 use Plugins\KouventaPages\Schemas\ProductCeSchema;
 use Plugins\KouventaPages\Schemas\SolutionAiSchema;
@@ -141,11 +142,12 @@ class PageEditor extends Component
             return;
         }
 
+        $this->page->sections = $rev->sections ?? [];
+        $this->translations = $rev->translations ?? [];
+
         $this->sections = $this->editingLocale === 'en'
             ? ($rev->sections ?? [])
             : ($rev->translations[$this->editingLocale]['sections'] ?? $rev->sections ?? []);
-
-        $this->translations = $rev->translations ?? [];
 
         $this->dispatch('notify', [
             'type' => 'success',
@@ -233,6 +235,10 @@ class PageEditor extends Component
             return SolutionCeSchema::getTabs();
         }
 
+        if ($this->page->template === 'pricing' || $this->page->slug === 'pricing') {
+            return PricingSchema::getTabs();
+        }
+
         return [
             ['id' => 'hero', 'label' => 'Hero Section', 'icon' => 'home'],
             ['id' => 'seo', 'label' => 'SEO & Settings', 'icon' => 'travel_explore'],
@@ -255,6 +261,10 @@ class PageEditor extends Component
 
         if ($this->page->template === 'solution-ce' || $this->page->slug === 'solutions/customer-engagement') {
             return SolutionCeSchema::getDefaults($locale);
+        }
+
+        if ($this->page->template === 'pricing' || $this->page->slug === 'pricing') {
+            return PricingSchema::getDefaults($locale);
         }
 
         return [];

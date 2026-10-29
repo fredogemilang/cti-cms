@@ -2,7 +2,17 @@
 
 @php
     $isIdLocale = app()->getLocale() === 'id';
-    $heroBadge = $page?->block('hero_badge', '');
+
+    // Sections from KouventaPage
+    $sHero = $page?->section('hero', []);
+    $sTiersAi = $page?->section('tiers_ai', []);
+    $sTiersCe = $page?->section('tiers_ce', []);
+    $sAddons = $page?->section('addons', []);
+    $sTemplates = $page?->section('templates', []);
+    $sCalc = $page?->section('calculator', []);
+    $sCta = $page?->section('cta', []);
+
+    $heroBadge = $sHero['badge'] ?? $page?->block('hero_badge', '');
     
     // Bottom CTA setup
     $defaultCtaTitle = $isIdLocale
@@ -12,20 +22,22 @@
         ? 'Jadwalkan sesi kerja dengan tim solusi kami. Kami bantu memetakan use case Anda ke paket dan deployment yang tepat'
         : "Book a working session with our solution team. We'll map your use cases to the right tier and deployment";
 
-    $ctaTitle = rtrim($page?->block('cta_title', $defaultCtaTitle), '.');
+    $ctaTitle = rtrim($sCta['title'] ?? $page?->block('cta_title', $defaultCtaTitle), '.');
     if ($ctaTitle === 'Need a custom deployment or on-premise setup?' || $ctaTitle === 'Butuh deployment khusus atau instalasi on-premise?' || empty($ctaTitle)) {
         $ctaTitle = $defaultCtaTitle;
     }
     $ctaTitle = rtrim($ctaTitle, '.');
 
-    $ctaSubtitle = rtrim($page?->block('cta_subtitle', $defaultCtaSubtitle), '.');
+    $ctaSubtitle = rtrim($sCta['subtitle'] ?? $page?->block('cta_subtitle', $defaultCtaSubtitle), '.');
     if (str_contains($ctaSubtitle ?? '', 'Talk to our solution architects') || str_contains($ctaSubtitle ?? '', 'Konsultasikan dengan tim solution architect') || empty($ctaSubtitle)) {
         $ctaSubtitle = $defaultCtaSubtitle;
     }
     $ctaSubtitle = rtrim($ctaSubtitle, '.');
 
-    $calcTitle = rtrim($page?->block('calc_title', $isIdLocale ? 'Estimasi biaya WhatsApp Anda' : 'Estimate your WhatsApp cost'), '.');
-    $calcSubtitle = rtrim($page?->block('calc_subtitle', $isIdLocale ? 'Masukkan perkiraan percakapan bulanan Anda per kategori untuk melihat perkiraan biaya bulanan dan tahunan' : 'Enter your expected monthly conversations per category to see your estimated monthly and yearly cost'), '.');
+    $calcTitle = rtrim($sCalc['title'] ?? $page?->block('calc_title', $isIdLocale ? 'Estimasi biaya WhatsApp Anda' : 'Estimate your WhatsApp cost'), '.');
+    $calcSubtitle = rtrim($sCalc['subtitle'] ?? $page?->block('calc_subtitle', $isIdLocale ? 'Masukkan perkiraan percakapan bulanan Anda per kategori untuk melihat perkiraan biaya bulanan dan tahunan' : 'Enter your expected monthly conversations per category to see your estimated monthly and yearly cost'), '.');
+    $calcRates = $sCalc['rates'] ?? ['mk' => 616, 'ut' => 375, 'au' => 375, 'sv' => 375];
+    $calcFees = $sCalc['fees'] ?? ['starter_mau' => 3000, 'starter_fee' => 1499000, 'pro_mau' => 15000, 'pro_fee' => 4499000];
 
     // Structured comparison data
     $ceCategories = array (
@@ -1031,6 +1043,20 @@
             'items' => ['Personalized customer conversations', 'Order assistance', 'Proactive issue resolution', 'Interactive product recommendations'],
         ],
     ];
+
+    // Structured Addons & Templates resolution
+    $ceAddonsList = !empty($sAddons['items_ce']) ? $sAddons['items_ce'] : array_map(fn($item) => ['title' => t('kouventa.' . $item[0], $item[0]), 'desc' => t('kouventa.' . $item[1], $item[1])], $ceAddons);
+
+    $aiAddonsList = !empty($sAddons['items_ai']) ? $sAddons['items_ai'] : array_map(function($addon) use ($isIdLocale) {
+        $defaultTitle = $isIdLocale ? $addon['id'][0] : $addon['en'][0];
+        $defaultDesc = $isIdLocale ? $addon['id'][1] : $addon['en'][1];
+        return [
+            'title' => t('kouventa.' . $addon['en'][0], $defaultTitle),
+            'desc' => t('kouventa.' . $addon['en'][1], $defaultDesc),
+        ];
+    }, $aiAddons);
+
+    $templatesList = !empty($sTemplates['items']) ? $sTemplates['items'] : $templates;
 @endphp
 
 @section('content')
@@ -1047,7 +1073,9 @@
     @endif
     
     <h1 style="margin: 0; font-size: 72px; line-height: 1.04; font-weight: 800; letter-spacing: -0.035em; max-width: 960px">
-        @if($isIdLocale)
+        @if(!empty($sHero['title']['prefix']) || !empty($sHero['title']['highlight']))
+            {{ $sHero['title']['prefix'] ?? '' }} <span style="color: #67D175">{{ $sHero['title']['highlight'] ?? '' }}</span><br>{!! nl2br(e($sHero['title']['suffix'] ?? '')) !!}
+        @elseif($isIdLocale)
             AI yang Anda <span style="color: #67D175">kendalikan,</span><br>dengan harga sesuai<br>pertumbuhan Anda
         @else
             Intelligence you <span style="color: #67D175">control,</span><br>priced for how you grow
@@ -1055,7 +1083,9 @@
     </h1>
     
     <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 720px">
-        @if($isIdLocale)
+        @if(!empty($sHero['subtitle']))
+            {!! nl2br(e($sHero['subtitle'])) !!}
+        @elseif($isIdLocale)
             Dua platform, masing-masing tiga paket. Mulai sesuai kondisi tim<br>Anda sekarang, lalu kembangkan tanpa perlu ganti vendor
         @else
             Two platforms, three tiers each. Start where your team is today, and<br>scale without switching vendors
@@ -1067,12 +1097,12 @@
         <button type="button" @click="setTab('ai')"
                 :class="{ 'is-active': product === 'ai' }"
                 class="kv-toggle-btn">
-            {{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}
+            {{ $sHero['toggle_ai'] ?? t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}
         </button>
         <button type="button" @click="setTab('ce')"
                 :class="{ 'is-active': product === 'ce' }"
                 class="kv-toggle-btn">
-            {{ t('kouventa.Customer Engagement', 'Customer Engagement') }}
+            {{ $sHero['toggle_ce'] ?? t('kouventa.Customer Engagement', 'Customer Engagement') }}
         </button>
     </div>
 </section>
@@ -1092,77 +1122,89 @@
             <!-- AI Starter -->
             <article style="background: #FFFFFF; color: #0E1A24; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Starter', 'Starter') }}</h3>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ $sTiersAi['starter']['name'] ?? t('kouventa.Starter', 'Starter') }}</h3>
                 </div>
-                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ t('kouventa.Bring AI to your first workflow.', 'Bring AI to your first workflow.') }}</span>
+                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ $sTiersAi['starter']['desc'] ?? t('kouventa.Bring AI to your first workflow.', 'Bring AI to your first workflow.') }}</span>
                 <div style="display: flex; flex-direction: column; gap: 4px">
-                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap">IDR 5.999.000</span>
-                    <span style="font-size: 14px; color: #4A5866">{{ t('kouventa.per month, billed annually', 'per month, billed annually') }}</span>
+                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap">{{ $sTiersAi['starter']['price'] ?? 'IDR 5.999.000' }}</span>
+                    <span style="font-size: 14px; color: #4A5866">{{ $sTiersAi['starter']['period'] ?? t('kouventa.per month, billed annually', 'per month, billed annually') }}</span>
                 </div>
                 <span style="display: flex; align-items: center; gap: 10px; min-height: 48px; box-sizing: border-box; padding: 10px 14px; border-radius: 12px; background: #EAF7EF; color: #13803F; font-size: 13px; font-weight: 700; line-height: 1.35">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    <span>{{ t('kouventa.Unlimited Company Wikipedia use cases', 'Unlimited Company Wikipedia use cases') }}</span>
+                    <span>{{ $sTiersAi['starter']['highlight'] ?? t('kouventa.Unlimited Company Wikipedia use cases', 'Unlimited Company Wikipedia use cases') }}</span>
                 </span>
                 <ul style="margin: 0; padding: 18px 0 0; list-style: none; border-top: 1px solid #E3E8E6; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Generative AI with source citation', 'Generative AI with source citation') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.19+ supported data source types', '19+ supported data source types') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Curated LLM with dynamic selection', 'Curated LLM with dynamic selection') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.100 GB storage, 100k API calls/month', '100 GB storage, 100k API calls/month') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.AI guardrails & PII masking', 'AI guardrails & PII masking') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Livechat delivery, SDK access', 'Livechat delivery, SDK access') }}</span></li>
+                    @foreach(($sTiersAi['starter']['bullets'] ?? [
+                        t('kouventa.Generative AI with source citation', 'Generative AI with source citation'),
+                        t('kouventa.19+ supported data source types', '19+ supported data source types'),
+                        t('kouventa.Curated LLM with dynamic selection', 'Curated LLM with dynamic selection'),
+                        t('kouventa.100 GB storage, 100k API calls/month', '100 GB storage, 100k API calls/month'),
+                        t('kouventa.AI guardrails & PII masking', 'AI guardrails & PII masking'),
+                        t('kouventa.Livechat delivery, SDK access', 'Livechat delivery, SDK access'),
+                    ]) as $bullet)
+                        <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ $bullet }}</span></li>
+                    @endforeach
                 </ul>
-                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-navy" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ $sTiersAi['starter']['cta_url'] ?? '#whatsapp' }}" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-navy" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ $sTiersAi['starter']['cta_text'] ?? t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- AI Grow (Most Popular) -->
             <article style="background: #071C33; color: #FFFFFF; border: 1px solid #071C33; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative; box-shadow: 0 24px 60px rgba(7,28,51,0.2)">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Grow', 'Grow') }}</h3>
-                    <span style="font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 999px; background: #2BD46A; color: #06251A">{{ t('kouventa.Most popular', 'Most popular') }}</span>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ $sTiersAi['grow']['name'] ?? t('kouventa.Grow', 'Grow') }}</h3>
+                    <span style="font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 999px; background: #2BD46A; color: #06251A">{{ $sTiersAi['grow']['badge'] ?? t('kouventa.Most popular', 'Most popular') }}</span>
                 </div>
-                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #B9C6D3">{{ t('kouventa.Add agentic capability across your teams.', 'Add agentic capability across your teams.') }}</span>
+                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #B9C6D3">{{ $sTiersAi['grow']['desc'] ?? t('kouventa.Add agentic capability across your teams.', 'Add agentic capability across your teams.') }}</span>
                 <div style="display: flex; flex-direction: column; gap: 4px">
-                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Custom pricing', 'Custom pricing') }}</span>
-                    <span style="font-size: 14px; color: #B9C6D3">{{ t('kouventa.annual subscription', 'annual subscription') }}</span>
+                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $sTiersAi['grow']['price'] ?? t('kouventa.Custom pricing', 'Custom pricing') }}</span>
+                    <span style="font-size: 14px; color: #B9C6D3">{{ $sTiersAi['grow']['period'] ?? t('kouventa.annual subscription', 'annual subscription') }}</span>
                 </div>
                 <span style="display: flex; align-items: center; gap: 10px; min-height: 48px; box-sizing: border-box; padding: 10px 14px; border-radius: 12px; background: rgba(43,212,106,0.14); color: #7BE8A6; font-size: 13px; font-weight: 700; line-height: 1.35">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    <span>{{ t('kouventa.Unlimited Wikipedia + 3 Task Force use cases', 'Unlimited Wikipedia + 3 Task Force use cases') }}</span>
+                    <span>{{ $sTiersAi['grow']['highlight'] ?? t('kouventa.Unlimited Wikipedia + 3 Task Force use cases', 'Unlimited Wikipedia + 3 Task Force use cases') }}</span>
                 </span>
                 <ul style="margin: 0; padding: 18px 0 0; list-style: none; border-top: 1px solid rgba(255,255,255,0.14); display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Everything in Starter', 'Everything in Starter') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Agentic AI with multi-agent orchestration', 'Agentic AI with multi-agent orchestration') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Custom LLM support', 'Custom LLM support') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Connectors: Slack, SAP, SQL, custom', 'Connectors: Slack, SAP, SQL, custom') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.500 GB storage, chat playground', '500 GB storage, chat playground') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.File & chart generation tools', 'File & chart generation tools') }}</span></li>
+                    @foreach(($sTiersAi['grow']['bullets'] ?? [
+                        t('kouventa.Everything in Starter', 'Everything in Starter'),
+                        t('kouventa.Agentic AI with multi-agent orchestration', 'Agentic AI with multi-agent orchestration'),
+                        t('kouventa.Custom LLM support', 'Custom LLM support'),
+                        t('kouventa.Connectors: Slack, SAP, SQL, custom', 'Connectors: Slack, SAP, SQL, custom'),
+                        t('kouventa.500 GB storage, chat playground', '500 GB storage, chat playground'),
+                        t('kouventa.File & chart generation tools', 'File & chart generation tools'),
+                    ]) as $bullet)
+                        <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ $bullet }}</span></li>
+                    @endforeach
                 </ul>
-                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-primary" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ $sTiersAi['grow']['cta_url'] ?? '#whatsapp' }}" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-primary" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ $sTiersAi['grow']['cta_text'] ?? t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- AI Scale -->
             <article style="background: #FFFFFF; color: #0E1A24; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Scale', 'Scale') }}</h3>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ $sTiersAi['scale']['name'] ?? t('kouventa.Scale', 'Scale') }}</h3>
                 </div>
-                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ t('kouventa.Enterprise AI, fully orchestrated.', 'Enterprise AI, fully orchestrated.') }}</span>
+                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ $sTiersAi['scale']['desc'] ?? t('kouventa.Enterprise AI, fully orchestrated.', 'Enterprise AI, fully orchestrated.') }}</span>
                 <div style="display: flex; flex-direction: column; gap: 4px">
-                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Custom pricing', 'Custom pricing') }}</span>
-                    <span style="font-size: 14px; color: #4A5866">{{ t('kouventa.custom scope, one-time or subscription', 'custom scope, one-time or subscription') }}</span>
+                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $sTiersAi['scale']['price'] ?? t('kouventa.Custom pricing', 'Custom pricing') }}</span>
+                    <span style="font-size: 14px; color: #4A5866">{{ $sTiersAi['scale']['period'] ?? t('kouventa.custom scope, one-time or subscription', 'custom scope, one-time or subscription') }}</span>
                 </div>
                 <span style="display: flex; align-items: center; gap: 10px; min-height: 48px; box-sizing: border-box; padding: 10px 14px; border-radius: 12px; background: #EAF7EF; color: #13803F; font-size: 13px; font-weight: 700; line-height: 1.35">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    <span>{{ t('kouventa.Unlimited use cases & workflows', 'Unlimited use cases & workflows') }}</span>
+                    <span>{{ $sTiersAi['scale']['highlight'] ?? t('kouventa.Unlimited use cases & workflows', 'Unlimited use cases & workflows') }}</span>
                 </span>
                 <ul style="margin: 0; padding: 18px 0 0; list-style: none; border-top: 1px solid #E3E8E6; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Everything in Grow', 'Everything in Grow') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Full workflow automation orchestration', 'Full workflow automation orchestration') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Hybrid, private cloud, or on-premise', 'Hybrid, private cloud, or on-premise') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Custom connectors & fine-tuning', 'Custom connectors & fine-tuning') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Dedicated engineering pod', 'Dedicated engineering pod') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Audit trail & change approval gates', 'Audit trail & change approval gates') }}</span></li>
+                    @foreach(($sTiersAi['scale']['bullets'] ?? [
+                        t('kouventa.Everything in Grow', 'Everything in Grow'),
+                        t('kouventa.Full workflow automation orchestration', 'Full workflow automation orchestration'),
+                        t('kouventa.Hybrid, private cloud, or on-premise', 'Hybrid, private cloud, or on-premise'),
+                        t('kouventa.Custom connectors & fine-tuning', 'Custom connectors & fine-tuning'),
+                        t('kouventa.Dedicated engineering pod', 'Dedicated engineering pod'),
+                        t('kouventa.Audit trail & change approval gates', 'Audit trail & change approval gates'),
+                    ]) as $bullet)
+                        <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ $bullet }}</span></li>
+                    @endforeach
                 </ul>
-                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ $sTiersAi['scale']['cta_url'] ?? '#whatsapp' }}" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none; cursor: pointer">{{ $sTiersAi['scale']['cta_text'] ?? t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
         </div>
 
@@ -1171,77 +1213,89 @@
             <!-- CE Starter -->
             <article style="background: #FFFFFF; color: #0E1A24; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Starter', 'Starter') }}</h3>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ $sTiersCe['starter']['name'] ?? t('kouventa.Starter', 'Starter') }}</h3>
                 </div>
-                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ t('kouventa.For teams starting their omnichannel journey.', 'For teams starting their omnichannel journey.') }}</span>
+                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ $sTiersCe['starter']['desc'] ?? t('kouventa.For teams starting their omnichannel journey.', 'For teams starting their omnichannel journey.') }}</span>
                 <div style="display: flex; flex-direction: column; gap: 4px">
-                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">IDR 1.499.000</span>
-                    <span style="font-size: 14px; color: #4A5866">{{ t('kouventa.per month', 'per month') }}</span>
+                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $sTiersCe['starter']['price'] ?? 'IDR 1.499.000' }}</span>
+                    <span style="font-size: 14px; color: #4A5866">{{ $sTiersCe['starter']['period'] ?? t('kouventa.per month', 'per month') }}</span>
                 </div>
                 <span style="display: flex; align-items: center; gap: 10px; min-height: 48px; box-sizing: border-box; padding: 10px 14px; border-radius: 12px; background: #EAF7EF; color: #13803F; font-size: 13px; font-weight: 700; line-height: 1.35">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    <span>{{ t('kouventa.Up to 3,000 monthly active users', 'Up to 3,000 monthly active users') }}</span>
+                    <span>{{ $sTiersCe['starter']['highlight'] ?? t('kouventa.Up to 3,000 monthly active users', 'Up to 3,000 monthly active users') }}</span>
                 </span>
                 <ul style="margin: 0; padding: 18px 0 0; list-style: none; border-top: 1px solid #E3E8E6; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.WhatsApp, Instagram, Facebook', 'WhatsApp, Instagram, Facebook') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Unlimited customer service agents', 'Unlimited customer service agents') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Static chatbot & agent routing', 'Static chatbot & agent routing') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.10,000 contact database', '10,000 contact database') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Analytics, role-based access, MFA', 'Analytics, role-based access, MFA') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.SaaS cloud deployment', 'SaaS cloud deployment') }}</span></li>
+                    @foreach(($sTiersCe['starter']['bullets'] ?? [
+                        t('kouventa.WhatsApp, Instagram, Facebook', 'WhatsApp, Instagram, Facebook'),
+                        t('kouventa.Unlimited customer service agents', 'Unlimited customer service agents'),
+                        t('kouventa.Static chatbot & agent routing', 'Static chatbot & agent routing'),
+                        t('kouventa.10,000 contact database', '10,000 contact database'),
+                        t('kouventa.Analytics, role-based access, MFA', 'Analytics, role-based access, MFA'),
+                        t('kouventa.SaaS cloud deployment', 'SaaS cloud deployment'),
+                    ]) as $bullet)
+                        <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ $bullet }}</span></li>
+                    @endforeach
                 </ul>
-                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-navy" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ $sTiersCe['starter']['cta_url'] ?? '#whatsapp' }}" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-navy" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #071C33; color: #FFFFFF; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ $sTiersCe['starter']['cta_text'] ?? t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- CE Professional (Most Popular) -->
             <article style="background: #071C33; color: #FFFFFF; border: 1px solid #071C33; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative; box-shadow: 0 24px 60px rgba(7,28,51,0.2)">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Professional', 'Professional') }}</h3>
-                    <span style="font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 999px; background: #2BD46A; color: #06251A">{{ t('kouventa.Most popular', 'Most popular') }}</span>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ $sTiersCe['pro']['name'] ?? t('kouventa.Professional', 'Professional') }}</h3>
+                    <span style="font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 999px; background: #2BD46A; color: #06251A">{{ $sTiersCe['pro']['badge'] ?? t('kouventa.Most popular', 'Most popular') }}</span>
                 </div>
-                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #B9C6D3">{{ t('kouventa.For growing teams scaling engagement across channels.', 'For growing teams scaling engagement across channels.') }}</span>
+                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #B9C6D3">{{ $sTiersCe['pro']['desc'] ?? t('kouventa.For growing teams scaling engagement across channels.', 'For growing teams scaling engagement across channels.') }}</span>
                 <div style="display: flex; flex-direction: column; gap: 4px">
-                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">IDR 4.499.000</span>
-                    <span style="font-size: 14px; color: #B9C6D3">{{ t('kouventa.per month', 'per month') }}</span>
+                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $sTiersCe['pro']['price'] ?? 'IDR 4.499.000' }}</span>
+                    <span style="font-size: 14px; color: #B9C6D3">{{ $sTiersCe['pro']['period'] ?? t('kouventa.per month', 'per month') }}</span>
                 </div>
                 <span style="display: flex; align-items: center; gap: 10px; min-height: 48px; box-sizing: border-box; padding: 10px 14px; border-radius: 12px; background: rgba(43,212,106,0.14); color: #7BE8A6; font-size: 13px; font-weight: 700; line-height: 1.35">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    <span>{{ t('kouventa.Up to 15,000 monthly active users', 'Up to 15,000 monthly active users') }}</span>
+                    <span>{{ $sTiersCe['pro']['highlight'] ?? t('kouventa.Up to 15,000 monthly active users', 'Up to 15,000 monthly active users') }}</span>
                 </span>
                 <ul style="margin: 0; padding: 18px 0 0; list-style: none; border-top: 1px solid rgba(255,255,255,0.14); display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Everything in Starter', 'Everything in Starter') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Conversation search across history', 'Conversation search across history') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.45,000 contact database', '45,000 contact database') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.WhatsApp Flow forms & templates', 'WhatsApp Flow forms & templates') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Broadcast scheduling & CSAT', 'Broadcast scheduling & CSAT') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Standard 9×5 support, 99.5% uptime', 'Standard 9×5 support, 99.5% uptime') }}</span></li>
+                    @foreach(($sTiersCe['pro']['bullets'] ?? [
+                        t('kouventa.Everything in Starter', 'Everything in Starter'),
+                        t('kouventa.Conversation search across history', 'Conversation search across history'),
+                        t('kouventa.45,000 contact database', '45,000 contact database'),
+                        t('kouventa.WhatsApp Flow forms & templates', 'WhatsApp Flow forms & templates'),
+                        t('kouventa.Broadcast scheduling & CSAT', 'Broadcast scheduling & CSAT'),
+                        t('kouventa.Standard 9×5 support, 99.5% uptime', 'Standard 9×5 support, 99.5% uptime'),
+                    ]) as $bullet)
+                        <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ $bullet }}</span></li>
+                    @endforeach
                 </ul>
-                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-primary" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ $sTiersCe['pro']['cta_url'] ?? '#whatsapp' }}" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-primary" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: #2BD46A; color: #06251A; font-size: 16px; font-weight: 700; padding: 16px 24px; border-radius: 12px; text-align: center; text-decoration: none; cursor: pointer">{{ $sTiersCe['pro']['cta_text'] ?? t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
 
             <!-- CE Enterprise -->
             <article style="background: #FFFFFF; color: #0E1A24; border: 1px solid #E3E8E6; border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 18px; position: relative">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
-                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ t('kouventa.Enterprise', 'Enterprise') }}</h3>
+                    <h3 style="margin: 0; font-size: 30px; font-weight: 800">{{ $sTiersCe['enterprise']['name'] ?? t('kouventa.Enterprise', 'Enterprise') }}</h3>
                 </div>
-                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ t('kouventa.Full control for enterprise-scale operations.', 'Full control for enterprise-scale operations.') }}</span>
+                <span style="font-size: 16px; line-height: 1.5; min-height: 48px; color: #4A5866">{{ $sTiersCe['enterprise']['desc'] ?? t('kouventa.Full control for enterprise-scale operations.', 'Full control for enterprise-scale operations.') }}</span>
                 <div style="display: flex; flex-direction: column; gap: 4px">
-                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Custom pricing', 'Custom pricing') }}</span>
-                    <span style="font-size: 14px; color: #4A5866">{{ t('kouventa.custom scope, one-time or subscription', 'custom scope, one-time or subscription') }}</span>
+                    <span style="font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $sTiersCe['enterprise']['price'] ?? t('kouventa.Custom pricing', 'Custom pricing') }}</span>
+                    <span style="font-size: 14px; color: #4A5866">{{ $sTiersCe['enterprise']['period'] ?? t('kouventa.custom scope, one-time or subscription', 'custom scope, one-time or subscription') }}</span>
                 </div>
                 <span style="display: flex; align-items: center; gap: 10px; min-height: 48px; box-sizing: border-box; padding: 10px 14px; border-radius: 12px; background: #EAF7EF; color: #13803F; font-size: 13px; font-weight: 700; line-height: 1.35">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    <span>{{ t('kouventa.Customizable MAU & contact database', 'Customizable MAU & contact database') }}</span>
+                    <span>{{ $sTiersCe['enterprise']['highlight'] ?? t('kouventa.Customizable MAU & contact database', 'Customizable MAU & contact database') }}</span>
                 </span>
                 <ul style="margin: 0; padding: 18px 0 0; list-style: none; border-top: 1px solid #E3E8E6; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Everything in Professional', 'Everything in Professional') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Hybrid, private cloud, or on-premise', 'Hybrid, private cloud, or on-premise') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Platinum 24×7 support', 'Platinum 24×7 support') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.99.9% uptime SLA', '99.9% uptime SLA') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Dedicated implementation team', 'Dedicated implementation team') }}</span></li>
-                    <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ t('kouventa.Data masking & audit trail', 'Data masking & audit trail') }}</span></li>
+                    @foreach(($sTiersCe['enterprise']['bullets'] ?? [
+                        t('kouventa.Everything in Professional', 'Everything in Professional'),
+                        t('kouventa.Hybrid, private cloud, or on-premise', 'Hybrid, private cloud, or on-premise'),
+                        t('kouventa.Platinum 24×7 support', 'Platinum 24×7 support'),
+                        t('kouventa.99.9% uptime SLA', '99.9% uptime SLA'),
+                        t('kouventa.Dedicated implementation team', 'Dedicated implementation team'),
+                        t('kouventa.Data masking & audit trail', 'Data masking & audit trail'),
+                    ]) as $bullet)
+                        <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.45"><span style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span>{{ $bullet }}</span></li>
+                    @endforeach
                 </ul>
-                <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none; cursor: pointer">{{ t('kouventa.Talk to sales', 'Talk to sales') }}</a>
+                <a href="{{ $sTiersCe['enterprise']['cta_url'] ?? '#whatsapp' }}" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="margin-top: 8px; width: 100%; box-sizing: border-box; background: transparent; color: #0E1A24; font-size: 16px; font-weight: 700; padding: 15px 24px; border-radius: 12px; border: 1.5px solid #0E1A24; text-align: center; text-decoration: none; cursor: pointer">{{ $sTiersCe['enterprise']['cta_text'] ?? t('kouventa.Talk to sales', 'Talk to sales') }}</a>
             </article>
         </div>
     </div>
@@ -1365,43 +1419,38 @@
     <div style="display: flex; flex-direction: column; gap: 32px">
         <div style="display: flex; flex-direction: column; gap: 10px">
             <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; color: #0E1A24">
-                {{ t('kouventa.Extend your plan', app()->getLocale() === 'id' ? 'Perluas paket Anda' : 'Extend your plan') }}
+                {{ $sAddons['title'] ?? t('kouventa.Extend your plan', $isIdLocale ? 'Perluas paket Anda' : 'Extend your plan') }}
             </h2>
             <p style="margin: 0; font-size: 16px; color: #4A5866"
-               x-text="product === 'ai' ? '{{ t('kouventa.Add capabilities as your AI adoption grows.', app()->getLocale() === 'id' ? 'Tambahkan kemampuan seiring adopsi AI Anda berkembang.' : 'Add capabilities as your AI adoption grows.') }}' : '{{ t('kouventa.Add capabilities as you need them, on any tier.', app()->getLocale() === 'id' ? 'Tambahkan kemampuan sesuai kebutuhan, di paket mana pun.' : 'Add capabilities as you need them, on any tier.') }}'">
-                {{ t('kouventa.Add capabilities as you need them, on any tier.', app()->getLocale() === 'id' ? 'Tambahkan kemampuan sesuai kebutuhan, di paket mana pun.' : 'Add capabilities as you need them, on any tier.') }}
+               x-text="product === 'ai' ? '{{ $sAddons['subtitle_ai'] ?? t('kouventa.Add capabilities as your AI adoption grows.', $isIdLocale ? 'Tambahkan kemampuan seiring adopsi AI Anda berkembang.' : 'Add capabilities as your AI adoption grows.') }}' : '{{ $sAddons['subtitle_ce'] ?? t('kouventa.Add capabilities as you need them, on any tier.', $isIdLocale ? 'Tambahkan kemampuan sesuai kebutuhan, di paket mana pun.' : 'Add capabilities as you need them, on any tier.') }}'">
+                {{ $sAddons['subtitle_ce'] ?? t('kouventa.Add capabilities as you need them, on any tier.', $isIdLocale ? 'Tambahkan kemampuan sesuai kebutuhan, di paket mana pun.' : 'Add capabilities as you need them, on any tier.') }}
             </p>
         </div>
 
         <!-- CE Addons -->
         <div x-show="product === 'ce'" x-cloak class="kv-addon-grid">
-            @foreach ($ceAddons as $addon)
+            @foreach ($ceAddonsList as $addon)
                 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 8px">
-                    <span style="font-size: 16px; font-weight: 800; color: #0E1A24">{{ t('kouventa.' . $addon[0], $addon[0]) }}</span>
-                    <span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.' . $addon[1], $addon[1]) }}</span>
+                    <span style="font-size: 16px; font-weight: 800; color: #0E1A24">{{ $addon['title'] }}</span>
+                    <span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ $addon['desc'] }}</span>
                 </div>
             @endforeach
         </div>
 
         <!-- AI Addons -->
         <div x-show="product === 'ai'" x-cloak class="kv-addon-grid">
-            @foreach ($aiAddons as $addon)
-                @php
-                    $isId = app()->getLocale() === 'id';
-                    $defaultTitle = $isId ? $addon['id'][0] : $addon['en'][0];
-                    $defaultDesc = $isId ? $addon['id'][1] : $addon['en'][1];
-                @endphp
+            @foreach ($aiAddonsList as $addon)
                 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 8px">
-                    <span style="font-size: 16px; font-weight: 800; color: #0E1A24">{{ t('kouventa.' . $addon['en'][0], $defaultTitle) }}</span>
-                    <span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ t('kouventa.' . $addon['en'][1], $defaultDesc) }}</span>
+                    <span style="font-size: 16px; font-weight: 800; color: #0E1A24">{{ $addon['title'] }}</span>
+                    <span style="font-size: 14px; line-height: 1.55; color: #4A5866">{{ $addon['desc'] }}</span>
                 </div>
             @endforeach
         </div>
 
         <p style="margin: 0; font-size: 16px; color: #4A5866">
-            {{ t('kouventa.Available across all plans.', app()->getLocale() === 'id' ? 'Tersedia di semua paket.' : 'Available across all plans.') }}
-            <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp style="font-weight: 700; color: #13803F; text-decoration: none; cursor: pointer">{{ app()->getLocale() === 'id' ? t('kouventa.Talk to Sales', 'Hubungi sales') : 'Talk to sales' }}</a>
-            {{ t('kouventa.for scoping and pricing.', app()->getLocale() === 'id' ? 'untuk cakupan dan harga.' : 'for scoping and pricing.') }}
+            {{ $sAddons['note_text'] ?? t('kouventa.Available across all plans.', $isIdLocale ? 'Tersedia di semua paket.' : 'Available across all plans.') }}
+            <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp style="font-weight: 700; color: #13803F; text-decoration: none; cursor: pointer">{{ $sAddons['note_link_text'] ?? ($isIdLocale ? t('kouventa.Talk to Sales', 'Hubungi sales') : 'Talk to sales') }}</a>
+            {{ $sAddons['note_suffix'] ?? t('kouventa.for scoping and pricing.', $isIdLocale ? 'untuk cakupan dan harga.' : 'for scoping and pricing.') }}
         </p>
     </div>
 
@@ -1409,32 +1458,32 @@
     <div x-show="product === 'ce'" style="display: flex; flex-direction: column; gap: 32px">
         <div style="display: flex; flex-direction: column; gap: 10px">
             <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; color: #0E1A24">
-                {{ t('kouventa.WhatsApp message templates', 'WhatsApp message templates') }}
+                {{ $sTemplates['title'] ?? t('kouventa.WhatsApp message templates', 'WhatsApp message templates') }}
             </h2>
             <p style="margin: 0; font-size: 16px; color: #4A5866">
-                {{ t('kouventa.WhatsApp charges per conversation, based on the template category you send.', 'WhatsApp charges per conversation, based on the template category you send.') }}
+                {{ $sTemplates['subtitle'] ?? t('kouventa.WhatsApp charges per conversation, based on the template category you send.', 'WhatsApp charges per conversation, based on the template category you send.') }}
             </p>
         </div>
 
         <div class="kv-template-grid">
-            @foreach ($templates as $tp)
+            @foreach ($templatesList as $tp)
                 <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
                     <div style="display: flex; align-items: center; gap: 14px; padding-bottom: 18px; border-bottom: 1px solid #E3E8E6">
                         <span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center">
-                            @if ($tp['key'] === 'mk')
+                            @if (($tp['key'] ?? '') === 'mk')
                                 <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1Z"></path><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"></path></svg>
-                            @elseif ($tp['key'] === 'ut')
+                            @elseif (($tp['key'] ?? '') === 'ut')
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"></path></svg>
-                            @elseif ($tp['key'] === 'au')
+                            @elseif (($tp['key'] ?? '') === 'au')
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
-                            @elseif ($tp['key'] === 'sv')
+                            @elseif (($tp['key'] ?? '') === 'sv')
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="14" width="5" height="6" rx="2"></rect><rect x="17" y="14" width="5" height="6" rx="2"></rect></svg>
                             @endif
                         </span>
-                        <span style="font-size: 20px; font-weight: 800; color: #0E1A24">{{ t('kouventa.' . $tp['name'], $tp['name']) }}</span>
+                        <span style="font-size: 20px; font-weight: 800; color: #0E1A24">{{ t('kouventa.' . ($tp['name'] ?? ''), $tp['name'] ?? '') }}</span>
                     </div>
                     <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px">
-                        @foreach ($tp['items'] as $item)
+                        @foreach (($tp['items'] ?? []) as $item)
                             <li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947">
                                 <span style="width: 18px; height: 18px; flex-shrink: 0; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center; margin-top: 2px">
                                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
@@ -1467,7 +1516,7 @@
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
                         <input type="number" min="0" inputmode="numeric" aria-label="Marketing conversations per month" x-model.number="mk" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
-                        <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">616</span>
+                        <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">{{ $calcRates['mk'] ?? 616 }}</span>
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">=</span>
                         <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #0E1A24; display: flex; align-items: center; justify-content: flex-end; padding: 0 16px" x-text="fmtNum(subMk)">0</span>
                     </div>
@@ -1479,7 +1528,7 @@
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
                         <input type="number" min="0" inputmode="numeric" aria-label="Utility conversations per month" x-model.number="ut" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
-                        <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">375</span>
+<span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">{{ $calcRates['ut'] ?? 375 }}</span>
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">=</span>
                         <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #0E1A24; display: flex; align-items: center; justify-content: flex-end; padding: 0 16px" x-text="fmtNum(subUt)">0</span>
                     </div>
@@ -1491,7 +1540,7 @@
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
                         <input type="number" min="0" inputmode="numeric" aria-label="Authentication conversations per month" x-model.number="au" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
-                        <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">375</span>
+<span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">{{ $calcRates['au'] ?? 375 }}</span>
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">=</span>
                         <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #0E1A24; display: flex; align-items: center; justify-content: flex-end; padding: 0 16px" x-text="fmtNum(subAu)">0</span>
                     </div>
@@ -1503,7 +1552,7 @@
                     <div style="display: grid; grid-template-columns: minmax(0, 1fr) 24px 120px 24px minmax(0, 1fr); gap: 8px; align-items: center">
                         <input type="number" min="0" inputmode="numeric" aria-label="Service conversations per month" x-model.number="sv" @focus="$event.target.select()" style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #0E1A24; padding: 0 12px">
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">×</span>
-                        <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">375</span>
+<span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #6B7A88; display: flex; align-items: center; justify-content: center">{{ $calcRates['sv'] ?? 375 }}</span>
                         <span style="text-align: center; color: #6B7A88; font-weight: 700">=</span>
                         <span style="height: 52px; box-sizing: border-box; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; font-family: inherit; background: #F4F6F5; color: #0E1A24; display: flex; align-items: center; justify-content: flex-end; padding: 0 16px" x-text="fmtNum(subSv)">0</span>
                     </div>
@@ -1566,8 +1615,8 @@
             <p style="margin: 0; font-size: 18px; line-height: 1.55">{!! nl2br(e($ctaSubtitle)) !!}</p>
         </div>
         <div style="display: flex; gap: 12px; flex-shrink: 0">
-            <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ t('kouventa.Book a working session', $isIdLocale ? 'Jadwalkan sesi kerja' : 'Book a working session') }}</a>
-            <a href="#whatsapp" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none; cursor: pointer">{{ t('kouventa.Contact sales', $isIdLocale ? 'Hubungi sales' : 'Contact sales') }}</a>
+            <a href="{{ localized_url($sCta['primary_btn']['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ $sCta['primary_btn']['text'] ?? t('kouventa.Book a working session', $isIdLocale ? 'Jadwalkan sesi kerja' : 'Book a working session') }}</a>
+            <a href="{{ $sCta['secondary_btn']['url'] ?? '#whatsapp' }}" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none; cursor: pointer">{{ $sCta['secondary_btn']['text'] ?? t('kouventa.Contact sales', $isIdLocale ? 'Hubungi sales' : 'Contact sales') }}</a>
         </div>
     </div>
 </section>
@@ -1648,6 +1697,18 @@
             sv: 0,
             bc: 0,
             ib: 0,
+            rates: {
+                mk: {{ (int) ($calcRates['mk'] ?? 616) }},
+                ut: {{ (int) ($calcRates['ut'] ?? 375) }},
+                au: {{ (int) ($calcRates['au'] ?? 375) }},
+                sv: {{ (int) ($calcRates['sv'] ?? 375) }},
+            },
+            fees: {
+                starterMau: {{ (int) ($calcFees['starter_mau'] ?? 3000) }},
+                starterFee: {{ (int) ($calcFees['starter_fee'] ?? 1499000) }},
+                proMau: {{ (int) ($calcFees['pro_mau'] ?? 15000) }},
+                proFee: {{ (int) ($calcFees['pro_fee'] ?? 4499000) }},
+            },
 
             parseQty(val) {
                 const n = parseInt(val, 10);
@@ -1655,16 +1716,16 @@
             },
 
             get subMk() {
-                return this.parseQty(this.mk) * 616;
+                return this.parseQty(this.mk) * this.rates.mk;
             },
             get subUt() {
-                return this.parseQty(this.ut) * 375;
+                return this.parseQty(this.ut) * this.rates.ut;
             },
             get subAu() {
-                return this.parseQty(this.au) * 375;
+                return this.parseQty(this.au) * this.rates.au;
             },
             get subSv() {
-                return this.parseQty(this.sv) * 375;
+                return this.parseQty(this.sv) * this.rates.sv;
             },
             get convTotal() {
                 return this.subMk + this.subUt + this.subAu + this.subSv;
@@ -1673,13 +1734,13 @@
                 return this.parseQty(this.bc) + this.parseQty(this.ib);
             },
             get isOver() {
-                return this.mau > 15000;
+                return this.mau > this.fees.proMau;
             },
             get plan() {
-                return this.isOver ? 'Enterprise' : (this.mau > 3000 ? 'Professional' : 'Starter');
+                return this.isOver ? 'Enterprise' : (this.mau > this.fees.starterMau ? 'Professional' : 'Starter');
             },
             get platformFee() {
-                return this.isOver ? 0 : (this.mau > 3000 ? 4499000 : 1499000);
+                return this.isOver ? 0 : (this.mau > this.fees.starterMau ? this.fees.proFee : this.fees.starterFee);
             },
             get monthlyTotal() {
                 return this.platformFee + this.convTotal;

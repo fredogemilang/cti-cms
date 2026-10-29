@@ -147,6 +147,8 @@
                     @include('kouventa-pages::livewire.schemas.solution-ai')
                 @elseif($page->template === 'solution-ce' || $page->slug === 'solutions/customer-engagement')
                     @include('kouventa-pages::livewire.schemas.solution-ce')
+                @elseif($page->template === 'pricing' || $page->slug === 'pricing')
+                    @include('kouventa-pages::livewire.schemas.pricing')
                 @endif
             @endif
 
