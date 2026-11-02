@@ -157,7 +157,7 @@
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" wire:click="closeModal"></div>
 
         <div class="flex min-h-screen items-center justify-center p-4">
-            <div class="relative w-full max-w-xl rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-6 shadow-2xl space-y-6">
+            <div class="relative w-full max-w-xl rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-6 shadow-2xl space-y-6 z-10">
                 {{-- Header --}}
                 <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
                     <div>

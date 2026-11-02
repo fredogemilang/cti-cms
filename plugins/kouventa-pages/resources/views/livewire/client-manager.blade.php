@@ -143,8 +143,12 @@
 
     {{-- Add / Edit Client Modal --}}
     @if($showModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" wire:keydown.escape.window="closeModal">
-            <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden" @click.outside="$wire.closeModal()">
+        <div class="fixed inset-0 z-50 overflow-y-auto" role="dialog" aria-modal="true">
+            {{-- Backdrop (Click outside dialog to close) --}}
+            <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" wire:click="closeModal"></div>
+
+            <div class="flex min-h-screen items-center justify-center p-4">
+                <div class="relative bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden z-10">
                 {{-- Modal Header --}}
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-[#272B30]">
                     <div class="flex items-center gap-2.5">
@@ -271,6 +275,7 @@
                 </form>
             </div>
         </div>
+    </div>
     @endif
 </div>
 
