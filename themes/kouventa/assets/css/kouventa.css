@@ -5120,6 +5120,16 @@ body {
     animation: none !important;
 }
 
+.kv-help-sol-btn[aria-pressed="true"] .kv-help-sol-icon {
+    background: #13803F !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(19,128,63,.25) !important;
+}
+
+.kv-help-sol-btn[aria-pressed="true"] .kv-help-sol-icon svg {
+    stroke: #FFFFFF !important;
+}
+
 .kv-sol-btn-col.has-sol .kv-help-sol-btn:not([aria-pressed="true"]) {
     animation: none !important;
 }

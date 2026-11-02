@@ -78,15 +78,26 @@
         6: 'kv-ill-legal'
     },
     startAutoTimer() {
-        if (this._autoTimer) clearInterval(this._autoTimer);
-        this._autoTimer = setInterval(() => {
-            if (this.sol === -1) {
-                const count = (this.aiSols[this.tab] || []).length;
-                if (count > 1) {
-                    this.activeSol = (this.activeSol + 1) % count;
-                }
+        if (this._autoTimer) clearTimeout(this._autoTimer);
+        const scheduleNext = () => {
+            if (this.sol !== -1) return;
+            let duration = 6000;
+            if (this.tab === 0) {
+                // Scene 0: full sequence finishes at 3.55s, hold resolved state for 2.25s = 5800ms
+                // Scene 1: full sequence finishes at 2.20s, hold triage state for 2.80s = 5000ms
+                duration = (this.activeSol === 0) ? 5800 : 5000;
             }
-        }, 6000);
+            this._autoTimer = setTimeout(() => {
+                if (this.sol === -1) {
+                    const count = (this.aiSols[this.tab] || []).length;
+                    if (count > 1) {
+                        this.activeSol = (this.activeSol + 1) % count;
+                    }
+                    scheduleNext();
+                }
+            }, duration);
+        };
+        scheduleNext();
     },
     lockSol(i) {
         this.sol = i;
@@ -462,14 +473,14 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="(sol === 0) || (sol === -1 && activeSol === 0)" style="animation: kvHi 1.6s ease 1s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="(sol === 0) || (sol === -1 && activeSol === 0)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="14" width="5" height="6" rx="2"></rect><rect x="17" y="14" width="5" height="6" rx="2"></rect></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptCs['solutions'][0]['title'] ?? t('kouventa.Customer Support Agent', 'Customer Support Agent') }}</h3>
 <span class="kv-help-sol-desc">{{ $deptCs['solutions'][0]['desc'] ?? t('kouventa.Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.', 'Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="(sol === 1) || (sol === -1 && activeSol === 1)" style="animation: kvHi 2.8s ease 2.8s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="(sol === 1) || (sol === -1 && activeSol === 1)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M13 6v2M13 11v2M13 16v2"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptCs['solutions'][1]['title'] ?? t('kouventa.Ticket Management Agent', 'Ticket Management Agent') }}</h3>
@@ -485,6 +496,16 @@
 @endphp
 
 <style>
+/* Active Solution Button: Solid green badge with pure white icon for crisp separation */
+.kv-help-sol-btn[aria-pressed="true"] .kv-help-sol-icon {
+  background: #13803F !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(19, 128, 63, 0.25) !important;
+}
+.kv-help-sol-btn[aria-pressed="true"] .kv-help-sol-icon svg {
+  stroke: #FFFFFF !important;
+}
+
 /* Rigid 2-column layout for CS illustration scenes */
 #kv-ill-cs .kv-cs-scene {
   position: absolute;
