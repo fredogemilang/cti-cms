@@ -533,7 +533,7 @@
 <div class="kv-cs-scene" :class="{ 'kv-active': (sol === 0) || (sol === -1 && activeSol === 0) }">
 
   <!-- LEFT: Background Knowledge Retrieval Process (Hidden initially until typing dots start at 1.0s) -->
-  <div style="width: 270px; height: 440px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; opacity: 0; animation: kvIn .45s ease 1.0s both;">
+  <div style="width: 270px; height: 430px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; opacity: 0; animation: kvIn .45s ease 1.0s both;">
     
     <!-- Background Process Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0">
@@ -616,12 +616,6 @@
       </div>
 
     </div>
-
-    <!-- Pipeline Footer Metric -->
-    <div style="background: #F1F5F9; border-radius: 8px; padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #475569; animation: kvIn .35s ease 1.2s both">
-      <span style="font-weight: 700; color: #1E293B">⚡ {{ $isIdLocale ? 'Pencarian Semantik: 0.18s' : 'Semantic Search: 0.18s' }}</span>
-      <span style="color: #64748B">{{ $isIdLocale ? '1.420 potongan dipindai' : '1,420 chunks scanned' }}</span>
-    </div>
   </div>
 
   <!-- Animated Dashed Connector Line (Signal flows from WhatsApp Typing to SOP Document) -->
@@ -631,7 +625,7 @@
   </svg>
 
   <!-- RIGHT: Customer WhatsApp Chat Card (Foreground Interface) -->
-  <div style="width: 266px; height: 440px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); animation: kvIn .35s ease .15s both">
+  <div style="width: 266px; height: 430px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); animation: kvIn .35s ease .15s both">
     
     <!-- Chat Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
@@ -686,12 +680,6 @@
         </div>
 
       </div>
-    </div>
-
-    <!-- Bottom Status Bar -->
-    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 6px 10px; border-radius: 6px; animation: kvIn .3s ease 2.8s both">
-      <span>✓ {{ $isIdLocale ? 'Terjawab otomatis dari SOP' : 'Auto-resolved from SOP' }}</span>
-      <span style="color: #065F46; font-weight: 800">{{ $isIdLocale ? '100% Akurat' : '100% Grounded' }}</span>
     </div>
   </div>
 </div>
