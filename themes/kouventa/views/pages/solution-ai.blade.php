@@ -532,8 +532,8 @@
 <!-- SCENE 0: Customer Support Agent (Left: Background Process Canvas, Right: Customer WhatsApp Card) -->
 <div class="kv-cs-scene" :class="{ 'kv-active': (sol === 0) || (sol === -1 && activeSol === 0) }">
 
-  <!-- LEFT: Background Knowledge Retrieval Process (Hidden initially until typing dots start at 1.0s) -->
-  <div style="width: 270px; height: 430px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; opacity: 0; animation: kvIn .45s ease 1.0s both;">
+  <!-- LEFT: Background Knowledge Retrieval Process (Hidden initially until arrow arrives at 1.9s) -->
+  <div style="width: 270px; height: 430px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; opacity: 0; animation: kvIn .45s ease 1.9s both;">
     
     <!-- Background Process Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0">
@@ -553,7 +553,7 @@
     <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; padding: 8px 0">
 
       <!-- 1. Hatched Document: Katalog_Produk_2026.pdf (Background/Unmatched) -->
-      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 1.05s both">
+      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 1.95s both">
         <div style="display: flex; justify-content: space-between; align-items: center">
           <div style="display: flex; align-items: center; gap: 6px">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
@@ -568,7 +568,7 @@
       </div>
 
       <!-- 2. Target Matched Document: SOP_Operasional_Toko.pdf (Lights up on match!) -->
-      <div style="border: 1px solid #CBD5E1; border-radius: 12px; padding: 12px 14px; background: #F8FAFA; display: flex; flex-direction: column; gap: 8px; transition: all 0.3s ease; animation: kvIn .35s ease 1.1s both, kvMatchDoc .5s ease 1.4s 1 forwards">
+      <div style="border: 1px solid #CBD5E1; border-radius: 12px; padding: 12px 14px; background: #F8FAFA; display: flex; flex-direction: column; gap: 8px; transition: all 0.3s ease; animation: kvIn .35s ease 2.0s both, kvMatchDoc .5s ease 2.2s 1 forwards">
         <!-- Document Title & Header -->
         <div style="display: flex; justify-content: space-between; align-items: center">
           <div style="display: flex; align-items: center; gap: 6px">
@@ -581,7 +581,7 @@
         </div>
 
         <!-- Badges (99.4% Match, Confidence 99%) -->
-        <div style="display: flex; align-items: center; gap: 6px; animation: kvPopIn .35s ease 1.6s both">
+        <div style="display: flex; align-items: center; gap: 6px; animation: kvPopIn .35s ease 2.4s both">
           <span style="font-size: 10px; font-weight: 800; color: #0B5E2C; background: #EAF7EF; border: 1px solid #C9E8D3; padding: 2px 7px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
             99.4% Match
@@ -592,7 +592,7 @@
         </div>
 
         <!-- Extracted Text Snippet -->
-        <div style="background: #F8FAFA; border-left: 3px solid #13803F; border-radius: 6px; padding: 7px 10px; display: flex; flex-direction: column; gap: 3px; animation: kvIn .35s ease 1.8s both">
+        <div style="background: #F8FAFA; border-left: 3px solid #13803F; border-radius: 6px; padding: 7px 10px; display: flex; flex-direction: column; gap: 3px; animation: kvIn .35s ease 2.6s both">
           <span style="font-size: 10px; font-weight: 800; color: #13803F">{{ $isIdLocale ? 'Bagian 3.1 · Jam Operasional' : 'Section 3.1 · Store Hours' }}</span>
           <span style="font-size: 11px; line-height: 1.4; color: #1E293B; font-weight: 500">
             {{ $isIdLocale ? 'Seluruh gerai beroperasi normal setiap hari dari jam 08:00 sampai 21:00 tanpa libur, termasuk akhir pekan dan tanggal merah.' : 'All store branches operate daily from 08:00 to 21:00 without exception, including weekends and public holidays.' }}
@@ -601,7 +601,7 @@
       </div>
 
       <!-- 3. Hatched Document: Kebijakan_Garansi_Retur.docx (Background/Unmatched) -->
-      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 1.15s both">
+      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 2.05s both">
         <div style="display: flex; justify-content: space-between; align-items: center">
           <div style="display: flex; align-items: center; gap: 6px">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
@@ -619,7 +619,7 @@
   </div>
 
   <!-- Animated Dashed Connector Line (Signal flows from behind WhatsApp Card to SOP Document) -->
-  <svg style="position: absolute; left: 245px; top: 215px; width: 95px; height: 30px; z-index: 2; pointer-events: none; animation: kvIn .3s ease 1.05s both, kvOut .25s ease 2.35s 1 forwards">
+  <svg style="position: absolute; left: 245px; top: 215px; width: 95px; height: 30px; z-index: 2; pointer-events: none; opacity: 0; animation: kvIn .35s ease 1.5s both, kvOut .25s ease 3.15s 1 forwards">
     <path d="M 90 15 L 8 15" fill="none" stroke="#13803F" stroke-width="2.5" stroke-dasharray="5 4" style="animation: kvDashLeft 0.5s linear infinite;" />
     <polygon points="10,10 2,15 10,20" fill="#13803F" />
   </svg>
@@ -640,14 +640,14 @@
       </div>
       <span style="display: grid; font-size: 10px; font-weight: 800">
         <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #E3E8E6; color: #4A5866">{{ $isIdLocale ? 'Baru' : 'New' }}</span>
-        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 2.75s both">{{ $isIdLocale ? 'Selesai' : 'Resolved' }}</span>
+        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 3.55s both">{{ $isIdLocale ? 'Selesai' : 'Resolved' }}</span>
       </span>
     </div>
 
     <!-- Chat Messages Stack -->
     <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center">
-      <!-- 1. Customer Message (Pops in at 0.5s) -->
-      <div style="align-self: flex-start; max-width: 95%; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.5s both">
+      <!-- 1. Customer Message (Pops in at 0.45s) -->
+      <div style="align-self: flex-start; max-width: 95%; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.45s both">
         <span style="font-size: 12px; font-weight: 600; line-height: 1.45; color: #0E1A24">
           {{ $isIdLocale ? 'Halo kak! Apakah hari ini tokonya buka? Tutupnya jam berapa ya?' : 'Hi there! Are you guys open today? What time do you close?' }}
         </span>
@@ -657,15 +657,15 @@
       <!-- 2 & 3: Typing Indicator morphs into AI Agent Response in the EXACT SAME slot! -->
       <div style="display: grid; align-self: flex-start; width: 100%; max-width: 98%;">
         
-        <!-- Typing Indicator (Sits at top-left of this slot, morphs out at 2.35s) -->
-        <div style="grid-area: 1 / 1; align-self: start; justify-self: start; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 10px 14px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); transform-origin: top left; animation: kvIn .3s ease 1.0s both, kvMorphOut .2s ease 2.35s 1 forwards">
+        <!-- Typing Indicator (Sits at top-left of this slot, appears at 0.9s, morphs out at 3.15s) -->
+        <div style="grid-area: 1 / 1; align-self: start; justify-self: start; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 10px 14px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); transform-origin: top left; opacity: 0; animation: kvIn .3s ease 0.9s both, kvMorphOut .2s ease 3.15s 1 forwards">
           <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0s;"></span>
           <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.2s;"></span>
           <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.4s;"></span>
         </div>
 
-        <!-- AI Agent Response (Occupies the exact same slot, expands/morphs out from the typing origin at 2.4s) -->
-        <div style="grid-area: 1 / 1; background: #FFFFFF; border-radius: 2px 12px 12px 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #C9E8D3; box-shadow: 0 3px 10px rgba(19, 128, 63, 0.08); transform-origin: top left; animation: kvMorphIn .38s cubic-bezier(0.34, 1.35, 0.64, 1) 2.4s both">
+        <!-- AI Agent Response (Occupies the exact same slot, expands/morphs out from the typing origin at 3.2s) -->
+        <div style="grid-area: 1 / 1; background: #FFFFFF; border-radius: 2px 12px 12px 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #C9E8D3; box-shadow: 0 3px 10px rgba(19, 128, 63, 0.08); transform-origin: top left; opacity: 0; animation: kvMorphIn .38s cubic-bezier(0.34, 1.35, 0.64, 1) 3.2s both">
           <div style="display: flex; justify-content: space-between; align-items: center">
             <span style="font-size: 11px; font-weight: 800; color: #13803F">{{ $isIdLocale ? 'Customer Support Agent' : 'Customer Support Agent' }}</span>
             <span style="font-size: 9px; font-weight: 700; color: #13803F; background: #EAF7EF; padding: 1px 5px; border-radius: 4px">0.3s</span>
