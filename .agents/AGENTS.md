@@ -35,3 +35,8 @@ Whenever adding or modifying a `MetaField` for any `CustomPostType` (`cpt_entrie
 
 
 
+
+## Mandatory Clean UI Rule for Interactive Visualizations (No Artificial Headers/Footers)
+1. **Pure Animation & Realistic UI Only**: DILARANG menambahkan header atau footer buatan/dekoratif (seperti banner judul penjelasan *"AI Resume Screening & Match Ranking"*, metric counter *"101 CVs Scanned"*, atau status bar sintetis *"✓ 101 CVs auto-screened / 0.8s"*, *"⚡ Semantic Search: 0.18s"*, dll.) pada card/ilustrasi simulasi produk.
+2. **Self-Explanatory Animations**: Biarkan animasi dan antarmuka software yang realistis (chat WhatsApp, ATS leaderboard, multi-party calendar matrix, dossier kartu profil kandidat) berbicara sendiri tanpa perlu narasi ringkasan buatan di atas/bawah.
+3. **Centered & Proportional Spacing**: Manfaatkan ruang vertikal untuk memusatkan (`justify-content: center;`) elemen simulasi dengan padding dan kontras yang proporsional sehingga bersih (*clean*), elegan, dan tidak bocor (*zero visual leaks*).
