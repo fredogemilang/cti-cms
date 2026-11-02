@@ -137,3 +137,4 @@ return new class extends Migration
         Schema::dropIfExists('kouventa_partners');
     }
 };
+

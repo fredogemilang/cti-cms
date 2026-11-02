@@ -7,3 +7,4 @@
         @livewire('plugins.kouventa-pages.partner-manager')
     </div>
 @endsection
+

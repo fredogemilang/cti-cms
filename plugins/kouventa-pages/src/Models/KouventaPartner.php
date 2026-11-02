@@ -43,3 +43,4 @@ class KouventaPartner extends Model
         return resolve_block_asset($this->logo);
     }
 }
+

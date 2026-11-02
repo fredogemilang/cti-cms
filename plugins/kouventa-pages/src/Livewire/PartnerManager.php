@@ -219,3 +219,4 @@ class PartnerManager extends Component
         ]);
     }
 }
+

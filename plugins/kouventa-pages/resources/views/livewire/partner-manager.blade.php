@@ -184,35 +184,42 @@
                         @error('name') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
-                    {{-- Logo Selector --}}
-                    <div>
-                        <label class="block text-xs font-bold text-[#111827] dark:text-[#FCFCFC] mb-1">
+                    {{-- Partner Logo Image (Media Picker) --}}
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">
                             Partner Logo Image <span class="text-red-500">*</span>
                         </label>
-                        <div class="space-y-2">
-                            @if($logo)
-                                <div class="relative w-48 h-20 rounded-xl border border-gray-700 bg-[#071C33] flex items-center justify-center p-3 shadow-inner">
+
+                        @if($logo)
+                            <div class="p-4 rounded-xl border border-gray-200 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#0B0B0B] flex items-center justify-between gap-4">
+                                <div class="w-44 h-16 rounded-xl border border-gray-700 bg-[#071C33] flex items-center justify-center px-4 py-2 shadow-sm shrink-0">
                                     <img src="{{ resolve_block_asset($logo) }}"
-                                         alt="Partner Preview"
-                                         style="max-height: {{ min($max_height ?: 44, 48) }}px; max-width: 100%; width: auto; height: auto; object-fit: contain;">
-                                    <button type="button" wire:click="clearLogo" class="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 text-white flex items-center justify-center shadow hover:bg-red-600">
-                                        <span class="material-symbols-outlined text-xs">close</span>
+                                         alt="{{ $name ?: 'Partner Logo' }}"
+                                         style="max-height: {{ $max_height ?: 44 }}px; max-width: 100%; width: auto; height: auto; object-fit: contain;">
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-mono text-[#6F767E] truncate">{{ $logo }}</p>
+                                    <button type="button" wire:click="clearLogo" class="mt-1.5 text-xs font-bold text-red-500 hover:text-red-600 inline-flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                        <span>Remove / Change Image</span>
                                     </button>
                                 </div>
-                            @endif
-
-                            <div class="flex items-center gap-2">
-                                <button type="button"
-                                        x-data
-                                        @click="$dispatch('open-media-modal', { field: 'partner_logo' })"
-                                        class="h-9 px-3.5 rounded-xl border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#272B30] hover:bg-gray-100 dark:hover:bg-[#33383F] text-[#111827] dark:text-[#FCFCFC] text-xs font-bold inline-flex items-center gap-2 transition-colors">
-                                    <span class="material-symbols-outlined text-sm">photo_library</span>
-                                    <span>{{ $logo ? 'Change Logo Image' : 'Select Logo from Media Library' }}</span>
-                                </button>
-                                <span class="text-[11px] text-[#6F767E]">PNG, SVG, or WebP (transparent recommended)</span>
                             </div>
+                        @endif
+
+                        <div class="pt-1">
+                            <livewire:admin.media-picker
+                                :field="'partner_logo'"
+                                :value="$logo"
+                                :label="'Select or Upload Partner Logo'"
+                                :compact="true"
+                                :key="'partner-logo-picker-' . ($editingId ?? 'new') . '-' . md5($logo)"
+                            />
                         </div>
-                        @error('logo') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+
+                        @error('logo')
+                            <p class="text-xs text-red-500 font-medium mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Website URL (Optional) --}}
@@ -283,7 +290,5 @@
         </div>
     </div>
     @endif
-
-    {{-- Include Global Media Modal --}}
-    @livewire('media.modal')
 </div>
+
