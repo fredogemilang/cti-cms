@@ -518,6 +518,15 @@
   50% { border-color: #13803F; background: #FFFFFF; transform: scale(1.02); box-shadow: 0 8px 24px rgba(19, 128, 63, 0.14); }
   100% { border-color: #13803F; background: #FFFFFF; transform: scale(1); box-shadow: 0 4px 16px rgba(19, 128, 63, 0.08); }
 }
+@keyframes kvMorphOut {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.85); }
+}
+@keyframes kvMorphIn {
+  0% { opacity: 0; transform: scale(0.6); }
+  65% { opacity: 1; transform: scale(1.03); }
+  100% { opacity: 1; transform: scale(1); }
+}
 </style>
 
 <!-- SCENE 0: Customer Support Agent (Left: Background Process Canvas, Right: Customer WhatsApp Card) -->
@@ -651,26 +660,31 @@
         <span style="align-self: flex-end; font-size: 9px; font-weight: 600; color: #94A3B8">10:14 AM</span>
       </div>
 
-      <!-- 2. Typing Indicator (Bouncing dots in bubble from 1.0s to 2.4s) -->
-      <div style="align-self: flex-start; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 10px 14px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); animation: kvIn .3s ease 1.0s both, kvOut .25s ease 2.35s 1 forwards">
-        <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0s;"></span>
-        <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.2s;"></span>
-        <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.4s;"></span>
-      </div>
-
-      <!-- 3. AI Agent Response (Replaces typing indicator at 2.45s) -->
-      <div style="align-self: flex-start; max-width: 98%; background: #FFFFFF; border-radius: 2px 12px 12px 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #C9E8D3; box-shadow: 0 3px 10px rgba(19, 128, 63, 0.08); animation: kvIn .35s ease 2.45s both">
-        <div style="display: flex; justify-content: space-between; align-items: center">
-          <span style="font-size: 11px; font-weight: 800; color: #13803F">{{ $isIdLocale ? 'Customer Support Agent' : 'Customer Support Agent' }}</span>
-          <span style="font-size: 9px; font-weight: 700; color: #13803F; background: #EAF7EF; padding: 1px 5px; border-radius: 4px">0.3s</span>
+      <!-- 2 & 3: Typing Indicator morphs into AI Agent Response in the EXACT SAME slot! -->
+      <div style="display: grid; align-self: flex-start; width: 100%; max-width: 98%;">
+        
+        <!-- Typing Indicator (Sits at top-left of this slot, morphs out at 2.35s) -->
+        <div style="grid-area: 1 / 1; align-self: start; justify-self: start; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 10px 14px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); transform-origin: top left; animation: kvIn .3s ease 1.0s both, kvMorphOut .2s ease 2.35s 1 forwards">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0s;"></span>
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.2s;"></span>
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.4s;"></span>
         </div>
-        <span style="font-size: 12px; line-height: 1.45; color: #0E1A24">
-          {{ $isIdLocale ? 'Halo! Iya kak, seluruh gerai kami buka setiap hari jam 08:00–21:00. Ditunggu kedatangannya ya! 😊' : 'Hi! Yes, we\'re open every day from 08:00 to 21:00 across all outlets. See you soon! 😊' }}
-        </span>
-        <span style="align-self: flex-start; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; background: #DDF3E4; color: #0B5E2C; display: inline-flex; align-items: center; gap: 4px">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-          SOP_Operasional_Toko.pdf
-        </span>
+
+        <!-- AI Agent Response (Occupies the exact same slot, expands/morphs out from the typing origin at 2.4s) -->
+        <div style="grid-area: 1 / 1; background: #FFFFFF; border-radius: 2px 12px 12px 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #C9E8D3; box-shadow: 0 3px 10px rgba(19, 128, 63, 0.08); transform-origin: top left; animation: kvMorphIn .38s cubic-bezier(0.34, 1.35, 0.64, 1) 2.4s both">
+          <div style="display: flex; justify-content: space-between; align-items: center">
+            <span style="font-size: 11px; font-weight: 800; color: #13803F">{{ $isIdLocale ? 'Customer Support Agent' : 'Customer Support Agent' }}</span>
+            <span style="font-size: 9px; font-weight: 700; color: #13803F; background: #EAF7EF; padding: 1px 5px; border-radius: 4px">0.3s</span>
+          </div>
+          <span style="font-size: 12px; line-height: 1.45; color: #0E1A24">
+            {{ $isIdLocale ? 'Halo! Iya kak, seluruh gerai kami buka setiap hari jam 08:00–21:00. Ditunggu kedatangannya ya! 😊' : 'Hi! Yes, we\'re open every day from 08:00 to 21:00 across all outlets. See you soon! 😊' }}
+          </span>
+          <span style="align-self: flex-start; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; background: #DDF3E4; color: #0B5E2C; display: inline-flex; align-items: center; gap: 4px">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            SOP_Operasional_Toko.pdf
+          </span>
+        </div>
+
       </div>
     </div>
 
