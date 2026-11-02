@@ -28,8 +28,8 @@
 
 <!-- ============ FORM ============ -->
 <section style="padding: 0 80px 120px; margin-top: -170px; position: relative; z-index: 2">
-<div style="display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 32px; align-items: start">
 <h2 class="sr-only">{{ t('kouventa.Schedule a Live Product Consultation', 'Schedule a Live Product Consultation') }}</h2>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 32px; align-items: start">
 
 @php
     $theme = active_theme();

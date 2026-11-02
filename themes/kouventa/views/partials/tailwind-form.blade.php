@@ -596,7 +596,6 @@
                 onmouseover="this.style.background='#22be5c'" onmouseout="this.style.background='#2BD46A'">
             {{ t('kouventa.' . ($form->submit_button_text ?: 'Submit'), $form->submit_button_text ?: 'Submit') }}
         </button>
-    </form>
 
     @if(is_plugin_active('whatsapp-verifier'))
         <script>
@@ -862,4 +861,5 @@
         })();
         </script>
     @endif
+    </form>
 @endif

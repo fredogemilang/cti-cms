@@ -614,6 +614,18 @@ html{scroll-padding-top:0}
 
 
 /* --- Theme Specific Enhancements --- */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
+}
+
 .kv-canvas-wrap {
   width: 100%;
   position: relative;
@@ -3268,6 +3280,10 @@ body {
         margin-top: -40px !important;
         padding-left: 20px !important;
         padding-right: 20px !important;
+    }
+
+    div[style*="width: 500px"][style*="height: 440px"] {
+        display: none !important;
     }
 
     div[style*="padding-top: 194px"] {
