@@ -57,6 +57,11 @@ Route::middleware(['web', 'auth'])->prefix("{$adminPath}/kouventa-pages")->name(
         return view('kouventa-pages::clients');
     })->name('clients');
 
+    // 5. Logo Partners (Technology Partners)
+    Route::get('/partners', function () {
+        return view('kouventa-pages::partners');
+    })->name('partners');
+
     // Legacy / Fallback routes
     Route::get('/', function () {
         return redirect()->route('admin.kouventa-pages.solutions');

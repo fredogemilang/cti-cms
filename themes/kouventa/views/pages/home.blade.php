@@ -469,28 +469,92 @@
 </section>
 
 <!-- ============ TECHNOLOGY PARTNERS ============ -->
-<section style="padding: 0 80px; display: flex; flex-direction: column; gap: 28px">
+<section id="our-partner" style="padding: 0 80px; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 32px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $partnersTitle }}</h2>
+@php
+    $techPartners = [];
+    if (is_plugin_active('kouventa-pages') && class_exists(\Plugins\KouventaPages\Models\KouventaPartner::class)) {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('kouventa_partners')) {
+                $dbPartners = \Plugins\KouventaPages\Models\KouventaPartner::active()->get();
+                if ($dbPartners->isNotEmpty()) {
+                    $techPartners = $dbPartners->map(function ($p) {
+                        $altText = $p->alt_text ?: ('Logo ' . $p->name);
+                        return [
+                            'name' => $p->name,
+                            'logo' => resolve_block_asset($p->logo),
+                            'website_url' => !empty($p->website_url) ? trim($p->website_url) : null,
+                            'alt' => t('kouventa.' . $altText, $altText),
+                            'max_height' => $p->max_height ?: 44,
+                        ];
+                    })->all();
+                }
+            }
+        } catch (\Throwable $e) {
+            // Fallback to default partners
+        }
+    }
+
+    if (empty($techPartners)) {
+        $techPartners = [
+            [
+                'name' => 'Meta',
+                'logo' => theme_asset('images/logos/techonology-partners/meta.webp'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo Meta - Official WhatsApp Business Solution Provider Mitra Kouventa', 'Logo Meta - Official WhatsApp Business Solution Provider Mitra Kouventa'),
+                'max_height' => 44,
+            ],
+            [
+                'name' => 'Amazon Web Services',
+                'logo' => theme_asset('images/logos/techonology-partners/aws.webp'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo AWS Amazon Web Services - Cloud Infrastructure Partner Kouventa AI', 'Logo AWS Amazon Web Services - Cloud Infrastructure Partner Kouventa AI'),
+                'max_height' => 44,
+            ],
+            [
+                'name' => 'Microsoft Foundry',
+                'logo' => theme_asset('images/logos/techonology-partners/microsoft-foundry.webp') . '?v=2',
+                'website_url' => null,
+                'alt' => t('kouventa.Logo Microsoft Foundry - AI Technology Partner Kouventa', 'Logo Microsoft Foundry - AI Technology Partner Kouventa'),
+                'max_height' => 44,
+            ],
+            [
+                'name' => 'Lintasarta Cloudeka',
+                'logo' => theme_asset('images/logos/techonology-partners/deka-llm.webp'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo Lintasarta Cloudeka Deka LLM - Mitra Komputasi Sovereign AI Cloud Kouventa', 'Logo Lintasarta Cloudeka Deka LLM - Mitra Komputasi Sovereign AI Cloud Kouventa'),
+                'max_height' => 44,
+            ],
+            [
+                'name' => 'Motadata',
+                'logo' => theme_asset('images/logos/techonology-partners/motadata.webp'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo Motadata - Mitra Solusi Monitoring & Ticketing Enterprise Kouventa', 'Logo Motadata - Mitra Solusi Monitoring & Ticketing Enterprise Kouventa'),
+                'max_height' => 44,
+            ],
+            [
+                'name' => 'TokenKu.ai',
+                'logo' => theme_asset('images/logos/techonology-partners/tokeknku.webp'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo TokenKu - Platform Manajemen Token & LLM AI Mitra Kouventa', 'Logo TokenKu - Platform Manajemen Token & LLM AI Mitra Kouventa'),
+                'max_height' => 44,
+            ],
+        ];
+    }
+@endphp
 <div class="kv-partner-grid" style="width: 100%; display: grid; gap: 16px">
-<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/techonology-partners/meta.webp') }}" alt="{{ t('kouventa.Logo Meta - Official WhatsApp Business Solution Provider Mitra Kouventa', 'Logo Meta - Official WhatsApp Business Solution Provider Mitra Kouventa') }}" title="Meta" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-</div>
-<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/techonology-partners/aws.webp') }}" alt="{{ t('kouventa.Logo AWS Amazon Web Services - Cloud Infrastructure Partner Kouventa AI', 'Logo AWS Amazon Web Services - Cloud Infrastructure Partner Kouventa AI') }}" title="Amazon Web Services" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-</div>
-<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/techonology-partners/microsoft-foundry.webp') . '?v=2' }}" alt="{{ t('kouventa.Logo Microsoft Foundry - AI Technology Partner Kouventa', 'Logo Microsoft Foundry - AI Technology Partner Kouventa') }}" title="Microsoft Foundry" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-</div>
-<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/techonology-partners/deka-llm.webp') }}" alt="{{ t('kouventa.Logo Lintasarta Cloudeka Deka LLM - Mitra Komputasi Sovereign AI Cloud Kouventa', 'Logo Lintasarta Cloudeka Deka LLM - Mitra Komputasi Sovereign AI Cloud Kouventa') }}" title="Lintasarta Cloudeka" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-</div>
-<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/techonology-partners/motadata.webp') }}" alt="{{ t('kouventa.Logo Motadata - Mitra Solusi Monitoring & Ticketing Enterprise Kouventa', 'Logo Motadata - Mitra Solusi Monitoring & Ticketing Enterprise Kouventa') }}" title="Motadata" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-</div>
-<div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
-    <img src="{{ theme_asset('images/logos/techonology-partners/tokeknku.webp') }}" alt="{{ t('kouventa.Logo TokenKu - Platform Manajemen Token & LLM AI Mitra Kouventa', 'Logo TokenKu - Platform Manajemen Token & LLM AI Mitra Kouventa') }}" title="TokenKu.ai" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-</div>
+    @foreach($techPartners as $partner)
+        @if(!empty($partner['website_url']))
+            <a href="{{ $partner['website_url'] }}" target="_blank" rel="noopener noreferrer" class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12); text-decoration: none">
+                <img src="{{ $partner['logo'] }}" alt="{{ $partner['alt'] }}" title="{{ $partner['name'] }}" style="max-height: {{ $partner['max_height'] ?? 44 }}px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+            </a>
+        @else
+            <div class="kv-logo-card kv-partner-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.12); background: #071C33; display: flex; align-items: center; justify-content: center; padding: 14px 18px; box-shadow: 0 4px 16px rgba(7, 28, 51, 0.12)">
+                <img src="{{ $partner['logo'] }}" alt="{{ $partner['alt'] }}" title="{{ $partner['name'] }}" style="max-height: {{ $partner['max_height'] ?? 44 }}px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+            </div>
+        @endif
+    @endforeach
 </div>
 </div>
 </section>

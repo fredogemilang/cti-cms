@@ -15,6 +15,7 @@ use Plugins\KouventaPages\Http\Controllers\KouventaPageController;
 use Plugins\KouventaPages\Livewire\ClientManager;
 use Plugins\KouventaPages\Livewire\PageEditor;
 use Plugins\KouventaPages\Livewire\PageIndex;
+use Plugins\KouventaPages\Livewire\PartnerManager;
 use Plugins\KouventaPages\Models\KouventaPage;
 use Plugins\KouventaPages\Services\KouventaSitemapBuilder;
 
@@ -26,6 +27,7 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
         'plugins.kouventa-pages.page-index' => PageIndex::class,
         'plugins.kouventa-pages.page-editor' => PageEditor::class,
         'plugins.kouventa-pages.client-manager' => ClientManager::class,
+        'plugins.kouventa-pages.partner-manager' => PartnerManager::class,
     ];
 
     public function register(): void
@@ -47,6 +49,7 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
             $sections['plugin:kouventa-products'] = 'CONTENT';
             $sections['plugin:kouventa-pricing'] = 'CONTENT';
             $sections['plugin:kouventa-clients'] = 'CONTENT';
+            $sections['plugin:kouventa-partners'] = 'CONTENT';
             $sections['plugin:posts'] = 'CONTENT';
 
             return $sections;
@@ -58,6 +61,7 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
                 'plugin:kouventa-products',
                 'plugin:kouventa-pricing',
                 'plugin:kouventa-clients',
+                'plugin:kouventa-partners',
                 'cpt:testimonials',
             ];
 
@@ -193,6 +197,18 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
             'permission' => null,
             'is_active' => true,
             'source' => 'plugin:kouventa-clients',
+            'children' => [],
+        ]);
+
+        // 5. Logo Partners (Technology Partners)
+        $event->addMenuItem([
+            'title' => 'Logo Partners',
+            'route' => 'admin.kouventa-pages.partners|admin.kouventa-pages.partners.*',
+            'url' => route('admin.kouventa-pages.partners'),
+            'icon' => 'hub',
+            'permission' => null,
+            'is_active' => true,
+            'source' => 'plugin:kouventa-partners',
             'children' => [],
         ]);
     }
