@@ -364,19 +364,19 @@
 <div style="height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: #13803F; --d: 52px; animation: kvTravel .8s linear 4.8s 2 both"></span></div>
 <div style="height: 2px; background: #DCE3E0; position: relative"><span style="position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: #13803F; --d: 52px; animation: kvTravel .8s linear 5.0s 2 both"></span></div>
 </div>
-<div style="flex-grow: 1; background: #F4F6F5; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px">
+<div style="flex-grow: 1; background: #F4F6F5; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; overflow: hidden">
 <span style="font-size: 12px; font-weight: 800">One inbox</span>
 <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-radius: 8px; background: #FFFFFF; font-size: 12px; animation: kvIn .3s ease 4.8s both"><span>Rina · Is this available?</span><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon WhatsApp - Pesan Masuk Pelanggan', 'Ikon WhatsApp - Pesan Masuk Pelanggan') }}" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain"></div>
 <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-radius: 8px; background: #FFFFFF; font-size: 12px; animation: kvIn .3s ease 5.0s both"><span>Sari · Comment on post</span><img src="{{ theme_asset('images/icon-instagram.png') }}" alt="{{ t('kouventa.Ikon Instagram - Komentar Masuk Pelanggan', 'Ikon Instagram - Komentar Masuk Pelanggan') }}" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain"></div>
 <div style="display: flex; justify-content: space-between; align-items: center; padding: 7px 10px; border-radius: 8px; background: #FFFFFF; font-size: 12px; animation: kvIn .3s ease 5.2s both"><span>Budi · Price question</span><img src="{{ theme_asset('images/icon-facebook.png') }}" alt="{{ t('kouventa.Ikon Facebook - Pertanyaan Masuk Pelanggan', 'Ikon Facebook - Pertanyaan Masuk Pelanggan') }}" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain"></div>
 </div>
 </div>
-<div style="background: #F4F6F5; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; animation: kvIn .35s ease 5.6s both">
+<div style="background: #F4F6F5; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; animation: kvIn .35s ease 5.6s both">
 <span style="font-size: 12px; font-weight: 800; color: #4A5866; display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon Saluran WhatsApp Business Terintegrasi', 'Ikon Saluran WhatsApp Business Terintegrasi') }}" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain">WhatsApp</span>
 <span style="background: #FFFFFF; border-radius: 4px 12px 12px 12px; padding: 10px 12px; font-size: 13px">Your code is <strong style="font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em">482917</strong></span>
 <span style="align-self: flex-start; display: flex; align-items: center; gap: 6px; background: #13803F; color: #FFFFFF; padding: 7px 12px; border-radius: 999px; font-size: 13px; font-weight: 800; animation: kvPopIn .3s ease 6.2s both"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Verified</span>
 </div>
-<div style="background: #F4F6F5; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .35s ease 6.8s both">
+<div style="background: #F4F6F5; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; animation: kvIn .35s ease 6.8s both">
 <span style="font-size: 12px; font-weight: 800; color: #4A5866">Member sign-up</span>
 <div style="background: #FFFFFF; border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 10px; font-weight: 700; color: #4A5866">Name</span><div style="height: 7px; border-radius: 4px; background: #0E1A24; --w: 70%; animation: kvGrowW .5s ease 7.0s both"></div></div>
 <div style="background: #FFFFFF; border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px"><span style="font-size: 10px; font-weight: 700; color: #4A5866">Member no.</span><div style="height: 7px; border-radius: 4px; background: #0E1A24; --w: 50%; animation: kvGrowW .5s ease 7.3s both"></div></div>
@@ -469,25 +469,25 @@
 <div style="position: absolute; inset: 0; padding: 28px; display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 18px">
 <div style="display: flex; flex-direction: column; gap: 12px">
 <span style="font-size: 13px; font-weight: 800; animation: kvIn .3s ease .1s both">One inbox</span>
-<div style="background: #F4F6F5; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .35s ease .2s both">
+<div style="background: #F4F6F5; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; animation: kvIn .35s ease .2s both">
 <div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 12px; font-weight: 800; color: #0B5E2C; display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-whatsapp.png') }}" alt="{{ t('kouventa.Ikon Saluran WhatsApp - Status Tiket Terselesaikan', 'Ikon Saluran WhatsApp - Status Tiket Terselesaikan') }}" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain">WhatsApp</span><span style="display: grid; font-size: 11px; font-weight: 800"><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #E3E8E6">New</span><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 2.0s both">Resolved</span></span></div>
 <span style="font-size: 14px; font-weight: 600">Where is my order?</span>
 <span style="font-size: 13px; line-height: 1.5; background: #FFFFFF; padding: 8px 10px; border-radius: 4px 10px 10px 10px; animation: kvIn .35s ease 1.4s both"><strong style="font-size: 11px; color: #13803F">Chatbot</strong><br>It's with the courier and arrives tomorrow.</span>
 </div>
-<div style="background: #F4F6F5; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .35s ease .5s both">
+<div style="background: #F4F6F5; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; animation: kvIn .35s ease .5s both">
 <div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 12px; font-weight: 800; color: #5B2E86; display: flex; align-items: center; gap: 6px"><img src="{{ theme_asset('images/icon-instagram.png') }}" alt="{{ t('kouventa.Ikon Saluran Instagram - Eskalasi Kasus Pelanggan', 'Ikon Saluran Instagram - Eskalasi Kasus Pelanggan') }}" style="width: 16px; height: 16px; flex-shrink: 0; object-fit: contain">Instagram</span><span style="display: grid; font-size: 11px; font-weight: 800"><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #E3E8E6">New</span><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #FFF1D6; color: #7A4A00; animation: kvPopIn .3s ease 2.4s both">Escalated</span></span></div>
 <span style="font-size: 14px; font-weight: 600">I was charged twice for one order.</span>
 <span style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; animation: kvIn .35s ease 2.8s both"><span style="width: 28px; height: 28px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-size: 11px">DW</span>Dewi · Support agent</span>
 </div>
 </div>
 <div style="display: flex; flex-direction: column; gap: 14px">
-<div style="background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 12px; animation: kvIn .35s ease 3.2s both">
+<div style="background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 12px; overflow: hidden; animation: kvIn .35s ease 3.2s both">
 <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">TICKET CREATED</span>
 <span style="display: flex; justify-content: space-between; animation: kvIn .25s ease 3.5s both"><span style="color: #93A4B6">Category</span><strong>Billing</strong></span>
 <span style="display: flex; justify-content: space-between; animation: kvIn .25s ease 3.7s both"><span style="color: #93A4B6">Priority</span><strong>High</strong></span>
 <span style="display: flex; flex-direction: column; gap: 2px; animation: kvIn .25s ease 3.9s both"><span style="color: #93A4B6">Summary</span><strong>Double charge on one order</strong></span>
 </div>
-<div style="background: #F4F6F5; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; animation: kvIn .35s ease 4.6s both">
+<div style="background: #F4F6F5; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; animation: kvIn .35s ease 4.6s both">
 <span style="font-size: 13px; font-weight: 700">How was our service?</span>
 <div style="display: flex; gap: 4px; font-size: 26px; line-height: 1">
 <span style="color: #D5DCD9; animation: kvStar .3s ease 4.9s both">★</span><span style="color: #D5DCD9; animation: kvStar .3s ease 5.05s both">★</span><span style="color: #D5DCD9; animation: kvStar .3s ease 5.2s both">★</span><span style="color: #D5DCD9; animation: kvStar .3s ease 5.35s both">★</span><span style="color: #D5DCD9; animation: kvStar .3s ease 5.5s both">★</span>

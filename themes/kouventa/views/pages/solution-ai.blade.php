@@ -706,7 +706,7 @@
   </svg>
 
   <!-- RIGHT: Customer WhatsApp Chat Card (Foreground Interface - Sits on top with z-index: 5) -->
-  <div style="width: 266px; height: 430px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 5; animation: kvIn .35s ease .15s both">
+  <div style="width: 266px; height: 430px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 5; overflow: hidden; animation: kvIn .35s ease .15s both">
     
     <!-- Chat Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
@@ -867,7 +867,7 @@
   </svg>
 
   <!-- RIGHT: Customer Live Chat Card (Foreground Interface) -->
-  <div style="width: 266px; height: 430px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 5; animation: kvIn .35s ease .15s both">
+  <div style="width: 266px; height: 430px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 5; overflow: hidden; animation: kvIn .35s ease .15s both">
     
     <!-- Chat Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
@@ -1107,7 +1107,7 @@
 <!-- SCENE 1: Candidate Communication Agent -->
 <div class="kv-rec-scene" :class="{ 'kv-active': (sol === 1) || (sol === -1 && activeSol === 1) }" style="justify-content: center;">
   <!-- WhatsApp Chat Card Wrapper -->
-  <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); width: 100%; box-sizing: border-box;">
+  <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); width: 100%; box-sizing: border-box; overflow: hidden;">
     
     <!-- Chat Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px">
@@ -1179,7 +1179,7 @@
 <div class="kv-rec-scene" :class="{ 'kv-active': (sol === 2) || (sol === -1 && activeSol === 2) }" style="justify-content: center; gap: 14px;">
 
   <!-- Multi-Party Availability Grid -->
-  <div style="background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; animation: kvIn .35s ease 0.2s both">
+  <div style="background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; animation: kvIn .35s ease 0.2s both">
     
     <!-- Time Header -->
     <div style="display: grid; grid-template-columns: 120px repeat(5, 1fr); gap: 6px; align-items: center; font-size: 10.5px; font-weight: 800; color: #64748B; padding-bottom: 6px; border-bottom: 1px solid #E2E8F0">
@@ -1233,7 +1233,7 @@
   </div>
 
   <!-- Locked Calendar Event Card -->
-  <div style="background: #FFFFFF; border: 1.5px solid #13803F; border-left: 4px solid #13803F; border-radius: 10px; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 14px rgba(19, 128, 63, 0.08); animation: kvIn .35s ease 1.5s both">
+  <div style="background: #FFFFFF; border: 1.5px solid #13803F; border-left: 4px solid #13803F; border-radius: 10px; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 14px rgba(19, 128, 63, 0.08); overflow: hidden; animation: kvIn .35s ease 1.5s both">
     <div style="display: flex; justify-content: space-between; align-items: center">
       <span style="font-size: 13px; font-weight: 800; color: #0E1A24">Wawancara Teknis — Rani Pratama</span>
       <span style="font-size: 9.5px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 2px 7px; border-radius: 4px">✓ Slot Terkunci (100% Match)</span>
@@ -1254,7 +1254,7 @@
 </div>
 
 <!-- SCENE 3: Recruitment Insight Agent (Executive Dark Dossier Canvas) -->
-<div class="kv-rec-scene" :class="{ 'kv-active': (sol === 3) || (sol === -1 && activeSol === 3) }" style="background: #071C33; color: #FFFFFF; border-radius: 19px; padding: 26px; justify-content: center; gap: 14px;">
+<div class="kv-rec-scene" :class="{ 'kv-active': (sol === 3) || (sol === -1 && activeSol === 3) }" style="background: #071C33; color: #FFFFFF; border-radius: 19px; padding: 26px; justify-content: center; gap: 14px; overflow: hidden; box-sizing: border-box;">
   <!-- Header -->
   <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 12px">
     <div style="display: flex; align-items: center; gap: 10px">
@@ -1960,7 +1960,7 @@
 <div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 9px 13px; border-radius: 14px 4px 14px 14px; animation: kvIn .3s ease 1.6s both">What is the leave policy?</div>
 <div style="align-self: flex-start; max-width: 82%; background: #F4F6F5; padding: 9px 13px; border-radius: 4px 14px 14px 14px; display: flex; flex-direction: column; gap: 6px; animation: kvIn .3s ease 2.2s both"><span><strong style="font-size: 11px; color: #13803F">Knowledge Assistant Agent</strong><br>Permanent employees get 12 days of annual leave per year.</span><span style="align-self: flex-start; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: #DDF3E4; color: #0B5E2C">HR Policy.pdf</span></div>
 <div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 9px 13px; border-radius: 14px 4px 14px 14px; animation: kvIn .3s ease 3.2s both">Submit my leave request for 12–14 Nov.</div>
-<div style="align-self: flex-start; width: 82%; box-sizing: border-box; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; animation: kvIn .3s ease 3.7s both">
+<div style="align-self: flex-start; width: 82%; box-sizing: border-box; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; overflow: hidden; animation: kvIn .3s ease 3.7s both">
 <span style="display: flex; flex-direction: column"><span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #13803F">ACTION AGENT · LEAVE REQUEST</span><strong>3 days · 12–14 Nov</strong></span>
 <span style="position: relative; display: grid; flex-shrink: 0"><span style="grid-area: 1 / 1; padding: 8px 14px; border-radius: 8px; background: #071C33; color: #FFFFFF; font-size: 12px; font-weight: 800">Approve</span><span style="grid-area: 1 / 1; padding: 8px 10px; border-radius: 8px; background: #13803F; color: #FFFFFF; font-size: 12px; font-weight: 800; text-align: center; animation: kvPopIn .3s ease 4.6s both">Approved</span><span aria-hidden="true" style="position: absolute; left: 50%; top: 55%; animation: kvCursor 1.2s ease 3.7s 1 both"><svg width="20" height="20" viewBox="0 0 24 24" fill="#0E1A24" stroke="#FFFFFF" stroke-width="1.2"><path d="M5 3l14 8-6 1.5L10 19z"></path></svg></span></span>
 </div>
@@ -2016,7 +2016,7 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="align-items: flex-start; max-height: none; flex: 0 0 auto; animation: kvHi 7.4s ease 0.2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="(sol === 0) || (sol === -1 && activeSol === 0)" style="align-items: flex-start; max-height: none; flex: 0 0 auto;">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H5a2 2 0 0 1 0-4h13v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h15V7"></path><path d="M16 14h.01"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptPp['solutions'][0]['title'] ?? t('kouventa.Payment Prioritization Agent', 'Payment Prioritization Agent') }}</h3>
@@ -2061,7 +2061,7 @@
 <span style="width: 64px; height: 64px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0"><span style="position: absolute; inset: 0; border-radius: 50%; border: 3px solid #DCE3E0; border-top-color: #13803F; animation: kvSpin .5s linear 1.6s 2 both"></span><span style="width: 48px; height: 48px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800">AGENT</span></span>
 <span style="font-size: 12px; font-weight: 700; color: #4A5866; animation: kvIn .3s ease 2.7s both">Prioritized by due date, cash flow and vendor terms</span>
 </div>
-<div style="background: #F4F6F5; border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; animation: kvIn .35s ease 3.6s both">
+<div style="background: #F4F6F5; border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; overflow: hidden; animation: kvIn .35s ease 3.6s both">
 <span style="display: flex; flex-direction: column"><span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #13803F">RECOMMENDED BATCH</span><strong style="font-size: 14px">Batch 1: 12 invoices, due this week</strong></span>
 <span style="position: relative; display: grid; flex-shrink: 0"><span style="grid-area: 1 / 1; padding: 8px 14px; border-radius: 8px; background: #071C33; color: #FFFFFF; font-size: 12px; font-weight: 800">Approve</span><span style="grid-area: 1 / 1; padding: 12px 12px; border-radius: 10px; background: #13803F; color: #FFFFFF; font-size: 12px; font-weight: 800; text-align: center; animation: kvPopIn .3s ease 4.7s both">Approved</span><span aria-hidden="true" style="position: absolute; left: 50%; top: 55%; animation: kvCursor 1.2s ease 3.8s 1 both"><svg width="20" height="20" viewBox="0 0 24 24" fill="#0E1A24" stroke="#FFFFFF" stroke-width="1.2"><path d="M5 3l14 8-6 1.5L10 19z"></path></svg></span></span>
 </div>
@@ -2121,28 +2121,28 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 0.3s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="(sol === 0) || (sol === -1 && activeSol === 0)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptBr['solutions'][0]['title'] ?? t('kouventa.Transaction Matching Agent', 'Transaction Matching Agent') }}</h3>
 <span class="kv-help-sol-desc">{{ $deptBr['solutions'][0]['desc'] ?? t('kouventa.Automatically matches bank transactions with invoices, including partial and bulk transactions.', 'Automatically matches bank transactions with invoices, including partial and bulk transactions.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.8s ease 2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="(sol === 1) || (sol === -1 && activeSol === 1)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptBr['solutions'][1]['title'] ?? t('kouventa.Reconciliation Analysis Agent', 'Reconciliation Analysis Agent') }}</h3>
 <span class="kv-help-sol-desc">{{ $deptBr['solutions'][1]['desc'] ?? t('kouventa.Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.', 'Handles foreign exchange and tax considerations, identifies unmatched transactions and discrepancies, and explains the root causes.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 3s ease 4.1s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="(sol === 2) || (sol === -1 && activeSol === 2)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptBr['solutions'][2]['title'] ?? t('kouventa.Clearing Agent', 'Clearing Agent') }}</h3>
 <span class="kv-help-sol-desc">{{ $deptBr['solutions'][2]['desc'] ?? t('kouventa.Prepares clearing proposals and executes ERP clearing.', 'Prepares clearing proposals and executes ERP clearing.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="sol === 3" style="animation: kvHi 1s ease 7.1s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="(sol === 3) || (sol === -1 && activeSol === 3)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptBr['solutions'][3]['title'] ?? t('kouventa.Audit & Notification Agent', 'Audit & Notification Agent') }}</h3>
@@ -2171,17 +2171,17 @@
 <span style="position: absolute; left: 372px; top: 174px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600"><span>INV-103</span><span>Rp 18,0 jt</span></span>
 <span style="position: absolute; left: 372px; top: 226px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600"><span>INV-104</span><span>Rp 12,5 jt</span></span>
 <span style="position: absolute; left: 372px; top: 278px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; animation: kvAmber .3s ease 2.0s both"><span>INV-105 · USD 1,000</span><span>Rp 16,2 jt</span></span>
-<div style="position: absolute; left: 28px; right: 28px; top: 350px; background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; animation: kvIn .35s ease 2.5s both">
+<div style="position: absolute; left: 28px; right: 28px; top: 350px; background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; overflow: hidden; animation: kvIn .35s ease 2.5s both">
 <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #F2C46D">DISCREPANCY · TRX 0415 vs INV-105</span>
 <span>Difference caused by exchange rate (USD → IDR) between invoice date and payment date.</span>
 </div>
 </div>
 <div style="position: absolute; inset: 0; padding: 28px; display: flex; flex-direction: column; justify-content: center; gap: 14px; animation: kvIn .4s ease 4.1s both">
-<div style="background: #F4F6F5; border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<div style="background: #F4F6F5; border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; overflow: hidden">
 <span style="display: flex; flex-direction: column"><span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #13803F">CLEARING PROPOSAL</span><strong style="font-size: 14px">Clear 4 matched items + FX adjustment</strong></span>
 <span style="position: relative; display: grid; flex-shrink: 0"><span style="grid-area: 1 / 1; padding: 8px 14px; border-radius: 8px; background: #071C33; color: #FFFFFF; font-size: 12px; font-weight: 800">Approve</span><span style="grid-area: 1 / 1; padding: 8px 10px; border-radius: 8px; background: #13803F; color: #FFFFFF; font-size: 12px; font-weight: 800; text-align: center; animation: kvPopIn .3s ease 5.0s both">Approved</span><span aria-hidden="true" style="position: absolute; left: 50%; top: 55%; animation: kvCursor 1.1s ease 4.2s 1 both"><svg width="20" height="20" viewBox="0 0 24 24" fill="#0E1A24" stroke="#FFFFFF" stroke-width="1.2"><path d="M5 3l14 8-6 1.5L10 19z"></path></svg></span></span>
 </div>
-<div style="border: 1px solid #E3E8E6; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px">
+<div style="border: 1px solid #E3E8E6; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; overflow: hidden">
 <span style="font-size: 11px; font-weight: 800; color: #4A5866">ERP clearing</span>
 <span style="display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 12px; animation: kvGreen .3s ease 6.0s both"><span>TRX 0412 ↔ INV-101</span><strong style="color: #0B5E2C">Cleared</strong></span>
 <span style="display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 12px; animation: kvGreen .3s ease 6.3s both"><span>TRX 0413 ↔ INV-102, INV-103</span><strong style="color: #0B5E2C">Cleared</strong></span>
@@ -2243,21 +2243,21 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 2.2s ease 0.3s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="(sol === 0) || (sol === -1 && activeSol === 0)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M8 13h8M8 17h5"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptLegal['solutions'][0]['title'] ?? t('kouventa.Contract Review Agent', 'Contract Review Agent') }}</h3>
 <span class="kv-help-sol-desc">{{ $deptLegal['solutions'][0]['desc'] ?? t('kouventa.Review contracts and identify key clauses, terms, and potential issues.', 'Review contracts and identify key clauses, terms, and potential issues.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.5s ease 2.5s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="(sol === 1) || (sol === -1 && activeSol === 1)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptLegal['solutions'][1]['title'] ?? t('kouventa.Legal Research Agent', 'Legal Research Agent') }}</h3>
 <span class="kv-help-sol-desc">{{ $deptLegal['solutions'][1]['desc'] ?? t('kouventa.Find relevant policies, regulations, and legal information based on the context of the contract.', 'Find relevant policies, regulations, and legal information based on the context of the contract.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 2.5s ease 4.1s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="(sol === 2) || (sol === -1 && activeSol === 2)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptLegal['solutions'][2]['title'] ?? t('kouventa.Contract Insights Agent', 'Contract Insights Agent') }}</h3>
@@ -2269,7 +2269,7 @@
 <div class="kv-sol-ill-wrap">
 <div id="kv-ill-legal" role="img" aria-label="Animated illustration: an agent highlights key clauses in a long contract, flags an auto-renewal clause with related policy references, then answers a notice period question with a clause reference and a key terms summary" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 <div style="position: absolute; inset: 0; padding: 28px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 22px; align-content: center">
-<div style="background: #F4F6F5; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; position: relative">
+<div style="background: #F4F6F5; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden">
 <span style="font-size: 12px; font-weight: 800">Service Agreement.pdf</span>
 <span style="height: 6px; width: 90%; border-radius: 3px; background: #D5DCD9"></span>
 <span style="height: 6px; width: 75%; border-radius: 3px; background: #D5DCD9"></span>
@@ -2284,16 +2284,16 @@
 <span style="height: 6px; width: 88%; border-radius: 3px; background: #D5DCD9"></span>
 </div>
 <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13px; line-height: 1.5">
-<div style="background: #FFF6E5; border: 1px solid #F2C46D; border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; animation: kvIn .3s ease 1.8s both">
+<div style="background: #FFF6E5; border: 1px solid #F2C46D; border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; overflow: hidden; animation: kvIn .3s ease 1.8s both">
 <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #7A4A00">POTENTIAL ISSUE · AUTO-RENEWAL</span>
-<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<div style="display: gap: 6px; flex-wrap: wrap">
 <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; animation: kvIn .3s ease 2.6s both">Internal Contract Policy §4</span>
 <span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; animation: kvIn .3s ease 2.9s both">Related regulation</span>
 </div>
 </div>
 <div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 9px 13px; border-radius: 14px 4px 14px 14px; animation: kvIn .3s ease 4.1s both">What is the termination notice period?</div>
 <div style="align-self: flex-start; max-width: 90%; background: #F4F6F5; padding: 9px 13px; border-radius: 4px 14px 14px 14px; animation: kvIn .3s ease 4.7s both"><strong style="font-size: 11px; color: #13803F">Contract Insights Agent</strong><br>30 days' written notice. <span style="font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 6px; background: #DDF3E4; color: #0B5E2C">Clause 12.2</span></div>
-<div style="background: #071C33; color: #FFFFFF; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; animation: kvIn .35s ease 5.5s both">
+<div style="background: #071C33; color: #FFFFFF; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; overflow: hidden; animation: kvIn .35s ease 5.5s both">
 <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">KEY TERMS SUMMARY</span>
 <span>Term 24 months · Auto-renewal · Notice 30 days · Uptime 99.5%</span>
 </div>
