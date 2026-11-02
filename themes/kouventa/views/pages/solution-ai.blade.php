@@ -84,8 +84,8 @@
             let duration = 6000;
             if (this.tab === 0) {
                 // Scene 0: full sequence finishes at 3.55s, hold resolved state for 2.25s = 5800ms
-                // Scene 1: full sequence finishes at 2.20s, hold triage state for 2.80s = 5000ms
-                duration = (this.activeSol === 0) ? 5800 : 5000;
+                // Scene 1: full sequence finishes at 4.10s, hold assigned state for 2.40s = 6500ms
+                duration = (this.activeSol === 0) ? 5800 : 6500;
             }
             this._autoTimer = setTimeout(() => {
                 if (this.sol === -1) {
@@ -102,7 +102,7 @@
     lockSol(i) {
         this.sol = i;
         this.activeSol = i;
-        if (this._autoTimer) clearInterval(this._autoTimer);
+        if (this._autoTimer) clearTimeout(this._autoTimer);
         if (this.tab === 0) return;
         const sols = this.aiSols[this.tab];
         const illId = this.aiIllIds[this.tab];
@@ -532,12 +532,17 @@
 }
 @keyframes kvDashLeft {
   from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: 16; }
+  to { stroke-dashoffset: 18; }
 }
 @keyframes kvMatchDoc {
   0% { border-color: #CBD5E1; background: #F8FAFA; transform: scale(0.98); }
   50% { border-color: #13803F; background: #FFFFFF; transform: scale(1.02); box-shadow: 0 8px 24px rgba(19, 128, 63, 0.14); }
   100% { border-color: #13803F; background: #FFFFFF; transform: scale(1); box-shadow: 0 4px 16px rgba(19, 128, 63, 0.08); }
+}
+@keyframes kvMatchDocBlue {
+  0% { border-color: #CBD5E1; background: #F8FAFA; transform: scale(0.98); }
+  50% { border-color: #0284C7; background: #FFFFFF; transform: scale(1.02); box-shadow: 0 8px 24px rgba(2, 132, 199, 0.16); }
+  100% { border-color: #0284C7; background: #FFFFFF; transform: scale(1); box-shadow: 0 4px 16px rgba(2, 132, 199, 0.08); }
 }
 @keyframes kvMorphOut {
   0% { opacity: 1; transform: scale(1); }
@@ -705,60 +710,162 @@
   </div>
 </div>
 
-<!-- SCENE 1: Ticket Management Agent (Left: Complaint, Right: Ticket Triage) -->
+<!-- SCENE 1: Ticket Management Agent (Left: Background Triage & Routing Canvas, Right: Customer Live Chat Card) -->
 <div class="kv-cs-scene" :class="{ 'kv-active': (sol === 1) || (sol === -1 && activeSol === 1) }">
 
-  <!-- LEFT: Customer Dispute Complaint via Live Chat -->
-  <div style="width: 264px; height: 430px; background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .15s both">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 10px">
+  <!-- LEFT: Background Triage & Routing Process (Open canvas without outer card border) -->
+  <div style="width: 270px; height: 430px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; opacity: 0; animation: kvIn .45s ease 1.70s both;">
+
+    <!-- Background Process Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0">
       <div style="display: flex; align-items: center; gap: 7px">
-        <span style="width: 26px; height: 26px; border-radius: 50%; background: #0284C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <span style="width: 22px; height: 22px; border-radius: 6px; background: #F0F9FF; color: #0284C7; display: flex; align-items: center; justify-content: center">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
         </span>
-        <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Pelanggan · Live Chat' : 'Customer · Live Chat' }}</span>
+        <span style="font-size: 11px; font-weight: 800; color: #475569; letter-spacing: 0.02em">{{ $isIdLocale ? 'Triase & Klasifikasi AI' : 'AI Triage & Routing Engine' }}</span>
       </div>
-      <span style="display: grid; font-size: 10px; font-weight: 800">
-        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #E3E8E6; color: #4A5866">{{ $isIdLocale ? 'Baru' : 'New' }}</span>
-        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #FFF1D6; color: #7A4A00; animation: kvPopIn .3s ease 1.0s both">{{ $isIdLocale ? 'Tiket dibuat' : 'Ticket created' }}</span>
+      <span style="font-size: 10px; font-weight: 700; color: #0369A1; background: #E0F2FE; padding: 2px 7px; border-radius: 999px; display: flex; align-items: center; gap: 4px">
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: #0284C7"></span>
+        Auto-Triage
       </span>
     </div>
 
-    <!-- Message Bubble -->
-    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.35s both">
-      <span style="font-size: 13px; font-weight: 600; line-height: 1.5; color: #0E1A24">
-        {{ $isIdLocale ? 'Refund saya belum masuk setelah dua minggu, dan ada potongan biaya tambahan yang tidak sesuai.' : 'My refund still hasn\'t arrived after two weeks, and I was charged an extra fee.' }}
-      </span>
-      <span style="align-self: flex-end; font-size: 9px; font-weight: 600; color: #94A3B8">10:15 AM</span>
-    </div>
+    <!-- Main Triage Pipeline Stack (Staggered 1 per 1) -->
+    <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; justify-content: center; padding: 4px 0">
 
-    <!-- Complex complaint tag -->
-    <div style="padding: 8px 10px; border-radius: 8px; background: #FEF3C7; border: 1px solid #FDE68A; display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #92400E; animation: kvIn .3s ease 0.6s both">
-      <span style="width: 6px; height: 6px; border-radius: 50%; background: #D97706"></span>
-      <span>{{ $isIdLocale ? 'Keluhan kompleks terdeteksi · Eskalasi tiket' : 'Complex complaint · Escalating to ticket' }}</span>
+      <!-- 1. Knowledge Base Policy Check (1.90s) & Complexity Flag (2.20s) -->
+      <div style="border: 1px solid #CBD5E1; border-radius: 9px; padding: 7px 10px; background: #F8FAFA; display: flex; flex-direction: column; gap: 4px; animation: kvIn .35s ease 1.90s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div style="display: flex; align-items: center; gap: 5px">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span style="font-size: 10px; font-weight: 700; color: #475569">SOP_Refund_Retur.pdf</span>
+          </div>
+          <span style="font-size: 8.5px; font-weight: 700; color: #DC2626; background: #FEE2E2; padding: 1px 5px; border-radius: 3px">{{ $isIdLocale ? 'Di Luar SOP' : 'Out-of-SOP' }}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 5px; background: #FEF3C7; border: 1px solid #FDE68A; border-radius: 5px; padding: 3px 6px; opacity: 0; animation: kvPopIn .3s ease 2.20s both">
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #D97706; flex-shrink: 0"></span>
+          <span style="font-size: 9.5px; font-weight: 800; color: #92400E">{{ $isIdLocale ? 'Keluhan Kompleks · Butuh Eskalasi Tim' : 'Complex Issue · Needs Team Escalation' }}</span>
+        </div>
+      </div>
+
+      <!-- 2. Structured Ticket Card Generated (2.55s) -->
+      <div style="background: #071C33; color: #FFFFFF; border-radius: 10px; padding: 8px 12px; display: flex; flex-direction: column; gap: 4px; font-size: 9.5px; box-shadow: 0 4px 14px rgba(7,28,51,0.12); opacity: 0; animation: kvIn .35s ease 2.55s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.05em; color: #2BD46A">TICKET #KV-8921</span>
+          <span style="font-size: 8.5px; font-weight: 800; color: #FCA5A5; background: rgba(239, 68, 68, 0.25); padding: 1px 5px; border-radius: 4px">{{ $isIdLocale ? 'P1 · Tinggi (SLA 2j)' : 'P1 · High (SLA 2h)' }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; color: #CBD5E1">
+          <span>{{ $isIdLocale ? 'Kategori' : 'Category' }}:</span>
+          <strong style="color: #FFFFFF">Refund & Billing</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; color: #CBD5E1">
+          <span>{{ $isIdLocale ? 'Ringkasan' : 'Summary' }}:</span>
+          <strong style="color: #FFFFFF">{{ $isIdLocale ? 'Keterlambatan refund + dispute fee' : 'Delayed refund + fee discrepancy' }}</strong>
+        </div>
+      </div>
+
+      <!-- 3. Animated Routing Indicator from Ticket to Department (2.90s) -->
+      <div style="display: flex; align-items: center; justify-content: center; gap: 5px; padding: 1px 0; opacity: 0; animation: kvIn .3s ease 2.90s both">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+        <span style="font-size: 9px; font-weight: 800; color: #0284C7; letter-spacing: 0.04em; text-transform: uppercase">{{ $isIdLocale ? 'Assign ke Tim Relevan' : 'Route to Best-Fit Team' }}</span>
+      </div>
+
+      <!-- 4. Multi-Department Routing Choices (3.00s) -->
+      <div style="display: flex; flex-direction: column; gap: 4px; opacity: 0; animation: kvIn .35s ease 3.00s both">
+
+        <!-- Dept 1: General CS Ops (Dimmed) -->
+        <div style="border: 1px dashed #CBD5E1; border-radius: 6px; padding: 4px 8px; background: #F8FAFA; opacity: 0.55; display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 9.5px; font-weight: 600; color: #64748B">1. CS General Operations</span>
+          <span style="font-size: 8.5px; color: #94A3B8">—</span>
+        </div>
+
+        <!-- Dept 2: Billing & Finance Team (TARGET - lights up at 3.35s!) -->
+        <div style="border: 1.5px solid #CBD5E1; border-radius: 8px; padding: 6px 9px; background: #F8FAFA; display: flex; flex-direction: column; gap: 2px; transition: all 0.3s ease; animation: kvMatchDocBlue .5s ease 3.35s 1 forwards">
+          <div style="display: flex; justify-content: space-between; align-items: center">
+            <div style="display: flex; align-items: center; gap: 6px">
+              <span style="width: 18px; height: 18px; border-radius: 4px; background: #E0F2FE; color: #0284C7; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 800">BIL</span>
+              <span style="font-size: 11px; font-weight: 800; color: #0C4A6E">{{ $isIdLocale ? 'Tim Billing & Finance' : 'Billing & Finance Team' }}</span>
+            </div>
+            <span style="font-size: 8.5px; font-weight: 800; color: #0284C7; background: #E0F2FE; padding: 1px 5px; border-radius: 4px">Target Queue</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 4px; padding-left: 24px; opacity: 0; animation: kvPopIn .3s ease 3.50s both">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span style="font-size: 9px; font-weight: 700; color: #0284C7">{{ $isIdLocale ? 'Ditugaskan ke antrean tim (SLA 2 jam)' : 'Assigned to team queue (SLA 2h)' }}</span>
+          </div>
+        </div>
+
+        <!-- Dept 3: Logistics & Warehouse (Dimmed) -->
+        <div style="border: 1px dashed #CBD5E1; border-radius: 6px; padding: 4px 8px; background: #F8FAFA; opacity: 0.55; display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 9.5px; font-weight: 600; color: #64748B">{{ $isIdLocale ? '3. Logistik & Pergudangan' : '3. Logistics & Warehouse' }}</span>
+          <span style="font-size: 8.5px; color: #94A3B8">—</span>
+        </div>
+
+      </div>
+
     </div>
   </div>
 
-  <!-- RIGHT: Structured Ticket Card & Assignment -->
-  <div style="width: 264px; height: 430px; background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .15s both; position: relative">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 10px">
-      <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Triase Otomatis' : 'Automated Triage' }}</span>
-      <span style="font-size: 10px; font-weight: 800; color: #991B1B; background: #FEE2E2; padding: 2px 7px; border-radius: 999px">P1 · High</span>
+  <!-- Animated Dashed Connector Line (Blue signal flows from behind Live Chat Card to Background Triage) -->
+  <svg style="position: absolute; left: 245px; top: 185px; width: 95px; height: 30px; z-index: 2; pointer-events: none; opacity: 0; animation: kvIn .35s ease 1.40s both, kvOut .25s ease 3.70s 1 forwards">
+    <path d="M 90 15 L 8 15" fill="none" stroke="#0284C7" stroke-width="2.5" stroke-dasharray="5 4" style="animation: kvDashLeft 0.5s linear infinite;" />
+    <polygon points="10,10 2,15 10,20" fill="#0284C7" />
+  </svg>
+
+  <!-- RIGHT: Customer Live Chat Card (Foreground Interface) -->
+  <div style="width: 266px; height: 430px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 5; animation: kvIn .35s ease .15s both">
+    
+    <!-- Chat Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #0284C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </span>
+        <div style="display: flex; flex-direction: column">
+          <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Pelanggan · Live Chat' : 'Customer · Live Chat' }}</span>
+          <span style="font-size: 9px; font-weight: 600; color: #0284C7">● live</span>
+        </div>
+      </div>
+      <span style="display: grid; font-size: 10px; font-weight: 800">
+        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #E3E8E6; color: #4A5866">{{ $isIdLocale ? 'Baru' : 'New' }}</span>
+        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #FFF1D6; color: #7A4A00; animation: kvPopIn .3s ease 4.10s both">{{ $isIdLocale ? 'Tiket Dibuat' : 'Ticket Created' }}</span>
+      </span>
     </div>
 
-    <!-- Structured Ticket Card -->
-    <div style="background: #071C33; color: #FFFFFF; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 11px; box-shadow: 0 4px 14px rgba(7,28,51,0.15); animation: kvIn .35s ease 0.6s both">
-      <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">TICKET #KV-8921</span>
-      <div style="display: flex; justify-content: space-between"><span style="color: #93A4B6">{{ $isIdLocale ? 'Kategori' : 'Category' }}</span><strong>Refund & Billing</strong></div>
-      <div style="display: flex; flex-direction: column; gap: 2px"><span style="color: #93A4B6">{{ $isIdLocale ? 'Ringkasan' : 'Summary' }}</span><strong>{{ $isIdLocale ? 'Keterlambatan refund + selisih biaya' : 'Delayed refund + fee discrepancy' }}</strong></div>
-      <div style="display: flex; justify-content: space-between"><span style="color: #93A4B6">{{ $isIdLocale ? 'Prioritas' : 'Priority' }}</span><strong style="color: #F87171">High (SLA 2h)</strong></div>
-    </div>
+    <!-- Chat Messages Stack -->
+    <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center">
+      <!-- 1. Customer Complaint Message (0.45s) -->
+      <div style="align-self: flex-start; max-width: 95%; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.45s both">
+        <span style="font-size: 12px; font-weight: 600; line-height: 1.45; color: #0E1A24">
+          {{ $isIdLocale ? 'Dana refund saya belum masuk setelah 2 minggu, dan ada potongan biaya yang tidak sesuai.' : 'My refund still hasn\'t arrived after two weeks, and I was charged an extra fee.' }}
+        </span>
+        <span style="align-self: flex-end; font-size: 9px; font-weight: 600; color: #94A3B8">10:15 AM</span>
+      </div>
 
-    <!-- Assigned Destination Box -->
-    <div style="border: 1.5px dashed #0284C7; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; background: #F0F9FF; animation: kvIn .35s ease 1.4s both">
-      <span style="width: 34px; height: 34px; border-radius: 8px; background: #E0F2FE; color: #0369A1; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">BIL</span>
-      <div style="display: flex; flex-direction: column">
-        <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Tim Billing & Finance' : 'Billing & Finance Team' }}</span>
-        <span style="font-size: 10px; font-weight: 700; color: #0284C7; animation: kvPopIn .3s ease 2.2s both">✓ {{ $isIdLocale ? 'Ditugaskan ke antrean tim' : 'Assigned to team queue' }}</span>
+      <!-- 2 & 3: Typing Indicator morphs into Agent Confirmation in the EXACT SAME slot! -->
+      <div style="display: grid; align-self: flex-start; width: 100%; max-width: 98%;">
+        
+        <!-- Typing Indicator (0.90s to 3.70s) -->
+        <div style="grid-area: 1 / 1; align-self: start; justify-self: start; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 10px 14px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); transform-origin: top left; opacity: 0; animation: kvIn .3s ease 0.90s both, kvMorphOut .2s ease 3.70s 1 forwards">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #0284C7; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0s;"></span>
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #0284C7; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.2s;"></span>
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #0284C7; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.4s;"></span>
+        </div>
+
+        <!-- System Escalation Response (3.75s) -->
+        <div style="grid-area: 1 / 1; background: #FFFFFF; border-radius: 2px 12px 12px 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #BAE6FD; box-shadow: 0 3px 10px rgba(2, 132, 199, 0.08); transform-origin: top left; opacity: 0; animation: kvMorphIn .38s cubic-bezier(0.34, 1.35, 0.64, 1) 3.75s both">
+          <div style="display: flex; justify-content: space-between; align-items: center">
+            <span style="font-size: 11px; font-weight: 800; color: #0284C7">{{ $isIdLocale ? 'Ticket Management Agent' : 'Ticket Management Agent' }}</span>
+            <span style="font-size: 9px; font-weight: 700; color: #0284C7; background: #E0F2FE; padding: 1px 5px; border-radius: 4px">0.4s</span>
+          </div>
+          <span style="font-size: 12px; line-height: 1.45; color: #0E1A24">
+            {{ $isIdLocale ? 'Keluhan Anda telah kami buatkan tiket resmi dan dialihkan ke Tim Billing & Finance untuk investigasi langsung.' : 'Your issue has been converted to an official ticket and routed to our Billing & Finance Team for immediate investigation.' }}
+          </span>
+          <span style="align-self: flex-start; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 5px; background: #FEF3C7; color: #92400E; display: inline-flex; align-items: center; gap: 4px">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+            TICKET #KV-8921 · Escalated
+          </span>
+        </div>
+
       </div>
     </div>
   </div>
