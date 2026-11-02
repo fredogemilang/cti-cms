@@ -40,892 +40,16 @@
     $calcFees = $sCalc['fees'] ?? ['starter_mau' => 3000, 'starter_fee' => 1499000, 'pro_mau' => 15000, 'pro_fee' => 4499000];
 
     // Structured comparison data
-    $ceCategories = array (
-  0 => 
-  array (
-    0 => 'Usage limits',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Monthly active users',
-        1 => 'Up to 3,000',
-        2 => 'Up to 15,000',
-        3 => 'Customizable',
-      ),
-      1 => 
-      array (
-        0 => 'Contact database',
-        1 => '10,000',
-        2 => '45,000',
-        3 => 'Customizable',
-      ),
-    ),
-  ),
-  1 => 
-  array (
-    0 => 'Channels',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'WhatsApp',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Instagram',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'Facebook',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      3 => 
-      array (
-        0 => 'Livechat',
-        1 => 'Add-on',
-        2 => 'Add-on',
-        3 => 'Add-on',
-      ),
-    ),
-  ),
-  2 => 
-  array (
-    0 => 'Inbound handling',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Business profile configuration',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Static chatbot',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'AI chatbot',
-        1 => 'Add-on',
-        2 => 'Add-on',
-        3 => 'Add-on',
-      ),
-      3 => 
-      array (
-        0 => 'Customer service agents',
-        1 => 'Unlimited',
-        2 => 'Unlimited',
-        3 => 'Unlimited',
-      ),
-      4 => 
-      array (
-        0 => 'Supervisor mode',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      5 => 
-      array (
-        0 => 'Agent handoff & routing',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      6 => 
-      array (
-        0 => 'Response presets',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      7 => 
-      array (
-        0 => 'Agent notifications',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      8 => 
-      array (
-        0 => 'Conversation search',
-        1 => 'Add-on',
-        2 => '✓',
-        3 => '✓',
-      ),
-      9 => 
-      array (
-        0 => 'CSAT feedback',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-    ),
-  ),
-  3 => 
-  array (
-    0 => 'Outbound (WhatsApp)',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Broadcast scheduling',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Message templates (marketing, service, utility, OTP)',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'Media integration (image & video)',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      3 => 
-      array (
-        0 => 'Form builder (WhatsApp Flow)',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      4 => 
-      array (
-        0 => 'Media storage',
-        1 => '100 GB',
-        2 => '250 GB',
-        3 => 'Customizable',
-      ),
-    ),
-  ),
-  4 => 
-  array (
-    0 => 'Contact management',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Contact labeling',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Contact grouping',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'Conversation history',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-    ),
-  ),
-  5 => 
-  array (
-    0 => 'Platform control',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Role-based access',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Multi-factor authentication',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'Multiple numbers & accounts',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      3 => 
-      array (
-        0 => 'Analytics dashboard',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      4 => 
-      array (
-        0 => 'API integration',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      5 => 
-      array (
-        0 => 'Activity log',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      6 => 
-      array (
-        0 => 'Data masking',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-    ),
-  ),
-  6 => 
-  array (
-    0 => 'Data retention',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Conversation history retention',
-        1 => '365 days',
-        2 => '365 days',
-        3 => 'Customizable',
-      ),
-      1 => 
-      array (
-        0 => 'Audit log retention',
-        1 => '365 days',
-        2 => '365 days',
-        3 => 'Customizable',
-      ),
-    ),
-  ),
-  7 => 
-  array (
-    0 => 'Service level & support',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Uptime SLA',
-        1 => '99.5%',
-        2 => '99.5%',
-        3 => '99.9%',
-      ),
-      1 => 
-      array (
-        0 => 'Technical support',
-        1 => 'Standard 9×5',
-        2 => 'Standard 9×5',
-        3 => 'Customizable, up to 24×7',
-      ),
-      2 => 
-      array (
-        0 => 'Response time',
-        1 => '≤ 4 hours',
-        2 => '≤ 4 hours',
-        3 => '≤ 4 hours',
-      ),
-      3 => 
-      array (
-        0 => 'Warranty',
-        1 => '1 year',
-        2 => '1 year',
-        3 => '1 year',
-      ),
-    ),
-  ),
-  8 => 
-  array (
-    0 => 'Deployment & implementation',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Deployment mode',
-        1 => 'SaaS cloud',
-        2 => 'SaaS cloud',
-        3 => 'Hybrid / private cloud / on-premise',
-      ),
-      1 => 
-      array (
-        0 => 'Standard implementation',
-        1 => 'Guided + user guideline',
-        2 => 'Guided + user guideline',
-        3 => 'Guided + user guideline',
-      ),
-      2 => 
-      array (
-        0 => 'Custom implementation',
-        1 => 'Add-on',
-        2 => 'Add-on',
-        3 => 'Add-on',
-      ),
-    ),
-  ),
-);
-    $aiCategories = array (
-  0 => 
-  array (
-    0 => 'Business use cases',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Company Wikipedia (Generative AI)',
-        1 => 'Unlimited',
-        2 => 'Unlimited',
-        3 => 'Unlimited',
-      ),
-      1 => 
-      array (
-        0 => 'Task Force (Agentic AI)',
-        1 => '—',
-        2 => '3',
-        3 => 'Unlimited',
-      ),
-    ),
-  ),
-  1 => 
-  array (
-    0 => 'Generative AI: Company Wikipedia',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Dynamic model selection',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Search the web',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'Persona configuration',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      3 => 
-      array (
-        0 => 'Multi-language processing',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      4 => 
-      array (
-        0 => 'Audio-to-text processing',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      5 => 
-      array (
-        0 => 'Image-to-text processing',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      6 => 
-      array (
-        0 => 'Prompt template configuration',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-    ),
-  ),
-  2 => 
-  array (
-    0 => 'Agentic AI: Task Force',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Task scheduler',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Dynamic model selection',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'Persona & work step configuration',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      3 => 
-      array (
-        0 => 'Multi-language processing',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      4 => 
-      array (
-        0 => 'Audio-to-text processing',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      5 => 
-      array (
-        0 => 'Image-to-text processing',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      6 => 
-      array (
-        0 => 'Multi-agent configuration',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-    ),
-  ),
-  3 => 
-  array (
-    0 => 'Data source management',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Embedding',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Grouping',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'Change approval workflow',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      3 => 
-      array (
-        0 => 'Documents (PDF, Word, Excel, PPT, TXT, EML, PST)',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      4 => 
-      array (
-        0 => 'Web sources (HTML, website, SharePoint, Google Drive)',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      5 => 
-      array (
-        0 => 'Structured data (CSV/TSV, SQL, SQL API)',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      6 => 
-      array (
-        0 => 'Media (Image, TIFF)',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-    ),
-  ),
-  4 => 
-  array (
-    0 => 'Connectors & tools',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'File creation (Text, PDF, Word, Excel)',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Plot & chart generation',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'Web scraping',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      3 => 
-      array (
-        0 => 'Slack workspace',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      4 => 
-      array (
-        0 => 'SAP OData',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      5 => 
-      array (
-        0 => 'RAG datasource',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      6 => 
-      array (
-        0 => 'SQL database',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      7 => 
-      array (
-        0 => 'Custom connectors',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-    ),
-  ),
-  5 => 
-  array (
-    0 => 'LLM & usage',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Curated LLM',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Custom LLM',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'AI token (curated model)',
-        1 => 'Add-on',
-        2 => 'Add-on',
-        3 => 'Add-on',
-      ),
-      3 => 
-      array (
-        0 => 'API call token',
-        1 => '100k / month',
-        2 => '400k / month',
-        3 => 'Unlimited (full on-prem)',
-      ),
-      4 => 
-      array (
-        0 => 'Data storage',
-        1 => '100 GB',
-        2 => '500 GB',
-        3 => 'Customizable',
-      ),
-    ),
-  ),
-  6 => 
-  array (
-    0 => 'Sandbox & learning',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Trial run feedback identification',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Trial run usage feasibility',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'AI learning',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      3 => 
-      array (
-        0 => 'Feedback management',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-    ),
-  ),
-  7 => 
-  array (
-    0 => 'Platform access',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Platform seats',
-        1 => 'Unlimited',
-        2 => 'Unlimited',
-        3 => 'Customizable',
-      ),
-      1 => 
-      array (
-        0 => 'Chat playground seats',
-        1 => 'Up to 300',
-        2 => 'Unlimited',
-        3 => 'Customizable',
-      ),
-      2 => 
-      array (
-        0 => 'Analytics',
-        1 => 'Standard',
-        2 => 'Advanced',
-        3 => 'Advanced',
-      ),
-    ),
-  ),
-  8 => 
-  array (
-    0 => 'Access management',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Platform-level role-based access',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Datasource-level access',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      2 => 
-      array (
-        0 => 'Runner-level access',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      3 => 
-      array (
-        0 => 'Agent-level access',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-    ),
-  ),
-  9 => 
-  array (
-    0 => 'Platform control',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'AI guardrails & PII masking',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'Audit trail logs',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-    ),
-  ),
-  10 => 
-  array (
-    0 => 'Delivery channels',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Livechat',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      1 => 
-      array (
-        0 => 'WhatsApp',
-        1 => 'Add-on',
-        2 => 'Add-on',
-        3 => 'Add-on',
-      ),
-      2 => 
-      array (
-        0 => 'Chat playground',
-        1 => '—',
-        2 => '✓',
-        3 => '✓',
-      ),
-      3 => 
-      array (
-        0 => 'SDK',
-        1 => '✓',
-        2 => '✓',
-        3 => '✓',
-      ),
-      4 => 
-      array (
-        0 => 'Workflow automation management',
-        1 => '—',
-        2 => '—',
-        3 => '✓',
-      ),
-    ),
-  ),
-  11 => 
-  array (
-    0 => 'Data retention',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Conversation history retention',
-        1 => '365 days',
-        2 => '365 days',
-        3 => 'Customizable',
-      ),
-      1 => 
-      array (
-        0 => 'Audit log retention',
-        1 => '365 days',
-        2 => '365 days',
-        3 => 'Customizable',
-      ),
-    ),
-  ),
-  12 => 
-  array (
-    0 => 'Service level & support',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Uptime SLA',
-        1 => '99.5%',
-        2 => '99.5%',
-        3 => '99.9%',
-      ),
-      1 => 
-      array (
-        0 => 'Technical support',
-        1 => 'Standard 9×5',
-        2 => 'Standard 9×5',
-        3 => 'Customizable, up to 24×7',
-      ),
-      2 => 
-      array (
-        0 => 'Response time',
-        1 => '≤ 4 hours',
-        2 => '≤ 4 hours',
-        3 => '≤ 4 hours',
-      ),
-      3 => 
-      array (
-        0 => 'Warranty',
-        1 => '1 year',
-        2 => '1 year',
-        3 => '1 year',
-      ),
-    ),
-  ),
-  13 => 
-  array (
-    0 => 'Deployment & implementation',
-    1 => 
-    array (
-      0 => 
-      array (
-        0 => 'Deployment mode',
-        1 => 'SaaS cloud',
-        2 => 'SaaS cloud',
-        3 => 'Hybrid / private cloud / on-premise',
-      ),
-      1 => 
-      array (
-        0 => 'Standard implementation',
-        1 => 'Guided + user guideline',
-        2 => 'Guided + user guideline',
-        3 => 'Guided + user guideline',
-      ),
-      2 => 
-      array (
-        0 => 'Custom implementation',
-        1 => 'Add-on',
-        2 => 'Add-on',
-        3 => 'Add-on',
-      ),
-    ),
-  ),
-);
+    $ceCategories = $page?->section('compare_ce', []);
+    if (empty($ceCategories)) {
+        $ceCategories = \Plugins\KouventaPages\Schemas\PricingSchema::getDefaults(app()->getLocale())['compare_ce'] ?? [];
+    }
+
+    $aiCategories = $page?->section('compare_ai', []);
+    if (empty($aiCategories)) {
+        $aiCategories = \Plugins\KouventaPages\Schemas\PricingSchema::getDefaults(app()->getLocale())['compare_ai'] ?? [];
+    }
+
     $ceAddons = array (
   0 => 
   array (
@@ -1336,22 +460,35 @@
             <!-- CE Categories -->
             <div x-show="product === 'ce'">
                 @foreach ($ceCategories as $cIndex => $category)
-                    @php $catKey = 'ce_' . $cIndex; @endphp
+                    @php
+                        $catKey = 'ce_' . $cIndex;
+                        $catTitle = is_array($category) ? ($category['category'] ?? $category[0] ?? '') : '';
+                        $rows = is_array($category) ? ($category['rows'] ?? $category[1] ?? []) : [];
+                    @endphp
                     <div style="border-bottom: 1px solid #E3E8E6">
                         <button type="button" @click="toggleCat('{{ $catKey }}')" class="kv-table-cat-btn" style="width: 100%; min-height: 48px; border: 0; background: #F4F6F5; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 800; color: #0E1A24; text-align: left; cursor: pointer">
-                            <span>{{ t('kouventa.' . $category[0], $category[0]) }}</span>
+                            <span>{{ t('kouventa.' . $catTitle, $catTitle) }}</span>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" :style="{ transform: isCatOpen('{{ $catKey }}') ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }">
                                 <path d="m6 9 6 6 6-6"></path>
                             </svg>
                         </button>
                         <div x-show="isCatOpen('{{ $catKey }}')" style="display: flex; flex-direction: column">
-                            @foreach ($category[1] as $row)
+                            @foreach ($rows as $row)
+                                @php
+                                    $featTitle = is_array($row) ? ($row['feature'] ?? $row[0] ?? '') : '';
+                                    $colVals = is_array($row) 
+                                        ? [
+                                            $row['col1'] ?? $row[1] ?? '—',
+                                            $row['col2'] ?? $row[2] ?? '—',
+                                            $row['col3'] ?? $row[3] ?? '—',
+                                          ]
+                                        : ['—', '—', '—'];
+                                @endphp
                                 <div class="kv-compare-row">
                                     <span style="padding: 13px 24px; font-weight: 600; color: #0E1A24">
-                                        {{ t('kouventa.' . $row[0], $row[0]) }}
+                                        {{ t('kouventa.' . $featTitle, $featTitle) }}
                                     </span>
-                                    @for ($col = 1; $col <= 3; $col++)
-                                        @php $val = $row[$col] ?? '—'; @endphp
+                                    @foreach ($colVals as $val)
                                         <span style="padding: 13px 24px; display: flex; align-items: center; color: #2B3947">
                                             @if ($val === '✓')
                                                 <span aria-label="Included" style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center">
@@ -1365,7 +502,7 @@
                                                 <span>{{ t('kouventa.' . $val, $val) }}</span>
                                             @endif
                                         </span>
-                                    @endfor
+                                    @endforeach
                                 </div>
                             @endforeach
                         </div>
@@ -1376,22 +513,35 @@
             <!-- AI Categories -->
             <div x-show="product === 'ai'">
                 @foreach ($aiCategories as $cIndex => $category)
-                    @php $catKey = 'ai_' . $cIndex; @endphp
+                    @php
+                        $catKey = 'ai_' . $cIndex;
+                        $catTitle = is_array($category) ? ($category['category'] ?? $category[0] ?? '') : '';
+                        $rows = is_array($category) ? ($category['rows'] ?? $category[1] ?? []) : [];
+                    @endphp
                     <div style="border-bottom: 1px solid #E3E8E6">
                         <button type="button" @click="toggleCat('{{ $catKey }}')" class="kv-table-cat-btn" style="width: 100%; min-height: 48px; border: 0; background: #F4F6F5; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 800; color: #0E1A24; text-align: left; cursor: pointer">
-                            <span>{{ t('kouventa.' . $category[0], $category[0]) }}</span>
+                            <span>{{ t('kouventa.' . $catTitle, $catTitle) }}</span>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" :style="{ transform: isCatOpen('{{ $catKey }}') ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }">
                                 <path d="m6 9 6 6 6-6"></path>
                             </svg>
                         </button>
                         <div x-show="isCatOpen('{{ $catKey }}')" style="display: flex; flex-direction: column">
-                            @foreach ($category[1] as $row)
+                            @foreach ($rows as $row)
+                                @php
+                                    $featTitle = is_array($row) ? ($row['feature'] ?? $row[0] ?? '') : '';
+                                    $colVals = is_array($row) 
+                                        ? [
+                                            $row['col1'] ?? $row[1] ?? '—',
+                                            $row['col2'] ?? $row[2] ?? '—',
+                                            $row['col3'] ?? $row[3] ?? '—',
+                                          ]
+                                        : ['—', '—', '—'];
+                                @endphp
                                 <div class="kv-compare-row">
                                     <span style="padding: 13px 24px; font-weight: 600; color: #0E1A24">
-                                        {{ t('kouventa.' . $row[0], $row[0]) }}
+                                        {{ t('kouventa.' . $featTitle, $featTitle) }}
                                     </span>
-                                    @for ($col = 1; $col <= 3; $col++)
-                                        @php $val = $row[$col] ?? '—'; @endphp
+                                    @foreach ($colVals as $val)
                                         <span style="padding: 13px 24px; display: flex; align-items: center; color: #2B3947">
                                             @if ($val === '✓')
                                                 <span aria-label="Included" style="width: 22px; height: 22px; border-radius: 50%; background: #DDF3E4; display: flex; align-items: center; justify-content: center">
@@ -1405,7 +555,7 @@
                                                 <span>{{ t('kouventa.' . $val, $val) }}</span>
                                             @endif
                                         </span>
-                                    @endfor
+                                    @endforeach
                                 </div>
                             @endforeach
                         </div>

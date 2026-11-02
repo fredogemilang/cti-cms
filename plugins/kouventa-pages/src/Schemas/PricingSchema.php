@@ -13,11 +13,13 @@ class PricingSchema
             ['id' => 'hero', 'label' => '1. Hero & Toggle', 'icon' => 'home'],
             ['id' => 'tiers_ai', 'label' => '2. AI Tiers (3 Plans)', 'icon' => 'smart_toy'],
             ['id' => 'tiers_ce', 'label' => '3. CE Tiers (3 Plans)', 'icon' => 'forum'],
-            ['id' => 'addons', 'label' => '4. Add-ons & Extensions', 'icon' => 'extension'],
-            ['id' => 'templates', 'label' => '5. WhatsApp Templates', 'icon' => 'mark_chat_read'],
-            ['id' => 'calculator', 'label' => '6. WhatsApp Calculator Rates', 'icon' => 'calculate'],
-            ['id' => 'cta', 'label' => '7. Bottom CTA', 'icon' => 'call_to_action'],
-            ['id' => 'seo', 'label' => '8. SEO & Settings', 'icon' => 'travel_explore'],
+            ['id' => 'compare_ai', 'label' => '4. Compare AI Features', 'icon' => 'table_chart'],
+            ['id' => 'compare_ce', 'label' => '5. Compare CE Features', 'icon' => 'table_view'],
+            ['id' => 'addons', 'label' => '6. Add-ons & Extensions', 'icon' => 'extension'],
+            ['id' => 'templates', 'label' => '7. WhatsApp Templates', 'icon' => 'mark_chat_read'],
+            ['id' => 'calculator', 'label' => '8. WhatsApp Calculator Rates', 'icon' => 'calculate'],
+            ['id' => 'cta', 'label' => '9. Bottom CTA', 'icon' => 'call_to_action'],
+            ['id' => 'seo', 'label' => '10. SEO & Settings', 'icon' => 'travel_explore'],
         ];
     }
 
@@ -163,6 +165,743 @@ class PricingSchema
       ),
       'cta_text' => 'Hubungi sales',
       'cta_url' => '#whatsapp',
+    ),
+  ),
+  'compare_ai' => array (
+    0 => array (
+      'category' => 'Use case bisnis',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Company Wikipedia (Generative AI)',
+          'col1' => 'Tanpa batas',
+          'col2' => 'Tanpa batas',
+          'col3' => 'Tanpa batas',
+        ),
+        1 => array (
+          'feature' => 'Task Force (Agentic AI)',
+          'col1' => '—',
+          'col2' => '3',
+          'col3' => 'Tanpa batas',
+        ),
+      ),
+    ),
+    1 => array (
+      'category' => 'Generative AI: Company Wikipedia',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Pemilihan model dinamis',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Cari di web',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Konfigurasi persona',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Multi-language processing',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'Audio-to-text processing',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'Image-to-text processing',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'Prompt template configuration',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    2 => array (
+      'category' => 'Agentic AI: Task Force',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Penjadwal tugas',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Pemilihan model dinamis',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Persona & work step configuration',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Multi-language processing',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'Audio-to-text processing',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'Image-to-text processing',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'Multi-agent configuration',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    3 => array (
+      'category' => 'Manajemen sumber data',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Embedding',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Grouping',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Change approval workflow',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Documents (PDF, Word, Excel, PPT, TXT, EML, PST)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'Web sources (HTML, website, SharePoint, Google Drive)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'Structured data (CSV/TSV, SQL, SQL API)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'Media (Image, TIFF)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    4 => array (
+      'category' => 'Konektor & tools',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Pembuatan file (Text, PDF, Word, Excel)',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Plot & chart generation',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Web scraping',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Slack workspace',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'SAP OData',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'RAG datasource',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'SQL database',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        7 => array (
+          'feature' => 'Custom connectors',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    5 => array (
+      'category' => 'LLM & pemakaian',
+      'rows' => array (
+        0 => array (
+          'feature' => 'LLM terkurasi',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Custom LLM',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'AI token (curated model)',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+        3 => array (
+          'feature' => 'API call token',
+          'col1' => '100k / month',
+          'col2' => '400k / month',
+          'col3' => 'Unlimited (full on-prem)',
+        ),
+        4 => array (
+          'feature' => 'Data storage',
+          'col1' => '100 GB',
+          'col2' => '500 GB',
+          'col3' => 'Bisa disesuaikan',
+        ),
+      ),
+    ),
+    6 => array (
+      'category' => 'Sandbox & pembelajaran',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Identifikasi feedback uji coba',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Trial run usage feasibility',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'AI learning',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Feedback management',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    7 => array (
+      'category' => 'Akses platform',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Seat platform',
+          'col1' => 'Tanpa batas',
+          'col2' => 'Tanpa batas',
+          'col3' => 'Bisa disesuaikan',
+        ),
+        1 => array (
+          'feature' => 'Seat chat playground',
+          'col1' => 'Hingga 300',
+          'col2' => 'Tanpa batas',
+          'col3' => 'Bisa disesuaikan',
+        ),
+        2 => array (
+          'feature' => 'Analitik',
+          'col1' => 'Standar',
+          'col2' => 'Lanjutan',
+          'col3' => 'Lanjutan',
+        ),
+      ),
+    ),
+    8 => array (
+      'category' => 'Manajemen akses',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Akses berbasis peran di level platform',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Datasource-level access',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Runner-level access',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Agent-level access',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    9 => array (
+      'category' => 'Kontrol platform',
+      'rows' => array (
+        0 => array (
+          'feature' => 'AI guardrails & penyamaran PII',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Audit trail logs',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    10 => array (
+      'category' => 'Channel pengiriman',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Livechat',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'WhatsApp',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+        2 => array (
+          'feature' => 'Chat playground',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'SDK',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'Manajemen otomasi workflow',
+          'col1' => '—',
+          'col2' => '—',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    11 => array (
+      'category' => 'Masa simpan data',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Masa simpan riwayat percakapan',
+          'col1' => '365 days',
+          'col2' => '365 days',
+          'col3' => 'Bisa disesuaikan',
+        ),
+        1 => array (
+          'feature' => 'Masa simpan log audit',
+          'col1' => '365 days',
+          'col2' => '365 days',
+          'col3' => 'Bisa disesuaikan',
+        ),
+      ),
+    ),
+    12 => array (
+      'category' => 'Level layanan & dukungan',
+      'rows' => array (
+        0 => array (
+          'feature' => 'SLA uptime',
+          'col1' => '99.5%',
+          'col2' => '99.5%',
+          'col3' => '99.9%',
+        ),
+        1 => array (
+          'feature' => 'Dukungan teknis',
+          'col1' => 'Standard 9×5',
+          'col2' => 'Standard 9×5',
+          'col3' => 'Bisa disesuaikan, hingga 24×7',
+        ),
+        2 => array (
+          'feature' => 'Waktu respons',
+          'col1' => '≤ 4 jam',
+          'col2' => '≤ 4 jam',
+          'col3' => '≤ 4 jam',
+        ),
+        3 => array (
+          'feature' => 'Garansi',
+          'col1' => '1 year',
+          'col2' => '1 year',
+          'col3' => '1 year',
+        ),
+      ),
+    ),
+    13 => array (
+      'category' => 'Deployment & implementasi',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Mode deployment',
+          'col1' => 'SaaS cloud',
+          'col2' => 'SaaS cloud',
+          'col3' => 'Hybrid / private cloud / on-premise',
+        ),
+        1 => array (
+          'feature' => 'Implementasi standar',
+          'col1' => 'Dipandu + panduan pengguna',
+          'col2' => 'Dipandu + panduan pengguna',
+          'col3' => 'Dipandu + panduan pengguna',
+        ),
+        2 => array (
+          'feature' => 'Implementasi khusus',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+      ),
+    ),
+  ),
+  'compare_ce' => array (
+    0 => array (
+      'category' => 'Batas pemakaian',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Pengguna aktif bulanan',
+          'col1' => 'Hingga 3.000',
+          'col2' => 'Hingga 15.000',
+          'col3' => 'Bisa disesuaikan',
+        ),
+        1 => array (
+          'feature' => 'Database kontak',
+          'col1' => '10,000',
+          'col2' => '45,000',
+          'col3' => 'Bisa disesuaikan',
+        ),
+      ),
+    ),
+    1 => array (
+      'category' => 'Channels',
+      'rows' => array (
+        0 => array (
+          'feature' => 'WhatsApp',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Instagram',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Facebook',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Livechat',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+      ),
+    ),
+    2 => array (
+      'category' => 'Penanganan inbound',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Konfigurasi profil bisnis',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Static chatbot',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Chatbot AI',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+        3 => array (
+          'feature' => 'Customer service agents',
+          'col1' => 'Tanpa batas',
+          'col2' => 'Tanpa batas',
+          'col3' => 'Tanpa batas',
+        ),
+        4 => array (
+          'feature' => 'Mode supervisor',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'Agent handoff & routing',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'Response presets',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        7 => array (
+          'feature' => 'Agent notifications',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        8 => array (
+          'feature' => 'Pencarian percakapan',
+          'col1' => 'Add-on',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        9 => array (
+          'feature' => 'CSAT feedback',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    3 => array (
+      'category' => 'Outbound (WhatsApp)',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Penjadwalan broadcast',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Message templates (marketing, service, utility, OTP)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Media integration (image & video)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Form builder (WhatsApp Flow)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'Media storage',
+          'col1' => '100 GB',
+          'col2' => '250 GB',
+          'col3' => 'Bisa disesuaikan',
+        ),
+      ),
+    ),
+    4 => array (
+      'category' => 'Manajemen kontak',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Label kontak',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Pengelompokan kontak',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Riwayat percakapan',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    5 => array (
+      'category' => 'Kontrol platform',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Akses per peran',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Multi-factor authentication',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Multiple numbers & accounts',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Analytics dashboard',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'API integration',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'Activity log',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'Masking data',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    6 => array (
+      'category' => 'Masa simpan data',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Masa simpan riwayat percakapan',
+          'col1' => '365 days',
+          'col2' => '365 days',
+          'col3' => 'Bisa disesuaikan',
+        ),
+        1 => array (
+          'feature' => 'Masa simpan log audit',
+          'col1' => '365 days',
+          'col2' => '365 days',
+          'col3' => 'Bisa disesuaikan',
+        ),
+      ),
+    ),
+    7 => array (
+      'category' => 'Level layanan & dukungan',
+      'rows' => array (
+        0 => array (
+          'feature' => 'SLA uptime',
+          'col1' => '99.5%',
+          'col2' => '99.5%',
+          'col3' => '99.9%',
+        ),
+        1 => array (
+          'feature' => 'Dukungan teknis',
+          'col1' => 'Standard 9×5',
+          'col2' => 'Standard 9×5',
+          'col3' => 'Bisa disesuaikan, hingga 24×7',
+        ),
+        2 => array (
+          'feature' => 'Waktu respons',
+          'col1' => '≤ 4 jam',
+          'col2' => '≤ 4 jam',
+          'col3' => '≤ 4 jam',
+        ),
+        3 => array (
+          'feature' => 'Garansi',
+          'col1' => '1 year',
+          'col2' => '1 year',
+          'col3' => '1 year',
+        ),
+      ),
+    ),
+    8 => array (
+      'category' => 'Deployment & implementasi',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Mode deployment',
+          'col1' => 'SaaS cloud',
+          'col2' => 'SaaS cloud',
+          'col3' => 'Hybrid / private cloud / on-premise',
+        ),
+        1 => array (
+          'feature' => 'Implementasi standar',
+          'col1' => 'Dipandu + panduan pengguna',
+          'col2' => 'Dipandu + panduan pengguna',
+          'col3' => 'Dipandu + panduan pengguna',
+        ),
+        2 => array (
+          'feature' => 'Implementasi khusus',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+      ),
     ),
   ),
   'addons' => 
@@ -504,6 +1243,743 @@ class PricingSchema
       ),
       'cta_text' => 'Talk to sales',
       'cta_url' => '#whatsapp',
+    ),
+  ),
+  'compare_ai' => array (
+    0 => array (
+      'category' => 'Business use cases',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Company Wikipedia (Generative AI)',
+          'col1' => 'Unlimited',
+          'col2' => 'Unlimited',
+          'col3' => 'Unlimited',
+        ),
+        1 => array (
+          'feature' => 'Task Force (Agentic AI)',
+          'col1' => '—',
+          'col2' => '3',
+          'col3' => 'Unlimited',
+        ),
+      ),
+    ),
+    1 => array (
+      'category' => 'Generative AI: Company Wikipedia',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Dynamic model selection',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Search the web',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Persona configuration',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Multi-language processing',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'Audio-to-text processing',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'Image-to-text processing',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'Prompt template configuration',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    2 => array (
+      'category' => 'Agentic AI: Task Force',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Task scheduler',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Dynamic model selection',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Persona & work step configuration',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Multi-language processing',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'Audio-to-text processing',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'Image-to-text processing',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'Multi-agent configuration',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    3 => array (
+      'category' => 'Data source management',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Embedding',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Grouping',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Change approval workflow',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Documents (PDF, Word, Excel, PPT, TXT, EML, PST)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'Web sources (HTML, website, SharePoint, Google Drive)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'Structured data (CSV/TSV, SQL, SQL API)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'Media (Image, TIFF)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    4 => array (
+      'category' => 'Connectors & tools',
+      'rows' => array (
+        0 => array (
+          'feature' => 'File creation (Text, PDF, Word, Excel)',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Plot & chart generation',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Web scraping',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Slack workspace',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'SAP OData',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'RAG datasource',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'SQL database',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        7 => array (
+          'feature' => 'Custom connectors',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    5 => array (
+      'category' => 'LLM & usage',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Curated LLM',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Custom LLM',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'AI token (curated model)',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+        3 => array (
+          'feature' => 'API call token',
+          'col1' => '100k / month',
+          'col2' => '400k / month',
+          'col3' => 'Unlimited (full on-prem)',
+        ),
+        4 => array (
+          'feature' => 'Data storage',
+          'col1' => '100 GB',
+          'col2' => '500 GB',
+          'col3' => 'Customizable',
+        ),
+      ),
+    ),
+    6 => array (
+      'category' => 'Sandbox & learning',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Trial run feedback identification',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Trial run usage feasibility',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'AI learning',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Feedback management',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    7 => array (
+      'category' => 'Platform access',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Platform seats',
+          'col1' => 'Unlimited',
+          'col2' => 'Unlimited',
+          'col3' => 'Customizable',
+        ),
+        1 => array (
+          'feature' => 'Chat playground seats',
+          'col1' => 'Up to 300',
+          'col2' => 'Unlimited',
+          'col3' => 'Customizable',
+        ),
+        2 => array (
+          'feature' => 'Analytics',
+          'col1' => 'Standard',
+          'col2' => 'Advanced',
+          'col3' => 'Advanced',
+        ),
+      ),
+    ),
+    8 => array (
+      'category' => 'Access management',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Platform-level role-based access',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Datasource-level access',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Runner-level access',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Agent-level access',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    9 => array (
+      'category' => 'Platform control',
+      'rows' => array (
+        0 => array (
+          'feature' => 'AI guardrails & PII masking',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Audit trail logs',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    10 => array (
+      'category' => 'Delivery channels',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Livechat',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'WhatsApp',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+        2 => array (
+          'feature' => 'Chat playground',
+          'col1' => '—',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'SDK',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'Workflow automation management',
+          'col1' => '—',
+          'col2' => '—',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    11 => array (
+      'category' => 'Data retention',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Conversation history retention',
+          'col1' => '365 days',
+          'col2' => '365 days',
+          'col3' => 'Customizable',
+        ),
+        1 => array (
+          'feature' => 'Audit log retention',
+          'col1' => '365 days',
+          'col2' => '365 days',
+          'col3' => 'Customizable',
+        ),
+      ),
+    ),
+    12 => array (
+      'category' => 'Service level & support',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Uptime SLA',
+          'col1' => '99.5%',
+          'col2' => '99.5%',
+          'col3' => '99.9%',
+        ),
+        1 => array (
+          'feature' => 'Technical support',
+          'col1' => 'Standard 9×5',
+          'col2' => 'Standard 9×5',
+          'col3' => 'Customizable, up to 24×7',
+        ),
+        2 => array (
+          'feature' => 'Response time',
+          'col1' => '≤ 4 hours',
+          'col2' => '≤ 4 hours',
+          'col3' => '≤ 4 hours',
+        ),
+        3 => array (
+          'feature' => 'Warranty',
+          'col1' => '1 year',
+          'col2' => '1 year',
+          'col3' => '1 year',
+        ),
+      ),
+    ),
+    13 => array (
+      'category' => 'Deployment & implementation',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Deployment mode',
+          'col1' => 'SaaS cloud',
+          'col2' => 'SaaS cloud',
+          'col3' => 'Hybrid / private cloud / on-premise',
+        ),
+        1 => array (
+          'feature' => 'Standard implementation',
+          'col1' => 'Guided + user guideline',
+          'col2' => 'Guided + user guideline',
+          'col3' => 'Guided + user guideline',
+        ),
+        2 => array (
+          'feature' => 'Custom implementation',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+      ),
+    ),
+  ),
+  'compare_ce' => array (
+    0 => array (
+      'category' => 'Usage limits',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Monthly active users',
+          'col1' => 'Up to 3,000',
+          'col2' => 'Up to 15,000',
+          'col3' => 'Customizable',
+        ),
+        1 => array (
+          'feature' => 'Contact database',
+          'col1' => '10,000',
+          'col2' => '45,000',
+          'col3' => 'Customizable',
+        ),
+      ),
+    ),
+    1 => array (
+      'category' => 'Channels',
+      'rows' => array (
+        0 => array (
+          'feature' => 'WhatsApp',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Instagram',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Facebook',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Livechat',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+      ),
+    ),
+    2 => array (
+      'category' => 'Inbound handling',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Business profile configuration',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Static chatbot',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'AI chatbot',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+        3 => array (
+          'feature' => 'Customer service agents',
+          'col1' => 'Unlimited',
+          'col2' => 'Unlimited',
+          'col3' => 'Unlimited',
+        ),
+        4 => array (
+          'feature' => 'Supervisor mode',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'Agent handoff & routing',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'Response presets',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        7 => array (
+          'feature' => 'Agent notifications',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        8 => array (
+          'feature' => 'Conversation search',
+          'col1' => 'Add-on',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        9 => array (
+          'feature' => 'CSAT feedback',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    3 => array (
+      'category' => 'Outbound (WhatsApp)',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Broadcast scheduling',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Message templates (marketing, service, utility, OTP)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Media integration (image & video)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Form builder (WhatsApp Flow)',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'Media storage',
+          'col1' => '100 GB',
+          'col2' => '250 GB',
+          'col3' => 'Customizable',
+        ),
+      ),
+    ),
+    4 => array (
+      'category' => 'Contact management',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Contact labeling',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Contact grouping',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Conversation history',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    5 => array (
+      'category' => 'Platform control',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Role-based access',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        1 => array (
+          'feature' => 'Multi-factor authentication',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        2 => array (
+          'feature' => 'Multiple numbers & accounts',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        3 => array (
+          'feature' => 'Analytics dashboard',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        4 => array (
+          'feature' => 'API integration',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        5 => array (
+          'feature' => 'Activity log',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+        6 => array (
+          'feature' => 'Data masking',
+          'col1' => '✓',
+          'col2' => '✓',
+          'col3' => '✓',
+        ),
+      ),
+    ),
+    6 => array (
+      'category' => 'Data retention',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Conversation history retention',
+          'col1' => '365 days',
+          'col2' => '365 days',
+          'col3' => 'Customizable',
+        ),
+        1 => array (
+          'feature' => 'Audit log retention',
+          'col1' => '365 days',
+          'col2' => '365 days',
+          'col3' => 'Customizable',
+        ),
+      ),
+    ),
+    7 => array (
+      'category' => 'Service level & support',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Uptime SLA',
+          'col1' => '99.5%',
+          'col2' => '99.5%',
+          'col3' => '99.9%',
+        ),
+        1 => array (
+          'feature' => 'Technical support',
+          'col1' => 'Standard 9×5',
+          'col2' => 'Standard 9×5',
+          'col3' => 'Customizable, up to 24×7',
+        ),
+        2 => array (
+          'feature' => 'Response time',
+          'col1' => '≤ 4 hours',
+          'col2' => '≤ 4 hours',
+          'col3' => '≤ 4 hours',
+        ),
+        3 => array (
+          'feature' => 'Warranty',
+          'col1' => '1 year',
+          'col2' => '1 year',
+          'col3' => '1 year',
+        ),
+      ),
+    ),
+    8 => array (
+      'category' => 'Deployment & implementation',
+      'rows' => array (
+        0 => array (
+          'feature' => 'Deployment mode',
+          'col1' => 'SaaS cloud',
+          'col2' => 'SaaS cloud',
+          'col3' => 'Hybrid / private cloud / on-premise',
+        ),
+        1 => array (
+          'feature' => 'Standard implementation',
+          'col1' => 'Guided + user guideline',
+          'col2' => 'Guided + user guideline',
+          'col3' => 'Guided + user guideline',
+        ),
+        2 => array (
+          'feature' => 'Custom implementation',
+          'col1' => 'Add-on',
+          'col2' => 'Add-on',
+          'col3' => 'Add-on',
+        ),
+      ),
     ),
   ),
   'addons' => 
