@@ -86,12 +86,13 @@
                     this.activeSol = (this.activeSol + 1) % count;
                 }
             }
-        }, 5000);
+        }, 6000);
     },
     lockSol(i) {
         this.sol = i;
         this.activeSol = i;
         if (this._autoTimer) clearInterval(this._autoTimer);
+        if (this.tab === 0) return;
         const sols = this.aiSols[this.tab];
         const illId = this.aiIllIds[this.tab];
         if (!sols || !sols[i]) return;
@@ -483,11 +484,31 @@
     $isIdLocale = app()->getLocale() === 'id';
 @endphp
 
+<style>
+/* Rigid 2-column layout for CS illustration scenes - strictly side-by-side */
+#kv-ill-cs .kv-cs-scene {
+  position: absolute;
+  inset: 0;
+  padding: 24px 26px;
+  box-sizing: border-box;
+  display: none;
+  grid-template-columns: 264px 264px !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+#kv-ill-cs .kv-cs-scene.kv-active {
+  display: grid !important;
+  opacity: 1 !important;
+}
+</style>
+
 <!-- SCENE 0: Customer Support Agent (Left: Knowledge Base, Right: Customer Chat) -->
-<div x-show="(sol === 0) || (sol === -1 && activeSol === 0)" x-transition.opacity.duration.300ms style="position: absolute; inset: 0; padding: 26px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 18px; box-sizing: border-box">
+<div class="kv-cs-scene" :class="{ 'kv-active': (sol === 0) || (sol === -1 && activeSol === 0) }">
 
   <!-- LEFT: Knowledge Base (Store FAQ.pdf) -->
-  <div style="width: 260px; height: 410px; background: #F4F6F5; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .2s both">
+  <div style="width: 264px; height: 430px; background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .15s both">
     <!-- Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 10px">
       <div style="display: flex; align-items: center; gap: 6px">
@@ -499,32 +520,32 @@
       <span style="font-size: 10px; font-weight: 700; color: #0B5E2C; background: #DDF3E4; padding: 2px 7px; border-radius: 999px">{{ $isIdLocale ? 'Basis Pengetahuan' : 'Knowledge Base' }}</span>
     </div>
 
-    <!-- Document Skeleton Lines -->
+    <!-- Document Skeleton Lines (Top) -->
     <div style="display: flex; flex-direction: column; gap: 6px">
       <span style="height: 6px; width: 92%; border-radius: 3px; background: #D5DCD9"></span>
-      <span style="height: 6px; width: 75%; border-radius: 3px; background: #D5DCD9"></span>
+      <span style="height: 6px; width: 72%; border-radius: 3px; background: #D5DCD9"></span>
     </div>
 
     <!-- Highlighted Extracted Chunk (Animates in when right-side chat searches) -->
-    <div style="background: #FFFFFF; border-left: 3px solid #13803F; border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 4px 12px rgba(19, 128, 63, 0.1); animation: kvIn .4s ease 1.2s both">
+    <div style="background: #FFFFFF; border: 1px solid #C9E8D3; border-left: 3.5px solid #13803F; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 14px rgba(19, 128, 63, 0.1); animation: kvIn .4s ease 1.2s both">
       <div style="display: flex; justify-content: space-between; align-items: center">
         <strong style="font-size: 11px; color: #13803F; font-weight: 800">{{ $isIdLocale ? 'Bagian 3.1 · Jam Operasional' : 'Section 3.1 · Store Hours' }}</strong>
-        <span style="font-size: 9px; font-weight: 800; color: #0B5E2C; background: #EAF7EF; padding: 1px 5px; border-radius: 4px">99.8% Match</span>
+        <span style="font-size: 9px; font-weight: 800; color: #0B5E2C; background: #EAF7EF; padding: 1px 6px; border-radius: 4px">99.8% Match</span>
       </div>
       <span style="font-size: 11px; line-height: 1.45; color: #1E293B; font-weight: 500">
         {{ $isIdLocale ? 'Seluruh gerai beroperasi normal setiap hari dari jam 08:00 sampai 21:00 tanpa libur, termasuk akhir pekan dan tanggal merah.' : 'All store branches operate daily from 08:00 to 21:00 without exception, including weekends and public holidays.' }}
       </span>
     </div>
 
-    <!-- More Document Skeleton Lines -->
+    <!-- Document Skeleton Lines (Bottom) -->
     <div style="display: flex; flex-direction: column; gap: 6px">
       <span style="height: 6px; width: 85%; border-radius: 3px; background: #D5DCD9"></span>
-      <span style="height: 6px; width: 60%; border-radius: 3px; background: #D5DCD9"></span>
+      <span style="height: 6px; width: 58%; border-radius: 3px; background: #D5DCD9"></span>
     </div>
 
     <!-- Extraction Confirmation Pill -->
-    <div style="padding: 7px 10px; border-radius: 8px; background: #EAF7EF; border: 1px solid #C9E8D3; display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #0B5E2C; animation: kvPopIn .3s ease 1.6s both">
-      <span style="display: flex; align-items: center; gap: 5px">
+    <div style="padding: 8px 12px; border-radius: 8px; background: #EAF7EF; border: 1px solid #C9E8D3; display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #0B5E2C; animation: kvPopIn .3s ease 1.6s both">
+      <span style="display: flex; align-items: center; gap: 6px">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
         {{ $isIdLocale ? 'Data Akurat Ditemukan' : 'Knowledge Retrieved' }}
       </span>
@@ -533,7 +554,7 @@
   </div>
 
   <!-- RIGHT: Customer WhatsApp Chat Conversation -->
-  <div style="width: 270px; height: 410px; background: #F4F6F5; border: 1px solid #E3E8E6; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .2s both">
+  <div style="width: 264px; height: 430px; background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .15s both">
     <!-- Chat Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
       <div style="display: flex; align-items: center; gap: 7px">
@@ -544,34 +565,35 @@
       </div>
       <span style="display: grid; font-size: 10px; font-weight: 800">
         <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #E3E8E6; color: #4A5866">{{ $isIdLocale ? 'Baru' : 'New' }}</span>
-        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 2.5s both">{{ $isIdLocale ? 'Selesai' : 'Resolved' }}</span>
+        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 2.4s both">{{ $isIdLocale ? 'Selesai' : 'Resolved' }}</span>
       </span>
     </div>
 
     <!-- Chat Messages Stack -->
-    <div style="display: flex; flex-direction: column; gap: 9px; flex: 1; justify-content: center">
+    <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center">
       <!-- 1. Customer Message (Natural conversational phrasing) -->
-      <div style="align-self: flex-start; max-width: 92%; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.4s both">
+      <div style="align-self: flex-start; max-width: 95%; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.35s both">
         <span style="font-size: 12px; font-weight: 600; line-height: 1.45; color: #0E1A24">
-          {{ $isIdLocale ? 'Halo kak, apakah hari ini tokonya buka? Tutupnya jam berapa ya?' : 'Hi there, are you guys open today? What time do you close?' }}
+          {{ $isIdLocale ? 'Halo kak! Apakah hari ini tokonya buka? Tutupnya jam berapa ya?' : 'Hi there! Are you guys open today? What time do you close?' }}
         </span>
         <span style="align-self: flex-end; font-size: 9px; font-weight: 600; color: #94A3B8">10:14 AM</span>
       </div>
 
-      <!-- 2. Searching/Retrieval Indicator (Visual signal linking to Left side) -->
-      <div style="align-self: flex-start; background: #EFF6FF; border: 1px dashed #93C5FD; border-radius: 8px; padding: 5px 9px; display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #1D4ED8; animation: kvIn .3s ease 0.8s both">
+      <!-- 2. Searching/Retrieval Indicator (Visual signal linking to Left Knowledge Base) -->
+      <div style="align-self: flex-start; background: #EFF6FF; border: 1px dashed #93C5FD; border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #1D4ED8; animation: kvIn .3s ease 0.75s both, kvOut .3s ease 1.9s 1 forwards">
         <span style="width: 6px; height: 6px; border-radius: 50%; background: #2563EB; box-shadow: 0 0 0 2px rgba(37,99,235,0.25)"></span>
-        <span>{{ $isIdLocale ? 'Mencari di Store FAQ.pdf...' : 'Retrieving from Store FAQ.pdf...' }}</span>
+        <span>{{ $isIdLocale ? 'Mencari di Store FAQ.pdf...' : 'Searching Store FAQ.pdf...' }}</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       </div>
 
-      <!-- 3. AI Agent Response (Delivering answer back to Right side chat) -->
-      <div style="align-self: flex-start; max-width: 95%; background: #FFFFFF; border-radius: 4px 12px 12px 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #C9E8D3; box-shadow: 0 2px 6px rgba(0,0,0,0.03); animation: kvIn .35s ease 2.0s both">
+      <!-- 3. AI Agent Response (Delivering answer back to Right chat) -->
+      <div style="align-self: flex-start; max-width: 98%; background: #FFFFFF; border-radius: 2px 12px 12px 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #C9E8D3; box-shadow: 0 3px 8px rgba(19, 128, 63, 0.06); animation: kvIn .35s ease 2.0s both">
         <div style="display: flex; justify-content: space-between; align-items: center">
           <span style="font-size: 11px; font-weight: 800; color: #13803F">{{ $isIdLocale ? 'Customer Support Agent' : 'Customer Support Agent' }}</span>
           <span style="font-size: 9px; font-weight: 700; color: #13803F; background: #EAF7EF; padding: 1px 5px; border-radius: 4px">0.4s</span>
         </div>
         <span style="font-size: 12px; line-height: 1.45; color: #0E1A24">
-          {{ $isIdLocale ? 'Halo! Iya, kami buka setiap hari jam 08:00–21:00. Ditunggu kedatangannya ya! 😊' : 'Hi! Yes, we\'re open every day from 08:00 to 21:00. Hope to see you soon! 😊' }}
+          {{ $isIdLocale ? 'Halo! Iya kak, seluruh gerai kami buka setiap hari jam 08:00–21:00. Ditunggu kedatangannya ya! 😊' : 'Hi! Yes, we\'re open every day from 08:00 to 21:00 across all outlets. See you soon! 😊' }}
         </span>
         <span style="align-self: flex-start; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; background: #DDF3E4; color: #0B5E2C; display: inline-flex; align-items: center; gap: 4px">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
@@ -581,18 +603,18 @@
     </div>
 
     <!-- Bottom Status Bar -->
-    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 5px 8px; border-radius: 6px; animation: kvIn .3s ease 2.5s both">
+    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 6px 10px; border-radius: 6px; animation: kvIn .3s ease 2.5s both">
       <span>✓ {{ $isIdLocale ? 'Terjawab otomatis dari SOP' : 'Auto-resolved from SOP' }}</span>
-      <span style="color: #065F46">100% Grounded</span>
+      <span style="color: #065F46">{{ $isIdLocale ? '100% Akurat' : '100% Grounded' }}</span>
     </div>
   </div>
 </div>
 
 <!-- SCENE 1: Ticket Management Agent (Left: Complaint, Right: Ticket Triage) -->
-<div x-show="(sol === 1) || (sol === -1 && activeSol === 1)" x-transition.opacity.duration.300ms style="position: absolute; inset: 0; padding: 26px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 18px; box-sizing: border-box">
+<div class="kv-cs-scene" :class="{ 'kv-active': (sol === 1) || (sol === -1 && activeSol === 1) }">
 
   <!-- LEFT: Customer Dispute Complaint via Live Chat -->
-  <div style="width: 260px; height: 410px; background: #F4F6F5; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .2s both">
+  <div style="width: 264px; height: 430px; background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .15s both">
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 10px">
       <div style="display: flex; align-items: center; gap: 7px">
         <span style="width: 26px; height: 26px; border-radius: 50%; background: #0284C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
@@ -607,7 +629,7 @@
     </div>
 
     <!-- Message Bubble -->
-    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.03)">
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.35s both">
       <span style="font-size: 13px; font-weight: 600; line-height: 1.5; color: #0E1A24">
         {{ $isIdLocale ? 'Refund saya belum masuk setelah dua minggu, dan ada potongan biaya tambahan yang tidak sesuai.' : 'My refund still hasn\'t arrived after two weeks, and I was charged an extra fee.' }}
       </span>
@@ -622,19 +644,27 @@
   </div>
 
   <!-- RIGHT: Structured Ticket Card & Assignment -->
-  <div style="width: 270px; height: 410px; display: flex; flex-direction: column; justify-content: center; gap: 16px; position: relative">
-    <div style="background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; position: relative; z-index: 2; --mx: 0px; --my: 155px; animation: kvIn .35s ease 1.2s both, kvMove .6s ease 2.4s 1 forwards">
-      <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">TICKET</span>
-      <span style="display: flex; justify-content: space-between"><span style="color: #93A4B6">{{ $isIdLocale ? 'Kategori' : 'Category' }}</span><strong>Refund</strong></span>
-      <span style="display: flex; flex-direction: column; gap: 2px"><span style="color: #93A4B6">{{ $isIdLocale ? 'Ringkasan' : 'Summary' }}</span><strong>{{ $isIdLocale ? 'Refund terlambat, biaya tambahan' : 'Refund delayed, extra fee charged' }}</strong></span>
-      <span style="display: flex; justify-content: space-between"><span style="color: #93A4B6">{{ $isIdLocale ? 'Tim' : 'Team' }}</span><strong>Billing</strong></span>
+  <div style="width: 264px; height: 430px; background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .15s both; position: relative">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 10px">
+      <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Triase Otomatis' : 'Automated Triage' }}</span>
+      <span style="font-size: 10px; font-weight: 800; color: #991B1B; background: #FEE2E2; padding: 2px 7px; border-radius: 999px">P1 · High</span>
     </div>
-    <div style="position: absolute; left: 0; right: 0; top: 220px; border: 1.5px dashed #C9D2CE; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px; animation: kvIn .3s ease 1.9s both">
-      <span style="width: 36px; height: 36px; border-radius: 10px; background: #EAF7EF; color: #0B5E2C; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">BIL</span>
-      <span style="display: flex; flex-direction: column">
-        <span style="font-size: 13px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Tim Billing' : 'Billing team' }}</span>
-        <span style="font-size: 11px; font-weight: 700; color: #13803F; animation: kvIn .3s ease 3.0s both">{{ $isIdLocale ? 'Ditugaskan' : 'Assigned' }}</span>
-      </span>
+
+    <!-- Structured Ticket Card -->
+    <div style="background: #071C33; color: #FFFFFF; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 11px; box-shadow: 0 4px 14px rgba(7,28,51,0.15); animation: kvIn .35s ease 0.6s both">
+      <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">TICKET #KV-8921</span>
+      <div style="display: flex; justify-content: space-between"><span style="color: #93A4B6">{{ $isIdLocale ? 'Kategori' : 'Category' }}</span><strong>Refund & Billing</strong></div>
+      <div style="display: flex; flex-direction: column; gap: 2px"><span style="color: #93A4B6">{{ $isIdLocale ? 'Ringkasan' : 'Summary' }}</span><strong>{{ $isIdLocale ? 'Keterlambatan refund + selisih biaya' : 'Delayed refund + fee discrepancy' }}</strong></div>
+      <div style="display: flex; justify-content: space-between"><span style="color: #93A4B6">{{ $isIdLocale ? 'Prioritas' : 'Priority' }}</span><strong style="color: #F87171">High (SLA 2h)</strong></div>
+    </div>
+
+    <!-- Assigned Destination Box -->
+    <div style="border: 1.5px dashed #0284C7; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; background: #F0F9FF; animation: kvIn .35s ease 1.4s both">
+      <span style="width: 34px; height: 34px; border-radius: 8px; background: #E0F2FE; color: #0369A1; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">BIL</span>
+      <div style="display: flex; flex-direction: column">
+        <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Tim Billing & Finance' : 'Billing & Finance Team' }}</span>
+        <span style="font-size: 10px; font-weight: 700; color: #0284C7; animation: kvPopIn .3s ease 2.2s both">✓ {{ $isIdLocale ? 'Ditugaskan ke antrean tim' : 'Assigned to team queue' }}</span>
+      </div>
     </div>
   </div>
 </div>
