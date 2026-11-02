@@ -93,6 +93,12 @@
                 // Scene 2 (Scheduling): 5500ms
                 // Scene 3 (Insight): 5500ms
                 duration = (this.activeSol === 1) ? 5800 : 5500;
+            } else if (this.tab === 2) {
+                // Tab 2 (Sales & Marketing):
+                // Scene 0 (Sales Assistant): 5800ms
+                // Scene 1 (Order Agent): 5800ms
+                // Scene 2 (Shipment Tracking): 5800ms
+                duration = 5800;
             }
             this._autoTimer = setTimeout(() => {
                 if (this.sol === -1) {
@@ -110,7 +116,7 @@
         this.sol = i;
         this.activeSol = i;
         if (this._autoTimer) clearTimeout(this._autoTimer);
-        if (this.tab === 0 || this.tab === 1) return;
+        if (this.tab === 0 || this.tab === 1 || this.tab === 2) return;
         const sols = this.aiSols[this.tab];
         const illId = this.aiIllIds[this.tab];
         if (!sols || !sols[i]) return;
@@ -545,6 +551,24 @@
 }
 #kv-ill-rec .kv-rec-scene.kv-active {
   display: flex !important;
+  opacity: 1 !important;
+}
+
+/* Dedicated scenes for Sales & Marketing illustrations */
+#kv-ill-sales .kv-sales-scene {
+  position: absolute;
+  inset: 0;
+  padding: 22px 24px;
+  box-sizing: border-box;
+  display: none;
+  grid-template-columns: 270px 266px !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+#kv-ill-sales .kv-sales-scene.kv-active {
+  display: grid !important;
   opacity: 1 !important;
 }
 .kv-arsir-pattern {
@@ -1020,7 +1044,7 @@
       <div style="width: 42px; height: 42px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(7,28,51,0.2); animation: kvPopIn .3s ease .6s both">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
       </div>
-      <span style="font-size: 9px; font-weight: 800; color: #13803F; letter-spacing: 0.05em">MATCH</span>
+      <span style="font-size: 9px; font-weight: 800; color: #13803F; letter-spacing: 0.05em; white-space: nowrap">AI Agent</span>
     </div>
 
     <!-- Right: Candidates Ranked by Job Match -->
@@ -1360,21 +1384,21 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 3.7s ease 0.3s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="(sol === 0) || (sol === -1 && activeSol === 0)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"></circle><circle cx="18" cy="20" r="1.5"></circle><path d="M2 3h3l2.5 12h11L21 7H6"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptSales['solutions'][0]['title'] ?? t('kouventa.Sales Assistant Agent', 'Sales Assistant Agent') }}</h3>
 <span class="kv-help-sol-desc">{{ $deptSales['solutions'][0]['desc'] ?? t('kouventa.Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.', 'Understand customer needs, recommend relevant products, answer product and availability questions, and follow up with customers who don\'t respond.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.5s ease 4.2s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="(sol === 1) || (sol === -1 && activeSol === 1)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5Z"></path><path d="M3 8l9 5 9-5M12 13v8"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptSales['solutions'][1]['title'] ?? t('kouventa.Order Agent', 'Order Agent') }}</h3>
 <span class="kv-help-sol-desc">{{ $deptSales['solutions'][1]['desc'] ?? t('kouventa.Create orders, process payments, verify transactions, and confirm purchases.', 'Create orders, process payments, verify transactions, and confirm purchases.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 2.2s ease 5.8s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="(sol === 2) || (sol === -1 && activeSol === 2)">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptSales['solutions'][2]['title'] ?? t('kouventa.Shipment Tracking Agent', 'Shipment Tracking Agent') }}</h3>
@@ -1384,33 +1408,470 @@
 </div>
 
 <div class="kv-sol-ill-wrap">
-<div id="kv-ill-sales" role="img" aria-label="Animated illustration: after hours, an agent answers a product question, follows up when the customer goes quiet, confirms the order and payment, then answers a shipment status question" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
-<div style="position: absolute; inset: 0; padding: 28px; display: flex; flex-direction: column; justify-content: center; gap: 12px; font-size: 13px; line-height: 1.5; animation: kvOut .4s ease 4.0s 1 forwards">
-<span style="align-self: center; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 999px; background: #071C33; color: #FFFFFF; animation: kvIn .3s ease .1s both"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>22:30 · outside working hours</span>
-<div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 10px 13px; border-radius: 14px 4px 14px 14px; animation: kvIn .3s ease .4s both">Is this available in blue?</div>
-<div style="align-self: flex-start; max-width: 80%; background: #F4F6F5; padding: 10px 13px; border-radius: 4px 14px 14px 14px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .3s ease 1.1s both"><span><strong style="font-size: 11px; color: #13803F">Sales Assistant Agent</strong><br>Yes, it's in stock in blue. Here it is:</span>
-<span style="display: flex; align-items: center; gap: 10px; background: #FFFFFF; border-radius: 10px; padding: 8px"><span style="width: 44px; height: 44px; border-radius: 8px; background: #1D4F91"></span><span style="display: flex; flex-direction: column"><strong>Runner Sneakers · Blue</strong><span style="font-size: 11px; color: #13803F; font-weight: 700">In stock</span></span></span></div>
-<span style="align-self: center; font-size: 11px; font-weight: 700; color: #4A5866; padding: 4px 10px; border-radius: 999px; background: #F4F6F5; animation: kvIn .3s ease 2.1s both">2 hours later · no reply</span>
-<div style="align-self: flex-start; max-width: 80%; background: #F4F6F5; padding: 10px 13px; border-radius: 4px 14px 14px 14px; animation: kvIn .3s ease 2.6s both">Still interested? I can hold the blue pair for you today.</div>
-<div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 10px 13px; border-radius: 14px 4px 14px 14px; animation: kvIn .3s ease 3.3s both">Yes, I'll take it.</div>
+<div id="kv-ill-sales" role="img" aria-label="Animated illustration for Kouventa Sales and Marketing AI Agents" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
+
+<!-- SCENE 0: Sales Assistant Agent (Left: Live Catalog & Stock Check, Right: WhatsApp Customer Chat & Proactive Follow-up) -->
+<div class="kv-sales-scene" :class="{ 'kv-active': (sol === 0) || (sol === -1 && activeSol === 0) }">
+
+  <!-- LEFT: Catalog & Live Stock Engine (Open Background Process Canvas) -->
+  <div style="width: 270px; height: 430px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; opacity: 0; animation: kvIn .45s ease 0.6s both;">
+    
+    <!-- Background Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 24px; height: 24px; border-radius: 6px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </span>
+        <span style="font-size: 11px; font-weight: 800; color: #475569; letter-spacing: 0.02em">{{ $isIdLocale ? 'Katalog & Inventaris Real-Time' : 'Live Catalog & Stock Engine' }}</span>
+      </div>
+      <span style="font-size: 10px; font-weight: 700; color: #0B5E2C; background: #DDF3E4; padding: 2px 7px; border-radius: 999px; display: flex; align-items: center; gap: 4px">
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F"></span>
+        Live Stock
+      </span>
+    </div>
+
+    <!-- Product Inventory Items -->
+    <div style="display: flex; flex-direction: column; gap: 9px; flex: 1; justify-content: center; padding: 6px 0">
+      
+      <!-- Product 1: Runner Sneakers (Blue / 42) -> TARGET MATCH -->
+      <div style="border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; display: flex; flex-direction: column; gap: 6px; transition: all 0.3s ease; animation: kvMatchDoc .5s ease 1.10s 1 forwards">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div style="display: flex; align-items: center; gap: 8px">
+            <span style="width: 28px; height: 28px; border-radius: 6px; background: #1D4F91; display: flex; align-items: center; justify-content: center; color: #FFFFFF">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 17h20M2 12h20M7 7h10"/></svg>
+            </span>
+            <div style="display: flex; flex-direction: column">
+              <span style="font-size: 12px; font-weight: 800; color: #0E1A24">Runner Sneakers · Blue</span>
+              <span style="font-size: 9.5px; color: #64748B">SKU #SNK-042 · Size 42</span>
+            </div>
+          </div>
+          <span style="font-size: 11px; font-weight: 800; color: #0E1A24">Rp 899.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 4px; border-top: 1px dashed #CBD5E1">
+          <span style="font-size: 9.5px; font-weight: 700; color: #0B5E2C; display: flex; align-items: center; gap: 4px">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            {{ $isIdLocale ? 'Stok Tersedia (Sisa 3 pasang)' : 'In Stock (3 pairs left)' }}
+          </span>
+          <span style="font-size: 8.5px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 1px 6px; border-radius: 4px">Ready Stock</span>
+        </div>
+      </div>
+
+      <!-- Product 2: Obsidian Black (Out of Stock / Dimmed Arsir) -->
+      <div style="border: 1px dashed #CBD5E1; border-radius: 9px; padding: 8px 12px; opacity: 0.55; display: flex; justify-content: space-between; align-items: center" class="kv-arsir-pattern">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <span style="width: 24px; height: 24px; border-radius: 50%; background: #334155"></span>
+          <div style="display: flex; flex-direction: column">
+            <span style="font-size: 11px; font-weight: 700; color: #475569">Runner Sneakers · Black</span>
+            <span style="font-size: 9px; color: #94A3B8">SKU #SNK-043 · Size 42</span>
+          </div>
+        </div>
+        <span style="font-size: 8.5px; font-weight: 700; color: #94A3B8">{{ $isIdLocale ? 'Habis (PO 7 hari)' : 'Sold Out (7d PO)' }}</span>
+      </div>
+
+      <!-- Automation Follow-Up Trigger Card -->
+      <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 9px; padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; opacity: 0; animation: kvIn .35s ease 2.30s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 9.5px; font-weight: 800; color: #13803F; display: flex; align-items: center; gap: 4px">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            {{ $isIdLocale ? 'Pemicu Follow-Up Otomatis' : 'Automated Follow-Up Trigger' }}
+          </span>
+          <span style="font-size: 8px; font-weight: 700; color: #13803F; background: #DDF3E4; padding: 1px 5px; border-radius: 3px">Active</span>
+        </div>
+        <span style="font-size: 9px; color: #0B5E2C; line-height: 1.35">
+          {{ $isIdLocale ? 'Kirim follow-up reservasi jika calon pembeli tidak merespons dalam 2 jam.' : 'Send proactive reservation reminder if customer goes quiet for > 2 hours.' }}
+        </span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Animated Dashed Query Signal Arrow (Behind WhatsApp Card) -->
+  <svg style="position: absolute; left: 245px; top: 125px; width: 95px; height: 30px; z-index: 2; pointer-events: none; opacity: 0; animation: kvIn .35s ease 0.70s both, kvOut .25s ease 1.70s 1 forwards">
+    <path d="M 90 15 L 8 15" fill="none" stroke="#13803F" stroke-width="2.5" stroke-dasharray="5 4" style="animation: kvDashLeft 0.5s linear infinite;" />
+    <polygon points="10,10 2,15 10,20" fill="#13803F" />
+  </svg>
+
+  <!-- RIGHT: Customer WhatsApp Card -->
+  <div style="width: 266px; height: 430px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 16px 14px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 5; animation: kvIn .35s ease .15s both">
+    
+    <!-- Chat Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #25D366; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </span>
+        <div style="display: flex; flex-direction: column">
+          <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Pelanggan · WhatsApp' : 'Customer · WhatsApp' }}</span>
+          <span style="font-size: 9px; font-weight: 600; color: #16A34A">● online</span>
+        </div>
+      </div>
+      <span style="font-size: 9.5px; font-weight: 800; color: #FFFFFF; background: #071C33; padding: 2px 7px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px">
+        <span style="width: 4px; height: 4px; border-radius: 50%; background: #2BD46A"></span>
+        22:30 · {{ $isIdLocale ? 'Luar Jam Kerja' : 'After Hours' }}
+      </span>
+    </div>
+
+    <!-- Chat Messages Stack -->
+    <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; justify-content: center">
+      
+      <!-- 1. Customer Inquiry (0.35s) -->
+      <div style="align-self: flex-start; max-width: 95%; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 8px 11px; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.35s both">
+        <span style="font-size: 11.5px; font-weight: 600; line-height: 1.4; color: #0E1A24">
+          {{ $isIdLocale ? 'Halo min, apakah Runner Sneakers warna biru size 42 masih ada stok?' : 'Hi! Is Runner Sneakers in blue size 42 still in stock?' }}
+        </span>
+        <span style="align-self: flex-end; font-size: 8.5px; font-weight: 600; color: #94A3B8">22:30</span>
+      </div>
+
+      <!-- 2. Typing Indicator morphs into AI Instant Answer & Product Card (0.75s to 1.70s) -->
+      <div style="display: grid; align-self: flex-start; width: 100%; max-width: 98%;">
+        <div style="grid-area: 1 / 1; align-self: start; justify-self: start; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 8px 12px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); transform-origin: top left; opacity: 0; animation: kvIn .3s ease 0.75s both, kvMorphOut .2s ease 1.70s 1 forwards">
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0s;"></span>
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.2s;"></span>
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.4s;"></span>
+        </div>
+
+        <div style="grid-area: 1 / 1; background: #FFFFFF; border-radius: 2px 12px 12px 12px; padding: 9px 11px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #C9E8D3; box-shadow: 0 3px 10px rgba(19, 128, 63, 0.08); transform-origin: top left; opacity: 0; animation: kvMorphIn .38s cubic-bezier(0.34, 1.35, 0.64, 1) 1.75s both">
+          <div style="display: flex; justify-content: space-between; align-items: center">
+            <span style="font-size: 10.5px; font-weight: 800; color: #13803F">Sales Assistant Agent</span>
+            <span style="font-size: 8.5px; font-weight: 700; color: #13803F; background: #EAF7EF; padding: 1px 5px; border-radius: 4px">0.2s</span>
+          </div>
+          <span style="font-size: 11px; line-height: 1.4; color: #0E1A24">
+            {{ $isIdLocale ? 'Iya kak! Warna Biru size 42 ready sisa 3 pasang. Mau langsung kami bantu amankan malam ini? 😊' : 'Yes! Blue size 42 is in stock with 3 pairs left. Would you like me to hold a pair for you? 😊' }}
+          </span>
+          <div style="display: flex; align-items: center; gap: 7px; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 6px; padding: 5px 8px">
+            <span style="width: 22px; height: 22px; border-radius: 4px; background: #1D4F91; flex-shrink: 0"></span>
+            <div style="display: flex; flex-direction: column; flex: 1">
+              <span style="font-size: 10px; font-weight: 700; color: #0E1A24">Runner Sneakers · Blue (42)</span>
+              <span style="font-size: 9px; font-weight: 800; color: #13803F">Rp 899.000 · In stock</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Time Lapse Pill (2.70s) -->
+      <div style="align-self: center; background: #F1F5F9; border-radius: 999px; padding: 3px 9px; font-size: 9px; font-weight: 700; color: #64748B; opacity: 0; animation: kvPopIn .3s ease 2.70s both">
+        ⏰ {{ $isIdLocale ? '2 jam kemudian · belum ada balasan' : '2 hours later · no response' }}
+      </div>
+
+      <!-- 4. Smart Proactive Follow-Up (3.15s) -->
+      <div style="align-self: flex-start; max-width: 95%; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 2px 12px 12px 12px; padding: 8px 11px; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); opacity: 0; animation: kvIn .35s ease 3.15s both">
+        <span style="font-size: 10.5px; font-weight: 700; line-height: 1.4; color: #0B5E2C">
+          {{ $isIdLocale ? 'Halo kak, stok biru size 42 tinggal 1 pasang nih. Mau kami bantu simpankan sebelum kehabisan? 🙏' : 'Hi again! Just a heads up, only 1 pair left in blue 42. Can I help reserve it before it sells out? 🙏' }}
+        </span>
+        <span style="align-self: flex-end; font-size: 8.5px; font-weight: 600; color: #16A34A">00:30</span>
+      </div>
+
+      <!-- 5. Customer Conversion Response (4.20s) -->
+      <div style="align-self: flex-end; max-width: 88%; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 12px 12px 2px 12px; padding: 8px 11px; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); opacity: 0; animation: kvIn .35s ease 4.20s both">
+        <span style="font-size: 11.5px; font-weight: 600; line-height: 1.4; color: #1E3A8A">
+          {{ $isIdLocale ? 'Wah boleh kak, saya ambil 1 ya! Tolong dibantu pesan. 👍' : 'Yes please, I will take it! Help me order. 👍' }}
+        </span>
+        <span style="align-self: flex-end; font-size: 8.5px; font-weight: 600; color: #3B82F6">00:32 · ✓✓</span>
+      </div>
+
+    </div>
+  </div>
+
 </div>
-<div style="position: absolute; inset: 0; padding: 28px; display: flex; flex-direction: column; justify-content: center; gap: 14px; font-size: 13px; line-height: 1.5; animation: kvIn .4s ease 4.2s both">
-<div style="background: #F4F6F5; border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
-<span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #4A5866">ORDER</span>
-<strong>Runner Sneakers · Blue · Size 42</strong>
-<div style="display: flex; gap: 8px">
-<span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; padding: 5px 10px; border-radius: 999px; background: #DDF3E4; color: #0B5E2C; animation: kvPopIn .3s ease 4.8s both">✓ Payment verified</span>
-<span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; padding: 5px 10px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 5.3s both">Purchase confirmed</span>
+
+<!-- SCENE 1: Order Agent (Left: Order Engine & Auto Payment Gateway, Right: WhatsApp Order & Instant Verification) -->
+<div class="kv-sales-scene" :class="{ 'kv-active': (sol === 1) || (sol === -1 && activeSol === 1) }">
+
+  <!-- LEFT: Checkout & Payment Verification Canvas -->
+  <div style="width: 270px; height: 430px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; opacity: 0; animation: kvIn .45s ease 0.6s both;">
+    
+    <!-- Background Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 24px; height: 24px; border-radius: 6px; background: #F0F9FF; color: #0284C7; display: flex; align-items: center; justify-content: center">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        </span>
+        <span style="font-size: 11px; font-weight: 800; color: #475569; letter-spacing: 0.02em">{{ $isIdLocale ? 'Mesin Pesanan & Verifikasi Billing' : 'Order & Payment Verification' }}</span>
+      </div>
+      <span style="font-size: 10px; font-weight: 700; color: #0369A1; background: #E0F2FE; padding: 2px 7px; border-radius: 999px; display: flex; align-items: center; gap: 4px">
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: #0284C7"></span>
+        Auto-Billing
+      </span>
+    </div>
+
+    <!-- Main Payment & Order Processing Stack -->
+    <div style="display: flex; flex-direction: column; gap: 9px; flex: 1; justify-content: center; padding: 6px 0">
+      
+      <!-- Order Summary Card (0.90s) -->
+      <div style="background: #071C33; color: #FFFFFF; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 4px 14px rgba(7,28,51,0.12); opacity: 0; animation: kvIn .35s ease 0.90s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.05em; color: #2BD46A">ORDER #ORD-8821</span>
+          <span style="font-size: 8.5px; font-weight: 800; color: #FFFFFF; background: rgba(255,255,255,0.16); padding: 1px 6px; border-radius: 4px">1 Item</span>
+        </div>
+        <div style="font-size: 11px; font-weight: 700; color: #E2E8F0">Runner Sneakers · Blue · Size 42</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #94A3B8; padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.1)">
+          <span>{{ $isIdLocale ? 'Ongkos Kirim' : 'Shipping' }}: <strong style="color: #2BD46A">{{ $isIdLocale ? 'Gratis' : 'Free' }}</strong></span>
+          <span style="font-size: 12px; font-weight: 900; color: #FFFFFF">Rp 899.000</span>
+        </div>
+      </div>
+
+      <!-- Virtual Account & Payment Status Card (1.30s to 2.80s transitions to Paid) -->
+      <div style="border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; display: flex; flex-direction: column; gap: 6px; opacity: 0; animation: kvIn .35s ease 1.30s both, kvMatchDoc .5s ease 2.90s 1 forwards">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div style="display: flex; align-items: center; gap: 6px">
+            <span style="font-size: 10.5px; font-weight: 800; color: #0284C7; background: #E0F2FE; padding: 2px 6px; border-radius: 4px">BCA VA</span>
+            <span style="font-size: 11.5px; font-weight: 800; color: #0E1A24">8271 0812 3456 7890</span>
+          </div>
+          <!-- Dynamic Status: Waiting -> Paid -->
+          <span style="display: grid; font-size: 9px; font-weight: 800">
+            <span style="grid-area: 1 / 1; padding: 1px 6px; border-radius: 4px; background: #FEF3C7; color: #92400E; opacity: 1; animation: kvOut .2s ease 2.80s 1 forwards">{{ $isIdLocale ? 'Menunggu Bayar' : 'Awaiting Payment' }}</span>
+            <span style="grid-area: 1 / 1; padding: 1px 6px; border-radius: 4px; background: #DDF3E4; color: #0B5E2C; opacity: 0; animation: kvPopIn .3s ease 2.90s both">{{ $isIdLocale ? '✓ LUNAS' : '✓ PAID' }}</span>
+          </span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 9.5px; color: #64748B">
+          <span>{{ $isIdLocale ? 'Batas Waktu: 24 Jam' : 'Time Limit: 24 Hours' }}</span>
+          <span style="font-weight: 700; color: #0E1A24">Nominal: Rp 899.000</span>
+        </div>
+      </div>
+
+      <!-- Bank Webhook Verification Signal (Pops in at 2.60s) -->
+      <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; opacity: 0; animation: kvIn .35s ease 2.60s both">
+        <div style="display: flex; align-items: center; gap: 6px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span style="font-size: 10px; font-weight: 800; color: #0B5E2C">{{ $isIdLocale ? 'Mutasi Bank Terdeteksi' : 'Bank Webhook Received' }}</span>
+        </div>
+        <span style="font-size: 9px; font-weight: 700; color: #13803F">INV/2026/0491</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Animated Dashed Query Signal Arrow -->
+  <svg style="position: absolute; left: 245px; top: 135px; width: 95px; height: 30px; z-index: 2; pointer-events: none; opacity: 0; animation: kvIn .35s ease 0.70s both, kvOut .25s ease 1.70s 1 forwards">
+    <path d="M 90 15 L 8 15" fill="none" stroke="#0284C7" stroke-width="2.5" stroke-dasharray="5 4" style="animation: kvDashLeft 0.5s linear infinite;" />
+    <polygon points="10,10 2,15 10,20" fill="#0284C7" />
+  </svg>
+
+  <!-- RIGHT: Customer WhatsApp Card -->
+  <div style="width: 266px; height: 430px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 16px 14px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 5; animation: kvIn .35s ease .15s both">
+    
+    <!-- Chat Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #25D366; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </span>
+        <div style="display: flex; flex-direction: column">
+          <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Pelanggan · WhatsApp' : 'Customer · WhatsApp' }}</span>
+          <span style="font-size: 9px; font-weight: 600; color: #16A34A">● online</span>
+        </div>
+      </div>
+      <span style="display: grid; font-size: 9.5px; font-weight: 800">
+        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #FFF1D6; color: #7A4A00">{{ $isIdLocale ? 'Pesanan Dibuat' : 'Order Placed' }}</span>
+        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #DDF3E4; color: #0B5E2C; opacity: 0; animation: kvPopIn .3s ease 3.50s both">{{ $isIdLocale ? 'Lunas · Terverifikasi' : 'Paid · Confirmed' }}</span>
+      </span>
+    </div>
+
+    <!-- Chat Messages Stack -->
+    <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; justify-content: center">
+      
+      <!-- 1. Customer Shipping Address (0.35s) -->
+      <div style="align-self: flex-start; max-width: 95%; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 8px 11px; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.35s both">
+        <span style="font-size: 11.5px; font-weight: 600; line-height: 1.4; color: #0E1A24">
+          {{ $isIdLocale ? 'Kirim ke alamat Dimas, Jl. Sudirman Kav 24 Jakarta Selatan ya min.' : 'Please ship to Dimas, Jl. Sudirman Kav 24 South Jakarta.' }}
+        </span>
+        <span style="align-self: flex-end; font-size: 8.5px; font-weight: 600; color: #94A3B8">00:33</span>
+      </div>
+
+      <!-- 2. Agent Order Created & Payment Invoice (1.10s) -->
+      <div style="align-self: flex-start; max-width: 95%; background: #FFFFFF; border: 1px solid #BAE6FD; border-radius: 2px 12px 12px 12px; padding: 8px 11px; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08); opacity: 0; animation: kvIn .35s ease 1.10s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 10.5px; font-weight: 800; color: #0284C7">Order Agent</span>
+          <span style="font-size: 8.5px; font-weight: 700; color: #0284C7; background: #E0F2FE; padding: 1px 5px; border-radius: 4px">#ORD-8821</span>
+        </div>
+        <span style="font-size: 11px; line-height: 1.4; color: #0E1A24">
+          {{ $isIdLocale ? 'Pesanan berhasil dibuat kak! Total Rp 899.000. Silakan transfer via BCA VA berikut ya:' : 'Order successfully created! Total $89. Transfer via BCA VA:' }}
+        </span>
+        <div style="background: #F0F9FF; border: 1px dashed #7DD3FC; border-radius: 6px; padding: 5px 8px; display: flex; justify-content: space-between; align-items: center">
+          <strong style="font-size: 11px; color: #0369A1">8271 0812 3456 7890</strong>
+          <span style="font-size: 8px; font-weight: 800; color: #0284C7; background: #FFFFFF; padding: 1px 4px; border-radius: 3px">Salin</span>
+        </div>
+      </div>
+
+      <!-- 3. Typing Indicator Morphs into Payment Confirmed Bubble (2.80s to 3.45s) -->
+      <div style="display: grid; align-self: flex-start; width: 100%; max-width: 98%;">
+        <div style="grid-area: 1 / 1; align-self: start; justify-self: start; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 8px 12px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); transform-origin: top left; opacity: 0; animation: kvIn .3s ease 2.80s both, kvMorphOut .2s ease 3.40s 1 forwards">
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0s;"></span>
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.2s;"></span>
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.4s;"></span>
+        </div>
+
+        <div style="grid-area: 1 / 1; background: #FFFFFF; border-radius: 2px 12px 12px 12px; padding: 9px 11px; display: flex; flex-direction: column; gap: 5px; border: 1px solid #C9E8D3; box-shadow: 0 3px 10px rgba(19, 128, 63, 0.08); transform-origin: top left; opacity: 0; animation: kvMorphIn .38s cubic-bezier(0.34, 1.35, 0.64, 1) 3.45s both">
+          <div style="display: flex; justify-content: space-between; align-items: center">
+            <span style="font-size: 10.5px; font-weight: 800; color: #13803F">Order Agent</span>
+            <span style="font-size: 8.5px; font-weight: 700; color: #0B5E2C; background: #DDF3E4; padding: 1px 5px; border-radius: 4px">✓ Payment Verified</span>
+          </div>
+          <span style="font-size: 11px; line-height: 1.4; color: #0E1A24">
+            {{ $isIdLocale ? 'Pembayaran Rp 899.000 telah kami terima & terverifikasi otomatis! Invoice INV/2026/0491 telah terbit. Pesanan segera kami kemas ya kak 🎁' : 'Payment of $89 received & verified automatically! Invoice INV/2026/0491 issued. Packing your order now 🎁' }}
+          </span>
+          <span style="align-self: flex-start; font-size: 9px; font-weight: 800; color: #0B5E2C; background: #EAF7EF; padding: 2px 6px; border-radius: 4px">
+            {{ $isIdLocale ? '✓ Pembelian Dikonfirmasi' : '✓ Purchase Confirmed' }}
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div>
-</div>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; font-size: 12px; font-weight: 800; text-align: center">
-<span style="padding: 9px 0; border-radius: 8px; border: 1px solid #E3E8E6; animation: kvLit .3s ease 5.9s both">Packed</span>
-<span style="padding: 9px 0; border-radius: 8px; border: 1px solid #E3E8E6; animation: kvLit .3s ease 6.2s both">Shipped</span>
-<span style="padding: 9px 0; border-radius: 8px; border: 1px solid #E3E8E6; animation: kvLit .3s ease 6.5s both">Out for delivery</span>
-</div>
-<div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 10px 13px; border-radius: 14px 4px 14px 14px; animation: kvIn .3s ease 6.8s both">Where is my order?</div>
-<div style="align-self: flex-start; max-width: 80%; background: #F4F6F5; padding: 10px 13px; border-radius: 4px 14px 14px 14px; animation: kvIn .3s ease 7.3s both"><strong style="font-size: 11px; color: #13803F">Shipment Tracking Agent</strong><br>It's out for delivery and should arrive today.</div>
-</div>
+
+<!-- SCENE 2: Shipment Tracking Agent (Left: Live Courier API Tracking, Right: WhatsApp Real-Time Delivery Check) -->
+<div class="kv-sales-scene" :class="{ 'kv-active': (sol === 2) || (sol === -1 && activeSol === 2) }">
+
+  <!-- LEFT: Logistics & Courier Tracking Canvas -->
+  <div style="width: 270px; height: 430px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; opacity: 0; animation: kvIn .45s ease 0.6s both;">
+    
+    <!-- Background Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 24px; height: 24px; border-radius: 6px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+        </span>
+        <span style="font-size: 11px; font-weight: 800; color: #475569; letter-spacing: 0.02em">{{ $isIdLocale ? 'Pelacakan Ekspedisi Real-Time' : 'Live Courier API Tracking' }}</span>
+      </div>
+      <span style="font-size: 10px; font-weight: 700; color: #0284C7; background: #E0F2FE; padding: 2px 7px; border-radius: 999px; display: flex; align-items: center; gap: 4px">
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: #0284C7"></span>
+        JNE Express API
+      </span>
+    </div>
+
+    <!-- Stepper & Tracking Details -->
+    <div style="display: flex; flex-direction: column; gap: 9px; flex: 1; justify-content: center; padding: 6px 0">
+      
+      <!-- AWB Header Card -->
+      <div style="border: 1px solid #E2E8F0; border-radius: 9px; padding: 8px 11px; background: #F8FAFA; display: flex; justify-content: space-between; align-items: center">
+        <div style="display: flex; flex-direction: column">
+          <span style="font-size: 11.5px; font-weight: 800; color: #0E1A24">JNE-88291048201</span>
+          <span style="font-size: 9.5px; color: #64748B">Dimas A. · Jakarta Selatan</span>
+        </div>
+        <span style="font-size: 9px; font-weight: 800; color: #13803F; background: #DDF3E4; padding: 2px 6px; border-radius: 4px">Regular</span>
+      </div>
+
+      <!-- Stepper Tracking Timeline -->
+      <div style="display: flex; flex-direction: column; gap: 6px; padding: 4px 6px">
+        
+        <!-- Step 1: Picked Up -->
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #64748B">
+          <span style="width: 14px; height: 14px; border-radius: 50%; background: #C9E8D3; color: #0B5E2C; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 800">✓</span>
+          <span>09:30 · {{ $isIdLocale ? 'Paket Dipickup Kurir' : 'Picked Up by Courier' }}</span>
+        </div>
+
+        <!-- Step 2: Sorting Hub -->
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 10px; color: #64748B">
+          <span style="width: 14px; height: 14px; border-radius: 50%; background: #C9E8D3; color: #0B5E2C; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 800">✓</span>
+          <span>14:15 · {{ $isIdLocale ? 'Tiba di Sorting Hub Jakarta' : 'Arrived at Sorting Hub' }}</span>
+        </div>
+
+        <!-- Step 3: Out for Delivery (ACTIVE TARGET) -->
+        <div style="border: 1.5px solid #CBD5E1; border-radius: 8px; padding: 7px 10px; background: #F8FAFA; display: flex; flex-direction: column; gap: 2px; animation: kvMatchDoc .5s ease 1.30s 1 forwards">
+          <div style="display: flex; justify-content: space-between; align-items: center">
+            <div style="display: flex; align-items: center; gap: 6px">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #13803F; box-shadow: 0 0 0 3px rgba(19,128,63,0.25)"></span>
+              <span style="font-size: 10.5px; font-weight: 800; color: #0E1A24">18:40 · {{ $isIdLocale ? 'Dalam Pengantaran' : 'Out for Delivery' }}</span>
+            </div>
+            <span style="font-size: 8.5px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 1px 5px; border-radius: 3px">Active</span>
+          </div>
+          <span style="font-size: 9.5px; color: #475569; padding-left: 14px">
+            {{ $isIdLocale ? 'Kurir: Pak Joko (+62 812-9921-xxxx)' : 'Courier: Joko W. (+62 812-9921-xxxx)' }}
+          </span>
+        </div>
+
+      </div>
+
+      <!-- ETA Card (1.80s) -->
+      <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; opacity: 0; animation: kvIn .35s ease 1.80s both">
+        <span style="font-size: 10px; font-weight: 700; color: #0B5E2C">
+          ⏱️ {{ $isIdLocale ? 'Estimasi Tiba: Hari Ini sebelum 21:00 WIB' : 'Estimated: Today before 9:00 PM' }}
+        </span>
+        <span style="font-size: 8.5px; font-weight: 800; color: #13803F; background: #DDF3E4; padding: 1px 5px; border-radius: 3px">On Time</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Animated Dashed Query Signal Arrow -->
+  <svg style="position: absolute; left: 245px; top: 125px; width: 95px; height: 30px; z-index: 2; pointer-events: none; opacity: 0; animation: kvIn .35s ease 0.70s both, kvOut .25s ease 1.70s 1 forwards">
+    <path d="M 90 15 L 8 15" fill="none" stroke="#13803F" stroke-width="2.5" stroke-dasharray="5 4" style="animation: kvDashLeft 0.5s linear infinite;" />
+    <polygon points="10,10 2,15 10,20" fill="#13803F" />
+  </svg>
+
+  <!-- RIGHT: Customer WhatsApp Card -->
+  <div style="width: 266px; height: 430px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 16px 14px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 5; animation: kvIn .35s ease .15s both">
+    
+    <!-- Chat Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #25D366; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </span>
+        <div style="display: flex; flex-direction: column">
+          <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Pelanggan · WhatsApp' : 'Customer · WhatsApp' }}</span>
+          <span style="font-size: 9px; font-weight: 600; color: #16A34A">● online</span>
+        </div>
+      </div>
+      <span style="font-size: 9.5px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 2px 7px; border-radius: 999px">
+        {{ $isIdLocale ? 'Resi Aktif' : 'Tracking Active' }}
+      </span>
+    </div>
+
+    <!-- Chat Messages Stack -->
+    <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; justify-content: center">
+      
+      <!-- 1. Customer Tracking Inquiry (0.35s) -->
+      <div style="align-self: flex-start; max-width: 95%; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 8px 11px; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.35s both">
+        <span style="font-size: 11.5px; font-weight: 600; line-height: 1.4; color: #0E1A24">
+          {{ $isIdLocale ? 'Sore min, boleh tolong cek paket sepatu saya resi JNE-88291048201 sudah sampai mana ya?' : 'Hi! Could you check where my shoe package with tracking JNE-88291048201 is right now?' }}
+        </span>
+        <span style="align-self: flex-end; font-size: 8.5px; font-weight: 600; color: #94A3B8">18:42</span>
+      </div>
+
+      <!-- 2. Typing Indicator Morphs into Live Delivery Update Bubble (0.75s to 1.70s) -->
+      <div style="display: grid; align-self: flex-start; width: 100%; max-width: 98%;">
+        <div style="grid-area: 1 / 1; align-self: start; justify-self: start; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 8px 12px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); transform-origin: top left; opacity: 0; animation: kvIn .3s ease 0.75s both, kvMorphOut .2s ease 1.70s 1 forwards">
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0s;"></span>
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.2s;"></span>
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.4s;"></span>
+        </div>
+
+        <div style="grid-area: 1 / 1; background: #FFFFFF; border-radius: 2px 12px 12px 12px; padding: 9px 11px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #C9E8D3; box-shadow: 0 3px 10px rgba(19, 128, 63, 0.08); transform-origin: top left; opacity: 0; animation: kvMorphIn .38s cubic-bezier(0.34, 1.35, 0.64, 1) 1.75s both">
+          <div style="display: flex; justify-content: space-between; align-items: center">
+            <span style="font-size: 10.5px; font-weight: 800; color: #13803F">Shipment Tracking Agent</span>
+            <span style="font-size: 8.5px; font-weight: 700; color: #0B5E2C; background: #DDF3E4; padding: 1px 5px; border-radius: 4px">Live GPS</span>
+          </div>
+          <span style="font-size: 11px; line-height: 1.4; color: #0E1A24">
+            {{ $isIdLocale ? 'Halo kak Dimas! Paket kamu sedang dibawa kurir (Pak Joko) menuju alamat kakak. Estimasi tiba hari ini sebelum jam 21:00 ya 🚚📦' : 'Hi Dimas! Your package is currently out for delivery with courier Joko. Estimated arrival today before 9:00 PM 🚚📦' }}
+          </span>
+          <div style="display: flex; align-items: center; gap: 6px; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 6px; padding: 4px 7px">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: #13803F; animation: kvTypingDot 1.2s infinite ease-in-out"></span>
+            <span style="font-size: 9.5px; font-weight: 700; color: #0E1A24">{{ $isIdLocale ? 'Kurir di Jalan (SLA Tepat Waktu)' : 'Courier on Road (On-Time SLA)' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Customer Satisfaction Reply (3.10s) -->
+      <div style="align-self: flex-end; max-width: 88%; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 12px 12px 2px 12px; padding: 8px 11px; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); opacity: 0; animation: kvIn .35s ease 3.10s both">
+        <span style="font-size: 11.5px; font-weight: 600; line-height: 1.4; color: #1E3A8A">
+          {{ $isIdLocale ? 'Wah mantap cepat sekali infonya, terima kasih ya min! 👍' : 'Awesome, so quick! Thank you so much! 👍' }}
+        </span>
+        <span style="align-self: flex-end; font-size: 8.5px; font-weight: 600; color: #3B82F6">18:44 · ✓✓</span>
+      </div>
+
+      <!-- 4. Agent Polite Wrap-Up (4.00s) -->
+      <div style="align-self: flex-start; max-width: 95%; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 2px 12px 12px 12px; padding: 8px 11px; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); opacity: 0; animation: kvIn .35s ease 4.00s both">
+        <span style="font-size: 11px; line-height: 1.4; color: #0E1A24">
+          {{ $isIdLocale ? 'Sama-sama kak! Kalau ada kendala saat paket diterima, langsung hubungi kami ya 😊' : 'You are welcome! If anything comes up when the package arrives, let us know 😊' }}
+        </span>
+        <span style="align-self: flex-end; font-size: 8.5px; font-weight: 600; color: #94A3B8">18:45</span>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 </div>
 </div>
