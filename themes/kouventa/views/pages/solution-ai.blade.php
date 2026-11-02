@@ -485,14 +485,14 @@
 @endphp
 
 <style>
-/* Rigid 2-column layout for CS illustration scenes - strictly side-by-side */
+/* Rigid 2-column layout for CS illustration scenes */
 #kv-ill-cs .kv-cs-scene {
   position: absolute;
   inset: 0;
-  padding: 24px 26px;
+  padding: 22px 24px;
   box-sizing: border-box;
   display: none;
-  grid-template-columns: 264px 264px !important;
+  grid-template-columns: 270px 266px !important;
   justify-content: space-between !important;
   align-items: center !important;
   opacity: 0;
@@ -502,110 +502,182 @@
   display: grid !important;
   opacity: 1 !important;
 }
+.kv-arsir-pattern {
+  background: repeating-linear-gradient(-45deg, #E2E8F0, #E2E8F0 3px, #F8FAFA 3px, #F8FAFA 7px);
+}
+@keyframes kvTypingDot {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.35; }
+  40% { transform: translateY(-4px); opacity: 1; }
+}
+@keyframes kvDashLeft {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 16; }
+}
+@keyframes kvMatchDoc {
+  0% { border-color: #CBD5E1; background: #F8FAFA; transform: scale(0.98); }
+  50% { border-color: #13803F; background: #FFFFFF; transform: scale(1.02); box-shadow: 0 8px 24px rgba(19, 128, 63, 0.14); }
+  100% { border-color: #13803F; background: #FFFFFF; transform: scale(1); box-shadow: 0 4px 16px rgba(19, 128, 63, 0.08); }
+}
 </style>
 
-<!-- SCENE 0: Customer Support Agent (Left: Knowledge Base, Right: Customer Chat) -->
+<!-- SCENE 0: Customer Support Agent (Left: Background Process Canvas, Right: Customer WhatsApp Card) -->
 <div class="kv-cs-scene" :class="{ 'kv-active': (sol === 0) || (sol === -1 && activeSol === 0) }">
 
-  <!-- LEFT: Knowledge Base (Store FAQ.pdf) -->
-  <div style="width: 264px; height: 430px; background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .15s both">
-    <!-- Header -->
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 10px">
-      <div style="display: flex; align-items: center; gap: 6px">
-        <span style="width: 26px; height: 26px; border-radius: 6px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+  <!-- LEFT: Background Knowledge Retrieval Process (No outer card, open process schematic) -->
+  <div style="width: 270px; height: 440px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative">
+    
+    <!-- Background Process Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 22px; height: 22px; border-radius: 6px; background: #EFF6FF; color: #2563EB; display: flex; align-items: center; justify-content: center">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10M6 10h10M6 14h6"></path></svg>
         </span>
-        <span style="font-size: 13px; font-weight: 800; color: #0E1A24">Store FAQ.pdf</span>
+        <span style="font-size: 11px; font-weight: 800; color: #475569; letter-spacing: 0.02em">{{ $isIdLocale ? 'Proses Basis Pengetahuan' : 'Knowledge Base Pipeline' }}</span>
       </div>
-      <span style="font-size: 10px; font-weight: 700; color: #0B5E2C; background: #DDF3E4; padding: 2px 7px; border-radius: 999px">{{ $isIdLocale ? 'Basis Pengetahuan' : 'Knowledge Base' }}</span>
-    </div>
-
-    <!-- Document Skeleton Lines (Top) -->
-    <div style="display: flex; flex-direction: column; gap: 6px">
-      <span style="height: 6px; width: 92%; border-radius: 3px; background: #D5DCD9"></span>
-      <span style="height: 6px; width: 72%; border-radius: 3px; background: #D5DCD9"></span>
-    </div>
-
-    <!-- Highlighted Extracted Chunk (Animates in when right-side chat searches) -->
-    <div style="background: #FFFFFF; border: 1px solid #C9E8D3; border-left: 3.5px solid #13803F; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 14px rgba(19, 128, 63, 0.1); animation: kvIn .4s ease 1.2s both">
-      <div style="display: flex; justify-content: space-between; align-items: center">
-        <strong style="font-size: 11px; color: #13803F; font-weight: 800">{{ $isIdLocale ? 'Bagian 3.1 · Jam Operasional' : 'Section 3.1 · Store Hours' }}</strong>
-        <span style="font-size: 9px; font-weight: 800; color: #0B5E2C; background: #EAF7EF; padding: 1px 6px; border-radius: 4px">99.8% Match</span>
-      </div>
-      <span style="font-size: 11px; line-height: 1.45; color: #1E293B; font-weight: 500">
-        {{ $isIdLocale ? 'Seluruh gerai beroperasi normal setiap hari dari jam 08:00 sampai 21:00 tanpa libur, termasuk akhir pekan dan tanggal merah.' : 'All store branches operate daily from 08:00 to 21:00 without exception, including weekends and public holidays.' }}
+      <span style="font-size: 10px; font-weight: 700; color: #0B5E2C; background: #EAF7EF; padding: 2px 7px; border-radius: 999px; display: flex; align-items: center; gap: 4px">
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F"></span>
+        Vector RAG
       </span>
     </div>
 
-    <!-- Document Skeleton Lines (Bottom) -->
-    <div style="display: flex; flex-direction: column; gap: 6px">
-      <span style="height: 6px; width: 85%; border-radius: 3px; background: #D5DCD9"></span>
-      <span style="height: 6px; width: 58%; border-radius: 3px; background: #D5DCD9"></span>
+    <!-- Document Repository Stack (Arsir / Hatched schematic items) -->
+    <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; padding: 8px 0">
+
+      <!-- 1. Hatched Document: Katalog_Produk_2026.pdf (Background/Unmatched) -->
+      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease .15s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div style="display: flex; align-items: center; gap: 6px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span style="font-size: 11px; font-weight: 700; color: #64748B">Katalog_Produk_2026.pdf</span>
+          </div>
+          <span style="font-size: 9px; font-weight: 600; color: #94A3B8">98 chunks</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span class="kv-arsir-pattern" style="height: 6px; width: 90%; border-radius: 3px; display: block"></span>
+          <span class="kv-arsir-pattern" style="height: 6px; width: 65%; border-radius: 3px; display: block"></span>
+        </div>
+      </div>
+
+      <!-- 2. Target Matched Document: SOP_Operasional_Toko.pdf (Lights up on match!) -->
+      <div style="border: 1px solid #CBD5E1; border-radius: 12px; padding: 12px 14px; background: #F8FAFA; display: flex; flex-direction: column; gap: 8px; transition: all 0.3s ease; animation: kvIn .35s ease .2s both, kvMatchDoc .5s ease 1.3s 1 forwards">
+        <!-- Document Title & Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div style="display: flex; align-items: center; gap: 6px">
+            <span style="width: 22px; height: 22px; border-radius: 5px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            </span>
+            <span style="font-size: 12px; font-weight: 800; color: #0E1A24">SOP_Operasional_Toko.pdf</span>
+          </div>
+          <span style="font-size: 9px; font-weight: 700; color: #13803F; background: #DDF3E4; padding: 1px 6px; border-radius: 4px">SOP</span>
+        </div>
+
+        <!-- Badges (99.4% Match, Confidence 99%) -->
+        <div style="display: flex; align-items: center; gap: 6px; animation: kvPopIn .35s ease 1.5s both">
+          <span style="font-size: 10px; font-weight: 800; color: #0B5E2C; background: #EAF7EF; border: 1px solid #C9E8D3; padding: 2px 7px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            99.4% Match
+          </span>
+          <span style="font-size: 10px; font-weight: 800; color: #1D4ED8; background: #EFF6FF; border: 1px solid #BFDBFE; padding: 2px 7px; border-radius: 5px">
+            Confidence 99%
+          </span>
+        </div>
+
+        <!-- Extracted Text Snippet -->
+        <div style="background: #F8FAFA; border-left: 3px solid #13803F; border-radius: 6px; padding: 7px 10px; display: flex; flex-direction: column; gap: 3px; animation: kvIn .35s ease 1.7s both">
+          <span style="font-size: 10px; font-weight: 800; color: #13803F">{{ $isIdLocale ? 'Bagian 3.1 · Jam Operasional' : 'Section 3.1 · Store Hours' }}</span>
+          <span style="font-size: 11px; line-height: 1.4; color: #1E293B; font-weight: 500">
+            {{ $isIdLocale ? 'Seluruh gerai beroperasi normal setiap hari dari jam 08:00 sampai 21:00 tanpa libur, termasuk akhir pekan dan tanggal merah.' : 'All store branches operate daily from 08:00 to 21:00 without exception, including weekends and public holidays.' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- 3. Hatched Document: Kebijakan_Garansi_Retur.docx (Background/Unmatched) -->
+      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease .25s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div style="display: flex; align-items: center; gap: 6px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span style="font-size: 11px; font-weight: 700; color: #64748B">Kebijakan_Garansi_Retur.docx</span>
+          </div>
+          <span style="font-size: 9px; font-weight: 600; color: #94A3B8">64 chunks</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span class="kv-arsir-pattern" style="height: 6px; width: 85%; border-radius: 3px; display: block"></span>
+          <span class="kv-arsir-pattern" style="height: 6px; width: 55%; border-radius: 3px; display: block"></span>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Extraction Confirmation Pill -->
-    <div style="padding: 8px 12px; border-radius: 8px; background: #EAF7EF; border: 1px solid #C9E8D3; display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #0B5E2C; animation: kvPopIn .3s ease 1.6s both">
-      <span style="display: flex; align-items: center; gap: 6px">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-        {{ $isIdLocale ? 'Data Akurat Ditemukan' : 'Knowledge Retrieved' }}
-      </span>
-      <span style="color: #13803F; font-weight: 800">0.2s</span>
+    <!-- Pipeline Footer Metric -->
+    <div style="background: #F1F5F9; border-radius: 8px; padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #475569">
+      <span style="font-weight: 700; color: #1E293B">⚡ {{ $isIdLocale ? 'Pencarian Semantik: 0.18s' : 'Semantic Search: 0.18s' }}</span>
+      <span style="color: #64748B">{{ $isIdLocale ? '1.420 potongan dipindai' : '1,420 chunks scanned' }}</span>
     </div>
   </div>
 
-  <!-- RIGHT: Customer WhatsApp Chat Conversation -->
-  <div style="width: 264px; height: 430px; background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .15s both">
+  <!-- Animated Dashed Connector Line (Signal flows from WhatsApp Typing to SOP Document) -->
+  <svg style="position: absolute; left: 245px; top: 215px; width: 85px; height: 30px; z-index: 10; pointer-events: none; animation: kvIn .3s ease 1.0s both, kvOut .25s ease 2.35s 1 forwards">
+    <path d="M 80 15 L 8 15" fill="none" stroke="#13803F" stroke-width="2.5" stroke-dasharray="5 4" style="animation: kvDashLeft 0.5s linear infinite;" />
+    <polygon points="10,10 2,15 10,20" fill="#13803F" />
+  </svg>
+
+  <!-- RIGHT: Customer WhatsApp Chat Card (Foreground Interface) -->
+  <div style="width: 266px; height: 440px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); animation: kvIn .35s ease .15s both">
+    
     <!-- Chat Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
       <div style="display: flex; align-items: center; gap: 7px">
-        <span style="width: 26px; height: 26px; border-radius: 50%; background: #25D366; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2z"></path></svg>
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #25D366; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2z"></path></svg>
         </span>
-        <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Pelanggan · WhatsApp' : 'Customer · WhatsApp' }}</span>
+        <div style="display: flex; flex-direction: column">
+          <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Pelanggan · WhatsApp' : 'Customer · WhatsApp' }}</span>
+          <span style="font-size: 9px; font-weight: 600; color: #16A34A">● online</span>
+        </div>
       </div>
       <span style="display: grid; font-size: 10px; font-weight: 800">
         <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #E3E8E6; color: #4A5866">{{ $isIdLocale ? 'Baru' : 'New' }}</span>
-        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 2.4s both">{{ $isIdLocale ? 'Selesai' : 'Resolved' }}</span>
+        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 2.75s both">{{ $isIdLocale ? 'Selesai' : 'Resolved' }}</span>
       </span>
     </div>
 
     <!-- Chat Messages Stack -->
     <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center">
-      <!-- 1. Customer Message (Natural conversational phrasing) -->
-      <div style="align-self: flex-start; max-width: 95%; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.35s both">
+      <!-- 1. Customer Message (Pops in at 0.5s) -->
+      <div style="align-self: flex-start; max-width: 95%; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.5s both">
         <span style="font-size: 12px; font-weight: 600; line-height: 1.45; color: #0E1A24">
           {{ $isIdLocale ? 'Halo kak! Apakah hari ini tokonya buka? Tutupnya jam berapa ya?' : 'Hi there! Are you guys open today? What time do you close?' }}
         </span>
         <span style="align-self: flex-end; font-size: 9px; font-weight: 600; color: #94A3B8">10:14 AM</span>
       </div>
 
-      <!-- 2. Searching/Retrieval Indicator (Visual signal linking to Left Knowledge Base) -->
-      <div style="align-self: flex-start; background: #EFF6FF; border: 1px dashed #93C5FD; border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #1D4ED8; animation: kvIn .3s ease 0.75s both, kvOut .3s ease 1.9s 1 forwards">
-        <span style="width: 6px; height: 6px; border-radius: 50%; background: #2563EB; box-shadow: 0 0 0 2px rgba(37,99,235,0.25)"></span>
-        <span>{{ $isIdLocale ? 'Mencari di Store FAQ.pdf...' : 'Searching Store FAQ.pdf...' }}</span>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <!-- 2. Typing Indicator (Bouncing dots in bubble from 1.0s to 2.4s) -->
+      <div style="align-self: flex-start; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 10px 14px; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); animation: kvIn .3s ease 1.0s both, kvOut .25s ease 2.35s 1 forwards">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0s;"></span>
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.2s;"></span>
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #13803F; display: inline-block; animation: kvTypingDot 1.2s infinite ease-in-out 0.4s;"></span>
       </div>
 
-      <!-- 3. AI Agent Response (Delivering answer back to Right chat) -->
-      <div style="align-self: flex-start; max-width: 98%; background: #FFFFFF; border-radius: 2px 12px 12px 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #C9E8D3; box-shadow: 0 3px 8px rgba(19, 128, 63, 0.06); animation: kvIn .35s ease 2.0s both">
+      <!-- 3. AI Agent Response (Replaces typing indicator at 2.45s) -->
+      <div style="align-self: flex-start; max-width: 98%; background: #FFFFFF; border-radius: 2px 12px 12px 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #C9E8D3; box-shadow: 0 3px 10px rgba(19, 128, 63, 0.08); animation: kvIn .35s ease 2.45s both">
         <div style="display: flex; justify-content: space-between; align-items: center">
           <span style="font-size: 11px; font-weight: 800; color: #13803F">{{ $isIdLocale ? 'Customer Support Agent' : 'Customer Support Agent' }}</span>
-          <span style="font-size: 9px; font-weight: 700; color: #13803F; background: #EAF7EF; padding: 1px 5px; border-radius: 4px">0.4s</span>
+          <span style="font-size: 9px; font-weight: 700; color: #13803F; background: #EAF7EF; padding: 1px 5px; border-radius: 4px">0.3s</span>
         </div>
         <span style="font-size: 12px; line-height: 1.45; color: #0E1A24">
           {{ $isIdLocale ? 'Halo! Iya kak, seluruh gerai kami buka setiap hari jam 08:00–21:00. Ditunggu kedatangannya ya! 😊' : 'Hi! Yes, we\'re open every day from 08:00 to 21:00 across all outlets. See you soon! 😊' }}
         </span>
         <span style="align-self: flex-start; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; background: #DDF3E4; color: #0B5E2C; display: inline-flex; align-items: center; gap: 4px">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-          Store FAQ.pdf
+          SOP_Operasional_Toko.pdf
         </span>
       </div>
     </div>
 
     <!-- Bottom Status Bar -->
-    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 6px 10px; border-radius: 6px; animation: kvIn .3s ease 2.5s both">
+    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 6px 10px; border-radius: 6px; animation: kvIn .3s ease 2.8s both">
       <span>✓ {{ $isIdLocale ? 'Terjawab otomatis dari SOP' : 'Auto-resolved from SOP' }}</span>
-      <span style="color: #065F46">{{ $isIdLocale ? '100% Akurat' : '100% Grounded' }}</span>
+      <span style="color: #065F46; font-weight: 800">{{ $isIdLocale ? '100% Akurat' : '100% Grounded' }}</span>
     </div>
   </div>
 </div>
