@@ -60,25 +60,42 @@
     </div>
 
     <style>
-        .kv-editor-layout {
-            display: grid;
-            grid-template-columns: 280px minmax(0, 1fr);
+        .kv-editor-container {
+            display: flex;
+            flex-direction: row;
             gap: 24px;
-            align-items: start;
+            align-items: flex-start;
             width: 100%;
         }
-        @media (max-width: 1024px) {
-            .kv-editor-layout {
-                grid-template-columns: 1fr;
+        .kv-editor-sidebar {
+            width: 260px;
+            min-width: 260px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 24px;
+        }
+        .kv-editor-content {
+            flex: 1 1 0%;
+            min-width: 0;
+            width: 100%;
+        }
+        @media (max-width: 640px) {
+            .kv-editor-container {
+                flex-direction: column;
+            }
+            .kv-editor-sidebar {
+                width: 100%;
+                min-width: 100%;
+                position: static;
             }
         }
     </style>
 
     {{-- Main Editor Body (Tabs + Content) --}}
-    <div class="kv-editor-layout grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full">
+    <div class="kv-editor-container">
 
         {{-- Left: Section Tabs Navigation --}}
-        <div class="lg:col-span-3 bg-white dark:bg-[#1A1A1A] rounded-2xl border border-gray-200 dark:border-[#272B30] p-3 shadow-sm sticky top-6 space-y-1 shrink-0">
+        <div class="kv-editor-sidebar bg-white dark:bg-[#1A1A1A] rounded-2xl border border-gray-200 dark:border-[#272B30] p-3 shadow-sm space-y-1">
             <div class="px-3 py-2 text-xs font-bold text-[#6F767E] uppercase tracking-wider">
                 Page Sections
             </div>
@@ -93,7 +110,7 @@
         </div>
 
         {{-- Right: Active Section Form --}}
-        <div class="lg:col-span-9 min-w-0 flex-1 bg-white dark:bg-[#1A1A1A] rounded-2xl border border-gray-200 dark:border-[#272B30] p-6 shadow-sm space-y-6">
+        <div class="kv-editor-content bg-white dark:bg-[#1A1A1A] rounded-2xl border border-gray-200 dark:border-[#272B30] p-6 shadow-sm space-y-6">
 
             @if($activeTab === 'seo')
                 {{-- SEO & Settings Tab --}}
