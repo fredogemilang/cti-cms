@@ -291,35 +291,35 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1Z"></path><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleSm['solutions'][0]['title'] ?? t('kouventa.WhatsApp Broadcast', 'WhatsApp Broadcast') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $roleSm['solutions'][0]['title'] ?? t('kouventa.WhatsApp Broadcast', 'WhatsApp Broadcast') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleSm['solutions'][0]['desc'] ?? t('kouventa.Send promotional campaigns, product launches, and seasonal offers to customers at scale.', 'Send promotional campaigns, product launches, and seasonal offers to customers at scale.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 2.2s ease 1.8s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V5M9 13h.01M15 13h.01M10 17h4"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleSm['solutions'][1]['title'] ?? t('kouventa.Chatbot', 'Chatbot') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $roleSm['solutions'][1]['title'] ?? t('kouventa.Chatbot', 'Chatbot') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleSm['solutions'][1]['desc'] ?? t('kouventa.Answer product and service inquiries with predefined or AI chatbots, or escalate to a human agent for more complex requests.', 'Answer product and service inquiries with predefined or AI chatbots, or escalate to a human agent for more complex requests.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 1.2s ease 4.4s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleSm['solutions'][2]['title'] ?? t('kouventa.Omnichannel', 'Omnichannel') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $roleSm['solutions'][2]['title'] ?? t('kouventa.Omnichannel', 'Omnichannel') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleSm['solutions'][2]['desc'] ?? t('kouventa.Manage customer conversations and respond to comments from WhatsApp, Instagram, Facebook, and Live Chat in one platform.', 'Manage customer conversations and respond to comments from WhatsApp, Instagram, Facebook, and Live Chat in one platform.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="sol === 3" style="animation: kvHi 1.1s ease 5.6s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleSm['solutions'][3]['title'] ?? t('kouventa.Authentication', 'Authentication') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $roleSm['solutions'][3]['title'] ?? t('kouventa.Authentication', 'Authentication') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleSm['solutions'][3]['desc'] ?? t('kouventa.Secure customer logins and transactions with fast, seamless WhatsApp OTP verification.', 'Secure customer logins and transactions with fast, seamless WhatsApp OTP verification.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(4)" :aria-pressed="sol === 4" style="animation: kvHi 1.4s ease 6.8s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h3"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleSm['solutions'][4]['title'] ?? t('kouventa.WhatsApp Flows', 'WhatsApp Flows') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $roleSm['solutions'][4]['title'] ?? t('kouventa.WhatsApp Flows', 'WhatsApp Flows') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleSm['solutions'][4]['desc'] ?? t('kouventa.Simplify customer data collection for purchases, loyalty program registration, membership sign-ups, and more.', 'Simplify customer data collection for purchases, loyalty program registration, membership sign-ups, and more.') }}</span>
 </span>
 </button>
@@ -437,28 +437,28 @@
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.2s ease 0.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1Z"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleCs['solutions'][0]['title'] ?? t('kouventa.Omnichannel', 'Omnichannel') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $roleCs['solutions'][0]['title'] ?? t('kouventa.Omnichannel', 'Omnichannel') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleCs['solutions'][0]['desc'] ?? t('kouventa.Centralize customer complaints from WhatsApp, Instagram, Facebook, and Live Chat in one platform, making it easier to track and respond to every issue.', 'Centralize customer complaints from WhatsApp, Instagram, Facebook, and Live Chat in one platform, making it easier to track and respond to every issue.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 1.8s ease 1.4s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12" rx="3"></rect><path d="M12 8V5M9 13h.01M15 13h.01M10 17h4"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleCs['solutions'][1]['title'] ?? t('kouventa.Chatbot', 'Chatbot') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $roleCs['solutions'][1]['title'] ?? t('kouventa.Chatbot', 'Chatbot') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleCs['solutions'][1]['desc'] ?? t('kouventa.Handle common customer complaints instantly with predefined or AI-powered chatbots, while escalating complex issues to human agents when needed.', 'Handle common customer complaints instantly with predefined or AI-powered chatbots, while escalating complex issues to human agents when needed.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(2)" :aria-pressed="sol === 2" style="animation: kvHi 1.3s ease 3.2s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M13 6v2M13 11v2M13 16v2"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleCs['solutions'][2]['title'] ?? t('kouventa.Ticket Creation', 'Ticket Creation') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $roleCs['solutions'][2]['title'] ?? t('kouventa.Ticket Creation', 'Ticket Creation') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleCs['solutions'][2]['desc'] ?? t('kouventa.Create support tickets from customer complaints, reducing manual work and minimizing errors or miscommunication during issue handling.', 'Create support tickets from customer complaints, reducing manual work and minimizing errors or miscommunication during issue handling.') }}</span>
 </span>
 </button>
 <button type="button" class="kv-help-sol-btn" @click="lockSol(3)" :aria-pressed="sol === 3" style="animation: kvHi 1.5s ease 4.6s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleCs['solutions'][3]['title'] ?? t('kouventa.CSAT Survey', 'CSAT Survey') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $roleCs['solutions'][3]['title'] ?? t('kouventa.CSAT Survey', 'CSAT Survey') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleCs['solutions'][3]['desc'] ?? t('kouventa.Automatically collect customer feedback after complaint resolution to measure satisfaction and identify opportunities to improve service quality.', 'Automatically collect customer feedback after complaint resolution to measure satisfaction and identify opportunities to improve service quality.') }}</span>
 </span>
 </button>
@@ -549,7 +549,7 @@ $opsChallengeIcons = [
 <button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 5.2s ease 0.3s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10H7z"></path><path d="M3 9h4M3 15h4M17 9h4M17 15h4M9 3v4M15 3v4M9 17v4M15 17v4"></path></svg></span>
 <span class="kv-help-sol-text">
-<h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $roleOps['solutions'][0]['title'] ?? t('kouventa.Cross Platform Integrations', 'Cross Platform Integrations') }}</h3>
+<h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $roleOps['solutions'][0]['title'] ?? t('kouventa.Cross Platform Integrations', 'Cross Platform Integrations') }}</h3>
 <span class="kv-help-sol-desc">{{ $roleOps['solutions'][0]['desc'] ?? t('kouventa.Trigger WhatsApp messages from business systems based on operational events, such as order confirmations, delivery updates, payment reminders, and appointment notifications.', 'Trigger WhatsApp messages from business systems based on operational events, such as order confirmations, delivery updates, payment reminders, and appointment notifications.') }}</span>
 </span>
 </button>
