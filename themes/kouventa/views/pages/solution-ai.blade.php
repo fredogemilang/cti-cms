@@ -523,8 +523,8 @@
 <!-- SCENE 0: Customer Support Agent (Left: Background Process Canvas, Right: Customer WhatsApp Card) -->
 <div class="kv-cs-scene" :class="{ 'kv-active': (sol === 0) || (sol === -1 && activeSol === 0) }">
 
-  <!-- LEFT: Background Knowledge Retrieval Process (No outer card, open process schematic) -->
-  <div style="width: 270px; height: 440px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative">
+  <!-- LEFT: Background Knowledge Retrieval Process (Hidden initially until typing dots start at 1.0s) -->
+  <div style="width: 270px; height: 440px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; opacity: 0; animation: kvIn .45s ease 1.0s both;">
     
     <!-- Background Process Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0">
@@ -544,7 +544,7 @@
     <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; padding: 8px 0">
 
       <!-- 1. Hatched Document: Katalog_Produk_2026.pdf (Background/Unmatched) -->
-      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease .15s both">
+      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 1.05s both">
         <div style="display: flex; justify-content: space-between; align-items: center">
           <div style="display: flex; align-items: center; gap: 6px">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
@@ -559,7 +559,7 @@
       </div>
 
       <!-- 2. Target Matched Document: SOP_Operasional_Toko.pdf (Lights up on match!) -->
-      <div style="border: 1px solid #CBD5E1; border-radius: 12px; padding: 12px 14px; background: #F8FAFA; display: flex; flex-direction: column; gap: 8px; transition: all 0.3s ease; animation: kvIn .35s ease .2s both, kvMatchDoc .5s ease 1.3s 1 forwards">
+      <div style="border: 1px solid #CBD5E1; border-radius: 12px; padding: 12px 14px; background: #F8FAFA; display: flex; flex-direction: column; gap: 8px; transition: all 0.3s ease; animation: kvIn .35s ease 1.1s both, kvMatchDoc .5s ease 1.4s 1 forwards">
         <!-- Document Title & Header -->
         <div style="display: flex; justify-content: space-between; align-items: center">
           <div style="display: flex; align-items: center; gap: 6px">
@@ -572,7 +572,7 @@
         </div>
 
         <!-- Badges (99.4% Match, Confidence 99%) -->
-        <div style="display: flex; align-items: center; gap: 6px; animation: kvPopIn .35s ease 1.5s both">
+        <div style="display: flex; align-items: center; gap: 6px; animation: kvPopIn .35s ease 1.6s both">
           <span style="font-size: 10px; font-weight: 800; color: #0B5E2C; background: #EAF7EF; border: 1px solid #C9E8D3; padding: 2px 7px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px">
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
             99.4% Match
@@ -583,7 +583,7 @@
         </div>
 
         <!-- Extracted Text Snippet -->
-        <div style="background: #F8FAFA; border-left: 3px solid #13803F; border-radius: 6px; padding: 7px 10px; display: flex; flex-direction: column; gap: 3px; animation: kvIn .35s ease 1.7s both">
+        <div style="background: #F8FAFA; border-left: 3px solid #13803F; border-radius: 6px; padding: 7px 10px; display: flex; flex-direction: column; gap: 3px; animation: kvIn .35s ease 1.8s both">
           <span style="font-size: 10px; font-weight: 800; color: #13803F">{{ $isIdLocale ? 'Bagian 3.1 · Jam Operasional' : 'Section 3.1 · Store Hours' }}</span>
           <span style="font-size: 11px; line-height: 1.4; color: #1E293B; font-weight: 500">
             {{ $isIdLocale ? 'Seluruh gerai beroperasi normal setiap hari dari jam 08:00 sampai 21:00 tanpa libur, termasuk akhir pekan dan tanggal merah.' : 'All store branches operate daily from 08:00 to 21:00 without exception, including weekends and public holidays.' }}
@@ -592,7 +592,7 @@
       </div>
 
       <!-- 3. Hatched Document: Kebijakan_Garansi_Retur.docx (Background/Unmatched) -->
-      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease .25s both">
+      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 1.15s both">
         <div style="display: flex; justify-content: space-between; align-items: center">
           <div style="display: flex; align-items: center; gap: 6px">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
@@ -609,14 +609,14 @@
     </div>
 
     <!-- Pipeline Footer Metric -->
-    <div style="background: #F1F5F9; border-radius: 8px; padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #475569">
+    <div style="background: #F1F5F9; border-radius: 8px; padding: 7px 10px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: #475569; animation: kvIn .35s ease 1.2s both">
       <span style="font-weight: 700; color: #1E293B">⚡ {{ $isIdLocale ? 'Pencarian Semantik: 0.18s' : 'Semantic Search: 0.18s' }}</span>
       <span style="color: #64748B">{{ $isIdLocale ? '1.420 potongan dipindai' : '1,420 chunks scanned' }}</span>
     </div>
   </div>
 
   <!-- Animated Dashed Connector Line (Signal flows from WhatsApp Typing to SOP Document) -->
-  <svg style="position: absolute; left: 245px; top: 215px; width: 85px; height: 30px; z-index: 10; pointer-events: none; animation: kvIn .3s ease 1.0s both, kvOut .25s ease 2.35s 1 forwards">
+  <svg style="position: absolute; left: 245px; top: 215px; width: 85px; height: 30px; z-index: 10; pointer-events: none; animation: kvIn .3s ease 1.05s both, kvOut .25s ease 2.35s 1 forwards">
     <path d="M 80 15 L 8 15" fill="none" stroke="#13803F" stroke-width="2.5" stroke-dasharray="5 4" style="animation: kvDashLeft 0.5s linear infinite;" />
     <polygon points="10,10 2,15 10,20" fill="#13803F" />
   </svg>
