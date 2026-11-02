@@ -8,9 +8,11 @@ use App\Providers\CmsPluginServiceProvider;
 use App\Services\Ai\AiResourceRegistry;
 use App\Services\Sitemap\SitemapBuilder;
 use App\Support\Action;
+use App\Support\Filter;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Plugins\KouventaPages\Http\Controllers\KouventaPageController;
+use Plugins\KouventaPages\Livewire\ClientManager;
 use Plugins\KouventaPages\Livewire\PageEditor;
 use Plugins\KouventaPages\Livewire\PageIndex;
 use Plugins\KouventaPages\Models\KouventaPage;
@@ -23,6 +25,7 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
     protected array $livewireComponents = [
         'plugins.kouventa-pages.page-index' => PageIndex::class,
         'plugins.kouventa-pages.page-editor' => PageEditor::class,
+        'plugins.kouventa-pages.client-manager' => ClientManager::class,
     ];
 
     public function register(): void
@@ -37,6 +40,42 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
         parent::boot();
 
         $this->app->bind(SitemapBuilder::class, KouventaSitemapBuilder::class);
+
+        // Place Kouventa main menu items under CONTENT section in Admin Sidebar
+        Filter::add('admin_menu.default_sections', function (array $sections) {
+            $sections['plugin:kouventa-solutions'] = 'CONTENT';
+            $sections['plugin:kouventa-products'] = 'CONTENT';
+            $sections['plugin:kouventa-pricing'] = 'CONTENT';
+            $sections['plugin:kouventa-clients'] = 'CONTENT';
+            $sections['plugin:posts'] = 'CONTENT';
+
+            return $sections;
+        });
+
+        Filter::add('admin_menu.default_order', function (array $order) {
+            $kouventaKeys = [
+                'plugin:kouventa-solutions',
+                'plugin:kouventa-products',
+                'plugin:kouventa-pricing',
+                'plugin:kouventa-clients',
+                'cpt:testimonials',
+            ];
+
+            $newOrder = [];
+            foreach ($order as $key) {
+                if (in_array($key, $kouventaKeys, true)) {
+                    continue;
+                }
+                $newOrder[] = $key;
+                if ($key === 'core:2') {
+                    foreach ($kouventaKeys as $kKey) {
+                        $newOrder[] = $kKey;
+                    }
+                }
+            }
+
+            return $newOrder;
+        });
 
         $this->app->resolving(AiResourceRegistry::class, function (AiResourceRegistry $registry) {
             try {
@@ -109,51 +148,52 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
      */
     protected function registerMenuItems(RenderAdminMenu $event): void
     {
-        $children = [
-            [
-                'title' => 'All Interactive Pages',
-                'route' => 'admin.kouventa-pages.index',
-                'activeRoutePattern' => 'admin.kouventa-pages.index|admin.kouventa-pages.*',
-                'url' => route('admin.kouventa-pages.index'),
-                'icon' => 'list',
-                'permission' => null,
-                'is_active' => true,
-                'source' => 'plugin:kouventa-pages',
-                'children' => [],
-            ],
-        ];
-
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('kouventa_pages')) {
-                $pages = KouventaPage::select('id', 'title', 'slug')->get();
-                foreach ($pages as $page) {
-                    $children[] = [
-                        'title' => $page->title,
-                        'route' => 'admin.kouventa-pages.edit',
-                        'activeRoutePattern' => 'admin.kouventa-pages.edit',
-                        'url' => route('admin.kouventa-pages.edit', $page->id),
-                        'icon' => str_starts_with($page->slug, 'product/') ? 'inventory_2' : (str_starts_with($page->slug, 'solutions/') ? 'psychology' : 'payments'),
-                        'permission' => null,
-                        'is_active' => true,
-                        'source' => 'plugin:kouventa-pages',
-                        'children' => [],
-                    ];
-                }
-            }
-        } catch (\Throwable $e) {
-            // Fallback to basic menu if table not ready
-        }
-
+        // 1. Solutions (AI Solutions & Customer Engagement Solutions)
         $event->addMenuItem([
-            'title' => 'Kouventa Pages',
-            'route' => 'admin.kouventa-pages.index',
-            'url' => route('admin.kouventa-pages.index'),
-            'icon' => 'auto_stories',
+            'title' => 'Solutions',
+            'route' => 'admin.kouventa-pages.solutions|admin.kouventa-pages.solutions.*',
+            'url' => route('admin.kouventa-pages.solutions'),
+            'icon' => 'psychology',
             'permission' => null,
             'is_active' => true,
-            'source' => 'plugin:kouventa-pages',
-            'children' => $children,
+            'source' => 'plugin:kouventa-solutions',
+            'children' => [],
+        ]);
+
+        // 2. Products (Artificial Intelligence & Customer Engagement)
+        $event->addMenuItem([
+            'title' => 'Products',
+            'route' => 'admin.kouventa-pages.products|admin.kouventa-pages.products.*',
+            'url' => route('admin.kouventa-pages.products'),
+            'icon' => 'inventory_2',
+            'permission' => null,
+            'is_active' => true,
+            'source' => 'plugin:kouventa-products',
+            'children' => [],
+        ]);
+
+        // 3. Pricing
+        $event->addMenuItem([
+            'title' => 'Pricing',
+            'route' => 'admin.kouventa-pages.pricing|admin.kouventa-pages.pricing.*',
+            'url' => route('admin.kouventa-pages.pricing'),
+            'icon' => 'payments',
+            'permission' => null,
+            'is_active' => true,
+            'source' => 'plugin:kouventa-pricing',
+            'children' => [],
+        ]);
+
+        // 4. Clients (They trusted us)
+        $event->addMenuItem([
+            'title' => 'Clients',
+            'route' => 'admin.kouventa-pages.clients|admin.kouventa-pages.clients.*',
+            'url' => route('admin.kouventa-pages.clients'),
+            'icon' => 'handshake',
+            'permission' => null,
+            'is_active' => true,
+            'source' => 'plugin:kouventa-clients',
+            'children' => [],
         ]);
     }
 }
-

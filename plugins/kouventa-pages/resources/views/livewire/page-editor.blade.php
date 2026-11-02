@@ -3,7 +3,14 @@
     {{-- Top Action Bar --}}
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white dark:bg-[#1A1A1A] p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-[#272B30] shadow-sm">
         <div class="flex items-center gap-3">
-            <a href="{{ route('admin.kouventa-pages.index') }}" class="h-10 w-10 rounded-xl border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] flex items-center justify-center transition-colors">
+            @php
+                $backRoute = str_starts_with($slug, 'solutions/')
+                    ? route('admin.kouventa-pages.solutions')
+                    : (str_starts_with($slug, 'product/')
+                        ? route('admin.kouventa-pages.products')
+                        : route('admin.kouventa-pages.pricing'));
+            @endphp
+            <a href="{{ $backRoute }}" class="h-10 w-10 rounded-xl border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] flex items-center justify-center transition-colors">
                 <span class="material-symbols-outlined text-lg">arrow_back</span>
             </a>
             <div>

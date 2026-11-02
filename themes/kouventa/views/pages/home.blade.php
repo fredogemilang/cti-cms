@@ -521,40 +521,104 @@
         }
     }
 </style>
+@php
+    $trustedClients = [];
+    if (is_plugin_active('kouventa-pages') && class_exists(\Plugins\KouventaPages\Models\KouventaClient::class)) {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('kouventa_clients')) {
+                $dbClients = \Plugins\KouventaPages\Models\KouventaClient::active()->get();
+                if ($dbClients->isNotEmpty()) {
+                    $trustedClients = $dbClients->map(function ($c) {
+                        $altText = $c->alt_text ?: ('Logo ' . $c->name);
+                        return [
+                            'name' => $c->name,
+                            'logo' => resolve_block_asset($c->logo),
+                            'website_url' => !empty($c->website_url) ? trim($c->website_url) : null,
+                            'alt' => t('kouventa.' . $altText, $altText),
+                            'max_height' => $c->max_height ?: 44,
+                        ];
+                    })->all();
+                }
+            }
+        } catch (\Throwable $e) {
+            // Fallback to default clients
+        }
+    }
+
+    if (empty($trustedClients)) {
+        $trustedClients = [
+            [
+                'name' => 'Navios',
+                'logo' => theme_asset('images/logos/customer-navios.png'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo Navios - Klien Implementasi Solusi Customer Engagement Kouventa', 'Logo Navios - Klien Implementasi Solusi Customer Engagement Kouventa'),
+                'max_height' => 32,
+            ],
+            [
+                'name' => 'Toqco',
+                'logo' => theme_asset('images/logos/customer-toqco.png'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo Toqco - Klien Solusi Otomasi WhatsApp & Omnichannel Kouventa', 'Logo Toqco - Klien Solusi Otomasi WhatsApp & Omnichannel Kouventa'),
+                'max_height' => 42,
+            ],
+            [
+                'name' => 'Mitra Mandiri Informatika',
+                'logo' => theme_asset('images/logos/customer-mitra-mandiri.png'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo Mitra Mandiri Informatika - Klien Enterprise AI & Solusi Komunikasi Kouventa', 'Logo Mitra Mandiri Informatika - Klien Enterprise AI & Solusi Komunikasi Kouventa'),
+                'max_height' => 44,
+            ],
+            [
+                'name' => 'Liberta Hotels',
+                'logo' => theme_asset('images/logos/customer-liberta-hotels.png'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo Liberta Hotels - Klien Solusi Omnichannel Hospitality & Reservasi Kouventa', 'Logo Liberta Hotels - Klien Solusi Omnichannel Hospitality & Reservasi Kouventa'),
+                'max_height' => 44,
+            ],
+            [
+                'name' => 'DPay',
+                'logo' => theme_asset('images/logos/logo-dpay.png'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo DPay - Klien Notifikasi & Otomasi Transaksi Finansial WhatsApp Kouventa', 'Logo DPay - Klien Notifikasi & Otomasi Transaksi Finansial WhatsApp Kouventa'),
+                'max_height' => 42,
+            ],
+            [
+                'name' => 'PakeDriver',
+                'logo' => theme_asset('images/logos/customer-pakedriver.png'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo PakeDriver - Klien Solusi Notifikasi & Tracking Logistik Kouventa', 'Logo PakeDriver - Klien Solusi Notifikasi & Tracking Logistik Kouventa'),
+                'max_height' => 38,
+            ],
+            [
+                'name' => "Luna's Doughnuts",
+                'logo' => theme_asset('images/logos/customer-lunas-doughnuts.png'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo Luna\'s Doughnuts - Klien CRM & Broadcast WhatsApp Marketing Kouventa', 'Logo Luna\'s Doughnuts - Klien CRM & Broadcast WhatsApp Marketing Kouventa'),
+                'max_height' => 46,
+            ],
+            [
+                'name' => 'Astra Otoparts',
+                'logo' => theme_asset('images/logos/customer-astra-otoparts.png'),
+                'website_url' => null,
+                'alt' => t('kouventa.Logo Astra Otoparts - Klien Solusi Layanan Pelanggan & Otomasi Komunikasi Kouventa', 'Logo Astra Otoparts - Klien Solusi Layanan Pelanggan & Otomasi Komunikasi Kouventa'),
+                'max_height' => 44,
+            ],
+        ];
+    }
+@endphp
 <div class="kv-customer-grid" style="width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-    <!-- 1. Navios -->
-    <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-        <img src="{{ theme_asset('images/logos/customer-navios.png') }}" alt="{{ t('kouventa.Logo Navios - Klien Implementasi Solusi Customer Engagement Kouventa', 'Logo Navios - Klien Implementasi Solusi Customer Engagement Kouventa') }}" title="Navios" style="max-height: 32px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-    </div>
-    <!-- 2. Toqco -->
-    <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-        <img src="{{ theme_asset('images/logos/customer-toqco.png') }}" alt="{{ t('kouventa.Logo Toqco - Klien Solusi Otomasi WhatsApp & Omnichannel Kouventa', 'Logo Toqco - Klien Solusi Otomasi WhatsApp & Omnichannel Kouventa') }}" title="Toqco" style="max-height: 42px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-    </div>
-    <!-- 3. Mitra Mandiri Informatika -->
-    <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-        <img src="{{ theme_asset('images/logos/customer-mitra-mandiri.png') }}" alt="{{ t('kouventa.Logo Mitra Mandiri Informatika - Klien Enterprise AI & Solusi Komunikasi Kouventa', 'Logo Mitra Mandiri Informatika - Klien Enterprise AI & Solusi Komunikasi Kouventa') }}" title="Mitra Mandiri Informatika" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-    </div>
-    <!-- 4. Liberta Hotels -->
-    <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-        <img src="{{ theme_asset('images/logos/customer-liberta-hotels.png') }}" alt="{{ t('kouventa.Logo Liberta Hotels - Klien Solusi Omnichannel Hospitality & Reservasi Kouventa', 'Logo Liberta Hotels - Klien Solusi Omnichannel Hospitality & Reservasi Kouventa') }}" title="Liberta Hotels" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-    </div>
-    <!-- 5. DPay -->
-    <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-        <img src="{{ theme_asset('images/logos/logo-dpay.png') }}" alt="{{ t('kouventa.Logo DPay - Klien Notifikasi & Otomasi Transaksi Finansial WhatsApp Kouventa', 'Logo DPay - Klien Notifikasi & Otomasi Transaksi Finansial WhatsApp Kouventa') }}" title="DPay" style="max-height: 42px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-    </div>
-    <!-- 6. PakeDriver -->
-    <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-        <img src="{{ theme_asset('images/logos/customer-pakedriver.png') }}" alt="{{ t('kouventa.Logo PakeDriver - Klien Solusi Notifikasi & Tracking Logistik Kouventa', 'Logo PakeDriver - Klien Solusi Notifikasi & Tracking Logistik Kouventa') }}" title="PakeDriver" style="max-height: 38px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-    </div>
-    <!-- 7. Luna's Doughnuts -->
-    <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-        <img src="{{ theme_asset('images/logos/customer-lunas-doughnuts.png') }}" alt="{{ t('kouventa.Logo Luna\'s Doughnuts - Klien CRM & Broadcast WhatsApp Marketing Kouventa', 'Logo Luna\'s Doughnuts - Klien CRM & Broadcast WhatsApp Marketing Kouventa') }}" title="Luna's Doughnuts" style="max-height: 46px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-    </div>
-    <!-- 8. Astra Otoparts -->
-    <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
-        <img src="{{ theme_asset('images/logos/customer-astra-otoparts.png') }}" alt="{{ t('kouventa.Logo Astra Otoparts - Klien Solusi Layanan Pelanggan & Otomasi Komunikasi Kouventa', 'Logo Astra Otoparts - Klien Solusi Layanan Pelanggan & Otomasi Komunikasi Kouventa') }}" title="Astra Otoparts" style="max-height: 44px; max-width: 100%; width: auto; height: auto; object-fit: contain">
-    </div>
-    <!-- 9. And many more -->
+    @foreach($trustedClients as $client)
+        @if(!empty($client['website_url']))
+            <a href="{{ $client['website_url'] }}" target="_blank" rel="noopener noreferrer" class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02); text-decoration: none">
+                <img src="{{ $client['logo'] }}" alt="{{ $client['alt'] }}" title="{{ $client['name'] }}" style="max-height: {{ $client['max_height'] ?? 44 }}px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+            </a>
+        @else
+            <div class="kv-logo-card kv-customer-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #E3E8E6; background: #FFFFFF; display: flex; align-items: center; justify-content: center; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02)">
+                <img src="{{ $client['logo'] }}" alt="{{ $client['alt'] }}" title="{{ $client['name'] }}" style="max-height: {{ $client['max_height'] ?? 44 }}px; max-width: 100%; width: auto; height: auto; object-fit: contain">
+            </div>
+        @endif
+    @endforeach
+    <!-- And many more -->
     <div class="kv-logo-card kv-customer-card kv-more-card" style="width: 100%; height: 88px; box-sizing: border-box; border-radius: 12px; border: 1px solid #D4EFE0; background: #EAF7EF; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 20px; box-shadow: 0 2px 8px rgba(7, 28, 51, 0.02); color: #0B5E2C; transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1); cursor: default">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0">
             <line x1="12" y1="5" x2="12" y2="19"></line>

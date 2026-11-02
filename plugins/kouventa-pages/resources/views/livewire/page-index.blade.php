@@ -13,10 +13,17 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-[#272B30]">
                     @forelse($pages as $p)
+                        @php
+                            $editRoute = str_starts_with($p->slug, 'solutions/')
+                                ? route('admin.kouventa-pages.solutions.edit', $p->id)
+                                : (str_starts_with($p->slug, 'product/')
+                                    ? route('admin.kouventa-pages.products.edit', $p->id)
+                                    : route('admin.kouventa-pages.pricing.edit', $p->id));
+                        @endphp
                         <tr class="hover:bg-gray-50/50 dark:hover:bg-[#272B30]/30 transition-colors">
                             <td class="py-4 px-6">
                                 <div>
-                                    <a href="{{ route('admin.kouventa-pages.edit', $p->id) }}" class="font-bold text-[#111827] dark:text-[#FCFCFC] hover:text-[#2563EB] text-base transition-colors flex items-center gap-2">
+                                    <a href="{{ $editRoute }}" class="font-bold text-[#111827] dark:text-[#FCFCFC] hover:text-[#2563EB] text-base transition-colors flex items-center gap-2">
                                         {{ $p->title }}
                                     </a>
                                     <div class="text-xs text-[#6F767E] flex items-center gap-1 mt-1 font-mono">
@@ -65,7 +72,7 @@
                                         <span class="material-symbols-outlined text-sm">open_in_new</span>
                                         <span>View</span>
                                     </a>
-                                    <a href="{{ route('admin.kouventa-pages.edit', $p->id) }}" class="h-9 px-3.5 rounded-xl bg-[#2563EB] text-white hover:bg-blue-700 flex items-center gap-1.5 text-xs font-bold transition-all shadow-sm" title="Edit content & sections">
+                                    <a href="{{ $editRoute }}" class="h-9 px-3.5 rounded-xl bg-[#2563EB] text-white hover:bg-blue-700 flex items-center gap-1.5 text-xs font-bold transition-all shadow-sm" title="Edit content & sections">
                                         <span class="material-symbols-outlined text-sm">edit</span>
                                         <span>Edit Sections</span>
                                     </a>
@@ -76,8 +83,8 @@
                         <tr>
                             <td colspan="5" class="py-12 text-center text-[#6F767E]">
                                 <span class="material-symbols-outlined text-4xl mb-2 text-gray-300">auto_stories</span>
-                                <p class="text-sm font-medium">No pages found in plugin database.</p>
-                                <p class="text-xs text-gray-400 mt-1">Run plugin seeders to initialize the 5 interactive pages.</p>
+                                <p class="text-sm font-medium">No pages found in this category.</p>
+                                <p class="text-xs text-gray-400 mt-1">Run plugin seeders to initialize the interactive pages.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -86,4 +93,3 @@
         </div>
     </div>
 </div>
-

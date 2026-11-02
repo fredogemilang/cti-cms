@@ -2,11 +2,16 @@
 
 namespace Plugins\KouventaPages\Seeders;
 
+use App\Models\Media;
 use App\Models\Page;
 use App\Models\Plugin;
 use App\Models\SeoMeta;
+use App\Services\MediaService;
 use Illuminate\Database\Seeder;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Plugins\KouventaPages\Models\KouventaClient;
 use Plugins\KouventaPages\Models\KouventaPage;
 use Plugins\KouventaPages\Schemas\PricingSchema;
 use Plugins\KouventaPages\Schemas\ProductAiSchema;
@@ -26,8 +31,8 @@ class KouventaPagesSeeder extends Seeder
             ['slug' => 'kouventa-pages'],
             [
                 'name' => 'Kouventa Pages',
-                'version' => '1.0.0',
-                'description' => 'Dedicated section and repeater management for Kouventa interactive product, solution, and pricing pages.',
+                'version' => '1.1.0',
+                'description' => 'Dedicated section and repeater management for Kouventa interactive product, solution, pricing pages, and trusted clients.',
                 'author' => 'Kouventa Team',
                 'provider' => 'Plugins\\KouventaPages\\Providers\\KouventaPagesServiceProvider',
                 'is_active' => 1,
@@ -42,7 +47,7 @@ class KouventaPagesSeeder extends Seeder
         $enAiSections = ProductAiSchema::getDefaults('en');
         $idAiSections = ProductAiSchema::getDefaults('id');
 
-        $kouventaAiPage = KouventaPage::updateOrCreate(
+        $kouventaAiPage = KouventaPage::firstOrCreate(
             ['slug' => 'product/ai'],
             [
                 'title' => 'Artificial Intelligence',
@@ -61,7 +66,6 @@ class KouventaPagesSeeder extends Seeder
             ]
         );
 
-        // Migrate SEO Meta polymorphic records if they exist on old Page
         if ($existingAiPage) {
             $oldSeo = SeoMeta::where('seoable_type', Page::class)
                 ->where('seoable_id', $existingAiPage->id)
@@ -82,17 +86,14 @@ class KouventaPagesSeeder extends Seeder
                 );
             }
 
-            // Create baseline revision
             $kouventaAiPage->saveRevision('Initial baseline migration from Core Page');
 
-            // Takeout: Delete old Page ID 2
             DB::table('page_blocks')->where('page_id', $existingAiPage->id)->delete();
             DB::table('page_revisions')->where('page_id', $existingAiPage->id)->delete();
             DB::table('pages')->where('id', $existingAiPage->id)->delete();
         }
 
-        // Clean any old search index pointing to old Page ID 2
-        if (\Illuminate\Support\Facades\Schema::hasTable('search_index')) {
+        if (Schema::hasTable('search_index')) {
             \App\Models\SearchIndex::where('searchable_type', Page::class)
                 ->where('searchable_id', 2)
                 ->delete();
@@ -104,7 +105,7 @@ class KouventaPagesSeeder extends Seeder
         $enCeSections = ProductCeSchema::getDefaults('en');
         $idCeSections = ProductCeSchema::getDefaults('id');
 
-        $kouventaCePage = KouventaPage::updateOrCreate(
+        $kouventaCePage = KouventaPage::firstOrCreate(
             ['slug' => 'product/customer-engagement'],
             [
                 'title' => 'Customer Engagement',
@@ -123,7 +124,6 @@ class KouventaPagesSeeder extends Seeder
             ]
         );
 
-        // Migrate SEO Meta polymorphic records if they exist on old Page
         if ($existingCePage) {
             $oldCeSeo = SeoMeta::where('seoable_type', Page::class)
                 ->where('seoable_id', $existingCePage->id)
@@ -144,17 +144,14 @@ class KouventaPagesSeeder extends Seeder
                 );
             }
 
-            // Create baseline revision
             $kouventaCePage->saveRevision('Initial baseline migration from Core Page');
 
-            // Takeout: Delete old Page ID 3
             DB::table('page_blocks')->where('page_id', $existingCePage->id)->delete();
             DB::table('page_revisions')->where('page_id', $existingCePage->id)->delete();
             DB::table('pages')->where('id', $existingCePage->id)->delete();
         }
 
-        // Clean any old search index pointing to old Page ID 3
-        if (\Illuminate\Support\Facades\Schema::hasTable('search_index')) {
+        if (Schema::hasTable('search_index')) {
             \App\Models\SearchIndex::where('searchable_type', Page::class)
                 ->where('searchable_id', 3)
                 ->delete();
@@ -166,7 +163,7 @@ class KouventaPagesSeeder extends Seeder
         $enSolAiSections = SolutionAiSchema::getDefaults('en');
         $idSolAiSections = SolutionAiSchema::getDefaults('id');
 
-        $kouventaSolAiPage = KouventaPage::updateOrCreate(
+        $kouventaSolAiPage = KouventaPage::firstOrCreate(
             ['slug' => 'solutions/ai'],
             [
                 'title' => 'AI Solutions',
@@ -207,13 +204,12 @@ class KouventaPagesSeeder extends Seeder
 
             $kouventaSolAiPage->saveRevision('Initial baseline migration from Core Page');
 
-            // Takeout: Delete old Page ID 4
             DB::table('page_blocks')->where('page_id', $existingSolAiPage->id)->delete();
             DB::table('page_revisions')->where('page_id', $existingSolAiPage->id)->delete();
             DB::table('pages')->where('id', $existingSolAiPage->id)->delete();
         }
 
-        if (\Illuminate\Support\Facades\Schema::hasTable('search_index')) {
+        if (Schema::hasTable('search_index')) {
             \App\Models\SearchIndex::where('searchable_type', Page::class)
                 ->where('searchable_id', 4)
                 ->delete();
@@ -225,7 +221,7 @@ class KouventaPagesSeeder extends Seeder
         $enSolCeSections = SolutionCeSchema::getDefaults('en');
         $idSolCeSections = SolutionCeSchema::getDefaults('id');
 
-        $kouventaSolCePage = KouventaPage::updateOrCreate(
+        $kouventaSolCePage = KouventaPage::firstOrCreate(
             ['slug' => 'solutions/customer-engagement'],
             [
                 'title' => 'Customer Engagement Solutions',
@@ -266,13 +262,12 @@ class KouventaPagesSeeder extends Seeder
 
             $kouventaSolCePage->saveRevision('Initial baseline migration from Core Page');
 
-            // Takeout: Delete old Page ID 5
             DB::table('page_blocks')->where('page_id', $existingSolCePage->id)->delete();
             DB::table('page_revisions')->where('page_id', $existingSolCePage->id)->delete();
             DB::table('pages')->where('id', $existingSolCePage->id)->delete();
         }
 
-        if (\Illuminate\Support\Facades\Schema::hasTable('search_index')) {
+        if (Schema::hasTable('search_index')) {
             \App\Models\SearchIndex::where('searchable_type', Page::class)
                 ->where('searchable_id', 5)
                 ->delete();
@@ -284,7 +279,7 @@ class KouventaPagesSeeder extends Seeder
         $enPricingSections = PricingSchema::getDefaults('en');
         $idPricingSections = PricingSchema::getDefaults('id');
 
-        $kouventaPricingPage = KouventaPage::updateOrCreate(
+        $kouventaPricingPage = KouventaPage::firstOrCreate(
             ['slug' => 'pricing'],
             [
                 'title' => 'Pricing',
@@ -325,13 +320,12 @@ class KouventaPagesSeeder extends Seeder
 
             $kouventaPricingPage->saveRevision('Initial baseline migration from Core Page');
 
-            // Takeout: Delete old Page ID 6
             DB::table('page_blocks')->where('page_id', $existingPricingPage->id)->delete();
             DB::table('page_revisions')->where('page_id', $existingPricingPage->id)->delete();
             DB::table('pages')->where('id', $existingPricingPage->id)->delete();
         }
 
-        if (\Illuminate\Support\Facades\Schema::hasTable('search_index')) {
+        if (Schema::hasTable('search_index')) {
             \App\Models\SearchIndex::where('searchable_type', Page::class)
                 ->where('searchable_id', 6)
                 ->delete();
@@ -341,6 +335,191 @@ class KouventaPagesSeeder extends Seeder
         foreach ([$kouventaAiPage, $kouventaCePage, $kouventaSolAiPage, $kouventaSolCePage, $kouventaPricingPage] as $kPage) {
             $kPage->syncSearchIndex();
         }
+
+        // 8. Seed Default Trusted Clients ("They trusted us")
+        $this->seedClients();
+
+        // 9. Update Admin Sidebar Custom Order if stored in Settings
+        $this->updateSidebarMenuOrder();
+    }
+
+    /**
+     * Ensure any stored custom sidebar order replaces plugin:kouventa-pages with the 4 new top-level menus.
+     */
+    protected function updateSidebarMenuOrder(): void
+    {
+        try {
+            if (! Schema::hasTable('settings')) {
+                return;
+            }
+
+            $customOrder = \App\Models\Setting::get('admin_sidebar_custom_order', []);
+            if (empty($customOrder) || ! is_array($customOrder)) {
+                return;
+            }
+
+            $newKeys = [
+                'plugin:kouventa-solutions',
+                'plugin:kouventa-products',
+                'plugin:kouventa-pricing',
+                'plugin:kouventa-clients',
+            ];
+
+            $updatedOrder = [];
+            $inserted = false;
+
+            foreach ($customOrder as $item) {
+                if ($item === 'plugin:kouventa-pages') {
+                    foreach ($newKeys as $nk) {
+                        if (! in_array($nk, $updatedOrder, true)) {
+                            $updatedOrder[] = $nk;
+                        }
+                    }
+                    $inserted = true;
+                    continue;
+                }
+
+                if (in_array($item, $newKeys, true)) {
+                    continue;
+                }
+
+                $updatedOrder[] = $item;
+
+                if ($item === 'core:2' && ! in_array('plugin:kouventa-pages', $customOrder, true) && ! $inserted) {
+                    foreach ($newKeys as $nk) {
+                        $updatedOrder[] = $nk;
+                    }
+                    $inserted = true;
+                }
+            }
+
+            if (! $inserted) {
+                foreach ($newKeys as $nk) {
+                    $updatedOrder[] = $nk;
+                }
+            }
+
+            \App\Models\Setting::set('admin_sidebar_custom_order', array_values($updatedOrder));
+        } catch (\Throwable $e) {
+            // Ignore setting update errors
+        }
+    }
+
+    /**
+     * Seed default clients for the Homepage "They trusted us" section.
+     */
+    protected function seedClients(): void
+    {
+        if (! Schema::hasTable('kouventa_clients')) {
+            return;
+        }
+
+        $defaultClients = [
+            [
+                'name' => 'Navios',
+                'asset' => 'images/logos/customer-navios.png',
+                'alt_text' => 'Logo Navios - Klien Implementasi Solusi Customer Engagement Kouventa',
+                'max_height' => 32,
+                'sort_order' => 1,
+            ],
+            [
+                'name' => 'Toqco',
+                'asset' => 'images/logos/customer-toqco.png',
+                'alt_text' => 'Logo Toqco - Klien Solusi Otomasi WhatsApp & Omnichannel Kouventa',
+                'max_height' => 42,
+                'sort_order' => 2,
+            ],
+            [
+                'name' => 'Mitra Mandiri Informatika',
+                'asset' => 'images/logos/customer-mitra-mandiri.png',
+                'alt_text' => 'Logo Mitra Mandiri Informatika - Klien Enterprise AI & Solusi Komunikasi Kouventa',
+                'max_height' => 44,
+                'sort_order' => 3,
+            ],
+            [
+                'name' => 'Liberta Hotels',
+                'asset' => 'images/logos/customer-liberta-hotels.png',
+                'alt_text' => 'Logo Liberta Hotels - Klien Solusi Omnichannel Hospitality & Reservasi Kouventa',
+                'max_height' => 44,
+                'sort_order' => 4,
+            ],
+            [
+                'name' => 'DPay',
+                'asset' => 'images/logos/logo-dpay.png',
+                'alt_text' => 'Logo DPay - Klien Notifikasi & Otomasi Transaksi Finansial WhatsApp Kouventa',
+                'max_height' => 42,
+                'sort_order' => 5,
+            ],
+            [
+                'name' => 'PakeDriver',
+                'asset' => 'images/logos/customer-pakedriver.png',
+                'alt_text' => 'Logo PakeDriver - Klien Solusi Notifikasi & Tracking Logistik Kouventa',
+                'max_height' => 38,
+                'sort_order' => 6,
+            ],
+            [
+                'name' => "Luna's Doughnuts",
+                'asset' => 'images/logos/customer-lunas-doughnuts.png',
+                'alt_text' => "Logo Luna's Doughnuts - Klien CRM & Broadcast WhatsApp Marketing Kouventa",
+                'max_height' => 46,
+                'sort_order' => 7,
+            ],
+            [
+                'name' => 'Astra Otoparts',
+                'asset' => 'images/logos/customer-astra-otoparts.png',
+                'alt_text' => 'Logo Astra Otoparts - Klien Solusi Layanan Pelanggan & Otomasi Komunikasi Kouventa',
+                'max_height' => 44,
+                'sort_order' => 8,
+            ],
+        ];
+
+        $mediaService = app(MediaService::class);
+
+        foreach ($defaultClients as $client) {
+            $existing = KouventaClient::where('name', $client['name'])->first();
+            if ($existing) {
+                continue;
+            }
+
+            $logoPath = $client['asset'];
+            $filename = basename($client['asset']);
+            $fullAssetPath = base_path('themes/kouventa/assets/' . $client['asset']);
+
+            try {
+                $media = Media::where('original_filename', $filename)->first();
+
+                if (! $media && file_exists($fullAssetPath)) {
+                    $uploadedFile = new UploadedFile(
+                        $fullAssetPath,
+                        $filename,
+                        mime_content_type($fullAssetPath) ?: 'image/png',
+                        null,
+                        true
+                    );
+
+                    $media = $mediaService->upload($uploadedFile, [
+                        'title' => $client['name'],
+                        'alt_text' => $client['alt_text'],
+                    ]);
+                }
+
+                if ($media) {
+                    $logoPath = $media->webp_path ?? $media->path;
+                }
+            } catch (\Throwable $e) {
+                // Fallback to theme asset relative path
+                $logoPath = $client['asset'];
+            }
+
+            KouventaClient::create([
+                'name' => $client['name'],
+                'logo' => $logoPath,
+                'website_url' => null,
+                'alt_text' => $client['alt_text'],
+                'max_height' => $client['max_height'],
+                'sort_order' => $client['sort_order'],
+                'is_active' => true,
+            ]);
+        }
     }
 }
-
