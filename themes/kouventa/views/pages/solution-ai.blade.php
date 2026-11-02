@@ -986,228 +986,180 @@
 <div id="kv-ill-rec" role="img" aria-label="Animated illustration for Kouventa Recruitment AI Agents" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
 
 <!-- SCENE 0: Candidate Screening and Sourcing Agent -->
-<div class="kv-rec-scene" :class="{ 'kv-active': (sol === 0) || (sol === -1 && activeSol === 0) }">
-  <!-- Header -->
-  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 12px">
-    <div style="display: flex; align-items: center; gap: 8px">
-      <span style="width: 26px; height: 26px; border-radius: 6px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      </span>
-      <div>
-        <h4 style="margin: 0; font-size: 13px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Penyaringan & Pemeringkatan CV AI' : 'AI Resume Screening & Match Ranking' }}</h4>
-        <span style="font-size: 10px; color: #64748B">{{ $isIdLocale ? 'Sourcing otomatis dari multi portal ke pipeline seleksi' : 'Automated multi-portal sourcing to candidate shortlist' }}</span>
-      </div>
-    </div>
-    <span style="font-size: 10px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 3px 8px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px">
-      <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F"></span>
-      {{ $isIdLocale ? '101 CV Teranalisis' : '101 CVs Scanned' }}
-    </span>
-  </div>
+<div class="kv-rec-scene" :class="{ 'kv-active': (sol === 0) || (sol === -1 && activeSol === 0) }" style="justify-content: center;">
 
   <!-- Body: Sources -> AI Filter -> Leaderboard -->
-  <div style="display: grid; grid-template-columns: 130px 42px minmax(0, 1fr); align-items: center; gap: 12px; flex: 1; padding: 8px 0">
+  <div style="display: grid; grid-template-columns: 140px 48px minmax(0, 1fr); align-items: center; gap: 14px; width: 100%;">
     
     <!-- Left: Job Portals Sources -->
-    <div style="display: flex; flex-direction: column; gap: 8px">
-      <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B">{{ $isIdLocale ? 'Sumber Portal' : 'Job Portals' }}</span>
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B">{{ $isIdLocale ? 'Sumber Portal' : 'Job Portals' }}</span>
       
-      <div style="background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 8px; padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; animation: kvIn .3s ease .15s both">
-        <span style="font-size: 11px; font-weight: 700; color: #0E1A24">Jobstreet</span>
-        <span style="font-size: 9px; font-weight: 700; background: #E2E8F0; color: #475569; padding: 1px 5px; border-radius: 4px">48 CV</span>
+      <div style="background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 9px; padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; animation: kvIn .3s ease .15s both">
+        <span style="font-size: 12px; font-weight: 700; color: #0E1A24">Jobstreet</span>
+        <span style="font-size: 9.5px; font-weight: 700; background: #E2E8F0; color: #475569; padding: 2px 6px; border-radius: 4px">48 CV</span>
       </div>
       
-      <div style="background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 8px; padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; animation: kvIn .3s ease .30s both">
-        <span style="font-size: 11px; font-weight: 700; color: #0E1A24">LinkedIn</span>
-        <span style="font-size: 9px; font-weight: 700; background: #E2E8F0; color: #475569; padding: 1px 5px; border-radius: 4px">31 CV</span>
+      <div style="background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 9px; padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; animation: kvIn .3s ease .30s both">
+        <span style="font-size: 12px; font-weight: 700; color: #0E1A24">LinkedIn</span>
+        <span style="font-size: 9.5px; font-weight: 700; background: #E2E8F0; color: #475569; padding: 2px 6px; border-radius: 4px">31 CV</span>
       </div>
 
-      <div style="background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 8px; padding: 7px 10px; display: flex; justify-content: space-between; align-items: center; animation: kvIn .3s ease .45s both">
-        <span style="font-size: 11px; font-weight: 700; color: #0E1A24">Glints</span>
-        <span style="font-size: 9px; font-weight: 700; background: #E2E8F0; color: #475569; padding: 1px 5px; border-radius: 4px">22 CV</span>
+      <div style="background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 9px; padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; animation: kvIn .3s ease .45s both">
+        <span style="font-size: 12px; font-weight: 700; color: #0E1A24">Glints</span>
+        <span style="font-size: 9.5px; font-weight: 700; background: #E2E8F0; color: #475569; padding: 2px 6px; border-radius: 4px">22 CV</span>
       </div>
     </div>
 
     <!-- Center: Signal Beam & Agent Badge -->
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px">
-      <svg width="36" height="12" viewBox="0 0 36 12" fill="none">
-        <path d="M 2 6 L 30 6" stroke="#13803F" stroke-width="2" stroke-dasharray="4 3" style="animation: kvDashRight 0.6s linear infinite" />
-        <polygon points="28,2 34,6 28,10" fill="#13803F" />
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px">
+      <svg width="40" height="14" viewBox="0 0 40 14" fill="none">
+        <path d="M 2 7 L 34 7" stroke="#13803F" stroke-width="2.5" stroke-dasharray="5 3" style="animation: kvDashRight 0.6s linear infinite" />
+        <polygon points="32,3 38,7 32,11" fill="#13803F" />
       </svg>
-      <div style="width: 36px; height: 36px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(7,28,51,0.2); animation: kvPopIn .3s ease .6s both">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+      <div style="width: 42px; height: 42px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(7,28,51,0.2); animation: kvPopIn .3s ease .6s both">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
       </div>
-      <span style="font-size: 8px; font-weight: 800; color: #13803F; letter-spacing: 0.05em">MATCH</span>
+      <span style="font-size: 9px; font-weight: 800; color: #13803F; letter-spacing: 0.05em">MATCH</span>
     </div>
 
     <!-- Right: Candidates Ranked by Job Match -->
-    <div style="display: flex; flex-direction: column; gap: 7px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
       <div style="display: flex; justify-content: space-between; align-items: center">
-        <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B">{{ $isIdLocale ? 'Kandidat Terpilih' : 'Ranked Candidates' }}</span>
-        <span style="font-size: 9px; font-weight: 700; color: #13803F">{{ $isIdLocale ? 'Kecocokan Kualifikasi' : 'Requirement Fit' }}</span>
+        <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B">{{ $isIdLocale ? 'Kandidat Terpilih' : 'Ranked Candidates' }}</span>
+        <span style="font-size: 9.5px; font-weight: 700; color: #13803F">{{ $isIdLocale ? 'Kecocokan Kualifikasi' : 'Requirement Fit' }}</span>
       </div>
 
       <!-- Candidate 1: Rani Pratama (TOP MATCH) -->
-      <div style="border: 1.5px solid #CBD5E1; border-radius: 9px; padding: 7px 10px; background: #F8FAFA; display: flex; align-items: center; gap: 9px; transition: all 0.3s ease; animation: kvIn .3s ease 1.0s both, kvMatchDoc .5s ease 1.8s 1 forwards">
-        <span style="width: 26px; height: 26px; border-radius: 50%; background: #C9E8D3; color: #0B5E2C; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800">RP</span>
+      <div style="border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 8px 12px; background: #F8FAFA; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease; animation: kvIn .3s ease 1.0s both, kvMatchDoc .5s ease 1.8s 1 forwards">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #C9E8D3; color: #0B5E2C; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">RP</span>
         <div style="display: flex; flex-direction: column; flex: 1">
-          <div style="display: flex; align-items: center; gap: 5px">
-            <span style="font-size: 12px; font-weight: 800; color: #0E1A24">Rani Pratama</span>
-            <span style="font-size: 8px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 1px 4px; border-radius: 3px">Top Match</span>
+          <div style="display: flex; align-items: center; gap: 6px">
+            <span style="font-size: 13px; font-weight: 800; color: #0E1A24">Rani Pratama</span>
+            <span style="font-size: 8.5px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 1px 5px; border-radius: 3px">Top Match</span>
           </div>
-          <span style="font-size: 9.5px; color: #475569">Senior Backend · 5 thn exp</span>
+          <span style="font-size: 10px; color: #475569">Senior Backend · 5 thn exp</span>
         </div>
         <div style="text-align: right">
-          <span style="font-size: 13px; font-weight: 800; color: #0B5E2C">92%</span>
-          <span style="display: block; font-size: 8px; color: #13803F; font-weight: 700">Shortlisted</span>
+          <span style="font-size: 14px; font-weight: 800; color: #0B5E2C">92%</span>
+          <span style="display: block; font-size: 8.5px; color: #13803F; font-weight: 700">Shortlisted</span>
         </div>
       </div>
 
       <!-- Candidate 2: Dimas A. -->
-      <div style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 6px 10px; background: #F8FAFA; display: flex; align-items: center; gap: 9px; animation: kvIn .3s ease 1.2s both">
-        <span style="width: 24px; height: 24px; border-radius: 50%; background: #CFDCEB; color: #1E3A8A; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800">DA</span>
+      <div style="border: 1px solid #E2E8F0; border-radius: 9px; padding: 7px 11px; background: #F8FAFA; display: flex; align-items: center; gap: 10px; animation: kvIn .3s ease 1.2s both">
+        <span style="width: 26px; height: 26px; border-radius: 50%; background: #CFDCEB; color: #1E3A8A; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800">DA</span>
         <div style="display: flex; flex-direction: column; flex: 1">
-          <span style="font-size: 11px; font-weight: 700; color: #0E1A24">Dimas Aditya</span>
-          <span style="font-size: 9px; color: #64748B">Backend Dev · 4 thn exp</span>
+          <span style="font-size: 12px; font-weight: 700; color: #0E1A24">Dimas Aditya</span>
+          <span style="font-size: 9.5px; color: #64748B">Backend Dev · 4 thn exp</span>
         </div>
-        <span style="font-size: 12px; font-weight: 800; color: #0E1A24">87%</span>
+        <span style="font-size: 13px; font-weight: 800; color: #0E1A24">87%</span>
       </div>
 
       <!-- Candidate 3: Sinta W. -->
-      <div style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 6px 10px; background: #F8FAFA; display: flex; align-items: center; gap: 9px; animation: kvIn .3s ease 1.4s both">
-        <span style="width: 24px; height: 24px; border-radius: 50%; background: #F2DCC4; color: #7C2D12; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800">SW</span>
+      <div style="border: 1px solid #E2E8F0; border-radius: 9px; padding: 7px 11px; background: #F8FAFA; display: flex; align-items: center; gap: 10px; animation: kvIn .3s ease 1.4s both">
+        <span style="width: 26px; height: 26px; border-radius: 50%; background: #F2DCC4; color: #7C2D12; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800">SW</span>
         <div style="display: flex; flex-direction: column; flex: 1">
-          <span style="font-size: 11px; font-weight: 700; color: #0E1A24">Sinta Wijaya</span>
-          <span style="font-size: 9px; color: #64748B">Fullstack Dev · 3 thn exp</span>
+          <span style="font-size: 12px; font-weight: 700; color: #0E1A24">Sinta Wijaya</span>
+          <span style="font-size: 9.5px; color: #64748B">Fullstack Dev · 3 thn exp</span>
         </div>
-        <span style="font-size: 12px; font-weight: 800; color: #0E1A24">81%</span>
+        <span style="font-size: 13px; font-weight: 800; color: #0E1A24">81%</span>
       </div>
 
       <!-- Candidate 4: Yoga H. -->
-      <div style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 6px 10px; background: #F8FAFA; display: flex; align-items: center; gap: 9px; opacity: 0.65; animation: kvIn .3s ease 1.6s both">
-        <span style="width: 24px; height: 24px; border-radius: 50%; background: #DCD3EE; color: #4C1D95; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800">YH</span>
+      <div style="border: 1px solid #E2E8F0; border-radius: 9px; padding: 7px 11px; background: #F8FAFA; display: flex; align-items: center; gap: 10px; opacity: 0.65; animation: kvIn .3s ease 1.6s both">
+        <span style="width: 26px; height: 26px; border-radius: 50%; background: #DCD3EE; color: #4C1D95; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800">YH</span>
         <div style="display: flex; flex-direction: column; flex: 1">
-          <span style="font-size: 11px; font-weight: 700; color: #0E1A24">Yoga Hermanto</span>
-          <span style="font-size: 9px; color: #64748B">Junior Backend · 2 thn exp</span>
+          <span style="font-size: 12px; font-weight: 700; color: #0E1A24">Yoga Hermanto</span>
+          <span style="font-size: 9.5px; color: #64748B">Junior Backend · 2 thn exp</span>
         </div>
-        <span style="font-size: 12px; font-weight: 800; color: #64748B">74%</span>
+        <span style="font-size: 13px; font-weight: 800; color: #64748B">74%</span>
       </div>
 
     </div>
-  </div>
-
-  <!-- Footer Banner -->
-  <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; animation: kvPopIn .35s ease 2.2s both">
-    <div style="display: flex; align-items: center; gap: 8px">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-      <span style="font-size: 11px; font-weight: 700; color: #0B5E2C">
-        {{ $isIdLocale ? '101 CV tersaring otomatis · 3 kandidat teratas siap diproses ke tahap interview' : '101 CVs auto-screened · Top 3 candidates ready for interview stage' }}
-      </span>
-    </div>
-    <span style="font-size: 10px; font-weight: 800; color: #13803F; background: #DDF3E4; padding: 2px 7px; border-radius: 4px">0.8s</span>
   </div>
 </div>
 
 <!-- SCENE 1: Candidate Communication Agent -->
-<div class="kv-rec-scene" :class="{ 'kv-active': (sol === 1) || (sol === -1 && activeSol === 1) }">
-  <!-- Header -->
-  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px">
-    <div style="display: flex; align-items: center; gap: 8px">
-      <span style="width: 28px; height: 28px; border-radius: 50%; background: #25D366; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-      </span>
-      <div>
-        <div style="display: flex; align-items: center; gap: 6px">
-          <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Asisten Rekrutmen Kouventa' : 'Kouventa Recruitment Assistant' }}</span>
-          <span style="font-size: 9px; font-weight: 600; color: #16A34A">● online</span>
+<div class="kv-rec-scene" :class="{ 'kv-active': (sol === 1) || (sol === -1 && activeSol === 1) }" style="justify-content: center;">
+  <!-- WhatsApp Chat Card Wrapper -->
+  <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); width: 100%; box-sizing: border-box;">
+    
+    <!-- Chat Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #25D366; color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        </span>
+        <div>
+          <div style="display: flex; align-items: center; gap: 6px">
+            <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Asisten Rekrutmen Kouventa' : 'Kouventa Recruitment Assistant' }}</span>
+            <span style="font-size: 9px; font-weight: 600; color: #16A34A">● online</span>
+          </div>
+          <span style="font-size: 10px; color: #64748B">Rani Pratama · Candidate #1</span>
         </div>
-        <span style="font-size: 10px; color: #64748B">Kandidat: Rani Pratama (Senior Backend Dev)</span>
       </div>
-    </div>
-    <span style="font-size: 10px; font-weight: 800; color: #0284C7; background: #E0F2FE; padding: 2px 8px; border-radius: 999px">
-      Auto-Outreach
-    </span>
-  </div>
-
-  <!-- Messages Stack -->
-  <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; padding: 6px 0">
-
-    <!-- Message 1: Agent Automated Invite & Psychotest (0.3s) -->
-    <div style="align-self: flex-start; max-width: 90%; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.3s both">
-      <span style="font-size: 11.5px; line-height: 1.45; color: #0E1A24">
-        {{ $isIdLocale ? 'Halo Rani! Selamat, profil kamu lolos seleksi berkas posisi Senior Backend Dev. Kami mengundang kamu ke sesi Wawancara Teknis & Psikotes Online.' : 'Hi Rani! Congrats, you passed resume screening for Senior Backend Dev. You are invited to Technical Interview & Online Psychotest.' }}
+      <span style="font-size: 10px; font-weight: 800; color: #0284C7; background: #E0F2FE; padding: 2px 8px; border-radius: 999px">
+        WhatsApp
       </span>
-      <!-- Attached Invitation Details Card -->
-      <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px 8px; display: flex; flex-direction: column; gap: 3px; font-size: 10px">
-        <span style="font-weight: 700; color: #0E1A24">📅 {{ $isIdLocale ? 'Wawancara: Kamis, 10:00 WIB' : 'Interview: Thursday, 10:00 AM' }}</span>
-        <span style="color: #0284C7; font-weight: 600">📝 {{ $isIdLocale ? 'Link Psikotes: Aktif (durasi 45 menit)' : 'Psychotest Link: Active (45m)' }}</span>
+    </div>
+
+    <!-- Messages Stack -->
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+
+      <!-- Message 1: Agent Automated Invite & Psychotest (0.3s) -->
+      <div style="align-self: flex-start; max-width: 90%; background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.3s both">
+        <span style="font-size: 11.5px; line-height: 1.45; color: #0E1A24">
+          {{ $isIdLocale ? 'Halo Rani! Selamat, profil kamu lolos seleksi berkas posisi Senior Backend Dev. Kami mengundang kamu ke sesi Wawancara Teknis & Psikotes Online.' : 'Hi Rani! Congrats, you passed resume screening for Senior Backend Dev. You are invited to Technical Interview & Online Psychotest.' }}
+        </span>
+        <!-- Attached Invitation Details Card -->
+        <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px 8px; display: flex; flex-direction: column; gap: 3px; font-size: 10px">
+          <span style="font-weight: 700; color: #0E1A24">📅 {{ $isIdLocale ? 'Wawancara: Kamis, 10:00 WIB' : 'Interview: Thursday, 10:00 AM' }}</span>
+          <span style="color: #0284C7; font-weight: 600">📝 {{ $isIdLocale ? 'Link Psikotes: Aktif (durasi 45 menit)' : 'Psychotest Link: Active (45m)' }}</span>
+        </div>
+        <span style="align-self: flex-end; font-size: 8.5px; font-weight: 600; color: #94A3B8">10:00 AM</span>
       </div>
-      <span style="align-self: flex-end; font-size: 8.5px; font-weight: 600; color: #94A3B8">10:00 AM</span>
-    </div>
 
-    <!-- Candidate Typing Dots (0.9s - 1.5s) -->
-    <div style="align-self: flex-end; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 2px 12px; padding: 8px 12px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); opacity: 0; animation: kvIn .25s ease 0.9s both, kvOut .2s ease 1.5s 1 forwards">
-      <span style="width: 5px; height: 5px; border-radius: 50%; background: #64748B; animation: kvTypingDot 1.2s infinite ease-in-out 0s;"></span>
-      <span style="width: 5px; height: 5px; border-radius: 50%; background: #64748B; animation: kvTypingDot 1.2s infinite ease-in-out 0.2s;"></span>
-      <span style="width: 5px; height: 5px; border-radius: 50%; background: #64748B; animation: kvTypingDot 1.2s infinite ease-in-out 0.4s;"></span>
-    </div>
-
-    <!-- Message 2: Candidate Confirmation (1.6s) -->
-    <div style="align-self: flex-end; max-width: 88%; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 12px 12px 2px 12px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); opacity: 0; animation: kvIn .35s ease 1.6s both">
-      <span style="font-size: 11.5px; line-height: 1.45; color: #1E3A8A">
-        {{ $isIdLocale ? 'Halo, terima kasih banyak! Saya konfirmasi hadir hari Kamis jam 10:00 WIB, dan psikotes sudah selesai saya kerjakan barusan 👍' : 'Thank you so much! Confirming I will attend Thursday at 10:00 AM, and I just finished the psychotest 👍' }}
-      </span>
-      <span style="align-self: flex-end; font-size: 8.5px; font-weight: 600; color: #3B82F6">10:02 AM · ✓✓</span>
-    </div>
-
-    <!-- Message 3: Agent Confirmation & Sync (2.4s) -->
-    <div style="align-self: flex-start; max-width: 90%; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px 12px 12px 2px; padding: 9px 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); opacity: 0; animation: kvIn .35s ease 2.4s both">
-      <div style="display: flex; justify-content: space-between; align-items: center">
-        <span style="font-size: 10px; font-weight: 800; color: #13803F">Kouventa Agent</span>
-        <span style="font-size: 8.5px; font-weight: 700; color: #13803F; background: #DDF3E4; padding: 1px 5px; border-radius: 3px">0.3s Auto-Sync</span>
+      <!-- Candidate Typing Dots (0.9s - 1.5s) -->
+      <div style="align-self: flex-end; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 2px 12px; padding: 8px 12px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); opacity: 0; animation: kvIn .25s ease 0.9s both, kvOut .2s ease 1.5s 1 forwards">
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: #64748B; animation: kvTypingDot 1.2s infinite ease-in-out 0s;"></span>
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: #64748B; animation: kvTypingDot 1.2s infinite ease-in-out 0.2s;"></span>
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: #64748B; animation: kvTypingDot 1.2s infinite ease-in-out 0.4s;"></span>
       </div>
-      <span style="font-size: 11.5px; line-height: 1.45; color: #0B5E2C">
-        {{ $isIdLocale ? 'Konfirmasi kamu telah dikunci ke kalender Google Meet & dashboard HR. Pengingat otomatis akan dikirim H-1.' : 'Your confirmation is locked into Google Meet calendar & HR dashboard. An automated reminder will be sent 1 day prior.' }}
-      </span>
+
+      <!-- Message 2: Candidate Confirmation (1.6s) -->
+      <div style="align-self: flex-end; max-width: 88%; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 12px 12px 2px 12px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); opacity: 0; animation: kvIn .35s ease 1.6s both">
+        <span style="font-size: 11.5px; line-height: 1.45; color: #1E3A8A">
+          {{ $isIdLocale ? 'Halo, terima kasih banyak! Saya konfirmasi hadir hari Kamis jam 10:00 WIB, dan psikotes sudah selesai saya kerjakan barusan 👍' : 'Thank you so much! Confirming I will attend Thursday at 10:00 AM, and I just finished the psychotest 👍' }}
+        </span>
+        <span style="align-self: flex-end; font-size: 8.5px; font-weight: 600; color: #3B82F6">10:02 AM · ✓✓</span>
+      </div>
+
+      <!-- Message 3: Agent Confirmation & Sync (2.4s) -->
+      <div style="align-self: flex-start; max-width: 90%; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px 12px 12px 2px; padding: 9px 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); opacity: 0; animation: kvIn .35s ease 2.4s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 10px; font-weight: 800; color: #13803F">Kouventa Agent</span>
+          <span style="font-size: 8.5px; font-weight: 700; color: #13803F; background: #DDF3E4; padding: 1px 5px; border-radius: 3px">Auto-Sync</span>
+        </div>
+        <span style="font-size: 11.5px; line-height: 1.45; color: #0B5E2C">
+          {{ $isIdLocale ? 'Konfirmasi kamu telah dikunci ke kalender Google Meet & dashboard HR. Pengingat otomatis akan dikirim H-1.' : 'Your confirmation is locked into Google Meet calendar & HR dashboard. An automated reminder will be sent 1 day prior.' }}
+        </span>
+      </div>
+
     </div>
 
-  </div>
-
-  <!-- Footer Banner -->
-  <div style="background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 10px; padding: 9px 12px; display: flex; align-items: center; justify-content: space-between; animation: kvPopIn .35s ease 2.8s both">
-    <div style="display: flex; align-items: center; gap: 7px">
-      <span style="width: 18px; height: 18px; border-radius: 50%; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center; font-size: 10px">✓</span>
-      <span style="font-size: 10.5px; font-weight: 700; color: #0E1A24">
-        {{ $isIdLocale ? 'Undangan terkirim, konfirmasi diterima & status kandidat otomatis terupdate di ATS' : 'Invitation sent, confirmation received & candidate status auto-updated in ATS' }}
-      </span>
-    </div>
-    <span style="font-size: 9px; font-weight: 800; color: #0284C7; background: #E0F2FE; padding: 2px 6px; border-radius: 4px">Auto-Pilot</span>
   </div>
 </div>
 
 <!-- SCENE 2: Candidate Scheduling Agent -->
-<div class="kv-rec-scene" :class="{ 'kv-active': (sol === 2) || (sol === -1 && activeSol === 2) }">
-  <!-- Header -->
-  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 10px">
-    <div style="display: flex; align-items: center; gap: 8px">
-      <span style="width: 26px; height: 26px; border-radius: 6px; background: #EFF6FF; color: #2563EB; display: flex; align-items: center; justify-content: center">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-      </span>
-      <div>
-        <h4 style="margin: 0; font-size: 13px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Koordinasi Jadwal Multi-Pihak Otomatis' : 'Automated Multi-Party Schedule Coordination' }}</h4>
-        <span style="font-size: 10px; color: #64748B">{{ $isIdLocale ? 'Sinkronisasi kalender HR, Interviewer, dan Kandidat' : 'Calendar synchronization for HR, Interviewers, and Candidate' }}</span>
-      </div>
-    </div>
-    <span style="font-size: 10px; font-weight: 800; color: #1E40AF; background: #DBEAFE; padding: 2px 8px; border-radius: 999px">
-      {{ $isIdLocale ? '3 Kalender Tersinkron' : '3 Calendars Synced' }}
-    </span>
-  </div>
+<div class="kv-rec-scene" :class="{ 'kv-active': (sol === 2) || (sol === -1 && activeSol === 2) }" style="justify-content: center; gap: 14px;">
 
   <!-- Multi-Party Availability Grid -->
-  <div style="background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .35s ease 0.2s both">
+  <div style="background: #F8FAFA; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; animation: kvIn .35s ease 0.2s both">
     
     <!-- Time Header -->
-    <div style="display: grid; grid-template-columns: 110px repeat(5, 1fr); gap: 6px; align-items: center; font-size: 10px; font-weight: 800; color: #64748B; padding-bottom: 4px; border-bottom: 1px solid #E2E8F0">
-      <span>{{ $isIdLocale ? 'Peserta' : 'Participant' }}</span>
+    <div style="display: grid; grid-template-columns: 120px repeat(5, 1fr); gap: 6px; align-items: center; font-size: 10.5px; font-weight: 800; color: #64748B; padding-bottom: 6px; border-bottom: 1px solid #E2E8F0">
+      <span>{{ $isIdLocale ? 'Peserta Kalender' : 'Participants' }}</span>
       <span style="text-align: center">09:00</span>
       <span style="text-align: center; color: #13803F; background: #DDF3E4; border-radius: 4px; padding: 1px 0">10:00 ★</span>
       <span style="text-align: center">11:00</span>
@@ -1216,107 +1168,94 @@
     </div>
 
     <!-- Row 1: HR Manager -->
-    <div style="display: grid; grid-template-columns: 110px repeat(5, 1fr); gap: 6px; align-items: center; font-size: 10.5px">
-      <span style="font-weight: 700; color: #0E1A24; display: flex; align-items: center; gap: 4px">
-        <span style="width: 6px; height: 6px; border-radius: 50%; background: #3B82F6"></span>
+    <div style="display: grid; grid-template-columns: 120px repeat(5, 1fr); gap: 6px; align-items: center; font-size: 11px">
+      <span style="font-weight: 700; color: #0E1A24; display: flex; align-items: center; gap: 5px">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: #3B82F6"></span>
         Sarah (HR)
       </span>
-      <span style="height: 22px; border-radius: 5px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 700; color: #0B5E2C">Free</span>
-      <span style="height: 22px; border-radius: 5px; background: #13803F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 800; box-shadow: 0 2px 6px rgba(19,128,63,0.3)">Match</span>
-      <span style="height: 22px; border-radius: 5px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 8.5px; color: #94A3B8">Busy</span>
-      <span style="height: 22px; border-radius: 5px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 700; color: #0B5E2C">Free</span>
-      <span style="height: 22px; border-radius: 5px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 8.5px; color: #94A3B8">Busy</span>
+      <span style="height: 24px; border-radius: 6px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #0B5E2C">Free</span>
+      <span style="height: 24px; border-radius: 6px; background: #13803F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; box-shadow: 0 2px 6px rgba(19,128,63,0.3)">Match</span>
+      <span style="height: 24px; border-radius: 6px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #94A3B8">Busy</span>
+      <span style="height: 24px; border-radius: 6px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #0B5E2C">Free</span>
+      <span style="height: 24px; border-radius: 6px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #94A3B8">Busy</span>
     </div>
 
     <!-- Row 2: Lead Tech Interviewer -->
-    <div style="display: grid; grid-template-columns: 110px repeat(5, 1fr); gap: 6px; align-items: center; font-size: 10.5px">
-      <span style="font-weight: 700; color: #0E1A24; display: flex; align-items: center; gap: 4px">
-        <span style="width: 6px; height: 6px; border-radius: 50%; background: #8B5CF6"></span>
+    <div style="display: grid; grid-template-columns: 120px repeat(5, 1fr); gap: 6px; align-items: center; font-size: 11px">
+      <span style="font-weight: 700; color: #0E1A24; display: flex; align-items: center; gap: 5px">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: #8B5CF6"></span>
         Budi (Lead)
       </span>
-      <span style="height: 22px; border-radius: 5px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 8.5px; color: #94A3B8">Busy</span>
-      <span style="height: 22px; border-radius: 5px; background: #13803F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 800; box-shadow: 0 2px 6px rgba(19,128,63,0.3)">Match</span>
-      <span style="height: 22px; border-radius: 5px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 700; color: #0B5E2C">Free</span>
-      <span style="height: 22px; border-radius: 5px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 8.5px; color: #94A3B8">Busy</span>
-      <span style="height: 22px; border-radius: 5px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 700; color: #0B5E2C">Free</span>
+      <span style="height: 24px; border-radius: 6px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #94A3B8">Busy</span>
+      <span style="height: 24px; border-radius: 6px; background: #13803F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; box-shadow: 0 2px 6px rgba(19,128,63,0.3)">Match</span>
+      <span style="height: 24px; border-radius: 6px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #0B5E2C">Free</span>
+      <span style="height: 24px; border-radius: 6px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #94A3B8">Busy</span>
+      <span style="height: 24px; border-radius: 6px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #0B5E2C">Free</span>
     </div>
 
     <!-- Row 3: Candidate Rani P. -->
-    <div style="display: grid; grid-template-columns: 110px repeat(5, 1fr); gap: 6px; align-items: center; font-size: 10.5px">
-      <span style="font-weight: 700; color: #0E1A24; display: flex; align-items: center; gap: 4px">
-        <span style="width: 6px; height: 6px; border-radius: 50%; background: #10B981"></span>
+    <div style="display: grid; grid-template-columns: 120px repeat(5, 1fr); gap: 6px; align-items: center; font-size: 11px">
+      <span style="font-weight: 700; color: #0E1A24; display: flex; align-items: center; gap: 5px">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: #10B981"></span>
         Rani (Kandidat)
       </span>
-      <span style="height: 22px; border-radius: 5px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 700; color: #0B5E2C">Free</span>
-      <span style="height: 22px; border-radius: 5px; background: #13803F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 800; box-shadow: 0 2px 6px rgba(19,128,63,0.3)">Match</span>
-      <span style="height: 22px; border-radius: 5px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 8.5px; font-weight: 700; color: #0B5E2C">Free</span>
-      <span style="height: 22px; border-radius: 5px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 8.5px; color: #94A3B8">Busy</span>
-      <span style="height: 22px; border-radius: 5px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 8.5px; color: #94A3B8">Busy</span>
+      <span style="height: 24px; border-radius: 6px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #0B5E2C">Free</span>
+      <span style="height: 24px; border-radius: 6px; background: #13803F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; box-shadow: 0 2px 6px rgba(19,128,63,0.3)">Match</span>
+      <span style="height: 24px; border-radius: 6px; background: #C9E8D3; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #0B5E2C">Free</span>
+      <span style="height: 24px; border-radius: 6px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #94A3B8">Busy</span>
+      <span style="height: 24px; border-radius: 6px; background: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #94A3B8">Busy</span>
     </div>
 
   </div>
 
   <!-- Locked Calendar Event Card -->
-  <div style="background: #FFFFFF; border: 1.5px solid #13803F; border-left: 4px solid #13803F; border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 14px rgba(19, 128, 63, 0.08); animation: kvIn .35s ease 1.5s both">
+  <div style="background: #FFFFFF; border: 1.5px solid #13803F; border-left: 4px solid #13803F; border-radius: 10px; padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 14px rgba(19, 128, 63, 0.08); animation: kvIn .35s ease 1.5s both">
     <div style="display: flex; justify-content: space-between; align-items: center">
-      <div style="display: flex; align-items: center; gap: 6px">
-        <span style="font-size: 12px; font-weight: 800; color: #0E1A24">Wawancara Teknis — Rani Pratama</span>
-      </div>
-      <span style="font-size: 9px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 2px 6px; border-radius: 4px">✓ Slot Terkunci (100% Match)</span>
+      <span style="font-size: 13px; font-weight: 800; color: #0E1A24">Wawancara Teknis — Rani Pratama</span>
+      <span style="font-size: 9.5px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 2px 7px; border-radius: 4px">✓ Slot Terkunci (100% Match)</span>
     </div>
     
-    <div style="display: flex; gap: 14px; font-size: 10.5px; color: #475569">
+    <div style="display: flex; gap: 16px; font-size: 11px; color: #475569">
       <span>⏰ <strong>Kamis, 10:00 – 11:00 WIB</strong></span>
       <span>📹 <strong>Google Meet</strong> (link otomatis dibuat)</span>
     </div>
 
-    <div style="display: flex; align-items: center; gap: 6px; padding-top: 2px">
-      <span style="font-size: 9.5px; font-weight: 700; color: #64748B">Undangan terkirim:</span>
-      <span style="font-size: 9px; background: #F1F5F9; color: #334155; padding: 1px 6px; border-radius: 4px">sarah@company.com</span>
-      <span style="font-size: 9px; background: #F1F5F9; color: #334155; padding: 1px 6px; border-radius: 4px">budi@company.com</span>
-      <span style="font-size: 9px; background: #F1F5F9; color: #334155; padding: 1px 6px; border-radius: 4px">rani.p@email.com</span>
+    <div style="display: flex; align-items: center; gap: 6px; padding-top: 3px">
+      <span style="font-size: 10px; font-weight: 700; color: #64748B">Undangan terkirim:</span>
+      <span style="font-size: 9.5px; background: #F1F5F9; color: #334155; padding: 2px 7px; border-radius: 4px">sarah@company.com</span>
+      <span style="font-size: 9.5px; background: #F1F5F9; color: #334155; padding: 2px 7px; border-radius: 4px">budi@company.com</span>
+      <span style="font-size: 9.5px; background: #F1F5F9; color: #334155; padding: 2px 7px; border-radius: 4px">rani.p@email.com</span>
     </div>
-  </div>
-
-  <!-- Footer Banner -->
-  <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 10px; padding: 9px 12px; display: flex; align-items: center; justify-content: space-between; animation: kvPopIn .35s ease 2.0s both">
-    <div style="display: flex; align-items: center; gap: 7px">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      <span style="font-size: 10.5px; font-weight: 700; color: #0B5E2C">
-        {{ $isIdLocale ? 'Jadwal optimal ditemukan dalam 0.4 detik tanpa friksi email manual' : 'Optimal mutual slot resolved in 0.4s with zero manual email friction' }}
-      </span>
-    </div>
-    <span style="font-size: 9px; font-weight: 800; color: #13803F; background: #DDF3E4; padding: 2px 6px; border-radius: 4px">Calendar Sync</span>
   </div>
 </div>
 
 <!-- SCENE 3: Recruitment Insight Agent (Executive Dark Dossier Canvas) -->
-<div class="kv-rec-scene" :class="{ 'kv-active': (sol === 3) || (sol === -1 && activeSol === 3) }" style="background: #071C33; color: #FFFFFF; border-radius: 19px; padding: 22px;">
+<div class="kv-rec-scene" :class="{ 'kv-active': (sol === 3) || (sol === -1 && activeSol === 3) }" style="background: #071C33; color: #FFFFFF; border-radius: 19px; padding: 26px; justify-content: center; gap: 14px;">
   <!-- Header -->
-  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 10px">
+  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 12px">
     <div style="display: flex; align-items: center; gap: 10px">
-      <span style="width: 32px; height: 32px; border-radius: 50%; background: rgba(43, 212, 106, 0.15); border: 1.5px solid #2BD46A; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">RP</span>
+      <span style="width: 36px; height: 36px; border-radius: 50%; background: rgba(43, 212, 106, 0.15); border: 1.5px solid #2BD46A; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800">RP</span>
       <div>
         <div style="display: flex; align-items: center; gap: 6px">
-          <span style="font-size: 13px; font-weight: 800; color: #FFFFFF">Rani Pratama</span>
-          <span style="font-size: 9px; font-weight: 800; color: #2BD46A; background: rgba(43,212,106,0.16); padding: 1px 6px; border-radius: 4px">#REC-4902</span>
+          <span style="font-size: 14px; font-weight: 800; color: #FFFFFF">Rani Pratama</span>
+          <span style="font-size: 9.5px; font-weight: 800; color: #2BD46A; background: rgba(43,212,106,0.16); padding: 1px 6px; border-radius: 4px">#REC-4902</span>
         </div>
-        <span style="font-size: 10px; color: #94A3B8">Senior Backend Developer · {{ $isIdLocale ? 'Hasil Wawancara & Psikotes' : 'Interview & Psychotest Results' }}</span>
+        <span style="font-size: 11px; color: #94A3B8">Senior Backend Developer · {{ $isIdLocale ? 'Hasil Wawancara & Psikotes' : 'Interview & Psychotest Results' }}</span>
       </div>
     </div>
     <div style="text-align: right">
-      <span style="font-size: 16px; font-weight: 900; color: #2BD46A">94<span style="font-size: 11px; color: #94A3B8; font-weight: 600">/100</span></span>
-      <span style="display: block; font-size: 8.5px; font-weight: 800; color: #2BD46A; text-transform: uppercase; letter-spacing: 0.05em">Top 2% Candidate</span>
+      <span style="font-size: 18px; font-weight: 900; color: #2BD46A">94<span style="font-size: 12px; color: #94A3B8; font-weight: 600">/100</span></span>
+      <span style="display: block; font-size: 9px; font-weight: 800; color: #2BD46A; text-transform: uppercase; letter-spacing: 0.05em">Top 2% Candidate</span>
     </div>
   </div>
 
   <!-- Body: 3-Dimensional Score Bars -->
-  <div style="display: flex; flex-direction: column; gap: 8px; padding: 4px 0">
-    <span style="font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #94A3B8">{{ $isIdLocale ? 'Analisis Kompetensi AI' : 'AI Competency Matrix' }}</span>
+  <div style="display: flex; flex-direction: column; gap: 10px; padding: 2px 0">
+    <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #94A3B8">{{ $isIdLocale ? 'Analisis Kompetensi AI' : 'AI Competency Matrix' }}</span>
     
     <!-- Bar 1: Technical -->
-    <div style="display: flex; flex-direction: column; gap: 2px">
-      <div style="display: flex; justify-content: space-between; font-size: 10px">
+    <div style="display: flex; flex-direction: column; gap: 3px">
+      <div style="display: flex; justify-content: space-between; font-size: 10.5px">
         <span style="font-weight: 700; color: #E2E8F0">{{ $isIdLocale ? 'Kompetensi Teknis (Go, SQL, Arsitektur)' : 'Technical Mastery (Go, SQL, Architecture)' }}</span>
         <strong style="color: #2BD46A">95%</strong>
       </div>
@@ -1326,8 +1265,8 @@
     </div>
 
     <!-- Bar 2: Psychotest -->
-    <div style="display: flex; flex-direction: column; gap: 2px">
-      <div style="display: flex; justify-content: space-between; font-size: 10px">
+    <div style="display: flex; flex-direction: column; gap: 3px">
+      <div style="display: flex; justify-content: space-between; font-size: 10.5px">
         <span style="font-weight: 700; color: #E2E8F0">{{ $isIdLocale ? 'Psikotes & Penalaran Logika' : 'Psychotest & Cognitive Logic' }}</span>
         <strong style="color: #38BDF8">92%</strong>
       </div>
@@ -1337,8 +1276,8 @@
     </div>
 
     <!-- Bar 3: Culture & Comms -->
-    <div style="display: flex; flex-direction: column; gap: 2px">
-      <div style="display: flex; justify-content: space-between; font-size: 10px">
+    <div style="display: flex; flex-direction: column; gap: 3px">
+      <div style="display: flex; justify-content: space-between; font-size: 10.5px">
         <span style="font-weight: 700; color: #E2E8F0">{{ $isIdLocale ? 'Komunikasi & Problem Solving' : 'Communication & Problem Solving' }}</span>
         <strong style="color: #A78BFA">90%</strong>
       </div>
@@ -1349,33 +1288,25 @@
   </div>
 
   <!-- Key Observation Synthesis Box -->
-  <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 11px; display: flex; flex-direction: column; gap: 3px; animation: kvIn .35s ease 1.0s both">
-    <span style="font-size: 9px; font-weight: 800; color: #FBBF24; display: flex; align-items: center; gap: 4px">
+  <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 9px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; animation: kvIn .35s ease 1.0s both">
+    <span style="font-size: 9.5px; font-weight: 800; color: #FBBF24; display: flex; align-items: center; gap: 4px">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
       {{ $isIdLocale ? 'Sintesis Wawasan AI' : 'AI Behavioral Insight' }}
     </span>
-    <span style="font-size: 10.5px; line-height: 1.4; color: #CBD5E1">
+    <span style="font-size: 11px; line-height: 1.45; color: #CBD5E1">
       {{ $isIdLocale ? 'Kandidat menunjukkan keunggulan kuat pada optimasi database dan microservices. Skor psikotes mencerminkan konsistensi tinggi di bawah tekanan deadline.' : 'Candidate shows exceptional strength in database optimization & microservices. Psychotest indicates high consistency under deadline pressure.' }}
     </span>
   </div>
 
   <!-- Final Recommendation Card -->
-  <div style="background: rgba(43, 212, 106, 0.12); border: 1.5px solid #2BD46A; border-radius: 10px; padding: 9px 12px; display: flex; justify-content: space-between; align-items: center; animation: kvPopIn .35s ease 1.4s both">
+  <div style="background: rgba(43, 212, 106, 0.12); border: 1.5px solid #2BD46A; border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; animation: kvPopIn .35s ease 1.4s both">
     <div style="display: flex; flex-direction: column; gap: 2px">
-      <span style="font-size: 11px; font-weight: 800; color: #2BD46A">{{ $isIdLocale ? '✓ Rekomendasi: Lanjut ke Final Interview' : '✓ Recommendation: Proceed to Final Interview' }}</span>
-      <span style="font-size: 9.5px; color: #CBD5E1">{{ $isIdLocale ? 'Draft penawaran kerja (Offering Letter) otomatis disiapkan' : 'Automated draft offering letter pre-generated for HR approval' }}</span>
+      <span style="font-size: 12px; font-weight: 800; color: #2BD46A">{{ $isIdLocale ? '✓ Rekomendasi: Lanjut ke Final Interview' : '✓ Recommendation: Proceed to Final Interview' }}</span>
+      <span style="font-size: 10px; color: #CBD5E1">{{ $isIdLocale ? 'Draft penawaran kerja (Offering Letter) otomatis disiapkan' : 'Automated draft offering letter pre-generated for HR approval' }}</span>
     </div>
-    <span style="font-size: 9px; font-weight: 800; color: #071C33; background: #2BD46A; padding: 3px 8px; border-radius: 4px; white-space: nowrap">
+    <span style="font-size: 9.5px; font-weight: 800; color: #071C33; background: #2BD46A; padding: 3px 8px; border-radius: 4px; white-space: nowrap">
       Approved
     </span>
-  </div>
-
-  <!-- Footer Banner -->
-  <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; animation: kvIn .35s ease 1.8s both">
-    <span style="font-size: 10px; color: #94A3B8">
-      {{ $isIdLocale ? 'Analisis otomatis dari rekaman wawancara & hasil tes psikotes dalam 1.2 detik' : 'Automated synthesis from interview transcripts & psychotest scores in 1.2s' }}
-    </span>
-    <span style="font-size: 9px; font-weight: 700; color: #2BD46A">100% Grounded</span>
   </div>
 </div>
 
