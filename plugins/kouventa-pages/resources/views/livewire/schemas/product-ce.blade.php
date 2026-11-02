@@ -112,7 +112,7 @@
                 <p class="text-xs text-[#6F767E] mt-0.5">Edit heading and the pain points addressed by Kouventa Customer Engagement.</p>
             </div>
             <div class="flex items-center gap-3">
-                <button type="button" wire:click="addRepeaterItem('challenges.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
+                <button type="button" wire:click="addRepeaterItem('challenges.cards')" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
                     <span class="material-symbols-outlined text-sm">add_circle</span>
                     Add Challenge Card
                 </button>
@@ -166,7 +166,7 @@
                 </div>
             @endforeach
 
-            <button type="button" wire:click="addRepeaterItem('challenges.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
+            <button type="button" wire:click="addRepeaterItem('challenges.cards')" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
                 <span class="material-symbols-outlined text-sm">add</span>
                 Add Challenge Card
             </button>
@@ -344,7 +344,7 @@
                 <p class="text-xs text-[#6F767E] mt-0.5">Supervisor mode, Multi-account, Role-based access, History, and Ticketing.</p>
             </div>
             <div class="flex items-center gap-3">
-                <button type="button" wire:click="addRepeaterItem('platform_control.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
+                <button type="button" wire:click="addRepeaterItem('platform_control.cards')" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
                     <span class="material-symbols-outlined text-sm">add_circle</span>
                     Add Control Card
                 </button>
@@ -392,7 +392,7 @@
                 </div>
             @endforeach
 
-            <button type="button" wire:click="addRepeaterItem('platform_control.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
+            <button type="button" wire:click="addRepeaterItem('platform_control.cards')" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
                 <span class="material-symbols-outlined text-sm">add</span>
                 Add Control Card
             </button>
@@ -409,7 +409,7 @@
                 <p class="text-xs text-[#6F767E] mt-0.5">Meta BSP, Built around business, Secure & trusted, and Post-paid messaging.</p>
             </div>
             <div class="flex items-center gap-3">
-                <button type="button" wire:click="addRepeaterItem('why.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
+                <button type="button" wire:click="addRepeaterItem('why.cards')" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
                     <span class="material-symbols-outlined text-sm">add_circle</span>
                     Add Why Card
                 </button>
@@ -463,7 +463,7 @@
                 </div>
             @endforeach
 
-            <button type="button" wire:click="addRepeaterItem('why.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
+            <button type="button" wire:click="addRepeaterItem('why.cards')" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
                 <span class="material-symbols-outlined text-sm">add</span>
                 Add Why Card
             </button>

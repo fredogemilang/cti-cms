@@ -146,17 +146,100 @@ class PageEditor extends Component
         }
 
         if ($default === null) {
-            if (! empty($list) && is_array(reset($list))) {
-                $sample = reset($list);
-                $default = array_map(fn ($v) => is_array($v) ? [] : '', $sample);
-            } else {
-                $default = '';
-            }
+            $default = $this->getDefaultRepeaterItem($path, $list);
         }
 
         $list[] = $default;
         data_set($this->sections, $path, array_values($list));
         $this->stashCurrentLocaleData();
+    }
+
+    /**
+     * Helper to add a feature row to a comparison category.
+     */
+    public function addCompareRow(string $section, int $categoryIndex): void
+    {
+        $this->addRepeaterItem("{$section}.{$categoryIndex}.rows");
+    }
+
+    /**
+     * Helper to add a new category to a comparison table.
+     */
+    public function addCompareCategory(string $section): void
+    {
+        $this->addRepeaterItem($section);
+    }
+
+    /**
+     * Resolve schema-appropriate default data for a new repeater item.
+     */
+    protected function getDefaultRepeaterItem(string $path, array $list): mixed
+    {
+        // 1. Comparison Matrix row
+        if (preg_match('/compare_(ai|ce)\.\d+\.rows$/', $path)) {
+            return ['feature' => '', 'col1' => '—', 'col2' => '✓', 'col3' => '✓'];
+        }
+
+        // 2. Comparison Category
+        if (preg_match('/compare_(ai|ce)$/', $path)) {
+            return [
+                'category' => 'New Category',
+                'rows' => [
+                    ['feature' => 'New Feature', 'col1' => '—', 'col2' => '✓', 'col3' => '✓'],
+                ],
+            ];
+        }
+
+        // 3. If list already has items, clone structure with empty values
+        if (! empty($list) && is_array(reset($list))) {
+            $sample = reset($list);
+            $inferred = [];
+            foreach ($sample as $k => $v) {
+                if (is_array($v)) {
+                    $inferred[$k] = [];
+                } elseif (in_array($k, ['col1', 'col2', 'col3'], true)) {
+                    $inferred[$k] = ($k === 'col1') ? '—' : '✓';
+                } else {
+                    $inferred[$k] = '';
+                }
+            }
+            return $inferred;
+        }
+
+        // 4. Known schema fallbacks
+        if (str_contains($path, 'departments.') && str_ends_with($path, '.challenges')) {
+            return ['text' => ''];
+        }
+
+        if (str_contains($path, 'departments.') && str_ends_with($path, '.impacts')) {
+            return ['text' => '', 'desc' => ''];
+        }
+
+        if (str_contains($path, 'addons.items_')) {
+            return ['title' => '', 'desc' => ''];
+        }
+
+        if (str_ends_with($path, 'challenges.cards')) {
+            return ['tag' => '', 'title' => '', 'desc' => ''];
+        }
+
+        if (str_ends_with($path, 'journey_steps')) {
+            return ['title' => '', 'desc' => '', 'outcome' => ''];
+        }
+
+        if (str_ends_with($path, 'governance.cards') || str_ends_with($path, 'why.cards')) {
+            return ['title' => '', 'desc' => ''];
+        }
+
+        if (str_ends_with($path, '.challenges')) {
+            return ['text' => ''];
+        }
+
+        if (str_ends_with($path, '.impacts') || str_ends_with($path, 'journey.steps')) {
+            return ['title' => '', 'desc' => ''];
+        }
+
+        return '';
     }
 
     /**

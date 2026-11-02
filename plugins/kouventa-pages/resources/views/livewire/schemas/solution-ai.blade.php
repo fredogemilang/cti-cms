@@ -122,7 +122,7 @@
     <div class="space-y-3">
         <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">Challenges</h3>
-            <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.challenges', {{ json_encode(['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+            <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.challenges')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
                 <span class="material-symbols-outlined text-xs">add_circle</span>
                 Add Challenge
             </button>
@@ -152,7 +152,7 @@
                 </div>
             @endforeach
         </div>
-        <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.challenges', {{ json_encode(['text' => '']) }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+        <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.challenges')" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
             <span class="material-symbols-outlined text-xs">add</span>
             Add Challenge Card
         </button>
@@ -184,7 +184,7 @@
     <div class="space-y-3">
         <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">Business Impact</h3>
-            <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.impacts', {{ json_encode($dKey === 'sales_marketing' ? ['text' => '', 'desc' => ''] : ['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+            <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.impacts')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
                 <span class="material-symbols-outlined text-xs">add_circle</span>
                 Add Impact
             </button>
@@ -217,7 +217,7 @@
                 </div>
             @endforeach
         </div>
-        <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.impacts', {{ json_encode($dKey === 'sales_marketing' ? ['text' => '', 'desc' => ''] : ['text' => '']) }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+        <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.impacts')" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
             <span class="material-symbols-outlined text-xs">add</span>
             Add Impact Card
         </button>
@@ -255,7 +255,7 @@
         <div class="space-y-2">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-[#6F767E] uppercase">Challenges</span>
-                <button type="button" wire:click="addRepeaterItem('departments.payment_prioritization.challenges', {{ json_encode(['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                <button type="button" wire:click="addRepeaterItem('departments.payment_prioritization.challenges')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
                     <span class="material-symbols-outlined text-xs">add_circle</span>
                     Add Challenge
                 </button>
@@ -319,7 +319,7 @@
         <div class="space-y-2">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-[#6F767E] uppercase">Business Impact</span>
-                <button type="button" wire:click="addRepeaterItem('departments.payment_prioritization.impacts', {{ json_encode(['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                <button type="button" wire:click="addRepeaterItem('departments.payment_prioritization.impacts')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
                     <span class="material-symbols-outlined text-xs">add_circle</span>
                     Add Impact
                 </button>
@@ -362,7 +362,7 @@
         <div class="space-y-2">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-[#6F767E] uppercase">Challenges</span>
-                <button type="button" wire:click="addRepeaterItem('departments.bank_reconciliation.challenges', {{ json_encode(['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                <button type="button" wire:click="addRepeaterItem('departments.bank_reconciliation.challenges')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
                     <span class="material-symbols-outlined text-xs">add_circle</span>
                     Add Challenge
                 </button>
@@ -418,7 +418,7 @@
         <div class="space-y-2">
             <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-[#6F767E] uppercase">Business Impact</span>
-                <button type="button" wire:click="addRepeaterItem('departments.bank_reconciliation.impacts', {{ json_encode(['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                <button type="button" wire:click="addRepeaterItem('departments.bank_reconciliation.impacts')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
                     <span class="material-symbols-outlined text-xs">add_circle</span>
                     Add Impact
                 </button>
@@ -462,7 +462,7 @@
             <p class="text-xs text-[#6F767E] mt-0.5">Configure implementation roadmap title and step details.</p>
         </div>
         <div class="flex items-center gap-3">
-            <button type="button" wire:click="addRepeaterItem('journey.steps', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
+            <button type="button" wire:click="addRepeaterItem('journey.steps')" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
                 <span class="material-symbols-outlined text-sm">add_circle</span>
                 Add Step
             </button>
@@ -510,7 +510,7 @@
             </div>
         @endforeach
     </div>
-    <button type="button" wire:click="addRepeaterItem('journey.steps', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
+    <button type="button" wire:click="addRepeaterItem('journey.steps')" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
         <span class="material-symbols-outlined text-sm">add</span>
         Add Journey Step
     </button>

@@ -382,7 +382,7 @@
                 </div>
                 @endforeach
 
-                <button type="button" wire:click="addRepeaterItem('compare_ai.{{ $cIdx }}.rows', {{ var_export(['feature' => '', 'col1' => '—', 'col2' => '✓', 'col3' => '✓'], true) }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+                <button type="button" wire:click="addCompareRow('compare_ai', {{ $cIdx }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
                     <span class="material-symbols-outlined text-sm">add</span>
                     Add Feature Row to {{ $cat['category'] ?? 'Category' }}
                 </button>
@@ -391,7 +391,7 @@
         @endforeach
     </div>
 
-    <button type="button" wire:click="addRepeaterItem('compare_ai', {{ var_export(['category' => 'New Category', 'rows' => []], true) }})" class="w-full py-3 rounded-xl border-2 border-dashed border-gray-300 dark:border-[#33383F] text-sm font-bold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-2">
+    <button type="button" wire:click="addCompareCategory('compare_ai')" class="w-full py-3 rounded-xl border-2 border-dashed border-gray-300 dark:border-[#33383F] text-sm font-bold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-base">add_circle</span>
         Add New Comparison Category (AI)
     </button>
@@ -501,7 +501,7 @@
                 </div>
                 @endforeach
 
-                <button type="button" wire:click="addRepeaterItem('compare_ce.{{ $cIdx }}.rows', {{ var_export(['feature' => '', 'col1' => '—', 'col2' => '✓', 'col3' => '✓'], true) }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+                <button type="button" wire:click="addCompareRow('compare_ce', {{ $cIdx }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
                     <span class="material-symbols-outlined text-sm">add</span>
                     Add Feature Row to {{ $cat['category'] ?? 'Category' }}
                 </button>
@@ -510,7 +510,7 @@
         @endforeach
     </div>
 
-    <button type="button" wire:click="addRepeaterItem('compare_ce', {{ var_export(['category' => 'New Category', 'rows' => []], true) }})" class="w-full py-3 rounded-xl border-2 border-dashed border-gray-300 dark:border-[#33383F] text-sm font-bold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-2">
+    <button type="button" wire:click="addCompareCategory('compare_ce')" class="w-full py-3 rounded-xl border-2 border-dashed border-gray-300 dark:border-[#33383F] text-sm font-bold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-2">
         <span class="material-symbols-outlined text-base">add_circle</span>
         Add New Comparison Category (CE)
     </button>
@@ -550,7 +550,7 @@
     <div class="space-y-3 pt-2">
         <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">Customer Engagement Add-ons</h3>
-            <button type="button" wire:click="addRepeaterItem('addons.items_ce', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+            <button type="button" wire:click="addRepeaterItem('addons.items_ce')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
                 <span class="material-symbols-outlined text-xs">add_circle</span>
                 Add CE Add-on
             </button>
@@ -589,7 +589,7 @@
             </div>
             @endforeach
         </div>
-        <button type="button" wire:click="addRepeaterItem('addons.items_ce', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+        <button type="button" wire:click="addRepeaterItem('addons.items_ce')" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
             <span class="material-symbols-outlined text-sm">add</span>
             Add CE Add-on
         </button>
@@ -599,7 +599,7 @@
     <div class="space-y-3 pt-4 border-t border-gray-100 dark:border-[#272B30]">
         <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">AI Platform Add-ons</h3>
-            <button type="button" wire:click="addRepeaterItem('addons.items_ai', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+            <button type="button" wire:click="addRepeaterItem('addons.items_ai')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
                 <span class="material-symbols-outlined text-xs">add_circle</span>
                 Add AI Add-on
             </button>
@@ -638,7 +638,7 @@
             </div>
             @endforeach
         </div>
-        <button type="button" wire:click="addRepeaterItem('addons.items_ai', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+        <button type="button" wire:click="addRepeaterItem('addons.items_ai')" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
             <span class="material-symbols-outlined text-sm">add</span>
             Add AI Add-on
         </button>
