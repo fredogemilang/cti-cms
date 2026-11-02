@@ -267,23 +267,21 @@
 <div role="tabpanel" x-show="tab === 0" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
-<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1Z"></path><path d="M16 9l5 6M21 9l-5 6"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $roleSm['challenges'][0]['text'] ?? t('kouventa.Limited campaign reach and personalization', 'Limited campaign reach and personalization') }}</h4>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px">
+@php
+    $smChallengeIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l6 4V6L6 10H4a1 1 0 0 0-1 1Z"></path><path d="M16 9l5 6M21 9l-5 6"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-3 3V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2Z"></path><path d="M18 9h1a2 2 0 0 1 2 2v10l-3-3h-6a2 2 0 0 1-2-2v-1"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="M12 8v4M12 15.5h.01"></path></svg>',
+    ];
+@endphp
+@foreach(($roleSm['challenges'] ?? []) as $i => $ch)
+<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease {{ sprintf('%.2fs', 0.15 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center">{!! $smChallengeIcons[$i % count($smChallengeIcons)] !!}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ is_array($ch) ? ($ch['text'] ?? '') : $ch }}</h4>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $roleSm['challenges'][1]['text'] ?? t('kouventa.Risk of losing leads due to slow responses', 'Risk of losing leads due to slow responses') }}</h4>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-3 3V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2Z"></path><path d="M18 9h1a2 2 0 0 1 2 2v10l-3-3h-6a2 2 0 0 1-2-2v-1"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $roleSm['challenges'][2]['text'] ?? t('kouventa.Customer conversations scattered across multiple channels', 'Customer conversations scattered across multiple channels') }}</h4>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.60s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="M12 8v4M12 15.5h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $roleSm['challenges'][3]['text'] ?? t('kouventa.Customers need a fast and secure way to verify their identity without adding friction to the customer experience', 'Customers need a fast and secure way to verify their identity without adding friction to the customer experience') }}</h4>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -392,23 +390,21 @@
 <div style="position: relative; overflow: hidden; background: #071C33; border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 24px">
 <span aria-hidden="true" style="position: absolute; right: -120px; top: -160px; width: 460px; height: 460px; border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.22), rgba(43, 212, 106, 0) 70%)"></span>
 <h2 style="position: relative; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF">{{ t('kouventa.Business impact', 'Business impact') }}</h2>
-<div style="position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][0]['title'] ?? $roleSm['impacts'][0]['text'] ?? t('kouventa.Reach more customers, more effectively', 'Reach more customers, more effectively') }}</span>
+<div style="position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+@php
+    $smImpactIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 12 0V3h-4v7a2 2 0 0 1-4 0V3Z"></path><path d="M6 7h4M14 7h4"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg>',
+    ];
+@endphp
+@foreach(($roleSm['impacts'] ?? []) as $i => $imp)
+<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease {{ sprintf('%.2fs', 0.20 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center">{!! $smImpactIcons[$i % count($smImpactIcons)] !!}</span>
+<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ is_array($imp) ? ($imp['title'] ?? $imp['text'] ?? '') : $imp }}</span>
 </div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 12 0V3h-4v7a2 2 0 0 1-4 0V3Z"></path><path d="M6 7h4M14 7h4"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][1]['title'] ?? $roleSm['impacts'][1]['text'] ?? t('kouventa.Minimize lost leads and enhance customer experience', 'Minimize lost leads and enhance customer experience') }}</span>
-</div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][2]['title'] ?? $roleSm['impacts'][2]['text'] ?? t('kouventa.More efficient sales and marketing operations', 'More efficient sales and marketing operations') }}</span>
-</div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.65s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleSm['impacts'][3]['title'] ?? $roleSm['impacts'][3]['text'] ?? t('kouventa.Improve customer engagement across channels', 'Improve customer engagement across channels') }}</span>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -418,19 +414,20 @@
 <div role="tabpanel" x-show="tab === 1" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><rect x="3" y="11" width="18" height="5" rx="1.5"></rect><path d="M7 20h10"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $roleCs['challenges'][0]['text'] ?? t('kouventa.Customers expect their complaints to be handled quickly, while customer service teams manage multiple issues and requests at the same time', 'Customers expect their complaints to be handled quickly, while customer service teams manage multiple issues and requests at the same time') }}</h4>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $csCeChallengeIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><rect x="3" y="11" width="18" height="5" rx="1.5"></rect><path d="M7 20h10"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M12 12v3M12 18h.01"></path></svg>',
+    ];
+@endphp
+@foreach(($roleCs['challenges'] ?? []) as $i => $ch)
+<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease {{ sprintf('%.2fs', 0.15 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center">{!! $csCeChallengeIcons[$i % count($csCeChallengeIcons)] !!}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ is_array($ch) ? ($ch['text'] ?? '') : $ch }}</h4>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $roleCs['challenges'][1]['text'] ?? t('kouventa.Customer service teams spend significant time handling repetitive questions, limiting their ability to focus on issues that require human assistance', 'Customer service teams spend significant time handling repetitive questions, limiting their ability to focus on issues that require human assistance') }}</h4>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M12 12v3M12 18h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $roleCs['challenges'][2]['text'] ?? t('kouventa.Manually creating and recording support tickets can lead to human errors, incomplete information, and miscommunication during issue handling', 'Manually creating and recording support tickets can lead to human errors, incomplete information, and miscommunication during issue handling') }}</h4>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -506,22 +503,21 @@
 <div style="position: relative; overflow: hidden; background: #071C33; border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 24px">
 <span aria-hidden="true" style="position: absolute; right: -120px; top: -160px; width: 460px; height: 460px; border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.22), rgba(43, 212, 106, 0) 70%)"></span>
 <h2 style="position: relative; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF">{{ t('kouventa.Business impact', 'Business impact') }}</h2>
-<div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleCs['impacts'][0]['title'] ?? t('kouventa.Faster Complaint Resolution', 'Faster Complaint Resolution') }}</span>
-<span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ $roleCs['impacts'][0]['desc'] ?? t('kouventa.Instant responses and seamless escalation to human agents for more complex issues.', 'Instant responses and seamless escalation to human agents for more complex issues.') }}</span>
+<div style="position: relative; display: grid; grid-template-columns: repeat({{ min(3, max(1, count($roleCs['impacts'] ?? []))) }}, minmax(0, 1fr)); gap: 16px">
+@php
+$csImpactIcons = [
+    '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg>',
+    '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg>',
+    '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"></path></svg>',
+];
+@endphp
+@foreach(($roleCs['impacts'] ?? []) as $i => $imp)
+<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease {{ 0.20 + ($i * 0.15) }}s both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center">{!! $csImpactIcons[$i % count($csImpactIcons)] !!}</span>
+<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $imp['title'] ?? '' }}</span>
+<span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ $imp['desc'] ?? '' }}</span>
 </div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleCs['impacts'][1]['title'] ?? t('kouventa.More Efficient Customer Service Operations', 'More Efficient Customer Service Operations') }}</span>
-<span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ $roleCs['impacts'][1]['desc'] ?? t('kouventa.Automate repetitive inquiries and reduce manual ticket creation, so teams can focus on more complex issues.', 'Automate repetitive inquiries and reduce manual ticket creation, so teams can focus on more complex issues.') }}</span>
-</div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleCs['impacts'][2]['title'] ?? t('kouventa.Improved Customer Experience', 'Improved Customer Experience') }}</span>
-<span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ $roleCs['impacts'][2]['desc'] ?? t('kouventa.More consistent, responsive support and customer feedback to continuously improve the service experience.', 'More consistent, responsive support and customer feedback to continuously improve the service experience.') }}</span>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -531,15 +527,19 @@
 <div role="tabpanel" x-show="tab === 2" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
-<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 3A6 6 0 0 1 18 8c0 2.6.5 4.4 1.2 5.7M17 17H3s3-2 3-9c0-.8.1-1.5.4-2.2"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0M2 2l20 20"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $roleOps['challenges'][0]['text'] ?? t('kouventa.Sending order, delivery, payment, and appointment updates manually can be time-consuming and may lead to delays, errors, or missed customer notifications', 'Sending order, delivery, payment, and appointment updates manually can be time-consuming and may lead to delays, errors, or missed customer notifications') }}</h4>
+<div style="display: grid; grid-template-columns: repeat({{ min(2, max(1, count($roleOps['challenges'] ?? []))) }}, minmax(0, 1fr)); gap: 16px">
+@php
+$opsChallengeIcons = [
+    '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 3A6 6 0 0 1 18 8c0 2.6.5 4.4 1.2 5.7M17 17H3s3-2 3-9c0-.8.1-1.5.4-2.2"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0M2 2l20 20"></path></svg>',
+    '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 15l4-4 3 3 6-7"></path></svg>',
+];
+@endphp
+@foreach(($roleOps['challenges'] ?? []) as $i => $ch)
+<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease {{ 0.15 + ($i * 0.15) }}s both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center">{!! $opsChallengeIcons[$i % count($opsChallengeIcons)] !!}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $ch['text'] ?? '' }}</h4>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 15l4-4 3 3 6-7"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $roleOps['challenges'][1]['text'] ?? t('kouventa.As transaction volumes grow, manually sending recurring notifications becomes harder to manage consistently and on time', 'As transaction volumes grow, manually sending recurring notifications becomes harder to manage consistently and on time') }}</h4>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -589,17 +589,20 @@
 <div style="position: relative; overflow: hidden; background: #071C33; border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 24px">
 <span aria-hidden="true" style="position: absolute; right: -120px; top: -160px; width: 460px; height: 460px; border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.22), rgba(43, 212, 106, 0) 70%)"></span>
 <h2 style="position: relative; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF">{{ t('kouventa.Business impact', 'Business impact') }}</h2>
-<div style="position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleOps['impacts'][0]['title'] ?? t('kouventa.Keep Customers Informed at Every Step', 'Keep Customers Informed at Every Step') }}</span>
-<span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ $roleOps['impacts'][0]['desc'] ?? t('kouventa.Timely notifications triggered by business events.', 'Timely notifications triggered by business events.') }}</span>
+<div style="position: relative; display: grid; grid-template-columns: repeat({{ min(2, max(1, count($roleOps['impacts'] ?? []))) }}, minmax(0, 1fr)); gap: 16px">
+@php
+$opsImpactIcons = [
+    '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"></path></svg>',
+    '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.6-1 2.9 1 2.9-2.5 1.6-.9 2.9-3-.2L12 20l-2.4-1.8-3 .2-.9-2.9-2.5-1.6 1-2.9-1-2.9 2.5-1.6.9-2.9 3 .2Z"></path><path d="M8.5 11.5l2.5 2.5 4.5-5"></path></svg>',
+];
+@endphp
+@foreach(($roleOps['impacts'] ?? []) as $i => $imp)
+<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease {{ 0.20 + ($i * 0.15) }}s both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center">{!! $opsImpactIcons[$i % count($opsImpactIcons)] !!}</span>
+<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $imp['title'] ?? '' }}</span>
+<span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ $imp['desc'] ?? '' }}</span>
 </div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.6-1 2.9 1 2.9-2.5 1.6-.9 2.9-3-.2L12 20l-2.4-1.8-3 .2-.9-2.9-2.5-1.6 1-2.9-1-2.9 2.5-1.6.9-2.9 3 .2Z"></path><path d="M8.5 11.5l2.5 2.5 4.5-5"></path></svg></span>
-<span style="font-size: 20px; line-height: 1.35; font-weight: 800">{{ $roleOps['impacts'][1]['title'] ?? t('kouventa.Create More Consistent Customer Experiences', 'Create More Consistent Customer Experiences') }}</span>
-<span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ $roleOps['impacts'][1]['desc'] ?? t('kouventa.Clear, standardized updates across every process.', 'Clear, standardized updates across every process.') }}</span>
-</div>
+@endforeach
 </div>
 </div>
 </div>

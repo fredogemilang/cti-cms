@@ -122,15 +122,40 @@
 
         {{-- Feature Bullets --}}
         <div>
-            <label class="block text-xs font-semibold text-[#6F767E] mb-1.5">Feature Bullets (6 items)</label>
-            <div class="space-y-2">
-                @for($b = 0; $b < 6; $b++)
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-mono text-[#6F767E] w-4">{{ $b + 1 }}.</span>
-                    <input type="text" wire:model.defer="sections.tiers_ai.{{ $tKey }}.bullets.{{ $b }}" class="flex-grow h-9 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs">
-                </div>
-                @endfor
+            <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-xs font-semibold text-[#6F767E]">Feature Bullets</label>
+                <button type="button" wire:click="addRepeaterItem('tiers_ai.{{ $tKey }}.bullets', '')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-xs">add_circle</span>
+                    Add Bullet
+                </button>
             </div>
+            <div class="space-y-2">
+                @foreach($sections['tiers_ai'][$tKey]['bullets'] ?? [] as $b => $bullet)
+                <div class="flex items-center gap-1.5" wire:key="tier-ai-bullet-{{ $tKey }}-{{ $b }}">
+                    <span class="text-xs font-mono text-[#6F767E] w-5 text-right flex-shrink-0">{{ $b + 1 }}.</span>
+                    <input type="text" wire:model.defer="sections.tiers_ai.{{ $tKey }}.bullets.{{ $b }}" class="flex-grow h-9 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs">
+                    <div class="flex items-center gap-0.5 flex-shrink-0">
+                        @if($b > 0)
+                        <button type="button" wire:click="moveRepeaterItem('tiers_ai.{{ $tKey }}.bullets', {{ $b }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                            <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+                        </button>
+                        @endif
+                        @if($b < count($sections['tiers_ai'][$tKey]['bullets'] ?? []) - 1)
+                        <button type="button" wire:click="moveRepeaterItem('tiers_ai.{{ $tKey }}.bullets', {{ $b }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                            <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+                        </button>
+                        @endif
+                        <button type="button" wire:click="removeRepeaterItem('tiers_ai.{{ $tKey }}.bullets', {{ $b }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                            <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                        </button>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            <button type="button" wire:click="addRepeaterItem('tiers_ai.{{ $tKey }}.bullets', '')" class="mt-2 w-full py-1.5 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-sm">add</span>
+                Add Bullet
+            </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
@@ -203,15 +228,40 @@
 
         {{-- Feature Bullets --}}
         <div>
-            <label class="block text-xs font-semibold text-[#6F767E] mb-1.5">Feature Bullets (6 items)</label>
-            <div class="space-y-2">
-                @for($b = 0; $b < 6; $b++)
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-mono text-[#6F767E] w-4">{{ $b + 1 }}.</span>
-                    <input type="text" wire:model.defer="sections.tiers_ce.{{ $tKey }}.bullets.{{ $b }}" class="flex-grow h-9 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs">
-                </div>
-                @endfor
+            <div class="flex items-center justify-between mb-1.5">
+                <label class="block text-xs font-semibold text-[#6F767E]">Feature Bullets</label>
+                <button type="button" wire:click="addRepeaterItem('tiers_ce.{{ $tKey }}.bullets', '')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-xs">add_circle</span>
+                    Add Bullet
+                </button>
             </div>
+            <div class="space-y-2">
+                @foreach($sections['tiers_ce'][$tKey]['bullets'] ?? [] as $b => $bullet)
+                <div class="flex items-center gap-1.5" wire:key="tier-ce-bullet-{{ $tKey }}-{{ $b }}">
+                    <span class="text-xs font-mono text-[#6F767E] w-5 text-right flex-shrink-0">{{ $b + 1 }}.</span>
+                    <input type="text" wire:model.defer="sections.tiers_ce.{{ $tKey }}.bullets.{{ $b }}" class="flex-grow h-9 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs">
+                    <div class="flex items-center gap-0.5 flex-shrink-0">
+                        @if($b > 0)
+                        <button type="button" wire:click="moveRepeaterItem('tiers_ce.{{ $tKey }}.bullets', {{ $b }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                            <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+                        </button>
+                        @endif
+                        @if($b < count($sections['tiers_ce'][$tKey]['bullets'] ?? []) - 1)
+                        <button type="button" wire:click="moveRepeaterItem('tiers_ce.{{ $tKey }}.bullets', {{ $b }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                            <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+                        </button>
+                        @endif
+                        <button type="button" wire:click="removeRepeaterItem('tiers_ce.{{ $tKey }}.bullets', {{ $b }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                            <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                        </button>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            <button type="button" wire:click="addRepeaterItem('tiers_ce.{{ $tKey }}.bullets', '')" class="mt-2 w-full py-1.5 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-sm">add</span>
+                Add Bullet
+            </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
@@ -260,40 +310,100 @@
 
     {{-- CE Addons --}}
     <div class="space-y-3 pt-2">
-        <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">Customer Engagement Add-ons (10 items)</h3>
+        <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">Customer Engagement Add-ons</h3>
+            <button type="button" wire:click="addRepeaterItem('addons.items_ce', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                <span class="material-symbols-outlined text-xs">add_circle</span>
+                Add CE Add-on
+            </button>
+        </div>
         <div class="space-y-2">
             @foreach($sections['addons']['items_ce'] ?? [] as $i => $item)
-            <div class="p-3 bg-gray-50 dark:bg-[#202428] rounded-lg border border-gray-100 dark:border-[#272B30] grid grid-cols-1 md:grid-cols-3 gap-2">
-                <div>
-                    <label class="block text-[11px] text-[#6F767E] mb-0.5">Title</label>
-                    <input type="text" wire:model.defer="sections.addons.items_ce.{{ $i }}.title" class="w-full h-8 px-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs font-bold">
+            <div class="p-3 bg-gray-50 dark:bg-[#202428] rounded-lg border border-gray-100 dark:border-[#272B30] space-y-2" wire:key="ce-addon-{{ $i }}">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-mono font-bold text-[#6F767E]">#{{ $i + 1 }}</span>
+                    <div class="flex items-center gap-1">
+                        @if($i > 0)
+                        <button type="button" wire:click="moveRepeaterItem('addons.items_ce', {{ $i }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                            <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+                        </button>
+                        @endif
+                        @if($i < count($sections['addons']['items_ce'] ?? []) - 1)
+                        <button type="button" wire:click="moveRepeaterItem('addons.items_ce', {{ $i }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                            <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+                        </button>
+                        @endif
+                        <button type="button" wire:click="removeRepeaterItem('addons.items_ce', {{ $i }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                            <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="md:col-span-2">
-                    <label class="block text-[11px] text-[#6F767E] mb-0.5">Description</label>
-                    <input type="text" wire:model.defer="sections.addons.items_ce.{{ $i }}.desc" class="w-full h-8 px-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-[11px] text-[#6F767E] mb-0.5">Title</label>
+                        <input type="text" wire:model.defer="sections.addons.items_ce.{{ $i }}.title" class="w-full h-8 px-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs font-bold">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[11px] text-[#6F767E] mb-0.5">Description</label>
+                        <input type="text" wire:model.defer="sections.addons.items_ce.{{ $i }}.desc" class="w-full h-8 px-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs">
+                    </div>
                 </div>
             </div>
             @endforeach
         </div>
+        <button type="button" wire:click="addRepeaterItem('addons.items_ce', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-sm">add</span>
+            Add CE Add-on
+        </button>
     </div>
 
     {{-- AI Addons --}}
     <div class="space-y-3 pt-4 border-t border-gray-100 dark:border-[#272B30]">
-        <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">AI Platform Add-ons (10 items)</h3>
+        <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">AI Platform Add-ons</h3>
+            <button type="button" wire:click="addRepeaterItem('addons.items_ai', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                <span class="material-symbols-outlined text-xs">add_circle</span>
+                Add AI Add-on
+            </button>
+        </div>
         <div class="space-y-2">
             @foreach($sections['addons']['items_ai'] ?? [] as $i => $item)
-            <div class="p-3 bg-gray-50 dark:bg-[#202428] rounded-lg border border-gray-100 dark:border-[#272B30] grid grid-cols-1 md:grid-cols-3 gap-2">
-                <div>
-                    <label class="block text-[11px] text-[#6F767E] mb-0.5">Title</label>
-                    <input type="text" wire:model.defer="sections.addons.items_ai.{{ $i }}.title" class="w-full h-8 px-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs font-bold">
+            <div class="p-3 bg-gray-50 dark:bg-[#202428] rounded-lg border border-gray-100 dark:border-[#272B30] space-y-2" wire:key="ai-addon-{{ $i }}">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-mono font-bold text-[#6F767E]">#{{ $i + 1 }}</span>
+                    <div class="flex items-center gap-1">
+                        @if($i > 0)
+                        <button type="button" wire:click="moveRepeaterItem('addons.items_ai', {{ $i }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                            <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+                        </button>
+                        @endif
+                        @if($i < count($sections['addons']['items_ai'] ?? []) - 1)
+                        <button type="button" wire:click="moveRepeaterItem('addons.items_ai', {{ $i }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                            <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+                        </button>
+                        @endif
+                        <button type="button" wire:click="removeRepeaterItem('addons.items_ai', {{ $i }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                            <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="md:col-span-2">
-                    <label class="block text-[11px] text-[#6F767E] mb-0.5">Description</label>
-                    <input type="text" wire:model.defer="sections.addons.items_ai.{{ $i }}.desc" class="w-full h-8 px-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-[11px] text-[#6F767E] mb-0.5">Title</label>
+                        <input type="text" wire:model.defer="sections.addons.items_ai.{{ $i }}.title" class="w-full h-8 px-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs font-bold">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-[11px] text-[#6F767E] mb-0.5">Description</label>
+                        <input type="text" wire:model.defer="sections.addons.items_ai.{{ $i }}.desc" class="w-full h-8 px-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs">
+                    </div>
                 </div>
             </div>
             @endforeach
         </div>
+        <button type="button" wire:click="addRepeaterItem('addons.items_ai', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-sm">add</span>
+            Add AI Add-on
+        </button>
     </div>
 </div>
 @endif
@@ -332,15 +442,40 @@
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-[#6F767E] mb-1.5">Use Case Items</label>
+                <div class="flex items-center justify-between mb-1.5">
+                    <label class="block text-xs font-semibold text-[#6F767E]">Use Case Items</label>
+                    <button type="button" wire:click="addRepeaterItem('templates.items.{{ $i }}.items', '')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                        <span class="material-symbols-outlined text-xs">add_circle</span>
+                        Add Item
+                    </button>
+                </div>
                 <div class="space-y-1.5">
                     @foreach($tp['items'] ?? [] as $itIdx => $item)
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-mono text-[#6F767E] w-4">•</span>
+                    <div class="flex items-center gap-1.5" wire:key="tmpl-item-{{ $i }}-{{ $itIdx }}">
+                        <span class="text-xs font-mono text-[#6F767E] w-4 text-center">•</span>
                         <input type="text" wire:model.defer="sections.templates.items.{{ $i }}.items.{{ $itIdx }}" class="flex-grow h-8 px-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1D1F] text-xs">
+                        <div class="flex items-center gap-0.5 flex-shrink-0">
+                            @if($itIdx > 0)
+                            <button type="button" wire:click="moveRepeaterItem('templates.items.{{ $i }}.items', {{ $itIdx }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                                <span class="material-symbols-outlined text-xs leading-none">arrow_upward</span>
+                            </button>
+                            @endif
+                            @if($itIdx < count($tp['items'] ?? []) - 1)
+                            <button type="button" wire:click="moveRepeaterItem('templates.items.{{ $i }}.items', {{ $itIdx }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                                <span class="material-symbols-outlined text-xs leading-none">arrow_downward</span>
+                            </button>
+                            @endif
+                            <button type="button" wire:click="removeRepeaterItem('templates.items.{{ $i }}.items', {{ $itIdx }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                                <span class="material-symbols-outlined text-xs leading-none">delete</span>
+                            </button>
+                        </div>
                     </div>
                     @endforeach
                 </div>
+                <button type="button" wire:click="addRepeaterItem('templates.items.{{ $i }}.items', '')" class="mt-2 w-full py-1 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-xs">add</span>
+                    Add Use Case Item
+                </button>
             </div>
         </div>
         @endforeach

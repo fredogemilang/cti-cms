@@ -108,13 +108,19 @@
     <div class="space-y-6">
         <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
             <div>
-                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">2. The Challenges (3 Cards)</h2>
-                <p class="text-xs text-[#6F767E] mt-0.5">Edit heading and the 3 pain points addressed by Kouventa Customer Engagement.</p>
+                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">2. The Challenges Cards</h2>
+                <p class="text-xs text-[#6F767E] mt-0.5">Edit heading and the pain points addressed by Kouventa Customer Engagement.</p>
             </div>
-            <button type="button" wire:click="resetSection('challenges')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">restart_alt</span>
-                Reset Section
-            </button>
+            <div class="flex items-center gap-3">
+                <button type="button" wire:click="addRepeaterItem('challenges.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    Add Challenge Card
+                </button>
+                <button type="button" wire:click="resetSection('challenges')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">restart_alt</span>
+                    Reset Section
+                </button>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -130,8 +136,25 @@
 
         <div class="space-y-4 pt-2">
             @foreach($sections['challenges']['cards'] ?? [] as $idx => $card)
-                <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-3">
-                    <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Challenge Card {{ $idx + 1 }}</span>
+                <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-3" wire:key="ce-challenge-{{ $idx }}">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Challenge Card #{{ $idx + 1 }}</span>
+                        <div class="flex items-center gap-1">
+                            @if($idx > 0)
+                            <button type="button" wire:click="moveRepeaterItem('challenges.cards', {{ $idx }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                                <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+                            </button>
+                            @endif
+                            @if($idx < count($sections['challenges']['cards'] ?? []) - 1)
+                            <button type="button" wire:click="moveRepeaterItem('challenges.cards', {{ $idx }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                                <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+                            </button>
+                            @endif
+                            <button type="button" wire:click="removeRepeaterItem('challenges.cards', {{ $idx }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                                <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                            </button>
+                        </div>
+                    </div>
                     <div>
                         <label class="block text-[11px] font-bold text-[#6F767E] mb-1">Title</label>
                         <input type="text" wire:model.defer="sections.challenges.cards.{{ $idx }}.title" class="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium">
@@ -142,6 +165,11 @@
                     </div>
                 </div>
             @endforeach
+
+            <button type="button" wire:click="addRepeaterItem('challenges.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">add</span>
+                Add Challenge Card
+            </button>
         </div>
     </div>
 @endif
@@ -270,10 +298,36 @@
                     </div>
 
                     <div class="space-y-2 pt-1">
-                        <label class="block text-[11px] font-bold text-[#6F767E]">Feature Bullets (3 items)</label>
-                        @for($b = 0; $b < 3; $b++)
-                            <input type="text" placeholder="Bullet {{ $b + 1 }}" wire:model.defer="sections.products.items.{{ $pKey }}.bullets.{{ $b }}" class="w-full h-8 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium">
-                        @endfor
+                        <div class="flex items-center justify-between">
+                            <label class="block text-[11px] font-bold text-[#6F767E]">Feature Bullets</label>
+                            <button type="button" wire:click="addRepeaterItem('products.items.{{ $pKey }}.bullets', '')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                                <span class="material-symbols-outlined text-xs">add_circle</span>
+                                Add Bullet
+                            </button>
+                        </div>
+                        <div class="space-y-1.5">
+                            @foreach($sections['products']['items'][$pKey]['bullets'] ?? [] as $b => $bText)
+                            <div class="flex items-center gap-1.5" wire:key="prod-ce-{{ $pKey }}-bullet-{{ $b }}">
+                                <span class="text-xs font-mono text-[#6F767E] w-4 text-center">•</span>
+                                <input type="text" placeholder="Bullet {{ $b + 1 }}" wire:model.defer="sections.products.items.{{ $pKey }}.bullets.{{ $b }}" class="flex-grow h-8 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium">
+                                <div class="flex items-center gap-0.5 flex-shrink-0">
+                                    @if($b > 0)
+                                    <button type="button" wire:click="moveRepeaterItem('products.items.{{ $pKey }}.bullets', {{ $b }}, 'up')" class="p-0.5 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                                        <span class="material-symbols-outlined text-xs leading-none">arrow_upward</span>
+                                    </button>
+                                    @endif
+                                    @if($b < count($sections['products']['items'][$pKey]['bullets'] ?? []) - 1)
+                                    <button type="button" wire:click="moveRepeaterItem('products.items.{{ $pKey }}.bullets', {{ $b }}, 'down')" class="p-0.5 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                                        <span class="material-symbols-outlined text-xs leading-none">arrow_downward</span>
+                                    </button>
+                                    @endif
+                                    <button type="button" wire:click="removeRepeaterItem('products.items.{{ $pKey }}.bullets', {{ $b }})" class="p-0.5 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                                        <span class="material-symbols-outlined text-xs leading-none">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
                 </div>
             @endforeach
@@ -286,13 +340,19 @@
     <div class="space-y-6">
         <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
             <div>
-                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">5. Platform Control (5 Cards)</h2>
+                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">5. Platform Control Cards</h2>
                 <p class="text-xs text-[#6F767E] mt-0.5">Supervisor mode, Multi-account, Role-based access, History, and Ticketing.</p>
             </div>
-            <button type="button" wire:click="resetSection('platform_control')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">restart_alt</span>
-                Reset Section
-            </button>
+            <div class="flex items-center gap-3">
+                <button type="button" wire:click="addRepeaterItem('platform_control.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    Add Control Card
+                </button>
+                <button type="button" wire:click="resetSection('platform_control')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">restart_alt</span>
+                    Reset Section
+                </button>
+            </div>
         </div>
 
         <div>
@@ -302,8 +362,25 @@
 
         <div class="space-y-4 pt-2">
             @foreach($sections['platform_control']['cards'] ?? [] as $idx => $card)
-                <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-3">
-                    <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Card {{ $idx + 1 }}</span>
+                <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-3" wire:key="ce-ctrl-card-{{ $idx }}">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Card #{{ $idx + 1 }}</span>
+                        <div class="flex items-center gap-1">
+                            @if($idx > 0)
+                            <button type="button" wire:click="moveRepeaterItem('platform_control.cards', {{ $idx }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                                <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+                            </button>
+                            @endif
+                            @if($idx < count($sections['platform_control']['cards'] ?? []) - 1)
+                            <button type="button" wire:click="moveRepeaterItem('platform_control.cards', {{ $idx }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                                <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+                            </button>
+                            @endif
+                            <button type="button" wire:click="removeRepeaterItem('platform_control.cards', {{ $idx }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                                <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                            </button>
+                        </div>
+                    </div>
                     <div>
                         <label class="block text-[11px] font-bold text-[#6F767E] mb-1">Title</label>
                         <input type="text" wire:model.defer="sections.platform_control.cards.{{ $idx }}.title" class="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium">
@@ -314,6 +391,11 @@
                     </div>
                 </div>
             @endforeach
+
+            <button type="button" wire:click="addRepeaterItem('platform_control.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">add</span>
+                Add Control Card
+            </button>
         </div>
     </div>
 @endif
@@ -323,13 +405,19 @@
     <div class="space-y-6">
         <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
             <div>
-                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">6. Why Kouventa (4 Cards)</h2>
+                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">6. Why Kouventa Cards</h2>
                 <p class="text-xs text-[#6F767E] mt-0.5">Meta BSP, Built around business, Secure & trusted, and Post-paid messaging.</p>
             </div>
-            <button type="button" wire:click="resetSection('why')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">restart_alt</span>
-                Reset Section
-            </button>
+            <div class="flex items-center gap-3">
+                <button type="button" wire:click="addRepeaterItem('why.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    Add Why Card
+                </button>
+                <button type="button" wire:click="resetSection('why')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">restart_alt</span>
+                    Reset Section
+                </button>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -345,8 +433,25 @@
 
         <div class="space-y-4 pt-2">
             @foreach($sections['why']['cards'] ?? [] as $idx => $card)
-                <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-3">
-                    <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Card {{ $idx + 1 }}</span>
+                <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-3" wire:key="ce-why-card-{{ $idx }}">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Card #{{ $idx + 1 }}</span>
+                        <div class="flex items-center gap-1">
+                            @if($idx > 0)
+                            <button type="button" wire:click="moveRepeaterItem('why.cards', {{ $idx }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                                <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+                            </button>
+                            @endif
+                            @if($idx < count($sections['why']['cards'] ?? []) - 1)
+                            <button type="button" wire:click="moveRepeaterItem('why.cards', {{ $idx }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                                <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+                            </button>
+                            @endif
+                            <button type="button" wire:click="removeRepeaterItem('why.cards', {{ $idx }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                                <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                            </button>
+                        </div>
+                    </div>
                     <div>
                         <label class="block text-[11px] font-bold text-[#6F767E] mb-1">Title</label>
                         <input type="text" wire:model.defer="sections.why.cards.{{ $idx }}.title" class="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium">
@@ -357,6 +462,11 @@
                     </div>
                 </div>
             @endforeach
+
+            <button type="button" wire:click="addRepeaterItem('why.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">add</span>
+                Add Why Card
+            </button>
         </div>
     </div>
 @endif

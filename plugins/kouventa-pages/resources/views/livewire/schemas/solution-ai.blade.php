@@ -120,15 +120,42 @@
 
     {{-- Challenges --}}
     <div class="space-y-3">
-        <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">Challenges (3 Cards)</h3>
+        <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">Challenges</h3>
+            <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.challenges', {{ json_encode(['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                <span class="material-symbols-outlined text-xs">add_circle</span>
+                Add Challenge
+            </button>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            @for($i = 0; $i < 3; $i++)
-                <div class="p-3.5 bg-gray-50 dark:bg-[#202428] rounded-xl border border-gray-100 dark:border-[#272B30] space-y-2">
-                    <span class="text-[11px] font-bold text-red-500 uppercase">Challenge {{ $i + 1 }}</span>
+            @foreach($sections['departments'][$dKey]['challenges'] ?? [] as $i => $ch)
+                <div class="p-3.5 bg-gray-50 dark:bg-[#202428] rounded-xl border border-gray-100 dark:border-[#272B30] space-y-2" wire:key="dept-{{ $dKey }}-ch-{{ $i }}">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-red-500 uppercase">Challenge {{ $i + 1 }}</span>
+                        <div class="flex items-center gap-1">
+                            @if($i > 0)
+                            <button type="button" wire:click="moveRepeaterItem('departments.{{ $dKey }}.challenges', {{ $i }}, 'up')" class="p-0.5 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                                <span class="material-symbols-outlined text-xs leading-none">arrow_upward</span>
+                            </button>
+                            @endif
+                            @if($i < count($sections['departments'][$dKey]['challenges'] ?? []) - 1)
+                            <button type="button" wire:click="moveRepeaterItem('departments.{{ $dKey }}.challenges', {{ $i }}, 'down')" class="p-0.5 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                                <span class="material-symbols-outlined text-xs leading-none">arrow_downward</span>
+                            </button>
+                            @endif
+                            <button type="button" wire:click="removeRepeaterItem('departments.{{ $dKey }}.challenges', {{ $i }})" class="p-0.5 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                                <span class="material-symbols-outlined text-xs leading-none">delete</span>
+                            </button>
+                        </div>
+                    </div>
                     <textarea wire:model.defer="sections.departments.{{ $dKey }}.challenges.{{ $i }}.text" rows="4" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium"></textarea>
                 </div>
-            @endfor
+            @endforeach
         </div>
+        <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.challenges', {{ json_encode(['text' => '']) }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-xs">add</span>
+            Add Challenge Card
+        </button>
     </div>
 
     {{-- Solution Agents --}}
@@ -155,18 +182,45 @@
 
     {{-- Business Impact --}}
     <div class="space-y-3">
-        <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">Business Impact (3 Cards)</h3>
+        <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC] uppercase tracking-wider">Business Impact</h3>
+            <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.impacts', {{ json_encode($dKey === 'sales_marketing' ? ['text' => '', 'desc' => ''] : ['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                <span class="material-symbols-outlined text-xs">add_circle</span>
+                Add Impact
+            </button>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            @for($i = 0; $i < 3; $i++)
-                <div class="p-3.5 bg-gray-50 dark:bg-[#202428] rounded-xl border border-gray-100 dark:border-[#272B30] space-y-2">
-                    <span class="text-[11px] font-bold text-blue-500 uppercase">Impact {{ $i + 1 }}</span>
+            @foreach($sections['departments'][$dKey]['impacts'] ?? [] as $i => $imp)
+                <div class="p-3.5 bg-gray-50 dark:bg-[#202428] rounded-xl border border-gray-100 dark:border-[#272B30] space-y-2" wire:key="dept-{{ $dKey }}-imp-{{ $i }}">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-blue-500 uppercase">Impact {{ $i + 1 }}</span>
+                        <div class="flex items-center gap-1">
+                            @if($i > 0)
+                            <button type="button" wire:click="moveRepeaterItem('departments.{{ $dKey }}.impacts', {{ $i }}, 'up')" class="p-0.5 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                                <span class="material-symbols-outlined text-xs leading-none">arrow_upward</span>
+                            </button>
+                            @endif
+                            @if($i < count($sections['departments'][$dKey]['impacts'] ?? []) - 1)
+                            <button type="button" wire:click="moveRepeaterItem('departments.{{ $dKey }}.impacts', {{ $i }}, 'down')" class="p-0.5 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                                <span class="material-symbols-outlined text-xs leading-none">arrow_downward</span>
+                            </button>
+                            @endif
+                            <button type="button" wire:click="removeRepeaterItem('departments.{{ $dKey }}.impacts', {{ $i }})" class="p-0.5 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                                <span class="material-symbols-outlined text-xs leading-none">delete</span>
+                            </button>
+                        </div>
+                    </div>
                     <textarea wire:model.defer="sections.departments.{{ $dKey }}.impacts.{{ $i }}.text" rows="{{ $dKey === 'sales_marketing' ? 2 : 3 }}" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium" placeholder="Impact Headline"></textarea>
                     @if($dKey === 'sales_marketing')
                         <textarea wire:model.defer="sections.departments.sales_marketing.impacts.{{ $i }}.desc" rows="3" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium" placeholder="Impact Subtitle / Description"></textarea>
                     @endif
                 </div>
-            @endfor
+            @endforeach
         </div>
+        <button type="button" wire:click="addRepeaterItem('departments.{{ $dKey }}.impacts', {{ json_encode($dKey === 'sales_marketing' ? ['text' => '', 'desc' => ''] : ['text' => '']) }})" class="w-full py-2 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+            <span class="material-symbols-outlined text-xs">add</span>
+            Add Impact Card
+        </button>
     </div>
 </div>
 @endif
@@ -199,11 +253,37 @@
         </div>
 
         <div class="space-y-2">
-            <span class="text-xs font-bold text-[#6F767E] uppercase">Challenges (3 Cards)</span>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-[#6F767E] uppercase">Challenges</span>
+                <button type="button" wire:click="addRepeaterItem('departments.payment_prioritization.challenges', {{ json_encode(['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-xs">add_circle</span>
+                    Add Challenge
+                </button>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                @for($i = 0; $i < 3; $i++)
-                    <textarea wire:model.defer="sections.departments.payment_prioritization.challenges.{{ $i }}.text" rows="3" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] text-xs font-medium"></textarea>
-                @endfor
+                @foreach($sections['departments']['payment_prioritization']['challenges'] ?? [] as $i => $ch)
+                    <div class="p-2.5 rounded-lg border border-gray-100 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] space-y-1.5" wire:key="pp-ch-{{ $i }}">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold text-red-500 uppercase">#{{ $i + 1 }}</span>
+                            <div class="flex items-center gap-0.5">
+                                @if($i > 0)
+                                <button type="button" wire:click="moveRepeaterItem('departments.payment_prioritization.challenges', {{ $i }}, 'up')" class="p-0.5 rounded text-[#6F767E] hover:text-white" title="Move Up">
+                                    <span class="material-symbols-outlined text-xs leading-none">arrow_upward</span>
+                                </button>
+                                @endif
+                                @if($i < count($sections['departments']['payment_prioritization']['challenges'] ?? []) - 1)
+                                <button type="button" wire:click="moveRepeaterItem('departments.payment_prioritization.challenges', {{ $i }}, 'down')" class="p-0.5 rounded text-[#6F767E] hover:text-white" title="Move Down">
+                                    <span class="material-symbols-outlined text-xs leading-none">arrow_downward</span>
+                                </button>
+                                @endif
+                                <button type="button" wire:click="removeRepeaterItem('departments.payment_prioritization.challenges', {{ $i }})" class="p-0.5 rounded text-red-500 hover:text-red-600" title="Remove">
+                                    <span class="material-symbols-outlined text-xs leading-none">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <textarea wire:model.defer="sections.departments.payment_prioritization.challenges.{{ $i }}.text" rows="3" class="w-full p-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#202428] text-xs font-medium"></textarea>
+                    </div>
+                @endforeach
             </div>
         </div>
 
@@ -215,22 +295,59 @@
                     <input type="text" wire:model.defer="sections.departments.payment_prioritization.solutions.0.title" class="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] text-xs font-medium">
                 </div>
                 <div class="md:col-span-3 space-y-2">
-                    <label class="block text-xs font-semibold text-[#6F767E]">Agent Feature Bullets (4 Items)</label>
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-semibold text-[#6F767E]">Agent Feature Bullets</label>
+                        <button type="button" wire:click="addRepeaterItem('departments.payment_prioritization.solutions.0.bullets', '')" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                            <span class="material-symbols-outlined text-xs">add_circle</span>
+                            Add Bullet
+                        </button>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        @for($b = 0; $b < 4; $b++)
-                            <input type="text" wire:model.defer="sections.departments.payment_prioritization.solutions.0.bullets.{{ $b }}" class="w-full h-9 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] text-xs font-medium" placeholder="Bullet {{ $b + 1 }}">
-                        @endfor
+                        @foreach($sections['departments']['payment_prioritization']['solutions'][0]['bullets'] ?? [] as $b => $bText)
+                            <div class="flex items-center gap-1.5" wire:key="pp-bullet-{{ $b }}">
+                                <input type="text" wire:model.defer="sections.departments.payment_prioritization.solutions.0.bullets.{{ $b }}" class="flex-grow h-9 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] text-xs font-medium" placeholder="Bullet {{ $b + 1 }}">
+                                <button type="button" wire:click="removeRepeaterItem('departments.payment_prioritization.solutions.0.bullets', {{ $b }})" class="p-1 rounded text-red-500 hover:text-red-600" title="Remove">
+                                    <span class="material-symbols-outlined text-xs leading-none">delete</span>
+                                </button>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="space-y-2">
-            <span class="text-xs font-bold text-[#6F767E] uppercase">Business Impact (3 Cards)</span>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-[#6F767E] uppercase">Business Impact</span>
+                <button type="button" wire:click="addRepeaterItem('departments.payment_prioritization.impacts', {{ json_encode(['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-xs">add_circle</span>
+                    Add Impact
+                </button>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                @for($i = 0; $i < 3; $i++)
-                    <textarea wire:model.defer="sections.departments.payment_prioritization.impacts.{{ $i }}.text" rows="3" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] text-xs font-medium"></textarea>
-                @endfor
+                @foreach($sections['departments']['payment_prioritization']['impacts'] ?? [] as $i => $imp)
+                    <div class="p-2.5 rounded-lg border border-gray-100 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] space-y-1.5" wire:key="pp-imp-{{ $i }}">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold text-blue-500 uppercase">#{{ $i + 1 }}</span>
+                            <div class="flex items-center gap-0.5">
+                                @if($i > 0)
+                                <button type="button" wire:click="moveRepeaterItem('departments.payment_prioritization.impacts', {{ $i }}, 'up')" class="p-0.5 rounded text-[#6F767E] hover:text-white" title="Move Up">
+                                    <span class="material-symbols-outlined text-xs leading-none">arrow_upward</span>
+                                </button>
+                                @endif
+                                @if($i < count($sections['departments']['payment_prioritization']['impacts'] ?? []) - 1)
+                                <button type="button" wire:click="moveRepeaterItem('departments.payment_prioritization.impacts', {{ $i }}, 'down')" class="p-0.5 rounded text-[#6F767E] hover:text-white" title="Move Down">
+                                    <span class="material-symbols-outlined text-xs leading-none">arrow_downward</span>
+                                </button>
+                                @endif
+                                <button type="button" wire:click="removeRepeaterItem('departments.payment_prioritization.impacts', {{ $i }})" class="p-0.5 rounded text-red-500 hover:text-red-600" title="Remove">
+                                    <span class="material-symbols-outlined text-xs leading-none">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <textarea wire:model.defer="sections.departments.payment_prioritization.impacts.{{ $i }}.text" rows="3" class="w-full p-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#202428] text-xs font-medium"></textarea>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>
@@ -243,16 +360,42 @@
         </div>
 
         <div class="space-y-2">
-            <span class="text-xs font-bold text-[#6F767E] uppercase">Challenges (3 Cards)</span>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-[#6F767E] uppercase">Challenges</span>
+                <button type="button" wire:click="addRepeaterItem('departments.bank_reconciliation.challenges', {{ json_encode(['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-xs">add_circle</span>
+                    Add Challenge
+                </button>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                @for($i = 0; $i < 3; $i++)
-                    <textarea wire:model.defer="sections.departments.bank_reconciliation.challenges.{{ $i }}.text" rows="3" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] text-xs font-medium"></textarea>
-                @endfor
+                @foreach($sections['departments']['bank_reconciliation']['challenges'] ?? [] as $i => $ch)
+                    <div class="p-2.5 rounded-lg border border-gray-100 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] space-y-1.5" wire:key="br-ch-{{ $i }}">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold text-red-500 uppercase">#{{ $i + 1 }}</span>
+                            <div class="flex items-center gap-0.5">
+                                @if($i > 0)
+                                <button type="button" wire:click="moveRepeaterItem('departments.bank_reconciliation.challenges', {{ $i }}, 'up')" class="p-0.5 rounded text-[#6F767E] hover:text-white" title="Move Up">
+                                    <span class="material-symbols-outlined text-xs leading-none">arrow_upward</span>
+                                </button>
+                                @endif
+                                @if($i < count($sections['departments']['bank_reconciliation']['challenges'] ?? []) - 1)
+                                <button type="button" wire:click="moveRepeaterItem('departments.bank_reconciliation.challenges', {{ $i }}, 'down')" class="p-0.5 rounded text-[#6F767E] hover:text-white" title="Move Down">
+                                    <span class="material-symbols-outlined text-xs leading-none">arrow_downward</span>
+                                </button>
+                                @endif
+                                <button type="button" wire:click="removeRepeaterItem('departments.bank_reconciliation.challenges', {{ $i }})" class="p-0.5 rounded text-red-500 hover:text-red-600" title="Remove">
+                                    <span class="material-symbols-outlined text-xs leading-none">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <textarea wire:model.defer="sections.departments.bank_reconciliation.challenges.{{ $i }}.text" rows="3" class="w-full p-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#202428] text-xs font-medium"></textarea>
+                    </div>
+                @endforeach
             </div>
         </div>
 
         <div class="space-y-3">
-            <span class="text-xs font-bold text-[#6F767E] uppercase">AI Solution Agents (4 Agents)</span>
+            <span class="text-xs font-bold text-[#6F767E] uppercase">AI Solution Agents</span>
             <div class="space-y-3">
                 @foreach($sections['departments']['bank_reconciliation']['solutions'] ?? [] as $sIdx => $sol)
                     <div class="p-4 bg-gray-50 dark:bg-[#1A1A1A] rounded-xl border border-gray-100 dark:border-[#272B30] space-y-2">
@@ -273,11 +416,37 @@
         </div>
 
         <div class="space-y-2">
-            <span class="text-xs font-bold text-[#6F767E] uppercase">Business Impact (3 Cards)</span>
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-[#6F767E] uppercase">Business Impact</span>
+                <button type="button" wire:click="addRepeaterItem('departments.bank_reconciliation.impacts', {{ json_encode(['text' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-xs">add_circle</span>
+                    Add Impact
+                </button>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                @for($i = 0; $i < 3; $i++)
-                    <textarea wire:model.defer="sections.departments.bank_reconciliation.impacts.{{ $i }}.text" rows="3" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] text-xs font-medium"></textarea>
-                @endfor
+                @foreach($sections['departments']['bank_reconciliation']['impacts'] ?? [] as $i => $imp)
+                    <div class="p-2.5 rounded-lg border border-gray-100 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A] space-y-1.5" wire:key="br-imp-{{ $i }}">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold text-blue-500 uppercase">#{{ $i + 1 }}</span>
+                            <div class="flex items-center gap-0.5">
+                                @if($i > 0)
+                                <button type="button" wire:click="moveRepeaterItem('departments.bank_reconciliation.impacts', {{ $i }}, 'up')" class="p-0.5 rounded text-[#6F767E] hover:text-white" title="Move Up">
+                                    <span class="material-symbols-outlined text-xs leading-none">arrow_upward</span>
+                                </button>
+                                @endif
+                                @if($i < count($sections['departments']['bank_reconciliation']['impacts'] ?? []) - 1)
+                                <button type="button" wire:click="moveRepeaterItem('departments.bank_reconciliation.impacts', {{ $i }}, 'down')" class="p-0.5 rounded text-[#6F767E] hover:text-white" title="Move Down">
+                                    <span class="material-symbols-outlined text-xs leading-none">arrow_downward</span>
+                                </button>
+                                @endif
+                                <button type="button" wire:click="removeRepeaterItem('departments.bank_reconciliation.impacts', {{ $i }})" class="p-0.5 rounded text-red-500 hover:text-red-600" title="Remove">
+                                    <span class="material-symbols-outlined text-xs leading-none">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <textarea wire:model.defer="sections.departments.bank_reconciliation.impacts.{{ $i }}.text" rows="3" class="w-full p-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#202428] text-xs font-medium"></textarea>
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>
@@ -289,13 +458,19 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
         <div>
-            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Implementation Journey (4 Steps)</h2>
-            <p class="text-xs text-[#6F767E] mt-0.5">Configure implementation roadmap title and descriptions.</p>
+            <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">Implementation Journey Steps</h2>
+            <p class="text-xs text-[#6F767E] mt-0.5">Configure implementation roadmap title and step details.</p>
         </div>
-        <button type="button" wire:click="resetSection('journey')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
-            <span class="material-symbols-outlined text-sm">restart_alt</span>
-            Reset Section
-        </button>
+        <div class="flex items-center gap-3">
+            <button type="button" wire:click="addRepeaterItem('journey.steps', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
+                <span class="material-symbols-outlined text-sm">add_circle</span>
+                Add Step
+            </button>
+            <button type="button" wire:click="resetSection('journey')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm">restart_alt</span>
+                Reset Section
+            </button>
+        </div>
     </div>
 
     <div>
@@ -304,9 +479,26 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        @for($i = 0; $i < 4; $i++)
-            <div class="p-4 bg-gray-50 dark:bg-[#202428] rounded-xl border border-gray-100 dark:border-[#272B30] space-y-3">
-                <span class="text-xs font-bold text-green-600 uppercase tracking-wider">Step {{ $i + 1 }}</span>
+        @foreach($sections['journey']['steps'] ?? [] as $i => $step)
+            <div class="p-4 bg-gray-50 dark:bg-[#202428] rounded-xl border border-gray-100 dark:border-[#272B30] space-y-3" wire:key="ai-journey-step-{{ $i }}">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-green-600 uppercase tracking-wider">Step #{{ $i + 1 }}</span>
+                    <div class="flex items-center gap-1">
+                        @if($i > 0)
+                        <button type="button" wire:click="moveRepeaterItem('journey.steps', {{ $i }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                            <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+                        </button>
+                        @endif
+                        @if($i < count($sections['journey']['steps'] ?? []) - 1)
+                        <button type="button" wire:click="moveRepeaterItem('journey.steps', {{ $i }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                            <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+                        </button>
+                        @endif
+                        <button type="button" wire:click="removeRepeaterItem('journey.steps', {{ $i }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                            <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                        </button>
+                    </div>
+                </div>
                 <div>
                     <label class="block text-xs font-semibold text-[#6F767E] mb-1">Step Name</label>
                     <input type="text" wire:model.defer="sections.journey.steps.{{ $i }}.title" class="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium">
@@ -316,8 +508,12 @@
                     <textarea wire:model.defer="sections.journey.steps.{{ $i }}.desc" rows="3" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium"></textarea>
                 </div>
             </div>
-        @endfor
+        @endforeach
     </div>
+    <button type="button" wire:click="addRepeaterItem('journey.steps', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
+        <span class="material-symbols-outlined text-sm">add</span>
+        Add Journey Step
+    </button>
 </div>
 @endif
 

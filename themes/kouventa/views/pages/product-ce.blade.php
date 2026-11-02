@@ -1569,32 +1569,30 @@ Kouventa AI · WhatsApp · 09:12
 <!-- ============ CHALLENGES ============ -->
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">@if(!empty($channelsTitle['prefix'])){{ $channelsTitle['prefix'] }} <span style="color: #13803F">{{ $channelsTitle['main'] }}</span>@else{{ $channelsTitle['main'] ?? $channelsTitle }}@endif</h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
-<article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 0.2s both">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px">
+@foreach($challengeCards as $idx => $card)
+<article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease {{ 0.2 + ($idx * 0.3) }}s both">
+@if($idx % 3 === 0)
 <div aria-hidden="true" style="height: 56px; display: flex; align-items: center; gap: 10px">
 <span style="width: 52px; height: 52px; border-radius: 14px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; transform-origin: 50% 50%; animation: kvClockTick 3.2s ease-in-out infinite"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2M9 2h6"></path></svg></span>
 <span style="display: flex; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 50%; background: #E79F8E; animation: kvBlink 1s ease infinite"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #E79F8E; animation: kvBlink 1s ease .2s infinite"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: #E79F8E; animation: kvBlink 1s ease .4s infinite"></span></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengeCards[0]['title'] ?? '' }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengeCards[0]['desc'] ?? '' }}</p>
-</article>
-<article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 0.8s both">
+@elseif($idx % 3 === 1)
 <div aria-hidden="true" style="height: 56px; display: flex; align-items: center; gap: 12px">
 <span style="width: 52px; height: 52px; border-radius: 14px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; animation: kvBlockedPulse 3.2s ease-in-out infinite"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="m4.9 4.9 14.2 14.2"></path></svg></span>
 <span style="display: flex; gap: 6px"><span style="width: 16px; height: 6px; border-radius: 3px; background: #F0C4BA; transform-origin: left; animation: kvSignalDash 1.8s ease-in-out infinite"></span><span style="width: 24px; height: 6px; border-radius: 3px; background: #E79F8E; transform-origin: left; animation: kvSignalDash 1.8s ease-in-out .3s infinite"></span><span style="width: 12px; height: 6px; border-radius: 3px; background: #F0C4BA; transform-origin: left; animation: kvSignalDash 1.8s ease-in-out .6s infinite"></span></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengeCards[1]['title'] ?? '' }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengeCards[1]['desc'] ?? '' }}</p>
-</article>
-<article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 1.4s both">
+@else
 <div aria-hidden="true" style="height: 56px; position: relative; width: 140px">
 <span style="position: absolute; left: 0; top: 12px; width: 36px; height: 36px; border-radius: 10px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; animation: kvFloatDrift1 2.8s ease-in-out infinite alternate"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
 <span style="position: absolute; left: 44px; top: 0; width: 36px; height: 36px; border-radius: 10px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; animation: kvFloatDrift2 3.2s ease-in-out .4s infinite alternate"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></span>
 <span style="position: absolute; left: 88px; top: 16px; width: 36px; height: 36px; border-radius: 10px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; animation: kvFloatDrift3 2.5s ease-in-out .8s infinite alternate"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengeCards[2]['title'] ?? '' }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengeCards[2]['desc'] ?? '' }}</p>
+@endif
+<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $card['title'] ?? '' }}</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $card['desc'] ?? '' }}</p>
 </article>
+@endforeach
 </div>
 </section>
 
@@ -2108,52 +2106,24 @@ Kouventa AI · WhatsApp · 09:12
     {{ $controlTitle }}
 </h2>
 <div class="kv-ce-control-grid">
-
-    <!-- Card 1: Mode supervisor -->
+@php
+$ctrlIcons = [
+    '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle>',
+    '<rect width="7" height="7" x="3" y="3" rx="1.5"></rect><rect width="7" height="7" x="14" y="3" rx="1.5"></rect><rect width="7" height="7" x="14" y="14" rx="1.5"></rect><rect width="7" height="7" x="3" y="14" rx="1.5"></rect>',
+    '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>',
+    '<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path>',
+    '<path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><path d="M13 5v2"></path><path d="M13 17v2"></path><path d="M13 11v2"></path>',
+];
+@endphp
+@foreach($controlCards as $idx => $card)
     <article class="kv-control-card">
         <div style="color: #13803F; display: flex; align-items: center">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{!! $ctrlIcons[$idx % count($ctrlIcons)] !!}</svg>
         </div>
-        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $controlCards[0]['title'] ?? ($isIdLocale ? 'Mode supervisor' : 'Supervisor mode') }}</h3>
-        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $controlCards[0]['desc'] ?? '' }}</p>
+        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $card['title'] ?? '' }}</h3>
+        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $card['desc'] ?? '' }}</p>
     </article>
-
-    <!-- Card 2: Multi-akun -->
-    <article class="kv-control-card">
-        <div style="color: #13803F; display: flex; align-items: center">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1.5"></rect><rect width="7" height="7" x="14" y="3" rx="1.5"></rect><rect width="7" height="7" x="14" y="14" rx="1.5"></rect><rect width="7" height="7" x="3" y="14" rx="1.5"></rect></svg>
-        </div>
-        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $controlCards[1]['title'] ?? ($isIdLocale ? 'Multi-akun' : 'Multi-account') }}</h3>
-        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $controlCards[1]['desc'] ?? '' }}</p>
-    </article>
-
-    <!-- Card 3: Akses berbasis peran -->
-    <article class="kv-control-card">
-        <div style="color: #13803F; display: flex; align-items: center">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-        </div>
-        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $controlCards[2]['title'] ?? ($isIdLocale ? 'Akses berbasis peran' : 'Role-based access') }}</h3>
-        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $controlCards[2]['desc'] ?? '' }}</p>
-    </article>
-
-    <!-- Card 4: Riwayat percakapan -->
-    <article class="kv-control-card">
-        <div style="color: #13803F; display: flex; align-items: center">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path></svg>
-        </div>
-        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $controlCards[3]['title'] ?? ($isIdLocale ? 'Riwayat percakapan' : 'Conversation history') }}</h3>
-        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $controlCards[3]['desc'] ?? '' }}</p>
-    </article>
-
-    <!-- Card 5: Ticketing -->
-    <article class="kv-control-card">
-        <div style="color: #13803F; display: flex; align-items: center">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><path d="M13 5v2"></path><path d="M13 17v2"></path><path d="M13 11v2"></path></svg>
-        </div>
-        <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: #0E1A24; line-height: 1.3">{{ $controlCards[4]['title'] ?? 'Ticketing' }}</h3>
-        <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #4A5866">{{ $controlCards[4]['desc'] ?? '' }}</p>
-    </article>
-
+@endforeach
 </div>
 </section>
 
@@ -2168,61 +2138,23 @@ Kouventa AI · WhatsApp · 09:12
 </h2>
 
 <div class="kv-why-grid">
-    <!-- Card 1: Official Meta Business Solution Provider -->
+@php
+$whyCeIcons = [
+    '<circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>',
+    '<line x1="21" x2="14" y1="4" y2="4"></line><line x1="10" x2="3" y1="4" y2="4"></line><line x1="21" x2="12" y1="12" y2="12"></line><line x1="8" x2="3" y1="12" y2="12"></line><line x1="21" x2="16" y1="20" y2="20"></line><line x1="12" x2="3" y1="20" y2="20"></line><line x1="14" x2="14" y1="2" y2="6"></line><line x1="8" x2="8" y1="10" y2="14"></line><line x1="16" x2="16" y1="18" y2="22"></line>',
+    '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path>',
+    '<rect width="20" height="14" x="2" y="5" rx="2"></rect><line x1="2" x2="22" y1="10" y2="10"></line><line x1="6" x2="10" y1="15" y2="15"></line>',
+];
+@endphp
+@foreach($whyCards as $idx => $card)
     <div class="kv-why-card">
         <span class="kv-why-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="8" r="6"></circle>
-                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
-            </svg>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{!! $whyCeIcons[$idx % count($whyCeIcons)] !!}</svg>
         </span>
-        <h3 class="kv-why-title">{{ $whyCards[0]['title'] ?? 'Official Meta Business Solution Provider' }}</h3>
-        <p class="kv-why-desc">{{ $whyCards[0]['desc'] ?? '' }}</p>
+        <h3 class="kv-why-title">{{ $card['title'] ?? '' }}</h3>
+        <p class="kv-why-desc">{{ $card['desc'] ?? '' }}</p>
     </div>
-
-    <!-- Card 2: Built around your business -->
-    <div class="kv-why-card">
-        <span class="kv-why-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="21" x2="14" y1="4" y2="4"></line>
-                <line x1="10" x2="3" y1="4" y2="4"></line>
-                <line x1="21" x2="12" y1="12" y2="12"></line>
-                <line x1="8" x2="3" y1="12" y2="12"></line>
-                <line x1="21" x2="16" y1="20" y2="20"></line>
-                <line x1="12" x2="3" y1="20" y2="20"></line>
-                <line x1="14" x2="14" y1="2" y2="6"></line>
-                <line x1="8" x2="8" y1="10" y2="14"></line>
-                <line x1="16" x2="16" y1="18" y2="22"></line>
-            </svg>
-        </span>
-        <h3 class="kv-why-title">{{ $whyCards[1]['title'] ?? ($isIdLocale ? 'Dibangun sesuai bisnis Anda' : 'Built around your business') }}</h3>
-        <p class="kv-why-desc">{{ $whyCards[1]['desc'] ?? '' }}</p>
-    </div>
-
-    <!-- Card 3: Secure & trusted -->
-    <div class="kv-why-card">
-        <span class="kv-why-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                <path d="m9 12 2 2 4-4"></path>
-            </svg>
-        </span>
-        <h3 class="kv-why-title">{{ $whyCards[2]['title'] ?? ($isIdLocale ? 'Aman & terpercaya' : 'Secure & trusted') }}</h3>
-        <p class="kv-why-desc">{{ $whyCards[2]['desc'] ?? '' }}</p>
-    </div>
-
-    <!-- Card 4: Post-paid messaging -->
-    <div class="kv-why-card">
-        <span class="kv-why-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect width="20" height="14" x="2" y="5" rx="2"></rect>
-                <line x1="2" x2="22" y1="10" y2="10"></line>
-                <line x1="6" x2="10" y1="15" y2="15"></line>
-            </svg>
-        </span>
-        <h3 class="kv-why-title">{{ $whyCards[3]['title'] ?? ($isIdLocale ? 'Pesan pascabayar' : 'Post-paid messaging') }}</h3>
-        <p class="kv-why-desc">{{ $whyCards[3]['desc'] ?? '' }}</p>
-    </div>
+@endforeach
 </div>
 </section>
 

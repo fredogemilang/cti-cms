@@ -71,13 +71,19 @@
     <div class="space-y-6">
         <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
             <div>
-                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">2. The Challenges (3 Cards)</h2>
-                <p class="text-xs text-[#6F767E] mt-0.5">Edit heading and the 3 pain points addressed by Kouventa AI.</p>
+                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">2. The Challenges Cards</h2>
+                <p class="text-xs text-[#6F767E] mt-0.5">Edit heading and the pain points addressed by Kouventa AI.</p>
             </div>
-            <button type="button" wire:click="resetSection('challenges')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">restart_alt</span>
-                Reset Section
-            </button>
+            <div class="flex items-center gap-3">
+                <button type="button" wire:click="addRepeaterItem('challenges.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    Add Challenge Card
+                </button>
+                <button type="button" wire:click="resetSection('challenges')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">restart_alt</span>
+                    Reset Section
+                </button>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -93,8 +99,25 @@
 
         <div class="space-y-4 pt-2">
             @foreach($sections['challenges']['cards'] ?? [] as $idx => $card)
-                <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-3">
-                    <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Challenge Card {{ $idx + 1 }}</span>
+                <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-3" wire:key="ai-challenge-{{ $idx }}">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Challenge Card #{{ $idx + 1 }}</span>
+                        <div class="flex items-center gap-1">
+                            @if($idx > 0)
+                            <button type="button" wire:click="moveRepeaterItem('challenges.cards', {{ $idx }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                                <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+                            </button>
+                            @endif
+                            @if($idx < count($sections['challenges']['cards'] ?? []) - 1)
+                            <button type="button" wire:click="moveRepeaterItem('challenges.cards', {{ $idx }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                                <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+                            </button>
+                            @endif
+                            <button type="button" wire:click="removeRepeaterItem('challenges.cards', {{ $idx }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                                <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                            </button>
+                        </div>
+                    </div>
                     <div>
                         <label class="block text-[11px] font-bold text-[#6F767E] mb-1">Title</label>
                         <input type="text" wire:model.defer="sections.challenges.cards.{{ $idx }}.title" class="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium">
@@ -105,6 +128,11 @@
                     </div>
                 </div>
             @endforeach
+
+            <button type="button" wire:click="addRepeaterItem('challenges.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">add</span>
+                Add Challenge Card
+            </button>
         </div>
     </div>
 @endif
@@ -227,15 +255,43 @@
 
                     {{-- Features List --}}
                     <div class="space-y-2 pt-2">
-                        <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Key Feature Bullets</span>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Key Feature Bullets</span>
+                            <button type="button" wire:click="addRepeaterItem('products.items.{{ $pk }}.features', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-[11px] font-bold text-[#2BD46A] hover:underline">
+                                <span class="material-symbols-outlined text-xs">add_circle</span>
+                                Add Feature
+                            </button>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             @foreach($sections['products']['items'][$pk]['features'] ?? [] as $fIdx => $feat)
-                                <div class="p-3 rounded-lg border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-2">
+                                <div class="p-3 rounded-lg border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-2" wire:key="prod-{{ $pk }}-feat-{{ $fIdx }}">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[11px] font-mono text-[#6F767E]">#{{ $fIdx + 1 }}</span>
+                                        <div class="flex items-center gap-1">
+                                            @if($fIdx > 0)
+                                            <button type="button" wire:click="moveRepeaterItem('products.items.{{ $pk }}.features', {{ $fIdx }}, 'up')" class="p-0.5 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                                                <span class="material-symbols-outlined text-xs leading-none">arrow_upward</span>
+                                            </button>
+                                            @endif
+                                            @if($fIdx < count($sections['products']['items'][$pk]['features'] ?? []) - 1)
+                                            <button type="button" wire:click="moveRepeaterItem('products.items.{{ $pk }}.features', {{ $fIdx }}, 'down')" class="p-0.5 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                                                <span class="material-symbols-outlined text-xs leading-none">arrow_downward</span>
+                                            </button>
+                                            @endif
+                                            <button type="button" wire:click="removeRepeaterItem('products.items.{{ $pk }}.features', {{ $fIdx }})" class="p-0.5 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                                                <span class="material-symbols-outlined text-xs leading-none">delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
                                     <input type="text" placeholder="Feature Title" wire:model.defer="sections.products.items.{{ $pk }}.features.{{ $fIdx }}.title" class="w-full h-8 px-2.5 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-bold">
                                     <textarea rows="2" placeholder="Feature Description" wire:model.defer="sections.products.items.{{ $pk }}.features.{{ $fIdx }}.desc" class="w-full p-2 rounded border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-[11px] font-medium"></textarea>
                                 </div>
                             @endforeach
                         </div>
+                        <button type="button" wire:click="addRepeaterItem('products.items.{{ $pk }}.features', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-1.5 rounded-lg border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1">
+                            <span class="material-symbols-outlined text-xs">add</span>
+                            Add Feature Bullet
+                        </button>
                     </div>
                 </div>
             @endforeach
@@ -248,13 +304,19 @@
     <div class="space-y-6">
         <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
             <div>
-                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">5. Platform Control & Governance (6 Cards)</h2>
-                <p class="text-xs text-[#6F767E] mt-0.5">Edit title and the 6 security and governance cards.</p>
+                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">5. Platform Control & Governance Cards</h2>
+                <p class="text-xs text-[#6F767E] mt-0.5">Edit title and security & governance cards.</p>
             </div>
-            <button type="button" wire:click="resetSection('governance')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">restart_alt</span>
-                Reset Section
-            </button>
+            <div class="flex items-center gap-3">
+                <button type="button" wire:click="addRepeaterItem('governance.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    Add Governance Card
+                </button>
+                <button type="button" wire:click="resetSection('governance')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">restart_alt</span>
+                    Reset Section
+                </button>
+            </div>
         </div>
 
         <div class="space-y-4">
@@ -265,13 +327,35 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                 @foreach($sections['governance']['cards'] ?? [] as $gIdx => $gCard)
-                    <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-2">
-                        <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Card {{ $gIdx + 1 }}</span>
+                    <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-2" wire:key="ai-gov-card-{{ $gIdx }}">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Card #{{ $gIdx + 1 }}</span>
+                            <div class="flex items-center gap-1">
+                                @if($gIdx > 0)
+                                <button type="button" wire:click="moveRepeaterItem('governance.cards', {{ $gIdx }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                                    <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+                                </button>
+                                @endif
+                                @if($gIdx < count($sections['governance']['cards'] ?? []) - 1)
+                                <button type="button" wire:click="moveRepeaterItem('governance.cards', {{ $gIdx }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                                    <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+                                </button>
+                                @endif
+                                <button type="button" wire:click="removeRepeaterItem('governance.cards', {{ $gIdx }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                                    <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                                </button>
+                            </div>
+                        </div>
                         <input type="text" placeholder="Card Title" wire:model.defer="sections.governance.cards.{{ $gIdx }}.title" class="w-full h-9 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-bold">
                         <textarea rows="2" placeholder="Description" wire:model.defer="sections.governance.cards.{{ $gIdx }}.desc" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium"></textarea>
                     </div>
                 @endforeach
             </div>
+
+            <button type="button" wire:click="addRepeaterItem('governance.cards', {{ json_encode(['title' => '', 'desc' => '']) }})" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">add</span>
+                Add Governance Card
+            </button>
         </div>
     </div>
 @endif
@@ -281,13 +365,19 @@
     <div class="space-y-6">
         <div class="flex items-center justify-between border-b border-gray-100 dark:border-[#272B30] pb-4">
             <div>
-                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">6. Why Kouventa (4 Cards)</h2>
-                <p class="text-xs text-[#6F767E] mt-0.5">Edit heading and the 4 reasons to choose Kouventa AI.</p>
+                <h2 class="text-lg font-bold text-[#111827] dark:text-[#FCFCFC]">6. Why Kouventa Cards</h2>
+                <p class="text-xs text-[#6F767E] mt-0.5">Edit heading and the reasons to choose Kouventa AI.</p>
             </div>
-            <button type="button" wire:click="resetSection('why')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">restart_alt</span>
-                Reset Section
-            </button>
+            <div class="flex items-center gap-3">
+                <button type="button" wire:click="addRepeaterItem('why.cards', {{ json_encode(['title' => '', 'desc' => '', 'badge' => '']) }})" class="inline-flex items-center gap-1 text-xs font-bold text-[#2BD46A] hover:underline">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    Add Why Card
+                </button>
+                <button type="button" wire:click="resetSection('why')" wire:confirm="Reset this section to original defaults?" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">restart_alt</span>
+                    Reset Section
+                </button>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -303,8 +393,25 @@
 
         <div class="space-y-4 pt-2">
             @foreach($sections['why']['cards'] ?? [] as $wIdx => $wCard)
-                <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-2">
-                    <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Card {{ $wIdx + 1 }}</span>
+                <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-2" wire:key="ai-why-card-{{ $wIdx }}">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Card #{{ $wIdx + 1 }}</span>
+                        <div class="flex items-center gap-1">
+                            @if($wIdx > 0)
+                            <button type="button" wire:click="moveRepeaterItem('why.cards', {{ $wIdx }}, 'up')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Up">
+                                <span class="material-symbols-outlined text-sm leading-none">arrow_upward</span>
+                            </button>
+                            @endif
+                            @if($wIdx < count($sections['why']['cards'] ?? []) - 1)
+                            <button type="button" wire:click="moveRepeaterItem('why.cards', {{ $wIdx }}, 'down')" class="p-1 rounded text-[#6F767E] hover:text-[#111827] dark:hover:text-white" title="Move Down">
+                                <span class="material-symbols-outlined text-sm leading-none">arrow_downward</span>
+                            </button>
+                            @endif
+                            <button type="button" wire:click="removeRepeaterItem('why.cards', {{ $wIdx }})" class="p-1 rounded text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30" title="Remove">
+                                <span class="material-symbols-outlined text-sm leading-none">delete</span>
+                            </button>
+                        </div>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <input type="text" placeholder="Title" wire:model.defer="sections.why.cards.{{ $wIdx }}.title" class="w-full h-9 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-bold">
                         <input type="text" placeholder="Badge (e.g. Solves: ...)" wire:model.defer="sections.why.cards.{{ $wIdx }}.badge" class="w-full h-9 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium">
@@ -312,6 +419,11 @@
                     <textarea rows="2" placeholder="Description" wire:model.defer="sections.why.cards.{{ $wIdx }}.desc" class="w-full p-2.5 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium"></textarea>
                 </div>
             @endforeach
+
+            <button type="button" wire:click="addRepeaterItem('why.cards', {{ json_encode(['title' => '', 'desc' => '', 'badge' => '']) }})" class="w-full py-2.5 rounded-xl border border-dashed border-gray-300 dark:border-[#33383F] text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white hover:border-gray-400 flex items-center justify-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">add</span>
+                Add Why Card
+            </button>
         </div>
     </div>
 @endif

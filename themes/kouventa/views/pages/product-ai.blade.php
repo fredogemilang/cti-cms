@@ -1389,33 +1389,31 @@ $ctaSecondary = $ctaSec['secondary_cta'] ?? ['text' => $isIdLocale ? 'Lihat harg
 <!-- ============ CHALLENGES ============ -->
 <section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $challengesTitle['prefix'] ?? 'Too many AI tools,' }} <span style="color: #13803F">{{ $challengesTitle['main'] ?? 'too little control.' }}</span></h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
-<article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 0.2s both">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px">
+@foreach($challengesCards as $idx => $card)
+<article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease {{ 0.2 + ($idx * 0.3) }}s both">
+@if($idx % 3 === 0)
 <div aria-hidden="true" style="height: 56px; position: relative; width: 120px">
 <span style="position: absolute; left: 0; top: 10px; width: 34px; height: 34px; border-radius: 10px; background: #FBE6E1; border: 1px solid #F0C4BA; animation: kvScatterDrift1 3.2s ease-in-out infinite alternate"></span>
 <span style="position: absolute; left: 44px; top: 0; width: 34px; height: 34px; border-radius: 10px; background: #FBE6E1; border: 1px solid #F0C4BA; animation: kvScatterDrift2 2.8s ease-in-out .3s infinite alternate"></span>
 <span style="position: absolute; left: 86px; top: 18px; width: 34px; height: 34px; border-radius: 10px; background: #FBE6E1; border: 1px solid #F0C4BA; animation: kvScatterDrift3 3.5s ease-in-out .6s infinite alternate"></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengesCards[0]['title'] ?? t('kouventa.AI tools are scattered across teams', 'AI tools are scattered across teams') }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengesCards[0]['desc'] ?? t('kouventa.Different teams use different AI tools based on their needs, creating a fragmented AI environment across the organization.', 'Different teams use different AI tools based on their needs, creating a fragmented AI environment across the organization.') }}</p>
-</article>
-<article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 0.8s both">
+@elseif($idx % 3 === 1)
 <div aria-hidden="true" style="height: 56px; display: flex; align-items: center">
 <span style="width: 52px; height: 52px; border-radius: 14px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center; transform-origin: 50% 80%; animation: kvWobbleLoop 3.2s ease-in-out infinite"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 7.5-2"></path></svg></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengesCards[1]['title'] ?? t('kouventa.Limited control over AI usage', 'Limited control over AI usage') }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengesCards[1]['desc'] ?? t('kouventa.With AI tools managed separately, it becomes harder to control how AI is used and ensure business data is handled securely.', 'With AI tools managed separately, it becomes harder to control how AI is used and ensure business data is handled securely.') }}</p>
-</article>
-<article style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 16px; animation: kvIn .6s ease 1.4s both">
+@else
 <div aria-hidden="true" style="height: 56px; display: flex; align-items: flex-end; gap: 6px">
 <span style="width: 16px; height: 18px; border-radius: 4px 4px 0 0; background: #F0C4BA; transform-origin: bottom; animation: kvBarFluctuate 2.1s ease-in-out infinite alternate"></span>
 <span style="width: 16px; height: 30px; border-radius: 4px 4px 0 0; background: #E79F8E; transform-origin: bottom; animation: kvBarFluctuate 2.5s ease-in-out .3s infinite alternate"></span>
 <span style="width: 16px; height: 42px; border-radius: 4px 4px 0 0; background: #D9735D; transform-origin: bottom; animation: kvBarFluctuate 2.3s ease-in-out .6s infinite alternate"></span>
 <span style="width: 16px; height: 56px; border-radius: 4px 4px 0 0; background: #B4412A; transform-origin: bottom; animation: kvBarFluctuate 2.7s ease-in-out .15s infinite alternate"></span>
 </div>
-<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $challengesCards[2]['title'] ?? t('kouventa.AI usage & billing are hard to manage', 'AI usage & billing are hard to manage') }}</h3>
-<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $challengesCards[2]['desc'] ?? t('kouventa.Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.', 'Multiple AI subscriptions make it difficult to centralize usage, manage subscriptions, and keep track of spending across teams.') }}</p>
+@endif
+<h3 style="margin: 0; font-size: 21px; font-weight: 700">{{ $card['title'] ?? '' }}</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #4A5866">{{ $card['desc'] ?? '' }}</p>
 </article>
+@endforeach
 </div>
 </section>
 
@@ -1853,37 +1851,24 @@ $ctaSecondary = $ctaSec['secondary_cta'] ?? ['text' => $isIdLocale ? 'Lihat harg
 <!-- ============ PLATFORM CONTROL ============ -->
 <section style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 40px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $governanceTitle }}</h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px">
+@php
+$govIcons = [
+    '<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="M9 12h6"></path>',
+    '<rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path>',
+    '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path>',
+    '<path d="M12 3a6 6 0 0 0-4 10.5V17h8v-3.5A6 6 0 0 0 12 3Z"></path><path d="M9 21h6"></path>',
+    '<path d="M9 4h10a1 1 0 0 1 1 1v15H8a3 3 0 0 1-3-3V8"></path><path d="M5 8a3 3 0 0 1 3-4M11 9h6M11 13h6M11 17h4"></path>',
+    '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="m9 15 2 2 4-4"></path>',
+];
+@endphp
+@foreach($governanceCards as $idx => $card)
 <div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="M9 12h6"></path></svg>
-<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[0]['title'] ?? 'AI Guardrails' }}</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[0]['desc'] ?? t('kouventa.Control what AI can access, process, say, and do based on defined rules and boundaries, including masking sensitive personally identifiable information (PII).', 'Control what AI can access, process, say, and do based on defined rules and boundaries, including masking sensitive personally identifiable information (PII).') }}</span>
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{!! $govIcons[$idx % count($govIcons)] !!}</svg>
+<span style="font-size: 19px; font-weight: 700">{{ $card['title'] ?? '' }}</span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $card['desc'] ?? '' }}</span>
 </div>
-<div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
-<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[1]['title'] ?? t('kouventa.Role-Based Access', 'Role-Based Access') }}</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[1]['desc'] ?? t('kouventa.Control access to AI resources and capabilities by user role, hierarchy, and permissions.', 'Control access to AI resources and capabilities by user role, hierarchy, and permissions.') }}</span>
-</div>
-<div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>
-<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[2]['title'] ?? t('kouventa.Usage Analytics', 'Usage Analytics') }}</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[2]['desc'] ?? t('kouventa.Track AI usage and activity to understand adoption, usage patterns, and resource consumption.', 'Track AI usage and activity to understand adoption, usage patterns, and resource consumption.') }}</span>
-</div>
-<div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0-4 10.5V17h8v-3.5A6 6 0 0 0 12 3Z"></path><path d="M9 21h6"></path></svg>
-<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[3]['title'] ?? 'AI Learning' }}</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[3]['desc'] ?? t('kouventa.Use feedback and corrections to continuously improve AI responses and performance.', 'Use feedback and corrections to continuously improve AI responses and performance.') }}</span>
-</div>
-<div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h10a1 1 0 0 1 1 1v15H8a3 3 0 0 1-3-3V8"></path><path d="M5 8a3 3 0 0 1 3-4M11 9h6M11 13h6M11 17h4"></path></svg>
-<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[4]['title'] ?? 'Audit Trail Logs' }}</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[4]['desc'] ?? t('kouventa.Record user activities, access, actions, and outcomes for traceability and governance.', 'Record user activities, access, actions, and outcomes for traceability and governance.') }}</span>
-</div>
-<div class="kv-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 12px">
-<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="m9 15 2 2 4-4"></path></svg>
-<span style="font-size: 19px; font-weight: 700">{{ $governanceCards[5]['title'] ?? t('kouventa.Knowledge Change Management', 'Knowledge Change Management') }}</span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $governanceCards[5]['desc'] ?? t('kouventa.Require changes to AI resources to go through review and approval before they are applied.', 'Require changes to AI resources to go through review and approval before they are applied.') }}</span>
-</div>
+@endforeach
 </div>
 <div class="kv-hover kv-integrate-card" style="background: #071C33; color: #FFFFFF; border: 1px solid #071C33; border-radius: 18px; padding: 28px 0; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
 <div class="kv-integrate-header" style="padding: 0 28px; display: flex; justify-content: space-between; align-items: baseline; gap: 24px; flex-wrap: wrap">
@@ -1921,30 +1906,24 @@ $channelsDbl = array_merge($channels, $channels);
 <div aria-hidden="true" style="position: absolute; right: -160px; top: -260px; width: 560px; height: 560px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
 <h2 class="kv-why-heading">{{ $whyPrefix }} <span style="color: #2BD46A">{{ $whyMain }}</span></h2>
 <div class="kv-why-grid">
+@php
+$whyIcons = [
+    '<rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect>',
+    '<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle>',
+    '<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path>',
+    '<rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path>',
+];
+@endphp
+@foreach($whyCards as $idx => $card)
 <div class="kv-why-card">
-<span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg></span>
-<h3 class="kv-why-title" style="margin: 0">{{ $whyCards[0]['title'] ?? 'Multi-Model AI' }}</h3>
-<span class="kv-why-desc">{{ $whyCards[0]['desc'] ?? t('kouventa.Access multiple AI models and choose the right model for each business need, all in one platform.', 'Access multiple AI models and choose the right model for each business need, all in one platform.') }}</span>
-<span class="kv-why-badge">{{ $whyCards[0]['badge'] ?? t('kouventa.Solves: scattered AI tools', 'Solves: scattered AI tools') }}</span>
+<span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">{!! $whyIcons[$idx % count($whyIcons)] !!}</svg></span>
+<h3 class="kv-why-title" style="margin: 0">{{ $card['title'] ?? '' }}</h3>
+<span class="kv-why-desc">{{ $card['desc'] ?? '' }}</span>
+@if(!empty($card['badge']))
+<span class="kv-why-badge">{{ $card['badge'] }}</span>
+@endif
 </div>
-<div class="kv-why-card">
-<span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg></span>
-<h3 class="kv-why-title" style="margin: 0">{{ $whyCards[1]['title'] ?? t('kouventa.Controlled AI', 'Controlled AI') }}</h3>
-<span class="kv-why-desc">{{ $whyCards[1]['desc'] ?? t('kouventa.Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.', 'Control how AI operates across multiple business processes with defined permissions, workflows, and execution rules.') }}</span>
-<span class="kv-why-badge">{{ $whyCards[1]['badge'] ?? t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
-</div>
-<div class="kv-why-card">
-<span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg></span>
-<h3 class="kv-why-title" style="margin: 0">{{ $whyCards[2]['title'] ?? t('kouventa.Secure AI', 'Secure AI') }}</h3>
-<span class="kv-why-desc">{{ $whyCards[2]['desc'] ?? t('kouventa.Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.', 'Keep AI processing and deployment secure with data protection measures such as PII masking, while keeping sensitive business data under your control.') }}</span>
-<span class="kv-why-badge">{{ $whyCards[2]['badge'] ?? t('kouventa.Solves: limited control', 'Solves: limited control') }}</span>
-</div>
-<div class="kv-why-card">
-<span class="kv-why-icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg></span>
-<h3 class="kv-why-title" style="margin: 0">{{ $whyCards[3]['title'] ?? t('kouventa.Budget Management', 'Budget Management') }}</h3>
-<span class="kv-why-desc">{{ $whyCards[3]['desc'] ?? t('kouventa.Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.', 'Monitor and control AI usage and spending with budgets per user, usage limits, and overage alerts.') }}</span>
-<span class="kv-why-badge">{{ $whyCards[3]['badge'] ?? t('kouventa.Solves: hard-to-manage billing', 'Solves: hard-to-manage billing') }}</span>
-</div>
+@endforeach
 </div>
 </section>
 

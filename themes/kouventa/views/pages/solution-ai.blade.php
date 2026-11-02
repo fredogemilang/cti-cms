@@ -53,8 +53,8 @@
     tab: 0,
     sol: -1,
     panelOn: true,
-    stepOn: [true, true, true, true],
-    replayed: [false, false, false, false],
+    stepOn: Array({{ max(4, count($journeySteps ?? [])) }}).fill(true),
+    replayed: Array({{ max(4, count($journeySteps ?? [])) }}).fill(false),
     implSeen: false,
     _lockT: null,
     aiSols: {
@@ -422,19 +422,20 @@
 <div role="tabpanel" x-show="tab === 0" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptCs['challenges'][0]['text'] ?? t('kouventa.Customer service agents spend too much time answering the same repetitive questions every day', 'Customer service agents spend too much time answering the same repetitive questions every day') }}</h4>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $csChallengeIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><rect x="3" y="11" width="18" height="5" rx="1.5"></rect><path d="M7 20h10"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="8" height="8" rx="2"></rect><rect x="14" y="13" width="8" height="8" rx="2"></rect><path d="M14 7h4a2 2 0 0 1 2 2v1M10 17H6a2 2 0 0 1-2-2v-1"></path><path d="M18 8l2 2 2-2M6 16l-2-2-2 2"></path></svg>',
+    ];
+@endphp
+@foreach(($deptCs['challenges'] ?? []) as $i => $ch)
+<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease {{ sprintf('%.2fs', 0.15 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center">{!! $csChallengeIcons[$i % count($csChallengeIcons)] !!}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ is_array($ch) ? ($ch['text'] ?? '') : $ch }}</h4>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"></rect><rect x="3" y="11" width="18" height="5" rx="1.5"></rect><path d="M7 20h10"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptCs['challenges'][1]['text'] ?? t('kouventa.Customers expect fast responses, while agents need to handle multiple conversations simultaneously', 'Customers expect fast responses, while agents need to handle multiple conversations simultaneously') }}</h4>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="8" height="8" rx="2"></rect><rect x="14" y="13" width="8" height="8" rx="2"></rect><path d="M14 7h4a2 2 0 0 1 2 2v1M10 17H6a2 2 0 0 1-2-2v-1"></path><path d="M18 8l2 2 2-2M6 16l-2-2-2 2"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptCs['challenges'][2]['text'] ?? t('kouventa.Agents have to switch between CRM, ticketing systems, and other business applications to find the right information, slowing down issue resolution', 'Agents have to switch between CRM, ticketing systems, and other business applications to find the right information, slowing down issue resolution') }}</h4>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -491,19 +492,20 @@
 <div style="position: relative; overflow: hidden; background: #071C33; border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 24px">
 <span aria-hidden="true" style="position: absolute; right: -120px; top: -160px; width: 460px; height: 460px; border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.22), rgba(43, 212, 106, 0) 70%)"></span>
 <h2 style="position: relative; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF">{{ t('kouventa.Business impact', 'Business impact') }}</h2>
-<div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptCs['impacts'][0]['text'] ?? t('kouventa.Resolve customer inquiries and issues faster, improving customer experience', 'Resolve customer inquiries and issues faster, improving customer experience') }}</span>
+<div style="position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $csImpactIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg>',
+    ];
+@endphp
+@foreach(($deptCs['impacts'] ?? []) as $i => $imp)
+<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease {{ sprintf('%.2fs', 0.20 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center">{!! $csImpactIcons[$i % count($csImpactIcons)] !!}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ is_array($imp) ? ($imp['text'] ?? '') : $imp }}</span>
 </div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptCs['impacts'][1]['text'] ?? t('kouventa.Reduce repetitive work so agents can focus on more complex cases', 'Reduce repetitive work so agents can focus on more complex cases') }}</span>
-</div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptCs['impacts'][2]['text'] ?? t('kouventa.Automate routine inquiries and manual ticket management', 'Automate routine inquiries and manual ticket management') }}</span>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -513,19 +515,20 @@
 <div role="tabpanel" x-show="tab === 1" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptRec['challenges'][0]['text'] ?? t('kouventa.HR teams spend hours reviewing resumes, matching candidates to job requirements, ranking profiles, and evaluating test and interview results', 'HR teams spend hours reviewing resumes, matching candidates to job requirements, ranking profiles, and evaluating test and interview results') }}</h4>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $recChallengeIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="8" height="8" rx="2"></rect><rect x="14" y="13" width="8" height="8" rx="2"></rect><path d="M14 7h4a2 2 0 0 1 2 2v1M10 17H6a2 2 0 0 1-2-2v-1"></path><path d="M18 8l2 2 2-2M6 16l-2-2-2 2"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg>',
+    ];
+@endphp
+@foreach(($deptRec['challenges'] ?? []) as $i => $ch)
+<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease {{ sprintf('%.2fs', 0.15 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center">{!! $recChallengeIcons[$i % count($recChallengeIcons)] !!}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ is_array($ch) ? ($ch['text'] ?? '') : $ch }}</h4>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="8" height="8" rx="2"></rect><rect x="14" y="13" width="8" height="8" rx="2"></rect><path d="M14 7h4a2 2 0 0 1 2 2v1M10 17H6a2 2 0 0 1-2-2v-1"></path><path d="M18 8l2 2 2-2M6 16l-2-2-2 2"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptRec['challenges'][1]['text'] ?? t('kouventa.Recruiters have to switch between multiple platforms to find candidate information and track the hiring process', 'Recruiters have to switch between multiple platforms to find candidate information and track the hiring process') }}</h4>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptRec['challenges'][2]['text'] ?? t('kouventa.Recruiters spend time on repetitive tasks such as data entry, document generation, interview scheduling, and candidate notifications', 'Recruiters spend time on repetitive tasks such as data entry, document generation, interview scheduling, and candidate notifications') }}</h4>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -605,19 +608,20 @@
 <div style="position: relative; overflow: hidden; background: #071C33; border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 24px">
 <span aria-hidden="true" style="position: absolute; right: -120px; top: -160px; width: 460px; height: 460px; border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.22), rgba(43, 212, 106, 0) 70%)"></span>
 <h2 style="position: relative; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF">{{ t('kouventa.Business impact', 'Business impact') }}</h2>
-<div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptRec['impacts'][0]['text'] ?? t('kouventa.Spend less time screening candidates, and more time hiring the right ones', 'Spend less time screening candidates, and more time hiring the right ones') }}</span>
+<div style="position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $recImpactIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg>',
+    ];
+@endphp
+@foreach(($deptRec['impacts'] ?? []) as $i => $imp)
+<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease {{ sprintf('%.2fs', 0.20 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center">{!! $recImpactIcons[$i % count($recImpactIcons)] !!}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ is_array($imp) ? ($imp['text'] ?? '') : $imp }}</span>
 </div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptRec['impacts'][1]['text'] ?? t('kouventa.Reduce HR workload by automating repetitive manual tasks', 'Reduce HR workload by automating repetitive manual tasks') }}</span>
-</div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptRec['impacts'][2]['text'] ?? t('kouventa.Make hiring decisions with greater confidence using insights from candidate data and evaluation results', 'Make hiring decisions with greater confidence using insights from candidate data and evaluation results') }}</span>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -627,19 +631,20 @@
 <div role="tabpanel" x-show="tab === 2" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 3A6 6 0 0 1 18 8c0 2.6.5 4.4 1.2 5.7M17 17H3s3-2 3-9c0-.8.1-1.5.4-2.2"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0M2 2l20 20"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptSales['challenges'][0]['text'] ?? t('kouventa.Missed leads from delayed responses, because customers expect quick responses even outside working hours', 'Missed leads from delayed responses, because customers expect quick responses even outside working hours') }}</h4>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $salesChallengeIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.7 3A6 6 0 0 1 18 8c0 2.6.5 4.4 1.2 5.7M17 17H3s3-2 3-9c0-.8.1-1.5.4-2.2"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0M2 2l20 20"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3M11 8v3M11 14h.01"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M17 8l5 5M22 8l-5 5"></path></svg>',
+    ];
+@endphp
+@foreach(($deptSales['challenges'] ?? []) as $i => $ch)
+<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease {{ sprintf('%.2fs', 0.15 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center">{!! $salesChallengeIcons[$i % count($salesChallengeIcons)] !!}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ is_array($ch) ? ($ch['text'] ?? '') : $ch }}</h4>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3M11 8v3M11 14h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptSales['challenges'][1]['text'] ?? t('kouventa.Sales teams have to answer repetitive questions while searching through multiple documents and systems to find the right information', 'Sales teams have to answer repetitive questions while searching through multiple documents and systems to find the right information') }}</h4>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M17 8l5 5M22 8l-5 5"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptSales['challenges'][2]['text'] ?? t('kouventa.Sales teams have to manually follow up with unresponsive customers, and missed follow-ups can mean missed sales opportunities', 'Sales teams have to manually follow up with unresponsive customers, and missed follow-ups can mean missed sales opportunities') }}</h4>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -704,22 +709,23 @@
 <div style="position: relative; overflow: hidden; background: #071C33; border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 24px">
 <span aria-hidden="true" style="position: absolute; right: -120px; top: -160px; width: 460px; height: 460px; border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.22), rgba(43, 212, 106, 0) 70%)"></span>
 <h2 style="position: relative; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF">{{ t('kouventa.Business impact', 'Business impact') }}</h2>
-<div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptSales['impacts'][0]['text'] ?? t('kouventa.Enhance Customer Experiences', 'Enhance Customer Experiences') }}</span>
-<span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ $deptSales['impacts'][0]['desc'] ?? t('kouventa.Instant responses and accurate product, order, and shipment information.', 'Instant responses and accurate product, order, and shipment information.') }}</span>
+<div style="position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $salesImpactIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M14 7h7v7"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 12 0V3h-4v7a2 2 0 0 1-4 0V3Z"></path><path d="M6 7h4M14 7h4"></path></svg>',
+    ];
+@endphp
+@foreach(($deptSales['impacts'] ?? []) as $i => $imp)
+<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease {{ sprintf('%.2fs', 0.20 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center">{!! $salesImpactIcons[$i % count($salesImpactIcons)] !!}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ is_array($imp) ? ($imp['text'] ?? '') : $imp }}</span>
+@if(is_array($imp) && !empty($imp['desc']))
+<span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ $imp['desc'] }}</span>
+@endif
 </div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M14 7h7v7"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptSales['impacts'][1]['text'] ?? t('kouventa.Increase Sales Productivity', 'Increase Sales Productivity') }}</span>
-<span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ $deptSales['impacts'][1]['desc'] ?? t('kouventa.Fewer repetitive inquiries and manual follow-ups, allowing sales teams to focus on higher-value opportunities.', 'Fewer repetitive inquiries and manual follow-ups, allowing sales teams to focus on higher-value opportunities.') }}</span>
-</div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 12 0V3h-4v7a2 2 0 0 1-4 0V3Z"></path><path d="M6 7h4M14 7h4"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptSales['impacts'][2]['text'] ?? t('kouventa.Improve Customer Conversion & Retention', 'Improve Customer Conversion & Retention') }}</span>
-<span style="font-size: 15px; line-height: 1.6; color: #B9C6D3">{{ $deptSales['impacts'][2]['desc'] ?? t('kouventa.Proactive follow-ups and seamless support throughout the purchase journey.', 'Proactive follow-ups and seamless support throughout the purchase journey.') }}</span>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -729,19 +735,20 @@
 <div role="tabpanel" x-show="tab === 3" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-3 3V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2Z"></path><path d="M18 9h1a2 2 0 0 1 2 2v10l-3-3h-6a2 2 0 0 1-2-2v-1"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptOps['challenges'][0]['text'] ?? t('kouventa.Internal information is scattered across documents, systems, and sources, making it difficult for employees to find the right policies, SOPs, and business information', 'Internal information is scattered across documents, systems, and sources, making it difficult for employees to find the right policies, SOPs, and business information') }}</h4>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $opsChallengeIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-3 3V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2Z"></path><path d="M18 9h1a2 2 0 0 1 2 2v10l-3-3h-6a2 2 0 0 1-2-2v-1"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3M11 8v3M11 14h.01"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg>',
+    ];
+@endphp
+@foreach(($deptOps['challenges'] ?? []) as $i => $ch)
+<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease {{ sprintf('%.2fs', 0.15 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center">{!! $opsChallengeIcons[$i % count($opsChallengeIcons)] !!}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ is_array($ch) ? ($ch['text'] ?? '') : $ch }}</h4>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3M11 8v3M11 14h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptOps['challenges'][1]['text'] ?? t('kouventa.Employees spend valuable time searching for answers when important information needs to be accessed immediately', 'Employees spend valuable time searching for answers when important information needs to be accessed immediately') }}</h4>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a3 3 0 0 1 3-3h15"></path><path d="M7 22l-4-4 4-4"></path><path d="M21 13v2a3 3 0 0 1-3 3H3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptOps['challenges'][2]['text'] ?? t('kouventa.Support teams spend too much time answering the same internal questions about policies, procedures, and business information', 'Support teams spend too much time answering the same internal questions about policies, procedures, and business information') }}</h4>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -790,19 +797,20 @@
 <div style="position: relative; overflow: hidden; background: #071C33; border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 24px">
 <span aria-hidden="true" style="position: absolute; right: -120px; top: -160px; width: 460px; height: 460px; border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.22), rgba(43, 212, 106, 0) 70%)"></span>
 <h2 style="position: relative; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF">{{ t('kouventa.Business impact', 'Business impact') }}</h2>
-<div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptOps['impacts'][0]['text'] ?? t('kouventa.Give employees instant access to the information they need, anytime', 'Give employees instant access to the information they need, anytime') }}</span>
+<div style="position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $opsImpactIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>',
+    ];
+@endphp
+@foreach(($deptOps['impacts'] ?? []) as $i => $imp)
+<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease {{ sprintf('%.2fs', 0.20 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center">{!! $opsImpactIcons[$i % count($opsImpactIcons)] !!}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ is_array($imp) ? ($imp['text'] ?? '') : $imp }}</span>
 </div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptOps['impacts'][1]['text'] ?? t('kouventa.Reduce recurring internal questions and manual searches, reducing repetitive work for support teams', 'Reduce recurring internal questions and manual searches, reducing repetitive work for support teams') }}</span>
-</div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptOps['impacts'][2]['text'] ?? t('kouventa.Help employees spend less time searching for information and more time getting work done', 'Help employees spend less time searching for information and more time getting work done') }}</span>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -812,19 +820,20 @@
 <div role="tabpanel" x-show="tab === 4" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptPp['challenges'][0]['text'] ?? t('kouventa.Finance teams spend too much time reviewing invoices, due dates, cash flow, and vendor data before deciding what to pay first', 'Finance teams spend too much time reviewing invoices, due dates, cash flow, and vendor data before deciding what to pay first') }}</h4>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $ppChallengeIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M12 12v3M12 18h.01"></path></svg>',
+    ];
+@endphp
+@foreach(($deptPp['challenges'] ?? []) as $i => $ch)
+<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease {{ sprintf('%.2fs', 0.15 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center">{!! $ppChallengeIcons[$i % count($ppChallengeIcons)] !!}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ is_array($ch) ? ($ch['text'] ?? '') : $ch }}</h4>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M8 16v-4M12 16V8M16 16v-6"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptPp['challenges'][1]['text'] ?? t('kouventa.Finance teams need to analyze multiple data points manually to determine which payments should be prioritized', 'Finance teams need to analyze multiple data points manually to determine which payments should be prioritized') }}</h4>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M12 12v3M12 18h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptPp['challenges'][2]['text'] ?? t('kouventa.Manual payment analysis and validation increase the risk of errors and inconsistent payment decisions', 'Manual payment analysis and validation increase the risk of errors and inconsistent payment decisions') }}</h4>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -836,10 +845,9 @@
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: inherit; font-weight: inherit; line-height: inherit; color: inherit">{{ $deptPp['solutions'][0]['title'] ?? t('kouventa.Payment Prioritization Agent', 'Payment Prioritization Agent') }}</h3>
 <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px">
-<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ $deptPp['solutions'][0]['bullets'][0] ?? t('kouventa.Analyze invoices, due dates, cash flow, and vendor data', 'Analyze invoices, due dates, cash flow, and vendor data') }}</li>
-<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ $deptPp['solutions'][0]['bullets'][1] ?? t('kouventa.Prioritize payments based on business criteria', 'Prioritize payments based on business criteria') }}</li>
-<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ $deptPp['solutions'][0]['bullets'][2] ?? t('kouventa.Recommend payment batches for approval', 'Recommend payment batches for approval') }}</li>
-<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ $deptPp['solutions'][0]['bullets'][3] ?? t('kouventa.Execute approved payments through ERP', 'Execute approved payments through ERP') }}</li>
+@foreach(($deptPp['solutions'][0]['bullets'] ?? []) as $bullet)
+<li style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #2B3947"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="M20 6 9 17l-5-5"></path></svg>{{ is_array($bullet) ? ($bullet['text'] ?? '') : $bullet }}</li>
+@endforeach
 </ul>
 </span>
 </button>
@@ -894,19 +902,20 @@
 <div style="position: relative; overflow: hidden; background: #071C33; border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 24px">
 <span aria-hidden="true" style="position: absolute; right: -120px; top: -160px; width: 460px; height: 460px; border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.22), rgba(43, 212, 106, 0) 70%)"></span>
 <h2 style="position: relative; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF">{{ t('kouventa.Business impact', 'Business impact') }}</h2>
-<div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptPp['impacts'][0]['text'] ?? t('kouventa.Enable finance teams to identify payment priorities faster and make timely, data-driven decisions', 'Enable finance teams to identify payment priorities faster and make timely, data-driven decisions') }}</span>
+<div style="position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $ppImpactIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.6-1 2.9 1 2.9-2.5 1.6-.9 2.9-3-.2L12 20l-2.4-1.8-3 .2-.9-2.9-2.5-1.6 1-2.9-1-2.9 2.5-1.6.9-2.9 3 .2Z"></path><path d="M8.5 11.5l2.5 2.5 4.5-5"></path></svg>',
+    ];
+@endphp
+@foreach(($deptPp['impacts'] ?? []) as $i => $imp)
+<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease {{ sprintf('%.2fs', 0.20 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center">{!! $ppImpactIcons[$i % count($ppImpactIcons)] !!}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ is_array($imp) ? ($imp['text'] ?? '') : $imp }}</span>
 </div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptPp['impacts'][1]['text'] ?? t('kouventa.Achieve higher operational efficiency by reducing manual analysis and streamlining the payment prioritization process', 'Achieve higher operational efficiency by reducing manual analysis and streamlining the payment prioritization process') }}</span>
-</div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.6-1 2.9 1 2.9-2.5 1.6-.9 2.9-3-.2L12 20l-2.4-1.8-3 .2-.9-2.9-2.5-1.6 1-2.9-1-2.9 2.5-1.6.9-2.9 3 .2Z"></path><path d="M8.5 11.5l2.5 2.5 4.5-5"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptPp['impacts'][2]['text'] ?? t('kouventa.Improve validation accuracy by analyzing invoice data consistently and reducing manual errors', 'Improve validation accuracy by analyzing invoice data consistently and reducing manual errors') }}</span>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -916,19 +925,20 @@
 <div role="tabpanel" x-show="tab === 5" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M12 12v3M12 18h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptBr['challenges'][0]['text'] ?? t('kouventa.Finance teams still rely on manual reconciliation to match bank transactions with invoices and financial records', 'Finance teams still rely on manual reconciliation to match bank transactions with invoices and financial records') }}</h4>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $brChallengeIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"></path><path d="M14 3v6h6M12 12v3M12 18h.01"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3M11 8v3M11 14h.01"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 15l4-4 3 3 6-7"></path></svg>',
+    ];
+@endphp
+@foreach(($deptBr['challenges'] ?? []) as $i => $ch)
+<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease {{ sprintf('%.2fs', 0.15 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center">{!! $brChallengeIcons[$i % count($brChallengeIcons)] !!}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ is_array($ch) ? ($ch['text'] ?? '') : $ch }}</h4>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3M11 8v3M11 14h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptBr['challenges'][1]['text'] ?? t('kouventa.Finance teams need to manually identify mismatches, trace transaction details, and determine the root cause to resolve reconciliation issues', 'Finance teams need to manually identify mismatches, trace transaction details, and determine the root cause to resolve reconciliation issues') }}</h4>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 15l4-4 3 3 6-7"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptBr['challenges'][2]['text'] ?? t('kouventa.As transaction volumes grow, manual reconciliation becomes harder to manage efficiently and scale', 'As transaction volumes grow, manual reconciliation becomes harder to manage efficiently and scale') }}</h4>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -1014,19 +1024,20 @@
 <div style="position: relative; overflow: hidden; background: #071C33; border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 24px">
 <span aria-hidden="true" style="position: absolute; right: -120px; top: -160px; width: 460px; height: 460px; border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.22), rgba(43, 212, 106, 0) 70%)"></span>
 <h2 style="position: relative; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF">{{ t('kouventa.Business impact', 'Business impact') }}</h2>
-<div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptBr['impacts'][0]['text'] ?? t('kouventa.Reduce manual finance activities by automating transaction matching and analysis', 'Reduce manual finance activities by automating transaction matching and analysis') }}</span>
+<div style="position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $brImpactIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M14 7h7v7"></path></svg>',
+    ];
+@endphp
+@foreach(($deptBr['impacts'] ?? []) as $i => $imp)
+<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease {{ sprintf('%.2fs', 0.20 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center">{!! $brImpactIcons[$i % count($brImpactIcons)] !!}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ is_array($imp) ? ($imp['text'] ?? '') : $imp }}</span>
 </div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptBr['impacts'][1]['text'] ?? t('kouventa.Accelerate reconciliation by helping finance teams identify and resolve discrepancies faster with clear root-cause explanations', 'Accelerate reconciliation by helping finance teams identify and resolve discrepancies faster with clear root-cause explanations') }}</span>
-</div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"></path><path d="M14 7h7v7"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptBr['impacts'][2]['text'] ?? t('kouventa.Handle higher transaction volumes without increasing manual workload', 'Handle higher transaction volumes without increasing manual workload') }}</span>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -1036,19 +1047,20 @@
 <div role="tabpanel" x-show="tab === 6" class="kv-flex-col" style="gap: 48px">
 <div style="display: flex; flex-direction: column; gap: 18px">
 <h2 style="margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.Challenges', 'Challenges') }}</h2>
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.15s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptLegal['challenges'][0]['text'] ?? t('kouventa.Contract reviews take too long, with legal teams manually searching lengthy documents for relevant clauses and terms', 'Contract reviews take too long, with legal teams manually searching lengthy documents for relevant clauses and terms') }}</h4>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $legalChallengeIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-3 3V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2Z"></path><path d="M18 9h1a2 2 0 0 1 2 2v10l-3-3h-6a2 2 0 0 1-2-2v-1"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="M12 8v4M12 15.5h.01"></path></svg>',
+    ];
+@endphp
+@foreach(($deptLegal['challenges'] ?? []) as $i => $ch)
+<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease {{ sprintf('%.2fs', 0.15 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center">{!! $legalChallengeIcons[$i % count($legalChallengeIcons)] !!}</span>
+<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ is_array($ch) ? ($ch['text'] ?? '') : $ch }}</h4>
 </div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.30s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-3 3V4a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2Z"></path><path d="M18 9h1a2 2 0 0 1 2 2v10l-3-3h-6a2 2 0 0 1-2-2v-1"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptLegal['challenges'][1]['text'] ?? t('kouventa.Critical clauses, policies, and regulations are scattered across multiple documents, making it easy to miss what matters', 'Critical clauses, policies, and regulations are scattered across multiple documents, making it easy to miss what matters') }}</h4>
-</div>
-<div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-top: 4px solid #E0563B; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05); animation: kvIn .45s ease 0.45s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: #FBE6E1; color: #B4412A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="M12 8v4M12 15.5h.01"></path></svg></span>
-<h4 style="margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; color: #0E1A24">{{ $deptLegal['challenges'][2]['text'] ?? t('kouventa.Growing volumes of contracts and regulations increase the risk of missed compliance requirements and potential issues', 'Growing volumes of contracts and regulations increase the risk of missed compliance requirements and potential issues') }}</h4>
-</div>
+@endforeach
 </div>
 </div>
 
@@ -1118,19 +1130,20 @@
 <div style="position: relative; overflow: hidden; background: #071C33; border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 24px">
 <span aria-hidden="true" style="position: absolute; right: -120px; top: -160px; width: 460px; height: 460px; border-radius: 50%; background: radial-gradient(circle, rgba(43, 212, 106, 0.22), rgba(43, 212, 106, 0) 70%)"></span>
 <h2 style="position: relative; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; color: #FFFFFF">{{ t('kouventa.Business impact', 'Business impact') }}</h2>
-<div style="position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.20s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptLegal['impacts'][0]['text'] ?? t('kouventa.Improve compliance quality by identifying relevant clauses, key terms, and applicable policies while reducing the risk of missed requirements', 'Improve compliance quality by identifying relevant clauses, key terms, and applicable policies while reducing the risk of missed requirements') }}</span>
+<div style="position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+@php
+    $legalImpactIcons = [
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="M8.5 12l2.5 2.5 4.5-5"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg>',
+        '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg>',
+    ];
+@endphp
+@foreach(($deptLegal['impacts'] ?? []) as $i => $imp)
+<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease {{ sprintf('%.2fs', 0.20 + ($i * 0.15)) }} both">
+<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center">{!! $legalImpactIcons[$i % count($legalImpactIcons)] !!}</span>
+<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ is_array($imp) ? ($imp['text'] ?? '') : $imp }}</span>
 </div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.35s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptLegal['impacts'][1]['text'] ?? t('kouventa.Review contracts faster by quickly finding key terms, clauses, and relevant policies, so legal teams spend less time reviewing', 'Review contracts faster by quickly finding key terms, clauses, and relevant policies, so legal teams spend less time reviewing') }}</span>
-</div>
-<div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-top: 4px solid #2BD46A; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 16px; color: #FFFFFF; animation: kvIn .45s ease 0.50s both">
-<span style="width: 56px; height: 56px; border-radius: 16px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14l4-4"></path><path d="M3.3 19a10 10 0 1 1 17.4 0"></path></svg></span>
-<span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ $deptLegal['impacts'][2]['text'] ?? t('kouventa.Reduce manual work by automating contract Q&A and summarization, allowing legal teams to focus on higher-value legal activities', 'Reduce manual work by automating contract Q&A and summarization, allowing legal teams to focus on higher-value legal activities') }}</span>
-</div>
+@endforeach
 </div>
 </div>
 </div>
@@ -1140,106 +1153,75 @@
 <!-- ============ IMPLEMENTATION JOURNEY ============ -->
 <section id="impl-journey" style="padding: 0 80px 88px; display: flex; flex-direction: column; gap: 32px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $journeyTitle }}</h2>
-<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px">
 
-<!-- Step 1: Discover -->
-<button type="button" @click="replayStep(0)" aria-label="Step 1: Discover (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.06); display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
+@foreach(($journeySteps ?? []) as $i => $step)
+@php
+    $stepMod = $i % 4;
+    $sTitle = is_array($step) ? ($step['title'] ?? '') : '';
+    $sDesc = is_array($step) ? ($step['desc'] ?? '') : '';
+@endphp
+<button type="button" @click="replayStep({{ $i }})" aria-label="Step {{ $i + 1 }}: {{ $sTitle }} (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.06); display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
 <div style="height: 156px; background: #E8F3EC; position: relative; overflow: hidden">
-<template x-if="stepOn[0]">
+<template x-if="stepOn[{{ $i }}]">
 <div style="position: absolute; inset: 0">
+@if($stepMod === 0)
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 10px">
 <span style="width: 50px; height: 34px; border-radius: 8px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08)"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
-<span style="width: 50px; height: 34px; border-radius: 8px; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvAmber .3s ease ' + (replayed[0] ? '0.6s' : '0.6s') + ' both') : 'none' }"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
+<span style="width: 50px; height: 34px; border-radius: 8px; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvAmber .3s ease ' + (replayed[{{ $i }}] ? '0.6s' : '0.6s') + ' both') : 'none' }"></span><span style="width: 14px; height: 2px; background: #C9D2CE"></span>
 <span style="width: 50px; height: 34px; border-radius: 8px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08)"></span>
 </div>
-<span style="position: absolute; left: 24px; top: 46px; --d: 170px;" :style="{ animation: implSeen ? ('kvScan 1.4s ease ' + (replayed[0] ? '0.1s' : '0.1s') + ' 1 both') : 'none' }"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#071C33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"></circle><path d="m20 20-4.5-4.5"></path></svg></span>
-</div>
-</template>
-</div>
-<div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[0] ? '0s' : '0s') + ' both') : 'none' }">1</span><span style="font-size: 20px; font-weight: 800">{{ $journeySteps[0]['title'] ?? ($isIdLocale ? 'Analisis' : 'Discover') }}</span></span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $journeySteps[0]['desc'] ?? '' }}</span>
-</div>
-</button>
-
-<!-- Step 2: Connect -->
-<button type="button" @click="replayStep(1)" aria-label="Step 2: Connect (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.06); display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
-<div style="height: 156px; background: #E8F3EC; position: relative; overflow: hidden">
-<template x-if="stepOn[1]">
-<div style="position: absolute; inset: 0">
+<span style="position: absolute; left: 24px; top: 46px; --d: 170px;" :style="{ animation: implSeen ? ('kvScan 1.4s ease ' + (replayed[{{ $i }}] ? '0.1s' : '0.1s') + ' 1 both') : 'none' }"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#071C33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"></circle><path d="m20 20-4.5-4.5"></path></svg></span>
+@elseif($stepMod === 1)
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 14px">
 <div style="display: flex; flex-direction: column; gap: 5px">
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[1] ? '0.1s' : '2.1s') + ' both') : 'none' }">{{ t('kouventa.Documents', 'Documents') }}</span>
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[1] ? '0.6s' : '2.6s') + ' both') : 'none' }">CRM</span>
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[1] ? '1.0s' : '3.0s') + ' both') : 'none' }">ERP</span>
-<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[1] ? '1.4s' : '3.4s') + ' both') : 'none' }">Ticketing</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[{{ $i }}] ? '0.1s' : '2.1s') + ' both') : 'none' }">{{ t('kouventa.Documents', 'Documents') }}</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[{{ $i }}] ? '0.6s' : '2.6s') + ' both') : 'none' }">CRM</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[{{ $i }}] ? '1.0s' : '3.0s') + ' both') : 'none' }">ERP</span>
+<span style="font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[{{ $i }}] ? '1.4s' : '3.4s') + ' both') : 'none' }">Ticketing</span>
 </div>
-<div style="width: 40px; height: 2px; background: #13803F; --w: 40px;" :style="{ animation: implSeen ? ('kvGrowW .4s ease ' + (replayed[1] ? '1.4s' : '3.4s') + ' both') : 'none' }"></div>
+<div style="width: 40px; height: 2px; background: #13803F; --w: 40px;" :style="{ animation: implSeen ? ('kvGrowW .4s ease ' + (replayed[{{ $i }}] ? '1.4s' : '3.4s') + ' both') : 'none' }"></div>
 <span style="width: 52px; height: 52px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800">AGENT</span>
 </div>
-</div>
-</template>
-</div>
-<div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[1] ? '0s' : '2s') + ' both') : 'none' }">2</span><span style="font-size: 20px; font-weight: 800">{{ $journeySteps[1]['title'] ?? ($isIdLocale ? 'Integrasi' : 'Connect') }}</span></span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $journeySteps[1]['desc'] ?? '' }}</span>
-</div>
-</button>
-
-<!-- Step 3: Configure -->
-<button type="button" @click="replayStep(2)" aria-label="Step 3: Configure (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.06); display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
-<div style="height: 156px; background: #E8F3EC; position: relative; overflow: hidden">
-<template x-if="stepOn[2]">
-<div style="position: absolute; inset: 0">
+@elseif($stepMod === 2)
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 16px">
 <div style="display: flex; flex-direction: column; gap: 5px; width: 90px">
-<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[2] ? '0.1s' : '4.1s') + ' both') : 'none' }"></span>
-<span style="height: 18px; border-radius: 5px; background: #FFF6E5; border: 1px solid #F2C46D; font-size: 9px; font-weight: 800; color: #7A4A00; display: flex; align-items: center; justify-content: center;" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[2] ? '0.6s' : '4.6s') + ' both') : 'none' }">{{ t('kouventa.Approval', 'Approval') }}</span>
-<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[2] ? '1.0s' : '5.0s') + ' both') : 'none' }"></span>
+<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[{{ $i }}] ? '0.1s' : '4.1s') + ' both') : 'none' }"></span>
+<span style="height: 18px; border-radius: 5px; background: #FFF6E5; border: 1px solid #F2C46D; font-size: 9px; font-weight: 800; color: #7A4A00; display: flex; align-items: center; justify-content: center;" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[{{ $i }}] ? '0.6s' : '4.6s') + ' both') : 'none' }">{{ t('kouventa.Approval', 'Approval') }}</span>
+<span style="height: 18px; border-radius: 5px; background: #FFFFFF; border: 1px solid #C9D2CE; box-shadow: 0 2px 6px rgba(7, 28, 51, 0.08);" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[{{ $i }}] ? '1.0s' : '5.0s') + ' both') : 'none' }"></span>
 </div>
 <div style="display: flex; flex-direction: column; gap: 6px; font-size: 10px; font-weight: 700">
-<span :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[2] ? '0.6s' : '4.6s') + ' both') : 'none' }">✓ {{ t('kouventa.Rules', 'Rules') }}</span>
-<span :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[2] ? '1.0s' : '5.0s') + ' both') : 'none' }">✓ {{ t('kouventa.Actions', 'Actions') }}</span>
-<span style="display: flex; align-items: center; gap: 4px;" :style="{ animation: implSeen ? ('kvPopIn .3s ease ' + (replayed[2] ? '1.4s' : '5.4s') + ' both') : 'none' }"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path></svg>{{ t('kouventa.Guardrails', 'Guardrails') }}</span>
+<span :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[{{ $i }}] ? '0.6s' : '4.6s') + ' both') : 'none' }">✓ {{ t('kouventa.Rules', 'Rules') }}</span>
+<span :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[{{ $i }}] ? '1.0s' : '5.0s') + ' both') : 'none' }">✓ {{ t('kouventa.Actions', 'Actions') }}</span>
+<span style="display: flex; align-items: center; gap: 4px;" :style="{ animation: implSeen ? ('kvPopIn .3s ease ' + (replayed[{{ $i }}] ? '1.4s' : '5.4s') + ' both') : 'none' }"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path></svg>{{ t('kouventa.Guardrails', 'Guardrails') }}</span>
 </div>
 </div>
-</div>
-</template>
-</div>
-<div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[2] ? '0s' : '4s') + ' both') : 'none' }">3</span><span style="font-size: 20px; font-weight: 800">{{ $journeySteps[2]['title'] ?? ($isIdLocale ? 'Konfigurasi' : 'Configure') }}</span></span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $journeySteps[2]['desc'] ?? '' }}</span>
-</div>
-</button>
-
-<!-- Step 4: Deploy & Scale -->
-<button type="button" @click="replayStep(3)" aria-label="Step 4: Deploy & Scale (replay illustration)" style="text-align: left; border: 1px solid #E3E8E6; background: #FFFFFF; border-radius: 20px; padding: 0; overflow: hidden; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.06); display: flex; flex-direction: column; color: #0E1A24; cursor: pointer">
-<div style="height: 156px; background: #E8F3EC; position: relative; overflow: hidden">
-<template x-if="stepOn[3]">
-<div style="position: absolute; inset: 0">
+@else
 <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 16px">
 <div style="display: flex; flex-direction: column; align-items: center; gap: 6px">
-<span style="width: 44px; height: 24px; border-radius: 999px; background: #9AA8A2; padding: 2px; box-sizing: border-box; display: flex;" :style="{ animation: implSeen ? ('kvLiveOn .3s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both') : 'none' }"><span style="width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 3px rgba(7,28,51,0.3);" :style="{ animation: implSeen ? ('kvKnob .3s ease ' + (replayed[3] ? '0.1s' : '6.1s') + ' both') : 'none' }"></span></span>
-<span style="font-size: 11px; font-weight: 800; color: #0B5E2C;" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both') : 'none' }">Live</span>
+<span style="width: 44px; height: 24px; border-radius: 999px; background: #9AA8A2; padding: 2px; box-sizing: border-box; display: flex;" :style="{ animation: implSeen ? ('kvLiveOn .3s ease ' + (replayed[{{ $i }}] ? '0.6s' : '6.6s') + ' both') : 'none' }"><span style="width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 3px rgba(7,28,51,0.3);" :style="{ animation: implSeen ? ('kvKnob .3s ease ' + (replayed[{{ $i }}] ? '0.1s' : '6.1s') + ' both') : 'none' }"></span></span>
+<span style="font-size: 11px; font-weight: 800; color: #0B5E2C;" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[{{ $i }}] ? '0.6s' : '6.6s') + ' both') : 'none' }">Live</span>
 </div>
-<div style="display: flex; align-items: flex-end; gap: 4px; height: 40px;" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[3] ? '0.6s' : '6.6s') + ' both') : 'none' }"><span style="width: 8px; height: 14px; background: #4FAE74; border-radius: 2px"></span><span style="width: 8px; height: 24px; background: #2A8F52; border-radius: 2px"></span><span style="width: 8px; height: 32px; background: #0B5E2C; border-radius: 2px"></span></div>
+<div style="display: flex; align-items: flex-end; gap: 4px; height: 40px;" :style="{ animation: implSeen ? ('kvIn .25s ease ' + (replayed[{{ $i }}] ? '0.6s' : '6.6s') + ' both') : 'none' }"><span style="width: 8px; height: 14px; background: #4FAE74; border-radius: 2px"></span><span style="width: 8px; height: 24px; background: #2A8F52; border-radius: 2px"></span><span style="width: 8px; height: 32px; background: #0B5E2C; border-radius: 2px"></span></div>
 <div style="display: grid; grid-template-columns: repeat(3, 16px); gap: 5px">
 <span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33"></span>
-<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: implSeen ? ('kvPopIn .25s ease ' + (replayed[3] ? '1.0s' : '7.0s') + ' both') : 'none' }"></span>
-<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: implSeen ? ('kvPopIn .25s ease ' + (replayed[3] ? '1.0s' : '7.0s') + ' both') : 'none' }"></span>
-<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: implSeen ? ('kvPopIn .25s ease ' + (replayed[3] ? '1.4s' : '7.4s') + ' both') : 'none' }"></span>
-<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: implSeen ? ('kvPopIn .25s ease ' + (replayed[3] ? '1.4s' : '7.4s') + ' both') : 'none' }"></span>
-<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: implSeen ? ('kvPopIn .25s ease ' + (replayed[3] ? '1.4s' : '7.4s') + ' both') : 'none' }"></span>
+<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: implSeen ? ('kvPopIn .25s ease ' + (replayed[{{ $i }}] ? '1.0s' : '7.0s') + ' both') : 'none' }"></span>
+<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: implSeen ? ('kvPopIn .25s ease ' + (replayed[{{ $i }}] ? '1.0s' : '7.0s') + ' both') : 'none' }"></span>
+<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: implSeen ? ('kvPopIn .25s ease ' + (replayed[{{ $i }}] ? '1.4s' : '7.4s') + ' both') : 'none' }"></span>
+<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: implSeen ? ('kvPopIn .25s ease ' + (replayed[{{ $i }}] ? '1.4s' : '7.4s') + ' both') : 'none' }"></span>
+<span style="width: 16px; height: 16px; border-radius: 50%; background: #071C33;" :style="{ animation: implSeen ? ('kvPopIn .25s ease ' + (replayed[{{ $i }}] ? '1.4s' : '7.4s') + ' both') : 'none' }"></span>
 </div>
 </div>
+@endif
 </div>
 </template>
 </div>
 <div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px">
-<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[3] ? '0s' : '6s') + ' both') : 'none' }">4</span><span style="font-size: 20px; font-weight: 800">{{ $journeySteps[3]['title'] ?? ($isIdLocale ? 'Deploy & Skalakan' : 'Deploy & Scale') }}</span></span>
-<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $journeySteps[3]['desc'] ?? '' }}</span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #C9D2CE; background: #FFFFFF; color: #4A5866; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800;" :style="{ animation: implSeen ? ('kvStepOn .3s ease ' + (replayed[{{ $i }}] ? '0s' : '{{ $stepMod * 2 }}s') + ' both') : 'none' }">{{ $i + 1 }}</span><span style="font-size: 20px; font-weight: 800">{{ $sTitle }}</span></span>
+<span style="font-size: 15px; line-height: 1.55; color: #4A5866">{{ $sDesc }}</span>
 </div>
 </button>
+@endforeach
 
 </div>
 </section>

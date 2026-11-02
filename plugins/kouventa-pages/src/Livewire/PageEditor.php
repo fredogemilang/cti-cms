@@ -136,6 +136,66 @@ class PageEditor extends Component
     }
 
     /**
+     * Add a new item to a repeater array at the given dot-notation path.
+     */
+    public function addRepeaterItem(string $path, mixed $default = null): void
+    {
+        $list = data_get($this->sections, $path, []);
+        if (! is_array($list)) {
+            $list = [];
+        }
+
+        if ($default === null) {
+            if (! empty($list) && is_array(reset($list))) {
+                $sample = reset($list);
+                $default = array_map(fn ($v) => is_array($v) ? [] : '', $sample);
+            } else {
+                $default = '';
+            }
+        }
+
+        $list[] = $default;
+        data_set($this->sections, $path, array_values($list));
+        $this->stashCurrentLocaleData();
+    }
+
+    /**
+     * Remove an item from a repeater array at the given index.
+     */
+    public function removeRepeaterItem(string $path, int $index): void
+    {
+        $list = data_get($this->sections, $path, []);
+        if (is_array($list) && isset($list[$index])) {
+            unset($list[$index]);
+            data_set($this->sections, $path, array_values($list));
+            $this->stashCurrentLocaleData();
+        }
+    }
+
+    /**
+     * Move a repeater item up or down.
+     */
+    public function moveRepeaterItem(string $path, int $index, string $direction = 'up'): void
+    {
+        $list = data_get($this->sections, $path, []);
+        if (! is_array($list) || ! isset($list[$index])) {
+            return;
+        }
+
+        $targetIndex = $direction === 'up' ? $index - 1 : $index + 1;
+        if ($targetIndex < 0 || $targetIndex >= count($list)) {
+            return;
+        }
+
+        $item = $list[$index];
+        $list[$index] = $list[$targetIndex];
+        $list[$targetIndex] = $item;
+
+        data_set($this->sections, $path, array_values($list));
+        $this->stashCurrentLocaleData();
+    }
+
+    /**
      * Reset a single section (supports dot-notation like 'departments.cs') back to its schema defaults.
      */
     public function resetSection(string $sectionName): void
@@ -308,8 +368,30 @@ class PageEditor extends Component
             $raw = $this->translations[$locale]['sections'] ?? [];
         }
 
-        // Recursively merge stored data over schema defaults to preserve any newly added schema keys
-        return array_replace_recursive($defaults, $raw);
+        // Deep merge stored data over schema defaults; sequential lists in $raw override defaults
+        return $this->mergeDeepSmart($defaults, $raw);
+    }
+
+    /**
+     * Recursively merge user data over defaults.
+     * When encountering a sequential list (repeater array), user data wins completely
+     * so deleted items are not resurrected from defaults.
+     */
+    protected function mergeDeepSmart(array $defaults, array $raw): array
+    {
+        foreach ($raw as $key => $value) {
+            if (is_array($value) && isset($defaults[$key]) && is_array($defaults[$key])) {
+                if (array_is_list($value) || array_is_list($defaults[$key])) {
+                    $defaults[$key] = $value;
+                } else {
+                    $defaults[$key] = $this->mergeDeepSmart($defaults[$key], $value);
+                }
+            } else {
+                $defaults[$key] = $value;
+            }
+        }
+
+        return $defaults;
     }
 
     protected function refreshRevisions(): void
