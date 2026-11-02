@@ -479,74 +479,161 @@
 
 <div class="kv-sol-ill-wrap">
 <div id="kv-ill-cs" role="img" aria-label="Animated illustration: a routine question is answered with a knowledge source and resolved, while a complex complaint becomes a ticket assigned to the right team" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
+@php
+    $isIdLocale = app()->getLocale() === 'id';
+@endphp
 
-<!-- SCENE 0: Customer Support Agent (English, balanced 2-column layout, zero whitespace) -->
-<div x-show="(sol === 0) || (sol === -1 && activeSol === 0)" x-transition.opacity.duration.300ms style="position: absolute; inset: 0; padding: 28px; display: grid; grid-template-columns: minmax(0, 1.15fr) 230px; gap: 20px; align-content: center">
-  <div style="background: #F4F6F5; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 12px; animation: kvIn .35s ease .2s both">
-    <div style="display: flex; justify-content: space-between; align-items: center">
-      <span style="font-size: 12px; font-weight: 800; color: #4A5866">Customer · WhatsApp</span>
-      <span style="display: grid; font-size: 11px; font-weight: 800">
-        <span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #E3E8E6">New</span>
-        <span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 1.8s both">Resolved</span>
+<!-- SCENE 0: Customer Support Agent (Left: Knowledge Base, Right: Customer Chat) -->
+<div x-show="(sol === 0) || (sol === -1 && activeSol === 0)" x-transition.opacity.duration.300ms style="position: absolute; inset: 0; padding: 26px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 18px; box-sizing: border-box">
+
+  <!-- LEFT: Knowledge Base (Store FAQ.pdf) -->
+  <div style="width: 260px; height: 410px; background: #F4F6F5; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .2s both">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 10px">
+      <div style="display: flex; align-items: center; gap: 6px">
+        <span style="width: 26px; height: 26px; border-radius: 6px; background: #EAF7EF; color: #13803F; display: flex; align-items: center; justify-content: center">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        </span>
+        <span style="font-size: 13px; font-weight: 800; color: #0E1A24">Store FAQ.pdf</span>
+      </div>
+      <span style="font-size: 10px; font-weight: 700; color: #0B5E2C; background: #DDF3E4; padding: 2px 7px; border-radius: 999px">{{ $isIdLocale ? 'Basis Pengetahuan' : 'Knowledge Base' }}</span>
+    </div>
+
+    <!-- Document Skeleton Lines -->
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="height: 6px; width: 92%; border-radius: 3px; background: #D5DCD9"></span>
+      <span style="height: 6px; width: 75%; border-radius: 3px; background: #D5DCD9"></span>
+    </div>
+
+    <!-- Highlighted Extracted Chunk (Animates in when right-side chat searches) -->
+    <div style="background: #FFFFFF; border-left: 3px solid #13803F; border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 4px 12px rgba(19, 128, 63, 0.1); animation: kvIn .4s ease 1.2s both">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <strong style="font-size: 11px; color: #13803F; font-weight: 800">{{ $isIdLocale ? 'Bagian 3.1 · Jam Operasional' : 'Section 3.1 · Store Hours' }}</strong>
+        <span style="font-size: 9px; font-weight: 800; color: #0B5E2C; background: #EAF7EF; padding: 1px 5px; border-radius: 4px">99.8% Match</span>
+      </div>
+      <span style="font-size: 11px; line-height: 1.45; color: #1E293B; font-weight: 500">
+        {{ $isIdLocale ? 'Seluruh gerai beroperasi normal setiap hari dari jam 08:00 sampai 21:00 tanpa libur, termasuk akhir pekan dan tanggal merah.' : 'All store branches operate daily from 08:00 to 21:00 without exception, including weekends and public holidays.' }}
       </span>
     </div>
-    <span style="font-size: 14px; font-weight: 600; color: #0E1A24">What are your opening hours?</span>
-    <div style="background: #FFFFFF; border-radius: 4px 10px 10px 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 0.9s both">
-      <span style="font-size: 11px; font-weight: 800; color: #13803F">Customer Support Agent</span>
-      <span style="font-size: 13px; color: #0E1A24">We're open every day, 08:00–21:00.</span>
-      <span style="align-self: flex-start; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: #DDF3E4; color: #0B5E2C; display: inline-flex; align-items: center; gap: 4px">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-        Store FAQ.pdf
+
+    <!-- More Document Skeleton Lines -->
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <span style="height: 6px; width: 85%; border-radius: 3px; background: #D5DCD9"></span>
+      <span style="height: 6px; width: 60%; border-radius: 3px; background: #D5DCD9"></span>
+    </div>
+
+    <!-- Extraction Confirmation Pill -->
+    <div style="padding: 7px 10px; border-radius: 8px; background: #EAF7EF; border: 1px solid #C9E8D3; display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #0B5E2C; animation: kvPopIn .3s ease 1.6s both">
+      <span style="display: flex; align-items: center; gap: 5px">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        {{ $isIdLocale ? 'Data Akurat Ditemukan' : 'Knowledge Retrieved' }}
       </span>
+      <span style="color: #13803F; font-weight: 800">0.2s</span>
     </div>
   </div>
 
-  <!-- Knowledge Source Reference Preview -->
-  <div style="background: #F4F6F5; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; animation: kvIn .35s ease .4s both">
-    <div style="display: flex; justify-content: space-between; align-items: center">
-      <span style="font-size: 12px; font-weight: 800; color: #0E1A24; display: flex; align-items: center; gap: 5px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-        Store FAQ.pdf
+  <!-- RIGHT: Customer WhatsApp Chat Conversation -->
+  <div style="width: 270px; height: 410px; background: #F4F6F5; border: 1px solid #E3E8E6; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .2s both">
+    <!-- Chat Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 26px; height: 26px; border-radius: 50%; background: #25D366; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2z"></path></svg>
+        </span>
+        <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Pelanggan · WhatsApp' : 'Customer · WhatsApp' }}</span>
+      </div>
+      <span style="display: grid; font-size: 10px; font-weight: 800">
+        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #E3E8E6; color: #4A5866">{{ $isIdLocale ? 'Baru' : 'New' }}</span>
+        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 2.5s both">{{ $isIdLocale ? 'Selesai' : 'Resolved' }}</span>
       </span>
-      <span style="font-size: 10px; font-weight: 700; color: #0B5E2C; background: #DDF3E4; padding: 2px 6px; border-radius: 4px">Knowledge Base</span>
     </div>
-    <span style="height: 6px; width: 90%; border-radius: 3px; background: #D5DCD9"></span>
-    <span style="height: 6px; width: 75%; border-radius: 3px; background: #D5DCD9"></span>
-    <div style="font-size: 11px; line-height: 1.5; padding: 8px 10px; border-radius: 6px; background: #DDF3E4; color: #0B5E2C; animation: kvIn .3s ease 1.1s both">
-      <strong>Store Hours:</strong> Open daily 08:00–21:00 across all outlets.
+
+    <!-- Chat Messages Stack -->
+    <div style="display: flex; flex-direction: column; gap: 9px; flex: 1; justify-content: center">
+      <!-- 1. Customer Message (Natural conversational phrasing) -->
+      <div style="align-self: flex-start; max-width: 92%; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 9px 12px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); animation: kvIn .35s ease 0.4s both">
+        <span style="font-size: 12px; font-weight: 600; line-height: 1.45; color: #0E1A24">
+          {{ $isIdLocale ? 'Halo kak, apakah hari ini tokonya buka? Tutupnya jam berapa ya?' : 'Hi there, are you guys open today? What time do you close?' }}
+        </span>
+        <span style="align-self: flex-end; font-size: 9px; font-weight: 600; color: #94A3B8">10:14 AM</span>
+      </div>
+
+      <!-- 2. Searching/Retrieval Indicator (Visual signal linking to Left side) -->
+      <div style="align-self: flex-start; background: #EFF6FF; border: 1px dashed #93C5FD; border-radius: 8px; padding: 5px 9px; display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #1D4ED8; animation: kvIn .3s ease 0.8s both">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: #2563EB; box-shadow: 0 0 0 2px rgba(37,99,235,0.25)"></span>
+        <span>{{ $isIdLocale ? 'Mencari di Store FAQ.pdf...' : 'Retrieving from Store FAQ.pdf...' }}</span>
+      </div>
+
+      <!-- 3. AI Agent Response (Delivering answer back to Right side chat) -->
+      <div style="align-self: flex-start; max-width: 95%; background: #FFFFFF; border-radius: 4px 12px 12px 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; border: 1px solid #C9E8D3; box-shadow: 0 2px 6px rgba(0,0,0,0.03); animation: kvIn .35s ease 2.0s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 11px; font-weight: 800; color: #13803F">{{ $isIdLocale ? 'Customer Support Agent' : 'Customer Support Agent' }}</span>
+          <span style="font-size: 9px; font-weight: 700; color: #13803F; background: #EAF7EF; padding: 1px 5px; border-radius: 4px">0.4s</span>
+        </div>
+        <span style="font-size: 12px; line-height: 1.45; color: #0E1A24">
+          {{ $isIdLocale ? 'Halo! Iya, kami buka setiap hari jam 08:00–21:00. Ditunggu kedatangannya ya! 😊' : 'Hi! Yes, we\'re open every day from 08:00 to 21:00. Hope to see you soon! 😊' }}
+        </span>
+        <span style="align-self: flex-start; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 5px; background: #DDF3E4; color: #0B5E2C; display: inline-flex; align-items: center; gap: 4px">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          Store FAQ.pdf
+        </span>
+      </div>
     </div>
-    <span style="height: 6px; width: 85%; border-radius: 3px; background: #D5DCD9"></span>
-    <span style="height: 6px; width: 55%; border-radius: 3px; background: #D5DCD9"></span>
+
+    <!-- Bottom Status Bar -->
+    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 5px 8px; border-radius: 6px; animation: kvIn .3s ease 2.5s both">
+      <span>✓ {{ $isIdLocale ? 'Terjawab otomatis dari SOP' : 'Auto-resolved from SOP' }}</span>
+      <span style="color: #065F46">100% Grounded</span>
+    </div>
   </div>
 </div>
 
-<!-- SCENE 1: Ticket Management Agent (English, balanced 2-column layout, zero whitespace) -->
-<div x-show="(sol === 1) || (sol === -1 && activeSol === 1)" x-transition.opacity.duration.300ms style="position: absolute; inset: 0; padding: 28px; display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 20px; align-content: center">
-  <div style="display: flex; flex-direction: column; gap: 14px">
-    <div style="background: #F4F6F5; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; animation: kvIn .35s ease .2s both">
-      <div style="display: flex; justify-content: space-between; align-items: center">
-        <span style="font-size: 12px; font-weight: 800; color: #4A5866">Customer · Live Chat</span>
-        <span style="display: grid; font-size: 11px; font-weight: 800">
-          <span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #E3E8E6">New</span>
-          <span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #FFF1D6; color: #7A4A00; animation: kvPopIn .3s ease 1.0s both">Ticket created</span>
+<!-- SCENE 1: Ticket Management Agent (Left: Complaint, Right: Ticket Triage) -->
+<div x-show="(sol === 1) || (sol === -1 && activeSol === 1)" x-transition.opacity.duration.300ms style="position: absolute; inset: 0; padding: 26px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 18px; box-sizing: border-box">
+
+  <!-- LEFT: Customer Dispute Complaint via Live Chat -->
+  <div style="width: 260px; height: 410px; background: #F4F6F5; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 4px 16px rgba(0,0,0,0.03); animation: kvIn .35s ease .2s both">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 10px">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 26px; height: 26px; border-radius: 50%; background: #0284C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
         </span>
+        <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Pelanggan · Live Chat' : 'Customer · Live Chat' }}</span>
       </div>
-      <span style="font-size: 14px; font-weight: 600; line-height: 1.5; color: #0E1A24">My refund still hasn't arrived after two weeks, and I was charged a fee.</span>
+      <span style="display: grid; font-size: 10px; font-weight: 800">
+        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #E3E8E6; color: #4A5866">{{ $isIdLocale ? 'Baru' : 'New' }}</span>
+        <span style="grid-area: 1 / 1; padding: 2px 7px; border-radius: 999px; background: #FFF1D6; color: #7A4A00; animation: kvPopIn .3s ease 1.0s both">{{ $isIdLocale ? 'Tiket dibuat' : 'Ticket created' }}</span>
+      </span>
+    </div>
+
+    <!-- Message Bubble -->
+    <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px 12px 12px 2px; padding: 12px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.03)">
+      <span style="font-size: 13px; font-weight: 600; line-height: 1.5; color: #0E1A24">
+        {{ $isIdLocale ? 'Refund saya belum masuk setelah dua minggu, dan ada potongan biaya tambahan yang tidak sesuai.' : 'My refund still hasn\'t arrived after two weeks, and I was charged an extra fee.' }}
+      </span>
+      <span style="align-self: flex-end; font-size: 9px; font-weight: 600; color: #94A3B8">10:15 AM</span>
+    </div>
+
+    <!-- Complex complaint tag -->
+    <div style="padding: 8px 10px; border-radius: 8px; background: #FEF3C7; border: 1px solid #FDE68A; display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #92400E; animation: kvIn .3s ease 0.6s both">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: #D97706"></span>
+      <span>{{ $isIdLocale ? 'Keluhan kompleks terdeteksi · Eskalasi tiket' : 'Complex complaint · Escalating to ticket' }}</span>
     </div>
   </div>
 
-  <div style="display: flex; flex-direction: column; gap: 16px; position: relative">
-    <div style="background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 12px; position: relative; z-index: 2; --mx: 0px; --my: 155px; animation: kvIn .35s ease 1.2s both, kvMove .6s ease 2.4s 1 forwards">
+  <!-- RIGHT: Structured Ticket Card & Assignment -->
+  <div style="width: 270px; height: 410px; display: flex; flex-direction: column; justify-content: center; gap: 16px; position: relative">
+    <div style="background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; font-size: 12px; position: relative; z-index: 2; --mx: 0px; --my: 155px; animation: kvIn .35s ease 1.2s both, kvMove .6s ease 2.4s 1 forwards">
       <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">TICKET</span>
-      <span style="display: flex; justify-content: space-between; animation: kvIn .25s ease 1.4s both"><span style="color: #93A4B6">Category</span><strong>Refund</strong></span>
-      <span style="display: flex; flex-direction: column; gap: 2px; animation: kvIn .25s ease 1.6s both"><span style="color: #93A4B6">Summary</span><strong>Refund delayed, extra fee charged</strong></span>
-      <span style="display: flex; justify-content: space-between; animation: kvIn .25s ease 1.8s both"><span style="color: #93A4B6">Team</span><strong>Billing</strong></span>
+      <span style="display: flex; justify-content: space-between"><span style="color: #93A4B6">{{ $isIdLocale ? 'Kategori' : 'Category' }}</span><strong>Refund</strong></span>
+      <span style="display: flex; flex-direction: column; gap: 2px"><span style="color: #93A4B6">{{ $isIdLocale ? 'Ringkasan' : 'Summary' }}</span><strong>{{ $isIdLocale ? 'Refund terlambat, biaya tambahan' : 'Refund delayed, extra fee charged' }}</strong></span>
+      <span style="display: flex; justify-content: space-between"><span style="color: #93A4B6">{{ $isIdLocale ? 'Tim' : 'Team' }}</span><strong>Billing</strong></span>
     </div>
-    <div style="position: absolute; left: 0; right: 0; top: 155px; border: 1.5px dashed #C9D2CE; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px; animation: kvIn .3s ease 1.9s both">
+    <div style="position: absolute; left: 0; right: 0; top: 220px; border: 1.5px dashed #C9D2CE; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px; animation: kvIn .3s ease 1.9s both">
       <span style="width: 36px; height: 36px; border-radius: 10px; background: #EAF7EF; color: #0B5E2C; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">BIL</span>
       <span style="display: flex; flex-direction: column">
-        <span style="font-size: 13px; font-weight: 800; color: #0E1A24">Billing team</span>
-        <span style="font-size: 11px; font-weight: 700; color: #13803F; animation: kvIn .3s ease 3.0s both">Assigned</span>
+        <span style="font-size: 13px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Tim Billing' : 'Billing team' }}</span>
+        <span style="font-size: 11px; font-weight: 700; color: #13803F; animation: kvIn .3s ease 3.0s both">{{ $isIdLocale ? 'Ditugaskan' : 'Assigned' }}</span>
       </span>
     </div>
   </div>
