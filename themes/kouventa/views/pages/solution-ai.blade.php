@@ -52,6 +52,8 @@
 <div class="kv-canvas-wrap" x-data="{
     tab: 0,
     sol: -1,
+    activeSol: 0,
+    _autoTimer: null,
     panelOn: true,
     stepOn: Array({{ max(4, count($journeySteps ?? [])) }}).fill(true),
     replayed: Array({{ max(4, count($journeySteps ?? [])) }}).fill(false),
@@ -75,7 +77,21 @@
         5: 'kv-ill-br',
         6: 'kv-ill-legal'
     },
+    startAutoTimer() {
+        if (this._autoTimer) clearInterval(this._autoTimer);
+        this._autoTimer = setInterval(() => {
+            if (this.sol === -1) {
+                const count = (this.aiSols[this.tab] || []).length;
+                if (count > 1) {
+                    this.activeSol = (this.activeSol + 1) % count;
+                }
+            }
+        }, 5000);
+    },
     lockSol(i) {
+        this.sol = i;
+        this.activeSol = i;
+        if (this._autoTimer) clearInterval(this._autoTimer);
         const sols = this.aiSols[this.tab];
         const illId = this.aiIllIds[this.tab];
         if (!sols || !sols[i]) return;
@@ -85,7 +101,6 @@
         if (sols[i + 1]) {
             en = Math.min(en, parseFloat(sols[i + 1].delay) * 1000 - 20);
         }
-        this.sol = i;
         clearTimeout(this._lockT);
         setTimeout(() => {
             try {
@@ -125,6 +140,8 @@
         this.panelOn = false;
         this.tab = i;
         this.sol = -1;
+        this.activeSol = 0;
+        this.startAutoTimer();
         setTimeout(() => {
             this.panelOn = true;
         }, 40);
@@ -144,7 +161,9 @@
     init() {
         this.tab = this.parseTabFromUrl();
         this.sol = -1;
+        this.activeSol = 0;
         this.panelOn = true;
+        this.startAutoTimer();
 
         // If landing with dept, tab, or #solution-tabs, scroll smoothly to tabs section
         const p = new URLSearchParams(window.location.search);
@@ -442,14 +461,14 @@
 <div class="kv-sol-split-grid" style="display: grid; grid-template-columns: minmax(0, 1fr) 600px; column-gap: 24px; row-gap: 18px; align-items: stretch">
 <h2 style="grid-column: 1 / -1; margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -0.02em">{{ t('kouventa.How Kouventa AI helps', 'How Kouventa AI helps') }}</h2>
 <div class="kv-sol-btn-col" :class="{ 'has-sol': sol >= 0 }">
-<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="sol === 0" style="animation: kvHi 1.6s ease 1s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(0)" :aria-pressed="(sol === 0) || (sol === -1 && activeSol === 0)" style="animation: kvHi 1.6s ease 1s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="14" width="5" height="6" rx="2"></rect><rect x="17" y="14" width="5" height="6" rx="2"></rect></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptCs['solutions'][0]['title'] ?? t('kouventa.Customer Support Agent', 'Customer Support Agent') }}</h3>
 <span class="kv-help-sol-desc">{{ $deptCs['solutions'][0]['desc'] ?? t('kouventa.Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.', 'Understand customer questions in context, provide accurate information from your business knowledge, and resolve routine inquiries automatically.') }}</span>
 </span>
 </button>
-<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="sol === 1" style="animation: kvHi 2.8s ease 2.8s 1 both">
+<button type="button" class="kv-help-sol-btn" @click="lockSol(1)" :aria-pressed="(sol === 1) || (sol === -1 && activeSol === 1)" style="animation: kvHi 2.8s ease 2.8s 1 both">
 <span class="kv-help-sol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M13 6v2M13 11v2M13 16v2"></path></svg></span>
 <span class="kv-help-sol-text">
 <h3 class="kv-help-sol-title" style="margin: 0; font-size: 18px; font-weight: 700; line-height: 1.35; color: #0E1A24">{{ $deptCs['solutions'][1]['title'] ?? t('kouventa.Ticket Management Agent', 'Ticket Management Agent') }}</h3>
@@ -459,32 +478,272 @@
 </div>
 
 <div class="kv-sol-ill-wrap">
-<div id="kv-ill-cs" role="img" aria-label="Animated illustration: a routine question is answered with a knowledge source and resolved, while a complex complaint becomes a ticket assigned to the right team" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
-<div style="position: absolute; inset: 0; padding: 28px; display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 18px; align-content: center">
-<div style="display: flex; flex-direction: column; gap: 14px">
-<div style="background: #F4F6F5; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .35s ease .2s both">
-<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 12px; font-weight: 800; color: #4A5866">Customer · WhatsApp</span><span style="display: grid; font-size: 11px; font-weight: 800"><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #E3E8E6">New</span><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #13803F; color: #FFFFFF; animation: kvPopIn .3s ease 2.1s both">Resolved</span></span></div>
-<span style="font-size: 14px; font-weight: 600">What are your opening hours?</span>
-<div style="background: #FFFFFF; border-radius: 4px 10px 10px 10px; padding: 9px 11px; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 1.2s both"><span style="font-size: 11px; font-weight: 800; color: #13803F">Customer Support Agent</span><span style="font-size: 13px">We're open every day, 08:00–21:00.</span><span style="align-self: flex-start; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: #DDF3E4; color: #0B5E2C">Store FAQ.pdf</span></div>
+<div id="kv-ill-cs" role="img" aria-label="Animated illustration of Kouventa Customer Service AI" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
+
+<!-- SCENE 0: Customer Support Agent (Full 600px Balanced Layout, Zero Dead Whitespace) -->
+<div x-show="(sol === 0) || (sol === -1 && activeSol === 0)" x-transition.opacity.duration.300ms style="position: absolute; inset: 0; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box">
+  <!-- Top Bar -->
+  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #EDF2F0; padding-bottom: 12px">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <span style="width: 28px; height: 28px; border-radius: 8px; background: #13803F; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="14" width="5" height="6" rx="2"></rect><rect x="17" y="14" width="5" height="6" rx="2"></rect></svg>
+      </span>
+      <span style="font-size: 13px; font-weight: 800; color: #0E1A24">Customer Support Agent</span>
+      <span style="font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C; letter-spacing: 0.02em">GROUNDED RAG</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px">
+      <span style="width: 7px; height: 7px; border-radius: 50%; background: #2BD46A; box-shadow: 0 0 0 2px rgba(43, 212, 106, 0.25)"></span>
+      <span style="font-size: 11px; font-weight: 700; color: #13803F">WhatsApp & Omnichannel</span>
+      <span style="font-size: 11px; font-weight: 700; color: #94A3B8; margin-left: 4px">· Avg 0.4s</span>
+    </div>
+  </div>
+
+  <!-- Main Grid (Left Chat 285px + Right Knowledge Inspector 255px) -->
+  <div style="display: grid; grid-template-columns: 285px 255px; gap: 14px; align-items: stretch; margin: 10px 0; flex: 1">
+    <!-- Left Column: Conversational Stream -->
+    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px">
+      <!-- Chat Profile Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 6px; border-bottom: 1px dashed #E2E8F0">
+        <div style="display: flex; align-items: center; gap: 7px">
+          <span style="width: 24px; height: 24px; border-radius: 50%; background: #CBD5E1; color: #334155; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center">BP</span>
+          <span style="font-size: 11px; font-weight: 800; color: #334155">Budi Pratama · WhatsApp</span>
+        </div>
+        <span style="font-size: 10px; font-weight: 700; color: #16A34A; background: #DCFCE7; padding: 1px 6px; border-radius: 999px">Online</span>
+      </div>
+
+      <!-- User Message -->
+      <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px 10px 10px 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.03)">
+        <span style="font-size: 12px; font-weight: 600; color: #1E293B; line-height: 1.4">Apakah store buka saat libur nasional? Dan apa bisa tukar ukuran baju di store terdekat?</span>
+        <span style="align-self: flex-end; font-size: 9px; font-weight: 600; color: #94A3B8">10:14 AM</span>
+      </div>
+
+      <!-- AI Searching Indicator -->
+      <div style="background: #EFF6FF; border: 1px dashed #93C5FD; border-radius: 8px; padding: 5px 8px; display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #1D4ED8">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <span>Retrieving verified policy & store hours...</span>
+      </div>
+
+      <!-- AI Agent Response -->
+      <div style="background: #EAF7EF; border: 1px solid #B8E6C8; border-radius: 10px 10px 2px 10px; padding: 9px 11px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.03)">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 10px; font-weight: 800; color: #0B5E2C">Kouventa Support Agent</span>
+          <span style="font-size: 9px; font-weight: 700; color: #13803F; background: #D1FAE5; padding: 1px 5px; border-radius: 4px">0.4s</span>
+        </div>
+        <span style="font-size: 12px; font-weight: 500; color: #064E3B; line-height: 1.4">Halo Kak Budi! Toko kami tetap buka normal setiap hari termasuk libur nasional (08:00–21:00). Penukaran ukuran gratis di seluruh outlet dalam 14 hari dengan struk fisik/digital! 😊</span>
+        <div style="align-self: flex-start; display: flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 5px; background: #FFFFFF; border: 1px solid #A7F3D0; font-size: 10px; font-weight: 700; color: #047857">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          <span>SOP_Operasional_Toko.pdf (p.14)</span>
+        </div>
+      </div>
+
+      <!-- Bottom Chat Tag -->
+      <div style="display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #15803D; background: #DCFCE7; padding: 4px 8px; border-radius: 6px">
+        <span>✓ Inkuiri Terselesaikan Otomatis</span>
+        <span style="color: #065F46">Tanpa antrean tiket</span>
+      </div>
+    </div>
+
+    <!-- Right Column: Enterprise Knowledge Retrieval Inspector -->
+    <div style="background: #071C33; border-radius: 14px; padding: 14px; color: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between; gap: 8px">
+      <!-- Inspector Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px">
+        <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">KNOWLEDGE RETRIEVAL (RAG)</span>
+        <span style="font-size: 9px; font-weight: 800; color: #93A4B6">VECTOR SEARCH</span>
+      </div>
+
+      <!-- Document Chunk Card -->
+      <div style="background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 9px; display: flex; flex-direction: column; gap: 6px">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 11px; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 4px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            SOP_Operasional_Toko.pdf
+          </span>
+          <span style="font-size: 10px; font-weight: 800; color: #2BD46A">99.4% Match</span>
+        </div>
+        <div style="font-size: 11px; line-height: 1.4; color: #CBD5E1; background: rgba(0,0,0,0.25); padding: 6px 8px; border-radius: 5px; border-left: 2px solid #2BD46A">
+          "...Semua cabang buka setiap hari 08:00–21:00 tanpa libur... Retur/tukar ukuran berlaku 14 hari dengan bukti struk..."
+        </div>
+        <!-- Semantic confidence bar -->
+        <div style="display: flex; align-items: center; gap: 6px; font-size: 9px; color: #94A3B8">
+          <span style="width: 55px">Confidence</span>
+          <div style="flex: 1; height: 4px; background: rgba(255,255,255,0.15); border-radius: 999px; overflow: hidden">
+            <div style="width: 99.4%; height: 100%; background: #2BD46A"></div>
+          </div>
+          <span style="color: #2BD46A; font-weight: 800">99.4%</span>
+        </div>
+      </div>
+
+      <!-- Guardrail Validation -->
+      <div style="background: rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; font-size: 10px">
+        <div style="display: flex; justify-content: space-between; color: #CBD5E1">
+          <span>Ground Truth Verification</span>
+          <span style="color: #2BD46A; font-weight: 800">✓ 100% Passed</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; color: #CBD5E1">
+          <span>Hallucination Risk</span>
+          <span style="color: #2BD46A; font-weight: 800">0.0% Guaranteed</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; color: #CBD5E1">
+          <span>Customer Sentiment</span>
+          <span style="color: #93A4B6; font-weight: 700">Satisfied (+0.95)</span>
+        </div>
+      </div>
+
+      <!-- Auto Resolution Pill -->
+      <div style="background: rgba(43, 212, 106, 0.14); border: 1px solid rgba(43, 212, 106, 0.28); border-radius: 8px; padding: 6px 10px; display: flex; justify-content: space-between; align-items: center">
+        <span style="font-size: 10px; font-weight: 700; color: #E2E8F0">Eskalasi ke Manusia?</span>
+        <span style="font-size: 11px; font-weight: 800; color: #2BD46A">Tidak Perlu (Selesai)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Metric Strip -->
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 7px 12px; font-size: 11px">
+    <div style="display: flex; align-items: center; gap: 6px">
+      <span style="font-weight: 800; color: #13803F">84%</span>
+      <span style="color: #475569; font-weight: 600">Resolusi Otomatis</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px">
+      <span style="font-weight: 800; color: #0284C7">0.4s</span>
+      <span style="color: #475569; font-weight: 600">Waktu Respons</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px">
+      <span style="font-weight: 800; color: #13803F">100%</span>
+      <span style="color: #475569; font-weight: 600">Sesuai Dokumen Resmi</span>
+    </div>
+  </div>
 </div>
-<div style="background: #F4F6F5; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .35s ease .5s both">
-<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 12px; font-weight: 800; color: #4A5866">Customer · Live Chat</span><span style="display: grid; font-size: 11px; font-weight: 800"><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #E3E8E6">New</span><span style="grid-area: 1 / 1; padding: 3px 8px; border-radius: 999px; background: #FFF1D6; color: #7A4A00; animation: kvPopIn .3s ease 2.8s both">Ticket created</span></span></div>
-<span style="font-size: 14px; font-weight: 600">My refund still hasn't arrived after two weeks, and I was charged a fee.</span>
+
+<!-- SCENE 1: Ticket Management Agent (Full 600px Balanced Layout, Zero Dead Whitespace) -->
+<div x-show="(sol === 1) || (sol === -1 && activeSol === 1)" x-transition.opacity.duration.300ms style="position: absolute; inset: 0; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box">
+  <!-- Top Bar -->
+  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #EDF2F0; padding-bottom: 12px">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <span style="width: 28px; height: 28px; border-radius: 8px; background: #0284C7; color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 0 2-2h14a2 2 0 0 0 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 0-2 2H5a2 2 0 0 0-2-2v-2a2 2 0 0 0 0-4Z"></path><path d="M13 6v2M13 11v2M13 16v2"></path></svg>
+      </span>
+      <span style="font-size: 13px; font-weight: 800; color: #0E1A24">Ticket Management Agent</span>
+      <span style="font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: #E0F2FE; color: #0369A1; letter-spacing: 0.02em">AUTO TRIAGE</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px">
+      <span style="width: 7px; height: 7px; border-radius: 50%; background: #0284C7; box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.25)"></span>
+      <span style="font-size: 11px; font-weight: 700; color: #0284C7">Zendesk & Jira Sync</span>
+      <span style="font-size: 11px; font-weight: 700; color: #94A3B8; margin-left: 4px">· SLA < 2 Jam</span>
+    </div>
+  </div>
+
+  <!-- Main Grid (Left Complaint Stream 280px + Right Structured Ticket 260px) -->
+  <div style="display: grid; grid-template-columns: 280px 260px; gap: 14px; align-items: stretch; margin: 10px 0; flex: 1">
+    <!-- Left Column: Customer Complaint & Entity Extraction -->
+    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px">
+      <!-- Profile Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 6px; border-bottom: 1px dashed #E2E8F0">
+        <div style="display: flex; align-items: center; gap: 7px">
+          <span style="width: 24px; height: 24px; border-radius: 50%; background: #FDE68A; color: #92400E; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center">SR</span>
+          <span style="font-size: 11px; font-weight: 800; color: #334155">Siti Rahmawati · Live Chat</span>
+        </div>
+        <span style="font-size: 10px; font-weight: 700; color: #DC2626; background: #FEE2E2; padding: 1px 6px; border-radius: 999px">Priority</span>
+      </div>
+
+      <!-- Customer Complaint Message -->
+      <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 10px 10px 10px 2px; padding: 9px 11px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.03)">
+        <span style="font-size: 12px; font-weight: 600; color: #1E293B; line-height: 1.4">Halo, refund invoice #INV-882 sebesar Rp 15.000.000 belum masuk padahal sudah 10 hari kerja. Ada extra fee yang didebet tidak sesuai SPK!</span>
+        <span style="align-self: flex-end; font-size: 9px; font-weight: 600; color: #94A3B8">10:15 AM</span>
+      </div>
+
+      <!-- Real-Time AI Entity Extraction Card -->
+      <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; font-size: 10px">
+        <span style="font-size: 10px; font-weight: 800; color: #166534">AI Real-Time Entity Extraction</span>
+        <div style="display: flex; justify-content: space-between; color: #166534">
+          <span style="color: #4B5563">Kategori:</span>
+          <strong style="color: #166534">Refund Delayed & Dispute</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; color: #166534">
+          <span style="color: #4B5563">Nilai Sengketa:</span>
+          <strong style="color: #166534">Rp 15.000.000</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; color: #166534">
+          <span style="color: #4B5563">Ref Dokumen:</span>
+          <strong style="color: #166534">Invoice #INV-882</strong>
+        </div>
+      </div>
+
+      <!-- Action Dispatched -->
+      <div style="display: flex; align-items: center; justify-content: space-between; font-size: 10px; font-weight: 700; color: #0369A1; background: #E0F2FE; padding: 4px 8px; border-radius: 6px">
+        <span>⚡ Tiket Otomatis Dibuat & Ditugaskan</span>
+        <span>0.3s</span>
+      </div>
+    </div>
+
+    <!-- Right Column: Auto-Created Structured Ticket Card -->
+    <div style="background: #071C33; border: 1.5px solid #2BD46A; border-radius: 14px; padding: 14px; color: #FFFFFF; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; box-shadow: 0 10px 24px rgba(7, 28, 51, 0.15)">
+      <!-- Ticket Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px">
+        <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.05em; color: #2BD46A">TICKET #TK-8492</span>
+        <span style="font-size: 9px; font-weight: 800; background: #EF4444; color: #FFFFFF; padding: 2px 7px; border-radius: 999px">HIGH PRIORITY</span>
+      </div>
+
+      <!-- Ticket Data Fields -->
+      <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="color: #93A4B6">Client</span>
+          <span style="font-weight: 700">PT Megah Tama (Siti R.)</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="color: #93A4B6">Isu</span>
+          <span style="font-weight: 700">Refund delayed + Extra fee</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="color: #93A4B6">Nominal</span>
+          <span style="font-weight: 800; color: #2BD46A">Rp 15.000.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="color: #93A4B6">Tim Penanggung Jawab</span>
+          <span style="padding: 2px 7px; border-radius: 5px; background: rgba(43, 212, 106, 0.16); color: #2BD46A; font-weight: 800; font-size: 10px">Billing & Finance Ops</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="color: #93A4B6">Target SLA</span>
+          <span style="color: #FBBF24; font-weight: 800">< 2 Jam</span>
+        </div>
+      </div>
+
+      <!-- Integrations Row -->
+      <div style="background: rgba(255, 255, 255, 0.06); border-radius: 8px; padding: 6px 8px; display: flex; align-items: center; justify-content: space-between">
+        <div style="display: flex; gap: 4px">
+          <span style="font-size: 9px; font-weight: 800; background: rgba(255,255,255,0.12); padding: 2px 5px; border-radius: 4px">Jira #FIN-104</span>
+          <span style="font-size: 9px; font-weight: 800; background: rgba(255,255,255,0.12); padding: 2px 5px; border-radius: 4px">Zendesk</span>
+        </div>
+        <span style="font-size: 9px; font-weight: 800; color: #2BD46A">● Slack Notified</span>
+      </div>
+
+      <!-- Assignee slot -->
+      <div style="border: 1px dashed rgba(255,255,255,0.25); border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; gap: 8px">
+        <span style="width: 24px; height: 24px; border-radius: 6px; background: #EAF7EF; color: #0B5E2C; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800">BIL</span>
+        <div style="display: flex; flex-direction: column">
+          <span style="font-size: 11px; font-weight: 800; color: #FFFFFF">Assigned to: Dimas K. (Billing Specialist)</span>
+          <span style="font-size: 9px; color: #2BD46A; font-weight: 700">Notification sent to mobile app</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Metric Strip -->
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 7px 12px; font-size: 11px">
+    <div style="display: flex; align-items: center; gap: 6px">
+      <span style="font-weight: 800; color: #0284C7">100%</span>
+      <span style="color: #475569; font-weight: 600">Ekstraksi Detail Otomatis</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px">
+      <span style="font-weight: 800; color: #13803F">0 Menit</span>
+      <span style="color: #475569; font-weight: 600">Waktu Triage Manual</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px">
+      <span style="font-weight: 800; color: #0284C7">Multi-App</span>
+      <span style="color: #475569; font-weight: 600">Sinkronisasi CRM & ERP</span>
+    </div>
+  </div>
 </div>
-</div>
-<div style="display: flex; flex-direction: column; gap: 16px; position: relative">
-<div style="background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 8px; font-size: 12px; position: relative; z-index: 2; --mx: 0px; --my: 165px; animation: kvIn .35s ease 3.2s both, kvMove .6s ease 4.6s 1 forwards">
-<span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">TICKET</span>
-<span style="display: flex; justify-content: space-between; animation: kvIn .25s ease 3.5s both"><span style="color: #93A4B6">Category</span><strong>Refund</strong></span>
-<span style="display: flex; flex-direction: column; gap: 2px; animation: kvIn .25s ease 3.7s both"><span style="color: #93A4B6">Summary</span><strong>Refund delayed, extra fee charged</strong></span>
-<span style="display: flex; justify-content: space-between; animation: kvIn .25s ease 3.9s both"><span style="color: #93A4B6">Team</span><strong>Billing</strong></span>
-</div>
-<div style="position: absolute; left: 0; right: 0; top: 300px; border: 1.5px dashed #C9D2CE; border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 10px; animation: kvIn .3s ease 4.2s both">
-<span style="width: 36px; height: 36px; border-radius: 10px; background: #EAF7EF; color: #0B5E2C; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800">BIL</span>
-<span style="display: flex; flex-direction: column"><span style="font-size: 13px; font-weight: 800">Billing team</span><span style="font-size: 11px; font-weight: 700; color: #13803F; animation: kvIn .3s ease 5.3s both">Assigned</span></span>
-</div>
-</div>
-</div>
+
 </div>
 </div>
 </div>
