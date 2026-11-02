@@ -618,14 +618,14 @@
     </div>
   </div>
 
-  <!-- Animated Dashed Connector Line (Signal flows from WhatsApp Typing to SOP Document) -->
-  <svg style="position: absolute; left: 245px; top: 215px; width: 85px; height: 30px; z-index: 10; pointer-events: none; animation: kvIn .3s ease 1.05s both, kvOut .25s ease 2.35s 1 forwards">
-    <path d="M 80 15 L 8 15" fill="none" stroke="#13803F" stroke-width="2.5" stroke-dasharray="5 4" style="animation: kvDashLeft 0.5s linear infinite;" />
+  <!-- Animated Dashed Connector Line (Signal flows from behind WhatsApp Card to SOP Document) -->
+  <svg style="position: absolute; left: 245px; top: 215px; width: 95px; height: 30px; z-index: 2; pointer-events: none; animation: kvIn .3s ease 1.05s both, kvOut .25s ease 2.35s 1 forwards">
+    <path d="M 90 15 L 8 15" fill="none" stroke="#13803F" stroke-width="2.5" stroke-dasharray="5 4" style="animation: kvDashLeft 0.5s linear infinite;" />
     <polygon points="10,10 2,15 10,20" fill="#13803F" />
   </svg>
 
-  <!-- RIGHT: Customer WhatsApp Chat Card (Foreground Interface) -->
-  <div style="width: 266px; height: 430px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); animation: kvIn .35s ease .15s both">
+  <!-- RIGHT: Customer WhatsApp Chat Card (Foreground Interface - Sits on top with z-index: 5) -->
+  <div style="width: 266px; height: 430px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 5; animation: kvIn .35s ease .15s both">
     
     <!-- Chat Header -->
     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
