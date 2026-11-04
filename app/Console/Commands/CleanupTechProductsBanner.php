@@ -45,7 +45,7 @@ class CleanupTechProductsBanner extends Command
 
         $this->info("Found {$entries->count()} tech-products entries. Cleaning up banner meta...");
 
-        $keysToClean = ['banner_headline', 'banner_description', 'banner_cta', 'banner_logo', 'banner_image', 'banner'];
+        $keysToClean = ['banner_headline', 'banner_description', 'banner_cta', 'banner_link', 'banner_logo', 'banner_image', 'banner'];
         $cleanedCount = 0;
 
         foreach ($entries as $entry) {

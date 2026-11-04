@@ -121,6 +121,7 @@
       $bannerHeadline = trim((string) $entry->getMeta('banner_headline'));
       $bannerDescription = trim((string) $entry->getMeta('banner_description'));
       $bannerCta = trim((string) $entry->getMeta('banner_cta'));
+      $bannerLink = trim((string) ($entry->getMeta('banner_link') ?: $entry->getMeta('banner_cta_link')));
 
       $rawBannerLogo = $entry->getMeta('banner_logo') ?: $entry->getMeta('banner_image');
       
@@ -177,7 +178,11 @@
         </div>
 
         <div class="flex-shrink-0 mt-4 md:mt-0" data-gsap="fade-up" data-gsap-delay="0.2">
-          <a href="#explore" class="inline-flex items-center justify-center px-8 py-4 font-bold text-primary transition-all duration-300 bg-white rounded-full hover:bg-zinc-100 hover:scale-105 shadow-[0_10px_30px_rgba(0,0,0,0.2)] group/btn relative overflow-hidden">
+          @php
+            $bannerUrl = !empty($bannerLink) ? $bannerLink : '#explore';
+            $isExternalBanner = (str_starts_with($bannerUrl, 'http://') || str_starts_with($bannerUrl, 'https://')) && !str_contains($bannerUrl, request()->getHost());
+          @endphp
+          <a href="{{ $bannerUrl }}" @if($isExternalBanner) target="_blank" rel="noopener noreferrer" @endif class="inline-flex items-center justify-center px-8 py-4 font-bold text-primary transition-all duration-300 bg-white rounded-full hover:bg-zinc-100 hover:scale-105 shadow-[0_10px_30px_rgba(0,0,0,0.2)] group/btn relative overflow-hidden">
             <span class="relative z-10 flex items-center gap-2 text-base tracking-wide uppercase">
               {{ $bannerCta ?: 'Get Started Today' }}
               <svg class="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>

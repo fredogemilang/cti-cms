@@ -13,6 +13,7 @@
         'headline' => $entry->getMeta('banner_headline', ''),
         'description' => $entry->getMeta('banner_description', ''),
         'cta' => $entry->getMeta('banner_cta', ''),
+        'link' => $entry->getMeta('banner_link', '') ?: $entry->getMeta('banner_cta_link', ''),
     ];
     $videos = $entry->getMeta('videos', []);
     
@@ -317,7 +318,11 @@
         @endif
       </div>
       @if($banner['cta'])
-      <a href="#explore" class="inline-flex items-center px-8 py-4 font-bold text-primary bg-white rounded-full hover:bg-zinc-100 shadow-lg transition-all">
+      @php
+        $bannerLink = !empty(trim((string) $banner['link'])) ? trim((string) $banner['link']) : '#explore';
+        $isExternalBanner = (str_starts_with($bannerLink, 'http://') || str_starts_with($bannerLink, 'https://')) && !str_contains($bannerLink, request()->getHost());
+      @endphp
+      <a href="{{ $bannerLink }}" @if($isExternalBanner) target="_blank" rel="noopener noreferrer" @endif class="inline-flex items-center px-8 py-4 font-bold text-primary bg-white rounded-full hover:bg-zinc-100 shadow-lg transition-all">
         {{ $banner['cta'] }} <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
       </a>
       @endif
