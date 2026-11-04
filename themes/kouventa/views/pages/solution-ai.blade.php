@@ -114,7 +114,6 @@
             const raw = p.get('dept') !== null ? p.get('dept') : p.get('tab');
             if (raw !== null) {
                 let v = parseInt(raw, 10);
-                if (v === 5 && !p.has('tab')) v = 6;
                 if (!isNaN(v) && v >= 0 && v <= 6) return v;
             }
         } catch(e) {}
@@ -171,7 +170,6 @@
                     const raw = u.searchParams.get('dept') !== null ? u.searchParams.get('dept') : u.searchParams.get('tab');
                     if (raw !== null) {
                         let target = parseInt(raw, 10);
-                        if (target === 5 && !u.searchParams.has('tab')) target = 6;
                         if (!isNaN(target) && target >= 0 && target <= 6) {
                             this.pickTab(target, true);
                             window.history.pushState(null, '', u.href);
@@ -2227,6 +2225,7 @@
 
 </div>
 
+</div>
 </div>
 </div>
 
