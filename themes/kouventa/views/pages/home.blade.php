@@ -356,6 +356,7 @@
 </div>
 </section>
 
+@if(false) {{-- HIDE TEMPORARY: Unapproved section; preserved for future re-enablement --}}
 <!-- ============ INDUSTRIES ============ -->
 <section style="width: 100%;">
 <div class="kv-container" style="padding-top: 104px; display: flex; flex-direction: column; gap: 28px">
@@ -378,6 +379,7 @@
 </div>
 </div>
 </section>
+@endif
 
 <!-- ============ WHO NEEDS THIS (tabs) ============ -->
 <section id="pick-team" x-data="{
