@@ -343,9 +343,9 @@
 <style>
 /* Main Container */
 .kv-single-container {
-    max-width: 1240px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 36px 24px 80px;
+    padding: 36px clamp(20px, 4vw, 64px) 80px;
 }
 
 .kv-single-breadcrumbs {
@@ -853,11 +853,11 @@
 .kv-related-section {
     background: #FFFFFF;
     border-top: 1px solid #E5E9EB;
-    padding: 64px 24px 88px;
+    padding: 64px clamp(20px, 4vw, 64px) 88px;
 }
 
 .kv-related-container {
-    max-width: 1240px;
+    max-width: 1400px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;

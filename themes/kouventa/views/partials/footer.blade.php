@@ -1,72 +1,74 @@
-<footer style="flex-grow: 0; flex-shrink: 0; margin-top: auto; background: #071C33; color: #FFFFFF; padding: 64px 80px 36px; display: flex; flex-direction: column; gap: 48px">
-    <div style="display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.6fr 1.1fr; gap: 40px; align-items: start">
-        <div style="display: flex; flex-direction: column; gap: 24px">
-            @php
-                $footerLogo = setting('site_logo') ? resolve_block_asset(setting('site_logo')) : theme_asset('images/kouventa-logo.png');
-                $footerSiteName = setting('site_name', 'Kouventa');
-                $instagramUrl = setting('social_instagram', 'https://instagram.com/kouventa.ai');
-                $linkedinUrl = setting('social_linkedin', 'https://linkedin.com/company/kouventa');
-                $youtubeUrl = setting('social_youtube', 'https://www.youtube.com/@heliosinformatikanusantara4415');
-            @endphp
-            <img src="{{ $footerLogo }}" alt="{{ t('kouventa.Logo Kouventa AI - Platform Enterprise AI dan Customer Engagement Indonesia', 'Logo Kouventa AI - Platform Enterprise AI dan Customer Engagement Indonesia') }}" style="height: 40px; width: auto; align-self: flex-start">
-            <div style="display: flex; gap: 10px">
-                <a href="{{ $instagramUrl }}" target="_blank" rel="noopener" aria-label="Kouventa on Instagram" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><path d="M17.5 6.5h.01"></path></svg>
+<footer style="flex-grow: 0; flex-shrink: 0; margin-top: auto; background: #071C33; color: #FFFFFF; width: 100%;">
+    <div class="kv-container" style="padding-top: 64px; padding-bottom: 36px; display: flex; flex-direction: column; gap: 48px">
+        <div style="display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.6fr 1.1fr; gap: 40px; align-items: start">
+            <div style="display: flex; flex-direction: column; gap: 24px">
+                @php
+                    $footerLogo = setting('site_logo') ? resolve_block_asset(setting('site_logo')) : theme_asset('images/kouventa-logo.png');
+                    $footerSiteName = setting('site_name', 'Kouventa');
+                    $instagramUrl = setting('social_instagram', 'https://instagram.com/kouventa.ai');
+                    $linkedinUrl = setting('social_linkedin', 'https://linkedin.com/company/kouventa');
+                    $youtubeUrl = setting('social_youtube', 'https://www.youtube.com/@heliosinformatikanusantara4415');
+                @endphp
+                <img src="{{ $footerLogo }}" alt="{{ t('kouventa.Logo Kouventa AI - Platform Enterprise AI dan Customer Engagement Indonesia', 'Logo Kouventa AI - Platform Enterprise AI dan Customer Engagement Indonesia') }}" style="height: 40px; width: auto; align-self: flex-start">
+                <div style="display: flex; gap: 10px">
+                    <a href="{{ $instagramUrl }}" target="_blank" rel="noopener" aria-label="Kouventa on Instagram" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><path d="M17.5 6.5h.01"></path></svg>
+                    </a>
+                    <a href="{{ $linkedinUrl }}" target="_blank" rel="noopener" aria-label="Kouventa on LinkedIn" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M8 10v7M8 7h.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"></path></svg>
+                    </a>
+                    <a href="{{ $youtubeUrl }}" target="_blank" rel="noopener" aria-label="Kouventa on YouTube" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor"></polygon></svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 14px">
+                <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Product', 'Product') }}</span>
+                <a href="{{ localized_url('/product/ai') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</a>
+                <a href="{{ localized_url('/product/customer-engagement') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</a>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 14px">
+                <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Insights', 'Insights') }}</span>
+                <a href="{{ localized_url('/about') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.About us', 'About us') }}</a>
+                <a href="{{ localized_url('/blog') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Blog', 'Blog') }}</a>
+                <a href="{{ localized_url('/terms-conditions') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Terms & Conditions', 'Terms & Conditions') }}</a>
+                <a href="{{ localized_url('/privacy-policy') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Privacy Policy', 'Privacy Policy') }}</a>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 14px">
+                <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Contact us', 'Contact us') }}</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Centennial+Tower+Jl.+Jend.+Gatot+Subroto+Kav.+24-25+Jakarta" target="_blank" rel="noopener noreferrer" aria-label="Open address in Google Maps" style="color: #B9C6D3; font-size: 15px; display: flex; gap: 10px; align-items: flex-start; text-decoration: none; line-height: 1.55">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <span>Centennial Tower, 12th Floor<br>Jl. Jend. Gatot Subroto Kav. 24-25, Jakarta</span>
                 </a>
-                <a href="{{ $linkedinUrl }}" target="_blank" rel="noopener" aria-label="Kouventa on LinkedIn" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M8 10v7M8 7h.01M12 17v-4a2 2 0 0 1 4 0v4M12 10v7"></path></svg>
+                <a href="https://wa.me/628118496889" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" style="color: #B9C6D3; font-size: 15px; display: flex; gap: 10px; align-items: center; text-decoration: none">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M3 21l1.65-4.6A9 9 0 1 1 8.6 20.1Z"></path><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-2.3-2.3l.8-1-1-2Z"></path></svg>
+                    <span>+62 8118 4968 89</span>
                 </a>
-                <a href="{{ $youtubeUrl }}" target="_blank" rel="noopener" aria-label="Kouventa on YouTube" class="kv-btn-action" style="width: 44px; height: 44px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-decoration: none">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor"></polygon></svg>
+                <a href="mailto:kouventa@helios.id" aria-label="Send an email" style="color: #B9C6D3; font-size: 15px; display: flex; gap: 10px; align-items: center; text-decoration: none">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
+                    <span>kouventa@helios.id</span>
                 </a>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 14px">
+                <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Certified & Registered', 'Certified & Registered') }}</span>
+                <div style="display: flex; gap: 12px; align-items: center">
+                    <div style="background: #FFFFFF; border-radius: 10px; padding: 6px; display: inline-flex; align-items: center; justify-content: center; height: 50px; width: 50px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.2)">
+                        <img src="{{ theme_asset('images/badge-iso-27001.webp') }}?v=20261026" alt="{{ t('kouventa.Sertifikasi Keamanan Informasi ISO/IEC 27001 Resmi Kouventa', 'Sertifikasi Keamanan Informasi ISO/IEC 27001 Resmi Kouventa') }}" style="height: 38px; width: 38px; object-fit: contain; display: block" loading="lazy">
+                    </div>
+                    <div style="background: #FFFFFF; border-radius: 10px; padding: 6px; display: inline-flex; align-items: center; justify-content: center; height: 50px; width: 50px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.2)">
+                        <img src="{{ theme_asset('images/badge-komdigi.webp') }}?v=20261026" alt="{{ t('kouventa.Tanda Daftar Penyelenggara Sistem Elektronik Resmi Kementerian Komunikasi dan Digital (Komdigi)', 'Tanda Daftar Penyelenggara Sistem Elektronik Resmi Kementerian Komunikasi dan Digital (Komdigi)') }}" style="height: 38px; width: 38px; object-fit: contain; display: block" loading="lazy">
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div style="display: flex; flex-direction: column; gap: 14px">
-            <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Product', 'Product') }}</span>
-            <a href="{{ localized_url('/product/ai') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</a>
-            <a href="{{ localized_url('/product/customer-engagement') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</a>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1)">
+            <span style="font-size: 14px; color: #93A4B6">© {{ date('Y') }} Kouventa by PT Helios Informatika Nusantara</span>
         </div>
-        
-        <div style="display: flex; flex-direction: column; gap: 14px">
-            <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Insights', 'Insights') }}</span>
-            <a href="{{ localized_url('/about') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.About us', 'About us') }}</a>
-            <a href="{{ localized_url('/blog') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Blog', 'Blog') }}</a>
-            <a href="{{ localized_url('/terms-conditions') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Terms & Conditions', 'Terms & Conditions') }}</a>
-            <a href="{{ localized_url('/privacy-policy') }}" style="color: #B9C6D3; font-size: 15px">{{ t('kouventa.Privacy Policy', 'Privacy Policy') }}</a>
-        </div>
-        
-        <div style="display: flex; flex-direction: column; gap: 14px">
-            <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Contact us', 'Contact us') }}</span>
-            <a href="https://www.google.com/maps/search/?api=1&query=Centennial+Tower+Jl.+Jend.+Gatot+Subroto+Kav.+24-25+Jakarta" target="_blank" rel="noopener noreferrer" aria-label="Open address in Google Maps" style="color: #B9C6D3; font-size: 15px; display: flex; gap: 10px; align-items: flex-start; text-decoration: none; line-height: 1.55">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 3px"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span>Centennial Tower, 12th Floor<br>Jl. Jend. Gatot Subroto Kav. 24-25, Jakarta</span>
-            </a>
-            <a href="https://wa.me/628118496889" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" style="color: #B9C6D3; font-size: 15px; display: flex; gap: 10px; align-items: center; text-decoration: none">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="M3 21l1.65-4.6A9 9 0 1 1 8.6 20.1Z"></path><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-2.3-2.3l.8-1-1-2Z"></path></svg>
-                <span>+62 8118 4968 89</span>
-            </a>
-            <a href="mailto:kouventa@helios.id" aria-label="Send an email" style="color: #B9C6D3; font-size: 15px; display: flex; gap: 10px; align-items: center; text-decoration: none">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2BD46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>
-                <span>kouventa@helios.id</span>
-            </a>
-        </div>
-        
-        <div style="display: flex; flex-direction: column; gap: 14px">
-            <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Certified & Registered', 'Certified & Registered') }}</span>
-            <div style="display: flex; gap: 12px; align-items: center">
-                <div style="background: #FFFFFF; border-radius: 10px; padding: 6px; display: inline-flex; align-items: center; justify-content: center; height: 50px; width: 50px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.2)">
-                    <img src="{{ theme_asset('images/badge-iso-27001.webp') }}?v=20261026" alt="{{ t('kouventa.Sertifikasi Keamanan Informasi ISO/IEC 27001 Resmi Kouventa', 'Sertifikasi Keamanan Informasi ISO/IEC 27001 Resmi Kouventa') }}" style="height: 38px; width: 38px; object-fit: contain; display: block" loading="lazy">
-                </div>
-                <div style="background: #FFFFFF; border-radius: 10px; padding: 6px; display: inline-flex; align-items: center; justify-content: center; height: 50px; width: 50px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.2)">
-                    <img src="{{ theme_asset('images/badge-komdigi.webp') }}?v=20261026" alt="{{ t('kouventa.Tanda Daftar Penyelenggara Sistem Elektronik Resmi Kementerian Komunikasi dan Digital (Komdigi)', 'Tanda Daftar Penyelenggara Sistem Elektronik Resmi Kementerian Komunikasi dan Digital (Komdigi)') }}" style="height: 38px; width: 38px; object-fit: contain; display: block" loading="lazy">
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1)">
-        <span style="font-size: 14px; color: #93A4B6">© {{ date('Y') }} Kouventa by PT Helios Informatika Nusantara</span>
     </div>
 </footer>
 

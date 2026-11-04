@@ -1296,13 +1296,15 @@ $ctaSecondary = $ctaSec['secondary_cta'] ?? ['text' => $isIdLocale ? 'Lihat harg
 <!-- ============ NAV + HERO ============ -->
 <section class="kv-hero-container" style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative">
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
-<nav aria-label="Products" style="height: 56px; padding: 0 80px; display: flex; align-items: center; gap: 32px; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 4">
+<nav aria-label="Products" style="height: 56px; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 4; width: 100%;">
+<div class="kv-container" style="height: 56px; display: flex; align-items: center; gap: 32px;">
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #93A4B6">{{ $heroSubnavLabel }}</span>
 <a href="{{ localized_url('/product/ai') }}" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ $heroSubnavAi }}</a>
 <a href="{{ localized_url('/product/customer-engagement') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ $heroSubnavCe }}</a>
+</div>
 </nav>
 
-<div class="kv-hero-section" style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 64px; align-items: center; position: relative">
+<div class="kv-container kv-hero-section" style="height: 704px; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) 520px; gap: 64px; align-items: center; position: relative">
 <div class="kv-hero-content" style="display: flex; flex-direction: column; gap: 26px">
 <h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'One AI platform is' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'all you need' }}</span></h1>
 <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 600px">{!! nl2br(e($heroSubtitle)) !!}</p>
@@ -1387,7 +1389,8 @@ $ctaSecondary = $ctaSec['secondary_cta'] ?? ['text' => $isIdLocale ? 'Lihat harg
 </section>
 
 <!-- ============ CHALLENGES ============ -->
-<section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
+<section style="width: 100%;">
+<div class="kv-container" style="padding-top: 104px; display: flex; flex-direction: column; gap: 40px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $challengesTitle['prefix'] ?? 'Too many AI tools,' }} <span style="color: #13803F">{{ $challengesTitle['main'] ?? 'too little control.' }}</span></h2>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px">
 @foreach($challengesCards as $idx => $card)
@@ -1415,10 +1418,12 @@ $ctaSecondary = $ctaSec['secondary_cta'] ?? ['text' => $isIdLocale ? 'Lihat harg
 </article>
 @endforeach
 </div>
+</div>
 </section>
 
 <!-- ============ ENTERPRISE AI JOURNEY ============ -->
-<section id="journey" class="kv-journey-section" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 28px">
+<section id="journey" class="kv-journey-section" style="width: 100%;">
+<div class="kv-container" style="padding-top: 104px; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 14px; max-width: 900px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $journeyPrefix }} <span style="color: #13803F; display: block">{{ $journeyMain }}</span></h2>
 <p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5866">{{ $journeySubtitle }}</p>
@@ -1560,10 +1565,12 @@ $ctaSecondary = $ctaSec['secondary_cta'] ?? ['text' => $isIdLocale ? 'Lihat harg
 </button>
 </div>
 </div>
+</div>
 </section>
 
 <!-- ============ OUR PRODUCTS ============ -->
-<section id="ai-products" class="kv-ai-products-section">
+<section id="ai-products" class="kv-ai-products-section" style="width: 100%; padding-left: 0 !important; padding-right: 0 !important;">
+<div class="kv-container" style="display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
 <h2 class="kv-products-heading" style="margin: 0; font-weight: 800; letter-spacing: -0.02em">{{ $productsTitle }}</h2>
 <span class="kv-linked-pill" x-show="linked" x-cloak>
@@ -1846,10 +1853,12 @@ $ctaSecondary = $ctaSec['secondary_cta'] ?? ['text' => $isIdLocale ? 'Lihat harg
 </div>
 </div>
 </div>
+</div>
 </section>
 
 <!-- ============ PLATFORM CONTROL ============ -->
-<section style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 40px">
+<section style="width: 100%;">
+<div class="kv-container" style="padding-bottom: 104px; display: flex; flex-direction: column; gap: 40px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $governanceTitle }}</h2>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px">
 @php
@@ -1898,10 +1907,12 @@ $channelsDbl = array_merge($channels, $channels);
 </div>
 </div>
 </div>
+</div>
 </section>
 
 <!-- ============ WHY ============ -->
-<section class="kv-why-section">
+<section class="kv-why-section" style="width: 100%; padding-left: 0 !important; padding-right: 0 !important;">
+<div class="kv-container" style="display: flex; flex-direction: column; gap: 48px; position: relative; z-index: 2">
 <div aria-hidden="true" style="position: absolute; left: -200px; bottom: -320px; width: 700px; height: 700px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
 <div aria-hidden="true" style="position: absolute; right: -160px; top: -260px; width: 560px; height: 560px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
 <h2 class="kv-why-heading">{{ $whyPrefix }} <span style="color: #2BD46A">{{ $whyMain }}</span></h2>
@@ -1925,15 +1936,18 @@ $whyIcons = [
 </div>
 @endforeach
 </div>
+</div>
 </section>
 
 <!-- ============ CTA ============ -->
-<section style="padding: 104px 80px">
+<section style="width: 100%;">
+<div class="kv-container" style="padding-top: 104px; padding-bottom: 104px">
 <div class="kv-panel" style="background: #2BD46A; border-radius: 28px; padding: 72px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 32px; color: #06251A">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
 <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap">
 <a href="{{ localized_url($ctaPrimary['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ $ctaPrimary['text'] ?? ($isIdLocale ? 'Jadwalkan demo' : t('kouventa.Book a demo', 'Book a demo')) }}</a>
 <a href="{{ localized_url($ctaSecondary['url'] ?? '/pricing?tab=ai') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ $ctaSecondary['text'] ?? ($isIdLocale ? 'Lihat harga' : t('kouventa.See pricing', 'See pricing')) }}</a>
+</div>
 </div>
 </div>
 </section>

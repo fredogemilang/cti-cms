@@ -29,8 +29,8 @@
         pointer-events: none;
     }
     .kv-legal-hero-inner {
-        padding: 80px 80px 140px;
-        max-width: 1280px;
+        padding: 80px clamp(20px, 4vw, 64px) 140px;
+        max-width: 1400px;
         margin: 0 auto;
         width: 100%;
         box-sizing: border-box;
@@ -40,9 +40,9 @@
         position: relative;
     }
     .kv-legal-wrap {
-        max-width: 1280px;
+        max-width: 1400px;
         margin: -60px auto 120px;
-        padding: 0 80px;
+        padding: 0 clamp(20px, 4vw, 64px);
         position: relative;
         z-index: 2;
         box-sizing: border-box;

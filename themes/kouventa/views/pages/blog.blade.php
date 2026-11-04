@@ -126,7 +126,7 @@ function initInsightBlog(initialCat = 'All') {
     overflow: hidden;
     background: #071C33 !important;
     color: #FFFFFF !important;
-    padding: 88px 80px 88px;
+    padding: 88px clamp(20px, 4vw, 64px);
     display: flex;
     justify-content: center;
 }
@@ -200,9 +200,9 @@ function initInsightBlog(initialCat = 'All') {
 }
 
 .kv-tab-bar {
-    max-width: 1280px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 clamp(20px, 4vw, 64px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -250,9 +250,9 @@ function initInsightBlog(initialCat = 'All') {
 
 /* Archive Grid Container */
 .kv-insight-section {
-    max-width: 1320px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 56px 32px 100px;
+    padding: 56px clamp(20px, 4vw, 64px) 100px;
     display: flex;
     flex-direction: column;
     gap: 48px;

@@ -290,8 +290,8 @@
 @section('content')
 <div class="kv-canvas-wrap">
 <!-- ============ NAV + HERO ============ -->
-<section style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative; overflow: hidden">
-<div style="padding: 88px 80px 112px; display: flex; flex-direction: column; align-items: center; gap: 28px; position: relative">
+<section style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative; overflow: hidden; width: 100%;">
+<div class="kv-container" style="padding-top: 88px; padding-bottom: 112px; display: flex; flex-direction: column; align-items: center; gap: 28px; position: relative">
 <h1 style="margin: 0; font-size: 96px; line-height: 1.0; text-align: center; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'AI adoption,' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'done right' }}</span></h1>
 <p style="margin: 0; text-align: center; font-size: 24px; line-height: 1.5; color: #B9C6D3">{!! nl2br(e($heroSubtitle)) !!}</p>
 <div style="position: relative; width: 1080px; height: 500px; margin-top: 8px">
@@ -324,7 +324,8 @@
 </section>
 
 <!-- ============ TWO PATHS ============ -->
-<section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
+<section style="width: 100%;">
+<div class="kv-container" style="padding-top: 104px; display: flex; flex-direction: column; gap: 40px">
 @php
     $pathsMain = $pathsTitle['main'] ?? ($isIdLocale ? 'Mau mulai dari mana?' : 'Where do you want to start?');
     if ($isIdLocale && ($pathsMain === 'Where do you want to start?' || $pathsMain === 'Di mana Anda ingin memulai?' || empty($pathsMain))) {
@@ -352,10 +353,12 @@
 <span class="kv-card-link" style="font-size: 16px; font-weight: 700; color: #13803F; padding-top: 8px">{{ $path2Btn['text'] ?? 'Explore more' }} <span class="kv-arrow">→</span></span>
 </a>
 </div>
+</div>
 </section>
 
 <!-- ============ INDUSTRIES ============ -->
-<section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 28px">
+<section style="width: 100%;">
+<div class="kv-container" style="padding-top: 104px; display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; gap: 10px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $industriesTitle }}</h2>
@@ -373,13 +376,15 @@
 <a href="{{ localized_url('/solutions/ai') }}" class="kv-industry-card kv-hover" style="height: 76px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E3E8E6; background: #FFFFFF; padding: 0 18px; display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; transition: all 0.2s ease"><span class="kv-ind-icon" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: #DDF3E4; color: #13803F; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"></path><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle></svg></span><h3 class="kv-ind-label" style="margin: 0; font-size: 16px; font-weight: 700; color: #0E1A24">{{ t('kouventa.Transportation', 'Transportation') }}</h3></a>
 </div>
 </div>
+</div>
 </section>
 
 <!-- ============ WHO NEEDS THIS (tabs) ============ -->
 <section id="pick-team" x-data="{
     activeTeam: 0,
     teams: @js($teams)
-}" style="padding: 104px 80px; display: flex; flex-direction: column; gap: 32px; scroll-margin-top: 60px">
+}" style="width: 100%; scroll-margin-top: 60px">
+<div class="kv-container" style="padding-top: 104px; padding-bottom: 104px; display: flex; flex-direction: column; gap: 32px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $teamsTitle }}</h2>
 <div role="tablist" aria-label="Teams" style="display: flex; gap: 8px; flex-wrap: wrap">
 
@@ -419,6 +424,7 @@
 
 </div>
 </div>
+</div>
 </section>
 
 <!-- ============ WHY ============ -->
@@ -438,7 +444,8 @@
     }
     $whyMain = rtrim($whyMain, '.');
 @endphp
-<section style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 40px">
+<section style="width: 100%;">
+<div class="kv-container" style="padding-bottom: 104px; display: flex; flex-direction: column; gap: 40px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $whyPrefix }} <span style="color: #13803F">{{ $whyMain }}</span></h2>
 <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; align-items: stretch">
 <div class="kv-card kv-card-hover" style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 10px 28px rgba(7, 28, 51, 0.05)">
@@ -466,10 +473,12 @@
 <span style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 4px"><span style="font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C">{{ t('kouventa.Up to 24/7', 'Up to 24/7') }}</span><span style="font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C">{{ t('kouventa.Online', 'Online') }}</span><span style="font-size: 13px; font-weight: 700; padding: 6px 10px; border-radius: 999px; background: #EAF7EF; color: #0B5E2C">{{ t('kouventa.On-site', 'On-site') }}</span></span>
 </div>
 </div>
+</div>
 </section>
 
 <!-- ============ TECHNOLOGY PARTNERS ============ -->
-<section id="our-partner" style="padding: 0 80px; display: flex; flex-direction: column; gap: 28px">
+<section id="our-partner" style="width: 100%;">
+<div class="kv-container" style="display: flex; flex-direction: column; gap: 28px">
 <div style="display: flex; flex-direction: column; gap: 32px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $partnersTitle }}</h2>
 @php
@@ -557,10 +566,12 @@
     @endforeach
 </div>
 </div>
+</div>
 </section>
 
 <!-- ============ CUSTOMERS ============ -->
-<section id="our-customer" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 32px">
+<section id="our-customer" style="width: 100%;">
+<div class="kv-container" style="padding-top: 104px; display: flex; flex-direction: column; gap: 32px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $customersTitle }}</h2>
 <style>
     .kv-customer-grid {
@@ -693,10 +704,11 @@
         </span>
     </div>
 </div>
+</div>
 </section>
 
 <!-- ============ STORIES (carousel) ============ -->
-<section style="padding: 80px 80px 64px; display: flex; flex-direction: column; gap: 32px" 
+<section style="width: 100%;"
          x-data="{
              activeStory: 0,
              totalStories: {{ count($stories) }},
@@ -762,6 +774,7 @@
                  this.resetAutoSlide();
              }
          }">
+<div class="kv-container" style="padding-top: 80px; padding-bottom: 64px; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; justify-content: space-between; align-items: end">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $resultsTitle }}</h2>
 <div style="display: flex; gap: 8px">
@@ -821,16 +834,19 @@
     </button>
 @endforeach
 </div>
+</div>
 </section>
 
 <!-- ============ CTA ============ -->
-<section style="padding: 0 80px 104px">
+<section style="width: 100%;">
+<div class="kv-container" style="padding-bottom: 104px">
 <div class="kv-panel" style="background: #2BD46A; border-radius: 28px; padding: 72px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; color: #06251A">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $ctaTitle }}</h2>
 <p style="margin: 0; font-size: 18px; line-height: 1.55; max-width: 640px">{!! nl2br(e($ctaSubtitle)) !!}</p>
 <div style="display: flex; gap: 14px; justify-content: center; padding-top: 16px">
 <a href="{{ localized_url($ctaDemoBtn['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ $ctaDemoBtn['text'] ?? 'Book a demo' }}</a>
 <a href="{{ localized_url($ctaPricingBtn['url'] ?? '/pricing') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ $ctaPricingBtn['text'] ?? 'See pricing' }}</a>
+</div>
 </div>
 </div>
 </section>
@@ -863,8 +879,9 @@
         }
     }"
     x-init="setTimeout(() => checkScroll(), 100); window.addEventListener('resize', () => checkScroll())"
-    style="padding: 0 80px 104px; display: flex; flex-direction: column; gap: 32px"
+    style="width: 100%;"
 >
+<div class="kv-container" style="padding-bottom: 104px; display: flex; flex-direction: column; gap: 32px">
     <style>
         .kv-video-slider {
             display: flex !important;
@@ -1055,6 +1072,7 @@
             </template>
         </div>
     </template>
+</div>
 </section>
 
 <!-- ============ FOOTER ============ -->

@@ -1380,15 +1380,17 @@
     }
 }">
 <!-- ============ NAV + HERO ============ -->
-<section class="kv-hero-container" style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative">
+<section class="kv-hero-container" style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative; width: 100%;">
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
-<nav aria-label="Products" style="height: 56px; padding: 0 80px; display: flex; align-items: center; gap: 32px; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 4">
+<nav aria-label="Products" style="height: 56px; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 4; width: 100%;">
+<div class="kv-container" style="height: 56px; display: flex; align-items: center; gap: 32px;">
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #93A4B6">{{ $heroSubnavLabel }}</span>
 <a href="{{ localized_url('/product/ai') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ $heroSubnavAi }}</a>
 <a href="{{ localized_url('/product/customer-engagement') }}" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ $heroSubnavCe }}</a>
+</div>
 </nav>
 
-<div class="kv-hero-section" style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 600px; gap: 56px; align-items: center; position: relative">
+<div class="kv-container kv-hero-section" style="height: 704px; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) 600px; gap: 56px; align-items: center; position: relative">
 <div class="kv-hero-content" style="display: flex; flex-direction: column; gap: 26px">
 <span style="align-self: flex-start; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 999px; background: rgba(43,212,106,0.12); color: #2BD46A"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"></path><path d="m9 12 2 2 4-4"></path></svg>{{ $heroEyebrow }}</span>
 <h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'The smarter way to' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'engage customers' }}</span></h1>
@@ -1567,7 +1569,8 @@ Kouventa AI · WhatsApp · 09:12
 </section>
 
 <!-- ============ CHALLENGES ============ -->
-<section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 40px">
+<section style="width: 100%;">
+<div class="kv-container" style="padding-top: 104px; display: flex; flex-direction: column; gap: 40px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">@if(!empty($channelsTitle['prefix'])){{ $channelsTitle['prefix'] }} <span style="color: #13803F">{{ $channelsTitle['main'] }}</span>@else{{ $channelsTitle['main'] ?? $channelsTitle }}@endif</h2>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px">
 @foreach($challengeCards as $idx => $card)
@@ -1594,10 +1597,12 @@ Kouventa AI · WhatsApp · 09:12
 </article>
 @endforeach
 </div>
+</div>
 </section>
 
 <!-- ============ JOURNEY ============ -->
-<section id="journey" class="kv-journey-section" style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 32px">
+<section id="journey" class="kv-journey-section" style="width: 100%; padding-left: 0 !important; padding-right: 0 !important;">
+<div class="kv-container" style="padding-top: 104px; display: flex; flex-direction: column; gap: 32px">
 <div style="display: flex; flex-direction: column; gap: 14px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em">{{ $journeyTitle['prefix'] ?? 'Never miss a' }} <span style="color: #13803F">{{ $journeyTitle['main'] ?? 'message.' }}</span></h2>
 <p style="margin: 0; font-size: 18px; line-height: 1.5; color: #4A5866">{{ $journeySubtitle }}</p>
@@ -1681,10 +1686,12 @@ Kouventa AI · WhatsApp · 09:12
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"></path></svg>
 </button>
 </div>
+</div>
 </section>
 
 <!-- ============ PRODUCTS ============ -->
-<section id="products" class="kv-ce-products-section" style="padding: 48px 80px 104px; display: flex; flex-direction: column; gap: 32px">
+<section id="products" class="kv-ce-products-section" style="width: 100%; padding-left: 0 !important; padding-right: 0 !important;">
+<div class="kv-container" style="display: flex; flex-direction: column; gap: 32px">
 <div class="kv-products-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px">
 <h2 class="kv-products-heading" style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">@if(!empty($featuresTitle['prefix'])){{ $featuresTitle['prefix'] }} <span style="color: #13803F">{{ $featuresTitle['main'] }}</span>@else{{ $featuresTitle['main'] ?? $featuresTitle }}@endif</h2>
 <span class="kv-linked-pill" x-show="linked" x-cloak style="min-height: 48px; box-sizing: border-box; align-items: center; gap: 10px; padding: 6px 6px 6px 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E3E8E6; font-size: 15px; color: #4A5866; white-space: nowrap">
@@ -2098,10 +2105,12 @@ Kouventa AI · WhatsApp · 09:12
 </div>
 </div>
 </div>
+</div>
 </section>
 
 <!-- ============ PLATFORM CONTROL ============ -->
-<section style="padding: 104px 80px 0; display: flex; flex-direction: column; gap: 32px">
+<section style="width: 100%;">
+<div class="kv-container" style="padding-top: 104px; padding-bottom: 0; display: flex; flex-direction: column; gap: 32px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">
     {{ $controlTitle }}
 </h2>
@@ -2125,14 +2134,16 @@ $ctrlIcons = [
     </article>
 @endforeach
 </div>
+</div>
 </section>
 
 <!-- ============ WHY ============ -->
-<section class="kv-why-section">
+<section class="kv-why-section" style="width: 100%; padding-left: 0 !important; padding-right: 0 !important;">
 <div aria-hidden="true" style="position: absolute; left: -200px; bottom: -320px; width: 700px; height: 700px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
 <div aria-hidden="true" style="position: absolute; right: -160px; top: -260px; width: 560px; height: 560px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07); pointer-events: none"></div>
 <div aria-hidden="true" style="position: absolute; right: -240px; top: -340px; width: 800px; height: 800px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.04); pointer-events: none"></div>
 
+<div class="kv-container" style="display: flex; flex-direction: column; gap: 48px; position: relative; z-index: 1;">
 <h2 class="kv-why-heading">
     {{ $whyTitle['prefix'] ?? ($isIdLocale ? 'Kenapa Kouventa untuk customer' : 'Why Kouventa for customer') }} <span style="color: #2BD46A">{{ $whyTitle['main'] ?? 'engagement' }}</span>
 </h2>
@@ -2156,15 +2167,18 @@ $whyCeIcons = [
     </div>
 @endforeach
 </div>
+</div>
 </section>
 
 <!-- ============ CTA ============ -->
-<section style="padding: 104px 80px">
+<section style="width: 100%;">
+<div class="kv-container" style="padding-top: 104px; padding-bottom: 104px">
 <div class="kv-panel" style="background: #2BD46A; border-radius: 28px; padding: 72px 64px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 32px; color: #06251A">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
 <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap">
 <a href="{{ localized_url($ctaPrimary['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ $ctaPrimary['text'] ?? ($isIdLocale ? 'Jadwalkan demo' : 'Book a demo') }}</a>
 <a href="{{ localized_url($ctaSecondary['url'] ?? '/pricing?tab=ce') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ $ctaSecondary['text'] ?? ($isIdLocale ? 'Lihat harga' : 'See pricing') }}</a>
+</div>
 </div>
 </div>
 </section>

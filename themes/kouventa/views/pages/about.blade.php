@@ -10,16 +10,17 @@
 @section('content')
 <div class="kv-canvas-wrap">
 <!-- ============ NAV + HERO ============ -->
-<section style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative">
+<section style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative; width: 100%;">
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
-<div style="padding: 88px 80px 240px; display: flex; flex-direction: column; gap: 18px; position: relative">
+<div class="kv-container" style="padding-top: 88px; padding-bottom: 240px; display: flex; flex-direction: column; gap: 18px; position: relative">
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #93A4B6">{{ $heroBadge }}</span>
 <h1 style="margin: 0; font-size: 64px; line-height: 1.05; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? 'From business communication' }}<br><span style="color: #2BD46A">{{ $heroTitle['main'] ?? 'to enterprise AI' }}</span></h1>
 </div>
 </section>
 
 <!-- ============ TEAM + VALUES ============ -->
-<section style="padding: 0 80px; margin-top: -170px; position: relative; z-index: 2">
+<section style="width: 100%; margin-top: -170px; position: relative; z-index: 2">
+<div class="kv-container">
 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 24px; align-items: stretch">
 <img src="{{ theme_asset('images/kouventa-team.png') }}" alt="{{ t('kouventa.Tim Profesional dan Solution Architect Kouventa Indonesia', 'Tim Profesional dan Solution Architect Kouventa Indonesia') }}" style="width: 100%; height: 100%; max-height: 640px; object-fit: cover; object-position: center top; border-radius: 22px; display: block; box-shadow: 0 24px 60px rgba(7,28,51,0.18)">
 <div style="display: flex; flex-direction: column; gap: 16px">
@@ -47,10 +48,12 @@
 </div>
 </div>
 </div>
+</div>
 </section>
 
 <!-- ============ HISTORY ============ -->
-<section id="kv-history" style="padding: 120px 80px 128px; display: flex; flex-direction: column; gap: 56px">
+<section id="kv-history" style="width: 100%;">
+<div class="kv-container" style="padding-top: 120px; padding-bottom: 128px; display: flex; flex-direction: column; gap: 56px">
 <h2 style="margin: 0; font-size: 44px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em">{{ $historyTitle }}</h2>
 <div class="kv-history-wrap">
     <!-- Static dashed track line connecting 2014 down to 2026 -->
@@ -101,6 +104,7 @@
             <p class="kv-tl-desc">{{ t('kouventa.Kouventa launched AI Task Force, its Agentic AI solution, allowing intelligent agents to reason, plan, and take action across enterprise applications to automate business processes from start to finish.', 'Kouventa launched AI Task Force, its Agentic AI solution, allowing intelligent agents to reason, plan, and take action across enterprise applications to automate business processes from start to finish.') }}</p>
         </div>
     </div>
+</div>
 </div>
 </section>
 

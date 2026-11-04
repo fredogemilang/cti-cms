@@ -187,11 +187,11 @@
 <div x-data="pricingPage" class="kv-canvas-wrap">
 
 <!-- ============ HERO & PLATFORM TOGGLE ============ -->
-<section style="background: #071C33; color: #FFFFFF; padding: 96px 80px 104px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 24px; position: relative">
+<section style="background: #071C33; color: #FFFFFF; position: relative; width: 100%;">
     <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none">
         <div style="position: absolute; left: 50%; top: -200px; width: 1000px; height: 1000px; margin-left: -500px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div>
     </div>
-    
+    <div class="kv-container" style="padding-top: 96px; padding-bottom: 104px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 24px; position: relative">
     @if(!empty($heroBadge) && !in_array(strtoupper(trim($heroBadge)), ['PRICING', 'HARGA']))
         <span style="font-size: 13px; font-weight: 800; letter-spacing: 0.1em; color: #2BD46A; text-transform: uppercase">{{ $heroBadge }}</span>
     @endif
@@ -229,10 +229,12 @@
             {{ $sHero['toggle_ce'] ?? t('kouventa.Customer Engagement', 'Customer Engagement') }}
         </button>
     </div>
+    </div>
 </section>
 
 <!-- ============ PRODUCT PANEL ============ -->
-<section style="padding: 104px 80px; display: flex; flex-direction: column; gap: 104px; background: #F4F6F5">
+<section style="width: 100%; background: #F4F6F5;">
+    <div class="kv-container" style="padding-top: 104px; padding-bottom: 104px; display: flex; flex-direction: column; gap: 104px">
 
     <!-- ============ TIER CARDS ============ -->
     <div style="display: flex; flex-direction: column; gap: 24px">
@@ -755,10 +757,12 @@
             </div>
         </div>
     </div>
+    </div>
 </section>
 
 <!-- ============ CLOSING CTA ============ -->
-<section style="padding: 0 80px 104px; background: #F4F6F5">
+<section style="width: 100%; background: #F4F6F5;">
+    <div class="kv-container" style="padding-bottom: 104px">
     <div style="background: #2BD46A; border-radius: 28px; padding: 56px 64px; display: flex; justify-content: space-between; align-items: center; gap: 48px; color: #06251A">
         <div style="display: flex; flex-direction: column; gap: 12px; max-width: 720px">
             <h2 style="margin: 0; font-size: 40px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $ctaTitle }}</h2>
@@ -768,6 +772,7 @@
             <a href="{{ localized_url($sCta['primary_btn']['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ $sCta['primary_btn']['text'] ?? t('kouventa.Book a working session', $isIdLocale ? 'Jadwalkan sesi kerja' : 'Book a working session') }}</a>
             <a href="{{ $sCta['secondary_btn']['url'] ?? '#whatsapp' }}" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none; cursor: pointer">{{ $sCta['secondary_btn']['text'] ?? t('kouventa.Contact sales', $isIdLocale ? 'Hubungi sales' : 'Contact sales') }}</a>
         </div>
+    </div>
     </div>
 </section>
 

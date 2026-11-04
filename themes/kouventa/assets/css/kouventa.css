@@ -5562,5 +5562,25 @@ body {
     background: #1EBE5D !important;
 }
 
+/* --- Global Responsive Fluid Container (Option 2) --- */
+.kv-container {
+    width: 100%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(20px, 4vw, 64px);
+    padding-right: clamp(20px, 4vw, 64px);
+    box-sizing: border-box;
+}
+
+.kv-container-fluid {
+    width: 100%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+
 
 

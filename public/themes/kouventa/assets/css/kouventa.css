@@ -614,6 +614,18 @@ html{scroll-padding-top:0}
 
 
 /* --- Theme Specific Enhancements --- */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border-width: 0 !important;
+}
+
 .kv-canvas-wrap {
   width: 100%;
   position: relative;
@@ -3270,6 +3282,10 @@ body {
         padding-right: 20px !important;
     }
 
+    div[style*="width: 500px"][style*="height: 440px"] {
+        display: none !important;
+    }
+
     div[style*="padding-top: 194px"] {
         padding-top: 0 !important;
     }
@@ -5545,6 +5561,26 @@ body {
 .kv-flow-btn-loading {
     background: #1EBE5D !important;
 }
+
+/* --- Global Responsive Fluid Container (Option 2) --- */
+.kv-container {
+    width: 100%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(20px, 4vw, 64px);
+    padding-right: clamp(20px, 4vw, 64px);
+    box-sizing: border-box;
+}
+
+.kv-container-fluid {
+    width: 100%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
 
 
 

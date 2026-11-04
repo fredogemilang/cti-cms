@@ -162,13 +162,15 @@
 <!-- ============ NAV + HERO ============ -->
 <section class="kv-hero-container" style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative">
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
-<nav aria-label="Solutions" style="height: 56px; padding: 0 80px; display: flex; align-items: center; gap: 32px; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 4">
+<nav aria-label="Solutions" style="height: 56px; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; z-index: 4; width: 100%;">
+<div class="kv-container" style="height: 56px; display: flex; align-items: center; gap: 32px;">
 <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #93A4B6">{{ $heroSubnavLabel }}</span>
 <a href="{{ localized_url('/solutions/ai') }}" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 600; color: #93A4B6; border-bottom: 2px solid transparent">{{ $heroSubnavAi }}</a>
 <a href="#" aria-current="page" style="height: 56px; box-sizing: border-box; display: flex; align-items: center; padding: 0 4px; font-size: 15px; font-weight: 700; color: #FFFFFF; border-bottom: 2px solid #2BD46A">{{ $heroSubnavCe }}</a>
+</div>
 </nav>
 
-<div class="kv-hero-section" style="height: 704px; box-sizing: border-box; padding: 0 80px; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 72px; align-items: center; position: relative">
+<div class="kv-container kv-hero-section" style="height: 704px; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 72px; align-items: center; position: relative">
 <div style="display: flex; flex-direction: column; gap: 26px">
 <h1 style="margin: 0; font-size: 72px; line-height: 1.02; font-weight: 800; letter-spacing: -0.035em">{{ $heroTitle['prefix'] ?? '' }} <span style="color: #2BD46A">{{ $heroTitle['main'] ?? '' }}</span></h1>
 <p style="margin: 0; font-size: 21px; line-height: 1.5; color: #B9C6D3; max-width: 620px">{{ $heroSubtitle }}</p>
@@ -224,7 +226,8 @@
 </section>
 
 <!-- ============ TABS ============ -->
-<section id="solution-tabs" style="padding: 88px 80px 104px; display: flex; flex-direction: column; gap: 40px">
+<section id="solution-tabs" style="width: 100%;">
+<div class="kv-container" style="padding-top: 88px; padding-bottom: 104px; display: flex; flex-direction: column; gap: 40px">
 <style>
 /* Solution Button Active Highlight */
 .kv-help-sol-btn[aria-pressed="true"] .kv-help-sol-icon {
@@ -1009,10 +1012,12 @@ $opsImpactIcons = [
 </div>
 </div>
 </template>
+</div>
 </section>
 
 <!-- ============ CLOSING CTA ============ -->
-<section style="padding: 0 80px 104px">
+<section style="width: 100%;">
+<div class="kv-container" style="padding-bottom: 104px">
 <div style="background: #2BD46A; border-radius: 28px; padding: 56px 64px; display: flex; justify-content: space-between; align-items: center; gap: 48px; color: #06251A">
 <div style="display: flex; flex-direction: column; gap: 12px; max-width: 720px">
 <h2 style="margin: 0; font-size: 40px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
@@ -1021,6 +1026,7 @@ $opsImpactIcons = [
 <div style="display: flex; gap: 12px; flex-shrink: 0; flex-wrap: wrap">
 <a href="{{ localized_url($ctaPrimary['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-navy" style="background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 18px 28px; border-radius: 12px; text-decoration: none">{{ $ctaPrimary['text'] ?? ($isIdLocale ? 'Minta Demo' : 'Request a Demo') }}</a>
 <a href="{{ $ctaSecondary['url'] ?? '#whatsapp' }}" @click.prevent="$dispatch('open-whatsapp-modal')" data-open-whatsapp class="kv-btn-action kv-btn-outline" style="color: #06251A; font-size: 17px; font-weight: 700; padding: 17px 26px; border-radius: 12px; border: 1.5px solid #06251A; text-decoration: none; cursor: pointer">{{ $ctaSecondary['text'] ?? ($isIdLocale ? 'Hubungi sales' : 'Talk to Sales') }}</a>
+</div>
 </div>
 </div>
 </section>
