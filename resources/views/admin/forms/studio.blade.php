@@ -289,6 +289,25 @@
         $f['validation'] = $validation;
         $f['validation_corporate_email'] = ($validation['rule'] ?? null) === 'corporate_email';
         $f['validation_rule_message'] = $validation['rule_message'] ?? '';
+
+        // Populate options_text if options array is present
+        if (!empty($f['options'])) {
+            if (is_array($f['options'])) {
+                $f['options_text'] = implode("\n", array_map(function($opt) {
+                    if (is_array($opt)) {
+                        $lbl = $opt['label'] ?? '';
+                        $val = $opt['value'] ?? '';
+                        return ($lbl === $val || empty($val)) ? $lbl : "{$lbl}|{$val}";
+                    }
+                    return (string)$opt;
+                }, $f['options']));
+            } else {
+                $f['options_text'] = (string)$f['options'];
+            }
+        } else {
+            $f['options_text'] = $f['options_text'] ?? '';
+        }
+
         return $f;
     }, $form->fields ? $form->fields->toArray() : []);
 @endphp

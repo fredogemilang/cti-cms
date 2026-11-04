@@ -63,6 +63,58 @@ class FormField extends Model
     }
 
     /**
+     * Set the options attribute. Handles array of options, JSON string, or newline-separated string (Label|Value or Label).
+     */
+    public function setOptionsAttribute(mixed $value): void
+    {
+        if (is_string($value)) {
+            $trimmed = trim($value);
+            if ($trimmed === '') {
+                $this->attributes['options'] = null;
+                return;
+            }
+            $decoded = json_decode($trimmed, true);
+            if (is_array($decoded)) {
+                $value = $decoded;
+            } else {
+                $lines = array_filter(array_map('trim', explode("\n", str_replace("\r", '', $trimmed))));
+                $options = [];
+                foreach ($lines as $line) {
+                    if (str_contains($line, '|')) {
+                        [$lbl, $val] = explode('|', $line, 2);
+                        $options[] = ['label' => trim($lbl), 'value' => trim($val)];
+                    } else {
+                        $options[] = ['label' => $line, 'value' => $line];
+                    }
+                }
+                $this->attributes['options'] = json_encode($options);
+                return;
+            }
+        }
+
+        if (is_array($value)) {
+            $normalized = [];
+            foreach ($value as $item) {
+                if (is_array($item)) {
+                    $normalized[] = [
+                        'label' => (string) ($item['label'] ?? $item['value'] ?? ''),
+                        'value' => (string) ($item['value'] ?? $item['label'] ?? ''),
+                    ];
+                } else {
+                    $normalized[] = [
+                        'label' => (string) $item,
+                        'value' => (string) $item,
+                    ];
+                }
+            }
+            $this->attributes['options'] = json_encode($normalized);
+            return;
+        }
+
+        $this->attributes['options'] = $value === null ? null : json_encode($value);
+    }
+
+    /**
      * Get the localized label. Falls back to the English column value.
      */
     public function localizedLabel(): string

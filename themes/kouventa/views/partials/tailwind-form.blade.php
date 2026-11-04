@@ -5,6 +5,12 @@
           style="background: #FFFFFF; border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 22px; box-shadow: 0 24px 60px rgba(7,28,51,0.14)">
         @csrf
 
+        <style>
+            .kv-option-card { transition: all 0.2s ease; }
+            .kv-option-card:hover { border-color: #2BD46A !important; background: #F0FDF4 !important; }
+            .kv-option-card:has(input:checked) { border-color: #2BD46A !important; background: #F0FDF4 !important; box-shadow: 0 0 0 1px #2BD46A; }
+        </style>
+
         @if($form->spam_protection['honeypot'] ?? false)
             <div style="display:none;"><input type="text" name="website_url" tabindex="-1" autocomplete="off"></div>
         @endif
@@ -575,6 +581,65 @@
                                 </button>
                             </div>
                         </div>
+                    @elseif($field->type === 'checkbox')
+                        @php
+                            $selectedVals = (array) old($fieldId, $field->default_value ?? []);
+                        @endphp
+                        @if(!empty($field->options) && is_array($field->options))
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 4px">
+                                @foreach($field->options as $index => $option)
+                                    @php
+                                        $val = is_array($option) ? ($option['value'] ?? '') : $option;
+                                        $lbl = is_array($option) ? ($option['label'] ?? $val) : $option;
+                                        $optId = "f-{$fieldId}-{$index}";
+                                        $isChecked = in_array((string)$val, array_map('strval', $selectedVals), true);
+                                    @endphp
+                                    <label for="{{ $optId }}"
+                                           class="kv-option-card"
+                                           style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #F7F9F8; border: 1.5px solid #DCE3E0; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; user-select: none">
+                                        <input id="{{ $optId }}" name="{{ $fieldId }}[]" type="checkbox" value="{{ $val }}"
+                                               {{ $isChecked ? 'checked' : '' }}
+                                               style="width: 18px; height: 18px; accent-color: #13803F; cursor: pointer; flex-shrink: 0; margin: 0">
+                                        <span style="font-size: 14px; font-weight: 600; color: #0E1A24; line-height: 1.3">{{ t('kouventa.' . $lbl, $lbl) }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        @else
+                            <div style="display: flex; gap: 12px; align-items: flex-start; padding-top: 4px">
+                                <input id="f-{{ $fieldId }}" name="{{ $fieldId }}" type="checkbox" value="1"
+                                       {{ $field->is_required ? 'required' : '' }}
+                                       {{ old($fieldId, $field->default_value) ? 'checked' : '' }}
+                                       style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: #13803F; flex-shrink: 0">
+                                <label for="f-{{ $fieldId }}" style="font-size: 14px; line-height: 1.6; color: #4A5866; cursor: pointer">
+                                    {{ $placeholder ?: $label }}
+                                </label>
+                            </div>
+                        @endif
+                    @elseif($field->type === 'radio')
+                        @php
+                            $selectedVal = old($fieldId, $field->default_value ?? '');
+                        @endphp
+                        @if(!empty($field->options) && is_array($field->options))
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 4px">
+                                @foreach($field->options as $index => $option)
+                                    @php
+                                        $val = is_array($option) ? ($option['value'] ?? '') : $option;
+                                        $lbl = is_array($option) ? ($option['label'] ?? $val) : $option;
+                                        $optId = "f-{$fieldId}-{$index}";
+                                        $isChecked = ((string)$val === (string)$selectedVal);
+                                    @endphp
+                                    <label for="{{ $optId }}"
+                                           class="kv-option-card"
+                                           style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #F7F9F8; border: 1.5px solid #DCE3E0; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; user-select: none">
+                                        <input id="{{ $optId }}" name="{{ $fieldId }}" type="radio" value="{{ $val }}"
+                                               {{ $isChecked ? 'checked' : '' }}
+                                               {{ $field->is_required ? 'required' : '' }}
+                                               style="width: 18px; height: 18px; accent-color: #13803F; cursor: pointer; flex-shrink: 0; margin: 0">
+                                        <span style="font-size: 14px; font-weight: 600; color: #0E1A24; line-height: 1.3">{{ t('kouventa.' . $lbl, $lbl) }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        @endif
                     @else
                         <input id="f-{{ $fieldId }}" name="{{ $fieldId }}"
                                type="{{ $field->type === 'email' ? 'email' : ($field->type === 'tel' ? 'tel' : 'text') }}"
