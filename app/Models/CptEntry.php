@@ -320,7 +320,7 @@ class CptEntry extends Model
 
         return in_array($k, [
             'icon', 'icon_type', 'image', 'img', 'logo', 'media',
-            'banner_logo', 'about_image', 'featured_image', 'loop_image',
+            'banner_logo', 'second_banner_logo', 'about_image', 'featured_image', 'loop_image',
             'kf_icon', 'kf_image', 'kf_img', 'kf_logo', 'icon_key', 'badge_icon',
         ], true)
             || str_ends_with($k, '_icon')

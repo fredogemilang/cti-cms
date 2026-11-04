@@ -15,6 +15,14 @@
         'cta' => $entry->getMeta('banner_cta', ''),
         'link' => $entry->getMeta('banner_link', '') ?: $entry->getMeta('banner_cta_link', ''),
     ];
+    $secondBanner = [
+        'badge' => $entry->getMeta('second_banner_badge') ?: $entry->getMeta('banner_2_badge', ''),
+        'headline' => $entry->getMeta('second_banner_headline') ?: $entry->getMeta('banner_2_headline', ''),
+        'description' => $entry->getMeta('second_banner_description') ?: $entry->getMeta('banner_2_description', ''),
+        'cta' => $entry->getMeta('second_banner_cta') ?: $entry->getMeta('banner_2_cta', ''),
+        'link' => $entry->getMeta('second_banner_link') ?: $entry->getMeta('banner_2_link', ''),
+        'logo' => $entry->getMeta('second_banner_logo') ?: $entry->getMeta('banner_2_logo', null),
+    ];
     $videos = $entry->getMeta('videos', []);
     
     $articles = [];
@@ -536,6 +544,51 @@
     </div>
   </div>
 </section>
+
+<!-- Second Banner (Above What Our Client Says) -->
+@if(!empty(trim((string) $secondBanner['headline'])))
+<section data-gsap="fade-up" class="py-10 md:py-14 bg-gradient-to-r from-red-800 via-primary to-red-700 relative overflow-hidden z-20 shadow-inner">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-1/2 left-0 w-64 h-64 bg-white/10 rounded-full blur-[60px] -translate-y-1/2 -translate-x-1/2"></div>
+    <div class="absolute top-1/2 right-0 w-96 h-96 bg-black/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
+  </div>
+  <div class="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 relative z-10">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
+      @php
+        $secondBannerLogo = resolve_block_asset($secondBanner['logo']);
+        $fallbackLogo2 = $secondBannerLogo ?: ($entry->featured_image ? resolve_block_asset($entry->featured_image) : null);
+      @endphp
+      @if($fallbackLogo2)
+      <div class="flex-shrink-0">
+        <div class="w-24 h-24 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center p-4 shadow-[0_10px_25px_rgba(0,0,0,0.3)] ring-4 ring-white/20 transform hover:scale-105 transition-transform duration-500">
+          <img src="{{ $fallbackLogo2 }}" alt="{{ $entry->title }}" class="w-full h-auto object-contain drop-shadow-sm" />
+        </div>
+      </div>
+      @endif
+      <div class="flex-1 text-center md:text-left">
+        @if(!empty($secondBanner['badge']))
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/20 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-white mb-3">
+          <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span> {{ $secondBanner['badge'] }}
+        </div>
+        @endif
+        <h2 class="text-3xl md:text-4xl font-extrabold text-white leading-tight">{!! $secondBanner['headline'] !!}</h2>
+        @if(!empty($secondBanner['description']))
+        <p class="text-white/80 text-base mt-2">{{ $secondBanner['description'] }}</p>
+        @endif
+      </div>
+      @if(!empty($secondBanner['cta']))
+      @php
+        $secondBannerLink = !empty(trim((string) $secondBanner['link'])) ? trim((string) $secondBanner['link']) : '#explore';
+        $isExternalSecondBanner = (str_starts_with($secondBannerLink, 'http://') || str_starts_with($secondBannerLink, 'https://')) && !str_contains($secondBannerLink, request()->getHost());
+      @endphp
+      <a href="{{ $secondBannerLink }}" @if($isExternalSecondBanner) target="_blank" rel="noopener noreferrer" @endif class="inline-flex items-center px-8 py-4 font-bold text-primary bg-white rounded-full hover:bg-zinc-100 shadow-lg transition-all">
+        {{ $secondBanner['cta'] }} <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </a>
+      @endif
+    </div>
+  </div>
+</section>
+@endif
 
 <!-- Client Stories Carousel -->
 @php
