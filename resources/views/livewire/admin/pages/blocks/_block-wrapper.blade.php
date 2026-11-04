@@ -1,5 +1,6 @@
 @php
-    $blockConfig = \App\Models\PageBlock::$blockTypes[$block['type']] ?? [];
+    $blockType = $block['type'] ?? 'text';
+    $blockConfig = \App\Models\PageBlock::$blockTypes[$blockType] ?? [];
     $colorClasses = \App\Models\PageBlock::$colorClasses[$blockConfig['color'] ?? 'gray'] ?? 'bg-gray-500/10 text-gray-500';
     $isConfigured = $block['is_configured'] ?? false;
 @endphp
