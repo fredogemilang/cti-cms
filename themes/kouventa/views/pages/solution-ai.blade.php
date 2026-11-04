@@ -81,23 +81,13 @@
         if (this._autoTimer) clearTimeout(this._autoTimer);
         const scheduleNext = () => {
             if (this.sol !== -1) return;
-            let duration = 6000;
+            let duration = 5800;
             if (this.tab === 0) {
-                // Scene 0: full sequence finishes at 3.55s, hold resolved state for 2.25s = 5800ms
-                // Scene 1: full sequence finishes at 4.10s, hold assigned state for 2.40s = 6500ms
+                // Scene 0: 5800ms, Scene 1: 6500ms
                 duration = (this.activeSol === 0) ? 5800 : 6500;
             } else if (this.tab === 1) {
-                // Tab 1 (Recruitment):
-                // Scene 0 (Screening): 5500ms
-                // Scene 1 (Communication): 5800ms
-                // Scene 2 (Scheduling): 5500ms
-                // Scene 3 (Insight): 5500ms
                 duration = (this.activeSol === 1) ? 5800 : 5500;
-            } else if (this.tab === 2) {
-                // Tab 2 (Sales & Marketing):
-                // Scene 0 (Sales Assistant): 5800ms
-                // Scene 1 (Order Agent): 5800ms
-                // Scene 2 (Shipment Tracking): 5800ms
+            } else if (this.tab === 2 || this.tab === 3 || this.tab === 5 || this.tab === 6) {
                 duration = 5800;
             }
             this._autoTimer = setTimeout(() => {
@@ -116,36 +106,6 @@
         this.sol = i;
         this.activeSol = i;
         if (this._autoTimer) clearTimeout(this._autoTimer);
-        if (this.tab === 0 || this.tab === 1 || this.tab === 2) return;
-        const sols = this.aiSols[this.tab];
-        const illId = this.aiIllIds[this.tab];
-        if (!sols || !sols[i]) return;
-        const s = sols[i];
-        const st = parseFloat(s.delay) * 1000;
-        let en = (parseFloat(s.delay) + parseFloat(s.dur)) * 1000 + 250;
-        if (sols[i + 1]) {
-            en = Math.min(en, parseFloat(sols[i + 1].delay) * 1000 - 20);
-        }
-        clearTimeout(this._lockT);
-        setTimeout(() => {
-            try {
-                const root = document.getElementById(illId);
-                if (!root || !root.getAnimations) return;
-                const an = root.getAnimations({ subtree: true });
-                an.forEach((a) => {
-                    a.currentTime = st;
-                    a.play();
-                });
-                this._lockT = setTimeout(() => {
-                    an.forEach((a) => {
-                        const tm = a.effect && a.effect.getTiming ? a.effect.getTiming() : {};
-                        if (tm.iterations === Infinity) return;
-                        a.pause();
-                        a.currentTime = en;
-                    });
-                }, Math.max(0, en - st));
-            } catch (e) {}
-        }, 30);
     },
     parseTabFromUrl(url = window.location.href) {
         try {
@@ -568,6 +528,60 @@
   transition: opacity 0.35s ease;
 }
 #kv-ill-sales .kv-sales-scene.kv-active {
+  display: grid !important;
+  opacity: 1 !important;
+}
+
+/* Dedicated scenes for Business Operations illustrations */
+#kv-ill-ops .kv-ops-scene {
+  position: absolute;
+  inset: 0;
+  padding: 22px 24px;
+  box-sizing: border-box;
+  display: none;
+  grid-template-columns: 270px 266px !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+#kv-ill-ops .kv-ops-scene.kv-active {
+  display: grid !important;
+  opacity: 1 !important;
+}
+
+/* Dedicated scenes for Bank Reconciliation illustrations */
+#kv-ill-br .kv-br-scene {
+  position: absolute;
+  inset: 0;
+  padding: 24px 26px;
+  box-sizing: border-box;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+#kv-ill-br .kv-br-scene.kv-active {
+  display: flex !important;
+  opacity: 1 !important;
+}
+
+/* Dedicated scenes for Legal & Compliance illustrations */
+#kv-ill-legal .kv-legal-scene {
+  position: absolute;
+  inset: 0;
+  padding: 22px 24px;
+  box-sizing: border-box;
+  display: none;
+  grid-template-columns: 270px 266px !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+#kv-ill-legal .kv-legal-scene.kv-active {
   display: grid !important;
   opacity: 1 !important;
 }
@@ -1948,25 +1962,271 @@
 </div>
 
 <div class="kv-sol-ill-wrap">
-<div id="kv-ill-ops" role="img" aria-label="Animated illustration: scattered documents, SOPs and systems are pulled into one agent, which answers a policy question with a source, then prepares a leave request that is approved and submitted" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
-<div style="position: absolute; left: 0; right: 0; top: 0; height: 150px">
-<span style="position: absolute; left: 50%; top: 60px; margin-left: -40px; width: 80px; padding: 6px 0; text-align: center; border-radius: 8px; background: #F4F6F5; font-size: 11px; font-weight: 800; --x: -200px; --y: -30px; animation: kvConverge 1.3s ease .1s 1 forwards">Documents</span>
-<span style="position: absolute; left: 50%; top: 60px; margin-left: -40px; width: 80px; padding: 6px 0; text-align: center; border-radius: 8px; background: #F4F6F5; font-size: 11px; font-weight: 800; --x: 200px; --y: -30px; animation: kvConverge 1.3s ease .1s 1 forwards">SOPs</span>
-<span style="position: absolute; left: 50%; top: 60px; margin-left: -40px; width: 80px; padding: 6px 0; text-align: center; border-radius: 8px; background: #F4F6F5; font-size: 11px; font-weight: 800; --x: -170px; --y: 40px; animation: kvConverge 1.3s ease .1s 1 forwards">HR system</span>
-<span style="position: absolute; left: 50%; top: 60px; margin-left: -40px; width: 80px; padding: 6px 0; text-align: center; border-radius: 8px; background: #F4F6F5; font-size: 11px; font-weight: 800; --x: 170px; --y: 40px; animation: kvConverge 1.3s ease .1s 1 forwards">Intranet</span>
-<span style="position: absolute; left: 50%; top: 44px; margin-left: -32px; width: 64px; height: 64px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; animation: kvPopIn .35s ease 1.2s both">AGENT</span>
+<div id="kv-ill-ops" role="img" aria-label="Animated illustration: Knowledge Assistant Agent and Action Agent for internal operations" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
+
+<!-- SCENE 0: Knowledge Assistant Agent -->
+<div class="kv-ops-scene" :class="{ 'kv-active': (sol === 0) || (sol === -1 && activeSol === 0) }">
+
+  <!-- LEFT: Internal Knowledge Base & Policy Repository -->
+  <div style="width: 270px; height: 456px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; animation: kvIn .4s ease .15s both">
+    
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 22px; height: 22px; border-radius: 6px; background: #EFF6FF; color: #2563EB; display: flex; align-items: center; justify-content: center">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10M6 10h10M6 14h6"></path></svg>
+        </span>
+        <span style="font-size: 11px; font-weight: 800; color: #475569; letter-spacing: 0.02em">{{ $isIdLocale ? 'Repositori Kebijakan Internal' : 'Internal Policy Repository' }}</span>
+      </div>
+      <span style="font-size: 10px; font-weight: 700; color: #0B5E2C; background: #EAF7EF; padding: 2px 7px; border-radius: 999px; display: flex; align-items: center; gap: 4px">
+        <span style="width: 5px; height: 5px; border-radius: 50%; background: #13803F"></span>
+        Vector RAG
+      </span>
+    </div>
+
+    <!-- Document Stack -->
+    <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; padding: 8px 0">
+      <!-- Hatched doc 1 -->
+      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease .2s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div style="display: flex; align-items: center; gap: 6px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span style="font-size: 11px; font-weight: 700; color: #64748B">Panduan_Karyawan_2026.pdf</span>
+          </div>
+          <span style="font-size: 9px; font-weight: 600; color: #94A3B8">112 chunks</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span class="kv-arsir-pattern" style="height: 6px; width: 90%; border-radius: 3px; display: block"></span>
+          <span class="kv-arsir-pattern" style="height: 6px; width: 65%; border-radius: 3px; display: block"></span>
+        </div>
+      </div>
+
+      <!-- Active Matched Doc: Kebijakan_Cuti_Karyawan.pdf -->
+      <div style="border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 12px; background: #F8FAFA; display: flex; flex-direction: column; gap: 8px; animation: kvMatchDoc .6s ease 1.8s both; position: relative">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div style="display: flex; align-items: center; gap: 6px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#13803F" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span style="font-size: 11px; font-weight: 800; color: #0E1A24">Kebijakan_Cuti_Karyawan.pdf</span>
+          </div>
+          <span style="font-size: 9px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 1px 6px; border-radius: 4px">SOP HR</span>
+        </div>
+        <div style="display: flex; gap: 6px; animation: kvPopIn .3s ease 2.0s both">
+          <span style="font-size: 9px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 2px 6px; border-radius: 4px">✓ 99.8% Match</span>
+          <span style="font-size: 9px; font-weight: 700; color: #1E40AF; background: #DBEAFE; padding: 2px 6px; border-radius: 4px">Confidence 99%</span>
+        </div>
+        <div style="background: #FFFFFF; border-left: 3px solid #13803F; border-radius: 4px; padding: 6px 8px; font-size: 10px; line-height: 1.45; color: #334155; animation: kvIn .35s ease 2.2s both">
+          <strong style="color: #0E1A24; display: block; font-size: 10px">{{ $isIdLocale ? 'Pasal 4.2 · Cuti Tahunan' : 'Section 4.2 · Annual Leave' }}</strong>
+          {{ $isIdLocale ? 'Karyawan tetap berhak atas 12 hari kerja cuti tahunan per tahun. Sisa cuti dapat dibawa ke tahun depan maks. 6 hari.' : 'Permanent employees receive 12 days of annual leave per year. Up to 6 unused days may be carried over.' }}
+        </div>
+      </div>
+
+      <!-- Hatched doc 2 -->
+      <div style="border: 1px dashed #CBD5E1; border-radius: 10px; padding: 10px 12px; background: #F8FAFA; opacity: 0.7; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease .25s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div style="display: flex; align-items: center; gap: 6px">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            <span style="font-size: 11px; font-weight: 700; color: #64748B">Struktur_Organisasi_HR.docx</span>
+          </div>
+          <span style="font-size: 9px; font-weight: 600; color: #94A3B8">48 chunks</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <span class="kv-arsir-pattern" style="height: 6px; width: 80%; border-radius: 3px; display: block"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Animated Dashed Query Beam -->
+  <svg style="position: absolute; left: 245px; top: 215px; width: 95px; height: 30px; z-index: 2; pointer-events: none; opacity: 0; animation: kvIn .35s ease 1.3s both, kvOut .25s ease 2.9s 1 forwards">
+    <path d="M 90 15 L 8 15" fill="none" stroke="#13803F" stroke-width="2.5" stroke-dasharray="5 4" style="animation: kvDashLeft 0.5s linear infinite;" />
+    <polygon points="10,10 2,15 10,20" fill="#13803F" />
+  </svg>
+
+  <!-- RIGHT: Enterprise Employee HR Chat Card -->
+  <div style="width: 266px; height: 456px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 5; overflow: hidden; animation: kvIn .35s ease .15s both">
+    
+    <!-- Chat Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #071C33; color: #2BD46A; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800">
+          AI
+        </span>
+        <div style="display: flex; flex-direction: column">
+          <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Portal Karyawan · HR' : 'Employee Portal · HR' }}</span>
+          <span style="font-size: 9px; font-weight: 600; color: #16A34A">● online</span>
+        </div>
+      </div>
+      <span style="font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: #DDF3E4; color: #0B5E2C; animation: kvPopIn .3s ease 3.3s both">
+        {{ $isIdLocale ? 'SOP Terverifikasi' : 'SOP Verified' }}
+      </span>
+    </div>
+
+    <!-- Chat Messages Stack -->
+    <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center">
+      <!-- 1. Employee Question (0.45s) -->
+      <div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 9px 12px; border-radius: 14px 4px 14px 14px; font-size: 11px; line-height: 1.45; max-width: 88%; animation: kvIn .35s ease 0.45s both">
+        {{ $isIdLocale ? 'Berapa jatah cuti tahunan untuk karyawan tetap? Bisa di-carry over?' : 'How many annual leave days do permanent employees get? Can unused days carry over?' }}
+        <span style="display: block; font-size: 8.5px; color: #94A3B8; text-align: right; margin-top: 3px">09:15</span>
+      </div>
+
+      <!-- 2. Morphing AI Response Area -->
+      <div style="display: grid; align-self: flex-start; max-width: 95%;">
+        <!-- Typing Dots (0.85s to 2.85s) -->
+        <div style="grid-area: 1 / 1; align-self: flex-start; background: #F4F6F5; border-radius: 4px 12px 12px 12px; padding: 8px 12px; display: inline-flex; align-items: center; gap: 4px; animation: kvIn .3s ease 0.85s both, kvMorphOut .25s ease 2.9s 1 forwards">
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #64748B; animation: kvTypingDot 1s infinite 0s"></span>
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #64748B; animation: kvTypingDot 1s infinite 0.2s"></span>
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #64748B; animation: kvTypingDot 1s infinite 0.4s"></span>
+        </div>
+
+        <!-- Full Grounded Answer (Springs in at 2.95s) -->
+        <div style="grid-area: 1 / 1; align-self: flex-start; background: #F4F6F5; border-radius: 4px 14px 14px 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); opacity: 0; animation: kvMorphIn .38s cubic-bezier(0.34, 1.35, 0.64, 1) 2.95s 1 forwards">
+          <div style="display: flex; justify-content: space-between; align-items: center">
+            <span style="font-size: 10px; font-weight: 800; color: #13803F">Knowledge Assistant Agent</span>
+            <span style="font-size: 8.5px; color: #64748B">0.2s</span>
+          </div>
+          <span style="font-size: 11px; line-height: 1.45; color: #1E293B">
+            {{ $isIdLocale ? 'Sesuai Kebijakan Cuti Pasal 4.2: Karyawan tetap berhak 12 hari cuti kerja per tahun. Sisa cuti dapat dibawa ke tahun berikutnya maksimal 6 hari kerja.' : 'Per Leave Policy Section 4.2: Permanent employees get 12 annual leave days. Up to 6 unused days can carry over to the next year.' }}
+          </span>
+          <span style="align-self: flex-start; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #DDF3E4; color: #0B5E2C; display: flex; align-items: center; gap: 4px">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+            Kebijakan_Cuti_Karyawan.pdf · Pasal 4.2
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clean Bottom Badge -->
+    <div style="display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; color: #0B5E2C; background: #EAF7EF; padding: 6px 10px; border-radius: 8px; animation: kvIn .3s ease 3.4s both">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      {{ $isIdLocale ? '100% Berbasis Dokumen Resmi Perusahaan' : '100% Grounded in Official Company Docs' }}
+    </div>
+
+  </div>
+
 </div>
-<div style="position: absolute; left: 28px; right: 28px; top: 140px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; line-height: 1.5">
-<div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 9px 13px; border-radius: 14px 4px 14px 14px; animation: kvIn .3s ease 1.6s both">What is the leave policy?</div>
-<div style="align-self: flex-start; max-width: 82%; background: #F4F6F5; padding: 9px 13px; border-radius: 4px 14px 14px 14px; display: flex; flex-direction: column; gap: 6px; animation: kvIn .3s ease 2.2s both"><span><strong style="font-size: 11px; color: #13803F">Knowledge Assistant Agent</strong><br>Permanent employees get 12 days of annual leave per year.</span><span style="align-self: flex-start; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: #DDF3E4; color: #0B5E2C">HR Policy.pdf</span></div>
-<div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 9px 13px; border-radius: 14px 4px 14px 14px; animation: kvIn .3s ease 3.2s both">Submit my leave request for 12–14 Nov.</div>
-<div style="align-self: flex-start; width: 82%; box-sizing: border-box; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; overflow: hidden; animation: kvIn .3s ease 3.7s both">
-<span style="display: flex; flex-direction: column"><span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #13803F">ACTION AGENT · LEAVE REQUEST</span><strong>3 days · 12–14 Nov</strong></span>
-<span style="position: relative; display: grid; flex-shrink: 0"><span style="grid-area: 1 / 1; padding: 8px 14px; border-radius: 8px; background: #071C33; color: #FFFFFF; font-size: 12px; font-weight: 800">Approve</span><span style="grid-area: 1 / 1; padding: 8px 10px; border-radius: 8px; background: #13803F; color: #FFFFFF; font-size: 12px; font-weight: 800; text-align: center; animation: kvPopIn .3s ease 4.6s both">Approved</span><span aria-hidden="true" style="position: absolute; left: 50%; top: 55%; animation: kvCursor 1.2s ease 3.7s 1 both"><svg width="20" height="20" viewBox="0 0 24 24" fill="#0E1A24" stroke="#FFFFFF" stroke-width="1.2"><path d="M5 3l14 8-6 1.5L10 19z"></path></svg></span></span>
+
+<!-- SCENE 1: Action Agent (Executing Leave Request & System Integration) -->
+<div class="kv-ops-scene" :class="{ 'kv-active': (sol === 1) || (sol === -1 && activeSol === 1) }">
+
+  <!-- LEFT: HRIS & Enterprise Workflow Engine -->
+  <div style="width: 270px; height: 456px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; position: relative; animation: kvIn .4s ease .15s both">
+    
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 22px; height: 22px; border-radius: 6px; background: #F0FDF4; color: #16A34A; display: flex; align-items: center; justify-content: center">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"></path></svg>
+        </span>
+        <span style="font-size: 11px; font-weight: 800; color: #475569; letter-spacing: 0.02em">{{ $isIdLocale ? 'Mesin Alur Kerja HRIS' : 'HRIS & Workflow Engine' }}</span>
+      </div>
+      <span style="font-size: 10px; font-weight: 700; color: #1E40AF; background: #DBEAFE; padding: 2px 7px; border-radius: 999px; display: flex; align-items: center; gap: 4px">
+        API Live
+      </span>
+    </div>
+
+    <!-- Integration Systems Stack -->
+    <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; padding: 8px 0">
+      
+      <!-- System 1: HRIS Quota Validation -->
+      <div style="border: 1.5px solid #CBD5E1; border-radius: 10px; padding: 12px; background: #FFFFFF; display: flex; flex-direction: column; gap: 6px; animation: kvMatchDocBlue .6s ease .6s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 11px; font-weight: 800; color: #0E1A24">HRIS (Workday / SAP)</span>
+          <span style="font-size: 9px; font-weight: 700; color: #0284C7; background: #E0F2FE; padding: 1px 6px; border-radius: 4px">Active Session</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 10.5px; color: #475569; padding-top: 2px">
+          <span>{{ $isIdLocale ? 'Sisa Saldo Cuti' : 'Leave Balance' }}</span>
+          <strong style="color: #0E1A24">8 {{ $isIdLocale ? 'hari' : 'days' }}</strong>
+        </div>
+        <div style="font-size: 9.5px; font-weight: 700; color: #0B5E2C; background: #DDF3E4; padding: 2px 6px; border-radius: 4px; align-self: flex-start; animation: kvIn .3s ease 1.0s both">
+          ✓ {{ $isIdLocale ? 'Kuota Mencukupi (3 hari diajukan)' : 'Quota Valid (3 days requested)' }}
+        </div>
+      </div>
+
+      <!-- System 2: Manager Approval Chain -->
+      <div style="border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px; background: #F8FAFA; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 1.4s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 11px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Persetujuan Manajer' : 'Manager Approval' }}</span>
+          <span style="font-size: 9px; font-weight: 800; color: #0B5E2C; background: #DDF3E4; padding: 1px 6px; border-radius: 4px; animation: kvPopIn .3s ease 2.2s both">✓ {{ $isIdLocale ? 'Disetujui' : 'Approved' }}</span>
+        </div>
+        <span style="font-size: 10px; color: #64748B">Budi Santoso · Engineering Lead</span>
+        <span style="font-size: 9px; color: #94A3B8; animation: kvIn .3s ease 2.3s both">14:32 WIB · {{ $isIdLocale ? 'Persetujuan otomatis via Slack/Email' : 'Auto-approved via Slack/Email' }}</span>
+      </div>
+
+      <!-- System 3: Calendar & Attendance Sync -->
+      <div style="border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px; background: #F8FAFA; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 2.5s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 11px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Kalender & Jadwal' : 'Calendar & Schedule' }}</span>
+          <span style="font-size: 9px; font-weight: 700; color: #1E40AF; background: #DBEAFE; padding: 1px 6px; border-radius: 4px">Google / Outlook</span>
+        </div>
+        <span style="font-size: 10px; color: #64748B">{{ $isIdLocale ? 'Status OOO otomatis terpasang untuk 12–14 Nov' : 'OOO status auto-set for Nov 12–14' }}</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT: Action Execution Card -->
+  <div style="width: 266px; height: 456px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 16px; padding: 18px 16px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.04); position: relative; z-index: 5; overflow: hidden; animation: kvIn .35s ease .15s both">
+    
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 8px">
+      <div style="display: flex; align-items: center; gap: 7px">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #13803F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 12px">
+          ⚡
+        </span>
+        <div style="display: flex; flex-direction: column">
+          <span style="font-size: 12px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Action Agent · HRIS' : 'Action Agent · HRIS' }}</span>
+          <span style="font-size: 9px; font-weight: 600; color: #16A34A">● {{ $isIdLocale ? 'siap eksekusi' : 'ready' }}</span>
+        </div>
+      </div>
+      <span style="font-size: 9.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: #DDF3E4; color: #0B5E2C; animation: kvPopIn .3s ease 2.7s both">
+        ✓ {{ $isIdLocale ? 'Tereksekusi' : 'Executed' }}
+      </span>
+    </div>
+
+    <!-- Messages & Action Flow Stack -->
+    <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center">
+      <!-- 1. Employee Command (0.45s) -->
+      <div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 9px 12px; border-radius: 14px 4px 14px 14px; font-size: 11px; line-height: 1.45; max-width: 88%; animation: kvIn .35s ease 0.45s both">
+        {{ $isIdLocale ? 'Tolong ajukan cuti tahunan saya untuk 12–14 Nov (3 hari).' : 'Submit my annual leave request for Nov 12–14 (3 days).' }}
+        <span style="display: block; font-size: 8.5px; color: #94A3B8; text-align: right; margin-top: 3px">09:16</span>
+      </div>
+
+      <!-- 2. Interactive Action Card (1.2s) -->
+      <div style="background: #F8FAFA; border: 1.5px solid #13803F; border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 12px rgba(19,128,63,0.06); animation: kvIn .35s ease 1.2s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 9.5px; font-weight: 800; color: #13803F; letter-spacing: 0.05em">ACTION AGENT · LEAVE REQUEST</span>
+          <span style="font-size: 9px; font-weight: 700; color: #64748B">#LR-8821</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <div>
+            <strong style="font-size: 12px; color: #0E1A24; display: block">3 {{ $isIdLocale ? 'Hari Kerja · 12–14 Nov' : 'Work Days · Nov 12–14' }}</strong>
+            <span style="font-size: 9.5px; color: #64748B">{{ $isIdLocale ? 'Cuti Tahunan Pribadi' : 'Personal Annual Leave' }}</span>
+          </div>
+          <!-- Approve Button State -->
+          <div style="position: relative; display: grid">
+            <span style="grid-area: 1 / 1; padding: 5px 10px; border-radius: 6px; background: #071C33; color: #FFFFFF; font-size: 10px; font-weight: 800">{{ $isIdLocale ? 'Proses' : 'Submit' }}</span>
+            <span style="grid-area: 1 / 1; padding: 5px 10px; border-radius: 6px; background: #13803F; color: #FFFFFF; font-size: 10px; font-weight: 800; text-align: center; animation: kvPopIn .3s ease 2.1s both">✓ {{ $isIdLocale ? 'Disetujui' : 'Approved' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Final Execution Confirmation Message (2.6s) -->
+      <div style="align-self: flex-start; background: #F4F6F5; border-radius: 4px 14px 14px 14px; padding: 9px 12px; font-size: 11px; line-height: 1.45; color: #1E293B; animation: kvIn .35s ease 2.6s both">
+        <strong style="color: #13803F; font-size: 10px; display: block">{{ $isIdLocale ? 'Action Agent Sukses' : 'Action Agent Success' }}</strong>
+        {{ $isIdLocale ? 'Cuti telah disetujui manajer dan tercatat di sistem HRIS. Kalender OOO Anda sudah aktif!' : 'Leave has been approved by your manager and logged in HRIS. Your OOO calendar is now active!' }}
+      </div>
+    </div>
+
+    <!-- Bottom Status Confirmation -->
+    <div style="display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; padding: 6px 10px; border-radius: 8px; background: #DDF3E4; color: #0B5E2C; animation: kvPopIn .3s ease 2.9s both">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      {{ $isIdLocale ? 'Tersinkronisasi ke HRIS & Google Calendar' : 'Synced to HRIS & Google Calendar' }}
+    </div>
+
+  </div>
+
 </div>
-<span style="align-self: flex-start; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; padding: 7px 12px; border-radius: 999px; background: #DDF3E4; color: #0B5E2C; animation: kvPopIn .3s ease 5.8s both"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>Submitted to HRIS</span>
-</div>
-</div>
+
 </div>
 </div>
 
@@ -2152,47 +2412,262 @@
 </div>
 
 <div class="kv-sol-ill-wrap">
-<div id="kv-ill-br" role="img" aria-label="Animated illustration: bank transactions are matched to invoices including a split payment, an FX discrepancy is explained, a clearing proposal is approved and cleared in the ERP, and the activity is logged and notified" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
-<div style="position: absolute; inset: 0; animation: kvOut .4s ease 3.9s 1 forwards">
-<span style="position: absolute; left: 28px; top: 28px; font-size: 12px; font-weight: 800; color: #4A5866">Bank transactions</span>
-<span style="position: absolute; left: 372px; top: 28px; font-size: 12px; font-weight: 800; color: #4A5866">Invoices</span>
-<svg width="600" height="400" viewBox="0 0 600 400" fill="none" style="position: absolute; left: 0; top: 0">
-<path d="M228 90 L372 90" stroke="#13803F" stroke-width="2" stroke-dasharray="150" style="--len: 150; animation: kvDraw .4s ease .4s both"></path>
-<path d="M228 142 C 300 142, 300 142, 372 142" stroke="#13803F" stroke-width="2" stroke-dasharray="160" style="--len: 160; animation: kvDraw .4s ease .8s both"></path>
-<path d="M228 142 C 300 142, 300 194, 372 194" stroke="#13803F" stroke-width="2" stroke-dasharray="170" style="--len: 170; animation: kvDraw .4s ease .9s both"></path>
-<path d="M228 194 C 300 194, 300 246, 372 246" stroke="#13803F" stroke-width="2" stroke-dasharray="170" style="--len: 170; animation: kvDraw .4s ease 1.3s both"></path>
-</svg>
-<span style="position: absolute; left: 28px; top: 70px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600"><span>TRX 0412</span><span>Rp 25,0 jt</span></span>
-<span style="position: absolute; left: 28px; top: 122px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600"><span>TRX 0413 · bulk</span><span>Rp 40,0 jt</span></span>
-<span style="position: absolute; left: 28px; top: 174px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600"><span>TRX 0414</span><span>Rp 12,5 jt</span></span>
-<span style="position: absolute; left: 28px; top: 226px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; animation: kvAmber .3s ease 2.0s both"><span>TRX 0415 · USD</span><span>Rp 15,9 jt</span></span>
-<span style="position: absolute; left: 372px; top: 70px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600"><span>INV-101</span><span>Rp 25,0 jt</span></span>
-<span style="position: absolute; left: 372px; top: 122px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600"><span>INV-102</span><span>Rp 22,0 jt</span></span>
-<span style="position: absolute; left: 372px; top: 174px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600"><span>INV-103</span><span>Rp 18,0 jt</span></span>
-<span style="position: absolute; left: 372px; top: 226px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600"><span>INV-104</span><span>Rp 12,5 jt</span></span>
-<span style="position: absolute; left: 372px; top: 278px; width: 200px; height: 40px; box-sizing: border-box; padding: 0 10px; border-radius: 8px; border: 1px solid #E3E8E6; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 600; animation: kvAmber .3s ease 2.0s both"><span>INV-105 · USD 1,000</span><span>Rp 16,2 jt</span></span>
-<div style="position: absolute; left: 28px; right: 28px; top: 350px; background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; overflow: hidden; animation: kvIn .35s ease 2.5s both">
-<span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #F2C46D">DISCREPANCY · TRX 0415 vs INV-105</span>
-<span>Difference caused by exchange rate (USD → IDR) between invoice date and payment date.</span>
-</div>
-</div>
-<div style="position: absolute; inset: 0; padding: 28px; display: flex; flex-direction: column; justify-content: center; gap: 14px; animation: kvIn .4s ease 4.1s both">
-<div style="background: #F4F6F5; border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; overflow: hidden">
-<span style="display: flex; flex-direction: column"><span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #13803F">CLEARING PROPOSAL</span><strong style="font-size: 14px">Clear 4 matched items + FX adjustment</strong></span>
-<span style="position: relative; display: grid; flex-shrink: 0"><span style="grid-area: 1 / 1; padding: 8px 14px; border-radius: 8px; background: #071C33; color: #FFFFFF; font-size: 12px; font-weight: 800">Approve</span><span style="grid-area: 1 / 1; padding: 8px 10px; border-radius: 8px; background: #13803F; color: #FFFFFF; font-size: 12px; font-weight: 800; text-align: center; animation: kvPopIn .3s ease 5.0s both">Approved</span><span aria-hidden="true" style="position: absolute; left: 50%; top: 55%; animation: kvCursor 1.1s ease 4.2s 1 both"><svg width="20" height="20" viewBox="0 0 24 24" fill="#0E1A24" stroke="#FFFFFF" stroke-width="1.2"><path d="M5 3l14 8-6 1.5L10 19z"></path></svg></span></span>
-</div>
-<div style="border: 1px solid #E3E8E6; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; overflow: hidden">
-<span style="font-size: 11px; font-weight: 800; color: #4A5866">ERP clearing</span>
-<span style="display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 12px; animation: kvGreen .3s ease 6.0s both"><span>TRX 0412 ↔ INV-101</span><strong style="color: #0B5E2C">Cleared</strong></span>
-<span style="display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 12px; animation: kvGreen .3s ease 6.3s both"><span>TRX 0413 ↔ INV-102, INV-103</span><strong style="color: #0B5E2C">Cleared</strong></span>
-<span style="display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 12px; animation: kvGreen .3s ease 6.6s both"><span>TRX 0414 ↔ INV-104</span><strong style="color: #0B5E2C">Cleared</strong></span>
-<span style="display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 12px; animation: kvGreen .3s ease 6.9s both"><span>TRX 0415 ↔ INV-105 + FX</span><strong style="color: #0B5E2C">Cleared</strong></span>
-</div>
-<div style="display: flex; gap: 10px">
-<span style="flex-grow: 1; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 10px 12px; border-radius: 10px; background: #071C33; color: #D5DEE8; animation: kvIn .3s ease 7.2s both">log · 4 items cleared · approved by Finance Mgr</span>
-<span style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; padding: 10px 12px; border-radius: 10px; background: #DDF3E4; color: #0B5E2C; animation: kvPopIn .3s ease 7.6s both"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>Finance team notified</span>
-</div>
-</div>
+<div id="kv-ill-br" role="img" aria-label="Animated illustration: bank transactions are matched to invoices, foreign exchange discrepancies are analyzed, clearing proposals are executed in ERP, and immutable audit logs notify the finance team" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
+
+  <!-- ==================== SCENE 0: Transaction Matching Agent ==================== -->
+  <div class="kv-br-scene" :class="{ 'kv-active': (sol === 0) || (sol === -1 && activeSol === 0) }">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 12px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #13803F; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px">
+          🔗
+        </span>
+        <span style="font-size: 13px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Pencocokan Transaksi Otomatis' : 'Automated Transaction Matching' }}</span>
+      </div>
+      <span style="font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: #DDF3E4; color: #0B5E2C; animation: kvPopIn .3s ease 1.6s both">
+        ✓ 100% {{ $isIdLocale ? 'Cocok' : 'Matched' }}
+      </span>
+    </div>
+
+    <!-- Match Visualizer Layout -->
+    <div style="position: relative; height: 320px; display: flex; justify-content: space-between; align-items: center">
+      <!-- Left Column: Bank Transactions -->
+      <div style="width: 230px; display: flex; flex-direction: column; gap: 10px; z-index: 2">
+        <span style="font-size: 11px; font-weight: 800; color: #64748B; letter-spacing: 0.05em; text-transform: uppercase">{{ $isIdLocale ? 'Rekening Koran (Bank)' : 'Bank Transactions' }}</span>
+        <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; animation: kvIn .3s ease .1s both">
+          <div><strong style="color: #0E1A24; display: block">TRX 0412</strong><span style="font-size: 9.5px; color: #64748B">BCA Virtual Account</span></div>
+          <span style="font-weight: 700; color: #0E1A24">Rp 25,0 jt</span>
+        </div>
+        <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; animation: kvIn .3s ease .2s both">
+          <div><strong style="color: #0E1A24; display: block">TRX 0413 · bulk</strong><span style="font-size: 9.5px; color: #64748B">Mandiri Corporate</span></div>
+          <span style="font-weight: 700; color: #0E1A24">Rp 40,0 jt</span>
+        </div>
+        <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; animation: kvIn .3s ease .3s both">
+          <div><strong style="color: #0E1A24; display: block">TRX 0414</strong><span style="font-size: 9.5px; color: #64748B">BSI Giro</span></div>
+          <span style="font-weight: 700; color: #0E1A24">Rp 12,5 jt</span>
+        </div>
+        <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; animation: kvIn .3s ease .4s both">
+          <div><strong style="color: #0E1A24; display: block">TRX 0415 · USD</strong><span style="font-size: 9.5px; color: #64748B">Citi Wire ($1,000)</span></div>
+          <span style="font-weight: 700; color: #0E1A24">Rp 15,9 jt</span>
+        </div>
+      </div>
+
+      <!-- Center Connector SVG Lines -->
+      <svg width="88" height="260" viewBox="0 0 88 260" fill="none" style="z-index: 1; flex-shrink: 0">
+        <path d="M 0 32 C 44 32, 44 32, 88 32" stroke="#13803F" stroke-width="2.5" stroke-dasharray="90" style="--len: 90; animation: kvDraw .4s ease .5s both"></path>
+        <path d="M 0 96 C 44 96, 44 96, 88 96" stroke="#13803F" stroke-width="2.5" stroke-dasharray="90" style="--len: 90; animation: kvDraw .4s ease .8s both"></path>
+        <path d="M 0 96 C 44 96, 44 160, 88 160" stroke="#13803F" stroke-width="2.5" stroke-dasharray="110" style="--len: 110; animation: kvDraw .4s ease .9s both"></path>
+        <path d="M 0 160 C 44 160, 44 224, 88 224" stroke="#13803F" stroke-width="2.5" stroke-dasharray="110" style="--len: 110; animation: kvDraw .4s ease 1.2s both"></path>
+      </svg>
+
+      <!-- Right Column: Invoices -->
+      <div style="width: 230px; display: flex; flex-direction: column; gap: 10px; z-index: 2">
+        <span style="font-size: 11px; font-weight: 800; color: #64748B; letter-spacing: 0.05em; text-transform: uppercase">{{ $isIdLocale ? 'Faktur Penjualan (ERP)' : 'Invoices' }}</span>
+        <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; animation: kvIn .3s ease .1s both">
+          <div><strong style="color: #0E1A24; display: block">INV-101</strong><span style="font-size: 9.5px; color: #13803F">✓ {{ $isIdLocale ? '1-ke-1 Cocok' : '1:1 Matched' }}</span></div>
+          <span style="font-weight: 700; color: #0E1A24">Rp 25,0 jt</span>
+        </div>
+        <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; animation: kvIn .3s ease .2s both">
+          <div><strong style="color: #0E1A24; display: block">INV-102</strong><span style="font-size: 9.5px; color: #13803F">✓ {{ $isIdLocale ? 'Bulk Split' : 'Bulk Split' }}</span></div>
+          <span style="font-weight: 700; color: #0E1A24">Rp 22,0 jt</span>
+        </div>
+        <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; animation: kvIn .3s ease .3s both">
+          <div><strong style="color: #0E1A24; display: block">INV-103</strong><span style="font-size: 9.5px; color: #13803F">✓ {{ $isIdLocale ? 'Bulk Split' : 'Bulk Split' }}</span></div>
+          <span style="font-weight: 700; color: #0E1A24">Rp 18,0 jt</span>
+        </div>
+        <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; animation: kvIn .3s ease .4s both">
+          <div><strong style="color: #0E1A24; display: block">INV-104</strong><span style="font-size: 9.5px; color: #13803F">✓ {{ $isIdLocale ? 'Cocok' : 'Matched' }}</span></div>
+          <span style="font-weight: 700; color: #0E1A24">Rp 12,5 jt</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Match Summary -->
+    <div style="display: flex; justify-content: space-between; align-items: center; background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 10px; padding: 9px 14px; font-size: 11px; animation: kvPopIn .35s ease 1.7s both">
+      <span style="color: #64748B">{{ $isIdLocale ? 'Hasil Pencocokan:' : 'Matching Result:' }} <strong style="color: #0E1A24">4 {{ $isIdLocale ? 'transaksi ditautkan ke 4 faktur' : 'transactions linked to 4 invoices' }}</strong></span>
+      <span style="font-weight: 800; color: #13803F">● {{ $isIdLocale ? 'Siap kliring ERP' : 'Ready for ERP clearing' }}</span>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 1: Reconciliation Analysis Agent ==================== -->
+  <div class="kv-br-scene" :class="{ 'kv-active': (sol === 1) || (sol === -1 && activeSol === 1) }">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 12px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #D97706; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px">
+          🔍
+        </span>
+        <span style="font-size: 13px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Analisis Selisih & Valuta Asing (FX)' : 'Discrepancy & FX Analysis' }}</span>
+      </div>
+      <span style="font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: #FEF3C7; color: #92400E; animation: kvPopIn .3s ease 0.6s both">
+        ⚠ {{ $isIdLocale ? 'Selisih Terdeteksi' : 'Discrepancy Flagged' }}
+      </span>
+    </div>
+
+    <!-- Comparison Cards -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px">
+      <!-- Bank Wire -->
+      <div style="background: #F8FAFA; border: 1.5px solid #F59E0B; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; animation: kvIn .3s ease .15s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 10px; font-weight: 800; color: #B45309">TRX 0415 · BANK WIRE</span>
+          <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; background: #FEF3C7; color: #92400E; font-weight: 700">Settled 28 Oct</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px">
+          <strong style="font-size: 15px; color: #0E1A24">Rp 15.900.000</strong>
+          <span style="font-size: 11px; font-weight: 600; color: #64748B">USD 1,000 @ 15.900</span>
+        </div>
+      </div>
+
+      <!-- ERP Invoice -->
+      <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; animation: kvIn .3s ease .25s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 10px; font-weight: 800; color: #4A5866">INV-105 · ERP RECORD</span>
+          <span style="font-size: 9px; padding: 2px 6px; border-radius: 4px; background: #E2E8F0; color: #475569; font-weight: 700">Issued 15 Oct</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px">
+          <strong style="font-size: 15px; color: #0E1A24">Rp 16.200.000</strong>
+          <span style="font-size: 11px; font-weight: 600; color: #64748B">USD 1,000 @ 16.200</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variance Pill -->
+    <div style="display: flex; justify-content: space-between; align-items: center; background: #FFFBEB; border: 1px dashed #F59E0B; border-radius: 10px; padding: 8px 14px; font-size: 11px; animation: kvIn .3s ease .5s both">
+      <span style="font-weight: 700; color: #92400E">{{ $isIdLocale ? 'Variansi Nominal:' : 'Net Variance:' }} <strong style="color: #B45309">-Rp 300.000</strong></span>
+      <span style="font-size: 10px; font-weight: 700; color: #78350F">{{ $isIdLocale ? 'Fluktuasi Kurs USD/IDR (16.200 → 15.900)' : 'Exchange Rate Movement (16,200 → 15,900)' }}</span>
+    </div>
+
+    <!-- AI Root Cause & Recommendation Card -->
+    <div style="background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .35s ease 1.1s both">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #F2C46D">{{ $isIdLocale ? 'AKAR MASALAH (AI ROOT CAUSE)' : 'AI ROOT CAUSE ANALYSIS' }}</span>
+        <span style="font-size: 9.5px; font-weight: 700; color: #2BD46A">Confidence 99.8%</span>
+      </div>
+      <p style="margin: 0; font-size: 11.5px; line-height: 1.5; color: #E2E8F0">
+        {{ $isIdLocale ? 'Selisih Rp 300.000 terverifikasi murni akibat selisih kurs valas terealisasi (Realized FX Loss) antara tanggal terbit invoice dan tanggal penerimaan bank wire.' : 'The Rp 300,000 difference is verified as a Realized Foreign Exchange Loss between the invoice issue date and wire settlement date.' }}
+      </p>
+      <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 8px; margin-top: 2px">
+        <span style="font-size: 10.5px; color: #94A3B8">{{ $isIdLocale ? 'Rekomendasi Tindakan:' : 'Recommended Action:' }} <strong style="color: #FFFFFF">{{ $isIdLocale ? 'Jurnal Otomatis ke GL #7120 (Rugi Selisih Kurs)' : 'Auto-post to GL #7120 (Realized FX Loss)' }}</strong></span>
+        <span style="font-size: 10px; font-weight: 800; color: #2BD46A">✓ {{ $isIdLocale ? 'Siap posting' : 'Ready' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 2: Clearing Agent ==================== -->
+  <div class="kv-br-scene" :class="{ 'kv-active': (sol === 2) || (sol === -1 && activeSol === 2) }">
+    <!-- Clearing Proposal Header -->
+    <div style="background: #F4F6F5; border-radius: 14px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; animation: kvIn .3s ease .1s both">
+      <div style="display: flex; flex-direction: column">
+        <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #13803F">CLEARING PROPOSAL · #CLR-2026-081</span>
+        <strong style="font-size: 13.5px; color: #0E1A24">{{ $isIdLocale ? 'Kliring 4 transaksi cocok + penyesuaian selisih kurs FX' : 'Clear 4 matched items + FX adjustment' }}</strong>
+      </div>
+      <!-- Approve Button with Cursor Click Animation -->
+      <div style="position: relative; display: grid; flex-shrink: 0">
+        <span style="grid-area: 1 / 1; padding: 7px 14px; border-radius: 8px; background: #071C33; color: #FFFFFF; font-size: 11px; font-weight: 800">{{ $isIdLocale ? 'Setujui' : 'Approve' }}</span>
+        <span style="grid-area: 1 / 1; padding: 7px 14px; border-radius: 8px; background: #13803F; color: #FFFFFF; font-size: 11px; font-weight: 800; text-align: center; animation: kvPopIn .3s ease 1.5s both">✓ {{ $isIdLocale ? 'Disetujui' : 'Approved' }}</span>
+        <span aria-hidden="true" style="position: absolute; left: 50%; top: 55%; animation: kvCursor 1.1s ease .8s 1 both">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#0E1A24" stroke="#FFFFFF" stroke-width="1.2"><path d="M5 3l14 8-6 1.5L10 19z"></path></svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- ERP Clearing Table -->
+    <div style="border: 1px solid #E3E8E6; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 7px; animation: kvIn .3s ease .3s both">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 4px; border-bottom: 1px solid #E3E8E6">
+        <span style="font-size: 10.5px; font-weight: 800; color: #64748B; text-transform: uppercase">{{ $isIdLocale ? 'Daftar Kliring ERP (SAP S/4HANA)' : 'ERP Clearing Batch (SAP S/4HANA)' }}</span>
+        <span style="font-size: 9.5px; font-weight: 700; color: #13803F">Batch #POST-9921</span>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 11.5px; animation: kvGreen .3s ease 1.9s both">
+        <span style="color: #0E1A24">TRX 0412 ↔ INV-101</span>
+        <strong style="color: #0B5E2C">✓ {{ $isIdLocale ? 'Terkonfirmasi Kliring' : 'Cleared' }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 11.5px; animation: kvGreen .3s ease 2.1s both">
+        <span style="color: #0E1A24">TRX 0413 ↔ INV-102, INV-103</span>
+        <strong style="color: #0B5E2C">✓ {{ $isIdLocale ? 'Terkonfirmasi Kliring' : 'Cleared' }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 11.5px; animation: kvGreen .3s ease 2.3s both">
+        <span style="color: #0E1A24">TRX 0414 ↔ INV-104</span>
+        <strong style="color: #0B5E2C">✓ {{ $isIdLocale ? 'Terkonfirmasi Kliring' : 'Cleared' }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; padding: 8px 10px; border-radius: 8px; font-size: 11.5px; animation: kvGreen .3s ease 2.5s both">
+        <span style="color: #0E1A24">TRX 0415 ↔ INV-105 + FX (GL #7120)</span>
+        <strong style="color: #0B5E2C">✓ {{ $isIdLocale ? 'Terkonfirmasi Kliring' : 'Cleared' }}</strong>
+      </div>
+    </div>
+
+    <!-- Execution Footer -->
+    <div style="display: flex; justify-content: space-between; align-items: center; background: #DDF3E4; color: #0B5E2C; border-radius: 10px; padding: 8px 12px; font-size: 10.5px; font-weight: 700; animation: kvPopIn .3s ease 2.8s both">
+      <span>✓ {{ $isIdLocale ? 'Semua jurnal penyesuaian berhasil di-posting ke Buku Besar' : 'All journal entries posted to General Ledger' }}</span>
+      <span style="font-weight: 800">{{ $isIdLocale ? 'Saldo Rekonsiliasi: 0' : 'Variance: 0' }}</span>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 3: Audit & Notification Agent ==================== -->
+  <div class="kv-br-scene" :class="{ 'kv-active': (sol === 3) || (sol === -1 && activeSol === 3) }">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 12px">
+      <div style="display: flex; align-items: center; gap: 8px">
+        <span style="width: 28px; height: 28px; border-radius: 50%; background: #071C33; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px">
+          📋
+        </span>
+        <span style="font-size: 13px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Jejak Audit & Notifikasi Otomatis' : 'Audit Trail Log & Team Notification' }}</span>
+      </div>
+      <span style="font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: #DDF3E4; color: #0B5E2C">
+        ● {{ $isIdLocale ? 'Terekam Permanen' : 'Immutable Record' }}
+      </span>
+    </div>
+
+    <!-- Immutable Audit Trail Card -->
+    <div style="background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .35s ease .15s both">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px">
+        <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">AUDIT LOG #REC-8841</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #94A3B8">SHA-256: 7f8a9e...4b</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #D5DEE8">
+        <div style="display: flex; gap: 8px; animation: kvIn .25s ease .3s both">
+          <span style="color: #64748B">09:30:12</span>
+          <span>{{ $isIdLocale ? 'Pencocokan rekening koran batch #BR-402 selesai (4 transaksi).' : 'Bank batch #BR-402 matched (4 transactions).' }}</span>
+        </div>
+        <div style="display: flex; gap: 8px; animation: kvIn .25s ease .6s both">
+          <span style="color: #64748B">09:30:14</span>
+          <span>{{ $isIdLocale ? 'Selisih FX Rp 300k dialokasikan ke Akun #7120.' : 'FX diff Rp 300k allocated to GL #7120.' }}</span>
+        </div>
+        <div style="display: flex; gap: 8px; animation: kvIn .25s ease .9s both">
+          <span style="color: #64748B">09:30:16</span>
+          <span style="color: #2BD46A">✓ {{ $isIdLocale ? 'Proposal kliring disetujui Manajer Keuangan.' : 'Clearing proposal approved by Finance Mgr.' }}</span>
+        </div>
+        <div style="display: flex; gap: 8px; animation: kvIn .25s ease 1.2s both">
+          <span style="color: #64748B">09:30:18</span>
+          <span style="color: #2BD46A">✓ {{ $isIdLocale ? 'Status SAP ERP: 4 transaksi berhasil di-posting ke GL.' : 'SAP ERP Status: 4 transactions posted to GL.' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Cards Stack -->
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <!-- Slack / Teams Broadcast Card -->
+      <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; animation: kvIn .35s ease 1.6s both">
+        <div style="display: flex; align-items: center; gap: 10px">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: #4A154B; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px">#</div>
+          <div>
+            <div style="display: flex; align-items: center; gap: 6px">
+              <strong style="font-size: 11.5px; color: #0E1A24">#finance-treasury</strong>
+              <span style="font-size: 9px; padding: 1px 5px; border-radius: 4px; background: #E2E8F0; color: #475569">Slack</span>
+            </div>
+            <span style="font-size: 10px; color: #64748B; display: block">{{ $isIdLocale ? 'Rekonsiliasi harian selesai: 4 transaksi (Rp 93,4 jt) klir 100%.' : 'Daily reconciliation complete: 4 items (Rp 93.4M) 100% cleared.' }}</span>
+          </div>
+        </div>
+        <span style="font-size: 9px; color: #94A3B8">09:30</span>
+      </div>
+
+      <!-- Verified Status Pill -->
+      <div style="display: flex; align-items: center; justify-content: space-between; background: #DDF3E4; color: #0B5E2C; border-radius: 10px; padding: 8px 12px; font-size: 10.5px; font-weight: 700; animation: kvPopIn .3s ease 2.0s both">
+        <span style="display: flex; align-items: center; gap: 6px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path></svg>
+          {{ $isIdLocale ? 'Tim Keuangan & Akuntansi telah menerima notifikasi' : 'Finance & Treasury teams notified' }}
+        </span>
+        <span style="font-size: 9.5px; font-weight: 800">Delivered</span>
+      </div>
+    </div>
+  </div>
+
 </div>
 </div>
 </div>
@@ -2267,38 +2742,199 @@
 </div>
 
 <div class="kv-sol-ill-wrap">
-<div id="kv-ill-legal" role="img" aria-label="Animated illustration: an agent highlights key clauses in a long contract, flags an auto-renewal clause with related policy references, then answers a notice period question with a clause reference and a key terms summary" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
-<div style="position: absolute; inset: 0; padding: 28px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 22px; align-content: center">
-<div style="background: #F4F6F5; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden">
-<span style="font-size: 12px; font-weight: 800">Service Agreement.pdf</span>
-<span style="height: 6px; width: 90%; border-radius: 3px; background: #D5DCD9"></span>
-<span style="height: 6px; width: 75%; border-radius: 3px; background: #D5DCD9"></span>
-<span style="font-size: 11px; line-height: 1.5; padding: 4px 6px; border-radius: 6px; --c: #C9E8D3; animation: kvMark .3s ease .4s both"><strong>Term:</strong> 24 months from signing</span>
-<span style="height: 6px; width: 85%; border-radius: 3px; background: #D5DCD9"></span>
-<span style="font-size: 11px; line-height: 1.5; padding: 4px 6px; border-radius: 6px; --c: #CFDCEB; animation: kvMark .3s ease .8s both"><strong>Obligation:</strong> provider maintains 99.5% uptime</span>
-<span style="height: 6px; width: 70%; border-radius: 3px; background: #D5DCD9"></span>
-<span style="font-size: 11px; line-height: 1.5; padding: 4px 6px; border-radius: 6px; --c: #FFE1A8; animation: kvMark .3s ease 1.2s both"><strong>Renewal:</strong> renews automatically unless cancelled</span>
-<span style="height: 6px; width: 80%; border-radius: 3px; background: #D5DCD9"></span>
-<span style="font-size: 11px; line-height: 1.5; padding: 4px 6px; border-radius: 6px; --c: #C9E8D3; animation: kvMark .3s ease 1.4s both"><strong>12.2 Termination:</strong> 30 days' written notice</span>
-<span style="height: 6px; width: 60%; border-radius: 3px; background: #D5DCD9"></span>
-<span style="height: 6px; width: 88%; border-radius: 3px; background: #D5DCD9"></span>
-</div>
-<div style="display: flex; flex-direction: column; gap: 12px; font-size: 13px; line-height: 1.5">
-<div style="background: #FFF6E5; border: 1px solid #F2C46D; border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; overflow: hidden; animation: kvIn .3s ease 1.8s both">
-<span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #7A4A00">POTENTIAL ISSUE · AUTO-RENEWAL</span>
-<div style="display: gap: 6px; flex-wrap: wrap">
-<span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; animation: kvIn .3s ease 2.6s both">Internal Contract Policy §4</span>
-<span style="font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px; background: #FFFFFF; animation: kvIn .3s ease 2.9s both">Related regulation</span>
-</div>
-</div>
-<div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 9px 13px; border-radius: 14px 4px 14px 14px; animation: kvIn .3s ease 4.1s both">What is the termination notice period?</div>
-<div style="align-self: flex-start; max-width: 90%; background: #F4F6F5; padding: 9px 13px; border-radius: 4px 14px 14px 14px; animation: kvIn .3s ease 4.7s both"><strong style="font-size: 11px; color: #13803F">Contract Insights Agent</strong><br>30 days' written notice. <span style="font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 6px; background: #DDF3E4; color: #0B5E2C">Clause 12.2</span></div>
-<div style="background: #071C33; color: #FFFFFF; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; overflow: hidden; animation: kvIn .35s ease 5.5s both">
-<span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">KEY TERMS SUMMARY</span>
-<span>Term 24 months · Auto-renewal · Notice 30 days · Uptime 99.5%</span>
-</div>
-</div>
-</div>
+<div id="kv-ill-legal" role="img" aria-label="Animated illustration: contract clauses are reviewed and highlighted for risks, legal regulations are researched and cross-referenced, and conversational contract insights extract key terms with clause citations" style="height: 520px; border-radius: 20px; background: #FFFFFF; border: 1px solid #E3E8E6; position: relative; overflow: hidden">
+
+  <!-- ==================== SCENE 0: Contract Review Agent ==================== -->
+  <div class="kv-legal-scene" :class="{ 'kv-active': (sol === 0) || (sol === -1 && activeSol === 0) }">
+    <!-- Left: Contract Viewer Document -->
+    <div style="background: #F4F6F5; border: 1px solid #E3E8E6; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 9px; box-sizing: border-box; box-shadow: 0 4px 14px rgba(0,0,0,0.03); animation: kvIn .35s ease .1s both">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 6px">
+        <span style="font-size: 11.5px; font-weight: 800; color: #0E1A24">Service_Agreement_2026.pdf</span>
+        <span style="font-size: 9px; font-weight: 700; color: #64748B">Page 4/18</span>
+      </div>
+      <div style="height: 5px; width: 90%; border-radius: 3px; background: #D5DCD9"></div>
+      <div style="height: 5px; width: 75%; border-radius: 3px; background: #D5DCD9"></div>
+      
+      <!-- Highlight 1: Term -->
+      <div style="font-size: 11px; line-height: 1.45; padding: 5px 8px; border-radius: 6px; --c: #C9E8D3; animation: kvMark .3s ease .3s both">
+        <strong style="color: #0B5E2C">Clause 3.1 Term:</strong> {{ $isIdLocale ? '24 bulan sejak tanggal penandatanganan' : '24 months from execution date' }}
+      </div>
+      <div style="height: 5px; width: 85%; border-radius: 3px; background: #D5DCD9"></div>
+      
+      <!-- Highlight 2: SLA -->
+      <div style="font-size: 11px; line-height: 1.45; padding: 5px 8px; border-radius: 6px; --c: #CFDCEB; animation: kvMark .3s ease .6s both">
+        <strong style="color: #1E40AF">Clause 5.2 SLA:</strong> {{ $isIdLocale ? 'Penyedia menjamin ketersediaan sistem 99.5%' : 'Provider maintains 99.5% uptime commitment' }}
+      </div>
+      <div style="height: 5px; width: 70%; border-radius: 3px; background: #D5DCD9"></div>
+      
+      <!-- Highlight 3: Renewal (Potential Risk) -->
+      <div style="font-size: 11px; line-height: 1.45; padding: 5px 8px; border-radius: 6px; --c: #FFE1A8; animation: kvMark .3s ease .9s both">
+        <strong style="color: #92400E">Clause 8.2 Renewal:</strong> {{ $isIdLocale ? 'Perpanjangan otomatis kecuali pembatalan 90 hari' : 'Renews automatically unless 90 days notice given' }}
+      </div>
+      <div style="height: 5px; width: 80%; border-radius: 3px; background: #D5DCD9"></div>
+      
+      <!-- Highlight 4: Termination -->
+      <div style="font-size: 11px; line-height: 1.45; padding: 5px 8px; border-radius: 6px; --c: #FBE6E1; animation: kvMark .3s ease 1.2s both">
+        <strong style="color: #991B1B">Clause 12.2 Termination:</strong> {{ $isIdLocale ? 'Pemberitahuan tertulis 30 hari untuk pengakhiran' : '30 days written notice for termination' }}
+      </div>
+      <div style="height: 5px; width: 65%; border-radius: 3px; background: #D5DCD9"></div>
+    </div>
+
+    <!-- Right: AI Review Findings Card -->
+    <div style="display: flex; flex-direction: column; gap: 12px; justify-content: center">
+      <!-- Risk Finding Card -->
+      <div style="background: #FFF6E5; border: 1.5px solid #F2C46D; border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 1.5s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 9.5px; font-weight: 800; letter-spacing: 0.08em; color: #7A4A00">{{ $isIdLocale ? 'TEMUAN RISIKO · KONFLIK KLAUSUL' : 'POTENTIAL ISSUE · CLAUSE CONFLICT' }}</span>
+          <span style="font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #FEF3C7; color: #92400E">{{ $isIdLocale ? 'Perhatian Tinggi' : 'High Priority' }}</span>
+        </div>
+        <p style="margin: 0; font-size: 11px; line-height: 1.45; color: #78350F">
+          {{ $isIdLocale ? 'Clause 8.2 mensyaratkan 90 hari sebelum perpanjangan otomatis, namun Clause 12.2 memperbolehkan terminasi 30 hari. Berisiko timbul perselisihan perpanjangan otomatis tak terduga.' : 'Clause 8.2 requires 90 days notice for non-renewal, but Clause 12.2 allows convenience termination on 30 days. High risk of unintended renewal lock-in.' }}
+        </p>
+        <div style="border-top: 1px dashed #F2C46D; padding-top: 6px; margin-top: 2px; font-size: 10px; font-weight: 700; color: #92400E">
+          {{ $isIdLocale ? 'Saran Redaksi: Samakan jendela notifikasi menjadi 60 hari.' : 'Recommendation: Standardize notice window to 60 days.' }}
+        </div>
+      </div>
+
+      <!-- Compliance Summary Card -->
+      <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 6px; animation: kvIn .35s ease 1.8s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 10px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Audit Komitmen SLA' : 'SLA Obligation Audit' }}</span>
+          <span style="font-size: 9px; font-weight: 700; color: #16A34A">✓ {{ $isIdLocale ? 'Sesuai Standar' : 'Compliant' }}</span>
+        </div>
+        <span style="font-size: 10.5px; color: #64748B">{{ $isIdLocale ? 'Target 99.5% uptime memenuhi pedoman vendor standar perusahaan.' : '99.5% uptime commitment aligns with corporate vendor policy.' }}</span>
+      </div>
+
+      <!-- Bottom Status Pill -->
+      <div style="display: flex; align-items: center; justify-content: space-between; background: #DDF3E4; color: #0B5E2C; border-radius: 10px; padding: 8px 12px; font-size: 10.5px; font-weight: 700; animation: kvPopIn .3s ease 2.1s both">
+        <span>✓ {{ $isIdLocale ? 'Audit kontrak selesai · 1 konflik ditemukan' : 'Contract review complete · 1 issue flagged' }}</span>
+        <span style="font-weight: 800">100% Scanned</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 1: Legal Research Agent ==================== -->
+  <div class="kv-legal-scene" :class="{ 'kv-active': (sol === 1) || (sol === -1 && activeSol === 1) }">
+    <!-- Left: Regulatory & Statutory Knowledge Base -->
+    <div style="background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; box-shadow: 0 4px 14px rgba(0,0,0,0.03); animation: kvIn .35s ease .1s both">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 6px">
+        <span style="font-size: 11px; font-weight: 800; color: #64748B; text-transform: uppercase">{{ $isIdLocale ? 'Repositori Regulasi & Hukum' : 'Regulatory Knowledge Base' }}</span>
+        <span style="font-size: 9.5px; font-weight: 700; color: #13803F">● {{ $isIdLocale ? 'Tersinkronisasi' : 'Synced' }}</span>
+      </div>
+
+      <!-- Law 1: UU PDP -->
+      <div style="background: #FFFFFF; border: 1.5px solid #13803F; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; animation: kvIn .3s ease .3s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <strong style="font-size: 11px; color: #0E1A24">{{ $isIdLocale ? 'UU No. 27/2022 (UU PDP)' : 'Law No. 27/2022 (PDP Law)' }}</strong>
+          <span style="font-size: 9px; padding: 1px 5px; border-radius: 4px; background: #DDF3E4; color: #0B5E2C; font-weight: 700">Pasal 56</span>
+        </div>
+        <p style="margin: 0; font-size: 10px; line-height: 1.4; color: #4A5866">
+          {{ $isIdLocale ? 'Transfer Data Pribadi ke Luar Negeri wajib memastikan negara penerima memiliki tingkat pelindungan setara atau Standard Contractual Clauses (SCC).' : 'Cross-border personal data transfer requires equivalent level of data protection or binding Standard Contractual Clauses.' }}
+        </p>
+      </div>
+
+      <!-- Policy 2: Corporate Policy -->
+      <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; animation: kvIn .3s ease .5s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <strong style="font-size: 11px; color: #0E1A24">{{ $isIdLocale ? 'Kebijakan Tata Kelola Data Perusahaan' : 'Corporate Data Governance Policy' }}</strong>
+          <span style="font-size: 9px; padding: 1px 5px; border-radius: 4px; background: #E2E8F0; color: #475569; font-weight: 700">SOP § 7.3</span>
+        </div>
+        <p style="margin: 0; font-size: 10px; line-height: 1.4; color: #4A5866">
+          {{ $isIdLocale ? 'Setiap vendor cloud asing wajib menandatangani Data Processing Addendum (DPA) versi terbaru.' : 'All offshore cloud vendors must execute standard Data Processing Addendum (DPA).' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Right: Legal Research Compliance Memo -->
+    <div style="display: flex; flex-direction: column; gap: 12px; justify-content: center">
+      <div style="background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; animation: kvIn .35s ease .8s both">
+        <div style="display: flex; justify-content: space-between; align-items: center">
+          <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">LEGAL RESEARCH AGENT · OPINI KEPATUHAN</span>
+          <span style="font-size: 9px; font-family: 'JetBrains Mono', monospace; color: #94A3B8">REF #LEG-402</span>
+        </div>
+        <div style="font-size: 10.5px; color: #94A3B8; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 6px">
+          {{ $isIdLocale ? 'Konteks Klausul:' : 'Context:' }} <strong style="color: #FFFFFF">{{ $isIdLocale ? 'Pasal 14 · Penyimpanan Cloud di Singapura' : 'Clause 14 · Cloud Data Storage in Singapore' }}</strong>
+        </div>
+        <p style="margin: 0; font-size: 11px; line-height: 1.5; color: #E2E8F0">
+          {{ $isIdLocale ? 'Berdasarkan Pasal 56 UU No. 27/2022, transfer data ke pusat data Singapura sah secara hukum bila melampirkan klausul perlindungan data setara (Standard Contractual Clauses).' : 'Under Article 56 Law No. 27/2022, data hosting in Singapore data center is compliant provided Standard Contractual Clauses (SCC) are incorporated into the agreement.' }}
+        </p>
+        <div style="background: rgba(255,255,255,0.06); border-radius: 8px; padding: 8px 10px; font-size: 10px; color: #F2C46D">
+          {{ $isIdLocale ? 'Rekomendasi Tindakan: Lampirkan DPA v2.4 Kouventa sebelum penandatanganan.' : 'Action Required: Attach Kouventa standard DPA v2.4 before signing.' }}
+        </div>
+      </div>
+
+      <!-- Bottom Status Pill -->
+      <div style="display: flex; align-items: center; justify-content: space-between; background: #DDF3E4; color: #0B5E2C; border-radius: 10px; padding: 8px 12px; font-size: 10.5px; font-weight: 700; animation: kvPopIn .3s ease 1.4s both">
+        <span>✓ {{ $isIdLocale ? 'Tervalidasi sesuai UU PDP & Kebijakan Internal' : 'Validated against PDP Law & Internal Policy' }}</span>
+        <span style="font-weight: 800">Verified</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCENE 2: Contract Insights Agent ==================== -->
+  <div class="kv-legal-scene" :class="{ 'kv-active': (sol === 2) || (sol === -1 && activeSol === 2) }">
+    <!-- Left: Executive Key Terms Summary -->
+    <div style="background: #071C33; color: #FFFFFF; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px; box-sizing: border-box; box-shadow: 0 4px 14px rgba(0,0,0,0.05); animation: kvIn .35s ease .1s both">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 6px">
+        <span style="font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #2BD46A">{{ $isIdLocale ? 'RINGKASAN PARAMETER KUNCI' : 'KEY TERMS SUMMARY' }}</span>
+        <span style="font-size: 9px; color: #94A3B8">Service Agreement</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px">
+        <div style="display: flex; justify-content: space-between; padding: 6px 8px; background: rgba(255,255,255,0.05); border-radius: 6px">
+          <span style="color: #94A3B8">{{ $isIdLocale ? 'Jangka Waktu' : 'Contract Term' }}</span>
+          <strong style="color: #FFFFFF">24 {{ $isIdLocale ? 'Bulan (2 Tahun)' : 'Months' }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 8px; background: rgba(255,255,255,0.05); border-radius: 6px">
+          <span style="color: #94A3B8">{{ $isIdLocale ? 'Komitmen SLA' : 'SLA Commitment' }}</span>
+          <strong style="color: #FFFFFF">99.5% Uptime</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 8px; background: rgba(255,255,255,0.05); border-radius: 6px">
+          <span style="color: #94A3B8">{{ $isIdLocale ? 'Pemberitahuan Terminasi' : 'Termination Notice' }}</span>
+          <strong style="color: #2BD46A">30 {{ $isIdLocale ? 'Hari Tertulis' : 'Days Written' }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 6px 8px; background: rgba(255,255,255,0.05); border-radius: 6px">
+          <span style="color: #94A3B8">{{ $isIdLocale ? 'Yurisdiksi & Sengketa' : 'Governing Law' }}</span>
+          <strong style="color: #FFFFFF">{{ $isIdLocale ? 'Indonesia · BANI' : 'Indonesia Law · BANI' }}</strong>
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 6px; font-size: 9.5px; color: #94A3B8; text-align: center">
+        {{ $isIdLocale ? '18 parameter klausul telah diekstraksi secara instan' : '18 contract parameters extracted instantly' }}
+      </div>
+    </div>
+
+    <!-- Right: Conversational Insights Assistant -->
+    <div style="background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; box-shadow: 0 4px 14px rgba(0,0,0,0.03); animation: kvIn .35s ease .2s both">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E3E8E6; padding-bottom: 6px">
+        <span style="font-size: 11px; font-weight: 800; color: #0E1A24">{{ $isIdLocale ? 'Tanya Jawab Kontrak Instan' : 'Instant Contract Q&A' }}</span>
+        <span style="font-size: 9.5px; font-weight: 700; color: #16A34A">● {{ $isIdLocale ? 'Online' : 'Online' }}</span>
+      </div>
+
+      <!-- User Inquiry Bubble -->
+      <div style="align-self: flex-end; background: #071C33; color: #FFFFFF; padding: 8px 12px; border-radius: 14px 4px 14px 14px; font-size: 11px; max-width: 90%; animation: kvIn .3s ease .4s both">
+        {{ $isIdLocale ? 'Berapa hari periode pemberitahuan untuk pengakhiran kontrak?' : 'What is the termination notice period?' }}
+      </div>
+
+      <!-- Agent Answer Bubble with Reference Citation -->
+      <div style="align-self: flex-start; max-width: 95%; background: #F4F6F5; border-radius: 4px 14px 14px 14px; padding: 10px 12px; font-size: 11px; line-height: 1.45; color: #1E293B; animation: kvIn .3s ease .9s both">
+        <strong style="font-size: 10px; color: #13803F; display: block; margin-bottom: 2px">Contract Insights Agent</strong>
+        {{ $isIdLocale ? 'Periode pemberitahuan resmi adalah 30 hari secara tertulis untuk pengakhiran sepihak tanpa denda khusus.' : '30 days written notice is required for standard termination without additional penalty.' }}
+        <div style="margin-top: 6px">
+          <span style="font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 4px; background: #DDF3E4; color: #0B5E2C">
+            ✓ {{ $isIdLocale ? 'Pasal 12.2 · Halaman 14' : 'Clause 12.2 · Page 14' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Bottom Citation Guarantee -->
+      <div style="display: flex; align-items: center; justify-content: space-between; background: #F8FAFA; border: 1px solid #E3E8E6; border-radius: 8px; padding: 6px 10px; font-size: 10px; color: #64748B; animation: kvPopIn .3s ease 1.3s both">
+        <span>{{ $isIdLocale ? 'Jawaban 100% dikutip langsung dari naskah kontrak' : 'Answer grounded directly in contract text' }}</span>
+        <strong style="color: #13803F">Verified</strong>
+      </div>
+    </div>
+  </div>
+
 </div>
 </div>
 </div>
@@ -2320,6 +2956,7 @@
 <span style="font-size: 18px; line-height: 1.4; font-weight: 800">{{ is_array($imp) ? ($imp['text'] ?? '') : $imp }}</span>
 </div>
 @endforeach
+</div>
 </div>
 </div>
 </div>
