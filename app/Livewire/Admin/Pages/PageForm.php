@@ -372,8 +372,13 @@ class PageForm extends Component
                 // Default locale, no snapshot yet — keep whatever's currently in the form
             } else {
                 // Non-default locale with no translation: assign matching array structure for compound types
+                $defaultRows = $this->localizedBlockValues[$defaultLocale][$name]['value'] ?? [];
+                if (is_string($defaultRows)) {
+                    $defaultRows = json_decode($defaultRows, true) ?: [];
+                }
                 $this->blocks[$bi]['value'] = match ($type) {
-                    'repeater', 'checkbox', 'gallery', 'posts' => [],
+                    'repeater' => is_array($defaultRows) ? $defaultRows : [],
+                    'checkbox', 'gallery', 'posts' => [],
                     'button' => ['text' => '', 'url' => '#', 'target' => '_self'],
                     'title' => ['prefix' => '', 'main' => ''],
                     'card' => ['title' => '', 'description' => '', 'asset_type' => 'image', 'image' => '', 'icon' => 'lucide:sparkles', 'description_type' => 'text', 'list_icon' => 'lucide:check-circle', 'list_items' => '', 'wysiwyg_content' => '', 'button_text' => '', 'button_url' => '#', 'button_target' => '_self'],
@@ -743,7 +748,10 @@ class PageForm extends Component
 
         // Initialize an empty row with keys based on children fields
         $newRow = [];
-        foreach ($this->blocks[$blockIndex]['children'] ?? [] as $field) {
+        $children = ! empty($this->blocks[$blockIndex]['children'])
+            ? $this->blocks[$blockIndex]['children']
+            : ($this->blocks[$blockIndex]['options']['children'] ?? []);
+        foreach ($children as $field) {
             $newRow[$field['name']] = ''; // Default empty value
         }
 
@@ -755,6 +763,27 @@ class PageForm extends Component
     {
         if (isset($this->blocks[$blockIndex]['value'][$rowIndex])) {
             array_splice($this->blocks[$blockIndex]['value'], $rowIndex, 1);
+            $this->hasUnsavedChanges = true;
+        }
+    }
+
+    public function moveRepeaterRowUp(int $blockIndex, int $rowIndex)
+    {
+        if ($rowIndex > 0 && isset($this->blocks[$blockIndex]['value'][$rowIndex])) {
+            $temp = $this->blocks[$blockIndex]['value'][$rowIndex];
+            $this->blocks[$blockIndex]['value'][$rowIndex] = $this->blocks[$blockIndex]['value'][$rowIndex - 1];
+            $this->blocks[$blockIndex]['value'][$rowIndex - 1] = $temp;
+            $this->hasUnsavedChanges = true;
+        }
+    }
+
+    public function moveRepeaterRowDown(int $blockIndex, int $rowIndex)
+    {
+        $rows = $this->blocks[$blockIndex]['value'] ?? [];
+        if ($rowIndex < count($rows) - 1 && isset($rows[$rowIndex])) {
+            $temp = $this->blocks[$blockIndex]['value'][$rowIndex];
+            $this->blocks[$blockIndex]['value'][$rowIndex] = $this->blocks[$blockIndex]['value'][$rowIndex + 1];
+            $this->blocks[$blockIndex]['value'][$rowIndex + 1] = $temp;
             $this->hasUnsavedChanges = true;
         }
     }

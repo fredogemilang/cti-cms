@@ -28,136 +28,704 @@
             "label": "Homepage",
             "description": "Main Kouventa Homepage (Dual-track AI & Customer Engagement)",
             "blocks": [
-                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "AI adoption,", "main": "done right."}},
-                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "For your customers. For your teams. One enterprise AI platform, your organization’s rules."},
-                {"name": "hero_cta", "type": "button", "label": "Hero CTA Button", "default": {"text": "See how it fits your business", "url": "#pick-team"}},
-                {"name": "paths_title", "type": "title", "label": "Two Paths Title", "default": {"prefix": "", "main": "Where do you want to start?"}},
-                {"name": "path1_badge", "type": "text", "label": "Path 1 Badge", "default": "AI that works"},
-                {"name": "path1_title", "type": "title", "label": "Path 1 Title", "default": {"prefix": "Inside your", "main": "organization."}},
-                {"name": "path1_desc", "type": "textarea", "label": "Path 1 Description", "default": "Instant answer from your company knowledge, and AI agents that take routine tasks off your teams"},
-                {"name": "path1_button", "type": "button", "label": "Path 1 Link", "default": {"text": "Explore more", "url": "/product/ai"}},
-                {"name": "path2_badge", "type": "text", "label": "Path 2 Badge", "default": "AI that engages"},
-                {"name": "path2_title", "type": "title", "label": "Path 2 Title", "default": {"prefix": "With your", "main": "customers."}},
-                {"name": "path2_desc", "type": "textarea", "label": "Path 2 Description", "default": "Chatbots reply first on WhatsApp, Instagram, Facebook and Live Chat, then hand off to your agents when needed."},
-                {"name": "path2_button", "type": "button", "label": "Path 2 Link", "default": {"text": "Explore more", "url": "/product/customer-engagement"}},
-                {"name": "industries_title", "type": "text", "label": "Industries Section Title", "default": "Proven across industries."},
-                {"name": "teams_title", "type": "text", "label": "Teams Section Title", "default": "Pick your team to see how it works for your organization."},
-                {"name": "why_title", "type": "title", "label": "Why Section Title", "default": {"prefix": "Enterprise ready", "main": "from day one."}},
-                {"name": "partners_title", "type": "text", "label": "Partners Section Title", "default": "Technology Partners"},
-                {"name": "customers_title", "type": "text", "label": "Customers Section Title", "default": "They trusted us."},
-                {"name": "results_title", "type": "text", "label": "Testimonials Section Title", "default": "Real results, in their words."},
-                {"name": "cta_title", "type": "text", "label": "Bottom CTA Title", "default": "Ready to see it work for your business?"},
-                {"name": "cta_subtitle", "type": "textarea", "label": "Bottom CTA Subtitle", "default": "Book a demo and we'll walk you through it with your own use case."},
-                {"name": "cta_demo_button", "type": "button", "label": "CTA Book Demo Button", "default": {"text": "Book a demo", "url": "/book-demo"}},
-                {"name": "cta_pricing_button", "type": "button", "label": "CTA See Pricing Button", "default": {"text": "See pricing", "url": "/pricing"}},
-                {"name": "videos_title", "type": "text", "label": "Videos Section Title", "default": "See Kouventa in action."}
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Main Title",
+                    "default": {
+                        "prefix": "AI adoption,",
+                        "main": "done right."
+                    }
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "For your customers. For your teams. One enterprise AI platform, your organization’s rules."
+                },
+                {
+                    "name": "hero_cta",
+                    "type": "button",
+                    "label": "Hero CTA Button",
+                    "default": {
+                        "text": "See how it fits your business",
+                        "url": "#pick-team"
+                    }
+                },
+                {
+                    "name": "paths_title",
+                    "type": "title",
+                    "label": "Two Paths Title",
+                    "default": {
+                        "prefix": "",
+                        "main": "Where do you want to start?"
+                    }
+                },
+                {
+                    "name": "path1_badge",
+                    "type": "text",
+                    "label": "Path 1 Badge",
+                    "default": "AI that works"
+                },
+                {
+                    "name": "path1_title",
+                    "type": "title",
+                    "label": "Path 1 Title",
+                    "default": {
+                        "prefix": "Inside your",
+                        "main": "organization."
+                    }
+                },
+                {
+                    "name": "path1_desc",
+                    "type": "textarea",
+                    "label": "Path 1 Description",
+                    "default": "Instant answer from your company knowledge, and AI agents that take routine tasks off your teams"
+                },
+                {
+                    "name": "path1_button",
+                    "type": "button",
+                    "label": "Path 1 Link",
+                    "default": {
+                        "text": "Explore more",
+                        "url": "/product/ai"
+                    }
+                },
+                {
+                    "name": "path2_badge",
+                    "type": "text",
+                    "label": "Path 2 Badge",
+                    "default": "AI that engages"
+                },
+                {
+                    "name": "path2_title",
+                    "type": "title",
+                    "label": "Path 2 Title",
+                    "default": {
+                        "prefix": "With your",
+                        "main": "customers."
+                    }
+                },
+                {
+                    "name": "path2_desc",
+                    "type": "textarea",
+                    "label": "Path 2 Description",
+                    "default": "Chatbots reply first on WhatsApp, Instagram, Facebook and Live Chat, then hand off to your agents when needed."
+                },
+                {
+                    "name": "path2_button",
+                    "type": "button",
+                    "label": "Path 2 Link",
+                    "default": {
+                        "text": "Explore more",
+                        "url": "/product/customer-engagement"
+                    }
+                },
+                {
+                    "name": "industries_title",
+                    "type": "text",
+                    "label": "Industries Section Title",
+                    "default": "Proven across industries."
+                },
+                {
+                    "name": "teams_title",
+                    "type": "text",
+                    "label": "Teams Section Title",
+                    "default": "Pick your team to see how it works for your organization."
+                },
+                {
+                    "name": "why_title",
+                    "type": "title",
+                    "label": "Why Section Title",
+                    "default": {
+                        "prefix": "Enterprise ready",
+                        "main": "from day one."
+                    }
+                },
+                {
+                    "name": "partners_title",
+                    "type": "text",
+                    "label": "Partners Section Title",
+                    "default": "Technology Partners"
+                },
+                {
+                    "name": "customers_title",
+                    "type": "text",
+                    "label": "Customers Section Title",
+                    "default": "They trusted us."
+                },
+                {
+                    "name": "results_title",
+                    "type": "text",
+                    "label": "Testimonials Section Title",
+                    "default": "Real results, in their words."
+                },
+                {
+                    "name": "cta_title",
+                    "type": "text",
+                    "label": "Bottom CTA Title",
+                    "default": "Ready to see it work for your business?"
+                },
+                {
+                    "name": "cta_subtitle",
+                    "type": "textarea",
+                    "label": "Bottom CTA Subtitle",
+                    "default": "Book a demo and we'll walk you through it with your own use case."
+                },
+                {
+                    "name": "cta_demo_button",
+                    "type": "button",
+                    "label": "CTA Book Demo Button",
+                    "default": {
+                        "text": "Book a demo",
+                        "url": "/book-demo"
+                    }
+                },
+                {
+                    "name": "cta_pricing_button",
+                    "type": "button",
+                    "label": "CTA See Pricing Button",
+                    "default": {
+                        "text": "See pricing",
+                        "url": "/pricing"
+                    }
+                },
+                {
+                    "name": "videos_title",
+                    "type": "text",
+                    "label": "Videos Section Title",
+                    "default": "See Kouventa in action."
+                }
             ]
         },
         "product-ai": {
             "label": "Product AI",
             "description": "Artificial Intelligence product overview page",
             "blocks": [
-                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "One AI platform is", "main": "all you need."}},
-                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "Build AI agents with ease and put them to work on what your organization needs, with control you can measure."},
-                {"name": "hero_cta", "type": "button", "label": "Hero CTA Button", "default": {"text": "Book a demo", "url": "/book-demo"}},
-                {"name": "hero_secondary_cta", "type": "button", "label": "Hero Secondary Button", "default": {"text": "Explore products", "url": "#ai-products"}},
-                {"name": "challenges_title", "type": "title", "label": "Challenges Section Title", "default": {"prefix": "Too many AI tools,", "main": "too little control."}},
-                {"name": "products_title", "type": "text", "label": "Products Section Title", "default": "Four specialized products, one unified platform."},
-                {"name": "security_title", "type": "title", "label": "Security Section Title", "default": {"prefix": "Enterprise AI needs", "main": "enterprise guardrails."}},
-                {"name": "security_subtitle", "type": "textarea", "label": "Security Section Subtitle", "default": "Built for data privacy, compliance, and control from the ground up."},
-                {"name": "deploy_title", "type": "title", "label": "Deploy Section Title", "default": {"prefix": "Deploy where your", "main": "data lives."}},
-                {"name": "bottom_cta_title", "type": "text", "label": "Bottom CTA Title", "default": "Ready to take control of AI in your organization?"},
-                {"name": "bottom_cta_subtitle", "type": "textarea", "label": "Bottom CTA Subtitle", "default": "Book a demo to see how Kouventa unifies AI adoption with enterprise control."}
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Main Title",
+                    "default": {
+                        "prefix": "One AI platform is",
+                        "main": "all you need."
+                    }
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "Build AI agents with ease and put them to work on what your organization needs, with control you can measure."
+                },
+                {
+                    "name": "hero_cta",
+                    "type": "button",
+                    "label": "Hero CTA Button",
+                    "default": {
+                        "text": "Book a demo",
+                        "url": "/book-demo"
+                    }
+                },
+                {
+                    "name": "hero_secondary_cta",
+                    "type": "button",
+                    "label": "Hero Secondary Button",
+                    "default": {
+                        "text": "Explore products",
+                        "url": "#ai-products"
+                    }
+                },
+                {
+                    "name": "challenges_title",
+                    "type": "title",
+                    "label": "Challenges Section Title",
+                    "default": {
+                        "prefix": "Too many AI tools,",
+                        "main": "too little control."
+                    }
+                },
+                {
+                    "name": "products_title",
+                    "type": "text",
+                    "label": "Products Section Title",
+                    "default": "Four specialized products, one unified platform."
+                },
+                {
+                    "name": "security_title",
+                    "type": "title",
+                    "label": "Security Section Title",
+                    "default": {
+                        "prefix": "Enterprise AI needs",
+                        "main": "enterprise guardrails."
+                    }
+                },
+                {
+                    "name": "security_subtitle",
+                    "type": "textarea",
+                    "label": "Security Section Subtitle",
+                    "default": "Built for data privacy, compliance, and control from the ground up."
+                },
+                {
+                    "name": "deploy_title",
+                    "type": "title",
+                    "label": "Deploy Section Title",
+                    "default": {
+                        "prefix": "Deploy where your",
+                        "main": "data lives."
+                    }
+                },
+                {
+                    "name": "bottom_cta_title",
+                    "type": "text",
+                    "label": "Bottom CTA Title",
+                    "default": "Ready to take control of AI in your organization?"
+                },
+                {
+                    "name": "bottom_cta_subtitle",
+                    "type": "textarea",
+                    "label": "Bottom CTA Subtitle",
+                    "default": "Book a demo to see how Kouventa unifies AI adoption with enterprise control."
+                }
             ]
         },
         "product-ce": {
             "label": "Product Customer Engagement",
             "description": "Customer Engagement WhatsApp & Omnichannel page",
             "blocks": [
-                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "The smarter way to", "main": "engage customers."}},
-                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "Reach more customers, respond faster, and keep every conversation seamless — on WhatsApp and beyond."},
-                {"name": "hero_cta", "type": "button", "label": "Hero CTA Button", "default": {"text": "Book a demo", "url": "/book-demo"}},
-                {"name": "channels_title", "type": "title", "label": "Channels Section Title", "default": {"prefix": "Every missed message is a", "main": "missed sale."}},
-                {"name": "features_title", "type": "title", "label": "Features Section Title", "default": {"prefix": "One platform.", "main": "Zero missed messages."}},
-                {"name": "why_title", "type": "title", "label": "Why CE Section Title", "default": {"prefix": "Why Kouventa for customer", "main": "engagement"}},
-                {"name": "bottom_cta_title", "type": "text", "label": "Bottom CTA Title", "default": "Start engaging customers on WhatsApp."},
-                {"name": "bottom_cta_subtitle", "type": "textarea", "label": "Bottom CTA Subtitle", "default": "Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge."}
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Main Title",
+                    "default": {
+                        "prefix": "The smarter way to",
+                        "main": "engage customers."
+                    }
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "Reach more customers, respond faster, and keep every conversation seamless — on WhatsApp and beyond."
+                },
+                {
+                    "name": "hero_cta",
+                    "type": "button",
+                    "label": "Hero CTA Button",
+                    "default": {
+                        "text": "Book a demo",
+                        "url": "/book-demo"
+                    }
+                },
+                {
+                    "name": "channels_title",
+                    "type": "title",
+                    "label": "Channels Section Title",
+                    "default": {
+                        "prefix": "Every missed message is a",
+                        "main": "missed sale."
+                    }
+                },
+                {
+                    "name": "features_title",
+                    "type": "title",
+                    "label": "Features Section Title",
+                    "default": {
+                        "prefix": "One platform.",
+                        "main": "Zero missed messages."
+                    }
+                },
+                {
+                    "name": "why_title",
+                    "type": "title",
+                    "label": "Why CE Section Title",
+                    "default": {
+                        "prefix": "Why Kouventa for customer",
+                        "main": "engagement"
+                    }
+                },
+                {
+                    "name": "bottom_cta_title",
+                    "type": "text",
+                    "label": "Bottom CTA Title",
+                    "default": "Start engaging customers on WhatsApp."
+                },
+                {
+                    "name": "bottom_cta_subtitle",
+                    "type": "textarea",
+                    "label": "Bottom CTA Subtitle",
+                    "default": "Connect with our team to set up your WhatsApp Business Platform account, tailored templates, and verified badge."
+                }
             ]
         },
         "solution-ai": {
             "label": "Solution AI",
             "description": "AI Solutions for 6 enterprise departments",
             "blocks": [
-                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "From knowledge to action", "main": "with AI."}},
-                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "From knowledge retrieval to process automation, Kouventa AI helps businesses turn information into actionable insights and automate business processes with AI-powered autonomous agents."},
-                {"name": "hero_cta", "type": "button", "label": "Hero CTA Button", "default": {"text": "Request a Demo", "url": "/book-demo"}},
-                {"name": "bottom_cta_title", "type": "text", "label": "Bottom CTA Title", "default": "Start simple. Scale with confidence."},
-                {"name": "bottom_cta_subtitle", "type": "textarea", "label": "Bottom CTA Subtitle", "default": "Begin with everyday AI for your employees, governed by your organization. Grow into AI agents when you're ready."}
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Main Title",
+                    "default": {
+                        "prefix": "From knowledge to action",
+                        "main": "with AI."
+                    }
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "From knowledge retrieval to process automation, Kouventa AI helps businesses turn information into actionable insights and automate business processes with AI-powered autonomous agents."
+                },
+                {
+                    "name": "hero_cta",
+                    "type": "button",
+                    "label": "Hero CTA Button",
+                    "default": {
+                        "text": "Request a Demo",
+                        "url": "/book-demo"
+                    }
+                },
+                {
+                    "name": "bottom_cta_title",
+                    "type": "text",
+                    "label": "Bottom CTA Title",
+                    "default": "Start simple. Scale with confidence."
+                },
+                {
+                    "name": "bottom_cta_subtitle",
+                    "type": "textarea",
+                    "label": "Bottom CTA Subtitle",
+                    "default": "Begin with everyday AI for your employees, governed by your organization. Grow into AI agents when you're ready."
+                }
             ]
         },
         "solution-ce": {
             "label": "Solution Customer Engagement",
             "description": "Customer Engagement solutions by use-case",
             "blocks": [
-                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "Seamless omnichannel", "main": "customer experience."}},
-                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "From marketing campaigns and customer support to operational updates, Kouventa helps businesses connect, respond, and communicate more effectively."},
-                {"name": "hero_cta", "type": "button", "label": "Hero CTA Button", "default": {"text": "Request a Demo", "url": "/book-demo"}},
-                {"name": "bottom_cta_title", "type": "text", "label": "Bottom CTA Title", "default": "Ready to improve every customer conversation?"},
-                {"name": "bottom_cta_subtitle", "type": "textarea", "label": "Bottom CTA Subtitle", "default": "Tell us about your team's needs and we'll show you how Kouventa fits."}
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Main Title",
+                    "default": {
+                        "prefix": "Seamless omnichannel",
+                        "main": "customer experience."
+                    }
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "From marketing campaigns and customer support to operational updates, Kouventa helps businesses connect, respond, and communicate more effectively."
+                },
+                {
+                    "name": "hero_cta",
+                    "type": "button",
+                    "label": "Hero CTA Button",
+                    "default": {
+                        "text": "Request a Demo",
+                        "url": "/book-demo"
+                    }
+                },
+                {
+                    "name": "bottom_cta_title",
+                    "type": "text",
+                    "label": "Bottom CTA Title",
+                    "default": "Ready to improve every customer conversation?"
+                },
+                {
+                    "name": "bottom_cta_subtitle",
+                    "type": "textarea",
+                    "label": "Bottom CTA Subtitle",
+                    "default": "Tell us about your team's needs and we'll show you how Kouventa fits."
+                }
             ]
         },
         "pricing": {
             "label": "Pricing",
             "description": "Pricing tiers and WhatsApp conversation cost calculator",
             "blocks": [
-                {"name": "hero_badge", "type": "text", "label": "Hero Badge", "default": ""},
-                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "Intelligence you control,", "main": "priced for how you grow."}},
-                {"name": "hero_subtitle", "type": "textarea", "label": "Hero Subtitle", "default": "Two platforms, three tiers each. Start where your team is today, and\nscale without switching vendors."},
-                {"name": "calc_title", "type": "text", "label": "Calculator Section Title", "default": "Estimate your monthly WhatsApp costs."},
-                {"name": "calc_subtitle", "type": "textarea", "label": "Calculator Section Subtitle", "default": "Kouventa passes Meta conversation fees at cost with zero markup."},
-                {"name": "faq_title", "type": "text", "label": "FAQ Section Title", "default": "Frequently asked questions"},
-                {"name": "cta_title", "type": "text", "label": "Custom Setup CTA Title", "default": "Ready to see how your team would use it?"},
-                {"name": "cta_subtitle", "type": "textarea", "label": "Custom Setup CTA Subtitle", "default": "Book a working session with our solution team. We'll map your use cases to the right tier and deployment."}
+                {
+                    "name": "hero_badge",
+                    "type": "text",
+                    "label": "Hero Badge",
+                    "default": ""
+                },
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Main Title",
+                    "default": {
+                        "prefix": "Intelligence you control,",
+                        "main": "priced for how you grow."
+                    }
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "Two platforms, three tiers each. Start where your team is today, and\nscale without switching vendors."
+                },
+                {
+                    "name": "calc_title",
+                    "type": "text",
+                    "label": "Calculator Section Title",
+                    "default": "Estimate your monthly WhatsApp costs."
+                },
+                {
+                    "name": "calc_subtitle",
+                    "type": "textarea",
+                    "label": "Calculator Section Subtitle",
+                    "default": "Kouventa passes Meta conversation fees at cost with zero markup."
+                },
+                {
+                    "name": "faq_title",
+                    "type": "text",
+                    "label": "FAQ Section Title",
+                    "default": "Frequently asked questions"
+                },
+                {
+                    "name": "cta_title",
+                    "type": "text",
+                    "label": "Custom Setup CTA Title",
+                    "default": "Ready to see how your team would use it?"
+                },
+                {
+                    "name": "cta_subtitle",
+                    "type": "textarea",
+                    "label": "Custom Setup CTA Subtitle",
+                    "default": "Book a working session with our solution team. We'll map your use cases to the right tier and deployment."
+                }
             ]
         },
         "about": {
             "label": "About Us",
             "description": "About Kouventa, mission, leadership, and milestones",
             "blocks": [
-                {"name": "hero_badge", "type": "text", "label": "Hero Badge", "default": "About us"},
-                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "From business communication", "main": "to enterprise AI."}},
-                {"name": "values_badge", "type": "text", "label": "Values Section Badge", "default": "Our value"},
-                {"name": "history_title", "type": "text", "label": "History Section Title", "default": "History"}
+                {
+                    "name": "hero_badge",
+                    "type": "text",
+                    "label": "Hero Badge",
+                    "default": "About us"
+                },
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Main Title",
+                    "default": {
+                        "prefix": "From business communication",
+                        "main": "to enterprise AI."
+                    }
+                },
+                {
+                    "name": "team_image",
+                    "type": "media",
+                    "label": "Team Photo",
+                    "default": "images/kouventa-team.png"
+                },
+                {
+                    "name": "values_badge",
+                    "type": "text",
+                    "label": "Values Section Badge",
+                    "default": "Our value"
+                },
+                {
+                    "name": "values_list",
+                    "type": "repeater",
+                    "label": "Company Values",
+                    "children": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Value Title (e.g. Agile, Adaptive)"
+                        },
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "label": "Value Description"
+                        },
+                        {
+                            "name": "icon",
+                            "type": "text",
+                            "label": "Icon (optional Lucide icon or preset)"
+                        }
+                    ],
+                    "default": [
+                        {
+                            "title": "Agile",
+                            "description": "We focus on collaboration, responsiveness, and delivering working solutions to foster innovation and exceed stakeholder expectations.",
+                            "icon": ""
+                        },
+                        {
+                            "title": "Adaptive",
+                            "description": "We thrive on adaptability, shaping solutions to evolving needs. Our success is rooted in embracing change, growth, and innovation.",
+                            "icon": ""
+                        },
+                        {
+                            "title": "AI Friendly",
+                            "description": "We excel with AI-friendly innovation, leveraging technology to enhance customer experiences and create meaningful, future-ready interactions.",
+                            "icon": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "history_title",
+                    "type": "text",
+                    "label": "History Section Title",
+                    "default": "History"
+                },
+                {
+                    "name": "history_timeline",
+                    "type": "repeater",
+                    "label": "History Timeline Milestones",
+                    "children": [
+                        {
+                            "name": "year",
+                            "type": "text",
+                            "label": "Year (e.g. 2014, 2021)"
+                        },
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Milestone Title"
+                        },
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "label": "Milestone Description"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Milestone Image"
+                        }
+                    ],
+                    "default": [
+                        {
+                            "year": "2014",
+                            "title": "Established",
+                            "description": "PT Helios Informatika Nusantara (Helios) was established in 2014 as IT Value Added Distributor (VAD). As a member of PT Computrade Technology International (CTI Group), Helios collaborates with some of the world's leading IT global companies to provide our clients with cutting-edge and innovative technologies.",
+                            "image": "images/about-milestone-office.webp"
+                        },
+                        {
+                            "year": "2021",
+                            "title": "Embracing The Digital Era",
+                            "description": "We created Kouventa, an All-In-One Customer Engagement solution, to help businesses maintain and grow their customer engagement. We are also committed to providing great service and support to our clients who wish to maximize the usefulness of technology such as Generative AI technology, and API Integration.",
+                            "image": "images/about-milestone-planning.webp"
+                        },
+                        {
+                            "year": "2022",
+                            "title": "Advancing The Generative AI Solutions",
+                            "description": "Kouventa provides an AI Company Wikipedia solution based on Gen-AI technology, crafted to address enterprise demands for advanced AI adoption in complex operations.",
+                            "image": "images/about-milestone-genai.webp"
+                        },
+                        {
+                            "year": "2026",
+                            "title": "Agentic AI with AI Task Force",
+                            "description": "Kouventa launched AI Task Force, its Agentic AI solution, allowing intelligent agents to reason, plan, and take action across enterprise applications to automate business processes from start to finish.",
+                            "image": "images/about-milestone-agentic.webp"
+                        }
+                    ]
+                }
             ]
         },
         "blog": {
             "label": "Blog",
             "description": "Thought leadership and AI insight articles",
             "blocks": [
-                {"name": "hero_badge", "type": "text", "label": "Hero Badge", "default": "Blog"},
-                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "Explore the newest articles", "main": "in our blog."}}
+                {
+                    "name": "hero_badge",
+                    "type": "text",
+                    "label": "Hero Badge",
+                    "default": "Blog"
+                },
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Main Title",
+                    "default": {
+                        "prefix": "Explore the newest articles",
+                        "main": "in our blog."
+                    }
+                }
             ]
         },
         "insight": {
             "label": "Insight (Blog)",
             "description": "Thought leadership and AI insight articles",
             "blocks": [
-                {"name": "hero_badge", "type": "text", "label": "Hero Badge", "default": "Blog"},
-                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "Explore the newest articles", "main": "in our blog."}}
+                {
+                    "name": "hero_badge",
+                    "type": "text",
+                    "label": "Hero Badge",
+                    "default": "Blog"
+                },
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Main Title",
+                    "default": {
+                        "prefix": "Explore the newest articles",
+                        "main": "in our blog."
+                    }
+                }
             ]
         },
         "book-demo": {
             "label": "Book a Demo",
             "description": "Enterprise consultation booking page with Form Studio slot",
             "blocks": [
-                {"name": "hero_title", "type": "title", "label": "Hero Main Title", "default": {"prefix": "Get in touch", "main": "with us."}},
-                {"name": "hero_badge", "type": "text", "label": "Hero Badge / Tagline", "default": "Enjoy a 30-day free trial"},
-                {"name": "location_title", "type": "text", "label": "Location Label", "default": "Location"},
-                {"name": "location_text", "type": "textarea", "label": "Office Address", "default": "Centennial Tower, 12th Floor, Jl. Jend. Gatot Subroto Kav. 24-25, Jakarta"},
-                {"name": "phone_title", "type": "text", "label": "Phone Label", "default": "Phone"},
-                {"name": "phone_number", "type": "text", "label": "Phone Number", "default": "+62 811 8496 889"},
-                {"name": "email_title", "type": "text", "label": "Email Label", "default": "Email"},
-                {"name": "email_address", "type": "text", "label": "Email Address", "default": "kouventa@helios.id"}
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Main Title",
+                    "default": {
+                        "prefix": "Get in touch",
+                        "main": "with us."
+                    }
+                },
+                {
+                    "name": "hero_badge",
+                    "type": "text",
+                    "label": "Hero Badge / Tagline",
+                    "default": "Enjoy a 30-day free trial"
+                },
+                {
+                    "name": "location_title",
+                    "type": "text",
+                    "label": "Location Label",
+                    "default": "Location"
+                },
+                {
+                    "name": "location_text",
+                    "type": "textarea",
+                    "label": "Office Address",
+                    "default": "Centennial Tower, 12th Floor, Jl. Jend. Gatot Subroto Kav. 24-25, Jakarta"
+                },
+                {
+                    "name": "phone_title",
+                    "type": "text",
+                    "label": "Phone Label",
+                    "default": "Phone"
+                },
+                {
+                    "name": "phone_number",
+                    "type": "text",
+                    "label": "Phone Number",
+                    "default": "+62 811 8496 889"
+                },
+                {
+                    "name": "email_title",
+                    "type": "text",
+                    "label": "Email Label",
+                    "default": "Email"
+                },
+                {
+                    "name": "email_address",
+                    "type": "text",
+                    "label": "Email Address",
+                    "default": "kouventa@helios.id"
+                }
             ]
         },
         "terms-conditions": {

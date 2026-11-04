@@ -56,7 +56,7 @@ class PageTemplateService
                 $options['children'] = $blockDef['children'];
             }
 
-            PageBlock::create([
+            $createdBlock = PageBlock::create([
                 'page_id' => $page->id,
                 'name' => $blockDef['name'],
                 'type' => $blockDef['type'],
@@ -66,6 +66,22 @@ class PageTemplateService
                 'order' => $order,
                 'is_active' => true,
             ]);
+
+            if (isset($blockDef['children']) && is_array($blockDef['children'])) {
+                foreach ($blockDef['children'] as $childIndex => $childData) {
+                    PageBlock::create([
+                        'page_id' => $page->id,
+                        'parent_block_id' => $createdBlock->id,
+                        'name' => $childData['name'],
+                        'type' => $childData['type'],
+                        'label' => $childData['label'] ?? ucfirst(str_replace('_', ' ', $childData['name'])),
+                        'value' => '',
+                        'options' => $childData['options'] ?? [],
+                        'order' => $childIndex,
+                        'is_active' => true,
+                    ]);
+                }
+            }
 
             $seeded[] = $blockDef['name'];
         }
