@@ -18,6 +18,7 @@ use App\Services\Schema\SchemaRegistry;
 use App\Services\SettingsRegistry;
 use App\Services\TaxonomyRegistry;
 use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -59,6 +60,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (app()->environment('production') || str_starts_with((string) config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
+
         /** @var AiResourceRegistry $aiRegistry */
         $aiRegistry = $this->app->make(AiResourceRegistry::class);
         $aiRegistry->registerResource('Schema Manifest (AI Index)', url('/schema-manifest.json'), 'Machine-readable Data Catalog Index');

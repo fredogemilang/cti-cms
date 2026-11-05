@@ -205,6 +205,9 @@
                 <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 4) }}" @click="activeSheet = null" class="kv-sheet-sub-item">
                     {{ t('kouventa.Finance', 'Finance') }}
                 </a>
+                <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 5) }}" @click="activeSheet = null" class="kv-sheet-sub-item">
+                    {{ t('kouventa.Bank Reconciliation', 'Bank Reconciliation') }}
+                </a>
                 <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 6) }}" @click="activeSheet = null" class="kv-sheet-sub-item">
                     {{ t('kouventa.Legal & Compliance', 'Legal & Compliance') }}
                 </a>

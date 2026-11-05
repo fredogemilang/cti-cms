@@ -318,18 +318,18 @@
 </style>
 
 <div role="tablist" aria-label="Solutions by role" class="kv-sol-ce-tablist">
-<button type="button" role="tab" class="kv-sol-ce-tab" :aria-selected="tab === 0" @click="pickTab(0)">
+<a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ce', 0) }}" role="tab" class="kv-sol-ce-tab" :aria-selected="tab === 0" @click.prevent="pickTab(0)">
 <span class="kv-ce-tab-badge">{{ $roleSm['badge'] ?? 'S&M' }}</span>
 <span class="kv-ce-tab-title">{{ $roleSm['name'] ?? ($isIdLocale ? 'Sales & Marketing' : 'Sales & Marketing') }}</span>
-</button>
-<button type="button" role="tab" class="kv-sol-ce-tab" :aria-selected="tab === 1" @click="pickTab(1)">
+</a>
+<a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ce', 1) }}" role="tab" class="kv-sol-ce-tab" :aria-selected="tab === 1" @click.prevent="pickTab(1)">
 <span class="kv-ce-tab-badge">{{ $roleCs['badge'] ?? 'CS' }}</span>
 <span class="kv-ce-tab-title">{{ $roleCs['name'] ?? ($isIdLocale ? 'Customer Service' : 'Customer Service') }}</span>
-</button>
-<button type="button" role="tab" class="kv-sol-ce-tab" :aria-selected="tab === 2" @click="pickTab(2)">
+</a>
+<a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ce', 2) }}" role="tab" class="kv-sol-ce-tab" :aria-selected="tab === 2" @click.prevent="pickTab(2)">
 <span class="kv-ce-tab-badge">{{ $roleOps['badge'] ?? 'OPS' }}</span>
 <span class="kv-ce-tab-title">{{ $roleOps['name'] ?? ($isIdLocale ? 'Operasional' : 'Operations') }}</span>
-</button>
+</a>
 </div>
 
 <template x-if="panelOn">

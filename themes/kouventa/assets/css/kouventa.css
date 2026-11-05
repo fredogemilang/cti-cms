@@ -4856,6 +4856,7 @@ body {
     justify-content: center;
     box-sizing: border-box;
     font-family: inherit;
+    text-decoration: none;
 }
 
 .kv-sol-ai-tab:hover:not([aria-selected="true"]) {
@@ -4893,6 +4894,10 @@ body {
     transition: all .2s ease;
     font-family: inherit;
     box-sizing: border-box;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .kv-sol-fin-tab:hover:not([aria-selected="true"]) {
@@ -4928,6 +4933,7 @@ body {
     transition: all .2s ease;
     box-sizing: border-box;
     font-family: inherit;
+    text-decoration: none;
 }
 
 .kv-sol-ce-tab:hover:not([aria-selected="true"]) {

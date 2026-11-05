@@ -286,7 +286,15 @@ class SitemapBuilder
         $defaultLocale = setting('default_locale', config('app.locale', 'en'));
 
         // 1. Custom Taxonomy Terms (from CPT system)
-        $terms = TaxonomyTerm::with('taxonomy')->get();
+        $termsQuery = TaxonomyTerm::with('taxonomy');
+        if (Schema::hasTable('cpt_entry_term')) {
+            $termsQuery->whereExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('cpt_entry_term')
+                    ->whereColumn('cpt_entry_term.term_id', 'taxonomy_terms.id');
+            });
+        }
+        $terms = $termsQuery->get();
         foreach ($terms as $term) {
             if ($term->taxonomy instanceof CustomTaxonomy) {
                 // Respect SEO taxonomy indexing setting
@@ -312,7 +320,17 @@ class SitemapBuilder
         // 2. Posts plugin Categories (if plugin is active and indexing enabled)
         if ($this->isPostsPluginActive() && setting('seo_taxonomy_categories_index_enabled', true)) {
             $categoryBase = (string) Setting::get('permalink_category_base', 'category');
-            $categories = DB::table('categories')->select('slug', 'updated_at', 'translations')->get();
+            $categoriesQuery = DB::table('categories');
+            if (Schema::hasTable('category_post') && Schema::hasTable('posts')) {
+                $categoriesQuery->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('category_post')
+                        ->join('posts', 'category_post.post_id', '=', 'posts.id')
+                        ->whereColumn('category_post.category_id', 'categories.id')
+                        ->where('posts.status', 'published');
+                });
+            }
+            $categories = $categoriesQuery->select('slug', 'updated_at', 'translations')->get();
             foreach ($categories as $category) {
                 foreach ($locales as $loc) {
                     $archiveSlug = class_exists(\Plugins\Posts\Models\Setting::class)
@@ -342,7 +360,17 @@ class SitemapBuilder
         // 3. Posts plugin Tags (if plugin is active and indexing enabled)
         if ($this->isPostsPluginActive() && setting('seo_taxonomy_tags_index_enabled', true)) {
             $tagBase = (string) Setting::get('permalink_tag_base', 'tag');
-            $tags = DB::table('tags')->select('slug', 'updated_at', 'translations')->get();
+            $tagsQuery = DB::table('tags');
+            if (Schema::hasTable('post_tag') && Schema::hasTable('posts')) {
+                $tagsQuery->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('post_tag')
+                        ->join('posts', 'post_tag.post_id', '=', 'posts.id')
+                        ->whereColumn('post_tag.tag_id', 'tags.id')
+                        ->where('posts.status', 'published');
+                });
+            }
+            $tags = $tagsQuery->select('slug', 'updated_at', 'translations')->get();
             foreach ($tags as $tag) {
                 foreach ($locales as $loc) {
                     $archiveSlug = class_exists(\Plugins\Posts\Models\Setting::class)
@@ -479,6 +507,10 @@ class SitemapBuilder
         }
 
         if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://')) {
+            if (app()->environment('production') || str_starts_with((string) config('app.url'), 'https://')) {
+                $url = (string) preg_replace('/^http:/i', 'https:', $url);
+            }
+
             return $url;
         }
 

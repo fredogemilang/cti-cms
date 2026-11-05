@@ -220,7 +220,11 @@
     }
     $ctaSubtitle = rtrim($page?->block('cta_subtitle', $isIdLocale ? 'Jadwalkan demo dan kami tunjukkan langsung dengan use case Anda sendiri' : "Book a demo and we'll walk you through it with your own use case"), '.');
     $ctaDemoBtn = $page?->buttonBlock('cta_demo_button', ['text' => $isIdLocale ? 'Jadwalkan demo' : 'Book a demo', 'url' => '/book-demo']);
-    $ctaPricingBtn = $page?->buttonBlock('cta_pricing_button', ['text' => $isIdLocale ? 'Lihat harga' : 'See pricing', 'url' => '/pricing']);
+    $pricingDefaultUrl = class_exists(\Themes\Kouventa\Handlers\PricingRouteHandler::class) ? \Themes\Kouventa\Handlers\PricingRouteHandler::url('ai') : '/pricing/ai';
+    $ctaPricingBtn = $page?->buttonBlock('cta_pricing_button', ['text' => $isIdLocale ? 'Lihat harga' : 'See pricing', 'url' => $pricingDefaultUrl]);
+    if (empty($ctaPricingBtn['url']) || in_array($ctaPricingBtn['url'], ['/pricing', '/pricing/', 'pricing'])) {
+        $ctaPricingBtn['url'] = $pricingDefaultUrl;
+    }
     $videosTitle = rtrim($page?->block('videos_title', $isIdLocale ? 'Lihat cara kerja Kouventa' : 'See Kouventa in action'), '.');
     $videos = [
         [
@@ -847,7 +851,7 @@
 <p style="margin: 0; font-size: 18px; line-height: 1.55; max-width: 640px">{!! nl2br(e($ctaSubtitle)) !!}</p>
 <div style="display: flex; gap: 14px; justify-content: center; padding-top: 16px">
 <a href="{{ localized_url($ctaDemoBtn['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ $ctaDemoBtn['text'] ?? 'Book a demo' }}</a>
-<a href="{{ localized_url($ctaPricingBtn['url'] ?? '/pricing') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ $ctaPricingBtn['text'] ?? 'See pricing' }}</a>
+<a href="{{ str_starts_with($ctaPricingBtn['url'] ?? '', 'http') ? $ctaPricingBtn['url'] : localized_url($ctaPricingBtn['url'] ?? '/pricing/ai') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ $ctaPricingBtn['text'] ?? 'See pricing' }}</a>
 </div>
 </div>
 </div>

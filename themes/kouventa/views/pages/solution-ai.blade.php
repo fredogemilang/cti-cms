@@ -438,18 +438,18 @@
 <div class="kv-container" style="padding-top: 88px; padding-bottom: 104px; display: flex; flex-direction: column; gap: 40px">
 <div style="display: flex; flex-direction: column; gap: 14px">
 <div role="tablist" aria-label="Solutions by role" class="kv-sol-ai-tablist">
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 0" @click="pickTab(0)">{{ $deptCs['name'] ?? ($isIdLocale ? 'Customer Service' : 'Customer Service') }}</button>
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 1" @click="pickTab(1)">{{ $deptRec['name'] ?? ($isIdLocale ? 'Rekrutmen' : 'Recruitment') }}</button>
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 2" @click="pickTab(2)">{{ $deptSales['name'] ?? ($isIdLocale ? 'Sales & Marketing' : 'Sales & Marketing') }}</button>
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 3" @click="pickTab(3)">{{ $deptOps['name'] ?? ($isIdLocale ? 'Operasional Bisnis' : 'Business Operations') }}</button>
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 4 || tab === 5" @click="if (tab !== 4 && tab !== 5) pickTab(4)">{{ $isIdLocale ? 'Finance' : 'Finance' }}</button>
-<button type="button" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 6" @click="pickTab(6)">{{ $deptLegal['name'] ?? ($isIdLocale ? 'Legal & Compliance' : 'Legal & Compliance') }}</button>
+<a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 0) }}" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 0" @click.prevent="pickTab(0)">{{ $deptCs['name'] ?? ($isIdLocale ? 'Customer Service' : 'Customer Service') }}</a>
+<a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 1) }}" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 1" @click.prevent="pickTab(1)">{{ $deptRec['name'] ?? ($isIdLocale ? 'Rekrutmen' : 'Recruitment') }}</a>
+<a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 2) }}" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 2" @click.prevent="pickTab(2)">{{ $deptSales['name'] ?? ($isIdLocale ? 'Sales & Marketing' : 'Sales & Marketing') }}</a>
+<a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 3) }}" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 3" @click.prevent="pickTab(3)">{{ $deptOps['name'] ?? ($isIdLocale ? 'Operasional Bisnis' : 'Business Operations') }}</a>
+<a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 4) }}" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 4 || tab === 5" @click.prevent="if (tab !== 4 && tab !== 5) pickTab(4)">{{ $isIdLocale ? 'Finance' : 'Finance' }}</a>
+<a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 6) }}" role="tab" class="kv-sol-ai-tab" :aria-selected="tab === 6" @click.prevent="pickTab(6)">{{ $deptLegal['name'] ?? ($isIdLocale ? 'Legal & Compliance' : 'Legal & Compliance') }}</a>
 </div>
 
 <!-- Finance Sub-tabs Pill -->
 <div role="tablist" aria-label="Finance solutions" x-show="tab === 4 || tab === 5" class="kv-sol-fin-wrap">
-<button type="button" role="tab" class="kv-sol-fin-tab" :aria-selected="tab === 4" @click="pickTab(4)">{{ $deptPp['name'] ?? ($isIdLocale ? 'Prioritas pembayaran' : 'Payment Prioritization') }}</button>
-<button type="button" role="tab" class="kv-sol-fin-tab" :aria-selected="tab === 5" @click="pickTab(5)">{{ $deptBr['name'] ?? ($isIdLocale ? 'Rekonsiliasi Bank' : 'Bank Reconciliation') }}</button>
+<a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 4) }}" role="tab" class="kv-sol-fin-tab" :aria-selected="tab === 4" @click.prevent="pickTab(4)">{{ $deptPp['name'] ?? ($isIdLocale ? 'Prioritas pembayaran' : 'Payment Prioritization') }}</a>
+<a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 5) }}" role="tab" class="kv-sol-fin-tab" :aria-selected="tab === 5" @click.prevent="pickTab(5)">{{ $deptBr['name'] ?? ($isIdLocale ? 'Rekonsiliasi Bank' : 'Bank Reconciliation') }}</a>
 </div>
 </div>
 
