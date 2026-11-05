@@ -20,11 +20,29 @@ class StringTranslationManager extends Component
 
     public string $statusFilter = 'all'; // all, missing, completed
 
-    public string $targetLocale = 'id';
+    public string $targetLocale = '';
 
     public array $editingTranslations = [];
 
     protected $paginationTheme = 'tailwind';
+
+    public function mount(): void
+    {
+        $availableLocales = available_locales();
+        $defaultLocale = (string) setting('default_locale', config('app.locale', 'en'));
+
+        $nonDefault = array_values(array_filter($availableLocales, fn ($l) => $l !== $defaultLocale));
+        $this->targetLocale = ! empty($nonDefault) ? $nonDefault[0] : ($availableLocales[0] ?? $defaultLocale);
+    }
+
+    public function setTargetLocale(string $locale): void
+    {
+        $availableLocales = available_locales();
+        if (in_array($locale, $availableLocales, true)) {
+            $this->targetLocale = $locale;
+            $this->resetPage();
+        }
+    }
 
     public function updatingSearch(): void
     {
@@ -59,9 +77,10 @@ class StringTranslationManager extends Component
     /**
      * Save an inline translation for a key.
      */
-    public function saveTranslation(int $keyId, string $value): void
+    public function saveTranslation(int $keyId, ?string $value = null): void
     {
         $translationKey = StringTranslationKey::findOrFail($keyId);
+        $val = $value !== null ? $value : ($this->editingTranslations[$keyId] ?? '');
 
         StringTranslation::updateOrCreate(
             [
@@ -69,7 +88,7 @@ class StringTranslationManager extends Component
                 'locale' => $this->targetLocale,
             ],
             [
-                'value' => trim($value),
+                'value' => trim((string) $val),
             ]
         );
 
@@ -84,6 +103,12 @@ class StringTranslationManager extends Component
     public function render()
     {
         $availableLocales = available_locales();
+        $defaultLocale = (string) setting('default_locale', config('app.locale', 'en'));
+
+        if (empty($this->targetLocale)) {
+            $nonDefault = array_values(array_filter($availableLocales, fn ($l) => $l !== $defaultLocale));
+            $this->targetLocale = ! empty($nonDefault) ? $nonDefault[0] : ($availableLocales[0] ?? $defaultLocale);
+        }
 
         // Calculate progress stats per locale
         $totalKeysCount = StringTranslationKey::count();
@@ -157,6 +182,7 @@ class StringTranslationManager extends Component
             'translationKeys' => $translationKeys,
             'stats' => $stats,
             'availableLocales' => $availableLocales,
+            'defaultLocale' => $defaultLocale,
             'groups' => $groups,
         ])->layout('layouts.admin');
     }

@@ -10,39 +10,86 @@
     </div>
     @endif
 
-    <!-- Language Progress Overview Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        @foreach($availableLocales as $loc)
-        @php
-            $locStat = $stats[$loc] ?? ['total' => 0, 'translated' => 0, 'percentage' => 100];
-            $isTarget = ($loc === $targetLocale);
-        @endphp
-        <div class="bg-white dark:bg-[#1A1A1A] p-5 rounded-2xl border {{ $isTarget ? 'border-[#2563EB] ring-2 ring-[#2563EB]/20' : 'border-gray-200 dark:border-[#272B30]' }} shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-                <span class="font-bold text-[#111827] dark:text-[#FCFCFC] uppercase text-sm flex items-center gap-2">
-                    <span class="material-symbols-outlined text-lg text-[#2563EB]">language</span>
-                    {{ strtoupper($loc) }}
-                </span>
-                <span class="text-xs font-bold px-2.5 py-1 rounded-lg {{ $locStat['percentage'] === 100 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300' }}">
-                    {{ $locStat['percentage'] }}% Translated
-                </span>
+    @php
+        $isSingleLanguage = count($availableLocales) <= 1;
+    @endphp
+
+    @if($isSingleLanguage)
+        <!-- Friendly Single Language Notice Card -->
+        <div class="bg-white dark:bg-[#1A1A1A] p-6 rounded-3xl border border-gray-200 dark:border-[#272B30] shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-[#2563EB] flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-2xl">translate</span>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-base font-bold text-[#111827] dark:text-[#FCFCFC]">Single Language Mode Active</h3>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-900/40 text-[#2563EB] uppercase">
+                            {{ strtoupper($defaultLocale) }}
+                        </span>
+                    </div>
+                    <p class="text-xs text-[#6F767E] mt-1 max-w-2xl leading-relaxed">
+                        This website is currently configured to run in a single primary language (<strong>{{ strtoupper($defaultLocale) }}</strong>). String translations are used to localize interface phrases across multiple active languages.
+                    </p>
+                    <p class="text-xs text-[#6F767E] mt-1.5">
+                        Want to enable multi-language support (e.g. Bahasa Indonesia, Japanese, etc.)? Add languages in your CMS settings.
+                    </p>
+                </div>
             </div>
-            <div class="w-full bg-gray-100 dark:bg-[#272B30] rounded-full h-2 mb-2 overflow-hidden">
-                <div class="bg-[#2563EB] h-2 rounded-full transition-all duration-500" style="width: {{ $locStat['percentage'] }}%"></div>
-            </div>
-            <div class="text-xs text-[#6F767E] flex justify-between font-medium">
-                <span>{{ $locStat['translated'] }} of {{ $locStat['total'] }} keys</span>
-                @if(!$isTarget && $loc !== 'en')
-                <button wire:click="$set('targetLocale', '{{ $loc }}')" class="text-[#2563EB] font-bold hover:underline cursor-pointer">Select Target</button>
-                @endif
+            <div class="flex items-center gap-3 shrink-0">
+                <a
+                    href="{{ route('admin.settings', 'languages') }}"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-sm transition cursor-pointer"
+                >
+                    <span class="material-symbols-outlined text-sm">settings</span>
+                    Manage Languages
+                </a>
             </div>
         </div>
-        @endforeach
-    </div>
+    @else
+        <!-- Language Progress Overview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            @foreach($availableLocales as $loc)
+            @php
+                $locStat = $stats[$loc] ?? ['total' => 0, 'translated' => 0, 'percentage' => 100];
+                $isTarget = ($loc === $targetLocale);
+                $isMaster = ($loc === $defaultLocale);
+            @endphp
+            <div class="bg-white dark:bg-[#1A1A1A] p-5 rounded-2xl border {{ $isTarget ? 'border-[#2563EB] ring-2 ring-[#2563EB]/20' : 'border-gray-200 dark:border-[#272B30]' }} shadow-sm">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="font-bold text-[#111827] dark:text-[#FCFCFC] uppercase text-sm flex items-center gap-2">
+                        <span class="material-symbols-outlined text-lg text-[#2563EB]">language</span>
+                        {{ strtoupper($loc) }}
+                        @if($isMaster)
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-gray-100 dark:bg-[#272B30] text-[#6F767E] normal-case">Master</span>
+                        @endif
+                    </span>
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-lg {{ $locStat['percentage'] === 100 ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300' }}">
+                        {{ $locStat['percentage'] }}% Translated
+                    </span>
+                </div>
+                <div class="w-full bg-gray-100 dark:bg-[#272B30] rounded-full h-2 mb-2 overflow-hidden">
+                    <div class="bg-[#2563EB] h-2 rounded-full transition-all duration-500" style="width: {{ $locStat['percentage'] }}%"></div>
+                </div>
+                <div class="text-xs text-[#6F767E] flex justify-between font-medium items-center">
+                    <span>{{ $locStat['translated'] }} of {{ $locStat['total'] }} keys</span>
+                    @if(!$isTarget && !$isMaster)
+                        <button wire:click="setTargetLocale('{{ $loc }}')" class="text-[#2563EB] font-bold hover:underline cursor-pointer">Select Target</button>
+                    @elseif($isTarget)
+                        <span class="text-[#2563EB] font-bold flex items-center gap-1 text-[11px]">
+                            <span class="material-symbols-outlined text-xs">edit</span> Editing Target
+                        </span>
+                    @endif
+                </div>
+            </div>
+            @endforeach
+        </div>
+    @endif
 
     <!-- Status Filters & Action Toolbar -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <!-- Filter Pills -->
+        @if(!$isSingleLanguage)
         <div class="inline-flex flex-wrap items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30] gap-1">
             <button
                 wire:click="$set('statusFilter', 'all')"
@@ -62,6 +109,12 @@
                 Completed
             </button>
         </div>
+        @else
+        <div class="text-xs text-[#6F767E] flex items-center gap-2">
+            <span class="material-symbols-outlined text-sm text-[#2563EB]">info</span>
+            <span>Displaying master string keys scanned from theme, plugins, and core views.</span>
+        </div>
+        @endif
 
         <!-- Action Button -->
         <div class="flex items-center gap-3">
@@ -125,10 +178,14 @@
     <x-admin.ui.table>
         <x-slot:thead>
             <x-admin.ui.table-header class="px-6">Canonical Key & Group</x-admin.ui.table-header>
-            <x-admin.ui.table-header>Default Value (EN Master)</x-admin.ui.table-header>
-            <x-admin.ui.table-header>Translation ({{ strtoupper($targetLocale) }})</x-admin.ui.table-header>
+            <x-admin.ui.table-header>Master Value ({{ strtoupper($defaultLocale) }})</x-admin.ui.table-header>
+            @if(!$isSingleLanguage)
+                <x-admin.ui.table-header>Translation ({{ strtoupper($targetLocale) }})</x-admin.ui.table-header>
+            @endif
             <x-admin.ui.table-header>Source Location</x-admin.ui.table-header>
-            <x-admin.ui.table-header align="right" class="px-6 w-24">Actions</x-admin.ui.table-header>
+            @if(!$isSingleLanguage)
+                <x-admin.ui.table-header align="right" class="px-6 w-24">Actions</x-admin.ui.table-header>
+            @endif
         </x-slot:thead>
 
         @forelse($translationKeys as $tk)
@@ -151,17 +208,19 @@
                         {{ $tk->default_value ?: $tk->key }}
                     </span>
                 </x-admin.ui.table-cell>
-                <x-admin.ui.table-cell>
-                    <div class="flex items-center gap-2 max-w-sm">
-                        <x-admin.ui.input
-                            name="trans_{{ $tk->id }}"
-                            type="text"
-                            wire:model="editingTranslations.{{ $tk->id }}"
-                            class="!h-10 text-sm !rounded-xl {{ $hasTrans ? '' : '!border-amber-400 !bg-amber-50/30 dark:!bg-amber-950/20' }}"
-                            placeholder="Enter {{ strtoupper($targetLocale) }} translation..."
-                        />
-                    </div>
-                </x-admin.ui.table-cell>
+                @if(!$isSingleLanguage)
+                    <x-admin.ui.table-cell>
+                        <div class="flex items-center gap-2 max-w-sm">
+                            <x-admin.ui.input
+                                name="trans_{{ $tk->id }}"
+                                type="text"
+                                wire:model="editingTranslations.{{ $tk->id }}"
+                                class="!h-10 text-sm !rounded-xl {{ $hasTrans ? '' : '!border-amber-400 !bg-amber-50/30 dark:!bg-amber-950/20' }}"
+                                placeholder="Enter {{ strtoupper($targetLocale) }} translation..."
+                            />
+                        </div>
+                    </x-admin.ui.table-cell>
+                @endif
                 <x-admin.ui.table-cell>
                     @if($tk->sources->count() > 0)
                         @php $firstSource = $tk->sources->first(); @endphp
@@ -179,18 +238,20 @@
                         <span class="text-xs text-[#6F767E]">Manual / Core</span>
                     @endif
                 </x-admin.ui.table-cell>
-                <x-admin.ui.table-cell align="right" class="px-6">
-                    <x-admin.ui.button
-                        wire:click="saveTranslation({{ $tk->id }}, editingTranslations[{{ $tk->id }}])"
-                        class="!h-9 !px-3.5 !rounded-xl text-xs font-bold"
-                    >
-                        Save
-                    </x-admin.ui.button>
-                </x-admin.ui.table-cell>
+                @if(!$isSingleLanguage)
+                    <x-admin.ui.table-cell align="right" class="px-6">
+                        <x-admin.ui.button
+                            wire:click="saveTranslation({{ $tk->id }})"
+                            class="!h-9 !px-3.5 !rounded-xl text-xs font-bold"
+                        >
+                            Save
+                        </x-admin.ui.button>
+                    </x-admin.ui.table-cell>
+                @endif
             </x-admin.ui.table-row>
         @empty
             <x-admin.ui.table-row>
-                <x-admin.ui.table-cell colspan="5" class="text-center py-12">
+                <x-admin.ui.table-cell colspan="{{ $isSingleLanguage ? 3 : 5 }}" class="text-center py-12">
                     <div class="flex flex-col items-center justify-center gap-2">
                         <span class="material-symbols-outlined text-4xl text-[#6F767E]">translate</span>
                         <p class="text-[#6F767E] font-medium text-sm">No translation keys found matching current filter.</p>

@@ -85,6 +85,17 @@ class SettingsPage extends Component
     {
         $registry = app(SettingsRegistry::class);
 
+        if ($this->group === 'languages') {
+            if (isset($this->values['available_locales'])) {
+                $localesArr = array_values(array_filter(array_map('trim', explode(',', (string) $this->values['available_locales']))));
+                $defaultLoc = (string) ($this->values['default_locale'] ?? 'en');
+                if (! in_array($defaultLoc, $localesArr, true)) {
+                    array_unshift($localesArr, $defaultLoc);
+                }
+                $this->values['available_locales'] = implode(',', array_unique($localesArr));
+            }
+        }
+
         try {
             $validated = $registry->validate($this->group, $this->values);
         } catch (ValidationException $e) {
