@@ -226,68 +226,102 @@
         $ctaPricingBtn['url'] = $pricingDefaultUrl;
     }
     $videosTitle = rtrim($page?->block('videos_title', $isIdLocale ? 'Lihat cara kerja Kouventa' : 'See Kouventa in action'), '.');
-    $videos = [
-        [
-            'id' => 'oOY1BnbQPUc',
-            'url' => 'https://www.youtube.com/watch?v=oOY1BnbQPUc',
-            'title' => 'Tim Finance Masih Perlu Workflow Manual di Era Agentic AI?',
-            'category' => 'Artificial Intelligence',
-        ],
-        [
-            'id' => 'N76UFyc7v9s',
-            'url' => 'https://www.youtube.com/watch?v=N76UFyc7v9s',
-            'title' => 'Kouventa Agentic AI | A New Generation of AI for Business',
-            'category' => 'Artificial Intelligence',
-        ],
-        [
-            'id' => '6_6n4erRFXQ',
-            'url' => 'https://www.youtube.com/watch?v=6_6n4erRFXQ',
-            'title' => 'Cara Mendapatkan Centang Biru di WhatsApp untuk Akun Bisnis!',
-            'category' => 'Customer Engagement',
-        ],
-        [
-            'id' => 'w1OtL8yThnc',
-            'url' => 'https://www.youtube.com/watch?v=w1OtL8yThnc',
-            'title' => 'Stop Kirim Pesan Manual! Ini Cara Upgrade CRM Otomatis Tanpa Ribet',
-            'category' => 'Customer Engagement',
-        ],
-        [
-            'id' => '9lcV7QXol_g',
-            'url' => 'https://www.youtube.com/watch?v=9lcV7QXol_g',
-            'title' => '5 MASALAH CUSTOMER SERVICE WHATSAPP | Live Chat Agent',
-            'category' => 'Customer Engagement',
-        ],
-        [
-            'id' => 'O0E_XfPl5CE',
-            'url' => 'https://www.youtube.com/watch?v=O0E_XfPl5CE',
-            'title' => 'Evolusi Cara Bisnis Melayani Pelanggan: Kenapa Omnichannel Jadi Penting?',
-            'category' => 'Customer Engagement',
-        ],
-        [
-            'id' => '1xvLiyz3zJk',
-            'url' => 'https://www.youtube.com/watch?v=1xvLiyz3zJk',
-            'title' => 'RAHASIA CS NGGAK KEWALAHAN SAAT ACARA KANTOR!',
-            'category' => 'Customer Engagement',
-        ],
-        [
-            'id' => 'DbQ0ZBY_XSs',
-            'url' => 'https://www.youtube.com/watch?v=DbQ0ZBY_XSs',
-            'title' => 'Tim HR/IT Pusing Ticketing? Ini Cara Tracking Tanpa Ribet!',
-            'category' => 'Artificial Intelligence',
-        ],
-        [
-            'id' => '21WZzU5uou4',
-            'url' => 'https://www.youtube.com/watch?v=21WZzU5uou4',
-            'title' => 'STOP Pakai WhatsApp Biasa untuk Bisnis! Ini Alasannya',
-            'category' => 'Customer Engagement',
-        ],
-        [
-            'id' => 'UbcQOWUxJHI',
-            'url' => 'https://www.youtube.com/watch?v=UbcQOWUxJHI',
-            'title' => 'JANGAN SEMBARANGAN INPUT DATA KE AI! Data Kantormu Bisa Bocor',
-            'category' => 'Artificial Intelligence',
-        ],
-    ];
+    $videos = [];
+    if (is_plugin_active('kouventa-pages') && class_exists(\Plugins\KouventaPages\Models\KouventaVideo::class)) {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('kouventa_videos')) {
+                $dbVideos = \Plugins\KouventaPages\Models\KouventaVideo::active()->ordered()->get();
+                if ($dbVideos->isNotEmpty()) {
+                    $videos = $dbVideos->map(function ($v) {
+                        return [
+                            'id' => $v->youtube_id,
+                            'url' => $v->getWatchUrl(),
+                            'title' => $v->title,
+                            'category' => $v->category,
+                            'thumbnail' => $v->getThumbnailUrl(),
+                        ];
+                    })->all();
+                }
+            }
+        } catch (\Throwable $e) {
+            // Fallback to default videos
+        }
+    }
+
+    if (empty($videos)) {
+        $videos = [
+            [
+                'id' => 'oOY1BnbQPUc',
+                'url' => 'https://www.youtube.com/watch?v=oOY1BnbQPUc',
+                'title' => 'Tim Finance Masih Perlu Workflow Manual di Era Agentic AI?',
+                'category' => 'Artificial Intelligence',
+                'thumbnail' => theme_asset('images/youtube/oOY1BnbQPUc.jpg'),
+            ],
+            [
+                'id' => 'N76UFyc7v9s',
+                'url' => 'https://www.youtube.com/watch?v=N76UFyc7v9s',
+                'title' => 'Kouventa Agentic AI | A New Generation of AI for Business',
+                'category' => 'Artificial Intelligence',
+                'thumbnail' => theme_asset('images/youtube/N76UFyc7v9s.jpg'),
+            ],
+            [
+                'id' => '6_6n4erRFXQ',
+                'url' => 'https://www.youtube.com/watch?v=6_6n4erRFXQ',
+                'title' => 'Cara Mendapatkan Centang Biru di WhatsApp untuk Akun Bisnis!',
+                'category' => 'Customer Engagement',
+                'thumbnail' => theme_asset('images/youtube/6_6n4erRFXQ.jpg'),
+            ],
+            [
+                'id' => 'w1OtL8yThnc',
+                'url' => 'https://www.youtube.com/watch?v=w1OtL8yThnc',
+                'title' => 'Stop Kirim Pesan Manual! Ini Cara Upgrade CRM Otomatis Tanpa Ribet',
+                'category' => 'Customer Engagement',
+                'thumbnail' => theme_asset('images/youtube/w1OtL8yThnc.jpg'),
+            ],
+            [
+                'id' => '9lcV7QXol_g',
+                'url' => 'https://www.youtube.com/watch?v=9lcV7QXol_g',
+                'title' => '5 MASALAH CUSTOMER SERVICE WHATSAPP | Live Chat Agent',
+                'category' => 'Customer Engagement',
+                'thumbnail' => theme_asset('images/youtube/9lcV7QXol_g.jpg'),
+            ],
+            [
+                'id' => 'O0E_XfPl5CE',
+                'url' => 'https://www.youtube.com/watch?v=O0E_XfPl5CE',
+                'title' => 'Evolusi Cara Bisnis Melayani Pelanggan: Kenapa Omnichannel Jadi Penting?',
+                'category' => 'Customer Engagement',
+                'thumbnail' => theme_asset('images/youtube/O0E_XfPl5CE.jpg'),
+            ],
+            [
+                'id' => '1xvLiyz3zJk',
+                'url' => 'https://www.youtube.com/watch?v=1xvLiyz3zJk',
+                'title' => 'RAHASIA CS NGGAK KEWALAHAN SAAT ACARA KANTOR!',
+                'category' => 'Customer Engagement',
+                'thumbnail' => theme_asset('images/youtube/1xvLiyz3zJk.jpg'),
+            ],
+            [
+                'id' => 'DbQ0ZBY_XSs',
+                'url' => 'https://www.youtube.com/watch?v=DbQ0ZBY_XSs',
+                'title' => 'Tim HR/IT Pusing Ticketing? Ini Cara Tracking Tanpa Ribet!',
+                'category' => 'Artificial Intelligence',
+                'thumbnail' => theme_asset('images/youtube/DbQ0ZBY_XSs.jpg'),
+            ],
+            [
+                'id' => '21WZzU5uou4',
+                'url' => 'https://www.youtube.com/watch?v=21WZzU5uou4',
+                'title' => 'STOP Pakai WhatsApp Biasa untuk Bisnis! Ini Alasannya',
+                'category' => 'Customer Engagement',
+                'thumbnail' => theme_asset('images/youtube/21WZzU5uou4.jpg'),
+            ],
+            [
+                'id' => 'UbcQOWUxJHI',
+                'url' => 'https://www.youtube.com/watch?v=UbcQOWUxJHI',
+                'title' => 'JANGAN SEMBARANGAN INPUT DATA KE AI! Data Kantormu Bisa Bocor',
+                'category' => 'Artificial Intelligence',
+                'thumbnail' => theme_asset('images/youtube/UbcQOWUxJHI.jpg'),
+            ],
+        ];
+    }
 @endphp
 
 
@@ -858,7 +892,7 @@
 </section>
 
 <!-- ============ VIDEOS ============ -->
-<section 
+<section id="videos"
     x-data="{
         activeVideo: null,
         canPrev: false,
@@ -1029,7 +1063,7 @@
            style="flex: 0 0 calc((100% - 40px) / 3); width: calc((100% - 40px) / 3); max-width: calc((100% - 40px) / 3); min-width: 300px; box-sizing: border-box; scroll-snap-align: start; display: flex; flex-direction: column; gap: 14px; background: #FFFFFF; border: 1px solid #E3E8E6; border-radius: 20px; padding: 14px 14px 20px; color: #0E1A24; text-decoration: none; cursor: pointer"
            title="{{ $video['title'] }}">
             <div role="img" aria-label="{{ $video['title'] }}" style="position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #071C33; display: flex; align-items: center; justify-content: center; overflow: hidden">
-                <img src="{{ theme_asset('images/youtube/' . $video['id'] . '.jpg') }}" 
+                <img src="{{ !empty($video['thumbnail']) ? $video['thumbnail'] : theme_asset('images/youtube/' . $video['id'] . '.jpg') }}" 
                      onerror="this.onerror=null; this.src='https://i.ytimg.com/vi/{{ $video['id'] }}/hqdefault.jpg';" 
                      alt="{{ $video['title'] }} - Video Tutorial dan Solusi Kouventa AI" 
                      class="kv-video-thumb"
@@ -1040,7 +1074,13 @@
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFFFFF" aria-hidden="true"><path d="M8 5v14l11-7Z"></path></svg>
                 </span>
             </div>
-            <span style="align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: {{ $video['category'] === 'Artificial Intelligence' ? '#EAF7EF' : '#E6F0FA' }}; color: {{ $video['category'] === 'Artificial Intelligence' ? '#0B5E2C' : '#0F4C81' }}; margin: 0 6px">
+            @php
+                $isAi = ($video['category'] ?? '') === 'Artificial Intelligence';
+                $isCe = ($video['category'] ?? '') === 'Customer Engagement';
+                $catBg = $isAi ? '#EAF7EF' : ($isCe ? '#E6F0FA' : '#F3E8FF');
+                $catColor = $isAi ? '#0B5E2C' : ($isCe ? '#0F4C81' : '#6B21A8');
+            @endphp
+            <span style="align-self: flex-start; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: {{ $catBg }}; color: {{ $catColor }}; margin: 0 6px">
                 {{ t('kouventa.' . $video['category'], $video['category']) }}
             </span>
             <h3 style="margin: 0 6px; font-size: 16px; line-height: 1.4; font-weight: 700; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 44px">

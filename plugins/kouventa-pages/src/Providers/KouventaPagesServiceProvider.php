@@ -16,6 +16,7 @@ use Plugins\KouventaPages\Livewire\ClientManager;
 use Plugins\KouventaPages\Livewire\PageEditor;
 use Plugins\KouventaPages\Livewire\PageIndex;
 use Plugins\KouventaPages\Livewire\PartnerManager;
+use Plugins\KouventaPages\Livewire\VideoManager;
 use Plugins\KouventaPages\Models\KouventaPage;
 use Plugins\KouventaPages\Services\KouventaSitemapBuilder;
 
@@ -28,6 +29,7 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
         'plugins.kouventa-pages.page-editor' => PageEditor::class,
         'plugins.kouventa-pages.client-manager' => ClientManager::class,
         'plugins.kouventa-pages.partner-manager' => PartnerManager::class,
+        'plugins.kouventa-pages.video-manager' => VideoManager::class,
     ];
 
     public function register(): void
@@ -50,6 +52,7 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
             $sections['plugin:kouventa-pricing'] = 'CONTENT';
             $sections['plugin:kouventa-clients'] = 'CONTENT';
             $sections['plugin:kouventa-partners'] = 'CONTENT';
+            $sections['plugin:kouventa-videos'] = 'CONTENT';
             $sections['plugin:posts'] = 'CONTENT';
 
             return $sections;
@@ -62,6 +65,7 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
                 'plugin:kouventa-pricing',
                 'plugin:kouventa-clients',
                 'plugin:kouventa-partners',
+                'plugin:kouventa-videos',
                 'cpt:testimonials',
             ];
 
@@ -209,6 +213,18 @@ class KouventaPagesServiceProvider extends CmsPluginServiceProvider
             'permission' => null,
             'is_active' => true,
             'source' => 'plugin:kouventa-partners',
+            'children' => [],
+        ]);
+
+        // 6. YouTube Videos (See Kouventa in Action)
+        $event->addMenuItem([
+            'title' => 'YouTube Videos',
+            'route' => 'admin.kouventa-pages.videos|admin.kouventa-pages.videos.*',
+            'url' => route('admin.kouventa-pages.videos'),
+            'icon' => 'smart_display',
+            'permission' => null,
+            'is_active' => true,
+            'source' => 'plugin:kouventa-videos',
             'children' => [],
         ]);
     }

@@ -62,6 +62,11 @@ Route::middleware(['web', 'auth'])->prefix("{$adminPath}/kouventa-pages")->name(
         return view('kouventa-pages::partners');
     })->name('partners');
 
+    // 6. YouTube Videos (See Kouventa in Action)
+    Route::get('/videos', function () {
+        return view('kouventa-pages::videos');
+    })->name('videos');
+
     // Legacy / Fallback routes
     Route::get('/', function () {
         return redirect()->route('admin.kouventa-pages.solutions');
