@@ -239,14 +239,24 @@ class SolutionRouteHandler
             return redirect($targetUrl, 301);
         }
 
-        $basePage = Page::findByLocalizedSlug('solutions/ai');
+        $basePage = null;
+        if (class_exists(\Plugins\KouventaPages\Models\KouventaPage::class)) {
+            $basePage = \Plugins\KouventaPages\Models\KouventaPage::where('slug', 'solutions/ai')->first()
+                ?: \Plugins\KouventaPages\Models\KouventaPage::findByLocalizedSlug('solutions/ai');
+        }
+        if (! $basePage) {
+            $basePage = Page::published()->where('slug', 'solutions/ai')->first()
+                ?: Page::findByLocalizedSlug('solutions/ai');
+        }
         abort_if(! $basePage, 404);
 
-        $basePage->load(['blocks' => function ($q) {
-            $q->whereNull('parent_block_id')
-                ->with('childBlocks')
-                ->orderBy('order');
-        }]);
+        if (method_exists($basePage, 'blocks')) {
+            $basePage->load(['blocks' => function ($q) {
+                $q->whereNull('parent_block_id')
+                    ->with('childBlocks')
+                    ->orderBy('order');
+            }]);
+        }
 
         // Build virtual Page for SEO injection and Breadcrumbs
         $virtualPage = clone $basePage;
@@ -254,6 +264,12 @@ class SolutionRouteHandler
         $virtualPage->exists = false;
         $virtualPage->title = $matchedConfig['title'][$currentLocale] ?? $matchedConfig['title']['en'];
         $virtualPage->excerpt = $matchedConfig['description'][$currentLocale] ?? $matchedConfig['description']['en'];
+        if (isset($virtualPage->seo) && is_array($virtualPage->seo)) {
+            $virtualPage->seo = array_merge($virtualPage->seo, [
+                'title' => $matchedConfig['title'][$currentLocale] ?? $matchedConfig['title']['en'],
+                'description' => $matchedConfig['description'][$currentLocale] ?? $matchedConfig['description']['en'],
+            ]);
+        }
         $virtualPage->slug = "solutions/ai/{$canonicalSlug}";
         $virtualPage->translations = [
             'title' => [
@@ -276,7 +292,7 @@ class SolutionRouteHandler
         return view('kouventa::pages.solution-ai', [
             'page' => $virtualPage,
             'basePage' => $basePage,
-            'blocks' => $basePage->blocks,
+            'blocks' => $basePage->blocks ?? collect(),
             'initialTab' => $matchedConfig['tab'],
             'activeSlug' => $canonicalSlug,
         ]);
@@ -316,14 +332,24 @@ class SolutionRouteHandler
             return redirect($targetUrl, 301);
         }
 
-        $basePage = Page::findByLocalizedSlug('solutions/customer-engagement');
+        $basePage = null;
+        if (class_exists(\Plugins\KouventaPages\Models\KouventaPage::class)) {
+            $basePage = \Plugins\KouventaPages\Models\KouventaPage::where('slug', 'solutions/customer-engagement')->first()
+                ?: \Plugins\KouventaPages\Models\KouventaPage::findByLocalizedSlug('solutions/customer-engagement');
+        }
+        if (! $basePage) {
+            $basePage = Page::published()->where('slug', 'solutions/customer-engagement')->first()
+                ?: Page::findByLocalizedSlug('solutions/customer-engagement');
+        }
         abort_if(! $basePage, 404);
 
-        $basePage->load(['blocks' => function ($q) {
-            $q->whereNull('parent_block_id')
-                ->with('childBlocks')
-                ->orderBy('order');
-        }]);
+        if (method_exists($basePage, 'blocks')) {
+            $basePage->load(['blocks' => function ($q) {
+                $q->whereNull('parent_block_id')
+                    ->with('childBlocks')
+                    ->orderBy('order');
+            }]);
+        }
 
         // Build virtual Page for SEO injection and Breadcrumbs
         $virtualPage = clone $basePage;
@@ -331,6 +357,12 @@ class SolutionRouteHandler
         $virtualPage->exists = false;
         $virtualPage->title = $matchedConfig['title'][$currentLocale] ?? $matchedConfig['title']['en'];
         $virtualPage->excerpt = $matchedConfig['description'][$currentLocale] ?? $matchedConfig['description']['en'];
+        if (isset($virtualPage->seo) && is_array($virtualPage->seo)) {
+            $virtualPage->seo = array_merge($virtualPage->seo, [
+                'title' => $matchedConfig['title'][$currentLocale] ?? $matchedConfig['title']['en'],
+                'description' => $matchedConfig['description'][$currentLocale] ?? $matchedConfig['description']['en'],
+            ]);
+        }
         $virtualPage->slug = "solutions/customer-engagement/{$canonicalSlug}";
         $virtualPage->translations = [
             'title' => [
@@ -353,7 +385,7 @@ class SolutionRouteHandler
         return view('kouventa::pages.solution-ce', [
             'page' => $virtualPage,
             'basePage' => $basePage,
-            'blocks' => $basePage->blocks,
+            'blocks' => $basePage->blocks ?? collect(),
             'initialCase' => $matchedConfig['case'],
             'activeSlug' => $canonicalSlug,
         ]);
@@ -371,7 +403,13 @@ class SolutionRouteHandler
         $defaultLocale = setting('default_locale', config('app.locale', 'en'));
 
         // AI Solutions
-        $aiPage = Page::published()->where('slug', 'solutions/ai')->first();
+        $aiPage = null;
+        if (class_exists(\Plugins\KouventaPages\Models\KouventaPage::class)) {
+            $aiPage = \Plugins\KouventaPages\Models\KouventaPage::where('slug', 'solutions/ai')->first();
+        }
+        if (! $aiPage) {
+            $aiPage = Page::published()->where('slug', 'solutions/ai')->first();
+        }
         $aiLastMod = $aiPage?->updated_at ? $aiPage->updated_at->toAtomString() : now()->toAtomString();
 
         foreach (self::getAiDepts() as $dept) {
@@ -393,7 +431,13 @@ class SolutionRouteHandler
         }
 
         // Customer Engagement
-        $cePage = Page::published()->where('slug', 'solutions/customer-engagement')->first();
+        $cePage = null;
+        if (class_exists(\Plugins\KouventaPages\Models\KouventaPage::class)) {
+            $cePage = \Plugins\KouventaPages\Models\KouventaPage::where('slug', 'solutions/customer-engagement')->first();
+        }
+        if (! $cePage) {
+            $cePage = Page::published()->where('slug', 'solutions/customer-engagement')->first();
+        }
         $ceLastMod = $cePage?->updated_at ? $cePage->updated_at->toAtomString() : now()->toAtomString();
 
         foreach (self::getCeCases() as $case) {

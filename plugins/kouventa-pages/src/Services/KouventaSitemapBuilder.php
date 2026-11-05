@@ -39,6 +39,13 @@ class KouventaSitemapBuilder extends SitemapBuilder
                     ];
                 }
             }
+
+            // Append clean solution tab sub-URLs
+            if (class_exists(\Themes\Kouventa\Handlers\SolutionRouteHandler::class)) {
+                foreach (\Themes\Kouventa\Handlers\SolutionRouteHandler::getAllSolutionSitemapUrls() as $subUrl) {
+                    $urls[] = $subUrl;
+                }
+            }
         } catch (\Throwable $e) {
             // Gracefully ignore DB errors during migration/setup
         }

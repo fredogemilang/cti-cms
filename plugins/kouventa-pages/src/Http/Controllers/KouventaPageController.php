@@ -26,6 +26,25 @@ class KouventaPageController extends Controller
 
         $slug = trim($slug, '/');
 
+        // Backward compatibility: 301 redirect legacy query parameters (?dept=X, ?case=X) to clean SEO URLs
+        if ($slug === 'solutions/ai') {
+            $raw = $request->query('dept') ?? $request->query('tab');
+            if ($raw !== null && is_numeric($raw) && class_exists(\Themes\Kouventa\Handlers\SolutionRouteHandler::class)) {
+                $tabIndex = (int) $raw;
+                $targetUrl = \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', $tabIndex, $locale);
+
+                return redirect($targetUrl, 301);
+            }
+        } elseif ($slug === 'solutions/customer-engagement') {
+            $raw = $request->query('case') ?? $request->query('tab');
+            if ($raw !== null && is_numeric($raw) && class_exists(\Themes\Kouventa\Handlers\SolutionRouteHandler::class)) {
+                $caseIndex = (int) $raw;
+                $targetUrl = \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ce', $caseIndex, $locale);
+
+                return redirect($targetUrl, 301);
+            }
+        }
+
         // Look up by primary slug or localized slug
         $page = KouventaPage::where('slug', $slug)->first();
         if (! $page) {
