@@ -56,10 +56,11 @@
         1: 'customer-service',
         2: '{{ $isIdLocale ? 'operasional' : 'operations' }}'
     },
-    baseSolutionPath: '{{ localized_url('/solutions/customer-engagement') }}',
+    baseSolutionPath: '{{ rtrim(localized_url('/solutions/customer-engagement'), '/') }}',
     getCaseUrl(i) {
         const slug = this.caseSlugs[i] || 'sales-marketing';
-        return `${this.baseSolutionPath}/${slug}`;
+        const base = this.baseSolutionPath.replace(/\/+$/, '');
+        return `${base}/${slug}/`;
     },
     startAutoTimer() {
         if (this._autoTimer) clearTimeout(this._autoTimer);

@@ -68,10 +68,11 @@
         5: '{{ $isIdLocale ? 'rekonsiliasi-bank' : 'bank-reconciliation' }}',
         6: 'legal-compliance'
     },
-    baseSolutionPath: '{{ localized_url('/solutions/ai') }}',
+    baseSolutionPath: '{{ rtrim(localized_url('/solutions/ai'), '/') }}',
     getTabUrl(i) {
         const slug = this.tabSlugs[i] || 'customer-service';
-        return `${this.baseSolutionPath}/${slug}`;
+        const base = this.baseSolutionPath.replace(/\/+$/, '');
+        return `${base}/${slug}/`;
     },
     aiSols: {
         0: [{ delay: 1.0, dur: 1.6 }, { delay: 2.8, dur: 2.8 }],
