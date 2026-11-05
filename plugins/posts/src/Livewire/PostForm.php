@@ -474,11 +474,8 @@ class PostForm extends Component
 
         // Sync Categories
         if (empty($this->selectedCategories)) {
-            $uncategorized = Category::firstOrCreate(
-                ['slug' => 'uncategorized'],
-                ['name' => 'Uncategorized', 'description' => 'Default category']
-            );
-            $this->selectedCategories = [$uncategorized->id];
+            $defaultCategory = Category::getDefault();
+            $this->selectedCategories = [$defaultCategory->id];
         }
 
         $post->categories()->sync($this->selectedCategories);

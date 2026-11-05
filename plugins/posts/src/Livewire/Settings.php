@@ -18,6 +18,8 @@ class Settings extends Component
 
     public $date_format = 'M d, Y';
 
+    public $default_category = 'blog';
+
     public array $archive_slug_translations = [];
 
     public array $archive_title_translations = [];
@@ -43,6 +45,7 @@ class Settings extends Component
         $this->archive_slug = Setting::get('archive_slug', 'blog-news');
         $this->archive_title = Setting::get('archive_title', 'Blog & News');
         $this->date_format = Setting::get('date_format', 'M d, Y');
+        $this->default_category = Setting::get('default_category', 'blog');
 
         $locales = function_exists('available_locales') ? available_locales() : ['id', 'en'];
         $defaultLocale = function_exists('setting') ? setting('default_locale', 'en') : 'en';
@@ -76,11 +79,13 @@ class Settings extends Component
             'close_comments_days' => 'integer|min:0',
             'rss_full_text' => 'boolean',
             'rss_items' => 'required|integer|min:1',
+            'default_category' => 'nullable|string|max:100',
         ]);
 
         Setting::set('posts_per_page', $this->posts_per_page);
         Setting::set('archive_slug', $this->archive_slug);
         Setting::set('archive_title', $this->archive_title);
+        Setting::set('default_category', $this->default_category ?: 'blog');
         if (Schema::hasTable('settings')) {
             \App\Models\Setting::set('permalink_post_base', $this->archive_slug);
         }

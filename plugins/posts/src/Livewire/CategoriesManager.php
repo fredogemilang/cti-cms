@@ -221,8 +221,8 @@ class CategoriesManager extends Component
             return;
         }
 
-        if ($category->slug === 'uncategorized') {
-            session()->flash('error', 'The default Uncategorized category cannot be deleted.');
+        if ($category->isDefault()) {
+            session()->flash('error', "The default category '{$category->name}' cannot be deleted.");
 
             return;
         }
@@ -232,16 +232,12 @@ class CategoriesManager extends Component
 
         $category->delete();
 
-        // Ensure default Uncategorized category exists
-        $uncategorized = Category::firstOrCreate(
-            ['slug' => 'uncategorized'],
-            ['name' => 'Uncategorized', 'description' => 'Default category']
-        );
+        // Ensure default category exists and reassign orphaned posts
+        $defaultCategory = Category::getDefault();
 
-        // Reassign posts with no categories left
         foreach ($posts as $post) {
             if ($post->categories()->count() === 0) {
-                $post->categories()->attach($uncategorized->id);
+                $post->categories()->attach($defaultCategory->id);
             }
         }
 

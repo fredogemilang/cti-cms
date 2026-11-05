@@ -95,15 +95,22 @@
                                         <span class="material-symbols-outlined text-gray-400 text-base shrink-0 select-none">subdirectory_arrow_right</span>
                                     @endif
                                     <div>
-                                        <div class="font-bold text-[#111827] dark:text-[#FCFCFC] group-hover:text-blue-600 transition-colors">
-                                            {{ $category->name }}
+                                        <div class="flex items-center gap-2">
+                                            <span class="font-bold text-[#111827] dark:text-[#FCFCFC] group-hover:text-blue-600 transition-colors">
+                                                {{ $category->name }}
+                                            </span>
+                                            @if($category->isDefault())
+                                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-md bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">Default</span>
+                                            @endif
                                         </div>
                                         
                                         <!-- WP Style Hover Actions -->
                                         <div class="flex items-center gap-2 mt-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                                             <button wire:click="edit({{ $category->id }})" class="text-[11px] font-bold text-blue-600 hover:text-blue-700 uppercase tracking-tighter">Edit</button>
-                                            <span class="text-gray-300 dark:text-gray-600">|</span>
-                                            <button wire:click="delete({{ $category->id }})" wire:confirm="Are you sure you want to delete this category?" class="text-[11px] font-bold text-red-500 hover:text-red-700 uppercase tracking-tighter">Delete</button>
+                                            @if(! $category->isDefault())
+                                                <span class="text-gray-300 dark:text-gray-600">|</span>
+                                                <button wire:click="delete({{ $category->id }})" wire:confirm="Are you sure you want to delete this category?" class="text-[11px] font-bold text-red-500 hover:text-red-700 uppercase tracking-tighter">Delete</button>
+                                            @endif
                                             <span class="text-gray-300 dark:text-gray-600">|</span>
                                             <a href="#" class="text-[11px] font-bold text-[#6F767E] hover:text-gray-900 dark:hover:text-white uppercase tracking-tighter">View</a>
                                         </div>

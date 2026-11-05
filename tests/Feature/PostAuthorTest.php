@@ -223,30 +223,26 @@ class PostAuthorTest extends TestCase
     }
 
     #[Test]
-    public function default_uncategorized_category_cannot_be_deleted(): void
+    public function default_category_cannot_be_deleted(): void
     {
         $this->actingAs($this->user);
 
-        $uncategorized = Category::firstOrCreate([
-            'slug' => 'uncategorized',
-        ], [
-            'name' => 'Uncategorized',
-        ]);
+        $defaultCategory = Category::getDefault();
 
         // Attempt deletion via model level returning false
-        $result = $uncategorized->delete();
+        $result = $defaultCategory->delete();
         $this->assertFalse($result);
-        $this->assertDatabaseHas('categories', ['id' => $uncategorized->id]);
+        $this->assertDatabaseHas('categories', ['id' => $defaultCategory->id]);
 
         // Attempt deletion via Livewire controller
         $test = Livewire::test(CategoriesManager::class);
-        $test->call('delete', $uncategorized->id);
+        $test->call('delete', $defaultCategory->id);
 
-        $this->assertDatabaseHas('categories', ['id' => $uncategorized->id]);
+        $this->assertDatabaseHas('categories', ['id' => $defaultCategory->id]);
     }
 
     #[Test]
-    public function saving_post_without_categories_defaults_to_uncategorized(): void
+    public function saving_post_without_categories_defaults_to_default_category(): void
     {
         $this->actingAs($this->user);
 
@@ -267,11 +263,11 @@ class PostAuthorTest extends TestCase
         $post = Post::where('slug', 'post-with-no-custom-category')->first();
         $this->assertNotNull($post);
         $this->assertCount(1, $post->categories);
-        $this->assertEquals('uncategorized', $post->categories->first()->slug);
+        $this->assertEquals(Category::defaultSlug(), $post->categories->first()->slug);
     }
 
     #[Test]
-    public function deleting_category_reassigns_orphaned_posts_to_uncategorized(): void
+    public function deleting_category_reassigns_orphaned_posts_to_default_category(): void
     {
         $this->actingAs($this->user);
 
@@ -304,9 +300,9 @@ class PostAuthorTest extends TestCase
 
         $this->assertDatabaseMissing('categories', ['id' => $customCategory->id]);
 
-        // Assert post is now reassigned to Uncategorized
+        // Assert post is now reassigned to default category
         $post = $post->fresh();
         $this->assertCount(1, $post->categories);
-        $this->assertEquals('uncategorized', $post->categories->first()->slug);
+        $this->assertEquals(Category::defaultSlug(), $post->categories->first()->slug);
     }
 }

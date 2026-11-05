@@ -87,6 +87,22 @@
                                 </div>
                             </div>
 
+                            <!-- Default Category -->
+                            <div class="flex flex-col md:flex-row md:items-start gap-4 md:gap-8 pb-6 border-b border-gray-100 dark:border-[#272B30]">
+                                <div class="md:w-1/3">
+                                    <label class="block text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">Default Category</label>
+                                    <p class="text-xs text-[#6F767E] mt-1">Default post category assigned when none is chosen or an assigned category is removed.</p>
+                                </div>
+                                <div class="md:w-2/3">
+                                    <select wire:model="default_category" class="w-full max-w-xs px-3 py-2 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-lg text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all">
+                                        @foreach(\Plugins\Posts\Models\Category::orderBy('name')->get() as $catOpt)
+                                            <option value="{{ $catOpt->slug }}">{{ $catOpt->name }} ({{ $catOpt->slug }})</option>
+                                        @endforeach
+                                    </select>
+                                    @error('default_category') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+
                             <!-- Archive Slug -->
                             <div class="flex flex-col md:flex-row md:items-start gap-4 md:gap-8 pb-6 border-b border-gray-100 dark:border-[#272B30]">
                                 <div class="md:w-1/3">

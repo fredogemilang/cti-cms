@@ -41,7 +41,7 @@ class Category extends Model
         });
 
         static::deleting(function ($category) {
-            if ($category->slug === 'uncategorized') {
+            if ($category->isDefault()) {
                 return false;
             }
         });
@@ -65,6 +65,45 @@ class Category extends Model
     public function getPostsCountAttribute(): int
     {
         return $this->posts()->count();
+    }
+
+    /**
+     * Get the configured slug for the default category.
+     */
+    public static function defaultSlug(): string
+    {
+        if (class_exists(Setting::class)) {
+            return (string) Setting::get('default_category', 'blog');
+        }
+
+        return 'blog';
+    }
+
+    /**
+     * Get or create the default category instance.
+     */
+    public static function getDefault(): self
+    {
+        $defaultSlug = static::defaultSlug();
+        $category = static::where('slug', $defaultSlug)->first();
+
+        if (! $category) {
+            $category = static::where('slug', 'blog')->first()
+                ?: static::firstOrCreate(
+                    ['slug' => 'blog'],
+                    ['name' => 'Blog', 'description' => 'Default blog category']
+                );
+        }
+
+        return $category;
+    }
+
+    /**
+     * Check if this category is the default category.
+     */
+    public function isDefault(): bool
+    {
+        return $this->slug === static::defaultSlug();
     }
 
     public function getUrl(?string $locale = null): string
