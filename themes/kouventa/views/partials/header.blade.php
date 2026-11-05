@@ -2,6 +2,8 @@
     $siteLogo = setting('site_logo') ? resolve_block_asset(setting('site_logo')) : theme_asset('images/kouventa-logo.png');
     $siteName = setting('site_name', 'Kouventa');
     $currentLocale = app()->getLocale();
+    $availableLocales = available_locales();
+    $showLocaleSwitcher = filter_var(setting('locale_switcher_enabled', false), FILTER_VALIDATE_BOOLEAN) && count($availableLocales) > 1;
 @endphp
 
 <!-- Mobile Top Header Bar -->
@@ -14,10 +16,13 @@
 
         <!-- Right Actions: Language Switcher & Book Demo -->
         <div style="display: flex; align-items: center; gap: 8px">
-            <div role="group" aria-label="Language" style="display: flex; padding: 2px; gap: 2px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); font-size: 12px; font-weight: 700">
-                <a href="{{ current_page_localized_url('en') }}" style="padding: 4px 8px; border-radius: 6px; text-decoration: none; {{ $currentLocale === 'en' ? 'background: #FFFFFF; color: #071C33;' : 'color: rgba(255,255,255,0.8);' }}">EN</a>
-                <a href="{{ current_page_localized_url('id') }}" style="padding: 4px 8px; border-radius: 6px; text-decoration: none; {{ $currentLocale === 'id' ? 'background: #FFFFFF; color: #071C33;' : 'color: rgba(255,255,255,0.8);' }}">ID</a>
-            </div>
+            @if($showLocaleSwitcher)
+                <div role="group" aria-label="Language" style="display: flex; padding: 2px; gap: 2px; border-radius: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); font-size: 12px; font-weight: 700">
+                    @foreach($availableLocales as $loc)
+                        <a href="{{ current_page_localized_url($loc) }}" style="padding: 4px 8px; border-radius: 6px; text-decoration: none; {{ $currentLocale === $loc ? 'background: #FFFFFF; color: #071C33;' : 'color: rgba(255,255,255,0.8);' }}">{{ strtoupper($loc) }}</a>
+                    @endforeach
+                </div>
+            @endif
             <a href="{{ localized_url('/book-demo') }}" style="background: #2BD46A; color: #06251A; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; text-decoration: none">
                 {{ t('kouventa.Book demo', 'Book demo') }}
             </a>
@@ -139,13 +144,13 @@
 
         <!-- Header Actions (Lang Switcher & Book Demo) -->
         <div style="display: flex; align-items: center; gap: 12px">
-            @php
-                $currentLocale = app()->getLocale();
-            @endphp
-            <div role="group" aria-label="Language" style="display: flex; padding: 3px; gap: 2px; border-radius: 11px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14)">
-                <a href="{{ current_page_localized_url('en') }}" style="border: 0; min-width: 40px; min-height: 36px; padding: 6px 10px; border-radius: 8px; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; {{ $currentLocale === 'en' ? 'background: #FFFFFF; color: #071C33;' : 'background: transparent; color: #D5DEE8;' }}">EN</a>
-                <a href="{{ current_page_localized_url('id') }}" style="border: 0; min-width: 40px; min-height: 36px; padding: 6px 10px; border-radius: 8px; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; {{ $currentLocale === 'id' ? 'background: #FFFFFF; color: #071C33;' : 'background: transparent; color: #D5DEE8;' }}">ID</a>
-            </div>
+            @if($showLocaleSwitcher)
+                <div role="group" aria-label="Language" style="display: flex; padding: 3px; gap: 2px; border-radius: 11px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14)">
+                    @foreach($availableLocales as $loc)
+                        <a href="{{ current_page_localized_url($loc) }}" style="border: 0; min-width: 40px; min-height: 36px; padding: 6px 10px; border-radius: 8px; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; {{ $currentLocale === $loc ? 'background: #FFFFFF; color: #071C33;' : 'background: transparent; color: #D5DEE8;' }}">{{ strtoupper($loc) }}</a>
+                    @endforeach
+                </div>
+            @endif
 
             <a href="{{ localized_url('/book-demo') }}" class="kv-btn-action kv-btn-primary" style="background: #2BD46A; color: #06251A; font-size: 15px; font-weight: 700; padding: 12px 22px; border-radius: 12px; display: inline-block; text-decoration: none">
                 {{ t('kouventa.Book a demo', 'Book a demo') }}
