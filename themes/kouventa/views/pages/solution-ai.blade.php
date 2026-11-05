@@ -50,7 +50,7 @@
     $ctaSecondary = $sCta['secondary_btn'] ?? ['text' => ($isIdLocale ? 'Hubungi sales' : 'Talk to Sales'), 'url' => '#whatsapp'];
 @endphp
 <div class="kv-canvas-wrap" x-data="{
-    tab: 0,
+    tab: {{ $initialTab ?? 0 }},
     sol: -1,
     activeSol: 0,
     _autoTimer: null,
@@ -59,6 +59,20 @@
     replayed: Array({{ max(4, count($journeySteps ?? [])) }}).fill(false),
     implSeen: false,
     _lockT: null,
+    tabSlugs: {
+        0: 'customer-service',
+        1: '{{ $isIdLocale ? 'rekrutmen' : 'recruitment' }}',
+        2: 'sales-marketing',
+        3: '{{ $isIdLocale ? 'operasional-bisnis' : 'business-operations' }}',
+        4: 'finance',
+        5: '{{ $isIdLocale ? 'rekonsiliasi-bank' : 'bank-reconciliation' }}',
+        6: 'legal-compliance'
+    },
+    baseSolutionPath: '{{ localized_url('/solutions/ai') }}',
+    getTabUrl(i) {
+        const slug = this.tabSlugs[i] || 'customer-service';
+        return `${this.baseSolutionPath}/${slug}`;
+    },
     aiSols: {
         0: [{ delay: 1.0, dur: 1.6 }, { delay: 2.8, dur: 2.8 }],
         1: [{ delay: 0.2, dur: 3.4 }, { delay: 3.9, dur: 1.1 }, { delay: 5.0, dur: 1.4 }, { delay: 6.5, dur: 1.5 }],
@@ -110,6 +124,15 @@
     parseTabFromUrl(url = window.location.href) {
         try {
             const u = new URL(url, window.location.origin);
+            const path = u.pathname.toLowerCase();
+            if (path.includes('/customer-service') || path.includes('/dukungan-pelanggan')) return 0;
+            if (path.includes('/recruitment') || path.includes('/rekrutmen')) return 1;
+            if (path.includes('/sales-marketing') || path.includes('/penjualan-pemasaran')) return 2;
+            if (path.includes('/business-operations') || path.includes('/operasional-bisnis')) return 3;
+            if (path.includes('/bank-reconciliation') || path.includes('/rekonsiliasi-bank')) return 5;
+            if (path.includes('/finance') || path.includes('/payment-prioritization') || path.includes('/prioritas-pembayaran')) return 4;
+            if (path.includes('/legal-compliance') || path.includes('/legal')) return 6;
+
             const p = u.searchParams;
             const raw = p.get('dept') !== null ? p.get('dept') : p.get('tab');
             if (raw !== null) {
@@ -117,15 +140,25 @@
                 if (!isNaN(v) && v >= 0 && v <= 6) return v;
             }
         } catch(e) {}
-        return 0;
+        return {{ $initialTab ?? 0 }};
     },
-    pickTab(i, scroll = false) {
+    pickTab(i, scroll = false, updateUrl = true) {
         clearTimeout(this._lockT);
         this.panelOn = false;
         this.tab = i;
         this.sol = -1;
         this.activeSol = 0;
         this.startAutoTimer();
+        if (updateUrl && window.history && window.history.pushState) {
+            const targetUrl = this.getTabUrl(i);
+            try {
+                const cur = new URL(window.location.href);
+                const tgt = new URL(targetUrl, window.location.origin);
+                if (cur.pathname !== tgt.pathname) {
+                    window.history.pushState({ tab: i }, '', targetUrl);
+                }
+            } catch(e) {}
+        }
         setTimeout(() => {
             this.panelOn = true;
         }, 40);
@@ -149,9 +182,11 @@
         this.panelOn = true;
         this.startAutoTimer();
 
-        // If landing with dept, tab, or #solution-tabs, scroll smoothly to tabs section
+        // If landing with dept, tab, clean subpage, or #solution-tabs, scroll smoothly to tabs section
         const p = new URLSearchParams(window.location.search);
-        if (p.has('dept') || p.has('tab') || window.location.hash.includes('solution-tabs')) {
+        const path = window.location.pathname.toLowerCase();
+        const hasSubSlug = path.includes('/customer-service') || path.includes('/recruitment') || path.includes('/rekrutmen') || path.includes('/sales-marketing') || path.includes('/business-operations') || path.includes('/operasional-bisnis') || path.includes('/finance') || path.includes('/bank-reconciliation') || path.includes('/rekonsiliasi-bank') || path.includes('/legal-compliance');
+        if (hasSubSlug || p.has('dept') || p.has('tab') || window.location.hash.includes('solution-tabs')) {
             setTimeout(() => {
                 const el = document.getElementById('solution-tabs');
                 if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -166,16 +201,12 @@
             if (!href) return;
             try {
                 const u = new URL(href, window.location.href);
-                if (u.pathname === window.location.pathname && (u.searchParams.has('dept') || u.searchParams.has('tab') || u.hash.includes('solution-tabs'))) {
-                    const raw = u.searchParams.get('dept') !== null ? u.searchParams.get('dept') : u.searchParams.get('tab');
-                    if (raw !== null) {
-                        let target = parseInt(raw, 10);
-                        if (!isNaN(target) && target >= 0 && target <= 6) {
-                            this.pickTab(target, true);
-                            window.history.pushState(null, '', u.href);
-                            e.preventDefault();
-                            return;
-                        }
+                if (u.pathname.includes('/solutions/ai')) {
+                    const target = this.parseTabFromUrl(u.href);
+                    if (target !== undefined && target !== null && target >= 0 && target <= 6) {
+                        this.pickTab(target, true, true);
+                        e.preventDefault();
+                        return;
                     }
                     if (u.hash.includes('solution-tabs')) {
                         const el = document.getElementById('solution-tabs');

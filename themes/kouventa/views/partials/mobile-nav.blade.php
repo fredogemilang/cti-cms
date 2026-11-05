@@ -190,22 +190,22 @@
                 {{ t('kouventa.Artificial Intelligence Solutions', 'Artificial Intelligence Solutions') }}
             </div>
             <div class="kv-sheet-grid">
-                <a href="{{ localized_url('/solutions/ai?dept=0#solution-tabs') }}" @click="activeSheet = null" class="kv-sheet-sub-item">
+                <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 0) }}" @click="activeSheet = null" class="kv-sheet-sub-item">
                     {{ t('kouventa.Customer Service', 'Customer Service') }}
                 </a>
-                <a href="{{ localized_url('/solutions/ai?dept=1#solution-tabs') }}" @click="activeSheet = null" class="kv-sheet-sub-item">
+                <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 1) }}" @click="activeSheet = null" class="kv-sheet-sub-item">
                     {{ t('kouventa.Recruitment', 'Recruitment') }}
                 </a>
-                <a href="{{ localized_url('/solutions/ai?dept=2#solution-tabs') }}" @click="activeSheet = null" class="kv-sheet-sub-item">
+                <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 2) }}" @click="activeSheet = null" class="kv-sheet-sub-item">
                     {{ t('kouventa.Sales & Marketing', 'Sales & Marketing') }}
                 </a>
-                <a href="{{ localized_url('/solutions/ai?dept=3#solution-tabs') }}" @click="activeSheet = null" class="kv-sheet-sub-item">
+                <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 3) }}" @click="activeSheet = null" class="kv-sheet-sub-item">
                     {{ t('kouventa.Business Operation', 'Business Operation') }}
                 </a>
-                <a href="{{ localized_url('/solutions/ai?dept=4#solution-tabs') }}" @click="activeSheet = null" class="kv-sheet-sub-item">
+                <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 4) }}" @click="activeSheet = null" class="kv-sheet-sub-item">
                     {{ t('kouventa.Finance', 'Finance') }}
                 </a>
-                <a href="{{ localized_url('/solutions/ai?dept=6#solution-tabs') }}" @click="activeSheet = null" class="kv-sheet-sub-item">
+                <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ai', 6) }}" @click="activeSheet = null" class="kv-sheet-sub-item">
                     {{ t('kouventa.Legal & Compliance', 'Legal & Compliance') }}
                 </a>
             </div>
@@ -217,13 +217,13 @@
                 {{ t('kouventa.Customer Engagement Solutions', 'Customer Engagement Solutions') }}
             </div>
             <div class="kv-sheet-grid">
-                <a href="{{ localized_url('/solutions/customer-engagement?case=0#solution-tabs') }}" @click="activeSheet = null" class="kv-sheet-sub-item">
+                <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ce', 0) }}" @click="activeSheet = null" class="kv-sheet-sub-item">
                     {{ t('kouventa.Sales & Marketing', 'Sales & Marketing') }}
                 </a>
-                <a href="{{ localized_url('/solutions/customer-engagement?case=1#solution-tabs') }}" @click="activeSheet = null" class="kv-sheet-sub-item">
+                <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ce', 1) }}" @click="activeSheet = null" class="kv-sheet-sub-item">
                     {{ t('kouventa.Customer Service', 'Customer Service') }}
                 </a>
-                <a href="{{ localized_url('/solutions/customer-engagement?case=2#solution-tabs') }}" @click="activeSheet = null" class="kv-sheet-sub-item" style="grid-column: span 2;">
+                <a href="{{ \Themes\Kouventa\Handlers\SolutionRouteHandler::url('ce', 2) }}" @click="activeSheet = null" class="kv-sheet-sub-item" style="grid-column: span 2;">
                     {{ t('kouventa.Operation', 'Operation') }}
                 </a>
             </div>

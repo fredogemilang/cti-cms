@@ -41,7 +41,7 @@
     $ctaSecondary = $sCta['secondary_btn'] ?? ['text' => ($isIdLocale ? 'Hubungi sales' : 'Talk to Sales'), 'url' => '#whatsapp'];
 @endphp
 <div class="kv-canvas-wrap" x-data="{
-    tab: 0,
+    tab: {{ $initialCase ?? 0 }},
     sol: -1,
     activeSol: 0,
     panelOn: true,
@@ -50,6 +50,16 @@
         0: 5,
         1: 4,
         2: 1
+    },
+    caseSlugs: {
+        0: 'sales-marketing',
+        1: 'customer-service',
+        2: '{{ $isIdLocale ? 'operasional' : 'operations' }}'
+    },
+    baseSolutionPath: '{{ localized_url('/solutions/customer-engagement') }}',
+    getCaseUrl(i) {
+        const slug = this.caseSlugs[i] || 'sales-marketing';
+        return `${this.baseSolutionPath}/${slug}`;
     },
     startAutoTimer() {
         if (this._autoTimer) clearTimeout(this._autoTimer);
@@ -76,6 +86,11 @@
     parseTabFromUrl(url = window.location.href) {
         try {
             const u = new URL(url, window.location.origin);
+            const path = u.pathname.toLowerCase();
+            if (path.includes('/sales-marketing') || path.includes('/penjualan-pemasaran')) return 0;
+            if (path.includes('/customer-service') || path.includes('/dukungan-pelanggan')) return 1;
+            if (path.includes('/operations') || path.includes('/operasional')) return 2;
+
             const p = u.searchParams;
             const raw = p.get('case') !== null ? p.get('case') : p.get('tab');
             if (raw !== null) {
@@ -83,15 +98,25 @@
                 if (!isNaN(v) && v >= 0 && v <= 2) return v;
             }
         } catch(e) {}
-        return 0;
+        return {{ $initialCase ?? 0 }};
     },
-    pickTab(i, scroll = false) {
+    pickTab(i, scroll = false, updateUrl = true) {
         if (this._autoTimer) clearTimeout(this._autoTimer);
         this.panelOn = false;
         this.tab = i;
         this.sol = -1;
         this.activeSol = 0;
         this.startAutoTimer();
+        if (updateUrl && window.history && window.history.pushState) {
+            const targetUrl = this.getCaseUrl(i);
+            try {
+                const cur = new URL(window.location.href);
+                const tgt = new URL(targetUrl, window.location.origin);
+                if (cur.pathname !== tgt.pathname) {
+                    window.history.pushState({ tab: i }, '', targetUrl);
+                }
+            } catch(e) {}
+        }
         setTimeout(() => {
             this.panelOn = true;
         }, 40);
@@ -109,9 +134,11 @@
         this.panelOn = true;
         this.startAutoTimer();
 
-        // If landing with case, tab, or #solution-tabs, scroll smoothly to tabs section
+        // If landing with case, tab, clean subpage, or #solution-tabs, scroll smoothly to tabs section
         const p = new URLSearchParams(window.location.search);
-        if (p.has('case') || p.has('tab') || window.location.hash.includes('solution-tabs')) {
+        const path = window.location.pathname.toLowerCase();
+        const hasSubSlug = path.includes('/sales-marketing') || path.includes('/customer-service') || path.includes('/operations') || path.includes('/operasional');
+        if (hasSubSlug || p.has('case') || p.has('tab') || window.location.hash.includes('solution-tabs')) {
             setTimeout(() => {
                 const el = document.getElementById('solution-tabs');
                 if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -126,16 +153,12 @@
             if (!href) return;
             try {
                 const u = new URL(href, window.location.href);
-                if (u.pathname === window.location.pathname && (u.searchParams.has('case') || u.searchParams.has('tab') || u.hash.includes('solution-tabs'))) {
-                    const raw = u.searchParams.get('case') !== null ? u.searchParams.get('case') : u.searchParams.get('tab');
-                    if (raw !== null) {
-                        const target = parseInt(raw, 10);
-                        if (!isNaN(target) && target >= 0 && target <= 2) {
-                            this.pickTab(target, true);
-                            window.history.pushState(null, '', u.href);
-                            e.preventDefault();
-                            return;
-                        }
+                if (u.pathname.includes('/solutions/customer-engagement')) {
+                    const target = this.parseTabFromUrl(u.href);
+                    if (target !== undefined && target !== null && target >= 0 && target <= 2) {
+                        this.pickTab(target, true, true);
+                        e.preventDefault();
+                        return;
                     }
                     if (u.hash.includes('solution-tabs')) {
                         const el = document.getElementById('solution-tabs');
