@@ -18,32 +18,40 @@
                     <h1 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $title }}</h1>
                     <span class="px-2 py-0.5 rounded-md text-[11px] font-mono font-bold bg-gray-100 dark:bg-[#272B30] text-[#6F767E]">/{{ $slug }}</span>
                 </div>
+                @php
+                    $availableLocales = function_exists('available_locales') ? available_locales() : ['en'];
+                    $defaultLocale = (string) \App\Models\Setting::get('default_locale', 'en');
+                    $localeFlags = ['en' => '🇺🇸', 'id' => '🇮🇩', 'ja' => '🇯🇵', 'zh' => '🇨🇳', 'es' => '🇪🇸', 'fr' => '🇫🇷', 'de' => '🇩🇪'];
+                    $localeNames = ['en' => 'English', 'id' => 'Indonesia', 'ja' => 'Japanese', 'zh' => 'Chinese'];
+                @endphp
                 <div class="text-xs text-[#6F767E] mt-0.5 flex items-center gap-2">
-                    <span>Editing for: <strong class="text-[#111827] dark:text-[#FCFCFC] uppercase">{{ $editingLocale }}</strong></span>
-                    <span>•</span>
+                    @if(count($availableLocales) > 1)
+                        <span>Editing for: <strong class="text-[#111827] dark:text-[#FCFCFC] uppercase">{{ $editingLocale }}</strong></span>
+                        <span>•</span>
+                    @endif
                     <span class="text-emerald-600 dark:text-emerald-400">Autosave active (30s)</span>
                 </div>
             </div>
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-            {{-- Language Switcher --}}
-            <div class="inline-flex items-center bg-gray-100 dark:bg-[#0B0B0B] p-1 rounded-xl ring-1 ring-gray-200 dark:ring-[#272B30]">
-                <button type="button" wire:click="setLocale('en')" class="h-9 px-3.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 {{ $editingLocale === 'en' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                    <span>🇺🇸</span>
-                    <span>English</span>
-                </button>
-                <button type="button" wire:click="setLocale('id')" class="h-9 px-3.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 {{ $editingLocale === 'id' ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
-                    <span>🇮🇩</span>
-                    <span>Indonesia</span>
-                </button>
-            </div>
+            @if(count($availableLocales) > 1)
+                {{-- Language Switcher --}}
+                <div class="inline-flex items-center bg-gray-100 dark:bg-[#0B0B0B] p-1 rounded-xl ring-1 ring-gray-200 dark:ring-[#272B30]">
+                    @foreach($availableLocales as $loc)
+                        <button type="button" wire:click="setLocale('{{ $loc }}')" class="h-9 px-3.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 {{ $editingLocale === $loc ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                            <span>{{ $localeFlags[$loc] ?? '🌐' }}</span>
+                            <span>{{ $localeNames[$loc] ?? strtoupper($loc) }}</span>
+                        </button>
+                    @endforeach
+                </div>
 
-            @if($editingLocale === 'id')
-                <button type="button" wire:click="copyFromEn" class="h-10 px-3.5 rounded-xl border border-dashed border-gray-300 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] hover:bg-gray-50 dark:hover:bg-[#272B30] flex items-center gap-1.5 text-xs font-bold transition-all" title="Copy default content from English">
-                    <span class="material-symbols-outlined text-sm">content_copy</span>
-                    <span>Copy from EN</span>
-                </button>
+                @if($editingLocale !== $defaultLocale)
+                    <button type="button" wire:click="copyFromEn" class="h-10 px-3.5 rounded-xl border border-dashed border-gray-300 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] hover:bg-gray-50 dark:hover:bg-[#272B30] flex items-center gap-1.5 text-xs font-bold transition-all cursor-pointer" title="Copy default content">
+                        <span class="material-symbols-outlined text-sm">content_copy</span>
+                        <span>Copy from {{ strtoupper($defaultLocale) }}</span>
+                    </button>
+                @endif
             @endif
 
             <a href="{{ $page->getUrl($editingLocale) }}?preview=1" target="_blank" class="h-10 px-4 rounded-xl border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] hover:bg-gray-50 dark:hover:bg-[#272B30] flex items-center gap-1.5 text-xs font-bold transition-all">

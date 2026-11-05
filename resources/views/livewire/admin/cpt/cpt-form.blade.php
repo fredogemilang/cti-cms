@@ -24,15 +24,21 @@
                             <span class="material-symbols-outlined text-blue-600">label</span>
                             Post Type Labels & Slugs
                         </h2>
-                        {{-- Language Switcher Tabs --}}
-                        <div class="flex items-center bg-gray-100 dark:bg-[#272B30] p-1 rounded-xl">
-                            <button type="button" wire:click="setLocale('en')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeLocale === 'en' ? 'bg-white dark:bg-[#111827] text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white' }}">
-                                🇬🇧 English (EN)
-                            </button>
-                            <button type="button" wire:click="setLocale('id')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeLocale === 'id' ? 'bg-white dark:bg-[#111827] text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white' }}">
-                                🇮🇩 Bahasa Indonesia (ID)
-                            </button>
-                        </div>
+                        @php
+                            $availableLocales = function_exists('available_locales') ? available_locales() : ['en'];
+                            $localeFlags = ['en' => '🇬🇧', 'id' => '🇮🇩', 'ja' => '🇯🇵', 'zh' => '🇨🇳', 'es' => '🇪🇸', 'fr' => '🇫🇷', 'de' => '🇩🇪'];
+                            $localeNames = ['en' => 'English (EN)', 'id' => 'Bahasa Indonesia (ID)'];
+                        @endphp
+                        @if(count($availableLocales) > 1)
+                            {{-- Language Switcher Tabs --}}
+                            <div class="flex items-center bg-gray-100 dark:bg-[#272B30] p-1 rounded-xl">
+                                @foreach($availableLocales as $loc)
+                                    <button type="button" wire:click="setLocale('{{ $loc }}')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeLocale === $loc ? 'bg-white dark:bg-[#111827] text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white' }}">
+                                        {{ $localeFlags[$loc] ?? '🌐' }} {{ $localeNames[$loc] ?? strtoupper($loc) }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">

@@ -138,7 +138,11 @@ class Setting extends Model
     {
         $q = static::query();
         if ($group) {
-            $q->where('group', $group);
+            if ($group === 'languages') {
+                $q->whereIn('group', ['languages', 'localization']);
+            } else {
+                $q->where('group', $group);
+            }
         }
 
         return $q->get()->mapWithKeys(fn ($r) => [
