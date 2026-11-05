@@ -310,3 +310,41 @@ All theme templates (single CPTs, single posts, static pages, archives) **MUST**
 1. **No Manual `<nav>` Tags**: Writing manual/hardcoded `<nav>` breadcrumb HTML, `<a>` tag chains, or inline SVG loops in Blade views is **strictly forbidden**.
 2. **Automatic Schema Sync**: `<x-seo-breadcrumbs>` integrates directly with `BreadcrumbService`, automatically respecting `$postType->has_archive`, parent/child entry relations, and generating matching JSON-LD `BreadcrumbList` schema in `<head>`.
 3. **Attribute Customization**: Pass custom colors, font sizes, or margins via standard Blade `$attributes` (`class="..."`).
+
+---
+
+## 7. Public Locale Switcher Compliance (`locale_switcher_enabled`) ⚠️ MANDATORY
+
+Themes supporting multi-language navigation **MUST** respect the CMS setting `locale_switcher_enabled` (configured via **Settings → Languages**) and the active locales list `available_locales()`.
+
+### Strict Rules:
+1. **Never Hardcode Static Locales**: Writing static `EN | ID` buttons or unconditioned language switchers in theme headers, footers, or navigation drawers is **strictly forbidden**.
+2. **Respect Admin Toggle & Available Count**: The language switcher MUST NOT be rendered if:
+   - Setting `locale_switcher_enabled` is false / turned off.
+   - Only a single language is configured in `available_locales()` (e.g. only `['en']`).
+3. **Core Component or Guarded Custom UI**:
+   - **Option A (Standard Core Component — Recommended)**:
+     ```blade
+     <x-locale-switcher class="text-white" />
+     ```
+     `<x-locale-switcher />` automatically guards itself via `if (!setting('locale_switcher_enabled', false)) return;`.
+   - **Option B (Custom Theme Styled Switcher, e.g. Pill/Bar)**:
+     If the theme implements custom styling (e.g. pill toggles, custom mobile dock items), the view **MUST** explicitly guard and iterate over `available_locales()`:
+     ```blade
+     @php
+         $availableLocales = available_locales();
+         $showLocaleSwitcher = filter_var(setting('locale_switcher_enabled', false), FILTER_VALIDATE_BOOLEAN) && count($availableLocales) > 1;
+     @endphp
+
+     @if($showLocaleSwitcher)
+         <div role="group" aria-label="Language" class="theme-lang-switcher">
+             @foreach($availableLocales as $loc)
+                 <a href="{{ current_page_localized_url($loc) }}"
+                    class="{{ app()->getLocale() === $loc ? 'active' : '' }}">
+                     {{ strtoupper($loc) }}
+                 </a>
+             @endforeach
+         </div>
+     @endif
+     ```
+4. **URL Synchronization**: Always use `current_page_localized_url($loc)` (or `localized_url($path, $loc)`) to generate switcher links so active routes, localized slugs, and archive prefixes are preserved.

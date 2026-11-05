@@ -177,3 +177,18 @@ Settings → Page Optimization has a **"Homepage Only"** toggle for Critical CSS
 **FOUC gate REMOVED (2026-09-21):** `OptimizeHtml` used to inject `body{opacity:0}` and reveal the page from a `</body>` script once `link[rel=preload][as=style]` fired `load` (2s failsafe). The small preloads had usually *already* loaded by the time the script attached its listeners, so the counter never reached zero and every visitor waited the full 2s: Lighthouse on production showed an LCP "element render delay" of 2149ms with a 60ms TTFB. Critical CSS must paint the fold on its own — never hide `<body>` behind a stylesheet load again. If something flashes unstyled, fix the curated critical CSS in Settings → Page Optimization. In deferred mode `OptimizeHtml::deferStylesheets` stamps `html.css-pending` so CSS transitions stay suppressed until the last deferred sheet's `onload`.
 
 **Failed experiment (do not repeat without a new strategy):** auto-extracted 50KB inline critical CSS + deferred stylesheet swap made scores DROP (TBT +150ms from parsing inline at throttle, CLS up from the swap) and was reverted (commit c124522). If retried: curate critical manually, ≤8KB.
+
+## G53. Hardcoded Language Switcher Bypasses CMS Setting (2026-11-05)
+Hardcoding language switcher buttons (e.g. `EN | ID`) directly in theme header/footer templates ignores the CMS setting `locale_switcher_enabled` (toggled via **Settings → Languages**) and ignores configured `available_locales()`. When an admin turns off "Show Locale Switcher" or restricts available locales to just 1 language, the switcher still appears on the public frontend.
+
+**Rule:** Themes must either use `<x-locale-switcher />` or guard custom switcher UI with:
+```blade
+@php
+    $availableLocales = available_locales();
+    $showLocaleSwitcher = filter_var(setting('locale_switcher_enabled', false), FILTER_VALIDATE_BOOLEAN) && count($availableLocales) > 1;
+@endphp
+@if($showLocaleSwitcher)
+    ...
+@endif
+```
+and loop dynamically over `available_locales()` using `current_page_localized_url($loc)`. Never hardcode static locale code pairs. See `docs/theme-development.md` §7.

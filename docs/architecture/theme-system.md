@@ -82,3 +82,16 @@ php artisan theme:publish --all         # All themes
 - Theme views accessed via namespace: `cdt::pages.home`, `cdt::partials.header`
 - Include: `@include('cdt::partials.contact-section')`
 - `theme_view('pages.home')` helper resolves active theme automatically
+
+## Locale Switcher Compliance
+
+Themes must respect the CMS `locale_switcher_enabled` setting and `available_locales()`. Use `<x-locale-switcher />` or guard custom UI with:
+```blade
+@php
+    $showLocaleSwitcher = filter_var(setting('locale_switcher_enabled', false), FILTER_VALIDATE_BOOLEAN) && count(available_locales()) > 1;
+@endphp
+@if($showLocaleSwitcher)
+    ...
+@endif
+```
+Never hardcode static `EN | ID` buttons. See `docs/theme-development.md` §7.

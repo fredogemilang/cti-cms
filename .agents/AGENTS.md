@@ -32,6 +32,24 @@ Whenever adding or modifying a `MetaField` for any `CustomPostType` (`cpt_entrie
 1. **Always Check Plugin Status**: Theme views MUST check `is_plugin_active('posts') && class_exists(\Plugins\Posts\Models\Post::class)` before querying model classes from optional plugins.
 2. **Graceful Fallback**: If a plugin is deactivated in the admin panel, the view MUST fallback gracefully (e.g. returning an empty collection or hiding the section) without throwing `ClassNotFoundException` or crashing the app.
 
+## Mandatory Public Locale Switcher Compliance Rule
+1. **Never Hardcode Static Locales**: DILARANG meng-hardcode tombol/pill bahasa (misal statis `EN | ID`) di view header, footer, atau navigation bar tema tanpa memeriksa pengaturan CMS `locale_switcher_enabled` dan `available_locales()`.
+2. **Always Obey Admin Setting & Locales Count**: Switcher bahasa DILARANG tampil di frontend jika setting `locale_switcher_enabled` bernilai false (dimatikan di `/ctrlpanel/settings/languages`) ATAU jika bahasa aktif yang terdaftar di `available_locales()` hanya 1 bahasa saja.
+3. **Use Component or Guarded Custom UI**: Gunakan komponen `<x-locale-switcher />` ATAU jika tema membutuhkan styling custom (misal toggle pill), WAJIB membungkusnya dengan pengecekan:
+   ```blade
+   @php
+       $availableLocales = available_locales();
+       $showLocaleSwitcher = filter_var(setting('locale_switcher_enabled', false), FILTER_VALIDATE_BOOLEAN) && count($availableLocales) > 1;
+   @endphp
+   @if($showLocaleSwitcher)
+       ...
+       @foreach($availableLocales as $loc)
+           <a href="{{ current_page_localized_url($loc) }}">{{ strtoupper($loc) }}</a>
+       @endforeach
+   @endif
+   ```
+4. **Preserve Route Context**: Selalu gunakan helper `current_page_localized_url($loc)` (atau `localized_url()`) untuk menghasilkan link pergantian bahasa agar slug halaman, CPT, atau archive blog yang aktif berpindah ke padanan terjemahannya secara tepat.
+
 
 
 
