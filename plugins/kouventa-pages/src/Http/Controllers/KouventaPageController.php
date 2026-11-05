@@ -43,6 +43,13 @@ class KouventaPageController extends Controller
 
                 return redirect($targetUrl, 301);
             }
+        } elseif ($slug === 'pricing') {
+            $tab = $request->query('tab');
+            if (class_exists(\Themes\Kouventa\Handlers\PricingRouteHandler::class)) {
+                $targetUrl = \Themes\Kouventa\Handlers\PricingRouteHandler::url($tab ?? 'ai', $locale);
+
+                return redirect($targetUrl, 301);
+            }
         }
 
         // Look up by primary slug or localized slug

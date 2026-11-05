@@ -352,7 +352,7 @@ class ProductAiSchema
                 ],
                 'secondary_cta' => [
                     'text' => $isId ? 'Lihat harga' : 'See pricing',
-                    'url' => '/pricing?tab=ai',
+                    'url' => '/pricing/ai',
                 ],
             ],
         ];

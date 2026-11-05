@@ -1340,7 +1340,10 @@
     $sCta = $page?->section('cta', []);
     $bottomCtaTitle = rtrim($sCta['title'] ?? ($isIdLocale ? 'Mulai terhubung dengan pelanggan lewat WhatsApp' : 'Start engaging customers on WhatsApp'), '.');
     $ctaPrimary = $sCta['primary_btn'] ?? ['text' => ($isIdLocale ? 'Jadwalkan demo' : 'Book a demo'), 'url' => '/book-demo'];
-    $ctaSecondary = $sCta['secondary_btn'] ?? ['text' => ($isIdLocale ? 'Lihat harga' : 'See pricing'), 'url' => '/pricing?tab=ce'];
+    $ctaSecondary = $sCta['secondary_btn'] ?? ['text' => ($isIdLocale ? 'Lihat harga' : 'See pricing'), 'url' => '/pricing/customer-engagement'];
+if (($ctaSecondary['url'] ?? '') === '/pricing?tab=ce') {
+    $ctaSecondary['url'] = '/pricing/customer-engagement';
+}
 @endphp
 
 @section('content')
@@ -2177,7 +2180,7 @@ $whyCeIcons = [
 <h2 style="margin: 0; font-size: 44px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">{{ $bottomCtaTitle }}</h2>
 <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap">
 <a href="{{ localized_url($ctaPrimary['url'] ?? '/book-demo') }}" class="kv-btn-action kv-btn-navy" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: #071C33; color: #FFFFFF; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; white-space: nowrap; text-decoration: none">{{ $ctaPrimary['text'] ?? ($isIdLocale ? 'Jadwalkan demo' : 'Book a demo') }}</a>
-<a href="{{ localized_url($ctaSecondary['url'] ?? '/pricing?tab=ce') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ $ctaSecondary['text'] ?? ($isIdLocale ? 'Lihat harga' : 'See pricing') }}</a>
+<a href="{{ localized_url($ctaSecondary['url'] ?? '/pricing/customer-engagement') }}" class="kv-btn-action kv-btn-outline" style="box-sizing: border-box; min-width: 180px; height: 56px; display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.35); color: #06251A; font-size: 17px; font-weight: 700; padding: 0 28px; border-radius: 12px; border: 2px solid #06251A; white-space: nowrap; text-decoration: none">{{ $ctaSecondary['text'] ?? ($isIdLocale ? 'Lihat harga' : 'See pricing') }}</a>
 </div>
 </div>
 </div>

@@ -458,7 +458,7 @@
                 <div class="p-4 rounded-xl border border-gray-100 dark:border-[#272B30] bg-gray-50/50 dark:bg-[#272B30]/20 space-y-3">
                     <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Secondary Button (Outline)</span>
                     <input type="text" placeholder="Button Text" wire:model.defer="sections.cta.secondary_cta.text" class="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium">
-                    <input type="text" placeholder="Button URL / Anchor (e.g. /pricing?tab=ai)" wire:model.defer="sections.cta.secondary_cta.url" class="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium font-mono">
+                    <input type="text" placeholder="Button URL / Anchor (e.g. /pricing/ai)" wire:model.defer="sections.cta.secondary_cta.url" class="w-full h-10 px-3 rounded-lg border border-gray-200 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-xs font-medium font-mono">
                 </div>
             </div>
         </div>

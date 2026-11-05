@@ -2,6 +2,7 @@
 
 @php
     $isIdLocale = app()->getLocale() === 'id';
+    $initialProduct = $initialProduct ?? (request('tab') === 'ce' ? 'ce' : 'ai');
 
     // Sections from KouventaPage
     $sHero = $page?->section('hero', []);
@@ -218,16 +219,20 @@
 
     <!-- Platform Toggle -->
     <div id="pricing-toggle" role="group" aria-label="Choose a platform" style="align-self: center; display: flex; padding: 5px; background: rgba(255,255,255,0.08); border-radius: 14px; gap: 4px; margin-top: 12px; z-index: 10">
-        <button type="button" @click="setTab('ai')"
-                :class="{ 'is-active': product === 'ai' }"
-                class="kv-toggle-btn">
+        <a href="{{ class_exists(\Themes\Kouventa\Handlers\PricingRouteHandler::class) ? \Themes\Kouventa\Handlers\PricingRouteHandler::url('ai') : localized_url('/pricing/ai') }}"
+           @click.prevent="setTab('ai')"
+           :class="{ 'is-active': product === 'ai' }"
+           class="kv-toggle-btn"
+           style="text-decoration: none">
             {{ $sHero['toggle_ai'] ?? t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}
-        </button>
-        <button type="button" @click="setTab('ce')"
-                :class="{ 'is-active': product === 'ce' }"
-                class="kv-toggle-btn">
+        </a>
+        <a href="{{ class_exists(\Themes\Kouventa\Handlers\PricingRouteHandler::class) ? \Themes\Kouventa\Handlers\PricingRouteHandler::url('ce') : localized_url('/pricing/customer-engagement') }}"
+           @click.prevent="setTab('ce')"
+           :class="{ 'is-active': product === 'ce' }"
+           class="kv-toggle-btn"
+           style="text-decoration: none">
             {{ $sHero['toggle_ce'] ?? t('kouventa.Customer Engagement', 'Customer Engagement') }}
-        </button>
+        </a>
     </div>
     </div>
 </section>
@@ -783,14 +788,33 @@
 (() => {
     function pricingPage() {
         return {
-            product: (() => {
-                if (window.location.hash === '#calculator') return 'ce';
-                const tab = new URLSearchParams(window.location.search).get('tab');
-                return tab === 'ce' ? 'ce' : (tab === 'ai' ? 'ai' : 'ce');
-            })(),
+            basePricingUrl: '{{ rtrim(localized_url("/pricing"), "/") }}',
+            product: '{{ $initialProduct ?? "ai" }}',
             openCats: { 'ai_0': true, 'ce_0': true },
 
+            getTabUrl(tab) {
+                const slug = (tab === 'ce' || tab === 'customer-engagement') ? 'customer-engagement' : 'ai';
+                const base = this.basePricingUrl.replace(/\/+$/, '');
+                return `${base}/${slug}/`;
+            },
+
+            parseProductFromUrl(url = window.location.href) {
+                try {
+                    const u = new URL(url, window.location.origin);
+                    const path = u.pathname.toLowerCase();
+                    if (path.includes('/pricing/customer-engagement') || path.includes('/pricing/ce')) return 'ce';
+                    if (path.includes('/pricing/ai') || path.includes('/pricing/artificial-intelligence')) return 'ai';
+                    const tab = u.searchParams.get('tab');
+                    if (tab === 'ce' || tab === 'customer-engagement') return 'ce';
+                    if (tab === 'ai' || tab === 'artificial-intelligence') return 'ai';
+                    if (u.hash === '#calculator') return 'ce';
+                } catch(e) {}
+                return '{{ $initialProduct ?? "ai" }}';
+            },
+
             init() {
+                this.product = this.parseProductFromUrl();
+
                 if (window.location.hash === '#calculator') {
                     this.scrollToCalculator();
                 }
@@ -805,20 +829,54 @@
                 window.addEventListener('switch-pricing-tab', (e) => {
                     if (e.detail === 'ai' || e.detail === 'ce') this.setTab(e.detail);
                 });
-                window.addEventListener('popstate', () => {
-                    const t = new URLSearchParams(window.location.search).get('tab');
-                    if (t === 'ai' || t === 'ce') this.product = t;
-                    if (window.location.hash === '#calculator') this.scrollToCalculator();
+                window.addEventListener('popstate', (e) => {
+                    const parsed = (e.state && e.state.product) ? e.state.product : this.parseProductFromUrl();
+                    if (parsed === 'ai' || parsed === 'ce') {
+                        this.product = parsed;
+                    }
+                    if (window.location.hash === '#calculator') {
+                        this.scrollToCalculator();
+                    }
+                });
+
+                // Intercept internal pricing links from header / nav while on this page
+                document.addEventListener('click', (e) => {
+                    const a = e.target.closest('a');
+                    if (!a) return;
+                    const href = a.getAttribute('href');
+                    if (!href) return;
+                    try {
+                        const u = new URL(href, window.location.href);
+                        if (u.pathname.includes('/pricing')) {
+                            const target = this.parseProductFromUrl(u.href);
+                            if (target === 'ai' || target === 'ce') {
+                                this.setTab(target, true);
+                                if (u.hash === '#calculator') {
+                                    this.scrollToCalculator();
+                                } else if (u.hash) {
+                                    const targetEl = document.querySelector(u.hash);
+                                    if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
+                                }
+                                e.preventDefault();
+                                return;
+                            }
+                        }
+                    } catch(err) {}
                 });
             },
 
-            setTab(tab) {
+            setTab(tab, updateUrl = true) {
                 this.product = tab;
-                try {
-                    const u = new URL(window.location);
-                    u.searchParams.set('tab', tab);
-                    history.replaceState(null, '', u.pathname + u.search + u.hash);
-                } catch (e) {}
+                if (updateUrl && window.history && window.history.pushState) {
+                    const targetUrl = this.getTabUrl(tab);
+                    try {
+                        const cur = new URL(window.location.href);
+                        const tgt = new URL(targetUrl, window.location.origin);
+                        if (cur.pathname !== tgt.pathname) {
+                            window.history.pushState({ product: tab }, '', targetUrl + (window.location.hash || ''));
+                        }
+                    } catch(e) {}
+                }
             },
             toggleCat(key) {
                 this.openCats[key] = !this.openCats[key];
@@ -836,7 +894,13 @@
                 this.openCats = {};
             },
             scrollToCalculator() {
-                this.setTab('ce');
+                this.setTab('ce', true);
+                if (window.location.hash !== '#calculator') {
+                    try {
+                        const targetUrl = this.getTabUrl('ce') + '#calculator';
+                        history.replaceState({ product: 'ce' }, '', targetUrl);
+                    } catch(e) {}
+                }
                 setTimeout(() => {
                     const el = document.getElementById('calculator');
                     if (el) {

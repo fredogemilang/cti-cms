@@ -28,6 +28,11 @@ class KouventaSitemapBuilder extends SitemapBuilder
                     continue;
                 }
 
+                // Skip base pricing page since canonical clean URLs are /pricing/ai/ and /pricing/customer-engagement/
+                if ($kPage->slug === 'pricing') {
+                    continue;
+                }
+
                 foreach ($locales as $loc) {
                     $urls[] = [
                         'loc' => $kPage->getUrl($loc),
@@ -43,6 +48,13 @@ class KouventaSitemapBuilder extends SitemapBuilder
             // Append clean solution tab sub-URLs
             if (class_exists(\Themes\Kouventa\Handlers\SolutionRouteHandler::class)) {
                 foreach (\Themes\Kouventa\Handlers\SolutionRouteHandler::getAllSolutionSitemapUrls() as $subUrl) {
+                    $urls[] = $subUrl;
+                }
+            }
+
+            // Append clean pricing tab sub-URLs
+            if (class_exists(\Themes\Kouventa\Handlers\PricingRouteHandler::class)) {
+                foreach (\Themes\Kouventa\Handlers\PricingRouteHandler::getAllPricingSitemapUrls() as $subUrl) {
                     $urls[] = $subUrl;
                 }
             }

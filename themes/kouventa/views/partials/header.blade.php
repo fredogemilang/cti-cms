@@ -108,11 +108,11 @@
                 <div x-show="pricingOpen" x-transition x-cloak
                      class="kv-dropdown-menu"
                      style="position: absolute; top: 52px; left: -16px; width: 300px; background: #FFFFFF; border-radius: 14px; padding: 8px; box-shadow: 0 24px 48px rgba(0,0,0,0.3); z-index: 20">
-                    <a href="{{ localized_url('/pricing?tab=ai') }}" style="background: transparent; padding: 14px 16px; border-radius: 10px; color: #0E1A24; display: flex; flex-direction: column; gap: 2px; text-decoration: none">
+                    <a href="{{ \Themes\Kouventa\Handlers\PricingRouteHandler::url('ai') }}" style="background: transparent; padding: 14px 16px; border-radius: 10px; color: #0E1A24; display: flex; flex-direction: column; gap: 2px; text-decoration: none">
                         <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Artificial Intelligence', 'Artificial Intelligence') }}</span>
                         <span style="font-size: 13px; color: #4A5866">Starter · Grow · Scale</span>
                     </a>
-                    <a href="{{ localized_url('/pricing?tab=ce') }}" style="background: transparent; padding: 14px 16px; border-radius: 10px; color: #0E1A24; display: flex; flex-direction: column; gap: 2px; text-decoration: none">
+                    <a href="{{ \Themes\Kouventa\Handlers\PricingRouteHandler::url('ce') }}" style="background: transparent; padding: 14px 16px; border-radius: 10px; color: #0E1A24; display: flex; flex-direction: column; gap: 2px; text-decoration: none">
                         <span style="font-size: 15px; font-weight: 700">{{ t('kouventa.Customer Engagement', 'Customer Engagement') }}</span>
                         <span style="font-size: 13px; color: #4A5866">Starter · Professional · Enterprise</span>
                     </a>

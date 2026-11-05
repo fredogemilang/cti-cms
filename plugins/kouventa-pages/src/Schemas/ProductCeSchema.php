@@ -353,7 +353,7 @@ class ProductCeSchema
                 ],
                 'secondary_btn' => [
                     'text' => $isId ? 'Lihat harga' : 'See pricing',
-                    'url' => '/pricing?tab=ce',
+                    'url' => '/pricing/customer-engagement',
                 ],
             ],
         ];
