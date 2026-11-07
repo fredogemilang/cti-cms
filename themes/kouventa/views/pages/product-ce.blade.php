@@ -1347,41 +1347,7 @@ if (($ctaSecondary['url'] ?? '') === '/pricing?tab=ce') {
 @endphp
 
 @section('content')
-<div class="kv-canvas-wrap" x-data="{
-    stage: 0,
-    product: 'broadcast',
-    linked: true,
-    stages: @json($stages),
-    products: @json($productItems),
-    pickStage(i) {
-        if (this.linked && this.stage === i) {
-            this.linked = false;
-            return;
-        }
-        this.stage = i;
-        this.product = this.stages[i].defaultTool;
-        this.linked = true;
-    },
-    seeTools() {
-        this.linked = true;
-        this.product = this.stages[this.stage].defaultTool;
-        this.$nextTick(() => {
-            const el = document.getElementById('products');
-            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    },
-    isToolInStage(toolId) {
-        if (!this.linked) return false;
-        return !!this.stages[this.stage].tools[toolId];
-    },
-    getToolRole(toolId) {
-        if (!this.linked) return '';
-        return this.stages[this.stage].tools[toolId] || '';
-    },
-    unlink() {
-        this.linked = false;
-    }
-}">
+<div class="kv-canvas-wrap" x-data="productCePage">
 <!-- ============ NAV + HERO ============ -->
 <section class="kv-hero-container" style="background: #071C33; color: #FFFFFF; display: flex; flex-direction: column; position: relative; width: 100%;">
 <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none"><div style="position: absolute; right: -240px; top: -200px; width: 900px; height: 900px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.07)"></div></div>
@@ -2368,10 +2334,56 @@ window.kvChatbotDemo = function() {
     };
 };
 
+window.productCePage = function() {
+    return {
+        stage: 0,
+        product: 'broadcast',
+        linked: true,
+        stages: @json($stages),
+        products: @json($productItems),
+        pickStage(i) {
+            if (this.linked && this.stage === i) {
+                this.linked = false;
+                return;
+            }
+            this.stage = i;
+            this.product = this.stages[i].defaultTool;
+            this.linked = true;
+        },
+        seeTools() {
+            this.linked = true;
+            this.product = this.stages[this.stage].defaultTool;
+            this.$nextTick(() => {
+                const el = document.getElementById('products');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        },
+        isToolInStage(toolId) {
+            if (!this.linked) return false;
+            return !!this.stages[this.stage].tools[toolId];
+        },
+        getToolRole(toolId) {
+            if (!this.linked) return '';
+            return this.stages[this.stage].tools[toolId] || '';
+        },
+        unlink() {
+            this.linked = false;
+        }
+    };
+};
+
 document.addEventListener('alpine:init', () => {
+    Alpine.data('productCePage', window.productCePage);
     Alpine.data('kvBroadcastCounter', window.kvBroadcastCounter);
     Alpine.data('kvFlowsDemo', window.kvFlowsDemo);
     Alpine.data('kvChatbotDemo', window.kvChatbotDemo);
 });
+
+if (window.Alpine) {
+    Alpine.data('productCePage', window.productCePage);
+    Alpine.data('kvBroadcastCounter', window.kvBroadcastCounter);
+    Alpine.data('kvFlowsDemo', window.kvFlowsDemo);
+    Alpine.data('kvChatbotDemo', window.kvChatbotDemo);
+}
 </script>
 @endpush
