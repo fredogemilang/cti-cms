@@ -1,3 +1,7 @@
+@php
+    $defaultLocale = $defaultLocale ?? \App\Models\Page::defaultLocale();
+@endphp
+
 <div class="flex flex-col h-full" wire:poll.30s="autosave">
     {{-- Context Bar --}}
     <div class="flex items-center gap-3 px-6 py-4 md:px-10 border-b border-gray-200 dark:border-[#272B30] bg-white/50 dark:bg-[#0B0B0B]/50">
@@ -101,7 +105,7 @@
                     @if($slug || $isEdit)
                     <div class="flex items-center gap-2 text-xs font-bold text-[#6F767E] uppercase tracking-wider pl-1">
                         <span>PERMALINK:</span>
-                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}{{ $editingLocale && $editingLocale !== $defaultLocale ? '/' . $editingLocale : '' }}/</span>
+                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}{{ $editingLocale && $editingLocale !== ($defaultLocale ?? \App\Models\Page::defaultLocale()) ? '/' . $editingLocale : '' }}/</span>
                         @if($isSystemPage)
                             <span class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30] flex items-center gap-1">
                                 {{ $slug ?: ($page->slug ?? 'home') }}
