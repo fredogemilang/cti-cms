@@ -32,6 +32,49 @@ Whenever adding or modifying a `MetaField` for any `CustomPostType` (`cpt_entrie
 1. **Always Check Plugin Status**: Theme views MUST check `is_plugin_active('posts') && class_exists(\Plugins\Posts\Models\Post::class)` before querying model classes from optional plugins.
 2. **Graceful Fallback**: If a plugin is deactivated in the admin panel, the view MUST fallback gracefully (e.g. returning an empty collection or hiding the section) without throwing `ClassNotFoundException` or crashing the app.
 
+## Mandatory Public Locale Switcher Compliance Rule
+1. **Never Hardcode Static Locales**: DILARANG meng-hardcode tombol/pill bahasa (misal statis `EN | ID`) di view header, footer, atau navigation bar tema tanpa memeriksa pengaturan CMS `locale_switcher_enabled` dan `available_locales()`.
+2. **Always Obey Admin Setting & Locales Count**: Switcher bahasa DILARANG tampil di frontend jika setting `locale_switcher_enabled` bernilai false (dimatikan di `/ctrlpanel/settings/languages`) ATAU jika bahasa aktif yang terdaftar di `available_locales()` hanya 1 bahasa saja.
+3. **Use Component or Guarded Custom UI**: Gunakan komponen `<x-locale-switcher />` ATAU jika tema membutuhkan styling custom (misal toggle pill), WAJIB membungkusnya dengan pengecekan:
+   ```blade
+   @php
+       $availableLocales = available_locales();
+       $showLocaleSwitcher = filter_var(setting('locale_switcher_enabled', false), FILTER_VALIDATE_BOOLEAN) && count($availableLocales) > 1;
+   @endphp
+   @if($showLocaleSwitcher)
+       ...
+       @foreach($availableLocales as $loc)
+           <a href="{{ current_page_localized_url($loc) }}">{{ strtoupper($loc) }}</a>
+       @endforeach
+   @endif
+   ```
+4. **Preserve Route Context**: Selalu gunakan helper `current_page_localized_url($loc)` (atau `localized_url()`) untuk menghasilkan link pergantian bahasa agar slug halaman, CPT, atau archive blog yang aktif berpindah ke padanan terjemahannya secara tepat.
 
+## Mandatory Frontend Admin Bar Compliance Rule (<x-admin-bar />)
+1. **Always Include `<x-admin-bar />` in Themes**: Setiap tema CMS WAJIB menyertakan komponen Admin Bar (`<x-admin-bar />`) untuk user yang sedang terautentikasi (`@auth`). DILARANG membuat tema baru tanpa mengintegrasikan Admin Bar.
+2. **Standard Theme Integration Pattern**:
+   - Buat file wrapper partial di `themes/{theme}/views/partials/admin-bar.blade.php`:
+     ```blade
+     {{-- Delegated to Core <x-admin-bar /> Component --}}
+     <x-admin-bar />
+     ```
+   - Di layout utama `themes/{theme}/views/layouts/app.blade.php`, render di bagian paling atas body:
+     ```blade
+     <body class="... {{ auth()->check() ? 'has-admin-bar' : '' }}">
+         @auth
+             @include('{theme}::partials.admin-bar')
+         @endauth
+     ```
+   - Berikan offset sticky/fixed header pada CSS tema saat `body.has-admin-bar` aktif (tinggi standar bar = 32px):
+     ```css
+     body.has-admin-bar .header-sticky {
+         top: 32px !important;
+     }
+     ```
+3. **Automatic Contextual Edit**: Komponen `<x-admin-bar />` secara otomatis mendeteksi entitas aktif (`Page`, `KouventaPage`, `Post`, `CptEntry`) dan merender tombol kontekstual edit (*"Edit Page"*, *"Edit Post"*, dll.) yang mengarah langsung ke form edit di Control Panel, lengkap dengan avatar profil, status login, dan tombol logout.
+4. **LiteSpeed Cache Bypass**: Core CMS otomatis mem-bypass LiteSpeed Cache saat user login via cookie `cms_logged_in` di `.htaccess`.
 
-
+## Mandatory Clean UI Rule for Interactive Visualizations (No Artificial Headers/Footers)
+1. **Pure Animation & Realistic UI Only**: DILARANG menambahkan header atau footer buatan/dekoratif (seperti banner judul penjelasan *"AI Resume Screening & Match Ranking"*, metric counter *"101 CVs Scanned"*, atau status bar sintetis *"✓ 101 CVs auto-screened / 0.8s"*, *"⚡ Semantic Search: 0.18s"*, dll.) pada card/ilustrasi simulasi produk.
+2. **Self-Explanatory Animations**: Biarkan animasi dan antarmuka software yang realistis (chat WhatsApp, ATS leaderboard, multi-party calendar matrix, dossier kartu profil kandidat) berbicara sendiri tanpa perlu narasi ringkasan buatan di atas/bawah.
+3. **Centered & Proportional Spacing**: Manfaatkan ruang vertikal untuk memusatkan (`justify-content: center;`) elemen simulasi dengan padding dan kontras yang proporsional sehingga bersih (*clean*), elegan, dan tidak bocor (*zero visual leaks*).

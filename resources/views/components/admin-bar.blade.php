@@ -9,6 +9,8 @@
     $editLabel = null;
 
     $page = $page ?? view()->shared('page') ?? request()->attributes->get('page');
+    $basePage = $basePage ?? view()->shared('basePage') ?? request()->attributes->get('basePage');
+    $targetPage = (isset($page) && $page->id) ? $page : ($basePage ?? $page ?? null);
     $entry = $entry ?? view()->shared('entry') ?? view()->shared('cpt_entry') ?? request()->attributes->get('cpt_entry') ?? request()->attributes->get('entry');
     $post = $post ?? view()->shared('post') ?? request()->attributes->get('post');
 
@@ -16,8 +18,12 @@
         $postTypeSlug = $entry->postType?->slug ?? $entry->post_type_slug ?? '';
         $editUrl = url("{$adminPath}/cpt/entries/{$postTypeSlug}/{$entry->id}/edit");
         $editLabel = 'Edit ' . ($entry->postType?->singular_label ?? 'Entry');
-    } elseif (isset($page) && $page instanceof \App\Models\Page) {
-        $editUrl = url("{$adminPath}/pages/{$page->id}/edit");
+    } elseif (isset($targetPage) && class_exists(\Plugins\KouventaPages\Models\KouventaPage::class) && $targetPage instanceof \Plugins\KouventaPages\Models\KouventaPage) {
+        $category = $targetPage->category ?? 'products';
+        $editUrl = url("{$adminPath}/kouventa-pages/{$category}/{$targetPage->id}/edit");
+        $editLabel = 'Edit ' . ($targetPage->title ?? 'Page');
+    } elseif (isset($targetPage) && $targetPage instanceof \App\Models\Page) {
+        $editUrl = url("{$adminPath}/pages/{$targetPage->id}/edit");
         $editLabel = 'Edit Page';
     } elseif (isset($post) && class_exists(\Plugins\Posts\Models\Post::class) && $post instanceof \Plugins\Posts\Models\Post) {
         $editUrl = url("{$adminPath}/posts/{$post->id}/edit");
@@ -27,8 +33,8 @@
 
 <!-- Ultra-Sleek Professional Admin Top Bar (Core Component) -->
 <div id="cms-admin-bar" 
-     style="background-color: #09090b !important; color: #d4d4d8 !important;"
-     class="w-full h-8 bg-[#09090b] text-zinc-300 border-b border-zinc-800/80 text-[11px] flex items-center justify-between px-3 md:px-5 font-sans select-none shrink-0 tracking-tight z-[9999] relative">
+     style="background-color: #09090b !important; color: #d4d4d8 !important; position: sticky; top: 0; z-index: 9999;"
+     class="w-full h-8 bg-[#09090b] text-zinc-300 border-b border-zinc-800/80 text-[11px] flex items-center justify-between px-3 md:px-5 font-sans select-none shrink-0 tracking-tight">
     
     <!-- Left Section -->
     <div class="flex items-center gap-1 md:gap-2">
