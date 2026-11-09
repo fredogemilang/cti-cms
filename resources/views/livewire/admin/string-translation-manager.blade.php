@@ -38,7 +38,7 @@
             </div>
             <div class="flex items-center gap-3 shrink-0">
                 <a
-                    href="{{ route('admin.settings', 'languages') }}"
+                    href="{{ route('admin.settings.show', 'languages') }}"
                     class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-sm transition cursor-pointer"
                 >
                     <span class="material-symbols-outlined text-sm">settings</span>
