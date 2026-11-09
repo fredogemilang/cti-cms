@@ -73,6 +73,7 @@ Whenever adding or modifying a `MetaField` for any `CustomPostType` (`cpt_entrie
      ```
 3. **Automatic Contextual Edit**: Komponen `<x-admin-bar />` secara otomatis mendeteksi entitas aktif (`Page`, `KouventaPage`, `Post`, `CptEntry`) dan merender tombol kontekstual edit (*"Edit Page"*, *"Edit Post"*, dll.) yang mengarah langsung ke form edit di Control Panel, lengkap dengan avatar profil, status login, dan tombol logout.
 4. **LiteSpeed Cache Bypass**: Core CMS otomatis mem-bypass LiteSpeed Cache saat user login via cookie `cms_logged_in` di `.htaccess`.
+5. **Zero External CSS Dependency (100% Self-Contained)**: Komponen `<x-admin-bar />` WAJIB 100% self-contained dengan CSS scoped (`#cms-admin-bar`) dan atribut inline/eksplisit `width`/`height` pada setiap elemen SVG. DILARANG hanya mengandalkan utility classes Tailwind CSS (seperti `w-full`, `h-8`, `flex`, `w-3`, `h-3`) karena tema frontend (seperti Kouventa) tidak menggunakan compiler/runtime Tailwind CSS.
 
 ## Mandatory Clean UI Rule for Interactive Visualizations (No Artificial Headers/Footers)
 1. **Pure Animation & Realistic UI Only**: DILARANG menambahkan header atau footer buatan/dekoratif (seperti banner judul penjelasan *"AI Resume Screening & Match Ranking"*, metric counter *"101 CVs Scanned"*, atau status bar sintetis *"✓ 101 CVs auto-screened / 0.8s"*, *"⚡ Semantic Search: 0.18s"*, dll.) pada card/ilustrasi simulasi produk.
