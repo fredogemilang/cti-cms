@@ -39,7 +39,11 @@
 
     @stack('styles')
 </head>
-<body class="bg-[#F4F6F5] text-[#0E1A24] antialiased">
+<body class="bg-[#F4F6F5] text-[#0E1A24] antialiased {{ auth()->check() ? 'has-admin-bar' : '' }}">
+    @auth
+        @include('kouventa::partials.admin-bar')
+    @endauth
+
     <div id="wrap" class="min-h-screen flex flex-col justify-between"
          x-data="{ activeSheet: null, showMenu: true }"
          x-effect="const isSheetOpen = activeSheet !== null; document.documentElement.style.overflow = isSheetOpen ? 'hidden' : ''; document.body.style.overflow = isSheetOpen ? 'hidden' : '';">
