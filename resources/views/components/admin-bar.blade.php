@@ -1,3 +1,4 @@
+@props(['page' => null, 'entry' => null, 'post' => null, 'basePage' => null])
 @auth
 @php
     $adminPath = config('admin.path', 'ctrlpanel');
