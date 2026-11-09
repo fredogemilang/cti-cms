@@ -1387,6 +1387,7 @@ class PageForm extends Component
 
         return view('livewire.admin.pages.page-form', [
             'parentPages' => $parentPages,
+            'defaultLocale' => Page::defaultLocale(),
             'templates' => Page::getTemplates(),
             'blockTypes' => PageBlock::$blockTypes,
             'colorClasses' => PageBlock::$colorClasses,
