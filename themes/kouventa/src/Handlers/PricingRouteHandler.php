@@ -23,8 +23,8 @@ class PricingRouteHandler
                 'slugs' => ['en' => 'ai', 'id' => 'ai'],
                 'aliases' => ['ai', 'artificial-intelligence'],
                 'title' => [
-                    'en' => 'Enterprise AI Pricing & Plans | Kouventa',
-                    'id' => 'Harga & Paket Enterprise AI | Kouventa',
+                    'en' => 'Enterprise AI Pricing & Plans',
+                    'id' => 'Harga & Paket Enterprise AI',
                 ],
                 'description' => [
                     'en' => 'Transparent pricing for autonomous enterprise AI agents. Choose from Starter, Grow, or Scale tiers with flexible custom integration.',
@@ -36,8 +36,8 @@ class PricingRouteHandler
                 'slugs' => ['en' => 'customer-engagement', 'id' => 'customer-engagement'],
                 'aliases' => ['customer-engagement', 'ce', 'whatsapp', 'omnichannel', 'interaksi-pelanggan'],
                 'title' => [
-                    'en' => 'Customer Engagement Pricing & WhatsApp Calculator | Kouventa',
-                    'id' => 'Harga Customer Engagement & Kalkulator WhatsApp | Kouventa',
+                    'en' => 'Customer Engagement Pricing & WhatsApp Calculator',
+                    'id' => 'Harga Customer Engagement & Kalkulator WhatsApp',
                 ],
                 'description' => [
                     'en' => 'Omnichannel customer engagement pricing, WhatsApp conversation rate calculator, and unified 24/7 inbox tiers.',

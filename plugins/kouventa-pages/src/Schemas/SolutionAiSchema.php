@@ -478,7 +478,7 @@ class SolutionAiSchema
   ),
   'seo' => 
   array (
-    'meta_title' => 'AI Solutions for Enterprise Teams & Departments | Kouventa',
+    'meta_title' => 'AI Solutions for Enterprise Teams & Departments',
     'meta_description' => 'Empower finance, HR, legal, sales, IT, and operations with autonomous AI agents that turn knowledge into action and streamline business processes.',
     'keywords' => 'AI solutions, enterprise AI agents, automated workflow, customer service AI, finance AI',
     'canonical_url' => '',
@@ -933,7 +933,7 @@ class SolutionAiSchema
   ),
   'seo' => 
   array (
-    'meta_title' => 'AI Solutions for Enterprise Teams & Departments | Kouventa',
+    'meta_title' => 'AI Solutions for Enterprise Teams & Departments',
     'meta_description' => 'Empower finance, HR, legal, sales, IT, and operations with autonomous AI agents that turn knowledge into action and streamline business processes.',
     'keywords' => 'AI solutions, enterprise AI agents, automated workflow, customer service AI, finance AI',
     'canonical_url' => '',

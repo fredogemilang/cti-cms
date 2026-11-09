@@ -27,7 +27,7 @@ return new class extends Migration
                     ],
                 ],
                 'seo' => [
-                    'title' => 'Terms & Conditions | Kouventa by Helios',
+                    'title' => 'Terms & Conditions',
                     'description' => 'Terms and conditions outlining rules, rights, and responsibilities for using Kouventa enterprise AI and customer engagement services by PT Helios Informatika Nusantara.',
                     'keywords' => 'Kouventa terms, terms and conditions, terms of service, PT Helios Informatika Nusantara legal',
                 ],
@@ -51,7 +51,7 @@ return new class extends Migration
                     ],
                 ],
                 'seo' => [
-                    'title' => 'Privacy Policy | Kouventa by Helios',
+                    'title' => 'Privacy Policy',
                     'description' => 'Privacy policy explaining how PT Helios Informatika Nusantara collects, protects, and manages personal data across Kouventa platforms and WhatsApp Business integrations.',
                     'keywords' => 'Kouventa privacy policy, data protection, UU PDP, ISO 27001, Helios privacy policy',
                 ],
