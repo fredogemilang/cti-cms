@@ -26,7 +26,7 @@ return new class extends Migration
                     ],
                 ]),
                 'seo' => json_encode([
-                    'title' => 'Blog & Thought Leadership on Enterprise AI | Kouventa',
+                    'title' => 'Insights & Thought Leadership on Enterprise AI',
                     'keywords' => 'Kouventa blog, agentic AI insights, WhatsApp Business guide, enterprise AI trends',
                     'description' => 'Explore the latest articles, best practices, and case studies on Agentic AI, WhatsApp Business API, and enterprise digital transformation.',
                 ]),

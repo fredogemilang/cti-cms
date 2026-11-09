@@ -248,7 +248,7 @@ class SolutionCeSchema
   ),
   'seo' => 
   array (
-    'meta_title' => 'Customer Engagement Solutions by Industry & Use Case | Kouventa',
+    'meta_title' => 'Customer Engagement Solutions by Industry & Use Case',
     'meta_description' => 'Deliver automated marketing campaigns, rapid support resolution, and transactional messaging with Kouventa omnichannel solutions.',
     'keywords' => 'customer engagement solutions, WhatsApp marketing, omnichannel support, automated notifications',
     'canonical_url' => '',
@@ -477,7 +477,7 @@ class SolutionCeSchema
   ),
   'seo' => 
   array (
-    'meta_title' => 'Customer Engagement Solutions by Industry & Use Case | Kouventa',
+    'meta_title' => 'Customer Engagement Solutions by Industry & Use Case',
     'meta_description' => 'Deliver automated marketing campaigns, rapid support resolution, and transactional messaging with Kouventa omnichannel solutions.',
     'keywords' => 'customer engagement solutions, WhatsApp marketing, omnichannel support, automated notifications',
     'canonical_url' => '',
