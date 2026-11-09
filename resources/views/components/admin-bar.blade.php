@@ -20,7 +20,12 @@
         $editUrl = url("{$adminPath}/cpt/entries/{$postTypeSlug}/{$entry->id}/edit");
         $editLabel = 'Edit ' . ($entry->postType?->singular_label ?? 'Entry');
     } elseif (isset($targetPage) && class_exists(\Plugins\KouventaPages\Models\KouventaPage::class) && $targetPage instanceof \Plugins\KouventaPages\Models\KouventaPage) {
-        $category = $targetPage->category ?? 'products';
+        $category = match (true) {
+            str_starts_with($targetPage->slug ?? '', 'solutions') || str_starts_with($targetPage->template ?? '', 'solution') => 'solutions',
+            str_starts_with($targetPage->slug ?? '', 'product') || str_starts_with($targetPage->template ?? '', 'product') => 'products',
+            ($targetPage->slug ?? '') === 'pricing' || ($targetPage->template ?? '') === 'pricing' => 'pricing',
+            default => 'products',
+        };
         $editUrl = url("{$adminPath}/kouventa-pages/{$category}/{$targetPage->id}/edit");
         $editLabel = 'Edit ' . ($targetPage->title ?? 'Page');
     } elseif (isset($targetPage) && $targetPage instanceof \App\Models\Page) {
