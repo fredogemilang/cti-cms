@@ -7,7 +7,7 @@
 @endphp
 
 <!-- Mobile Top Header Bar -->
-<div class="kv-mobile-header" style="position: sticky; top: 0; z-index: 100; background: #071C33; border-bottom: 1px solid rgba(255,255,255,0.08); box-sizing: border-box; width: 100%;">
+<div class="kv-mobile-header" style="position: sticky; top: var(--kv-header-top, 0px); z-index: 100; background: #071C33; border-bottom: 1px solid rgba(255,255,255,0.08); box-sizing: border-box; width: 100%;">
     <div class="kv-container" style="padding-top: 12px; padding-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
         <!-- Logo -->
         <a href="{{ localized_url('/') }}" style="flex-shrink: 0; display: flex; align-items: center; text-decoration: none">
@@ -34,7 +34,7 @@
 <header x-data="{ productOpen: false, solutionOpen: false, pricingOpen: false, insightOpen: false }"
         @click.away="productOpen = false; solutionOpen = false; pricingOpen = false; insightOpen = false"
         class="kv-desktop-header"
-        style="position: sticky; top: 0; z-index: 50; flex-shrink: 0; box-sizing: border-box; background: #071C33; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.06); width: 100%;">
+        style="position: sticky; top: var(--kv-header-top, 0px); z-index: 50; flex-shrink: 0; box-sizing: border-box; background: #071C33; color: #FFFFFF; border-bottom: 1px solid rgba(255,255,255,0.06); width: 100%;">
     <div class="kv-container" style="height: 80px; display: flex; align-items: center; justify-content: space-between;">
         @php
             $siteLogo = setting('site_logo') ? resolve_block_asset(setting('site_logo')) : theme_asset('images/kouventa-logo.png');

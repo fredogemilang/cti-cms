@@ -2524,6 +2524,14 @@ body {
 }
 
 /* Responsive Header & Navigation Controls: Desktop Defaults */
+body.has-admin-bar {
+    --kv-header-top: 32px;
+}
+body.has-admin-bar .kv-desktop-header,
+body.has-admin-bar .kv-mobile-header {
+    top: 32px !important;
+}
+
 @media (min-width: 1025px) {
     .kv-mobile-header {
         display: none !important;
