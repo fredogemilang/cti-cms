@@ -20,6 +20,7 @@
 /storage/*.zip
 /storage/pail
 /storage/cms_installed
+/storage/framework/lsp-*.php
 /vendor
 # ── Core boundary (allowlist) ─────────────────────────────
 # main tracks ONLY core themes/plugins. Each project/<name> branch MUST
