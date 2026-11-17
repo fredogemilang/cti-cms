@@ -1,0 +1,164 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@source "../../views";
+@source "../../../../resources/views/components";
+@source not "../../../../resources/views/admin";
+@source not "../../../../resources/views/livewire";
+@source not "../../../../resources/views/layouts";
+@source not "../../../../resources/views/auth";
+
+@import "@fontsource/plus-jakarta-sans";
+@import "@fontsource/plus-jakarta-sans/500.css";
+@import "@fontsource/plus-jakarta-sans/600.css";
+@import "@fontsource/plus-jakarta-sans/700.css";
+@import "@fontsource/plus-jakarta-sans/800.css";
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --color-primary-cyan: #04B1C7;
+  --color-secondary-blue: #2296E4;
+  --color-accent-orange: #ED7F22;
+  --color-dark-navy: #2A303C;
+}
+
+/* Admin Bar Offset for Sticky Header */
+body.has-admin-bar #main-header,
+body.has-admin-bar .header-sticky {
+  top: 32px !important;
+}
+
+/* Lenis Recommended Styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+html, body {
+  overflow-x: clip;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #1E293B;
+  background-color: #FFFFFF;
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+  0% {
+    transform: translate3d(0%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Orbit rotation subtle animation */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 60s linear infinite;
+}
+
+/* Glowing effects from Figma */
+.glow-cyan {
+  box-shadow: 0px 0px 20px rgba(4, 177, 199, 0.35);
+}
+
+.glow-orange {
+  box-shadow: 0px 0px 20px rgba(237, 127, 34, 0.35);
+}
+
+/* Hardware-acceleration helper for smooth GSAP transforms */
+.will-change-transform {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Isolated GPU compositing layer for pulsing stars */
+.animate-pulse-isolated {
+  will-change: opacity, transform;
+  transform: translateZ(0);
+}
+
+/* 3D Planetary Orbit Partner Capsules (Hardware-Accelerated Compositor Translation) */
+.alliance-partner-capsule {
+  left: 0;
+  top: 0;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, filter 0.35s ease;
+}
+
+/* 3D Revolving Orbital Beads (Mini-Planets) */
+.alliance-orbit-bead {
+  left: 0;
+  top: 0;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.alliance-partner-capsule:hover {
+  border-color: #2296E0 !important;
+  box-shadow: 0 10px 25px -3px rgba(34, 150, 224, 0.28), 0 4px 6px -2px rgba(34, 150, 224, 0.12) !important;
+}
+
+/* Rich WYSIWYG paragraph spacing for Why Converion */
+.csi-prose p + p {
+  margin-top: 0.75rem;
+}
+
+/* Equal-height cards inside Partner Success Stories Swiper */
+#partner-stories-swiper .swiper-wrapper {
+  align-items: stretch;
+}
+
+#partner-stories-swiper .swiper-slide {
+  display: flex;
+  height: auto;
+}
+
+#partner-stories-swiper .partner-story-card {
+  width: 100%;
+  height: 100%;
+}
+
+[x-cloak] {
+  display: none !important;
+}

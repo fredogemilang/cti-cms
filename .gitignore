@@ -28,10 +28,13 @@
 #   !/themes/cdt  !/public/themes/cdt  !/plugins/youtube
 /themes/*
 !/themes/default
+!/themes/csi
 /public/themes/*
+!/public/themes/csi
 /plugins/*
 !/plugins/posts
 !/plugins/google-site-kit
+!/plugins/csi-menus
 
 Homestead.json
 Homestead.yaml

@@ -1,0 +1,610 @@
+{
+    "name": "CSI Theme",
+    "slug": "csi",
+    "version": "1.0.0",
+    "description": "Official PT Converion Solution Informatica (CSI) theme — Converging Technology, Connecting Business.",
+    "author": "CSI",
+    "screenshot": "screenshot.png",
+    "colors": {
+        "primary": "#04B1C7",
+        "secondary": "#2296E4",
+        "accent": "#ED7F22",
+        "dark": "#213C41"
+    },
+    "supports": [
+        "pages",
+        "posts",
+        "menus",
+        "cpt",
+        "forms"
+    ],
+    "menu_locations": {
+        "header": "Header Navigation",
+        "footer_pages": "Footer — Pages",
+        "footer_solutions": "Footer — Solutions",
+        "footer_other": "Footer — Other"
+    },
+    "form_placeholders": [
+        {
+            "key": "contact_form",
+            "label": "Homepage Contact Form",
+            "description": "Main inquiry form rendered inside the #contact section on the homepage."
+        }
+    ],
+    "page_templates": {
+        "default": {
+            "label": "Default",
+            "description": "Standard page template",
+            "blocks": []
+        },
+        "home": {
+            "label": "Homepage",
+            "description": "CSI Homepage with Hero, Client Logo Marquee, Comprehensive Solutions, Technology Alliances, Why Converion, Real Insights, and Contact Form.",
+            "blocks": [
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Title",
+                    "default": {
+                        "prefix": "Converging Technology,",
+                        "main": "Connecting Business"
+                    }
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "More than a Value-Added Distributor, Converion is your trusted IT solutions partner for building reliable, scalable, and secure technology foundations that support your business today and into the future."
+                },
+                {
+                    "name": "hero_cta",
+                    "type": "button",
+                    "label": "Hero CTA Button",
+                    "default": {
+                        "text": "Consult with Our Expert",
+                        "url": "#contact",
+                        "target": "_self"
+                    }
+                },
+                {
+                    "name": "hero_video_url",
+                    "type": "text",
+                    "label": "Hero Video Link (YouTube URL or ID)",
+                    "default": "https://www.youtube.com/watch?v=C3w39WEDYeg"
+                },
+                {
+                    "name": "hero_video_thumbnail",
+                    "type": "media",
+                    "label": "Hero Video Thumbnail",
+                    "default": ""
+                },
+                {
+                    "name": "hero_video_badge_text",
+                    "type": "text",
+                    "label": "Hero Video Play Badge Text",
+                    "default": "Discover Converion Solution Informatica"
+                },
+                {
+                    "name": "solutions_title",
+                    "type": "text",
+                    "label": "Comprehensive Solutions Title",
+                    "default": "Comprehensive Solutions for Your Business"
+                },
+                {
+                    "name": "alliances_title",
+                    "type": "text",
+                    "label": "Technology Alliances Title",
+                    "default": "Technology Alliances"
+                },
+                {
+                    "name": "alliances_subtitle",
+                    "type": "textarea",
+                    "label": "Technology Alliances Subtitle",
+                    "default": "Converion partners with leading technology providers to bring together the right capabilities into integrated solutions that fit each business needs."
+                },
+                {
+                    "name": "alliances_cta",
+                    "type": "button",
+                    "label": "Technology Alliances Button",
+                    "default": {
+                        "text": "Explore All Technology Alliances",
+                        "url": "#all-alliances",
+                        "target": "_self"
+                    }
+                },
+                {
+                    "name": "why_title",
+                    "type": "title",
+                    "label": "Why Converion Title & Subtitle",
+                    "default": {
+                        "prefix": "Why Converion",
+                        "main": "We Are Here To Transform"
+                    }
+                },
+                {
+                    "name": "why_description",
+                    "type": "wysiwyg",
+                    "label": "Why Converion Description",
+                    "default": "<p>PT Converion Solution Informatica, formerly known as PT Blue Power Technology and PT Mega Buana Teknologi, was officially formed in 2026. Building on each company's years of experience and proven track record in the IT industry, Converion is committed to help your digital transformation and AI adoption through a stronger portfolio, deeper expertise, and strategic alliances with leading IT players.</p>"
+                },
+                {
+                    "name": "why_cards",
+                    "type": "repeater",
+                    "label": "Why Converion Cards",
+                    "options": {
+                        "button_label": "Add Value Card"
+                    },
+                    "children": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Card Title"
+                        },
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "label": "Card Description"
+                        },
+                        {
+                            "name": "accent_color",
+                            "type": "color",
+                            "label": "Accent Color (#04B1C7 / #ED7F22)"
+                        },
+                        {
+                            "name": "icon",
+                            "type": "media",
+                            "label": "Card Icon (SVG / Image)"
+                        }
+                    ],
+                    "default": []
+                },
+                {
+                    "name": "insights_title",
+                    "type": "text",
+                    "label": "Real Insights Section Title",
+                    "default": "Real Insights from Our Clients"
+                },
+                {
+                    "name": "insights_subtitle",
+                    "type": "textarea",
+                    "label": "Real Insights Section Subtitle",
+                    "default": "See how Converion helps enterprises across diverse industries streamline operations and drive accelerated growth."
+                }
+            ]
+        },
+        "about": {
+            "label": "About Us",
+            "description": "About Us page with Hero, Company Intro, Vision & Mission, Interactive Competencies, Awards Carousel, and Contact Form.",
+            "blocks": [
+                {
+                    "name": "hero_title",
+                    "type": "title",
+                    "label": "Hero Title",
+                    "default": {
+                        "prefix": "Converging Technology,",
+                        "main": "Connecting Business"
+                    }
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "More than a Value-Added Distributor, Converion is your trusted IT solutions partner for building reliable, scalable, and secure technology foundations that support your business today and into the future."
+                },
+                {
+                    "name": "hero_cta",
+                    "type": "button",
+                    "label": "Hero CTA Button",
+                    "default": {
+                        "text": "Consult with Our Expert",
+                        "url": "#contact",
+                        "target": "_self"
+                    }
+                },
+                {
+                    "name": "intro_heading",
+                    "type": "text",
+                    "label": "Intro Heading",
+                    "default": "Converion, Established in 2026"
+                },
+                {
+                    "name": "intro_body",
+                    "type": "wysiwyg",
+                    "label": "Intro Body Content",
+                    "default": ""
+                },
+                {
+                    "name": "intro_primary_cta",
+                    "type": "button",
+                    "label": "Intro Primary Button",
+                    "default": {
+                        "text": "Our Solutions",
+                        "url": "/#solutions",
+                        "target": "_self"
+                    }
+                },
+                {
+                    "name": "intro_secondary_cta",
+                    "type": "button",
+                    "label": "Intro Secondary Button",
+                    "default": {
+                        "text": "Our Products",
+                        "url": "/#alliances",
+                        "target": "_self"
+                    }
+                },
+                {
+                    "name": "intro_image",
+                    "type": "media",
+                    "label": "Intro Side Image",
+                    "default": ""
+                },
+                {
+                    "name": "vision_title",
+                    "type": "text",
+                    "label": "Vision Title",
+                    "default": "Vision"
+                },
+                {
+                    "name": "vision_description",
+                    "type": "textarea",
+                    "label": "Vision Description",
+                    "default": "To become a trusted technology solutions partner that helps businesses in Indonesia address increasingly complex challenges through integrated, secure, and scalable technology capabilities."
+                },
+                {
+                    "name": "mission_title",
+                    "type": "text",
+                    "label": "Mission Title",
+                    "default": "Mission"
+                },
+                {
+                    "name": "mission_items",
+                    "type": "repeater",
+                    "label": "Mission Pillars",
+                    "options": {
+                        "button_label": "Add Mission Item"
+                    },
+                    "children": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Mission Title"
+                        },
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "label": "Mission Description"
+                        }
+                    ],
+                    "default": []
+                },
+                {
+                    "name": "competencies_title",
+                    "type": "text",
+                    "label": "Our Competencies Title",
+                    "default": "Our Competencies"
+                },
+                {
+                    "name": "competencies_cards",
+                    "type": "repeater",
+                    "label": "Competency Cards",
+                    "options": {
+                        "button_label": "Add Competency Card"
+                    },
+                    "children": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Card Title"
+                        },
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "label": "Card Description"
+                        },
+                        {
+                            "name": "icon",
+                            "type": "media",
+                            "label": "Card Icon (SVG / Image)"
+                        },
+                        {
+                            "name": "outreach_title",
+                            "type": "text",
+                            "label": "Top Box Title"
+                        },
+                        {
+                            "name": "outreach_p1_title",
+                            "type": "text",
+                            "label": "Top Box Point 1 Title"
+                        },
+                        {
+                            "name": "outreach_p1_desc",
+                            "type": "textarea",
+                            "label": "Top Box Point 1 Description"
+                        },
+                        {
+                            "name": "outreach_p2_title",
+                            "type": "text",
+                            "label": "Top Box Point 2 Title"
+                        },
+                        {
+                            "name": "outreach_p2_desc",
+                            "type": "textarea",
+                            "label": "Top Box Point 2 Description"
+                        },
+                        {
+                            "name": "col1_title",
+                            "type": "text",
+                            "label": "Bottom Left Box Title"
+                        },
+                        {
+                            "name": "col1_items",
+                            "type": "textarea",
+                            "label": "Bottom Left Checklist (1 item per line)"
+                        },
+                        {
+                            "name": "col2_title",
+                            "type": "text",
+                            "label": "Bottom Right Box Title"
+                        },
+                        {
+                            "name": "col2_items",
+                            "type": "textarea",
+                            "label": "Bottom Right Checklist (1 item per line)"
+                        }
+                    ],
+                    "default": []
+                },
+                {
+                    "name": "awards_title",
+                    "type": "text",
+                    "label": "Our Awards Title",
+                    "default": "Our Awards"
+                },
+                {
+                    "name": "awards_list",
+                    "type": "repeater",
+                    "label": "Awards Cards",
+                    "options": {
+                        "button_label": "Add Award"
+                    },
+                    "children": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Award Title"
+                        },
+                        {
+                            "name": "organization",
+                            "type": "text",
+                            "label": "Organization / Entity"
+                        },
+                        {
+                            "name": "year",
+                            "type": "text",
+                            "label": "Principal & Year (e.g. NetApp (2025))"
+                        },
+                        {
+                            "name": "accent_color",
+                            "type": "color",
+                            "label": "Bottom Accent Color"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Plaque / Award Image"
+                        }
+                    ],
+                    "default": []
+                }
+            ]
+        },
+        "partner": {
+            "label": "Partner Program",
+            "description": "Partner Program master page with Hero & Incentive Banner, Partner Success Stories Carousel, Start Growing With Us Grid, Featured Programs, CTA Banner, and Contact Form.",
+            "blocks": [
+                {
+                    "name": "hero_title",
+                    "type": "text",
+                    "label": "Hero Title",
+                    "default": "Partner Program"
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "Services and partnerships designed to strengthen strategic collaboration through exclusive technical support, certifications, and sustainable business opportunities for our business partners across Indonesia."
+                },
+                {
+                    "name": "hero_primary_cta",
+                    "type": "button",
+                    "label": "Hero Primary Button",
+                    "default": {
+                        "text": "Become a Partner",
+                        "url": "#contact",
+                        "target": "_self"
+                    }
+                },
+                {
+                    "name": "hero_secondary_cta",
+                    "type": "button",
+                    "label": "Hero Secondary Button",
+                    "default": {
+                        "text": "Explore Our Programs",
+                        "url": "#partner-programs",
+                        "target": "_self"
+                    }
+                },
+                {
+                    "name": "promo_image",
+                    "type": "media",
+                    "label": "Featured Promo Image",
+                    "default": ""
+                },
+                {
+                    "name": "promo_title",
+                    "type": "text",
+                    "label": "Featured Promo Title",
+                    "default": "Annual Partner Incentive Trip 2027"
+                },
+                {
+                    "name": "promo_description",
+                    "type": "textarea",
+                    "label": "Featured Promo Description",
+                    "default": ""
+                },
+                {
+                    "name": "promo_period",
+                    "type": "text",
+                    "label": "Featured Promo Period",
+                    "default": "Promo Period: 1 January – 31 December 2026."
+                },
+                {
+                    "name": "promo_cta",
+                    "type": "button",
+                    "label": "Featured Promo Button",
+                    "default": {
+                        "text": "Explore the Partner Reward Catalog",
+                        "url": "#contact",
+                        "target": "_self"
+                    }
+                },
+                {
+                    "name": "stories_title",
+                    "type": "text",
+                    "label": "Success Stories Title",
+                    "default": "Partner Success Stories"
+                },
+                {
+                    "name": "stories_subtitle",
+                    "type": "textarea",
+                    "label": "Success Stories Subtitle",
+                    "default": "At Converion, progress is driven by partnerships. We build relationships founded on trust, collaboration, and shared goals."
+                },
+                {
+                    "name": "stories_highlight",
+                    "type": "text",
+                    "label": "Success Stories Highlight Line",
+                    "default": "Hear firsthand from industry leaders who have grown alongside our ecosystem."
+                },
+                {
+                    "name": "grow_title",
+                    "type": "text",
+                    "label": "Grow Section Title",
+                    "default": "Start Growing With Us"
+                },
+                {
+                    "name": "grow_subtitle",
+                    "type": "textarea",
+                    "label": "Grow Section Subtitle",
+                    "default": "End-to-end support to help partners strengthen technical capabilities, expand business opportunities, and deliver enterprise projects."
+                },
+                {
+                    "name": "grow_cards",
+                    "type": "repeater",
+                    "label": "Partner Support Pillars",
+                    "options": {
+                        "button_label": "Add Support Card"
+                    },
+                    "children": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Card Title"
+                        },
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "label": "Card Description"
+                        },
+                        {
+                            "name": "icon",
+                            "type": "media",
+                            "label": "Card Icon (SVG / Image)"
+                        },
+                        {
+                            "name": "accent_color",
+                            "type": "color",
+                            "label": "Top Accent Bar Color"
+                        }
+                    ],
+                    "default": []
+                },
+                {
+                    "name": "programs_title",
+                    "type": "text",
+                    "label": "Featured Programs Title",
+                    "default": "Featured Partner Programs"
+                },
+                {
+                    "name": "programs_subtitle",
+                    "type": "textarea",
+                    "label": "Featured Programs Subtitle",
+                    "default": "A curated series of exclusive events and activities designed to strengthen business synergies, technical capabilities, and professional development among partners."
+                },
+                {
+                    "name": "programs_list",
+                    "type": "repeater",
+                    "label": "Featured Program Cards",
+                    "options": {
+                        "button_label": "Add Program"
+                    },
+                    "children": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Program Title"
+                        },
+                        {
+                            "name": "description",
+                            "type": "textarea",
+                            "label": "Program Description"
+                        },
+                        {
+                            "name": "image",
+                            "type": "media",
+                            "label": "Program Image"
+                        },
+                        {
+                            "name": "accent_color",
+                            "type": "color",
+                            "label": "Bottom Accent Color"
+                        }
+                    ],
+                    "default": []
+                },
+                {
+                    "name": "banner_description",
+                    "type": "textarea",
+                    "label": "Bottom Banner Description",
+                    "default": "At Converion, partnerships may begin with a problem to solve, but they grow through trust, support, and opportunities to collaborate. Through our products, services, and ongoing strategic guidance, we empower our partners to make decisions with confidence."
+                },
+                {
+                    "name": "banner_highlight",
+                    "type": "text",
+                    "label": "Bottom Banner Highlight Text",
+                    "default": "Explore the solutions and services that drive our partnerships."
+                },
+                {
+                    "name": "banner_cta",
+                    "type": "button",
+                    "label": "Bottom Banner Button",
+                    "default": {
+                        "text": "Find Out More",
+                        "url": "/#solutions",
+                        "target": "_self"
+                    }
+                }
+            ]
+        }
+    },
+    "archive_settings": {
+        "per_page": 12,
+        "layout": "grid",
+        "show_sidebar": false,
+        "show_excerpt": true,
+        "show_author": true,
+        "show_date": true,
+        "excerpt_length": 150
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "name": "CSI Navigation Menus",
+    "slug": "csi-menus",
+    "version": "1.0.0",
+    "description": "Manage frontend header, mega-menu, and footer navigation menus with EN/ID translations.",
+    "author": "CSI",
+    "namespace": "Plugins\\CsiMenus",
+    "provider": "Plugins\\CsiMenus\\Providers\\CsiMenusServiceProvider",
+    "requires": {
+        "php": ">=8.2",
+        "cms": ">=1.0"
+    }
+}
