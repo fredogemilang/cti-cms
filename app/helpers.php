@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\CptEntry;
+use App\Models\CustomPostType;
 use App\Models\Form;
 use App\Models\FormField;
 use App\Models\Page;
@@ -466,6 +467,15 @@ if (! function_exists('current_page_localized_url')) {
             return $entry->getUrl($targetLocale);
         }
 
+        // 2b. If viewing a CPT Archive listing
+        $postType = request()->attributes->get('postType')
+            ?? view()->shared('postType')
+            ?? null;
+
+        if ($postType instanceof CustomPostType) {
+            return $postType->getArchiveUrl($targetLocale);
+        }
+
         // 3. If viewing a Page
         $page = view()->shared('page') ?? null;
 
@@ -669,6 +679,37 @@ if (! function_exists('localized_url')) {
                 $base = $hideDefault || $urlStructure !== 'prefix' ? "/{$cleanPath}" : "/{$defaultLocale}/{$cleanPath}";
 
                 return trailing_slash_url(url($base)).$query.$fragment;
+            }
+        }
+
+        // 2b. Custom Post Type localized slug resolution (archive or single entry)
+        if ($cleanPath !== '') {
+            try {
+                $segments = explode('/', $cleanPath);
+                $firstSeg = $segments[0];
+                $matchedCpt = CustomPostType::active()->get()->first(
+                    fn (CustomPostType $cpt) => in_array($firstSeg, $cpt->getAllLocalizedSlugs(), true)
+                );
+
+                if ($matchedCpt) {
+                    if (count($segments) === 1 && $matchedCpt->has_archive) {
+                        return $matchedCpt->getArchiveUrl($locale).$query.$fragment;
+                    }
+
+                    $targetCptSlug = $matchedCpt->getLocalizedSlug($locale);
+                    $segments[0] = $targetCptSlug;
+                    $rewritten = implode('/', $segments);
+
+                    if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
+                        return trailing_slash_url(url("/{$locale}/{$rewritten}")).$query.$fragment;
+                    }
+
+                    $base = $hideDefault || $urlStructure !== 'prefix' ? "/{$rewritten}" : "/{$defaultLocale}/{$rewritten}";
+
+                    return trailing_slash_url(url($base)).$query.$fragment;
+                }
+            } catch (Throwable) {
+                // Ignore if custom_post_types table is unavailable during isolated unit tests
             }
         }
 
