@@ -164,8 +164,9 @@
           if (! $postsActive && str_contains($rawUrl, 'blog')) {
               continue;
           }
+          $itemActive = $item->isActive($currentLocale);
         @endphp
-        <a href="{{ $item->resolvedUrl($currentLocale) }}" target="{{ $item->target }}" class="sheet-item flex items-center justify-between p-3.5 hover:text-[#04B1C7] transition-colors">
+        <a href="{{ $item->resolvedUrl($currentLocale) }}" target="{{ $item->target }}" @if($itemActive) aria-current="page" @endif class="sheet-item flex items-center justify-between p-3.5 {{ $itemActive ? 'text-[#04B1C7]' : 'hover:text-[#04B1C7]' }} transition-colors">
           <span>{{ $item->localizedTitle($currentLocale) }}</span>
           <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </a>

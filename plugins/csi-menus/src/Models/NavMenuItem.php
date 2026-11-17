@@ -74,4 +74,42 @@ class NavMenuItem extends Model
 
         return function_exists('localized_url') ? localized_url($raw, $locale) : url($raw);
     }
+
+    /**
+     * Determine whether this menu item matches the active request URL.
+     */
+    public function isActive(?string $locale = null, ?string $currentPath = null): bool
+    {
+        $path = $currentPath ?? request()->path();
+        $normalizedCurrent = '/'.trim((string) $path, '/');
+
+        if ($this->item_type === 'mega_solutions') {
+            foreach (['/solutions', '/id/solutions', '/solusi', '/id/solusi'] as $prefix) {
+                if ($normalizedCurrent === $prefix || str_starts_with($normalizedCurrent, $prefix.'/')) {
+                    return true;
+                }
+            }
+        }
+
+        $resolved = $this->resolvedUrl($locale);
+        if ($resolved === '' || str_starts_with($resolved, '#') || str_starts_with($resolved, 'mailto:') || str_starts_with($resolved, 'tel:')) {
+            return false;
+        }
+
+        $parsedHost = parse_url($resolved, PHP_URL_HOST);
+        $currentHost = request()->getHost();
+        if ($parsedHost && $currentHost && strcasecmp($parsedHost, $currentHost) !== 0) {
+            return false;
+        }
+
+        $targetPath = '/'.trim((string) (parse_url($resolved, PHP_URL_PATH) ?? '/'), '/');
+        $rawPath = trim((string) ($this->getTranslation('url', $locale) ?? $this->getRawOriginal('url') ?? ''));
+
+        // Homepage item must match its locale root strictly (e.g. "/" or "/id")
+        if ($rawPath === '/' || $targetPath === '/' || $targetPath === '/id') {
+            return $normalizedCurrent === $targetPath;
+        }
+
+        return $normalizedCurrent === $targetPath || str_starts_with($normalizedCurrent, $targetPath.'/');
+    }
 }

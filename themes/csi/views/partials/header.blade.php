@@ -37,11 +37,12 @@
           }
           $itemLabel = $item->localizedTitle($currentLocale);
           $itemUrl = $item->resolvedUrl($currentLocale);
+          $isActive = $item->isActive($currentLocale);
         @endphp
 
         @if($item->item_type === 'mega_solutions')
           <!-- Solutions Mega Menu -->
-          <div class="relative group cursor-pointer flex items-center gap-1 hover:text-[#04B1C7] transition-colors py-4">
+          <div class="relative group cursor-pointer flex items-center gap-1 {{ $isActive ? 'text-[#04B1C7]' : 'hover:text-[#04B1C7]' }} transition-colors py-4" @if($isActive) aria-current="page" @endif>
             <span class="font-medium">{{ $itemLabel }}</span>
             <img src="{{ theme_asset('images/chevron-down.svg') }}" alt="" class="w-3.5 h-3.5 opacity-60 group-hover:rotate-180 transition-transform" />
 
@@ -99,7 +100,7 @@
               };
           @endphp
           <!-- Technology Alliances Mega Menu -->
-          <div class="relative group cursor-pointer flex items-center gap-1 hover:text-[#04B1C7] transition-colors py-4">
+          <div class="relative group cursor-pointer flex items-center gap-1 {{ $isActive ? 'text-[#04B1C7]' : 'hover:text-[#04B1C7]' }} transition-colors py-4" @if($isActive) aria-current="page" @endif>
             <span class="font-medium">{{ $itemLabel }}</span>
             <img src="{{ theme_asset('images/chevron-down.svg') }}" alt="" class="w-3.5 h-3.5 opacity-60 group-hover:rotate-180 transition-transform" />
 
@@ -173,7 +174,7 @@
           </div>
 
         @else
-          <a href="{{ $itemUrl }}" target="{{ $item->target }}" class="hover:text-[#04B1C7] transition-colors py-4">{{ $itemLabel }}</a>
+          <a href="{{ $itemUrl }}" target="{{ $item->target }}" @if($isActive) aria-current="page" @endif class="{{ $isActive ? 'text-[#04B1C7]' : 'hover:text-[#04B1C7]' }} transition-colors py-4">{{ $itemLabel }}</a>
         @endif
       @endforeach
     </nav>
