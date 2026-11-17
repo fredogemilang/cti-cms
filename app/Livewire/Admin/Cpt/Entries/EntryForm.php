@@ -580,9 +580,8 @@ class EntryForm extends Component
 
             // Extract only non-media meta keys whose values differ from default locale
             $deltaMeta = [];
-            $mediaKeyList = ['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'];
             foreach ($snapshot['meta'] as $key => $value) {
-                if (in_array($key, $mediaKeyList, true)) {
+                if (CptEntry::isMediaKey($key)) {
                     continue;
                 }
                 if (! array_key_exists($key, $defaultMeta) || $value !== ($defaultMeta[$key] ?? null)) {
@@ -729,9 +728,8 @@ class EntryForm extends Component
 
             // Extract only non-media meta keys whose values differ from default locale
             $deltaMeta = [];
-            $mediaKeyList = ['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'];
             foreach ($snapshot['meta'] as $key => $value) {
-                if (in_array($key, $mediaKeyList, true)) {
+                if (CptEntry::isMediaKey($key)) {
                     continue;
                 }
                 if (! array_key_exists($key, $defaultMeta) || $value !== ($defaultMeta[$key] ?? null)) {
@@ -784,9 +782,9 @@ class EntryForm extends Component
                     if (is_array($mVal) && isset($defaultMetaSnap[$mKey]) && is_array($defaultMetaSnap[$mKey])) {
                         foreach ($mVal as $idx => &$subItem) {
                             if (is_array($subItem) && isset($defaultMetaSnap[$mKey][$idx]) && is_array($defaultMetaSnap[$mKey][$idx])) {
-                                foreach (['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'] as $mediaKey) {
-                                    if (isset($defaultMetaSnap[$mKey][$idx][$mediaKey])) {
-                                        $subItem[$mediaKey] = $defaultMetaSnap[$mKey][$idx][$mediaKey];
+                                foreach ($defaultMetaSnap[$mKey][$idx] as $subKey => $subVal) {
+                                    if (CptEntry::isMediaKey($subKey)) {
+                                        $subItem[$subKey] = $subVal;
                                     }
                                 }
                             }
