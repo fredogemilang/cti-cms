@@ -250,16 +250,16 @@ class EntryForm extends Component
                     // For checkbox, default is an array of selected values
                     $defaultValues = [];
                     foreach ($optionsList as $option) {
-                        if (! empty($option['is_default'])) {
-                            $defaultValues[] = $option['value'];
+                        if (is_array($option) && ! empty($option['is_default'])) {
+                            $defaultValues[] = $option['value'] ?? $option['label'] ?? '';
                         }
                     }
                     $defaultValue = $defaultValues;
                 } else {
                     // For select/radio, find the first default
                     foreach ($optionsList as $option) {
-                        if (! empty($option['is_default'])) {
-                            $defaultValue = $option['value'];
+                        if (is_array($option) && ! empty($option['is_default'])) {
+                            $defaultValue = $option['value'] ?? $option['label'] ?? '';
                             break;
                         }
                     }
@@ -304,8 +304,8 @@ class EntryForm extends Component
                 $defaultValue = '';
                 if (isset($subField['options']['options_list']) && is_array($subField['options']['options_list'])) {
                     foreach ($subField['options']['options_list'] as $option) {
-                        if (isset($option['is_default']) && $option['is_default']) {
-                            $defaultValue = $option['value'];
+                        if (is_array($option) && ! empty($option['is_default'])) {
+                            $defaultValue = $option['value'] ?? $option['label'] ?? '';
                             break;
                         }
                     }

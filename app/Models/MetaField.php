@@ -61,6 +61,30 @@ class MetaField extends Model
     }
 
     /**
+     * Normalize an option entry (associative array or 'value:label' string) into a canonical shape.
+     *
+     * @return array{value: string, label: string, is_default: bool}
+     */
+    public static function normalizeOptionItem(mixed $option): array
+    {
+        if (is_array($option)) {
+            return [
+                'value' => (string) ($option['value'] ?? $option['label'] ?? ''),
+                'label' => (string) ($option['label'] ?? $option['value'] ?? ''),
+                'is_default' => ! empty($option['is_default']),
+            ];
+        }
+
+        $parts = array_map('trim', explode(':', (string) $option, 2));
+
+        return [
+            'value' => $parts[0],
+            'label' => $parts[1] ?? $parts[0],
+            'is_default' => false,
+        ];
+    }
+
+    /**
      * Available field types
      */
     public static array $fieldTypes = [

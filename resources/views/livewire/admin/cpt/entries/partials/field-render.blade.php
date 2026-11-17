@@ -90,7 +90,8 @@
             >
                 <option value="">Select...</option>
                 @foreach($field->options['options_list'] ?? [] as $option)
-                    <option value="{{ $option['value'] }}">{{ $option['label'] }}</option>
+                    @php $opt = \App\Models\MetaField::normalizeOptionItem($option); @endphp
+                    <option value="{{ $opt['value'] }}">{{ $opt['label'] }}</option>
                 @endforeach
             </select>
             @break
@@ -98,14 +99,15 @@
         @case('radio')
             <div class="space-y-2 pt-1">
                 @foreach($field->options['options_list'] ?? [] as $option)
+                    @php $opt = \App\Models\MetaField::normalizeOptionItem($option); @endphp
                     <label class="flex items-center gap-3 cursor-pointer group">
                         <input 
                             type="radio" 
                             wire:model="meta.{{ $field->name }}" 
-                            value="{{ $option['value'] }}"
+                            value="{{ $opt['value'] }}"
                             class="w-4 h-4 border-gray-300 text-blue-600 focus:ring-blue-500 bg-gray-50 dark:bg-[#272B30] dark:border-gray-700"
                         >
-                        <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">{{ $option['label'] }}</span>
+                        <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">{{ $opt['label'] }}</span>
                     </label>
                 @endforeach
             </div>
@@ -114,14 +116,15 @@
         @case('checkbox')
             <div class="space-y-2 pt-1">
                 @foreach($field->options['options_list'] ?? [] as $option)
+                    @php $opt = \App\Models\MetaField::normalizeOptionItem($option); @endphp
                     <label class="flex items-center gap-3 cursor-pointer group">
                         <input 
                             type="checkbox" 
                             wire:model="meta.{{ $field->name }}" 
-                            value="{{ $option['value'] }}"
+                            value="{{ $opt['value'] }}"
                             class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 bg-gray-50 dark:bg-[#272B30] dark:border-gray-700"
                         >
-                        <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">{{ $option['label'] }}</span>
+                        <span class="text-sm text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors">{{ $opt['label'] }}</span>
                     </label>
                 @endforeach
             </div>
