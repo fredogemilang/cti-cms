@@ -53,7 +53,7 @@
   <div class="relative z-10 max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-[120px] flex flex-col gap-[42px]">
     <!-- Top Hero -->
     <div id="about-hero-top" class="flex flex-col items-center text-center gap-[18px]">
-      <h1 id="about-hero-title" class="text-[36px] sm:text-[46px] font-bold leading-tight bg-gradient-to-r from-[#04B1C7] from-[40%] to-[#2296E4] bg-clip-text text-transparent">
+      <h1 id="about-hero-title" class="text-[44px] leading-[1.12] sm:text-5xl md:text-6xl lg:text-[64px] xl:text-[72px] font-extrabold pb-3 sm:pb-3 lg:pb-4 max-w-[1100px] text-center bg-gradient-to-r from-[#04B1C7] via-[#04B1C7] to-[#2296E4] bg-clip-text text-transparent tracking-tight">
         @if(!empty($heroTitle['prefix']))
           {{ $heroTitle['prefix'] }}<br />
         @endif
