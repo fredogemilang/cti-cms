@@ -77,8 +77,8 @@
     </div>
 
     <!-- Split Company Intro -->
-    <div id="about-intro" class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-[60px] items-center">
-      <div id="about-intro-text" class="lg:col-span-6 flex flex-col gap-[21px] items-start text-left">
+    <div id="about-intro" class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-10 items-center">
+      <div id="about-intro-text" class="lg:col-span-7 flex flex-col gap-[21px] items-start text-left">
         @if(!empty($introHeading))
           <h2 class="text-[21px] font-bold leading-[28px] text-black">
             {{ $introHeading }}
@@ -86,7 +86,7 @@
         @endif
 
         @if(!empty($introBody))
-          <div class="csi-prose text-base leading-[24px] text-black space-y-4 [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-black [&_h3]:pt-1 [&_strong]:font-bold">
+          <div class="csi-prose text-sm xl:text-[14.5px] leading-[23px] text-black space-y-4 [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-black [&_h3]:pt-1 [&_strong]:font-bold [&_br]:hidden xl:[&_br]:inline">
             {!! $introBody !!}
           </div>
         @endif
@@ -116,7 +116,7 @@
         </div>
       </div>
 
-      <div id="about-intro-media" class="lg:col-span-6">
+      <div id="about-intro-media" class="lg:col-span-5">
         <div class="w-full h-[320px] sm:h-[400px] lg:h-[462px] rounded-[14px] overflow-hidden shadow-md bg-slate-100">
           @if($introImage)
             <x-image id="about-intro-img" :src="$introImage" alt="{{ $introHeading }}" loading="eager" fetchpriority="high" sizes="(max-width: 1024px) 100vw, 50vw" class="w-full h-full object-cover rounded-[14px] will-change-transform" />

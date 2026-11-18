@@ -160,7 +160,7 @@
     "src": "node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-vietnamese-800-normal.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BnG_zaS8.css",
+    "file": "assets/app-D6drfxXD.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -175,7 +175,7 @@
     "isEntry": true
   },
   "themes/csi/assets/css/theme.css": {
-    "file": "assets/theme-wdZE7krO.css",
+    "file": "assets/theme-BnRJ4LgT.css",
     "src": "themes/csi/assets/css/theme.css",
     "isEntry": true,
     "name": "theme",
