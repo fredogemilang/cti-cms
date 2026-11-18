@@ -355,24 +355,56 @@
 @if(!empty($awardsList))
 <section id="about-awards" class="py-[60px] bg-white relative overflow-hidden"
          x-data="{
-           currentIndex: 0,
+           pageIndex: 0,
+           perView: 3,
            total: {{ count($awardsList) }},
+           offsetPx: 0,
            timer: null,
+           touchStartX: 0,
+           get totalPages() {
+             return Math.max(1, Math.ceil(this.total / this.perView));
+           },
            init() {
-             if (this.total > 1) {
+             this.syncMetrics();
+             this._onResize = () => this.syncMetrics();
+             window.addEventListener('resize', this._onResize, { passive: true });
+             if (this.totalPages > 1) {
                this.startAutoplay();
              }
            },
            destroy() {
              this.stopAutoplay();
+             if (this._onResize) window.removeEventListener('resize', this._onResize);
+           },
+           computePerView() {
+             if (window.innerWidth >= 1024) return 3;
+             if (window.innerWidth >= 640) return 2;
+             return 1;
+           },
+           syncMetrics() {
+             const pv = this.computePerView();
+             if (pv !== this.perView) {
+               this.perView = pv;
+             }
+             if (this.pageIndex >= this.totalPages) {
+               this.pageIndex = Math.max(0, this.totalPages - 1);
+             }
+             this.$nextTick(() => this.updateOffset());
+           },
+           updateOffset() {
+             const track = this.$refs.awardsTrack;
+             if (!track) return;
+             const startIdx = Math.min(this.pageIndex * this.perView, Math.max(0, this.total - this.perView));
+             const card = track.children[startIdx];
+             this.offsetPx = card ? card.offsetLeft : 0;
            },
            startAutoplay() {
              this.stopAutoplay();
-             if (this.total <= 1) return;
+             if (this.totalPages <= 1) return;
              this.timer = setInterval(() => {
-               this.currentIndex = (this.currentIndex + 1) % this.total;
-               this.scrollToCurrent();
-             }, 3500);
+               this.pageIndex = (this.pageIndex + 1) % this.totalPages;
+               this.updateOffset();
+             }, 4500);
            },
            stopAutoplay() {
              if (this.timer) {
@@ -380,15 +412,33 @@
                this.timer = null;
              }
            },
-           prev() { this.currentIndex = (this.currentIndex - 1 + this.total) % this.total; this.scrollToCurrent(); this.startAutoplay(); },
-           next() { this.currentIndex = (this.currentIndex + 1) % this.total; this.scrollToCurrent(); this.startAutoplay(); },
-           goTo(i) { this.currentIndex = i; this.scrollToCurrent(); this.startAutoplay(); },
-           scrollToCurrent() {
-             const track = this.$refs.awardsTrack;
-             const card = track?.children[this.currentIndex];
-             if (track && card) {
-               const targetLeft = card.offsetLeft - (track.clientWidth - card.clientWidth) / 2;
-               track.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
+           prev() {
+             this.pageIndex = (this.pageIndex - 1 + this.totalPages) % this.totalPages;
+             this.updateOffset();
+             this.startAutoplay();
+           },
+           next() {
+             this.pageIndex = (this.pageIndex + 1) % this.totalPages;
+             this.updateOffset();
+             this.startAutoplay();
+           },
+           goToPage(p) {
+             this.pageIndex = p;
+             this.updateOffset();
+             this.startAutoplay();
+           },
+           onTouchStart(e) {
+             this.touchStartX = e.changedTouches?.[0]?.clientX ?? 0;
+             this.stopAutoplay();
+           },
+           onTouchEnd(e) {
+             const endX = e.changedTouches?.[0]?.clientX ?? 0;
+             const diff = this.touchStartX - endX;
+             if (Math.abs(diff) > 40) {
+               if (diff > 0) this.next();
+               else this.prev();
+             } else {
+               this.startAutoplay();
              }
            }
          }"
@@ -401,24 +451,23 @@
       {{ $awardsTitle }}
     </h2>
 
-    <div id="about-awards-stage" class="relative w-full py-[10px] rounded-[20px]">
-      <!-- Edge Fade Masks -->
-      <div class="hidden lg:block pointer-events-none absolute left-0 top-0 bottom-0 w-44 bg-gradient-to-r from-white via-white/80 to-transparent z-10"></div>
-      <div class="hidden lg:block pointer-events-none absolute right-0 top-0 bottom-0 w-44 bg-gradient-to-l from-white via-white/80 to-transparent z-10"></div>
-
-      <div x-ref="awardsTrack" class="flex gap-[21px] overflow-x-auto scroll-smooth snap-x snap-mandatory py-2 px-4 lg:px-32 no-scrollbar" style="scrollbar-width: none;">
+    <div id="about-awards-stage" class="relative w-full max-w-[1002px] mx-auto overflow-hidden py-[12px]"
+         @touchstart.passive="onTouchStart($event)"
+         @touchend.passive="onTouchEnd($event)">
+      <div x-ref="awardsTrack"
+           class="flex gap-[21px] items-stretch will-change-transform transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+           :style="`transform: translate3d(-${offsetPx}px, 0, 0);`">
         @foreach($awardsList as $idx => $award)
           @php $barColor = !empty($award['accent_color']) ? $award['accent_color'] : '#04B1C7'; @endphp
-          <div @click="goTo({{ $idx }})"
-               class="about-award-card snap-center shrink-0 w-[300px] sm:w-[320px] rounded-[14px] pt-[10px] pb-[18px] px-[10px] relative overflow-hidden cursor-pointer transition-[box-shadow,translate] duration-300 hover:-translate-y-1 shadow-[0_6px_24px_rgba(0,0,0,0.04)]"
+          <div class="about-award-card shrink-0 w-full sm:w-[calc((100%-21px)/2)] lg:w-[calc((100%-42px)/3)] rounded-[14px] pt-[10px] pb-[18px] px-[10px] relative overflow-hidden transition-[box-shadow,transform] duration-300 hover:-translate-y-1 shadow-[0_6px_24px_rgba(0,0,0,0.04)]"
                style="background: linear-gradient(119deg, #F9FBFF 1.5%, #FFF4EA 100%);">
             <div class="flex flex-col items-center gap-[21px] w-full">
               <!-- Pedestal Stage + Plaque -->
               <div class="relative w-[200px] h-[200px] rounded-[7px] overflow-hidden flex items-center justify-center">
-                <img src="{{ theme_asset('images/about/award-stage.png') }}" alt="" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply pointer-events-none" />
+                <img src="{{ theme_asset('images/about/award-stage.png') }}" alt="" loading="eager" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply pointer-events-none" />
                 @if(!empty($award['image']))
                   <div class="relative z-10 w-[111px] h-[157px] -mt-6 flex items-center justify-center">
-                    <x-image :src="$award['image']" :alt="$award['title'] ?? 'Award'" sizes="120px" :placeholder="false" class="w-full h-full object-contain" />
+                    <x-image :src="$award['image']" :alt="$award['title'] ?? 'Award'" sizes="120px" loading="eager" :placeholder="false" class="w-full h-full object-contain" />
                   </div>
                 @endif
               </div>
@@ -442,18 +491,18 @@
 
     <!-- Navigation Controls & Dots -->
     <div id="about-awards-controls" class="flex flex-wrap justify-center items-center gap-[13px]">
-      <button type="button" @click="prev()" aria-label="Previous award"
+      <button type="button" @click="prev()" aria-label="Previous awards"
               class="w-[36px] h-[36px] rounded-full border-2 border-[#ED7F22] flex items-center justify-center text-[#ED7F22] hover:bg-[#ED7F22] hover:text-white transition-colors cursor-pointer">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 19l-7-7 7-7"/></svg>
       </button>
 
-      @foreach($awardsList as $idx => $award)
-        <button type="button" @click="goTo({{ $idx }})" aria-label="Award {{ $idx + 1 }}"
-                :class="currentIndex === {{ $idx }} ? 'bg-[#ED7F22] w-4' : 'bg-[#E4EBFA] w-2'"
-                class="h-2 rounded-full transition-all cursor-pointer"></button>
-      @endforeach
+      <template x-for="p in totalPages" :key="p">
+        <button type="button" @click="goToPage(p - 1)" :aria-label="`Awards slide ${p}`"
+                :class="pageIndex === (p - 1) ? 'bg-[#ED7F22] w-4' : 'bg-[#E4EBFA] w-2'"
+                class="h-2 rounded-full transition-all duration-300 cursor-pointer"></button>
+      </template>
 
-      <button type="button" @click="next()" aria-label="Next award"
+      <button type="button" @click="next()" aria-label="Next awards"
               class="w-[36px] h-[36px] rounded-full border-2 border-[#ED7F22] flex items-center justify-center text-[#ED7F22] hover:bg-[#ED7F22] hover:text-white transition-colors cursor-pointer">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
       </button>
