@@ -77,7 +77,7 @@
     </div>
 
     <!-- Split Company Intro -->
-    <div id="about-intro" class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-10 items-center">
+    <div id="about-intro" class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
       <div id="about-intro-text" class="lg:col-span-7 flex flex-col gap-[21px] items-start text-left">
         @if(!empty($introHeading))
           <h2 class="text-[21px] font-bold leading-[28px] text-black">
@@ -86,7 +86,7 @@
         @endif
 
         @if(!empty($introBody))
-          <div class="csi-prose text-sm xl:text-[14.5px] leading-[23px] text-black space-y-4 [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-black [&_h3]:pt-1 [&_strong]:font-bold [&_br]:hidden xl:[&_br]:inline">
+          <div class="csi-prose text-sm leading-[22px] text-black space-y-4 [&_h3]:text-base [&_h3]:font-bold [&_h3]:text-black [&_h3]:pt-1 [&_strong]:font-bold [&_br]:hidden xl:[&_br]:inline">
             {!! $introBody !!}
           </div>
         @endif
