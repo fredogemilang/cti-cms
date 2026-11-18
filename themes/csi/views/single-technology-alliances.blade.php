@@ -282,7 +282,7 @@
     @endif
 
     @if(!empty($solutionsItems))
-    <div class="w-full pt-1">
+    <div id="alliance-solutions-panels" class="w-full pt-1">
       @foreach($solutionsTabs as $tab)
         @php
           $tKey = $tab['tab_key'] ?? 'default';

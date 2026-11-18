@@ -1452,14 +1452,12 @@ onReady(() => {
           { y: 0, opacity: 1, duration: 0.62 },
           { trigger: '#alliance-solutions-tabs', start: 'top 90%', end: 'bottom 10%' }
         );
-        gsap.utils.toArray('.alliance-sol-item').forEach((card, i) => {
-          revealMotion(
-            card,
-            { y: 34, scale: 0.95, opacity: 0 },
-            { y: 0, scale: 1, opacity: 1, duration: 0.65, delay: (i % 5) * 0.05, ease: 'power4.out' },
-            { trigger: card, start: 'top 92%', end: 'bottom 8%' }
-          );
-        });
+        revealMotion(
+          '#alliance-solutions-panels',
+          { y: 24, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.65, ease: 'power4.out' },
+          { trigger: '#alliance-solutions-tabs', start: 'top 92%', end: 'bottom 8%' }
+        );
       }
 
       // --- HOMEPAGE: CLIENTS MARQUEE ---
