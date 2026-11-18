@@ -67,7 +67,7 @@
 
           <div class="h-px w-full bg-gradient-to-r from-[#04B1C7] to-[#268BE4]"></div>
 
-          <h1 id="alliance-hero-title" class="text-[34px] sm:text-[42px] xl:text-[46px] font-bold leading-[1.15] bg-gradient-to-r from-[#04B1C7] to-[#268BE4] bg-clip-text text-transparent">
+          <h1 id="alliance-hero-title" class="text-[34px] sm:text-[42px] xl:text-[46px] font-bold leading-[1.28] pb-1 bg-gradient-to-r from-[#04B1C7] to-[#268BE4] bg-clip-text text-transparent">
             {{ $heroHeadline }}
           </h1>
 

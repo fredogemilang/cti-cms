@@ -87,7 +87,7 @@
   <div class="relative z-10 max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-[120px] flex flex-col items-center gap-[42px]">
     <!-- Top Hero -->
     <div id="partner-hero-top" class="flex flex-col items-center text-center gap-[18px]">
-      <h1 id="partner-hero-title" class="text-[36px] sm:text-[46px] font-bold leading-tight bg-gradient-to-r from-[#04B1C7] from-[40%] to-[#2296E4] bg-clip-text text-transparent">
+      <h1 id="partner-hero-title" class="text-[36px] sm:text-[46px] font-bold leading-[1.28] pb-1 bg-gradient-to-r from-[#04B1C7] from-[40%] to-[#2296E4] bg-clip-text text-transparent">
         {{ $heroTitle }}
       </h1>
 

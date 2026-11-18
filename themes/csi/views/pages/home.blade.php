@@ -56,7 +56,7 @@
   <img src="{{ theme_asset('images/hero-glow-layer.png') }}" alt="" class="absolute top-[385px] left-1/2 -translate-x-1/2 w-[1235px] h-[624px] pointer-events-none z-0 opacity-50 blur-3xl" />
 
   <div class="relative z-10 max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 xl:px-[120px] flex flex-col items-center">
-    <h1 id="hero-title" class="text-[44px] leading-[1.12] sm:text-5xl md:text-6xl lg:text-[64px] xl:text-[72px] font-extrabold pb-3 sm:pb-3 lg:pb-4 max-w-[1100px] text-center bg-gradient-to-r from-[#04B1C7] via-[#04B1C7] to-[#2296E4] bg-clip-text text-transparent tracking-tight">
+    <h1 id="hero-title" class="text-[44px] leading-[1.2] sm:text-5xl md:text-6xl lg:text-[64px] xl:text-[72px] font-extrabold pb-3 sm:pb-3 lg:pb-4 max-w-[1100px] text-center bg-gradient-to-r from-[#04B1C7] via-[#04B1C7] to-[#2296E4] bg-clip-text text-transparent tracking-tight">
       @if(!empty($heroTitle['prefix']))
         {{ $heroTitle['prefix'] }}<br />
       @endif
