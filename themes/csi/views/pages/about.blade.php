@@ -22,7 +22,7 @@
     ]);
     $introSecondaryCta = $page->buttonBlock('intro_secondary_cta', [
         'text' => 'Our Products',
-        'url' => '/#alliances',
+        'url' => '/technology-alliances',
         'target' => '_self',
     ]);
     $introImage = $page->block('intro_image', '');
@@ -105,7 +105,7 @@
 
           @if(!empty($introSecondaryCta['text']))
             @php
-              $sUrl = $introSecondaryCta['url'] ?? '/#alliances';
+              $sUrl = $introSecondaryCta['url'] ?? '/technology-alliances';
               $sHref = str_starts_with($sUrl, '/#') ? localized_url('/').substr($sUrl, 1) : (str_starts_with($sUrl, '/') ? localized_url($sUrl) : $sUrl);
             @endphp
             <a href="{{ $sHref }}" target="{{ $introSecondaryCta['target'] ?? '_self' }}"

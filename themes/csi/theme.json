@@ -229,7 +229,7 @@
                     "label": "Intro Secondary Button",
                     "default": {
                         "text": "Our Products",
-                        "url": "/#alliances",
+                        "url": "/technology-alliances",
                         "target": "_self"
                     }
                 },
