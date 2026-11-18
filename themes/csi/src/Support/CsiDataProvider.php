@@ -383,8 +383,10 @@ class CsiDataProvider
                     'quote' => $isId
                         ? '"Solusi enterprise networking dari Converion Informatica membantu mengatasi bottleneck dan area dengan jangkauan Wi-Fi terbatas di seluruh lingkungan kampus. Dengan konektivitas yang lancar melalui lebih dari 788 access point, sivitas akademika dapat mengakses sistem informasi akademik, platform penelitian, dan berbagai kebutuhan administrasi sehari-hari dengan lebih mudah dan tanpa gangguan."'
                         : '"Our enterprise networking solutions from Converion Informatica eliminate bottlenecks and Wi-Fi dead zones across the entire campus environment. Seamless connectivity powered by 788+ access points ensures smooth and uninterrupted access to academic information systems, research platforms, and daily administrative operations."',
-                    'author' => 'Universitas Halu Oleo',
-                    'role' => '',
+                    'author' => 'Saefuddin',
+                    'role' => $isId
+                        ? "Kepala Unit Penunjang Akademik (UPA)\nTeknologi Informasi dan Komunikasi"
+                        : "Head of the Academic Support Unit (UPA)\nInformation and Communication Technology",
                     'logoImg' => $uhoLogo,
                     'image' => $campusImg,
                 ],

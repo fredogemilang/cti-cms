@@ -432,7 +432,7 @@
               <div class="flex items-center justify-between">
                 <div>
                   <span id="case-story-author" class="block text-sm font-bold text-slate-900">{{ $initialInsightStory['author'] }}</span>
-                  <p id="case-story-role" class="text-xs text-[#656F80] mt-0.5" @if(empty($initialInsightStory['role'])) style="display: none;" @endif>{{ $initialInsightStory['role'] ?? '' }}</p>
+                  <p id="case-story-role" class="text-xs text-[#656F80] mt-0.5" style="white-space: pre-line;{{ empty($initialInsightStory['role']) ? ' display: none;' : '' }}">{{ $initialInsightStory['role'] ?? '' }}</p>
                 </div>
                 <img id="case-story-logo-img" src="{{ $initialInsightStory['logoImg'] }}" alt="{{ $initialInsightStory['author'] }}" class="h-8 max-w-[120px] object-contain" />
               </div>
