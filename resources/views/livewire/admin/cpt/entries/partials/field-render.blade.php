@@ -491,20 +491,22 @@
                                                 class="w-full px-3 py-2 bg-white dark:bg-[#0B0B0B] border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                                             ></textarea>
                                         @elseif($subField['type'] === 'media' || $subField['type'] === 'image')
+                                            @php $subMediaValue = $this->meta[$field->name][$index][$subFieldId] ?? null; @endphp
                                             <livewire:admin.media-picker 
                                                 :field="'meta.' . $field->name . '.' . $index . '.' . $subFieldId"
-                                                :value="$this->meta[$field->name][$index][$subFieldId] ?? null"
+                                                :value="$subMediaValue"
                                                 :label="$subField['label'] ?? 'Media'"
                                                 :compact="true"
-                                                :key="'media-' . $field->name . '-' . $index . '-' . $subFieldId"
+                                                :key="'media-' . ($this->editingLocale ?? 'default') . '-' . $field->name . '-' . $index . '-' . $subFieldId . '-' . md5((string) $subMediaValue)"
                                             />
                                         @elseif($subField['type'] === 'icon')
+                                            @php $subIconValue = $this->meta[$field->name][$index][$subFieldId] ?? null; @endphp
                                             <livewire:admin.icon-picker 
                                                 :field="'meta.' . $field->name . '.' . $index . '.' . $subFieldId"
-                                                :value="$this->meta[$field->name][$index][$subFieldId] ?? null"
+                                                :value="$subIconValue"
                                                 :label="$subField['label'] ?? 'Icon'"
                                                 :compact="true"
-                                                :key="'icon-' . $field->name . '-' . $index . '-' . $subFieldId"
+                                                :key="'icon-' . ($this->editingLocale ?? 'default') . '-' . $field->name . '-' . $index . '-' . $subFieldId . '-' . md5((string) $subIconValue)"
                                             />
                                         @endif
 

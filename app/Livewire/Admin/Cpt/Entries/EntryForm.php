@@ -338,8 +338,6 @@ class EntryForm extends Component
             $this->featuredImage = $mediaPath;
         } elseif (str_starts_with($field, 'meta.')) {
             $cleanPath = substr($field, 5);
-            $fieldName = str_replace('meta.', '', $field);
-            $this->meta[$fieldName] = $mediaPath;
             data_set($this->meta, $cleanPath, $mediaPath);
         } elseif (str_starts_with($field, 'gallery_add.')) {
             $fieldName = str_replace('gallery_add.', '', $field);
@@ -375,8 +373,8 @@ class EntryForm extends Component
         }
         // Handle Meta Fields
         elseif (str_starts_with($field, 'meta.')) {
-            $fieldName = str_replace('meta.', '', $field);
-            $this->meta[$fieldName] = null;
+            $cleanPath = substr($field, 5);
+            data_set($this->meta, $cleanPath, null);
         }
     }
 
