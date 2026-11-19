@@ -2,10 +2,6 @@
 
 @section('title', $post->title)
 
-@push('meta')
-  <meta name="description" content="{{ $post->excerpt ?? Str::limit(strip_tags($post->content), 150) }}">
-@endpush
-
 @section('content')
 <main class="artikel-detail-main" style="background: #ffffff; padding: 80px 0; font-family: var(--font-body); color: var(--text-dark); min-height: 60vh;">
   <div class="artikel-container" style="max-width: 900px; margin: 0 auto; padding: 0 1.5rem;">

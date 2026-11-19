@@ -12,12 +12,8 @@
         <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
     @endif
 
-    {{-- SEO --}}
+    {{-- SEO (handled by InjectSeoTags middleware) --}}
     @stack('meta')
-    @if(isset($seo) && is_array($seo))
-        <meta name="description" content="{{ $seo['meta_description'] ?? '' }}">
-        <meta name="keywords" content="{{ $seo['meta_keywords'] ?? '' }}">
-    @endif
 
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.googleapis.com" />

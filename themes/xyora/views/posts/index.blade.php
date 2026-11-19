@@ -1,6 +1,6 @@
 @extends('xyora::layouts.app')
 
-@section('title', t('blog.title', 'XYORA - Artikel'))
+@section('title', t('blog.title', 'Artikel & Panduan Jaringan Wi-Fi Bisnis - XYORA'))
 
 @section('content')
 <!-- Screen reader only H1 for SEO compliance -->
