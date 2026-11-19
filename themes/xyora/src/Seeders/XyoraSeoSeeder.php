@@ -24,6 +24,9 @@ class XyoraSeoSeeder extends Seeder
         Setting::set('available_locales', 'id', 'languages', 'text');
         Setting::set('locale_switcher_enabled', false, 'languages', 'boolean');
 
+        // Dedicated category pages (/access-point/, /gateway/, /switch/) are indexed instead of generic taxonomy archives
+        Setting::set('seo_taxonomy_product_category_index_enabled', false, 'seo', 'boolean');
+
         Setting::set(
             'seo_default_description',
             'XYORA menyediakan solusi perangkat jaringan Wi-Fi 6/7, Access Point, Smart Gateway, dan PoE Switch yang cepat, stabil, serta mudah dikelola secara terpusat.',
