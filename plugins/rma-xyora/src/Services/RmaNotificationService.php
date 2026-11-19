@@ -7,6 +7,7 @@ use App\Models\FormEntry;
 use App\Services\FormNotificationService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Plugins\RmaXyora\Support\RmaStatus;
 
 class RmaNotificationService
 {
@@ -27,7 +28,7 @@ class RmaNotificationService
 
             $form = $entry->form ?: Form::find($entry->form_id);
             $notificationService = app(FormNotificationService::class);
-            $ccEmails = $notificationService->parseEmailList($form?->notifications['cc_email'] ?? $form?->notifications['admin_cc'] ?? null);
+            $ccEmails = $notificationService->parseEmailList($form?->notifications['cc_email'] ?? $form?->notifications['admin_cc'] ?? $form?->notifications['user_cc_email'] ?? null);
             $bccEmails = $notificationService->parseEmailList($form?->notifications['bcc_email'] ?? null);
             $supportEmail = $form?->notifications['admin_email'] ?: setting('contact_email', config('mail.from.address'));
 
@@ -85,7 +86,7 @@ class RmaNotificationService
 
             $form = $entry->form ?: Form::find($entry->form_id);
             $notificationService = app(FormNotificationService::class);
-            $ccEmails = $notificationService->parseEmailList($form?->notifications['cc_email'] ?? $form?->notifications['admin_cc'] ?? null);
+            $ccEmails = $notificationService->parseEmailList($form?->notifications['cc_email'] ?? $form?->notifications['admin_cc'] ?? $form?->notifications['user_cc_email'] ?? null);
             $bccEmails = $notificationService->parseEmailList($form?->notifications['bcc_email'] ?? null);
             $supportEmail = $form?->notifications['admin_email'] ?: setting('contact_email', config('mail.from.address'));
 
@@ -253,13 +254,7 @@ class RmaNotificationService
      */
     protected function getStatusLabel(?string $status): string
     {
-        return match ($status) {
-            'pending' => 'Menunggu Verifikasi',
-            'processing' => 'Sedang Diproses',
-            'completed' => 'Disetujui / Selesai',
-            'rejected' => 'Ditolak',
-            default => ucfirst($status ?? 'Pending'),
-        };
+        return RmaStatus::getLabel($status);
     }
 
     /**
@@ -267,12 +262,6 @@ class RmaNotificationService
      */
     protected function getStatusColor(?string $status): string
     {
-        return match ($status) {
-            'pending' => '#d97706', // amber-600
-            'processing' => '#2563eb', // blue-600
-            'completed' => '#89C55C', // green theme
-            'rejected' => '#dc2626', // red-600
-            default => '#475569', // slate-600
-        };
+        return RmaStatus::getColor($status);
     }
 }

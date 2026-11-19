@@ -399,24 +399,21 @@
                   <tr>
                     <td style="font-weight: 600; color: #64748b; padding: 6px 0;">Status:</td>
                     <td style="padding: 6px 0;">
-                      @if($rmaStatusResult['status'] === 'completed')
+                      @php
+                        $trackingMeta = class_exists(\Plugins\RmaXyora\Support\RmaStatus::class)
+                          ? \Plugins\RmaXyora\Support\RmaStatus::get($rmaStatusResult['status'])
+                          : null;
+                      @endphp
+                      @if($trackingMeta)
                         <span
-                          style="background: rgba(137, 197, 92, 0.15); color: #538d24; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; border: 1px solid rgba(137, 197, 92, 0.4);">Selesai
-                          / Disetujui</span>
-                      @elseif($rmaStatusResult['status'] === 'pending')
-                        <span
-                          style="background: rgba(245, 158, 11, 0.15); color: #b45309; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; border: 1px solid rgba(245, 158, 11, 0.4);">Menunggu
-                          Verifikasi</span>
-                      @elseif($rmaStatusResult['status'] === 'processing')
-                        <span
-                          style="background: rgba(59, 130, 246, 0.15); color: #1d4ed8; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; border: 1px solid rgba(59, 130, 246, 0.4);">Sedang
-                          Diproses</span>
-                      @elseif($rmaStatusResult['status'] === 'rejected')
-                        <span
-                          style="background: rgba(239, 68, 68, 0.15); color: #b91c1c; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; border: 1px solid rgba(239, 68, 68, 0.4);">Ditolak</span>
+                          style="background: {{ $trackingMeta['bg_rgba'] }}; color: {{ $trackingMeta['color'] }}; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; border: 1px solid {{ $trackingMeta['border_rgba'] }};">
+                          {{ $trackingMeta['label'] }}
+                        </span>
                       @else
                         <span
-                          style="background: #e2e8f0; color: #475569; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; border: 1px solid #cbd5e1;">{{ ucfirst($rmaStatusResult['status']) }}</span>
+                          style="background: #e2e8f0; color: #475569; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; border: 1px solid #cbd5e1;">
+                          {{ ucfirst($rmaStatusResult['status']) }}
+                        </span>
                       @endif
                     </td>
                   </tr>

@@ -48,24 +48,33 @@
         </div>
 
         <!-- Row 2: Status Filter Segment Buttons -->
-        <div class="mb-4">
-            <div class="inline-flex w-fit items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30]">
+        <div class="mb-4 overflow-x-auto no-scrollbar pb-1">
+            <div class="inline-flex w-max items-center bg-gray-100/50 dark:bg-[#0B0B0B]/30 p-1.5 rounded-2xl ring-1 ring-gray-200 dark:ring-[#272B30] gap-1">
                 @php
-                    $statuses = [
-                        '' => ['label' => 'Semua', 'count' => $statusCounts['all'], 'color' => 'blue'],
-                        'pending' => ['label' => 'Menunggu Verifikasi', 'count' => $statusCounts['pending'], 'color' => 'amber'],
-                        'processing' => ['label' => 'Sedang Diproses', 'count' => $statusCounts['processing'], 'color' => 'indigo'],
-                        'completed' => ['label' => 'Disetujui', 'count' => $statusCounts['completed'], 'color' => 'green'],
-                        'rejected' => ['label' => 'Ditolak', 'count' => $statusCounts['rejected'], 'color' => 'red'],
+                    $allStatuses = \Plugins\RmaXyora\Support\RmaStatus::all();
+                    $filterList = [
+                        '' => ['label' => 'Semua', 'count' => $statusCounts['all'] ?? 0],
                     ];
+                    foreach ($allStatuses as $key => $meta) {
+                        $filterList[$key] = [
+                            'label' => $meta['short_label'],
+                            'count' => $statusCounts[$key] ?? 0,
+                        ];
+                    }
+                    if (!empty($statusCounts['processing'])) {
+                        $filterList['processing'] = [
+                            'label' => 'Diproses (Legacy)',
+                            'count' => $statusCounts['processing'],
+                        ];
+                    }
                 @endphp
 
-                @foreach($statuses as $value => $data)
+                @foreach($filterList as $value => $data)
                     <button
                         wire:click="$set('statusFilter', '{{ $value }}')"
-                        class="h-10 px-4 rounded-xl text-sm font-bold transition-all flex items-center gap-2 {{ $statusFilter === $value ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
+                        class="h-9 px-3.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap {{ $statusFilter === $value ? 'bg-white dark:bg-[#1A1A1A] text-[#2563EB] shadow-sm ring-1 ring-gray-200 dark:ring-[#272B30]' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]' }}">
                         {{ $data['label'] }}
-                        <span class="px-2 py-0.5 rounded-lg {{ $statusFilter === $value ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
+                        <span class="px-1.5 py-0.5 rounded-md {{ $statusFilter === $value ? 'bg-blue-50 dark:bg-blue-900/20 text-[#2563EB]' : 'bg-gray-200/50 dark:bg-[#272B30] text-[#6F767E]' }} text-[10px] font-bold">
                             {{ $data['count'] }}
                         </span>
                     </button>
@@ -99,20 +108,9 @@
                     @forelse($entries as $entry)
                         @php
                             $data = $entry->data ?? [];
-                            $statusColor = match ($entry->status) {
-                                'pending' => 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
-                                'processing' => 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
-                                'completed' => 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20',
-                                'rejected' => 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20',
-                                default => 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20',
-                            };
-                            $statusLabel = match ($entry->status) {
-                                'pending' => 'Menunggu Verifikasi',
-                                'processing' => 'Sedang Diproses',
-                                'completed' => 'Disetujui',
-                                'rejected' => 'Ditolak',
-                                default => ucfirst($entry->status),
-                            };
+                            $statusMeta = \Plugins\RmaXyora\Support\RmaStatus::get($entry->status);
+                            $statusColor = $statusMeta['badge'];
+                            $statusLabel = $statusMeta['label'];
                         @endphp
                         <tr class="hover:bg-gray-50/30 dark:hover:bg-[#272B30]/10 transition-colors">
                             <td class="px-6 py-4 font-bold text-[#2563EB] whitespace-nowrap">
@@ -296,10 +294,12 @@
                                     wire:model="newStatus"
                                     class="h-12 w-full rounded-xl border-none bg-gray-50 dark:bg-[#0B0B0B]/30 pl-4 pr-10 text-sm font-bold text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#2563EB] transition-all cursor-pointer"
                                 >
-                                    <option value="pending">Menunggu Verifikasi (Pending)</option>
-                                    <option value="processing">Sedang Diproses (Processing)</option>
-                                    <option value="completed">Disetujui / Selesai (Completed)</option>
-                                    <option value="rejected">Ditolak (Rejected)</option>
+                                    @foreach(\Plugins\RmaXyora\Support\RmaStatus::all() as $stKey => $stMeta)
+                                        <option value="{{ $stKey }}">{{ $stMeta['dropdown'] }}</option>
+                                    @endforeach
+                                    @if($newStatus === 'processing')
+                                        <option value="processing">Sedang Diproses (Processing)</option>
+                                    @endif
                                 </select>
                             </div>
                             <button 

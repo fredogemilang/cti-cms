@@ -2,22 +2,27 @@
 
 namespace Plugins\RmaXyora\Livewire;
 
-use Livewire\Component;
-use Livewire\WithPagination;
 use App\Models\Form;
 use App\Models\FormEntry;
+use Livewire\Component;
+use Livewire\WithPagination;
+use Plugins\RmaXyora\Support\RmaStatus;
 
 class RmaTable extends Component
 {
     use WithPagination;
 
     public $search = '';
+
     public $statusFilter = '';
+
     public $perPage = 10;
 
     // Detail Modal State
     public $selectedRmaId = null;
+
     public $showModal = false;
+
     public $newStatus = '';
 
     protected $queryString = [
@@ -56,7 +61,7 @@ class RmaTable extends Component
     {
         $form = $this->getRmaForm();
 
-        if (!$form) {
+        if (! $form) {
             return FormEntry::whereRaw('1 = 0'); // Empty relation
         }
 
@@ -67,10 +72,10 @@ class RmaTable extends Component
                 $numericSearch = preg_replace('/[^0-9]/', '', $cleanSearch);
 
                 $query->where(function ($q) use ($cleanSearch, $numericSearch) {
-                    $q->where('data->nama_lengkap', 'like', '%' . $cleanSearch . '%')
-                      ->orWhere('data->alamat_email', 'like', '%' . $cleanSearch . '%')
-                      ->orWhere('data->serial_number_produk', 'like', '%' . $cleanSearch . '%')
-                      ->orWhere('data->nama_produk', 'like', '%' . $cleanSearch . '%');
+                    $q->where('data->nama_lengkap', 'like', '%'.$cleanSearch.'%')
+                        ->orWhere('data->alamat_email', 'like', '%'.$cleanSearch.'%')
+                        ->orWhere('data->serial_number_produk', 'like', '%'.$cleanSearch.'%')
+                        ->orWhere('data->nama_produk', 'like', '%'.$cleanSearch.'%');
 
                     if ($numericSearch !== '') {
                         $q->orWhere('id', (int) $numericSearch);
@@ -108,7 +113,7 @@ class RmaTable extends Component
      */
     public function updateStatus()
     {
-        if (!$this->selectedRmaId) {
+        if (! $this->selectedRmaId) {
             return;
         }
 
@@ -119,7 +124,7 @@ class RmaTable extends Component
             $rma->status = $this->newStatus;
             $rma->save();
 
-            session()->flash('success', 'Status RMA #' . sprintf('RMA-%04d', $rma->id) . ' berhasil diperbarui.');
+            session()->flash('success', 'Status RMA #'.sprintf('RMA-%04d', $rma->id).' berhasil diperbarui.');
         }
 
         $this->closeModal();
@@ -133,7 +138,7 @@ class RmaTable extends Component
         $rma = FormEntry::findOrFail($id);
         $rma->delete();
 
-        session()->flash('success', 'Pengajuan RMA #' . sprintf('RMA-%04d', $id) . ' berhasil dihapus.');
+        session()->flash('success', 'Pengajuan RMA #'.sprintf('RMA-%04d', $id).' berhasil dihapus.');
 
         if ($this->selectedRmaId === $id) {
             $this->closeModal();
@@ -146,19 +151,26 @@ class RmaTable extends Component
     public function getStatusCountsProperty()
     {
         $form = $this->getRmaForm();
-        if (!$form) {
-            return ['all' => 0, 'pending' => 0, 'processing' => 0, 'completed' => 0, 'rejected' => 0];
+        if (! $form) {
+            return ['all' => 0];
         }
 
         $base = FormEntry::where('form_id', $form->id);
-
-        return [
+        $counts = [
             'all' => (clone $base)->count(),
-            'pending' => (clone $base)->where('status', 'pending')->count(),
-            'processing' => (clone $base)->where('status', 'processing')->count(),
-            'completed' => (clone $base)->where('status', 'completed')->count(),
-            'rejected' => (clone $base)->where('status', 'rejected')->count(),
         ];
+
+        foreach (array_keys(RmaStatus::all()) as $key) {
+            $counts[$key] = (clone $base)->where('status', $key)->count();
+        }
+
+        // Support legacy processing count if exists
+        $processingCount = (clone $base)->where('status', 'processing')->count();
+        if ($processingCount > 0) {
+            $counts['processing'] = $processingCount;
+        }
+
+        return $counts;
     }
 
     public function render()
