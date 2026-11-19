@@ -5661,6 +5661,14 @@ body.has-admin-bar .kv-mobile-header {
     border-right: 0;
 }
 
+.kv-article-prose thead th strong,
+.kv-article-prose thead th b,
+.kv-legal-prose thead th strong,
+.kv-legal-prose thead th b {
+    color: #FFFFFF !important;
+    font-weight: 700;
+}
+
 .kv-article-prose th,
 .kv-article-prose td,
 .kv-legal-prose th,
