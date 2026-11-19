@@ -2,10 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\CptEntry;
+use App\Models\CustomPostType;
+use App\Models\CustomTaxonomy;
 use App\Models\Domicile;
 use App\Models\Page;
 use App\Models\PartnershipInquiry;
 use App\Models\Plugin;
+use App\Models\TaxonomyTerm;
 use App\Models\Theme;
 use App\Models\User;
 use App\Services\PluginLoader;
@@ -129,5 +133,94 @@ class IccomIntegrationTest extends TestCase
         ]);
 
         $this->artisan('events:complete-expired')->assertExitCode(0);
+    }
+
+    public function test_our_partners_on_homepage_are_grouped_by_taxonomy_term(): void
+    {
+        $user = User::factory()->create();
+        Page::create([
+            'title' => 'Home',
+            'slug' => 'home',
+            'template' => 'home',
+            'status' => 'published',
+            'published_at' => now(),
+            'author_id' => $user->id,
+        ]);
+
+        $cpt = CustomPostType::create([
+            'name' => 'our_partners',
+            'singular_label' => 'Our Partner',
+            'plural_label' => 'Our Partners',
+            'slug' => 'our-partners',
+            'is_active' => true,
+        ]);
+
+        $taxonomy = CustomTaxonomy::create([
+            'name' => 'partners_category',
+            'singular_label' => 'Category',
+            'plural_label' => 'Categories',
+            'slug' => 'partners-category',
+            'post_types' => ['our-partners'],
+            'is_active' => true,
+        ]);
+
+        $corpTerm = TaxonomyTerm::create([
+            'taxonomy_id' => $taxonomy->id,
+            'name' => 'Corporate Partner',
+            'slug' => 'corporate-partner',
+        ]);
+
+        $uniTerm = TaxonomyTerm::create([
+            'taxonomy_id' => $taxonomy->id,
+            'name' => 'University Partner',
+            'slug' => 'university-partner',
+        ]);
+
+        $commTerm = TaxonomyTerm::create([
+            'taxonomy_id' => $taxonomy->id,
+            'name' => 'Community Partner',
+            'slug' => 'community-partner',
+        ]);
+
+        $corpPartner = CptEntry::create([
+            'post_type_id' => $cpt->id,
+            'title' => 'TiDB',
+            'slug' => 'tidb',
+            'status' => 'published',
+            'published_at' => now(),
+            'author_id' => $user->id,
+        ]);
+        $corpPartner->terms()->attach($corpTerm->id);
+
+        $uniPartner = CptEntry::create([
+            'post_type_id' => $cpt->id,
+            'title' => 'Binus University',
+            'slug' => 'binus-university',
+            'status' => 'published',
+            'published_at' => now(),
+            'author_id' => $user->id,
+        ]);
+        $uniPartner->terms()->attach($uniTerm->id);
+
+        $commPartner = CptEntry::create([
+            'post_type_id' => $cpt->id,
+            'title' => 'Cloud Native ID',
+            'slug' => 'cloud-native-id',
+            'status' => 'published',
+            'published_at' => now(),
+            'author_id' => $user->id,
+        ]);
+        $commPartner->terms()->attach($commTerm->id);
+
+        $this->activateIccomEnvironment();
+
+        $response = $this->get('/');
+        $response->assertOk();
+        $html = $response->getContent();
+
+        $this->assertMatchesRegularExpression("/partnerData\['corporate'\]\.push\(\{\s*name:\s*\"TiDB\"/", $html);
+        $this->assertMatchesRegularExpression("/partnerData\['university'\]\.push\(\{\s*name:\s*\"Binus University\"/", $html);
+        $this->assertMatchesRegularExpression("/partnerData\['community'\]\.push\(\{\s*name:\s*\"Cloud Native ID\"/", $html);
+        $this->assertDoesNotMatchRegularExpression("/partnerData\['corporate'\]\.push\(\{\s*name:\s*\"Binus University\"/", $html);
     }
 }

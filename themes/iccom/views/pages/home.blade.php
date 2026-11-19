@@ -644,31 +644,49 @@
     @if(isset($partners) && count($partners) > 0)
         @foreach($partners as $partner)
             @php
-                // Try to guess the type/category field
-                // Adjust 'partner_type' to the actual meta field name if different
-                $pType = strtolower($partner->getMeta('partner_type') ?? $partner->getMeta('category') ?? $partner->getMeta('type') ?? 'corporate');
-                
-                $category = 'corporate';
-                if (str_contains($pType, 'university')) {
-                    $category = 'university';
-                } elseif (str_contains($pType, 'community')) {
-                    $category = 'community';
+                $matchedCategories = [];
+                $terms = $partner->relationLoaded('terms') ? $partner->terms : $partner->terms()->get();
+
+                foreach ($terms as $term) {
+                    $termValue = strtolower(($term->slug ?? '') . ' ' . ($term->name ?? ''));
+                    if (str_contains($termValue, 'university')) {
+                        $matchedCategories[] = 'university';
+                    } elseif (str_contains($termValue, 'community')) {
+                        $matchedCategories[] = 'community';
+                    } elseif (str_contains($termValue, 'corporate')) {
+                        $matchedCategories[] = 'corporate';
+                    }
                 }
+
+                if (empty($matchedCategories)) {
+                    $pType = strtolower((string) ($partner->getMeta('partner_type') ?? $partner->getMeta('category') ?? $partner->getMeta('type') ?? 'corporate'));
+                    if (str_contains($pType, 'university')) {
+                        $matchedCategories[] = 'university';
+                    } elseif (str_contains($pType, 'community')) {
+                        $matchedCategories[] = 'community';
+                    } else {
+                        $matchedCategories[] = 'corporate';
+                    }
+                }
+
+                $matchedCategories = array_values(array_unique($matchedCategories));
 
                 // Image handling
                 $metaLogo = $partner->getMeta('logo');
                 if ($metaLogo) {
-                    $imgUrl = asset('storage/' . $metaLogo);
+                    $imgUrl = resolve_block_asset($metaLogo);
                 } elseif ($partner->featured_image) {
-                     $imgUrl = asset('storage/' . $partner->featured_image);
+                    $imgUrl = resolve_block_asset($partner->featured_image);
                 } else {
                     $imgUrl = 'https://dummyimage.com/150x150/d9d9d9/555555.png?text=' . urlencode($partner->title);
                 }
             @endphp
-            partnerData['{{ $category }}'].push({
-                name: "{!! addslashes($partner->title) !!}",
-                img: "{!! $imgUrl !!}"
-            });
+            @foreach($matchedCategories as $category)
+                partnerData['{{ $category }}'].push({
+                    name: @json($partner->title),
+                    img: @json($imgUrl)
+                });
+            @endforeach
         @endforeach
     @else
         // Fallback Static Data

@@ -58,7 +58,7 @@ class IccomThemeServiceProvider extends ServiceProvider
             return collect();
         }
 
-        $query = CptEntry::with('author')
+        $query = CptEntry::with(['author', 'terms'])
             ->where('post_type_id', $cpt->id)
             ->where('status', 'published')
             ->latest();
