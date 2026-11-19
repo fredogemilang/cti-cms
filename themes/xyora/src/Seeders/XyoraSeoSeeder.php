@@ -18,6 +18,12 @@ class XyoraSeoSeeder extends Seeder
         $defaultOgMedia = Media::where('path', $defaultOgPath)->first()
             ?? Media::where('path', 'like', 'media/main-banner-%')->first();
 
+        // Single-locale Indonesian site configuration (prevents duplicate /id/ & /en/ sitemaps/hreflangs)
+        Setting::set('default_locale', 'id', 'languages', 'text');
+        Setting::set('fallback_locale', 'id', 'languages', 'text');
+        Setting::set('available_locales', 'id', 'languages', 'text');
+        Setting::set('locale_switcher_enabled', false, 'languages', 'boolean');
+
         Setting::set(
             'seo_default_description',
             'XYORA menyediakan solusi perangkat jaringan Wi-Fi 6/7, Access Point, Smart Gateway, dan PoE Switch yang cepat, stabil, serta mudah dikelola secara terpusat.',

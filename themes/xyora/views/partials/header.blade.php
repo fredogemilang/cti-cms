@@ -88,12 +88,12 @@
                     </a>
                   @endforeach
                 </div>
-                <button class="lihat-semua-btn" onclick="location.href = '{{ url('/' . $category->slug) }}'">
+                <a href="{{ trailing_slash_url(url('/' . $category->slug)) }}" class="lihat-semua-btn" style="text-decoration: none;">
                   {{ t('nav.view_all', 'Lihat Semua') }}
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
-                </button>
+                </a>
               </div>
             @endforeach
           </div>
