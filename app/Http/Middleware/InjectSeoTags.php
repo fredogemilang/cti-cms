@@ -76,6 +76,13 @@ class InjectSeoTags
         // Replace existing <title> tag only if entity was resolved or if existing <title> is generic
         if ($entity && preg_match('/<title\b[^>]*>(.*?)<\/title>/is', $content)) {
             $content = (string) preg_replace('/<title\b[^>]*>(.*?)<\/title>/is', '<title>'.e($seo['title']).'</title>', $content);
+        } elseif (! $entity && preg_match('/<title\b[^>]*>(.*?)<\/title>/is', $content, $titleMatch)) {
+            $renderedTitle = trim(html_entity_decode(strip_tags($titleMatch[1]), ENT_QUOTES, 'UTF-8'));
+            $siteName = (string) setting('site_name', config('app.name'));
+            if ($renderedTitle !== '' && ($seo['og']['title'] ?? '') === $siteName) {
+                $seo['og']['title'] = $renderedTitle;
+                $seo['twitter']['title'] = $renderedTitle;
+            }
         }
 
         // Robots directive resolution
