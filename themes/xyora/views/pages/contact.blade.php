@@ -154,16 +154,7 @@
                     {!! $captchaHtml !!}
                   @else
                     <!-- Mock reCAPTCHA Box -->
-                    <div class="recaptcha-box" style="margin-top: 0">
-                      <div class="recaptcha-left">
-                        <input type="checkbox" id="recaptcha-mock" class="recaptcha-check" required />
-                        <label for="recaptcha-mock">I'm not a robot</label>
-                      </div>
-                      <div class="recaptcha-logo">
-                        <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" width="24" />
-                        <span>reCAPTCHA<br />Privacy - Terms</span>
-                      </div>
-                    </div>
+                    @include('xyora::partials.recaptcha-box', ['inputId' => 'recaptcha-mock', 'style' => 'margin-top: 0'])
                   @endif
                 </div>
                 <button type="submit" class="kontak-btn-submit">{{ t('contact.send', 'Kirim') }}</button>
@@ -314,16 +305,7 @@
                     {!! $captchaHtml !!}
                   @else
                     <!-- Mock reCAPTCHA Box -->
-                    <div class="recaptcha-box" style="margin-top: 0">
-                      <div class="recaptcha-left">
-                        <input type="checkbox" id="rma-recaptcha-mock" class="recaptcha-check" required />
-                        <label for="rma-recaptcha-mock">I'm not a robot</label>
-                      </div>
-                      <div class="recaptcha-logo">
-                        <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" width="24" />
-                        <span>reCAPTCHA<br />Privacy - Terms</span>
-                      </div>
-                    </div>
+                    @include('xyora::partials.recaptcha-box', ['inputId' => 'rma-recaptcha-mock', 'style' => 'margin-top: 0'])
                   @endif
                 </div>
                 <button type="submit" class="kontak-btn-submit">{{ t('contact.send', 'Kirim') }}</button>

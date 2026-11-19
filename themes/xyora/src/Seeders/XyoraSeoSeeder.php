@@ -27,6 +27,82 @@ class XyoraSeoSeeder extends Seeder
         // Dedicated category pages (/access-point/, /gateway/, /switch/) are indexed instead of generic taxonomy archives
         Setting::set('seo_taxonomy_product_category_index_enabled', false, 'seo', 'boolean');
 
+        // Google Site Kit GTM (Smart Delayed Load handles GTM non-blockingly in InjectSeoTags)
+        Setting::set('gsk_enabled', true, 'google-site-kit', 'boolean');
+        Setting::set('gsk_gtm_id', 'GTM-KLDBVMMQ', 'google-site-kit', 'text');
+
+        // Critical CSS + deferred theme.css on Homepage only (eliminates render-blocking CSS)
+        Setting::set('pageopt_critical_css_homepage_only', true, 'pageopt', 'boolean');
+        Setting::set('pageopt_deferred_stylesheets', 'themes/xyora/assets/css/theme.css', 'pageopt', 'code');
+        Setting::set('pageopt_critical_css', <<<'CSS'
+:root{--primary-navy:#0f2c59;--accent-green:#89c55c;--accent-green-dark:#74a74e;--text-dark:#1e293b;--text-light:#64748b;--text-gray:#64748b;--bg-gradient:linear-gradient(135deg,#f3f8f2 0%,#faf6f0 100%);--white:#fff;--gray-light:#f8fafc;--gray-border:#e2e8f0;--font-heading:"Outfit",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--font-body:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--transition-fast:.2s ease;--transition-normal:.3s ease}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-body);color:var(--text-dark);background-color:var(--white);line-height:1.5;overflow-x:clip;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.site-header{position:sticky;top:0;left:0;width:100%;background-color:transparent;z-index:1000;box-shadow:0 1px 4px rgba(15,44,89,.05)}
+.site-header::before{content:"";position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(90deg,#eef7eb 0%,#fff 35%);z-index:-1;opacity:1}
+body.has-admin-bar .site-header{top:32px}
+.header-container{max-width:1280px;margin:0 auto;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.logo-link{display:flex;align-items:center;outline:none}
+.logo-img{height:38px;width:auto;display:block}
+.main-nav{display:flex;align-items:center}
+.nav-list{display:flex;align-items:center;gap:1.75rem}
+.nav-item{position:relative}
+.nav-link{font-family:var(--font-body);font-size:.95rem;font-weight:500;color:var(--text-dark);padding:.5rem 0;display:flex;align-items:center;gap:.25rem}
+.nav-item.active .nav-link{color:var(--primary-navy);font-weight:600;position:relative}
+.nav-item.active .nav-link::after{content:"";position:absolute;bottom:-4px;left:0;width:100%;height:3px;background-color:var(--accent-green);border-radius:2px}
+.nav-link svg.chevron{width:12px;height:12px}
+.dropdown-menu,.mega-menu{opacity:0;visibility:hidden;position:absolute}
+.nav-link.hubungi{display:inline-flex;align-items:center;gap:.5rem}
+.nav-link.hubungi .circle-chevron{display:flex;align-items:center;justify-content:center;width:18px;height:18px;border:1px solid var(--text-dark);border-radius:50%}
+.header-search{position:relative;display:flex;align-items:center;max-width:200px}
+.header-search form{position:relative;display:flex;align-items:center;width:100%}
+.mobile-only-search{display:none!important}
+.search-input{width:100%;padding:.5rem 2.5rem .5rem 1rem;font-family:var(--font-body);font-size:.875rem;color:var(--text-dark);background-color:var(--white);border:1px solid var(--gray-border);border-radius:20px;outline:none}
+.search-btn{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;display:flex;align-items:center;justify-content:center;padding:.25rem}
+.mobile-menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:.5rem;z-index:1001}
+.mobile-menu-toggle svg{width:24px;height:24px;color:var(--primary-navy)}
+.hero-slider-section{position:relative;background:var(--bg-gradient);overflow:hidden;padding:0}
+.slider-container{width:100%;position:relative}
+.slides-wrapper{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none}
+.slides-wrapper::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;width:100%;scroll-snap-align:start;display:flex;align-items:center;min-height:680px;padding:2rem 5% 2rem 8%;position:relative;overflow:hidden}
+.slide::after{content:"";position:absolute;bottom:0;left:0;width:100%;height:180px;background:linear-gradient(180deg,rgba(255,255,255,0) 0%,#fff 100%);z-index:3;pointer-events:none}
+.slide-content{width:45%;max-width:600px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;z-index:10;position:relative}
+.slide-title{font-family:var(--font-heading);font-size:clamp(2.25rem,4vw,3.5rem);font-weight:800;color:var(--primary-navy);line-height:1.15;margin-bottom:1rem}
+.slide-subtitle{font-family:var(--font-body);font-size:clamp(1.1rem,2vw,1.5rem);color:var(--text-dark);font-weight:500;margin-bottom:2rem}
+.slide-btn{display:inline-block;background-color:var(--accent-green);color:var(--text-dark);font-family:var(--font-body);font-weight:700;font-size:1.05rem;padding:.85rem 2.25rem;border-radius:8px;border:none;cursor:pointer;box-shadow:0 4px 6px -1px rgba(141,198,63,.2),0 2px 4px -1px rgba(141,198,63,.1)}
+.slide-visual{position:absolute;top:0;right:0;width:100%;height:100%;z-index:1}
+.slide-image{width:100%;height:100%;object-fit:cover;border-radius:0;box-shadow:none}
+.slider-pagination{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;gap:.75rem;z-index:20}
+.page-dot{width:10px;height:10px;border-radius:50%;background-color:#cbd5e1;border:none;cursor:pointer;padding:0}
+.page-dot.active{background-color:#64748b;width:24px;border-radius:5px}
+@media(max-width:1024px){
+.site-header{padding:.5rem 0}
+.header-container{padding:.75rem 1.5rem}
+.mobile-menu-toggle{display:block}
+.main-nav{position:fixed;top:0;right:-100%;width:280px;height:100vh;background-color:var(--white);box-shadow:-4px 0 15px rgba(15,44,89,.1);z-index:1000;padding:5.5rem 2rem 2rem;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:flex-start!important;gap:2rem!important;overflow-y:auto}
+.main-nav .dropdown-menu,.main-nav .mega-menu{display:none}
+.desktop-only-search{display:none!important}
+.mobile-only-search{display:flex!important;max-width:100%;width:100%}
+.slide{min-height:480px;padding:3rem 1.5rem 4.5rem;align-items:center}
+.slide::before{content:"";position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(243,248,242,.2) 0%,rgba(250,246,240,.85) 60%,rgba(250,246,240,.98) 100%)}
+.slide-content{width:100%;max-width:100%;text-align:center;align-items:center}
+.slide-visual{top:0;left:0;width:100%;height:100%}
+.slide-image{object-position:right center}
+.slide-title{margin-bottom:.5rem}
+.slide-subtitle{margin-bottom:1.25rem}
+}
+@media(max-width:480px){
+.header-container{padding:.5rem 1rem}
+.logo-img{height:32px}
+.slide{padding:2rem 1rem 4.5rem}
+.slide-title{font-size:2rem}
+}
+CSS, 'pageopt', 'code');
+
         Setting::set(
             'seo_default_description',
             'XYORA menyediakan solusi perangkat jaringan Wi-Fi 6/7, Access Point, Smart Gateway, dan PoE Switch yang cepat, stabil, serta mudah dikelola secara terpusat.',

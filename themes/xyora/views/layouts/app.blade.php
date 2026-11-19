@@ -15,12 +15,9 @@
     {{-- SEO (handled by InjectSeoTags middleware) --}}
     @stack('meta')
 
-    {{-- Fonts --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet" />
+    {{-- Fonts (Self-hosted local WOFF2, zero external CDN) --}}
+    @include('xyora::partials.fonts')
+    @stack('head')
 
     {{-- Theme CSS --}}
     <link rel="stylesheet" href="{{ theme_asset('css/theme.css') }}">
@@ -74,23 +71,14 @@
         }
     </style>
 
-    @livewireStyles
+    @if(View::hasSection('needs_livewire'))
+        @livewireStyles
+    @endif
     @stack('styles')
-
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-KLDBVMMQ');</script>
-    <!-- End Google Tag Manager -->
 </head>
 
-<body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KLDBVMMQ"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+<body class="{{ auth()->check() ? 'has-admin-bar' : '' }}">
+    <div id="header-scroll-sentinel" aria-hidden="true" style="position:absolute;top:0;left:0;width:1px;height:16px;pointer-events:none;"></div>
 
     {{-- Admin Top Bar (Only rendered for logged-in admin users) --}}
     <x-admin-bar />
@@ -106,13 +94,17 @@
     {{-- Footer --}}
     @include('xyora::partials.footer')
 
-    @livewireScripts
+    @if(View::hasSection('needs_livewire'))
+        @livewireScripts
+    @endif
 
-    {{-- SweetAlert2 (Local Asset) --}}
-    <script src="{{ theme_asset('js/sweetalert2.all.min.js') }}"></script>
+    @if(session('success') || session('error') || $errors->any() || View::hasSection('needs_sweetalert'))
+        {{-- SweetAlert2 (Local Asset, loaded only when needed) --}}
+        <script src="{{ theme_asset('js/sweetalert2.all.min.js') }}" defer></script>
+    @endif
 
     {{-- Theme Javascript --}}
-    <script src="{{ theme_asset('js/theme.js') }}"></script>
+    <script src="{{ theme_asset('js/theme.js') }}" defer></script>
 
     {{-- SweetAlert Flash Notifications --}}
     @if(session('success'))

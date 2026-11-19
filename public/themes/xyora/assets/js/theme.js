@@ -58,105 +58,139 @@ document.addEventListener('DOMContentLoaded', () => {
   let isUserInteracting = false;
 
   if (wrapper) {
-  // Update dots active class based on scroll position
-  const updateDots = () => {
-    const width = wrapper.clientWidth;
-    const scrollLeft = wrapper.scrollLeft;
-    // Math.round handles half-scrolled slides accurately
-    const activeIndex = Math.round(scrollLeft / width);
-    
-    dots.forEach((dot, idx) => {
-      if (idx === activeIndex) {
-        dot.classList.add('active');
-        dot.setAttribute('aria-current', 'true');
-      } else {
-        dot.classList.remove('active');
-        dot.removeAttribute('aria-current');
-      }
-    });
-  };
+    let cachedWidth = 0;
+    let activeSlideIndex = 0;
+    let dotRafId = 0;
 
-  // Scroll to slide when clicking dots
-  dots.forEach((dot, index) => {
-    dot.addEventListener('click', () => {
-      stopAutoplay();
-      isUserInteracting = true;
-      
-      const width = wrapper.clientWidth;
-      wrapper.scrollTo({
-        left: width * index,
-        behavior: 'smooth'
+    const getWrapperWidth = () => cachedWidth || wrapper.clientWidth;
+
+    const syncDotsDom = (nextIndex) => {
+      if (nextIndex === activeSlideIndex) return;
+      activeSlideIndex = nextIndex;
+
+      dots.forEach((dot, idx) => {
+        if (idx === nextIndex) {
+          dot.classList.add('active');
+          dot.setAttribute('aria-current', 'true');
+        } else {
+          dot.classList.remove('active');
+          dot.removeAttribute('aria-current');
+        }
       });
-    });
-  });
+    };
 
-  // Sync dots while scrolling
-  wrapper.addEventListener('scroll', updateDots, { passive: true });
-
-  // Autoplay functionality
-  const startAutoplay = () => {
-    if (isUserInteracting) return;
-    
-    autoplayInterval = setInterval(() => {
-      const width = wrapper.clientWidth;
-      if (width === 0) return; // Hidden or unrendered
-      
-      const scrollLeft = wrapper.scrollLeft;
-      const currentIndex = Math.round(scrollLeft / width);
-      const nextIndex = (currentIndex + 1) % dots.length;
-      
-      wrapper.scrollTo({
-        left: width * nextIndex,
-        behavior: 'smooth'
+    const scheduleUpdateDots = () => {
+      if (dotRafId) return;
+      dotRafId = requestAnimationFrame(() => {
+        dotRafId = 0;
+        const width = getWrapperWidth();
+        if (!width) return;
+        const nextIndex = Math.round(wrapper.scrollLeft / width);
+        syncDotsDom(nextIndex);
       });
-    }, 5000); // Transition every 5 seconds
-  };
+    };
 
-  const stopAutoplay = () => {
-    if (autoplayInterval) {
-      clearInterval(autoplayInterval);
+    if ('ResizeObserver' in window) {
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          cachedWidth = entry.contentRect.width;
+        }
+        wrapper.scrollLeft = cachedWidth * activeSlideIndex;
+      });
+      resizeObserver.observe(wrapper);
+    } else {
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          requestAnimationFrame(() => {
+            cachedWidth = wrapper.clientWidth;
+            wrapper.scrollLeft = cachedWidth * activeSlideIndex;
+          });
+        }, 100);
+      });
     }
-  };
 
-  // Start autoplay immediately
-  startAutoplay();
+    // Scroll to slide when clicking dots
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        stopAutoplay();
+        isUserInteracting = true;
 
-  // Stop autoplay on drag/swipe/touch interactions
-  const handleInteractionStart = () => {
-    isUserInteracting = true;
-    stopAutoplay();
-  };
+        requestAnimationFrame(() => {
+          const width = getWrapperWidth();
+          if (!width) return;
+          wrapper.scrollTo({
+            left: width * index,
+            behavior: 'smooth'
+          });
+          syncDotsDom(index);
+        });
+      });
+    });
 
-  wrapper.addEventListener('touchstart', handleInteractionStart, { passive: true });
-  wrapper.addEventListener('mousedown', handleInteractionStart);
-  
-  // Adjust scroll offset on window resize to keep current slide centered
-  let resizeTimeout;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-      const activeDot = document.querySelector('.page-dot.active');
-      if (activeDot) {
-        const index = parseInt(activeDot.getAttribute('data-slide-index'), 10);
-        const width = wrapper.clientWidth;
-        wrapper.scrollLeft = width * index;
+    // Sync dots while scrolling (batched in rAF, zero synchronous reflow)
+    wrapper.addEventListener('scroll', scheduleUpdateDots, { passive: true });
+
+    // Autoplay functionality
+    const startAutoplay = () => {
+      if (isUserInteracting || dots.length === 0) return;
+
+      autoplayInterval = setInterval(() => {
+        requestAnimationFrame(() => {
+          const width = getWrapperWidth();
+          if (!width) return;
+          const nextIndex = (activeSlideIndex + 1) % dots.length;
+          wrapper.scrollTo({
+            left: width * nextIndex,
+            behavior: 'smooth'
+          });
+          syncDotsDom(nextIndex);
+        });
+      }, 5000);
+    };
+
+    const stopAutoplay = () => {
+      if (autoplayInterval) {
+        clearInterval(autoplayInterval);
       }
-    }, 100);
-  });
+    };
+
+    // Start autoplay cleanly
+    startAutoplay();
+
+    // Stop autoplay on drag/swipe/touch interactions
+    const handleInteractionStart = () => {
+      isUserInteracting = true;
+      stopAutoplay();
+    };
+
+    wrapper.addEventListener('touchstart', handleInteractionStart, { passive: true });
+    wrapper.addEventListener('mousedown', handleInteractionStart);
   }
 
-  // --- Header Scroll Effect (Sticky background color change) ---
+  // --- Header Scroll Effect (Zero forced reflow via IntersectionObserver) ---
   const header = document.getElementById('main-header');
-  const handleScroll = () => {
-    if (window.scrollY > 15) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
-  };
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  // Initial check on load
-  handleScroll();
+  const sentinel = document.getElementById('header-scroll-sentinel');
+
+  if (header && sentinel && 'IntersectionObserver' in window) {
+    const headerObserver = new IntersectionObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      header.classList.toggle('scrolled', !entry.isIntersecting);
+    }, { threshold: 0 });
+    headerObserver.observe(sentinel);
+  } else if (header) {
+    let scrollRafId = 0;
+    const syncHeaderScroll = () => {
+      scrollRafId = 0;
+      header.classList.toggle('scrolled', window.scrollY > 15);
+    };
+    window.addEventListener('scroll', () => {
+      if (!scrollRafId) scrollRafId = requestAnimationFrame(syncHeaderScroll);
+    }, { passive: true });
+    requestAnimationFrame(syncHeaderScroll);
+  }
 
   // --- Bisnis Section Slider ---
   const bisnisSlides = document.querySelectorAll('.bisnis-slide');

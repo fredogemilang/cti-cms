@@ -40,7 +40,7 @@
   $overviewImage = $page->block('overview_image', 'images/overview.png');
   $overviewBtnText = $page->block('overview_btn_text', 'Pelajari Selengkapnya');
   $overviewBtnLink = $page->block('overview_btn_link', '/tentang');
-  $overviewOverlay = $page->block('overview_overlay', 'images/overlay-overview.png');
+  $overviewOverlay = $page->block('overview_overlay', 'images/overlay-overview.webp');
 
   // 3. Why Section
   $whyTitle = $page->block('why_title', 'Mengapa Xyora?');
@@ -112,7 +112,7 @@
             </button>
           </div>
           <div class="slide-visual">
-            <x-image :src="$slide['image'] ?? ''" alt="{{ $slide['subtitle'] ?? '' }}" class="slide-image" loading="{{ $index === 0 ? 'eager' : 'lazy' }}" sizes="100vw" />
+            <x-image :src="$slide['image'] ?? ''" alt="{{ $slide['subtitle'] ?? '' }}" class="slide-image" loading="{{ $index === 0 ? 'eager' : 'lazy' }}" fetchpriority="{{ $index === 0 ? 'high' : 'auto' }}" sizes="100vw" />
           </div>
         </article>
       @endforeach
@@ -131,7 +131,7 @@
 <section class="info-section" id="xyora-info-section" aria-label="Jaringan Cepat dan Stabil">
   <!-- Overlay Background Image -->
   @if($overviewOverlay)
-    <div class="info-overlay" aria-hidden="true" style="background-image: url('{{ resolve_block_asset($overviewOverlay) }}');"></div>
+    <img src="{{ resolve_block_asset($overviewOverlay) }}" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1440" height="798" class="info-overlay" />
   @endif
 
   <div class="info-container">
@@ -358,7 +358,8 @@
 @endif
 
 <!-- Contact Section -->
-<section class="contact-section" id="contact" style="background-image: url('{{ theme_asset('images/bg-contact.png') }}')">
+<section class="contact-section" id="contact">
+  <img src="{{ theme_asset('images/bg-contact.webp') }}" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1440" height="835" class="section-bg-img" />
   <div class="contact-overlay"></div>
   <div class="contact-container">
     <div class="contact-header">
@@ -451,16 +452,7 @@
             @if(!empty($captchaHtml))
               {!! $captchaHtml !!}
             @else
-              <div class="recaptcha-box">
-                <div class="recaptcha-left">
-                  <input type="checkbox" id="recaptcha-mock" class="recaptcha-check" required />
-                  <label for="recaptcha-mock">I'm not a robot</label>
-                </div>
-                <div class="recaptcha-logo">
-                  <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" width="24" />
-                  <span>reCAPTCHA<br />Privacy - Terms</span>
-                </div>
-              </div>
+              @include('xyora::partials.recaptcha-box', ['inputId' => 'recaptcha-mock'])
             @endif
           </div>
           <button type="submit" class="btn-kirim">{{ t('home.contact_submit', 'Kirim') }}</button>

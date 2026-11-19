@@ -8,7 +8,8 @@
 
 <!-- Footer -->
 @if($isProductDetail)
-  <footer class="site-footer product-detail-footer" style="background-image: url('{{ theme_asset('images/bg-footer.png') }}')">
+  <footer class="site-footer product-detail-footer">
+    <img src="{{ theme_asset('images/bg-footer.webp') }}" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1440" height="475" class="section-bg-img" />
     <div class="footer-container product-detail-footer-container">
       
       <!-- Left Column: Logo & Social/Contact Details -->
@@ -176,16 +177,7 @@
                 @if(!empty($captchaHtml))
                   {!! $captchaHtml !!}
                 @else
-                  <div class="recaptcha-box" style="margin-top: 0">
-                    <div class="recaptcha-left">
-                      <input type="checkbox" id="footer-recaptcha-mock" class="recaptcha-check" required />
-                      <label for="footer-recaptcha-mock">I'm not a robot</label>
-                    </div>
-                    <div class="recaptcha-logo">
-                      <img src="https://www.gstatic.com/recaptcha/api2/logo_48.png" alt="reCAPTCHA" width="24" />
-                      <span>reCAPTCHA<br />Privacy - Terms</span>
-                    </div>
-                  </div>
+                  @include('xyora::partials.recaptcha-box', ['inputId' => 'footer-recaptcha-mock', 'style' => 'margin-top: 0'])
                 @endif
               </div>
               <button type="submit" class="footer-submit-btn">Kirim</button>
@@ -357,7 +349,8 @@
     }
   </style>
 @else
-  <footer class="site-footer" style="background-image: url('{{ theme_asset('images/bg-footer.png') }}')">
+  <footer class="site-footer">
+    <img src="{{ theme_asset('images/bg-footer.webp') }}" alt="" aria-hidden="true" loading="lazy" decoding="async" width="1440" height="475" class="section-bg-img" />
     <div class="footer-container">
       <!-- Column 1: Logo -->
       <div class="footer-col footer-col-logo">

@@ -57,7 +57,7 @@
               <div class="mega-menu-column">
                 <div class="mega-menu-header">
                   <div class="column-icon green-circle">
-                    <img src="{{ theme_asset('icons/' . $iconName) }}" alt="{{ $category->name }}" width="20" height="20" style="object-fit: contain" />
+                    <img src="{{ theme_asset('icons/' . $iconName) }}" alt="{{ $category->name }}" width="20" height="20" loading="lazy" decoding="async" style="object-fit: contain" />
                   </div>
                   <span class="mega-column-title">{{ $category->name }}</span>
                 </div>
@@ -80,7 +80,7 @@
                       }
                     @endphp
                     <a href="{{ $child->getUrl() }}" class="mega-product-item">
-                      <x-image :src="$childImg" alt="{{ $child->title }}" class="mega-product-img" sizes="100vw" />
+                      <x-image :src="$childImg" alt="{{ $child->title }}" class="mega-product-img" loading="lazy" sizes="64px" />
                       <div class="mega-product-info">
                         <span class="mega-product-name">{{ $child->getTranslation('title') }}</span>
                         <span class="mega-product-cat">{{ $category->name }}</span>
