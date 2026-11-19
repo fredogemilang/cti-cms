@@ -2,12 +2,21 @@
 
 namespace App\Models;
 
+use App\Rules\CorporateEmail;
+use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 class FormField extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
+
+    /**
+     * Fields that support per-locale translations.
+     * Default locale values are stored in the primary columns.
+     */
+    protected array $translatable = ['label', 'placeholder', 'help_text'];
 
     protected $fillable = [
         'form_id',
@@ -27,6 +36,7 @@ class FormField extends Model
         'advanced_settings',
         'css_class',
         'is_hidden',
+        'translations',
     ];
 
     protected $casts = [
@@ -34,9 +44,73 @@ class FormField extends Model
         'validation' => 'array',
         'conditional_logic' => 'array',
         'advanced_settings' => 'array',
+        'translations' => 'array',
         'is_required' => 'boolean',
         'is_hidden' => 'boolean',
     ];
+
+    /**
+     * Store validation config as raw JSON — the array cast decodes on read.
+     * Accepts an array (API) or an already-encoded JSON string (Form Studio
+     * serializes via JSON.stringify before POST); both would otherwise be
+     * double-encoded by the automatic array cast on write.
+     */
+    public function setValidationAttribute(mixed $value): void
+    {
+        $this->attributes['validation'] = $value === null
+            ? null
+            : (is_string($value) ? $value : json_encode($value));
+    }
+
+    /**
+     * Get the localized label. Falls back to the English column value.
+     */
+    public function localizedLabel(): string
+    {
+        return $this->getTranslation('label') ?? $this->getRawOriginal('label') ?? '';
+    }
+
+    /**
+     * Get the localized placeholder. Falls back to the English column value.
+     */
+    public function localizedPlaceholder(): ?string
+    {
+        return $this->getTranslation('placeholder') ?? $this->getRawOriginal('placeholder');
+    }
+
+    /**
+     * Get the localized help text. Falls back to the English column value.
+     */
+    public function localizedHelpText(): ?string
+    {
+        return $this->getTranslation('help_text') ?? $this->getRawOriginal('help_text');
+    }
+
+    /**
+     * Get all available field types — built-in merged with theme custom types.
+     * Theme custom types are only available when the theme that defines them is active.
+     */
+    public static function getAvailableFieldTypes(): array
+    {
+        $builtIn = self::FIELD_TYPES;
+
+        $custom = app()->bound('theme_custom_field_types')
+            ? app('theme_custom_field_types')
+            : [];
+
+        $merged = $builtIn;
+        foreach ($custom as $ct) {
+            $type = $ct['type'];
+            $merged[$type] = [
+                'label' => $ct['label'],
+                'icon' => $ct['icon'] ?? 'extension',
+                'category' => $ct['category'] ?? 'custom',
+                'theme_custom' => true,
+            ];
+        }
+
+        return $merged;
+    }
 
     /**
      * All available field types with their metadata.
@@ -102,8 +176,8 @@ class FormField extends Model
         $widthClass = $this->getWidthClass();
         $html = "<div class=\"form-group mb-3 {$widthClass}\">";
 
-        // Most fields need a label (except hidden)
-        if ($this->type !== 'hidden') {
+        // Most fields need a label (except hidden, gdpr, terms)
+        if (! in_array($this->type, ['hidden', 'gdpr', 'terms'])) {
             $html .= "<label for=\"{$this->field_id}\" class=\"form-label\">";
             $html .= e($this->label);
             if ($this->is_required) {
@@ -486,12 +560,12 @@ class FormField extends Model
     {
         $required = $this->is_required ? 'required' : '';
         $text = $this->type === 'gdpr'
-            ? ($this->advanced_settings['consent_text'] ?? 'I consent to having my data processed.')
+            ? ($this->advanced_settings['consent_text'] ?? $this->advanced_settings['privacy_content'] ?? 'I consent to having my data processed.')
             : ($this->advanced_settings['terms_text'] ?? 'I agree to the Terms & Conditions.');
 
-        $html = '<div class="form-check">';
-        $html .= "<input type=\"checkbox\" name=\"{$this->field_id}\" id=\"{$this->field_id}\" value=\"1\" class=\"form-check-input\" {$required}>";
-        $html .= "<label class=\"form-check-label\" for=\"{$this->field_id}\">{$text}</label>";
+        $html = '<div class="form-check d-flex align-items-start gap-2.5 my-2">';
+        $html .= "<input type=\"checkbox\" name=\"{$this->field_id}\" id=\"{$this->field_id}\" value=\"1\" class=\"form-check-input mt-1 shrink-0\" {$required}>";
+        $html .= "<label class=\"form-check-label text-sm leading-relaxed text-zinc-600 dark:text-zinc-300 cursor-pointer\" for=\"{$this->field_id}\">{$text}</label>";
         $html .= '</div>';
 
         return $html;
@@ -574,7 +648,9 @@ class FormField extends Model
                     break;
 
                 case 'url':
-                    if (! filter_var($value, FILTER_VALIDATE_URL)) {
+                    $urlToTest = preg_match('~^https?://~i', $value) ? $value : 'https://'.$value;
+                    $host = parse_url($urlToTest, PHP_URL_HOST);
+                    if (! filter_var($urlToTest, FILTER_VALIDATE_URL) || ! $host || ! str_contains($host, '.')) {
                         return "{$this->label} must be a valid URL.";
                     }
                     break;
@@ -661,6 +737,24 @@ class FormField extends Model
                 }
                 if (isset($this->validation['pattern']) && ! preg_match($this->validation['pattern'], $value)) {
                     return "{$this->label} format is invalid.";
+                }
+            }
+
+            // Named rule classes (App\Rules\*) — reusable across the form
+            // builder, CPT, and plugins. Configure via `validation.rule` in
+            // Form Studio JSON; optional `validation.rule_message` overrides
+            // the rule's default message (e.g. translated text).
+            if (is_string($value) && ($this->validation['rule'] ?? null) === 'corporate_email') {
+                $failed = null;
+                (new CorporateEmail(null, $this->validation['rule_message'] ?? null))
+                    ->validate($this->field_id, $value, function (string $message) use (&$failed): PotentiallyTranslatedString {
+                        $failed = $message;
+
+                        return new PotentiallyTranslatedString($message, app('translator'));
+                    });
+
+                if ($failed !== null) {
+                    return $failed;
                 }
             }
         }

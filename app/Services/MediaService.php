@@ -19,16 +19,34 @@ class MediaService
         $filename = $this->generateUniqueFilename($file);
         $path = config('media.path').'/'.$filename;
 
-        // Store the file
-        Storage::disk(config('media.disk'))->put($path, file_get_contents($file->getRealPath()));
-
         // Get file information
         $mimeType = $file->getMimeType();
-        $size = $file->getSize();
         $extension = $file->getClientOriginalExtension();
 
-        // Get image dimensions if it's an image
-        $dimensions = $this->isImage($mimeType) ? $this->getImageDimensions($file->getRealPath()) : null;
+        // Read file contents
+        $disk = Storage::disk(config('media.disk'));
+        $contents = file_get_contents($file->getRealPath());
+
+        // Sanitize SVG before it touches disk — covers admin UI, API, and MCP uploads
+        if (strtolower($extension) === 'svg' || $mimeType === 'image/svg+xml') {
+            $contents = app(SvgSanitizerService::class)->clean($contents);
+            if ($contents === null) {
+                throw new \RuntimeException('SVG rejected: could not be parsed or sanitized.');
+            }
+        }
+
+        // Store the file
+        $disk->put($path, $contents);
+
+        // Optimize original image if enabled
+        if ($this->isImage($mimeType)) {
+            $this->optimizeOriginal($path, $mimeType);
+        }
+
+        // Get updated size and dimensions after optimization
+        $fullPath = $disk->path($path);
+        $size = file_exists($fullPath) ? filesize($fullPath) : strlen($contents);
+        $dimensions = $this->isImage($mimeType) ? $this->getImageDimensions($fullPath) : null;
 
         // Create media record
         $media = Media::create([
@@ -40,10 +58,10 @@ class MediaService
             'path' => $path,
             'width' => $dimensions['width'] ?? null,
             'height' => $dimensions['height'] ?? null,
-            'alt_text' => $metadata['alt_text'] ?? null,
+            'alt_text' => ! empty($metadata['alt_text']) ? $metadata['alt_text'] : $file->getClientOriginalName(),
             'title' => $metadata['title'] ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
             'description' => $metadata['description'] ?? null,
-            'uploaded_by' => auth()->id(),
+            'uploaded_by' => $metadata['uploaded_by'] ?? auth()->id() ?? 1,
         ]);
 
         // Convert to WebP if it's an image and conversion is enabled
@@ -86,6 +104,12 @@ class MediaService
     public function convertToWebp(string $path): ?string
     {
         try {
+            if (! function_exists('imagewebp')) {
+                \Log::warning('imagewebp() is not available on this server.');
+
+                return null;
+            }
+
             $disk = Storage::disk(config('media.disk'));
             $fullPath = $disk->path($path);
 
@@ -93,14 +117,24 @@ class MediaService
                 return null;
             }
 
+            // 1. If file is already .webp or SVG vector, return path as-is
+            $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+            if ($ext === 'webp' || $ext === 'svg') {
+                return $path;
+            }
+
             // Determine image type and create image resource
-            $imageInfo = getimagesize($fullPath);
-            $mimeType = $imageInfo['mime'] ?? null;
+            $imageInfo = @getimagesize($fullPath);
+            $mimeType = $imageInfo['mime'] ?? @mime_content_type($fullPath);
+
+            if ($mimeType === 'image/webp' || $mimeType === 'image/svg+xml') {
+                return $path;
+            }
 
             $image = match ($mimeType) {
-                'image/jpeg', 'image/jpg' => imagecreatefromjpeg($fullPath),
-                'image/png' => imagecreatefrompng($fullPath),
-                'image/gif' => imagecreatefromgif($fullPath),
+                'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($fullPath),
+                'image/png' => @imagecreatefrompng($fullPath),
+                'image/gif' => @imagecreatefromgif($fullPath),
                 default => null,
             };
 
@@ -108,16 +142,26 @@ class MediaService
                 return null;
             }
 
-            // Preserve transparency for PNG
-            if ($mimeType === 'image/png') {
-                imagepalettetotruecolor($image);
-                imagealphablending($image, true);
-                imagesavealpha($image, true);
+            // Preserve transparency for PNG and GIF by allocating a clean alpha canvas
+            if ($mimeType === 'image/png' || $mimeType === 'image/gif') {
+                $w = imagesx($image);
+                $h = imagesy($image);
+                $canvas = imagecreatetruecolor($w, $h);
+                imagealphablending($canvas, false);
+                imagesavealpha($canvas, true);
+                $transparent = imagecolorallocatealpha($canvas, 0, 0, 0, 127);
+                imagefill($canvas, 0, 0, $transparent);
+                imagecopy($canvas, $image, 0, 0, 0, 0, $w, $h);
+                imagedestroy($image);
+                $image = $canvas;
             }
 
-            // Generate WebP filename
-            $webpFilename = pathinfo($path, PATHINFO_FILENAME).'.webp';
-            $webpPath = config('media.path').'/'.$webpFilename;
+            // 2. Generate normalized WebP filename without double extension
+            $filenameWithoutExt = preg_replace('/\.(jpg|jpeg|png|gif)$/i', '', pathinfo($path, PATHINFO_BASENAME));
+            $webpFilename = $filenameWithoutExt.'.webp';
+
+            $dir = pathinfo($path, PATHINFO_DIRNAME);
+            $webpPath = ($dir === '.' ? '' : $dir.'/').$webpFilename;
             $webpFullPath = $disk->path($webpPath);
 
             // Convert to WebP
@@ -215,5 +259,92 @@ class MediaService
         }
 
         return $count;
+    }
+
+    /**
+     * Optimize original image file (quality compression & optional max dimension resizing).
+     */
+    public function optimizeOriginal(string $path, string $mimeType): bool
+    {
+        if (! (bool) setting('img_optimize_original', true)) {
+            return false;
+        }
+
+        if (! in_array($mimeType, ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'])) {
+            return false;
+        }
+
+        try {
+            $disk = Storage::disk(config('media.disk'));
+            $fullPath = $disk->path($path);
+
+            if (! file_exists($fullPath)) {
+                return false;
+            }
+
+            $source = match ($mimeType) {
+                'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($fullPath),
+                'image/png' => @imagecreatefrompng($fullPath),
+                'image/gif' => @imagecreatefromgif($fullPath),
+                default => @imagecreatefromwebp($fullPath),
+            };
+
+            if (! $source) {
+                return false;
+            }
+
+            // Preserve transparency for PNG, GIF, WebP
+            if (in_array($mimeType, ['image/png', 'image/gif', 'image/webp'])) {
+                imagepalettetotruecolor($source);
+                imagealphablending($source, false);
+                imagesavealpha($source, true);
+            }
+
+            $srcW = imagesx($source);
+            $srcH = imagesy($source);
+
+            $maxDim = (int) setting('img_max_dimension', 2560);
+            $needsResize = $maxDim > 0 && ($srcW > $maxDim || $srcH > $maxDim);
+
+            if ($needsResize) {
+                if ($srcW >= $srcH) {
+                    $targetW = $maxDim;
+                    $targetH = (int) round($srcH * ($maxDim / $srcW));
+                } else {
+                    $targetH = $maxDim;
+                    $targetW = (int) round($srcW * ($maxDim / $srcH));
+                }
+
+                $canvas = imagecreatetruecolor($targetW, $targetH);
+                if (in_array($mimeType, ['image/png', 'image/gif', 'image/webp'])) {
+                    imagealphablending($canvas, false);
+                    imagesavealpha($canvas, true);
+                    $transparent = imagecolorallocatealpha($canvas, 0, 0, 0, 127);
+                    imagefilledrectangle($canvas, 0, 0, $targetW, $targetH, $transparent);
+                }
+                imagecopyresampled($canvas, $source, 0, 0, 0, 0, $targetW, $targetH, $srcW, $srcH);
+                imagedestroy($source);
+                $source = $canvas;
+            }
+
+            $jpgQ = (int) setting('img_jpg_quality', 85);
+            $webpQ = (int) setting('img_webp_quality', 80);
+
+            match ($mimeType) {
+                'image/jpeg', 'image/jpg' => imagejpeg($source, $fullPath, $jpgQ),
+                'image/webp' => function_exists('imagewebp') ? imagewebp($source, $fullPath, $webpQ) : imagepng($source, $fullPath, 6),
+                'image/gif' => imagegif($source, $fullPath),
+                default => imagepng($source, $fullPath, 6),
+            };
+
+            imagedestroy($source);
+            clearstatcache(true, $fullPath);
+
+            return true;
+        } catch (\Exception $e) {
+            \Log::error('Original image optimization failed: '.$e->getMessage());
+
+            return false;
+        }
     }
 }

@@ -6,6 +6,9 @@ use App\Models\CustomTaxonomy;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+/**
+ * @property-read array<string, int> $statusCounts
+ */
 class TaxonomyTable extends Component
 {
     use WithPagination;
@@ -73,6 +76,25 @@ class TaxonomyTable extends Component
         ]);
     }
 
+    public function getStatusCountsProperty(): array
+    {
+        $baseQuery = CustomTaxonomy::query()
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('singular_label', 'like', '%'.$this->search.'%')
+                        ->orWhere('plural_label', 'like', '%'.$this->search.'%')
+                        ->orWhere('slug', 'like', '%'.$this->search.'%');
+                });
+            });
+
+        return [
+            'all' => (clone $baseQuery)->count(),
+            'active' => (clone $baseQuery)->where('is_active', true)->count(),
+            'inactive' => (clone $baseQuery)->where('is_active', false)->count(),
+        ];
+    }
+
     public function render()
     {
         $taxonomies = CustomTaxonomy::query()
@@ -92,6 +114,7 @@ class TaxonomyTable extends Component
 
         return view('livewire.admin.taxonomies.taxonomy-table', [
             'taxonomies' => $taxonomies,
+            'statusCounts' => $this->statusCounts,
         ]);
     }
 }

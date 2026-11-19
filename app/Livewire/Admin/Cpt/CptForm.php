@@ -37,6 +37,8 @@ class CptForm extends Component
 
     public bool $hasArchive = true;
 
+    public bool $publiclyQueryable = true;
+
     public array $supports = ['title', 'editor', 'thumbnail', 'excerpt', 'author'];
 
     public array $taxonomies = [];
@@ -66,6 +68,33 @@ class CptForm extends Component
 
     // UI State
     public string $activeTab = 'general';
+
+    public string $activeLocale = 'en';
+
+    public array $translations = [
+        'en' => ['singular_label' => '', 'plural_label' => '', 'slug' => '', 'description' => ''],
+        'id' => ['singular_label' => '', 'plural_label' => '', 'slug' => '', 'description' => ''],
+    ];
+
+    public function setLocale(string $locale)
+    {
+        if (in_array($locale, ['en', 'id'], true)) {
+            $this->translations[$this->activeLocale] = [
+                'singular_label' => $this->singularLabel,
+                'plural_label' => $this->pluralLabel,
+                'slug' => $this->slug,
+                'description' => $this->description,
+            ];
+
+            $this->activeLocale = $locale;
+
+            $target = $this->translations[$locale] ?? [];
+            $this->singularLabel = $target['singular_label'] ?? '';
+            $this->pluralLabel = $target['plural_label'] ?? '';
+            $this->slug = $target['slug'] ?? '';
+            $this->description = $target['description'] ?? '';
+        }
+    }
 
     public function updatedNewMetaBox($value, $key)
     {
@@ -136,18 +165,80 @@ class CptForm extends Component
         $cpt = CustomPostType::with('metaFields')->findOrFail($this->cptId);
 
         $this->name = $cpt->name;
-        $this->singularLabel = $cpt->singular_label;
-        $this->pluralLabel = $cpt->plural_label;
-        $this->slug = $cpt->slug;
-        $this->description = $cpt->description ?? '';
         $this->icon = $cpt->icon;
         $this->isHierarchical = $cpt->is_hierarchical;
         $this->showInMenu = $cpt->show_in_menu;
         $this->showInRest = $cpt->show_in_rest;
         $this->hasArchive = $cpt->has_archive;
+        $this->publiclyQueryable = $cpt->publicly_queryable;
         $this->supports = $cpt->supports ?? [];
 
+        $rawTrans = $cpt->translations ?? [];
+        $this->translations = [
+            'en' => [
+                'singular_label' => $rawTrans['en']['singular_label'] ?? $cpt->singular_label,
+                'plural_label' => $rawTrans['en']['plural_label'] ?? $cpt->plural_label,
+                'slug' => $rawTrans['en']['slug'] ?? $cpt->slug,
+                'description' => $rawTrans['en']['description'] ?? ($cpt->description ?? ''),
+            ],
+            'id' => [
+                'singular_label' => $rawTrans['id']['singular_label'] ?? $cpt->singular_label,
+                'plural_label' => $rawTrans['id']['plural_label'] ?? $cpt->plural_label,
+                'slug' => $rawTrans['id']['slug'] ?? $cpt->slug,
+                'description' => $rawTrans['id']['description'] ?? ($cpt->description ?? ''),
+            ],
+        ];
+
+        $current = $this->translations[$this->activeLocale] ?? [];
+        $this->singularLabel = $current['singular_label'] ?? $cpt->singular_label;
+        $this->pluralLabel = $current['plural_label'] ?? $cpt->plural_label;
+        $this->slug = $current['slug'] ?? $cpt->slug;
+        $this->description = $current['description'] ?? ($cpt->description ?? '');
+
+        $this->taxonomies = $cpt->taxonomies()->pluck('slug')->toArray();
+        $this->metaBoxes = $cpt->settings['meta_boxes'] ?? [];
+
+        $hasUngroupedFields = $cpt->metaFields->contains(fn ($f) => empty($f->field_group));
+        $hasGeneralBox = collect($this->metaBoxes)->contains(fn ($b) => ($b['id'] ?? '') === 'general');
+
+        if (empty($this->metaBoxes) || ($hasUngroupedFields && ! $hasGeneralBox)) {
+            array_unshift($this->metaBoxes, [
+                'id' => 'general',
+                'title' => 'General Fields',
+                'context' => 'normal',
+            ]);
+        }
+
         $this->metaFields = $cpt->metaFields->map(function ($field) {
+            $options = array_replace_recursive([
+                'conditional_logic' => [
+                    'enabled' => false,
+                    'relation' => 'all',
+                    'rules' => [],
+                ],
+            ], $field->options ?? []);
+
+            if ($field->type === 'repeater') {
+                $options['repeater_fields'] = $options['repeater_fields'] ?? [];
+            }
+
+            if (in_array($field->type, ['select', 'radio', 'checkbox'])) {
+                $rawList = $options['options_list'] ?? [];
+                if (is_string($rawList)) {
+                    $lines = array_filter(array_map('trim', explode("\n", $rawList)));
+                    $normalizedList = [];
+                    foreach ($lines as $line) {
+                        $normalizedList[] = [
+                            'label' => $line,
+                            'value' => strtolower(str_replace(' ', '_', $line)),
+                        ];
+                    }
+                    $options['options_list'] = $normalizedList;
+                } elseif (! is_array($rawList)) {
+                    $options['options_list'] = [];
+                }
+            }
+
             return [
                 'id' => $field->id,
                 'name' => $field->name,
@@ -155,20 +246,11 @@ class CptForm extends Component
                 'type' => $field->type,
                 'description' => $field->description ?? '',
                 'is_required' => $field->is_required,
-                'options' => array_replace_recursive([
-                    'conditional_logic' => [
-                        'enabled' => false,
-                        'relation' => 'all',
-                        'rules' => [],
-                    ],
-                ], $field->options ?? []),
-                'field_group' => $field->field_group ?? '',
+                'options' => $options,
+                'field_group' => ! empty($field->field_group) ? $field->field_group : 'general',
                 'order' => $field->order,
             ];
         })->toArray();
-
-        $this->taxonomies = $cpt->taxonomies()->pluck('slug')->toArray();
-        $this->metaBoxes = $cpt->settings['meta_boxes'] ?? [];
 
         // Initialize open metaboxes
         foreach ($this->metaBoxes as $box) {
@@ -359,6 +441,7 @@ class CptForm extends Component
                 ],
                 'options_list' => [],
                 'repeater_fields' => [],
+                'rewrite_url' => false,
             ],
             'order' => count($this->metaFields),
         ];
@@ -497,18 +580,29 @@ class CptForm extends Component
     {
         $this->validate();
 
-        $data = [
-            'name' => $this->name,
+        $this->translations[$this->activeLocale] = [
             'singular_label' => $this->singularLabel,
             'plural_label' => $this->pluralLabel,
             'slug' => $this->slug,
-            'description' => $this->description ?: null,
+            'description' => $this->description,
+        ];
+
+        $enData = $this->translations['en'] ?? [];
+
+        $data = [
+            'name' => $this->name,
+            'singular_label' => ! empty($enData['singular_label']) ? $enData['singular_label'] : $this->singularLabel,
+            'plural_label' => ! empty($enData['plural_label']) ? $enData['plural_label'] : $this->pluralLabel,
+            'slug' => ! empty($enData['slug']) ? $enData['slug'] : $this->slug,
+            'description' => ! empty($enData['description']) ? $enData['description'] : ($this->description ?: null),
             'icon' => $this->icon,
             'is_hierarchical' => $this->isHierarchical,
             'show_in_menu' => $this->showInMenu,
             'show_in_rest' => $this->showInRest,
             'has_archive' => $this->hasArchive,
+            'publicly_queryable' => $this->publiclyQueryable,
             'supports' => $this->supports,
+            'translations' => $this->translations,
             'settings' => array_merge($this->isEdit ? (CustomPostType::find($this->cptId)->settings ?? []) : [], [
                 'meta_boxes' => $this->metaBoxes,
             ]),
@@ -545,32 +639,39 @@ class CptForm extends Component
         $existingIds = [];
 
         foreach ($this->metaFields as $fieldData) {
+            $options = $fieldData['options'] ?? null;
+            if ($fieldData['type'] === 'repeater' && is_array($options)) {
+                $options['repeater_fields'] = $options['repeater_fields'] ?? [];
+            }
+
             if (isset($fieldData['id'])) {
                 // Update existing field
                 $field = MetaField::find($fieldData['id']);
                 if ($field) {
+                    $fieldGroup = ! empty($fieldData['field_group']) ? $fieldData['field_group'] : 'general';
                     $field->update([
                         'name' => $fieldData['name'],
                         'label' => $fieldData['label'],
                         'type' => $fieldData['type'],
                         'description' => $fieldData['description'] ?? null,
                         'is_required' => $fieldData['is_required'] ?? false,
-                        'options' => $fieldData['options'] ?? null,
-                        'field_group' => $fieldData['field_group'] ?? null,
+                        'options' => $options,
+                        'field_group' => $fieldGroup,
                         'order' => $fieldData['order'] ?? 0,
                     ]);
                     $existingIds[] = $field->id;
                 }
             } else {
                 // Create new field
+                $fieldGroup = ! empty($fieldData['field_group']) ? $fieldData['field_group'] : 'general';
                 $field = $cpt->metaFields()->create([
                     'name' => $fieldData['name'],
                     'label' => $fieldData['label'],
                     'type' => $fieldData['type'],
                     'description' => $fieldData['description'] ?? null,
                     'is_required' => $fieldData['is_required'] ?? false,
-                    'options' => $fieldData['options'] ?? null,
-                    'field_group' => $fieldData['field_group'] ?? null,
+                    'options' => $options,
+                    'field_group' => $fieldGroup,
                     'order' => $fieldData['order'] ?? 0,
                 ]);
                 $existingIds[] = $field->id;
@@ -620,6 +721,7 @@ class CptForm extends Component
         return view('livewire.admin.cpt.cpt-form', [
             'availableSupports' => CustomPostType::$availableSupports,
             'availableTaxonomies' => CustomTaxonomy::active()->get(),
+            'availableCpts' => CustomPostType::where('is_active', true)->get(),
             'fieldTypes' => MetaField::$fieldTypes,
         ]);
     }

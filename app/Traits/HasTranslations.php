@@ -19,19 +19,36 @@ namespace App\Traits;
  */
 trait HasTranslations
 {
+    public function getAttribute($key)
+    {
+        if (in_array($key, $this->translatableFields(), true)) {
+            return $this->getTranslation($key);
+        }
+
+        return parent::getAttribute($key);
+    }
+
+    /**
+     * Get the raw attribute value from primary column, bypassing locale translation.
+     */
+    public function getRawAttribute(string $key): mixed
+    {
+        return parent::getAttribute($key);
+    }
+
     public function getTranslation(string $field, ?string $locale = null, bool $fallback = true): mixed
     {
         $locale ??= app()->getLocale();
 
         if ($this->isDefaultLocale($locale)) {
-            return $this->getAttribute($field);
+            return parent::getAttribute($field);
         }
 
-        $translations = $this->translations ?? [];
+        $translations = parent::getAttribute('translations') ?? [];
         $value = $translations[$locale][$field] ?? null;
 
         if ($value === null && $fallback) {
-            return $this->getAttribute($field);
+            return parent::getAttribute($field);
         }
 
         return $value;
@@ -85,12 +102,30 @@ trait HasTranslations
         return isset($this->translations[$locale][$field]) && $this->translations[$locale][$field] !== '';
     }
 
+    /** Check if this row has any non-empty translated field for a given locale. */
+    public function hasTranslationForLocale(string $locale): bool
+    {
+        if ($this->isDefaultLocale($locale)) {
+            return true;
+        }
+
+        /** @var array<string, mixed>|null $translations */
+        $translations = $this->getAttribute('translations') ?? $this->getAttribute('_translations');
+        if (! is_array($translations) || empty($translations[$locale])) {
+            return false;
+        }
+
+        return collect((array) $translations[$locale])
+            ->filter(fn ($v) => ! empty($v))
+            ->isNotEmpty();
+    }
+
     /** Get all locales that have at least one translated field on this row. */
     public function translatedLocales(): array
     {
         $locales = [static::defaultLocale()];
         foreach (array_keys($this->translations ?? []) as $l) {
-            if (! in_array($l, $locales, true)) {
+            if ($this->hasTranslationForLocale($l) && ! in_array($l, $locales, true)) {
                 $locales[] = $l;
             }
         }
@@ -101,7 +136,7 @@ trait HasTranslations
     /** All translatable field names for this model. */
     public function translatableFields(): array
     {
-        return $this->translatable ?? [];
+        return $this->translatable;
     }
 
     public static function defaultLocale(): string
@@ -116,7 +151,7 @@ trait HasTranslations
 
     protected function ensureFieldIsTranslatable(string $field): void
     {
-        $allowed = $this->translatable ?? [];
+        $allowed = $this->translatable;
         if (! in_array($field, $allowed, true)) {
             throw new \InvalidArgumentException(
                 "Field [{$field}] is not translatable on ".static::class.'. Add it to $translatable.'

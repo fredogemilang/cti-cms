@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Services\Sitemap\SitemapBuilder;
+use App\Traits\HasSeoMeta;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 
 class CustomPostType extends Model
 {
+    use HasSeoMeta;
+
     protected $fillable = [
         'name',
         'singular_label',
@@ -19,9 +23,11 @@ class CustomPostType extends Model
         'show_in_menu',
         'show_in_rest',
         'has_archive',
+        'publicly_queryable',
         'supports',
         'settings',
         'is_active',
+        'translations',
     ];
 
     protected $casts = [
@@ -29,9 +35,11 @@ class CustomPostType extends Model
         'show_in_menu' => 'boolean',
         'show_in_rest' => 'boolean',
         'has_archive' => 'boolean',
+        'publicly_queryable' => 'boolean',
         'supports' => 'array',
         'settings' => 'array',
         'is_active' => 'boolean',
+        'translations' => 'array',
     ];
 
     /**
@@ -71,6 +79,14 @@ class CustomPostType extends Model
             if (empty($cpt->supports)) {
                 $cpt->supports = self::$defaultSupports;
             }
+        });
+
+        static::saved(function ($cpt) {
+            SitemapBuilder::clearCache($cpt->slug);
+        });
+
+        static::deleted(function ($cpt) {
+            SitemapBuilder::clearCache($cpt->slug);
         });
     }
 
@@ -138,5 +154,95 @@ class CustomPostType extends Model
     public function supports(string $feature): bool
     {
         return in_array($feature, $this->supports ?? []);
+    }
+
+    /**
+     * Scope for CPTs that have a public archive enabled.
+     */
+    public function scopeWithArchive($query)
+    {
+        return $query->where('has_archive', true)->where('is_active', true);
+    }
+
+    /**
+     * Scope for CPTs where each entry has its own URL page.
+     */
+    public function scopePubliclyQueryable($query)
+    {
+        return $query->where('publicly_queryable', true)->where('is_active', true);
+    }
+
+    /**
+     * Get a translated field value for the CPT.
+     */
+    public function getTranslation(string $field, ?string $locale = null, bool $fallback = true): ?string
+    {
+        $locale ??= app()->getLocale();
+        $translations = $this->translations ?? [];
+
+        if (isset($translations[$locale][$field]) && filled($translations[$locale][$field])) {
+            return $translations[$locale][$field];
+        }
+
+        if ($fallback) {
+            $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+            if ($locale !== $defaultLocale && isset($translations[$defaultLocale][$field]) && filled($translations[$defaultLocale][$field])) {
+                return $translations[$defaultLocale][$field];
+            }
+
+            return match ($field) {
+                'singular_label' => $this->singular_label,
+                'plural_label' => $this->plural_label,
+                'slug' => $this->slug,
+                'description' => $this->description,
+                default => null,
+            };
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the localized slug for this CPT based on locale.
+     */
+    public function getLocalizedSlug(?string $locale = null): string
+    {
+        return $this->getTranslation('slug', $locale) ?: $this->slug;
+    }
+
+    /**
+     * Get all registered localized slugs for this CPT.
+     */
+    public function getAllLocalizedSlugs(): array
+    {
+        $slugs = [$this->slug];
+        if (is_array($this->translations)) {
+            foreach ($this->translations as $lang => $data) {
+                if (! empty($data['slug'])) {
+                    $slugs[] = $data['slug'];
+                }
+            }
+        }
+
+        return array_values(array_unique(array_filter($slugs)));
+    }
+
+    /**
+     * Get the public archive URL for this CPT.
+     */
+    public function getArchiveUrl(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+
+        $targetSlug = $this->getLocalizedSlug($locale);
+
+        if ($locale !== $defaultLocale) {
+            $url = trailing_slash_url(url('/'.$locale.'/'.$targetSlug));
+        } else {
+            $url = trailing_slash_url(url('/'.$targetSlug));
+        }
+
+        return apply_filters('cpt.archive_url', $url, $this, $locale);
     }
 }

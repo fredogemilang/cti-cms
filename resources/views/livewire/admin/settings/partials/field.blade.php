@@ -9,13 +9,36 @@
 @endphp
 
 <div>
-    @if($type !== 'boolean')
+    @if($type !== 'boolean' && $type !== 'info')
         <label for="{{ $key }}" class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-2">
             {{ $label }}
         </label>
     @endif
 
     @switch($type)
+        @case('info')
+            @php
+                $isLiteSpeed = \App\Services\CacheManager::isLiteSpeed();
+                $icon = $field['icon'] ?? ($isLiteSpeed ? 'verified' : 'info');
+                $isSuccess = ($field['variant'] ?? '') === 'success' || ($isLiteSpeed && !isset($field['variant']));
+                $boxCls = $isSuccess
+                    ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-300'
+                    : 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20 text-blue-800 dark:text-blue-300';
+                $iconCls = $isSuccess ? 'text-emerald-600 dark:text-emerald-400' : 'text-[#2563EB] dark:text-blue-400';
+            @endphp
+            <div class="rounded-2xl border p-4 text-xs flex items-start gap-3.5 {{ $boxCls }}">
+                <span class="material-symbols-outlined text-[22px] shrink-0 mt-0.5 {{ $iconCls }}">{{ $icon }}</span>
+                <div class="space-y-1 min-w-0 flex-1">
+                    @if($label && $label !== $key)
+                        <div class="font-bold text-sm text-[#111827] dark:text-[#FCFCFC]">{{ $label }}</div>
+                    @endif
+                    <div class="text-xs leading-relaxed text-[#4B5563] dark:text-[#9CA3AF]">
+                        {!! $field['content'] ?? ($field['help'] ?? '') !!}
+                    </div>
+                </div>
+            </div>
+            @break
+
         @case('textarea')
             <textarea
                 id="{{ $key }}"
@@ -81,22 +104,14 @@
             @break
 
         @case('media')
-            <div class="flex items-start gap-4">
-                @if(!empty($values[$key] ?? null))
-                    <div class="relative group shrink-0">
-                        <img src="{{ asset('storage/' . $values[$key]) }}" alt="{{ $label }}" class="h-20 w-20 rounded-xl object-cover border border-gray-200 dark:border-[#272B30]">
-                        <button type="button" wire:click="$set('{{ $model }}', '')"
-                            class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow">
-                            <span class="material-symbols-outlined text-sm">close</span>
-                        </button>
-                    </div>
-                @endif
-                <button type="button"
-                    wire:click="$dispatch('open-media-picker', { field: '{{ $key }}' })"
-                    class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-[#272B30] text-sm font-medium text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] hover:border-gray-300 dark:hover:border-[#333] transition bg-white dark:bg-[#0F1113]">
-                    <span class="material-symbols-outlined text-lg">{{ empty($values[$key] ?? null) ? 'add_photo_alternate' : 'swap_horiz' }}</span>
-                    {{ empty($values[$key] ?? null) ? 'Choose image...' : 'Change' }}
-                </button>
+            <div>
+                <livewire:admin.media-picker 
+                    :field="$key"
+                    :value="$values[$key] ?? null"
+                    :label="$label"
+                    :compact="true"
+                    :key="'settings-media-picker-' . $key"
+                />
             </div>
             @break
 
@@ -119,7 +134,7 @@
             />
     @endswitch
 
-    @if($help && $type !== 'boolean')
+    @if($help && $type !== 'boolean' && $type !== 'info')
         <p class="text-xs text-[#6F767E] mt-1.5">{{ $help }}</p>
     @endif
 

@@ -4,9 +4,13 @@ namespace App\Livewire\Admin;
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+/**
+ * @property-read array<string, int> $statusCounts
+ */
 class UsersTable extends Component
 {
     use WithPagination;
@@ -106,6 +110,28 @@ class UsersTable extends Component
             ->paginate($this->perPage);
     }
 
+    public function getStatusCountsProperty(): array
+    {
+        $baseQuery = User::query()
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('name', 'like', '%'.$this->search.'%')
+                        ->orWhere('email', 'like', '%'.$this->search.'%');
+                });
+            })
+            ->when($this->roleFilter, function ($query) {
+                $query->whereHas('roles', function ($q) {
+                    $q->where('roles.id', $this->roleFilter);
+                });
+            });
+
+        return [
+            'all' => (clone $baseQuery)->count(),
+            'active' => (clone $baseQuery)->where('is_active', true)->count(),
+            'inactive' => (clone $baseQuery)->where('is_active', false)->count(),
+        ];
+    }
+
     public function getRolesProperty()
     {
         return Role::orderBy('name')->get();
@@ -119,22 +145,102 @@ class UsersTable extends Component
         $this->resetPage();
     }
 
+    // Delete & Reassignment modal state
+    public $userToDeleteId = null;
+
+    public $userToDeleteName = '';
+
+    public $userToDeleteContent = [];
+
+    public $reassignToUserId = null;
+
+    public $showDeleteModal = false;
+
     public function clearSelection()
     {
         $this->selectedUsers = [];
         $this->selectAll = false;
     }
 
-    public function deleteUser($userId)
+    public function getAvailableReassignUsersProperty()
+    {
+        return User::where('is_active', true)
+            ->when($this->userToDeleteId, fn ($q) => $q->where('id', '!=', $this->userToDeleteId))
+            ->orderBy('name')
+            ->get();
+    }
+
+    public function confirmDeleteUser($userId)
     {
         $user = User::find($userId);
 
-        if ($user && $user->id !== auth()->id()) {
-            $user->delete();
-            session()->flash('success', 'User deleted successfully.');
+        if (! $user || $user->id === auth()->id()) {
+            return;
         }
 
-        $this->selectedUsers = array_diff($this->selectedUsers, [(string) $userId]);
+        $this->userToDeleteId = $user->id;
+        $this->userToDeleteName = $user->name;
+        $this->userToDeleteContent = $user->authoredContentCounts();
+        $this->reassignToUserId = auth()->id();
+        $this->showDeleteModal = true;
+    }
+
+    public function cancelDeleteUser()
+    {
+        $this->userToDeleteId = null;
+        $this->userToDeleteName = '';
+        $this->userToDeleteContent = [];
+        $this->reassignToUserId = null;
+        $this->showDeleteModal = false;
+    }
+
+    public function deleteUserConfirmed()
+    {
+        if (! $this->userToDeleteId) {
+            return;
+        }
+
+        $user = User::find($this->userToDeleteId);
+
+        if (! $user || $user->id === auth()->id()) {
+            $this->cancelDeleteUser();
+
+            return;
+        }
+
+        $totalContent = array_sum($this->userToDeleteContent);
+
+        if ($totalContent > 0) {
+            if (! $this->reassignToUserId) {
+                session()->flash('error', 'Please select a user to attribute content to.');
+
+                return;
+            }
+
+            $targetUser = User::where('id', $this->reassignToUserId)
+                ->where('id', '!=', $user->id)
+                ->where('is_active', true)
+                ->first();
+
+            if (! $targetUser) {
+                session()->flash('error', 'Invalid target user selected for content reassignment.');
+
+                return;
+            }
+
+            $user->reassignContentTo($targetUser);
+        }
+
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        $user->delete();
+
+        $this->selectedUsers = array_diff($this->selectedUsers, [(string) $user->id]);
+        $this->cancelDeleteUser();
+
+        session()->flash('success', "User '{$user->name}' deleted successfully".($totalContent > 0 ? ' and all content was reassigned.' : '.'));
     }
 
     public function deleteSelected()
@@ -143,13 +249,33 @@ class UsersTable extends Component
             ->where('id', '!=', auth()->id())
             ->get();
 
+        $deletedCount = 0;
+        $skippedCount = 0;
+
         foreach ($users as $user) {
+            if ($user->hasAuthoredContent()) {
+                $skippedCount++;
+
+                continue;
+            }
+
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
             $user->delete();
+            $deletedCount++;
         }
 
         $this->clearSelection();
 
-        session()->flash('success', count($users).' user(s) deleted successfully.');
+        if ($skippedCount > 0) {
+            session()->flash('error', "{$skippedCount} user(s) could not be deleted because they own published content. Please delete them individually to reassign content.");
+        }
+
+        if ($deletedCount > 0) {
+            session()->flash('success', "{$deletedCount} user(s) deleted successfully.");
+        }
     }
 
     public function changeRoleSelected($roleId)
@@ -204,6 +330,7 @@ class UsersTable extends Component
         return view('livewire.admin.users-table', [
             'users' => $this->users,
             'roles' => $this->roles,
+            'statusCounts' => $this->statusCounts,
         ]);
     }
 }

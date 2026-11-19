@@ -39,6 +39,14 @@ class TiptapMediaPicker extends Component
     /** Field name that requested the picker (for settings pages, etc.) */
     public ?string $requestingField = null;
 
+    public bool $compact = false;
+
+    public ?string $value = null;
+
+    public string $label = 'Insert Image';
+
+    public bool $showTrigger = false;
+
     public function openModal(?string $field = null): void
     {
         $this->showModal = true;
@@ -179,7 +187,7 @@ class TiptapMediaPicker extends Component
 
     public function render()
     {
-        return view('livewire.admin.tiptap-media-picker', [
+        return view('livewire.admin.media-picker', [
             'mediaItems' => $this->media,
         ]);
     }

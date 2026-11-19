@@ -18,16 +18,43 @@ class Index extends Component
 
     public string $url = '';
 
-    public array $events = [];
+    public string $deployment_id = '';
+
+    public array $events = ['form.submitted'];
 
     public bool $is_active = true;
 
     public function startCreate(): void
     {
         $this->checkPermission('webhooks.create');
-        $this->reset(['editingId', 'name', 'url', 'events', 'is_active']);
+        $this->reset(['editingId', 'name', 'url', 'deployment_id', 'events', 'is_active']);
+        $this->events = ['form.submitted'];
         $this->is_active = true;
         $this->showForm = true;
+    }
+
+    public function updatedDeploymentId($val): void
+    {
+        $val = trim($val);
+        if ($val !== '') {
+            // If user pasted a full URL into deployment_id, extract the ID
+            if (preg_match('/\/macros\/s\/([^\/]+)\/exec/i', $val, $m)) {
+                $val = $m[1];
+                $this->deployment_id = $val;
+            }
+            $this->url = "https://script.google.com/macros/s/{$val}/exec";
+            if (empty($this->name)) {
+                $this->name = 'Google Sheets Webhook';
+            }
+        }
+    }
+
+    public function updatedUrl($val): void
+    {
+        $val = trim($val);
+        if (preg_match('/\/macros\/s\/([^\/]+)\/exec/i', $val, $m)) {
+            $this->deployment_id = $m[1];
+        }
     }
 
     public function edit(int $id): void
@@ -37,7 +64,12 @@ class Index extends Component
         $this->editingId = $w->id;
         $this->name = $w->name;
         $this->url = $w->url;
-        $this->events = $w->events ?? [];
+        if (preg_match('/\/macros\/s\/([^\/]+)\/exec/i', $w->url, $m)) {
+            $this->deployment_id = $m[1];
+        } else {
+            $this->deployment_id = '';
+        }
+        $this->events = $w->events ?? ['form.submitted'];
         $this->is_active = $w->is_active;
         $this->showForm = true;
     }
@@ -45,6 +77,12 @@ class Index extends Component
     public function save(): void
     {
         $this->checkPermission($this->editingId ? 'webhooks.edit' : 'webhooks.create');
+
+        // Auto format deployment_id to URL if filled
+        if (! empty($this->deployment_id) && empty($this->url)) {
+            $this->url = 'https://script.google.com/macros/s/'.trim($this->deployment_id).'/exec';
+        }
+
         $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'url' => ['required', 'url', 'max:500'],

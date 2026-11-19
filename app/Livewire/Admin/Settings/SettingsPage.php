@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Settings;
 
 use App\Models\Setting;
+use App\Services\CacheManager;
 use App\Services\SettingsRegistry;
 use App\Settings\Contracts\SettingsAction;
 use Illuminate\Validation\ValidationException;
@@ -18,12 +19,27 @@ class SettingsPage extends Component
     /** @var array<string, mixed> Current form values keyed by setting key. */
     public array $values = [];
 
-    /** Receives media-selected events from the media picker modal. */
+    /** Receives media-selected events from the media picker component. */
     #[On('media-selected')]
     public function onMediaSelected(string $mediaPath, ?string $field = null): void
     {
-        if ($field && array_key_exists($field, $this->values)) {
-            $this->values[$field] = $mediaPath;
+        if ($field) {
+            $key = str_replace('values.', '', $field);
+            if (array_key_exists($key, $this->values)) {
+                $this->values[$key] = $mediaPath;
+            }
+        }
+    }
+
+    /** Receives media-removed events from the media picker component. */
+    #[On('media-removed')]
+    public function onMediaRemoved(?string $field = null): void
+    {
+        if ($field) {
+            $key = str_replace('values.', '', $field);
+            if (array_key_exists($key, $this->values)) {
+                $this->values[$key] = null;
+            }
         }
     }
 
@@ -78,12 +94,17 @@ class SettingsPage extends Component
 
         $types = [];
         foreach ($registry->fields($this->group) as $field) {
+            if (($field['type'] ?? '') === 'info') {
+                continue;
+            }
             $types[$field['key']] = $this->fieldStorageType($field['type'] ?? 'string');
         }
 
         Setting::setMany($validated, $this->group, $types);
+        Setting::flushMemo();
+        CacheManager::purgeAll();
 
-        $this->dispatch('notify', ['type' => 'success', 'message' => 'Settings saved.']);
+        $this->dispatch('notify', ['type' => 'success', 'message' => 'Settings saved and cache cleared.']);
     }
 
     protected function fieldStorageType(string $uiType): string

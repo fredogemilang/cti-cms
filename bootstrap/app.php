@@ -7,15 +7,18 @@ use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\CompressResponse;
 use App\Http\Middleware\EnforceTwoFactor;
 use App\Http\Middleware\HandleRedirects;
+use App\Http\Middleware\InjectSeoTags;
+use App\Http\Middleware\Log404;
+use App\Http\Middleware\LSCacheHeaders;
 use App\Http\Middleware\OptimizeHtml;
 use App\Http\Middleware\PageCache;
 use App\Http\Middleware\SecurityHeaders;
 use App\Http\Middleware\SetLocale;
+use App\Models\NotFoundLog;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Plugins\Events\Models\Event;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -34,36 +37,50 @@ return Application::configure(basePath: dirname(__DIR__))
             'api.cors' => ApiCors::class,
         ]);
 
+        // Raw cookies so web servers (LiteSpeed) can inspect them directly:
+        // - XSRF-TOKEN: CSRF token for full-page cache forms
+        // - cms_logged_in: Tells LiteSpeed to bypass cache for logged-in admins
+        $middleware->encryptCookies(['XSRF-TOKEN', 'cms_logged_in']);
+
         // Run redirect rules before route matching (so 404 paths can still redirect).
         $middleware->prepend(HandleRedirects::class);
 
         // Set app locale from query → session → cookie → setting.
         $middleware->web(append: [
             SetLocale::class,
-            PageCache::class,
+            InjectSeoTags::class,
             OptimizeHtml::class,
             CompressResponse::class,
             SecurityHeaders::class,
+            LSCacheHeaders::class,
+            PageCache::class,
+            Log404::class,
         ]);
 
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
     })
     ->withSchedule(function (Schedule $schedule): void {
-        // Auto-complete events that have ended
-        $schedule->call(function () {
-            Event::where('status', 'published')
-                ->where('end_date', '<', now())
-                ->update(['status' => 'completed']);
-        })->daily()->at('00:01');
+        // Auto-complete events that have ended.
+        // The Events plugin was removed as client-specific (commit a5bf328) — the
+        // command no-ops safely when the plugin is absent, so the schedule never
+        // crashes if a client installs/uninstalls it.
+        $schedule->command('events:complete-expired')->dailyAt('00:01')->onOneServer();
 
         // Prune old audit log entries (default 90 days, configurable via setting)
         $schedule->command('activity:prune')->dailyAt('03:00')->onOneServer();
+
+        // Prune resolved 404 logs older than 90 days
+        $schedule->call(fn () => NotFoundLog::prune(90))
+            ->name('prune-404-logs')->dailyAt('03:15')->onOneServer();
 
         // Flip scheduled content to published once published_at arrives.
         $schedule->command('content:publish-scheduled')->everyMinute()->withoutOverlapping();
 
         // Purge trash older than retention window (default 30 days).
         $schedule->command('content:purge-trash')->dailyAt('02:30')->onOneServer();
+
+        // Preload and warm full-page cache before morning traffic peaks.
+        $schedule->command('page-cache:warm')->dailyAt('03:30')->onOneServer();
 
         // Cron-driven queue worker for shared hosting (no daemon allowed).
         // Each minute we drain pending jobs and exit before the next tick.

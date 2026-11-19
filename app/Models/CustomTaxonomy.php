@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 
@@ -124,5 +125,21 @@ class CustomTaxonomy extends Model
     {
         $postTypes = array_filter($this->post_types ?? [], fn ($slug) => $slug !== $postTypeSlug);
         $this->update(['post_types' => array_values($postTypes)]);
+    }
+
+    /**
+     * Get the public archive URL for this taxonomy.
+     */
+    public function getArchiveUrl(): string
+    {
+        return trailing_slash_url(url('/'.$this->slug));
+    }
+
+    /**
+     * Get the terms for this taxonomy.
+     */
+    public function terms(): HasMany
+    {
+        return $this->hasMany(TaxonomyTerm::class, 'taxonomy_id')->orderBy('order');
     }
 }

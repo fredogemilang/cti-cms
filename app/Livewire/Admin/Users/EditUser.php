@@ -42,6 +42,35 @@ class EditUser extends Component
         $this->selectedRole = $user->roles->first()?->id;
     }
 
+    public function save(): void
+    {
+        $validated = $this->validate([
+            'name' => 'required|string|max:255',
+            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($this->user->id)],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($this->user->id)],
+            'bio' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            $this->user->fill($validated);
+            $this->user->save();
+
+            if ($this->selectedRole) {
+                $this->user->roles()->sync([$this->selectedRole]);
+            }
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'User updated successfully',
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Failed to update user',
+            ]);
+        }
+    }
+
     public function updated($propertyName)
     {
         if ($propertyName === 'avatar') {

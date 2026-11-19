@@ -2,203 +2,289 @@
 
 @section('title', 'Menu Management')
 @section('page-title', 'Menu Management')
+@section('page-subtitle', 'Drag and drop items to customize the admin sidebar navigation order')
 
 @section('content')
-<div class="space-y-6">
-    <!-- Header with Actions -->
-    <div class="glass rounded-3xl shadow-lg p-6 flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-900">Navigation Menus</h2>
-            <p class="text-sm text-gray-600 mt-1">Manage sidebar navigation structure</p>
+<div class="space-y-6" x-data="menuManager()">
+
+    <!-- Action Bar & Controls -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-[#1A1A1A] p-5 rounded-2xl border border-gray-200 dark:border-[#272B30] shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center justify-center font-bold shrink-0">
+                <span class="material-symbols-outlined">reorder</span>
+            </div>
+            <div>
+                <h3 class="font-bold text-gray-900 dark:text-[#FCFCFC] text-base">Sidebar Order Customizer</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Drag items up or down across sections. Your custom layout applies live across the entire admin panel.</p>
+            </div>
         </div>
-        @can('menus.create')
-        <a href="{{ route('admin.menus.create') }}" wire:navigate class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-            </svg>
-            Add Menu Item
-        </a>
-        @endcan
+
+        <div class="flex items-center gap-3 shrink-0">
+            <button 
+                @click="resetOrder()" 
+                type="button" 
+                class="px-4 py-2 text-xs font-semibold rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all flex items-center gap-2 cursor-pointer">
+                <span class="material-symbols-outlined text-sm">restart_alt</span>
+                Reset to Default
+            </button>
+
+            <button 
+                @click="saveOrder()" 
+                type="button" 
+                :disabled="saving"
+                class="px-5 py-2 text-xs font-bold rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-md transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50">
+                <template x-if="saving">
+                    <span class="material-symbols-outlined text-sm animate-spin">progress_activity</span>
+                </template>
+                <template x-if="!saving">
+                    <span class="material-symbols-outlined text-sm">save</span>
+                </template>
+                <span x-text="saving ? 'Saving...' : 'Save Order'"></span>
+            </button>
+        </div>
     </div>
 
-    <!-- Success Message -->
-    @if(session('success'))
-    <div class="glass-card rounded-2xl p-4 border-l-4 border-green-500 bg-green-50/50">
-        <div class="flex items-center">
-            <svg class="w-5 h-5 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <p class="text-green-800 font-medium">{{ session('success') }}</p>
+    <!-- Notification Toast -->
+    <div 
+        x-show="toast.show" 
+        x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+        x-transition:leave="transition ease-in duration-200 transform"
+        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+        x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+        x-cloak
+        class="p-4 rounded-2xl border text-sm font-semibold flex items-center justify-between shadow-lg"
+        :class="toast.type === 'success' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' : 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined" x-text="toast.type === 'success' ? 'check_circle' : 'error'"></span>
+            <span x-text="toast.message"></span>
         </div>
+        <button @click="toast.show = false" class="text-xs opacity-70 hover:opacity-100">✕</button>
     </div>
-    @endif
 
-    <!-- Error Message -->
-    @if(session('error'))
-    <div class="glass-card rounded-2xl p-4 border-l-4 border-red-500 bg-red-50/50">
-        <div class="flex items-center">
-            <svg class="w-5 h-5 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <p class="text-red-800 font-medium">{{ session('error') }}</p>
-        </div>
-    </div>
-    @endif
+    <!-- Unified Menu Sortable Container -->
+    <x-admin.ui.card padding="p-6">
+        <div class="space-y-4" id="sortable-menu-list">
+            @php
+                $currentSection = null;
+            @endphp
 
-    <!-- Menu Items -->
-    <div class="glass-card rounded-3xl p-6">
-        <div class="space-y-3" id="menu-list">
-            @forelse($menus as $menu)
-            <div class="bg-white/50 rounded-2xl border border-gray-200 overflow-hidden">
-                <!-- Parent Menu -->
-                <div class="flex items-center p-4 hover:bg-white transition">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mr-4">
-                        @if($menu->icon)
-                            <i class="{{ $menu->icon }} text-white"></i>
-                        @else
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
+            @forelse($menus as $index => $item)
+            @php
+                $isCore = ($item['source'] ?? 'core') === 'core';
+                $isCpt = ($item['source'] ?? '') === 'cpt';
+                $isPlugin = str_starts_with($item['source'] ?? '', 'plugin:');
+                $section = $item['section'] ?? ($isCpt ? 'CONTENT' : ($isPlugin ? 'PLUGINS' : 'SYSTEM'));
+            @endphp
+
+            <!-- Section Header Banner (if section changes) -->
+            @if($section !== $currentSection)
+                @php $currentSection = $section; @endphp
+                <div class="section-header pt-4 pb-2 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2 select-none" data-section="{{ $section }}">
+                    <span class="w-2 h-2 rounded-full {{ $section === 'MAIN' ? 'bg-amber-500' : ($section === 'CONTENT' ? 'bg-emerald-500' : ($section === 'PLUGINS' ? 'bg-purple-500' : 'bg-blue-500')) }}"></span>
+                    <span class="text-xs font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">
+                        {{ $section }}
+                    </span>
+                </div>
+            @endif
+
+            <!-- Item Card -->
+            <div 
+                data-key="{{ $item['key'] ?? $item['source'] }}"
+                class="sortable-item group bg-white/70 dark:bg-[#1A1A1A]/80 rounded-2xl border border-gray-200 dark:border-[#272B30] p-4 transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-md cursor-grab active:cursor-grabbing flex flex-col md:flex-row md:items-center justify-between gap-4">
+                
+                <!-- Left: Drag Handle, Position, Icon, Title, and Badges -->
+                <div class="flex items-center gap-4 flex-1 min-w-0">
+                    <!-- Drag Handle -->
+                    <div class="text-gray-400 dark:text-gray-600 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors shrink-0">
+                        <span class="material-symbols-outlined text-2xl select-none">drag_indicator</span>
+                    </div>
+
+                    <!-- Position Number Badge -->
+                    <span class="pos-badge text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-[#272B30] text-gray-500 dark:text-gray-400 shrink-0">
+                        #{{ $index + 1 }}
+                    </span>
+
+                    <!-- Icon Container (Color-Coded) -->
+                    @if($isCpt)
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 flex items-center justify-center font-bold shrink-0">
+                            <span class="material-symbols-outlined text-xl">{{ $item['icon'] ?? 'article' }}</span>
+                        </div>
+                    @elseif($isPlugin)
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 border border-purple-500/20 flex items-center justify-center font-bold shrink-0">
+                            <span class="material-symbols-outlined text-xl">{{ $item['icon'] ?? 'extension' }}</span>
+                        </div>
+                    @else
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20 flex items-center justify-center font-bold shrink-0">
+                            @if(!empty($item['icon']) && str_starts_with($item['icon'], 'fa-'))
+                                <i class="{{ $item['icon'] }} text-base"></i>
+                            @else
+                                <span class="material-symbols-outlined text-xl">{{ $item['icon'] ?? 'widgets' }}</span>
+                            @endif
+                        </div>
+                    @endif
+
+                    <!-- Title & Source Badge -->
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h4 class="font-bold text-gray-900 dark:text-[#FCFCFC] text-base truncate">{{ $item['title'] }}</h4>
+                            
+                            <!-- Source Badge -->
+                            @if($isCpt)
+                                <span class="px-2.5 py-0.5 text-xs font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full">
+                                    Content (CPT)
+                                </span>
+                            @elseif($isPlugin)
+                                <span class="px-2.5 py-0.5 text-xs font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 rounded-full">
+                                    {{ $item['source_label'] ?? 'Plugin' }}
+                                </span>
+                            @else
+                                <span class="px-2.5 py-0.5 text-xs font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-full">
+                                    Core System
+                                </span>
+                            @endif
+                        </div>
+
+                        <!-- Sub-Items Pills Preview -->
+                        @if(!empty($item['children']))
+                        <div class="flex items-center gap-1.5 mt-2 flex-wrap">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Sub-items:</span>
+                            @foreach($item['children'] as $child)
+                                <span class="px-2 py-0.5 text-[11px] font-medium bg-gray-100 dark:bg-[#272B30] text-gray-600 dark:text-gray-300 rounded-md">
+                                    {{ $child['title'] }}
+                                </span>
+                            @endforeach
+                        </div>
                         @endif
                     </div>
-                    
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2">
-                            <h3 class="font-bold text-gray-900">{{ $menu->title }}</h3>
-                            @if(!$menu->is_active)
-                            <span class="px-2 py-0.5 text-xs font-bold bg-gray-100 text-gray-600 rounded-full">Inactive</span>
-                            @endif
-                            @if($menu->permission)
-                            <span class="px-2 py-0.5 text-xs font-bold bg-purple-100 text-purple-700 rounded-full">{{ $menu->permission }}</span>
-                            @endif
-                        </div>
-                        <p class="text-sm text-gray-600">
-                            @if($menu->route)
-                                Route: {{ $menu->route }}
-                            @else
-                                <span class="text-gray-400">No route</span>
-                            @endif
-                            <span class="mx-2">•</span>
-                            Order: {{ $menu->order }}
-                            @if($menu->children->isNotEmpty())
-                                <span class="mx-2">•</span>
-                                {{ $menu->children->count() }} sub-items
-                            @endif
-                        </p>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        @can('menus.view')
-                        <a href="{{ route('admin.menus.show', $menu) }}" wire:navigate class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="View">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                            </svg>
-                        </a>
-                        @endcan
-                        
-                        @can('menus.edit')
-                        <a href="{{ route('admin.menus.edit', $menu) }}" wire:navigate class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition" title="Edit">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                        </a>
-                        @endcan
-                        
-                        @can('menus.delete')
-                        <form action="{{ route('admin.menus.destroy', $menu) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this menu item?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                            </button>
-                        </form>
-                        @endcan
-                    </div>
                 </div>
 
-                <!-- Child Menus -->
-                @if($menu->children->isNotEmpty())
-                <div class="bg-gray-50/50 border-t border-gray-200">
-                    @foreach($menu->children as $child)
-                    <div class="flex items-center p-4 pl-16 hover:bg-white/50 transition border-b border-gray-100 last:border-0">
-                        <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center mr-3">
-                            @if($child->icon)
-                                <i class="{{ $child->icon }} text-white text-sm"></i>
-                            @else
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            @endif
-                        </div>
-                        
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2">
-                                <h4 class="font-medium text-gray-900">{{ $child->title }}</h4>
-                                @if(!$child->is_active)
-                                <span class="px-2 py-0.5 text-xs font-bold bg-gray-100 text-gray-600 rounded-full">Inactive</span>
-                                @endif
-                                @if($child->permission)
-                                <span class="px-2 py-0.5 text-xs font-bold bg-purple-100 text-purple-700 rounded-full">{{ $child->permission }}</span>
-                                @endif
-                            </div>
-                            <p class="text-xs text-gray-600">
-                                @if($child->route)
-                                    Route: {{ $child->route }}
-                                @else
-                                    <span class="text-gray-400">No route</span>
-                                @endif
-                                <span class="mx-2">•</span>
-                                Order: {{ $child->order }}
-                            </p>
-                        </div>
-
-                        <div class="flex items-center gap-2">
-                            @can('menus.view')
-                            <a href="{{ route('admin.menus.show', $child) }}" wire:navigate class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="View">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                </svg>
-                            </a>
-                            @endcan
-                            
-                            @can('menus.edit')
-                            <a href="{{ route('admin.menus.edit', $child) }}" wire:navigate class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition" title="Edit">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                </svg>
-                            </a>
-                            @endcan
-                            
-                            @can('menus.delete')
-                            <form action="{{ route('admin.menus.destroy', $child) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this menu item?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </button>
-                            </form>
-                            @endcan
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-                @endif
             </div>
             @empty
-            <div class="p-12 text-center">
-                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-                <p class="text-gray-500 font-medium">No menu items found</p>
-            </div>
+            <div class="p-12 text-center text-gray-500 font-medium">No menu items available to order.</div>
             @endforelse
         </div>
-    </div>
+    </x-admin.ui.card>
+
 </div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+function menuManager() {
+    return {
+        saving: false,
+        toast: {
+            show: false,
+            type: 'success',
+            message: ''
+        },
+
+        init() {
+            const el = document.getElementById('sortable-menu-list');
+            if (el) {
+                new Sortable(el, {
+                    animation: 150,
+                    ghostClass: 'opacity-40',
+                    onEnd: () => {
+                        this.updatePositions();
+                        this.saveOrder();
+                    }
+                });
+            }
+        },
+
+        updatePositions() {
+            const items = document.querySelectorAll('#sortable-menu-list .sortable-item');
+            items.forEach((item, index) => {
+                const badge = item.querySelector('.pos-badge');
+                if (badge) {
+                    badge.textContent = `#${index + 1}`;
+                }
+            });
+        },
+
+        getOrderedKeys() {
+            const children = document.querySelectorAll('#sortable-menu-list > *');
+            const keys = [];
+            children.forEach(el => {
+                if (el.classList.contains('section-header')) {
+                    const sec = el.getAttribute('data-section');
+                    if (sec) keys.push('SECTION:' + sec);
+                } else if (el.classList.contains('sortable-item')) {
+                    const key = el.getAttribute('data-key');
+                    if (key) keys.push(key);
+                }
+            });
+            return keys;
+        },
+
+        async saveOrder() {
+            this.saving = true;
+            const keys = this.getOrderedKeys();
+
+            try {
+                const response = await fetch('{{ route("admin.menus.reorder") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ order: keys })
+                });
+
+                const data = await response.json();
+                this.saving = false;
+
+                if (response.ok) {
+                    this.showToast('success', data.message || 'Menu layout order updated successfully.');
+                } else {
+                    this.showToast('danger', data.message || 'Failed to save menu order.');
+                }
+            } catch (err) {
+                this.saving = false;
+                this.showToast('danger', 'Network error while saving menu order.');
+            }
+        },
+
+        async resetOrder() {
+            if (!confirm('Are you sure you want to reset the admin menu layout to system defaults?')) {
+                return;
+            }
+
+            this.saving = true;
+            try {
+                const response = await fetch('{{ route("admin.menus.reorder") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ reset: true })
+                });
+
+                const data = await response.json();
+                this.saving = false;
+
+                if (response.ok) {
+                    this.showToast('success', data.message || 'Menu layout reset to default.');
+                    setTimeout(() => window.location.reload(), 800);
+                }
+            } catch (err) {
+                this.saving = false;
+                this.showToast('danger', 'Failed to reset menu order.');
+            }
+        },
+
+        showToast(type, message) {
+            this.toast.type = type;
+            this.toast.message = message;
+            this.toast.show = true;
+            setTimeout(() => { this.toast.show = false; }, 4000);
+        }
+    }
+}
+</script>
+@endpush
 @endsection

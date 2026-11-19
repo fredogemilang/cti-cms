@@ -49,7 +49,7 @@ class MenuItemSeeder extends Seeder
             ],
             [
                 'title' => 'User Management',
-                'icon' => 'users',
+                'icon' => 'group',
                 'route' => null,
                 'permission' => null,
                 'order' => 3,

@@ -18,11 +18,14 @@ class LogAuthEvents
             return;
         }
 
+        cookie()->queue('cms_logged_in', '1', 60 * 24 * 7, '/', null, null, false);
         $this->logger->log('user.login', $event->user, 'Signed in');
     }
 
     public function handleLogout(Logout $event): void
     {
+        cookie()->queue(cookie()->forget('cms_logged_in', '/', null));
+
         if (! $event->user instanceof User) {
             return;
         }

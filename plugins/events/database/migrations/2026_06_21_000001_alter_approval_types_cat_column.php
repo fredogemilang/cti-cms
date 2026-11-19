@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -10,6 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            Schema::table('approval_types', function (Blueprint $table) {
+                $table->string('cat', 50)->change();
+            });
+
+            return;
+        }
+
         DB::statement('ALTER TABLE approval_types MODIFY COLUMN cat VARCHAR(50) NOT NULL;');
     }
 

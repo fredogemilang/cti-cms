@@ -4,9 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') - {{ setting('site_name', config('app.name', 'CMS')) }} Admin</title>
+    <!-- Initialize theme before page renders to prevent flash & retain user selection -->
+    <script>
+        (function() {
+            function applyTheme() {
+                const theme = localStorage.getItem('theme');
+                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+            applyTheme();
+            document.addEventListener('livewire:navigated', applyTheme);
+        })();
+    </script>
+    <title>@yield('title', 'Dashboard') {{ setting('seo_title_separator', '-') }} {{ setting('site_name', config('app.name', 'CMS')) }} Admin</title>
     @if(setting('site_favicon'))
-        <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
+        <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
     @endif
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
@@ -64,9 +79,28 @@
             transition: opacity 0.2s ease-in-out, width 0.2s ease-in-out, margin 0.2s ease-in-out;
             white-space: nowrap;
             overflow: hidden;
+            text-overflow: ellipsis;
         }
         aside.collapsed {
             width: 96px !important;
+            overflow: visible !important;
+        }
+        aside.collapsed nav,
+        aside.collapsed .no-scrollbar {
+            overflow: visible !important;
+            overflow-y: visible !important;
+            overflow-x: visible !important;
+        }
+        aside.collapsed li {
+            position: relative;
+            overflow: visible !important;
+        }
+        aside.collapsed .nav-item {
+            position: relative;
+            overflow: visible !important;
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
         }
         aside.collapsed .sidebar-text {
             opacity: 0;
@@ -81,13 +115,65 @@
         aside.collapsed .expand-icon {
             display: none;
         }
-        aside.collapsed .nav-item {
-            justify-content: center;
-            padding-left: 0;
-            padding-right: 0;
-        }
         aside.collapsed .logo-container span:not(:first-child) {
             display: none;
+        }
+        /* Hide tooltips by default */
+        .sidebar-tooltip {
+            display: none !important;
+        }
+        aside.collapsed li.flyout-active .sidebar-tooltip {
+            display: none !important;
+        }
+        aside.collapsed .nav-item:hover .sidebar-tooltip {
+            display: flex !important;
+            align-items: center;
+            position: absolute;
+            left: calc(100% + 12px);
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 99;
+            white-space: nowrap;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+            pointer-events: none;
+            animation: tooltipFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        /* Light mode tooltip: Dark background, white text */
+        .sidebar-tooltip {
+            background-color: #0F172A;
+            color: #FFFFFF;
+        }
+        .sidebar-tooltip::before {
+            content: '';
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent #0F172A transparent transparent;
+        }
+        /* Dark mode tooltip: White background, dark text */
+        .dark .sidebar-tooltip {
+            background-color: #FFFFFF;
+            color: #111827;
+        }
+        .dark .sidebar-tooltip::before {
+            border-color: transparent #FFFFFF transparent transparent;
+        }
+        @keyframes tooltipFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50%) translateX(-4px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(-50%) translateX(0);
+            }
         }
         /* Admin gradient backgrounds */
         .admin-body {
@@ -132,6 +218,7 @@
     <div class="flex h-full" x-data="sidebarController()">
         <!-- Sidebar -->
         <aside 
+            wire:persist="admin-sidebar"
             :class="{ 'collapsed': sidebarCollapsed }"
             class="hidden w-[256px] flex-col bg-transparent md:flex shrink-0 border-r border-gray-200/50 dark:border-[#272B30]/50 relative transition-all duration-300"
             id="sidebar">
@@ -145,14 +232,30 @@
             </div>
 
             <!-- Navigation -->
-            <nav class="flex-1 overflow-y-auto px-4 no-scrollbar">
+            <nav 
+                wire:persist="sidebar-nav"
+                x-data="{
+                    saveScroll(e) {
+                        sessionStorage.setItem('sidebar-scroll-top', e.target.scrollTop);
+                    },
+                    restoreScroll() {
+                        const saved = sessionStorage.getItem('sidebar-scroll-top');
+                        if (saved !== null) {
+                            $el.scrollTop = parseInt(saved, 10);
+                        }
+                    }
+                }"
+                x-init="restoreScroll()"
+                x-on:scroll.debounce.100ms="saveScroll($event)"
+                x-on:livewire:navigated.window="restoreScroll()"
+                class="flex-1 overflow-y-auto px-4 no-scrollbar">
                 @include('components.admin.sidebar-new')
             </nav>
         </aside>
 
         <!-- Main Content -->
         <main 
-            class="flex-1 overflow-y-auto bg-transparent scroll-smooth relative no-scrollbar"
+            class="flex-1 flex flex-col min-h-0 @if(View::hasSection('hide-title') || View::hasSection('hide-header')) overflow-hidden @else overflow-y-auto @endif bg-transparent scroll-smooth relative no-scrollbar"
             x-data="{ scrolled: false }"
             @scroll="scrolled = $el.scrollTop > 20">
             
@@ -160,89 +263,121 @@
             <!-- Header -->
             <header 
                 :class="{ 'bg-white/80 dark:bg-[#0B0B0B]/80 backdrop-blur-md border-b border-gray-200/50 dark:border-[#272B30]/50 shadow-sm': scrolled, 'bg-transparent border-b border-transparent': !scrolled }"
-                class="sticky top-0 z-30 flex flex-col gap-6 md:flex-row md:items-center md:justify-between px-6 py-6 md:px-10 md:pt-8 md:pb-6 transition-all duration-300">
-                <div class="flex items-center gap-4">
+                class="sticky top-0 z-30 flex items-center justify-between px-6 py-4 md:px-10 md:py-5 transition-all duration-300 shrink-0">
+                <div class="flex items-center gap-4 flex-1 max-w-xl">
                     <button 
                         @click="toggleSidebar()"
-                        class="p-2 rounded-xl hover:bg-gray-200 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#111827] dark:text-[#FCFCFC] transition-colors focus:outline-none">
-                        <span class="material-symbols-outlined text-2xl" x-text="sidebarCollapsed ? 'menu' : 'menu_open'"></span>
+                        class="p-2 rounded-xl hover:bg-gray-200 dark:hover:bg-[#272B30] text-[#6F767E] hover:text-[#111827] dark:text-[#FCFCFC] dark:hover:text-white transition-colors focus:outline-none shrink-0">
+                        <span class="material-symbols-outlined text-3xl" x-text="sidebarCollapsed ? 'chevron_right' : 'chevron_left'"></span>
                     </button>
-                    <h1 class="text-4xl font-bold tracking-tight text-[#111827] dark:text-[#FCFCFC]">
-                        @yield('page-title', 'Dashboard')
-                    </h1>
+
+                    <!-- Global Search -->
+                    <livewire:admin.header.global-search />
                 </div>
-                <div class="flex items-center gap-6">
+
+                <div class="flex items-center gap-4">
                     @hasSection('header-actions')
                         @yield('header-actions')
-                    @else
-                        <!-- Global Search -->
-                        <livewire:admin.header.global-search />
+                    @endif
 
-                        <div class="flex items-center gap-4">
-                            <!-- Theme Toggle -->
-                            <button 
-                                x-data="{ 
-                                    darkMode: document.documentElement.classList.contains('dark'),
-                                    toggle() {
-                                        this.darkMode = !this.darkMode;
-                                        document.documentElement.classList.toggle('dark');
-                                        localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
+                    <div class="flex items-center gap-4">
+                        <!-- Theme Toggle -->
+                        <button 
+                            x-data="{ 
+                                darkMode: localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : document.documentElement.classList.contains('dark'),
+                                toggle() {
+                                    this.darkMode = !this.darkMode;
+                                    if (this.darkMode) {
+                                        document.documentElement.classList.add('dark');
+                                        localStorage.setItem('theme', 'dark');
+                                    } else {
+                                        document.documentElement.classList.remove('dark');
+                                        localStorage.setItem('theme', 'light');
                                     }
-                                }"
-                                @click="toggle()"
-                                class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#FCFCFC] transition-colors focus:outline-none">
-                                <span class="material-symbols-outlined text-[24px]" x-show="!darkMode" x-cloak>dark_mode</span>
-                                <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
-                            </button>
-                            <!-- Notifications -->
-                            <livewire:admin.header.notifications-dropdown />
+                                }
+                            }"
+                            @click="toggle()"
+                            class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#FCFCFC] transition-colors focus:outline-none"
+                            title="Toggle theme">
+                            <span class="material-symbols-outlined text-[24px]" x-show="!darkMode" x-cloak>dark_mode</span>
+                            <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
+                        </button>
+                        <!-- Notifications -->
+                        <livewire:admin.header.notifications-dropdown />
 
-                            <!-- User Avatar -->
-                            <div x-data="{ userMenuOpen: false }" class="relative">
-                                <div 
-                                    @click="userMenuOpen = !userMenuOpen"
-                                    class="h-12 w-12 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center cursor-pointer border-2 border-transparent hover:border-primary transition-all overflow-hidden">
-                                    @if(auth()->user()->avatar)
-                                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover">
-                                    @else
-                                        <span class="text-white font-bold">{{ substr(auth()->user()->name, 0, 2) }}</span>
-                                    @endif
+                        <!-- User Avatar -->
+                        <div x-data="{ userMenuOpen: false }" class="relative">
+                            <div 
+                                @click="userMenuOpen = !userMenuOpen"
+                                class="h-12 w-12 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center cursor-pointer border-2 border-transparent hover:border-primary transition-all overflow-hidden">
+                                @if(auth()->user()->avatar)
+                                    <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-cover">
+                                @else
+                                    <span class="text-white font-bold">{{ substr(auth()->user()->name, 0, 2) }}</span>
+                                @endif
+                            </div>
+                            <!-- Dropdown -->
+                            <div 
+                                x-show="userMenuOpen"
+                                @click.away="userMenuOpen = false"
+                                x-transition
+                                x-cloak
+                                class="absolute right-0 mt-2 w-56 bg-white dark:bg-[#1A1A1A] rounded-xl shadow-xl py-2 z-50 border border-gray-200 dark:border-[#272B30]">
+                                <div class="px-4 py-3 border-b border-gray-100 dark:border-[#272B30]">
+                                    <p class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ auth()->user()->name }}</p>
+                                    <p class="text-xs text-[#6F767E]">{{ auth()->user()->email }}</p>
                                 </div>
-                                <!-- Dropdown -->
-                                <div 
-                                    x-show="userMenuOpen"
-                                    @click.away="userMenuOpen = false"
-                                    x-transition
-                                    x-cloak
-                                    class="absolute right-0 mt-2 w-56 bg-white dark:bg-[#1A1A1A] rounded-xl shadow-xl py-2 z-50 border border-gray-200 dark:border-[#272B30]">
-                                    <div class="px-4 py-3 border-b border-gray-100 dark:border-[#272B30]">
-                                        <p class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ auth()->user()->name }}</p>
-                                        <p class="text-xs text-[#6F767E]">{{ auth()->user()->email }}</p>
-                                    </div>
-                                    <a wire:navigate href="{{ route('admin.profile.index') }}" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Profile</a>
-                                    {{-- Settings link aktif setelah Settings module landed --}}
-                                    @if(\Route::has('admin.settings.show'))
-                                        <a wire:navigate href="{{ route('admin.settings.show', 'general') }}" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Settings</a>
-                                    @endif
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition font-medium">
-                                            Logout
-                                        </button>
-                                    </form>
-                                </div>
+                                <a wire:navigate href="{{ route('admin.profile.index') }}" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Profile</a>
+                                {{-- Settings link aktif setelah Settings module landed --}}
+                                @if(\Route::has('admin.settings.show'))
+                                    <a wire:navigate href="{{ route('admin.settings.show', 'general') }}" class="block px-4 py-2 text-sm text-[#6F767E] hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition">Settings</a>
+                                @endif
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-50 dark:hover:bg-[#272B30]/50 transition font-medium">
+                                        Logout
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                    @endif
+                    </div>
                 </div>
             </header>
             @endif
 
             <!-- Page Content -->
-            <div class="@hasSection('hide-header') h-full @else px-6 pb-6 md:px-10 md:pb-10 @endif">
-                <!-- Alert Messages -->
-                <!-- Alert Messages Removed (Using Toasts) -->
+            <div class="flex-1 flex flex-col min-h-0 @hasSection('hide-header') h-full @elseif(View::hasSection('hide-title') && !View::hasSection('page-title')) h-full @else px-6 pb-6 md:px-10 md:pb-10 @endif">
+                <!-- Page Title & Subtitle Section -->
+                @sectionMissing('hide-title')
+                    <div class="pt-4">
+                        @hasSection('breadcrumb')
+                            @yield('breadcrumb')
+                        @else
+                            <x-admin.breadcrumb />
+                        @endif
+                    </div>
+                    @hasSection('page-title')
+                        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8 pt-2">
+                            <div>
+                                <h1 class="text-4xl font-bold tracking-tight text-[#111827] dark:text-[#FCFCFC]">
+                                    @yield('page-title')
+                                </h1>
+                                @hasSection('page-subtitle')
+                                    <p class="text-base font-normal text-[#6F767E] dark:text-[#9A9FA5] mt-1">
+                                        @yield('page-subtitle')
+                                    </p>
+                                @endif
+                            </div>
+                            @hasSection('page-actions')
+                                <div class="flex items-center gap-3">
+                                    @yield('page-actions')
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+                @endif
 
+                {{ $slot ?? '' }}
                 @yield('content')
             </div>
         </main>
@@ -269,35 +404,35 @@
             }
         }"
         @notify.window="handleNotify($event)"
-        class="fixed bottom-5 right-5 z-[90] flex flex-col gap-3 pointer-events-none"
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] flex flex-col items-center gap-3 pointer-events-none"
     >
         <template x-for="notification in notifications" :key="notification.id">
             <div 
                 x-transition:enter="transition ease-[cubic-bezier(0.16,1,0.3,1)] duration-500 transform"
-                x-transition:enter-start="translate-x-full opacity-0 scale-95"
-                x-transition:enter-end="translate-x-0 opacity-100 scale-100"
+                x-transition:enter-start="translate-y-6 opacity-0 scale-95"
+                x-transition:enter-end="translate-y-0 opacity-100 scale-100"
                 x-transition:leave="transition ease-[cubic-bezier(0.16,1,0.3,1)] duration-300 transform"
-                x-transition:leave-start="translate-x-0 opacity-100 scale-100"
-                x-transition:leave-end="translate-x-full opacity-0 scale-95"
-                class="flex items-center gap-3 bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-xl px-4 py-3 shadow-2xl min-w-[300px] pointer-events-auto"
+                x-transition:leave-start="translate-y-0 opacity-100 scale-100"
+                x-transition:leave-end="translate-y-6 opacity-0 scale-95"
+                class="flex items-center gap-3 rounded-xl px-4 py-3 shadow-2xl min-w-[300px] pointer-events-auto"
+                :class="{
+                    'bg-emerald-600 text-white': notification.type === 'success',
+                    'bg-red-600 text-white': notification.type === 'error',
+                    'bg-blue-600 text-white': notification.type === 'info'
+                }"
             >
                 <!-- Icon -->
                 <div 
-                    class="h-8 w-8 rounded-full flex items-center justify-center shrink-0"
-                    :class="{
-                        'bg-emerald-500/10 text-emerald-500': notification.type === 'success',
-                        'bg-red-500/10 text-red-500': notification.type === 'error',
-                        'bg-blue-500/10 text-blue-500': notification.type === 'info'
-                    }"
+                    class="h-8 w-8 rounded-full flex items-center justify-center shrink-0 bg-white/20"
                 >
-                    <span class="material-symbols-outlined text-xl" x-text="notification.type === 'success' ? 'check_circle' : (notification.type === 'error' ? 'error' : 'info')"></span>
+                    <span class="material-symbols-outlined text-xl text-white" x-text="notification.type === 'success' ? 'check_circle' : (notification.type === 'error' ? 'error' : 'info')"></span>
                 </div>
 
                 <!-- Message -->
-                <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]" x-text="notification.message"></span>
+                <span class="text-sm font-medium text-white" x-text="notification.message"></span>
 
                 <!-- Close Button -->
-                <button @click="remove(notification.id)" class="ml-auto text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-colors shrink-0">
+                <button @click="remove(notification.id)" class="ml-auto text-white/70 hover:text-white transition-colors shrink-0">
                     <span class="material-symbols-outlined text-lg">close</span>
                 </button>
             </div>

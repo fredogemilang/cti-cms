@@ -1,11 +1,53 @@
 import './bootstrap';
 
-import { Editor } from '@tiptap/core';
+import { Editor, Node } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import TextAlign from '@tiptap/extension-text-align';
 import OfficePaste from '@intevation/tiptap-extension-office-paste';
+import { Table, TableRow, TableCell, TableHeader } from '@tiptap/extension-table';
+
+const CustomButton = Node.create({
+    name: 'customButton',
+    group: 'inline',
+    inline: true,
+    selectable: true,
+    draggable: true,
+    atom: true,
+
+    addAttributes() {
+        return {
+            href: { default: '#' },
+            text: { default: 'Button' },
+            style: { default: 'btn-primary' },
+            download: { default: false },
+        };
+    },
+
+    parseHTML() {
+        return [
+            {
+                tag: 'a[data-type="custom-button"]',
+            },
+        ];
+    },
+
+    renderHTML({ HTMLAttributes }) {
+        const classes = ['btn', HTMLAttributes.style || 'btn-primary'];
+        const attrs = {
+            'data-type': 'custom-button',
+            href: HTMLAttributes.href || '#',
+            class: classes.join(' '),
+        };
+
+        if (HTMLAttributes.download) {
+            attrs.download = '';
+        }
+
+        return ['a', attrs, HTMLAttributes.text || 'Button'];
+    },
+});
 
 // Store editor instances outside Alpine's reactive scope
 window._tiptapEditors = window._tiptapEditors || {};
@@ -19,6 +61,24 @@ document.addEventListener('alpine:init', () => {
         let editorId = null;
         
         return {
+            // Real-time selection tracking tick for Alpine reactivity
+            selectionTick: 0,
+
+            // Link Modal State
+            showLinkModal: false,
+            linkUrl: '',
+            linkTargetBlank: false,
+            linkSelectedText: '',
+
+            // Button Creator State
+            showButtonCreator: false,
+            buttonText: '',
+            buttonUrl: '',
+            buttonStyle: 'btn-primary',
+            buttonDownload: false,
+            buttonLinkType: 'url',
+            mediaPickerPurpose: 'image',
+
             // Return editor via function to bypass Alpine proxy
             getEditor() {
                 return editorInstance;
@@ -40,7 +100,7 @@ document.addEventListener('alpine:init', () => {
                     element: this.$refs.editor,
                     extensions: [
                         StarterKit.configure({
-                            heading: { levels: [1, 2, 3] },
+                            heading: { levels: [2, 3, 4] },
                             link: {
                                 openOnClick: false,
                                 HTMLAttributes: { class: 'text-blue-500 hover:underline' },
@@ -49,6 +109,7 @@ document.addEventListener('alpine:init', () => {
                         Image.configure({
                             HTMLAttributes: { class: 'rounded-lg max-w-full h-auto' },
                         }),
+                        CustomButton,
                         Placeholder.configure({
                             placeholder: 'Start writing your story...',
                             emptyEditorClass: 'is-editor-empty',
@@ -56,6 +117,10 @@ document.addEventListener('alpine:init', () => {
                         TextAlign.configure({
                             types: ['heading', 'paragraph'],
                         }),
+                        Table.configure({ resizable: false }),
+                        TableRow,
+                        TableHeader,
+                        TableCell,
                         OfficePaste,
                     ],
                     editorProps: {
@@ -81,6 +146,10 @@ document.addEventListener('alpine:init', () => {
                         },
                     },
                     content: initialContent,
+                    onUpdate: () => {
+                        // Sync to Livewire on every content update
+                        this.$wire.set(modelName, editorInstance.getHTML(), false);
+                    },
                     onBlur: () => {
                         // Sync to Livewire on blur
                         this.$wire.set(modelName, editorInstance.getHTML());
@@ -88,15 +157,51 @@ document.addEventListener('alpine:init', () => {
                 });
 
                 window._tiptapEditors[editorId] = editorInstance;
+
+                // Track selection & transaction updates for real-time Alpine toolbar reactivity
+                editorInstance.on('selectionUpdate', () => {
+                    this.selectionTick++;
+                });
+                editorInstance.on('transaction', () => {
+                    this.selectionTick++;
+                });
+
+                // Sync from Livewire model changes (e.g. Docx upload, locale switch)
+                this.$watch('$wire.' + modelName, (value) => {
+                    if (editorInstance && value !== editorInstance.getHTML()) {
+                        editorInstance.commands.setContent(value || '', false);
+                    }
+                });
+
+                // Listen for locale switch to reload fresh content from Livewire
+                Livewire.on('tiptap-refresh-content', () => {
+                    setTimeout(() => {
+                        if (editorInstance) {
+                            const freshContent = this.$wire.get(modelName) || '';
+                            if (freshContent !== editorInstance.getHTML()) {
+                                editorInstance.commands.setContent(freshContent, false);
+                            }
+                        }
+                    }, 50);
+                });
                 
                 // Listen for media picker selection
                 Livewire.on('tiptap-media-selected', (data) => {
                     // Only process if this is the active editor
                     if (editorInstance && window.activeTiptapEditorId === editorId) {
-                        editorInstance.chain().focus().setImage({ 
-                            src: data.url, 
-                            alt: data.alt || '' 
-                        }).run();
+                        if (this.mediaPickerPurpose === 'button') {
+                            this.buttonUrl = data.url;
+                            if (! this.buttonText) {
+                                const parts = data.url.split('/');
+                                const filename = parts[parts.length - 1];
+                                this.buttonText = decodeURIComponent(filename);
+                            }
+                        } else {
+                            editorInstance.chain().focus().setImage({ 
+                                src: data.url, 
+                                alt: data.alt || '' 
+                            }).run();
+                        }
                     }
                 });
             },
@@ -108,11 +213,28 @@ document.addEventListener('alpine:init', () => {
             toggleItalic() {
                 if (editorInstance) editorInstance.chain().focus().toggleItalic().run();
             },
+            toggleUnderline() {
+                if (editorInstance) editorInstance.chain().focus().toggleUnderline().run();
+            },
             toggleStrike() {
                 if (editorInstance) editorInstance.chain().focus().toggleStrike().run();
             },
+            setParagraph() {
+                if (editorInstance) editorInstance.chain().focus().setParagraph().run();
+            },
             toggleHeading(level) {
                 if (editorInstance) editorInstance.chain().focus().toggleHeading({ level }).run();
+            },
+            setFormat(val) {
+                if (!editorInstance) return;
+                if (val === 'p') {
+                    editorInstance.chain().focus().setParagraph().run();
+                } else {
+                    const level = parseInt(val.replace('h', ''), 10);
+                    if ([2, 3, 4].includes(level)) {
+                        editorInstance.chain().focus().toggleHeading({ level }).run();
+                    }
+                }
             },
             toggleBulletList() {
                 if (editorInstance) editorInstance.chain().focus().toggleBulletList().run();
@@ -129,23 +251,87 @@ document.addEventListener('alpine:init', () => {
             setHorizontalRule() {
                 if (editorInstance) editorInstance.chain().focus().setHorizontalRule().run();
             },
-            setLink() {
-                const previousUrl = editorInstance.getAttributes('link').href;
-                const url = window.prompt('URL', previousUrl);
-                
-                // cancelled
-                if (url === null) {
-                    return;
-                }
-                
-                // empty
-                if (url === '') {
+            // Table commands
+            insertTable() {
+                if (editorInstance) editorInstance.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+            },
+            addRowAfter() {
+                if (editorInstance) editorInstance.chain().focus().addRowAfter().run();
+            },
+            addColumnAfter() {
+                if (editorInstance) editorInstance.chain().focus().addColumnAfter().run();
+            },
+            deleteRow() {
+                if (editorInstance) editorInstance.chain().focus().deleteRow().run();
+            },
+            deleteColumn() {
+                if (editorInstance) editorInstance.chain().focus().deleteColumn().run();
+            },
+            toggleHeaderRow() {
+                if (editorInstance) editorInstance.chain().focus().toggleHeaderRow().run();
+            },
+            mergeOrSplitCells() {
+                if (editorInstance) editorInstance.chain().focus().mergeOrSplit().run();
+            },
+            deleteTable() {
+                if (editorInstance) editorInstance.chain().focus().deleteTable().run();
+            },
+            openLinkModal() {
+                if (!editorInstance) return;
+                const { from, to } = editorInstance.state.selection;
+                const selectedText = editorInstance.state.doc.textBetween(from, to, ' ');
+                this.linkSelectedText = selectedText ? selectedText.trim() : '';
+
+                const attrs = editorInstance.getAttributes('link');
+                this.linkUrl = attrs.href || '';
+                this.linkTargetBlank = attrs.target === '_blank';
+                this.showLinkModal = true;
+                this.$nextTick(() => {
+                    if (this.$refs.linkUrlInput) {
+                        this.$refs.linkUrlInput.focus();
+                    }
+                });
+            },
+            saveLink() {
+                if (!editorInstance) return;
+                const url = (this.linkUrl || '').trim();
+                const text = (this.linkSelectedText || '').trim();
+
+                if (!url) {
                     editorInstance.chain().focus().extendMarkRange('link').unsetLink().run();
-                    return;
+                } else {
+                    const attrs = { href: url };
+                    if (this.linkTargetBlank) {
+                        attrs.target = '_blank';
+                        attrs.rel = 'noopener noreferrer';
+                    } else {
+                        attrs.target = null;
+                        attrs.rel = null;
+                    }
+
+                    const { from, to } = editorInstance.state.selection;
+                    const currentSelectedText = editorInstance.state.doc.textBetween(from, to, ' ').trim();
+
+                    if (text && (from === to || text !== currentSelectedText)) {
+                        editorInstance.chain().focus().insertContent({
+                            type: 'text',
+                            text: text,
+                            marks: [{ type: 'link', attrs: attrs }]
+                        }).run();
+                    } else {
+                        editorInstance.chain().focus().extendMarkRange('link').setLink(attrs).run();
+                    }
                 }
-                
-                // update
-                editorInstance.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+                this.showLinkModal = false;
+            },
+            removeLink() {
+                if (editorInstance) {
+                    editorInstance.chain().focus().extendMarkRange('link').unsetLink().run();
+                }
+                this.showLinkModal = false;
+            },
+            setLink() {
+                this.openLinkModal();
             },
             unsetLink() {
                 if (editorInstance) editorInstance.chain().focus().unsetLink().run();
@@ -158,8 +344,39 @@ document.addEventListener('alpine:init', () => {
                 }
             },
             openMediaPicker() {
+                this.mediaPickerPurpose = 'image';
                 window.activeTiptapEditorId = editorId;
                 Livewire.dispatch('openTiptapMediaPicker');
+            },
+            openButtonCreator() {
+                this.buttonText = '';
+                this.buttonUrl = '';
+                this.buttonStyle = 'btn-primary';
+                this.buttonDownload = false;
+                this.buttonLinkType = 'url';
+                this.showButtonCreator = true;
+            },
+            openButtonMediaPicker() {
+                this.mediaPickerPurpose = 'button';
+                window.activeTiptapEditorId = editorId;
+                Livewire.dispatch('openTiptapMediaPicker');
+            },
+            insertButton() {
+                if (! this.buttonUrl) {
+                    alert('Please enter a target URL or select a file.');
+                    return;
+                }
+                const text = this.buttonText || 'Button';
+                editorInstance.chain().focus().insertContent({
+                    type: 'customButton',
+                    attrs: {
+                        href: this.buttonUrl,
+                        text: text,
+                        style: this.buttonStyle,
+                        download: this.buttonDownload,
+                    }
+                }).run();
+                this.showButtonCreator = false;
             },
             // Insert image from Media Library (called via Livewire event)
             insertMediaImage(url, alt) {
@@ -180,6 +397,8 @@ document.addEventListener('alpine:init', () => {
                 if (editorInstance) editorInstance.chain().focus().unsetAllMarks().clearNodes().run();
             },
             isActive(name, attrs = {}) {
+                // Access selectionTick so Alpine registers this function call in its dependency graph
+                const _tick = this.selectionTick;
                 return editorInstance ? editorInstance.isActive(name, attrs) : false;
             },
 

@@ -53,16 +53,20 @@ class GenerateImageVariants implements ShouldQueue
         $srcW = imagesx($source);
         $srcH = imagesy($source);
 
-        $jpgQ = (int) (setting('img_jpg_quality', 85));
-        $webpQ = (int) (setting('img_webp_quality', 80));
+        $jpgQ = (int) (setting('img_jpg_quality', 80));
+        $webpQ = (int) (setting('img_webp_quality', 75));
         $emitWebp = (bool) setting('img_auto_webp', true);
+
+        if (! function_exists('imagewebp')) {
+            $emitWebp = false;
+        }
 
         // Pick encoder + extension based on the source mime so PNG keeps alpha
         // and bytes match the filename suffix (otherwise CDNs/browsers serve
         // the wrong Content-Type and transparency is silently lost).
         [$encoder, $variantExt] = match ($media->mime_type) {
             'image/png' => ['png',  'png'],
-            'image/webp' => ['webp', 'webp'],
+            'image/webp' => function_exists('imagewebp') ? ['webp', 'webp'] : ['png', 'png'],
             default => ['jpeg', 'jpg'],
         };
 
@@ -98,7 +102,20 @@ class GenerateImageVariants implements ShouldQueue
             // double-encoding when the source is already WebP).
             if ($emitWebp && $encoder !== 'webp') {
                 $webpRel = "{$dir}/{$base}-{$label}.webp";
-                imagewebp($thumb, $disk->path($webpRel), $webpQ);
+                // Preserve alpha channel for PNG sources: fill with transparent,
+                // then re-copy the source so the WebP encoder sees alpha data.
+                if ($encoder === 'png') {
+                    $wThumb = imagecreatetruecolor($targetW, $targetH);
+                    imagealphablending($wThumb, false);
+                    imagesavealpha($wThumb, true);
+                    $transparent = imagecolorallocatealpha($wThumb, 0, 0, 0, 127);
+                    imagefilledrectangle($wThumb, 0, 0, $targetW, $targetH, $transparent);
+                    imagecopyresampled($wThumb, $source, 0, 0, 0, 0, $targetW, $targetH, $srcW, $srcH);
+                    imagewebp($wThumb, $disk->path($webpRel), $webpQ);
+                    imagedestroy($wThumb);
+                } else {
+                    imagewebp($thumb, $disk->path($webpRel), $webpQ);
+                }
                 $variant['webp'] = $webpRel;
             }
 
@@ -124,11 +141,20 @@ class GenerateImageVariants implements ShouldQueue
 
     protected function createImageFrom(string $path, string $mime)
     {
-        return match ($mime) {
+        $img = match ($mime) {
             'image/jpeg', 'image/jpg' => @imagecreatefromjpeg($path),
             'image/png' => @imagecreatefrompng($path),
+            'image/gif' => @imagecreatefromgif($path),
             'image/webp' => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($path) : null,
             default => null,
         };
+
+        if ($img && in_array($mime, ['image/png', 'image/gif', 'image/webp'])) {
+            imagepalettetotruecolor($img);
+            imagealphablending($img, false);
+            imagesavealpha($img, true);
+        }
+
+        return $img;
     }
 }

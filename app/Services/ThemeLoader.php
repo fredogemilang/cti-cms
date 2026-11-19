@@ -11,6 +11,9 @@ class ThemeLoader
 {
     protected ?Theme $activeTheme = null;
 
+    /** @var array<string, true> Theme namespaces that already have an autoloader */
+    protected static array $autoloadedThemes = [];
+
     public function boot(): void
     {
         try {
@@ -33,10 +36,39 @@ class ThemeLoader
             // Share theme data with all views
             $this->shareThemeData($this->activeTheme);
 
+            // Register theme custom field types for form builder
+            $this->registerCustomFieldTypes($this->activeTheme);
+
+            // Boot theme service provider (if exists)
+            $this->bootThemeServiceProvider($this->activeTheme);
+
         } catch (\Exception $e) {
             // Log error but don't crash the app if something goes wrong with theme loading
             Log::error('Failed to load theme: '.$e->getMessage());
         }
+    }
+
+    /**
+     * Register custom form field types defined in the active theme's theme.json.
+     * These types appear in the form studio "Add Field" modal and are removed
+     * when the theme is deactivated (WordPress functions.php pattern).
+     */
+    protected function registerCustomFieldTypes(Theme $theme): void
+    {
+        $themeJsonPath = base_path("themes/{$theme->slug}/theme.json");
+
+        if (! file_exists($themeJsonPath)) {
+            return;
+        }
+
+        $config = json_decode(file_get_contents($themeJsonPath), true);
+
+        if (! $config || empty($config['custom_field_types'])) {
+            return;
+        }
+
+        // Register into the app container so FormField can merge them
+        app()->instance('theme_custom_field_types', $config['custom_field_types']);
     }
 
     /**
@@ -60,15 +92,28 @@ class ThemeLoader
         // Prepend theme path to the beginning
         array_unshift($paths, $themePath);
         $finder->setPaths($paths);
+        config(['view.paths' => $paths]);
 
         // Register theme namespace for direct access (e.g., themes::default.layouts.main)
         View::addNamespace('themes', base_path('themes'));
 
         // Register namespace matching the active theme's slug
-        // so @extends('iccom::layouts.app') resolves dynamically
+        // so @extends('{slug}::layouts.app') resolves dynamically
         View::addNamespace($theme->slug, $themePath);
 
-        Log::info("Theme views registered: {$themePath}");
+        // Prepend theme errors directory to 'errors' view namespace
+        if (is_dir("{$themePath}/errors")) {
+            View::prependNamespace('errors', "{$themePath}/errors");
+        }
+
+        // Register every installed theme as a view namespace fallback
+        // (e.g. '{slug}::partials.x' keeps working for non-active themes).
+        foreach (glob(base_path('themes/*/views'), GLOB_ONLYDIR) ?: [] as $fallbackPath) {
+            $fallbackSlug = basename(dirname($fallbackPath));
+            if ($fallbackSlug !== $theme->slug) {
+                View::addNamespace($fallbackSlug, $fallbackPath);
+            }
+        }
     }
 
     /**
@@ -118,6 +163,18 @@ class ThemeLoader
     }
 
     /**
+     * Set the currently active theme at runtime.
+     */
+    public function setActiveTheme(Theme $theme): void
+    {
+        $this->activeTheme = $theme;
+        $this->registerViewPaths($theme);
+        $this->shareThemeData($theme);
+        $this->registerCustomFieldTypes($theme);
+        $this->bootThemeServiceProvider($theme);
+    }
+
+    /**
      * Get theme asset path.
      */
     public function getAssetPath(string $path): string
@@ -127,5 +184,78 @@ class ThemeLoader
         }
 
         return "themes/{$this->activeTheme->slug}/assets/{$path}";
+    }
+
+    /**
+     * Boot the active theme's service provider if it exists.
+     * Convention: themes/{slug}/{StudlySlug}ThemeServiceProvider.php
+     *
+     * Theme classes (controllers, services, ...) live in themes/{slug}/src/
+     * under the Themes\{StudlySlug}\ namespace and are autoloaded at runtime,
+     * so no per-site composer.json entry is needed.
+     */
+    protected function bootThemeServiceProvider(Theme $theme): void
+    {
+        $slug = $theme->slug;
+        $studly = str_replace(' ', '', ucwords(str_replace('-', ' ', $slug)));
+
+        $this->registerThemeAutoloader($slug, $studly);
+
+        $file = base_path("themes/{$slug}/{$studly}ThemeServiceProvider.php");
+
+        if (! file_exists($file)) {
+            return;
+        }
+
+        require_once $file;
+
+        // Try studly case first, then exact slug case
+        $class = "Themes\\{$studly}\\{$studly}ThemeServiceProvider";
+        if (! class_exists($class)) {
+            $class = "Themes\\{$slug}\\{$studly}ThemeServiceProvider";
+        }
+        if (! class_exists($class)) {
+            Log::warning("Theme service provider class not found for: {$slug}");
+
+            return;
+        }
+
+        $provider = new $class(app());
+
+        if (method_exists($provider, 'register')) {
+            $provider->register();
+        }
+
+        if (method_exists($provider, 'boot')) {
+            app()->call([$provider, 'boot']);
+        }
+    }
+
+    /**
+     * Map Themes\{StudlySlug}\Foo\Bar to themes/{slug}/src/Foo/Bar.php.
+     */
+    protected function registerThemeAutoloader(string $slug, string $studly): void
+    {
+        $srcPath = base_path("themes/{$slug}/src");
+
+        if (isset(static::$autoloadedThemes[$studly]) || ! is_dir($srcPath)) {
+            return;
+        }
+
+        static::$autoloadedThemes[$studly] = true;
+        $prefix = "Themes\\{$studly}\\";
+
+        spl_autoload_register(function (string $class) use ($prefix, $srcPath): void {
+            if (! str_starts_with($class, $prefix)) {
+                return;
+            }
+
+            $relative = str_replace('\\', DIRECTORY_SEPARATOR, substr($class, strlen($prefix)));
+            $file = $srcPath.DIRECTORY_SEPARATOR.$relative.'.php';
+
+            if (is_file($file)) {
+                require_once $file;
+            }
+        });
     }
 }

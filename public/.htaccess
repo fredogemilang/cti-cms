@@ -1,4 +1,15 @@
 # ==========================================
+# LiteSpeed Web Server Cache Module
+# ==========================================
+<IfModule LiteSpeed>
+    CacheLookup on
+    RewriteEngine On
+    # Bypass LiteSpeed cache for logged-in users / admins (ensures Admin Bar renders)
+    RewriteCond %{HTTP_COOKIE} cms_logged_in [NC]
+    RewriteRule .* - [E=Cache-Control:no-cache]
+</IfModule>
+
+# ==========================================
 # Browser Caching (mod_expires)
 # ==========================================
 <IfModule mod_expires.c>
@@ -39,12 +50,9 @@
         Header set Cache-Control "public, max-age=2592000, immutable"
     </FilesMatch>
 
-    # HTML: no cache
-    <FilesMatch "\.(html|php)$">
-        Header set Cache-Control "no-cache, no-store, must-revalidate"
-        Header set Pragma "no-cache"
-        Header set Expires 0
-    </FilesMatch>
+    # HTML Cache-Control is managed in PHP (SecurityHeaders middleware):
+    # public pages get `no-cache` (bfcache + revalidation), admin gets `no-store`.
+    # Keeping it out of mod_headers avoids a header race with the app layer.
 </IfModule>
 
 # ==========================================
@@ -90,10 +98,24 @@ FileETag None
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # Redirect Trailing Slashes If Not A Folder...
+    # ==========================================
+    # Site-specific canonical host / legacy redirect maps go HERE,
+    # BEFORE the trailing slash block (project branches only).
+    # ==========================================
+
+    # ==========================================
+    # Add trailing slash (inverse of Laravel default).
+    # Must match trailing_slash_url() in app/helpers.php.
+    # ==========================================
+    # GET & HEAD only so POST/AJAX/Livewire are never redirected
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
+    RewriteCond %{REQUEST_URI} !^/(ctrlpanel|api|livewire|_deferred|storage|build|themes|vendor|wp-content)
+    RewriteCond %{REQUEST_URI} !^/(feed|search|lang/|forms/|indexnow-)
+    RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]{1,6}$
+    RewriteCond %{REQUEST_URI} !/$
+    RewriteRule ^(.*)$ /$1/ [R=301,L]
 
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d

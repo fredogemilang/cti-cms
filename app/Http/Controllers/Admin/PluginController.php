@@ -23,6 +23,8 @@ class PluginController extends Controller
      */
     public function index()
     {
+        $this->pluginManager->discoverPlugins();
+
         $plugins = Plugin::orderBy('name')->get();
 
         // Pre-compute reverse-dependency map for the confirmation modal

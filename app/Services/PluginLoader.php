@@ -33,7 +33,6 @@ class PluginLoader
                 // Check if src exists, otherwise map to root
                 $sourcePath = file_exists($pluginPath.'/src') ? $pluginPath.'/src' : $pluginPath;
 
-                Log::info("Registering plugin namespace: {$namespace} -> {$sourcePath}");
                 $loader->addPsr4($namespace, $sourcePath);
 
                 // Register Provider

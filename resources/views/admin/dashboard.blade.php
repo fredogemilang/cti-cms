@@ -2,6 +2,7 @@
 
 @section('title', 'Dashboard')
 @section('page-title', 'Dashboard')
+@section('page-subtitle', 'Overview & summary of your site')
 
 @section('content')
 <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">

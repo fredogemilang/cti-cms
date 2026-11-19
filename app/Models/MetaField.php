@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Validation\ValidationException;
 
 class MetaField extends Model
 {
@@ -22,6 +23,7 @@ class MetaField extends Model
         'field_group',
         'conditional_logic',
         'is_active',
+        'advanced_settings',
     ];
 
     protected $casts = [
@@ -32,6 +34,31 @@ class MetaField extends Model
         'conditional_logic' => 'array',
         'is_active' => 'boolean',
     ];
+
+    /**
+     * Boot method to normalize repeater fields key in options JSON column.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($metaField) {
+            $options = $metaField->options;
+            if (is_array($options)) {
+                // If field type is repeater, strictly require 'repeater_fields' and reject any other key (e.g. sub_fields, anak_fields, etc)
+                if ($metaField->type === 'repeater') {
+                    $validKeys = ['repeater_fields', 'conditional_logic', 'options_list', 'min', 'max', 'button_label'];
+                    foreach (array_keys($options) as $key) {
+                        if (! in_array($key, $validKeys)) {
+                            throw ValidationException::withMessages([
+                                'options' => ["Invalid repeater options key '{$key}'. Repeater sub-fields must be defined under 'repeater_fields'."],
+                            ]);
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     /**
      * Available field types
@@ -121,6 +148,16 @@ class MetaField extends Model
             'label' => 'Color',
             'icon' => 'palette',
             'description' => 'Color picker',
+        ],
+        'relationship' => [
+            'label' => 'Relationship',
+            'icon' => 'alt_route',
+            'description' => 'Relate entries from another or same Custom Post Type',
+        ],
+        'icon' => [
+            'label' => 'Icon Picker',
+            'icon' => 'category',
+            'description' => 'Select an icon from active libraries (Lucide Icons, Custom)',
         ],
     ];
 

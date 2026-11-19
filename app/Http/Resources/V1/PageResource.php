@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V1;
 
+use App\Services\SeoRenderer;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PageResource extends JsonResource
@@ -19,7 +20,7 @@ class PageResource extends JsonResource
             'published_at' => $this->published_at?->toAtomString(),
             'updated_at' => $this->updated_at?->toAtomString(),
             'url' => method_exists($this->resource, 'getUrl') ? $this->getUrl() : null,
-            'seo' => $this->seo,
+            'seo' => app(SeoRenderer::class)->resolve($this->resource),
             'blocks' => $this->whenLoaded('blocks', fn () => $this->blocks->map(fn ($b) => [
                 'name' => $b->name, 'value' => $b->value, 'order' => $b->order,
             ])),

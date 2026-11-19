@@ -19,14 +19,27 @@ trait FindsByLocalizedSlug
     public static function findByLocalizedSlug(string $slug): ?self
     {
         $base = static::baseLocalizedSlugQuery();
+        $currentLocale = app()->getLocale();
+        $defaultLocale = static::defaultLocale();
 
+        // 1. If currently in a non-default locale, check that locale's translated slug first
+        if ($currentLocale !== $defaultLocale) {
+            $row = (clone $base)
+                ->whereRaw('JSON_EXTRACT(translations, ?) = ?', ["$.\"{$currentLocale}\".slug", $slug])
+                ->first();
+            if ($row) {
+                return $row;
+            }
+        }
+
+        // 2. Check primary slug column (default locale)
         $row = (clone $base)->where('slug', $slug)->first();
         if ($row) {
             return $row;
         }
 
-        $defaultLocale = static::defaultLocale();
-        $locales = array_filter(available_locales(), fn ($l) => $l !== $defaultLocale);
+        // 3. Scan remaining locales
+        $locales = array_filter(available_locales(), fn ($l) => $l !== $defaultLocale && $l !== $currentLocale);
 
         foreach ($locales as $locale) {
             $row = (clone $base)

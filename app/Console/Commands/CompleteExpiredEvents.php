@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 
 class CompleteExpiredEvents extends Command
 {
@@ -28,7 +29,7 @@ class CompleteExpiredEvents extends Command
     {
         $eventClass = 'Plugins\\Events\\Models\\Event';
 
-        if (! class_exists($eventClass)) {
+        if (! class_exists($eventClass) || ! Schema::hasTable('events')) {
             $this->warn('Events plugin is not installed — skipping.');
 
             return self::SUCCESS;

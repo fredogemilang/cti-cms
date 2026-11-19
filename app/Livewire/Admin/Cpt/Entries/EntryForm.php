@@ -3,13 +3,20 @@
 namespace App\Livewire\Admin\Cpt\Entries;
 
 use App\Models\CptEntry;
+use App\Models\CptEntryRelationship;
+use App\Models\CptEntryRevision;
 use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
+use App\Models\MetaField;
 use App\Models\TaxonomyTerm;
+use App\Services\ContentLockService;
+use App\Services\EditorialWorkflowService;
+use App\Support\Filter;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -21,7 +28,21 @@ class EntryForm extends Component
 
     public ?int $entryId = null;
 
+    public ?CptEntry $entry = null;
+
     public bool $isEdit = false;
+
+    public bool $canApprove = false;
+
+    public array $allowedStatuses = [];
+
+    public bool $showChangeRequestModal = false;
+
+    public string $changeRequestNote = '';
+
+    public ?array $activeLock = null;
+
+    public bool $showRevisionsModal = false;
 
     // Core Fields
     public string $title = '';
@@ -53,8 +74,99 @@ class EntryForm extends Component
     // UI State
     public bool $showMediaPicker = false;
 
+    // Relationship Modal Picker UI State
+    public bool $showRelationshipModal = false;
+
+    public ?int $activeRelationshipFieldId = null;
+
+    public string $relationshipSearch = '';
+
+    public array $tempSelectedRelationshipIds = [];
+
+    public function openRelationshipModal(int $fieldId)
+    {
+        /** @var MetaField|null $field */
+        $field = $this->postType->metaFields->where('id', $fieldId)->first();
+        if (! $field) {
+            return;
+        }
+
+        $this->activeRelationshipFieldId = $fieldId;
+        $this->relationshipSearch = '';
+        $val = $this->meta[$field->name] ?? [];
+        $this->tempSelectedRelationshipIds = is_array($val)
+            ? array_values(array_map('intval', array_filter($val, fn ($v) => $v !== '')))
+            : array_filter([(int) $val]);
+        $this->showRelationshipModal = true;
+    }
+
+    public function closeRelationshipModal()
+    {
+        $this->showRelationshipModal = false;
+        $this->activeRelationshipFieldId = null;
+        $this->relationshipSearch = '';
+        $this->tempSelectedRelationshipIds = [];
+    }
+
+    public function toggleRelationshipTempSelection(int $entryId)
+    {
+        /** @var MetaField|null $field */
+        $field = $this->postType->metaFields->where('id', $this->activeRelationshipFieldId)->first();
+        if (! $field) {
+            return;
+        }
+
+        $cardinality = $field->options['cardinality'] ?? 'many_to_many';
+        if ($cardinality === 'one_to_many') {
+            $this->tempSelectedRelationshipIds = [$entryId];
+        } else {
+            if (in_array($entryId, $this->tempSelectedRelationshipIds, true)) {
+                $this->tempSelectedRelationshipIds = array_values(
+                    array_filter($this->tempSelectedRelationshipIds, fn ($id) => $id !== $entryId)
+                );
+            } else {
+                $this->tempSelectedRelationshipIds[] = $entryId;
+            }
+        }
+    }
+
+    public function confirmRelationshipSelection()
+    {
+        /** @var MetaField|null $field */
+        $field = $this->postType->metaFields->where('id', $this->activeRelationshipFieldId)->first();
+        if ($field) {
+            $cardinality = $field->options['cardinality'] ?? 'many_to_many';
+            if ($cardinality === 'one_to_many') {
+                $this->meta[$field->name] = ! empty($this->tempSelectedRelationshipIds) ? (string) $this->tempSelectedRelationshipIds[0] : '';
+            } else {
+                $this->meta[$field->name] = array_map('strval', $this->tempSelectedRelationshipIds);
+            }
+        }
+
+        $this->closeRelationshipModal();
+    }
+
+    public function removeRelationshipItem(string $fieldName, int $entryId)
+    {
+        if (isset($this->meta[$fieldName])) {
+            if (is_array($this->meta[$fieldName])) {
+                $this->meta[$fieldName] = array_values(
+                    array_filter($this->meta[$fieldName], fn ($id) => (int) $id !== $entryId)
+                );
+            } else {
+                if ((int) $this->meta[$fieldName] === $entryId) {
+                    $this->meta[$fieldName] = '';
+                }
+            }
+        }
+    }
+
     // === Translations state ===
+    #[Url(as: 'lang', keep: true)]
     public string $editingLocale = '';
+
+    #[Url(as: 'tab', keep: true)]
+    public string $activeTab = '';
 
     /** Per-locale snapshots of translatable form fields: {locale: {title, slug, content, excerpt}} */
     public array $localizedSnapshots = [];
@@ -70,7 +182,7 @@ class EntryForm extends Component
             'slug' => $isDefaultLocale ? 'required|string|max:255' : 'nullable|string|max:255',
             'content' => 'nullable|string',
             'excerpt' => 'nullable|string|max:500',
-            'status' => 'required|in:draft,published,scheduled,archived',
+            'status' => 'required|in:draft,pending,pending_review,published,scheduled,archived',
             'publishedAt' => 'nullable|date',
             'parentId' => 'nullable|integer|exists:cpt_entries,id',
             'menuOrder' => 'integer|min:0',
@@ -97,9 +209,10 @@ class EntryForm extends Component
                     $fieldRules[] = 'numeric';
                     break;
                 case 'repeater':
-                    if (isset($field->options['repeater_fields'])) {
-                        foreach ($field->options['repeater_fields'] as $subField) {
-                            $subFieldId = $subField['id'] ?? Str::snake($subField['label'] ?? '');
+                    $subFields = $field->options['repeater_fields'] ?? [];
+                    if (! empty($subFields)) {
+                        foreach ($subFields as $subField) {
+                            $subFieldId = $subField['name'] ?? $subField['id'] ?? Str::snake($subField['label'] ?? '');
                             if (! empty($subFieldId) && ! empty($subField['is_required'])) {
                                 $rules['meta.'.$field->name.'.*.'.$subFieldId] = 'required';
                             }
@@ -120,6 +233,10 @@ class EntryForm extends Component
         $this->postType = $postType;
         $this->availableLocales = available_locales();
         $this->editingLocale = CptEntry::defaultLocale();
+
+        $workflow = app(EditorialWorkflowService::class);
+        $this->canApprove = $workflow->canApprove();
+        $this->allowedStatuses = $workflow->allowedStatuses();
 
         // Initialize meta fields with defaults
         foreach ($postType->metaFields as $field) {
@@ -157,10 +274,16 @@ class EntryForm extends Component
             }
         }
 
+        $requestedLocale = request()->query('lang');
         if ($id) {
             $this->entryId = $id;
             $this->isEdit = true;
             $this->loadEntry();
+
+            if ($requestedLocale && in_array($requestedLocale, $this->availableLocales, true) && $requestedLocale !== CptEntry::defaultLocale()) {
+                $this->switchLocale($requestedLocale);
+            }
+            $this->refreshLock();
         }
     }
 
@@ -168,12 +291,14 @@ class EntryForm extends Component
     {
         // Find the field definition
         $field = $this->postType->metaFields->where('name', $fieldName)->first();
+        $options = is_array($field?->getAttribute('options')) ? $field->getAttribute('options') : [];
+        $subFields = $options['repeater_fields'] ?? [];
 
-        if ($field && $field->type === 'repeater' && isset($field->options['repeater_fields'])) {
+        if ($field && $field->type === 'repeater' && ! empty($subFields)) {
             $newRow = [];
-            foreach ($field->options['repeater_fields'] as $subField) {
+            foreach ($subFields as $subField) {
                 // Initialize based on sub-field type
-                $rowKey = $subField['id'] ?? Str::snake($subField['label'] ?? 'field_'.$loop->index);
+                $rowKey = $subField['name'] ?? $subField['id'] ?? Str::snake($subField['label'] ?? 'field_'.$loop->index);
 
                 // Determine default value
                 $defaultValue = '';
@@ -207,23 +332,38 @@ class EntryForm extends Component
     }
 
     #[On('media-selected')]
-    public function onMediaSelected($field, $mediaId, $mediaPath, $mediaUrl)
+    public function onMediaSelected($field, $mediaId = null, $mediaPath = null, $mediaUrl = null)
     {
         if ($field === 'featured_image') {
             $this->featuredImage = $mediaPath;
-        }
-        // Handle Meta Fields
-        elseif (str_starts_with($field, 'meta.')) {
+        } elseif (str_starts_with($field, 'meta.')) {
+            $cleanPath = substr($field, 5);
             $fieldName = str_replace('meta.', '', $field);
             $this->meta[$fieldName] = $mediaPath;
-        }
-        // Handle Gallery Addition
-        elseif (str_starts_with($field, 'gallery_add.')) {
+            data_set($this->meta, $cleanPath, $mediaPath);
+        } elseif (str_starts_with($field, 'gallery_add.')) {
             $fieldName = str_replace('gallery_add.', '', $field);
             if (! isset($this->meta[$fieldName])) {
                 $this->meta[$fieldName] = [];
             }
             $this->meta[$fieldName][] = $mediaPath;
+        }
+    }
+
+    #[On('media-selected-multiple')]
+    public function onMediaSelectedMultiple($field, array $mediaPaths)
+    {
+        if (str_starts_with($field, 'gallery_add.')) {
+            $fieldName = str_replace('gallery_add.', '', $field);
+            if (! isset($this->meta[$fieldName]) || ! is_array($this->meta[$fieldName])) {
+                $this->meta[$fieldName] = [];
+            }
+            foreach ($mediaPaths as $path) {
+                if (! in_array($path, $this->meta[$fieldName], true)) {
+                    $this->meta[$fieldName][] = $path;
+                }
+            }
+            $this->meta[$fieldName] = array_values($this->meta[$fieldName]);
         }
     }
 
@@ -251,6 +391,7 @@ class EntryForm extends Component
     protected function loadEntry()
     {
         $entry = CptEntry::with('terms')->findOrFail($this->entryId);
+        $this->entry = $entry;
 
         $this->title = $entry->title;
         $this->slug = $entry->slug;
@@ -262,10 +403,39 @@ class EntryForm extends Component
         $this->parentId = $entry->parent_id;
         $this->menuOrder = $entry->menu_order;
 
-        // Load meta values
+        // Load meta values and normalize repeater subfield keys
         if ($entry->meta) {
             foreach ($entry->meta as $key => $value) {
-                $this->meta[$key] = $value;
+                $metaField = $this->postType->metaFields->where('name', $key)->first();
+                if ($metaField && $metaField->type === 'repeater' && is_array($value)) {
+                    $subFields = $metaField->options['repeater_fields'] ?? [];
+                    $normalizedRows = [];
+                    foreach ($value as $row) {
+                        if (! is_array($row)) {
+                            $normalizedRows[] = $row;
+
+                            continue;
+                        }
+                        $normalizedRow = $row;
+                        foreach ($subFields as $loopIdx => $subField) {
+                            $targetKey = $subField['name'] ?? $subField['id'] ?? Str::snake($subField['label'] ?? 'field_'.$loopIdx);
+                            $camelKey = Str::camel($targetKey);
+                            $snakeKey = Str::snake($targetKey);
+
+                            if (! isset($normalizedRow[$targetKey])) {
+                                if (isset($normalizedRow[$camelKey])) {
+                                    $normalizedRow[$targetKey] = $normalizedRow[$camelKey];
+                                } elseif (isset($normalizedRow[$snakeKey])) {
+                                    $normalizedRow[$targetKey] = $normalizedRow[$snakeKey];
+                                }
+                            }
+                        }
+                        $normalizedRows[] = $normalizedRow;
+                    }
+                    $this->meta[$key] = $normalizedRows;
+                } else {
+                    $this->meta[$key] = $value;
+                }
             }
         }
 
@@ -274,18 +444,115 @@ class EntryForm extends Component
             $this->selectedTerms[$term->taxonomy_id][] = $term->id;
         }
 
-        // Hydrate per-locale snapshots from the translations JSON column.
+        // Load relationship values from pivot table
+        $rels = CptEntryRelationship::where('parent_entry_id', $entry->id)
+            ->orderBy('order')
+            ->get();
+        foreach ($rels as $rel) {
+            $metaField = MetaField::find($rel->meta_field_id);
+            if ($metaField) {
+                $cardinality = $metaField->options['cardinality'] ?? 'many_to_many';
+                if ($cardinality === 'one_to_many') {
+                    $this->meta[$metaField->name] = (string) $rel->child_entry_id;
+                } else {
+                    if (! isset($this->meta[$metaField->name]) || ! is_array($this->meta[$metaField->name])) {
+                        $this->meta[$metaField->name] = [];
+                    }
+                    $this->meta[$metaField->name][] = (string) $rel->child_entry_id;
+                }
+            }
+        }
+
+        // Let themes hydrate extra relationship meta (e.g. child → parent pointers).
+        $this->meta = (array) Filter::apply('cpt_entry.form_meta', $this->meta, $entry, $this->postType);
+
+        // Hydrate per-locale snapshots from translations JSON column AND meta _translations
+        $defaultLocale = CptEntry::defaultLocale();
+        $defaultMeta = $entry->meta ?? [];
+        $metaTranslations = $defaultMeta['_translations'] ?? [];
+        unset($defaultMeta['_translations']);
+
+        $this->localizedSnapshots[$defaultLocale] = [
+            'title' => $this->title,
+            'slug' => $this->slug,
+            'content' => $this->content,
+            'excerpt' => $this->excerpt,
+            'meta' => $defaultMeta,
+        ];
+
         $translations = $entry->translations ?? [];
-        foreach ($translations as $locale => $fields) {
-            if ($locale === CptEntry::defaultLocale()) {
+        $allLocales = array_unique(array_merge(array_keys($translations), array_keys($metaTranslations)));
+        foreach ($allLocales as $locale) {
+            if ($locale === $defaultLocale) {
                 continue;
             }
+            $fields = $translations[$locale] ?? [];
+            $mFields = $metaTranslations[$locale] ?? [];
+
             $this->localizedSnapshots[$locale] = [
                 'title' => $fields['title'] ?? '',
                 'slug' => $fields['slug'] ?? '',
                 'content' => $fields['content'] ?? '',
                 'excerpt' => $fields['excerpt'] ?? '',
+                'meta' => $mFields,
             ];
+        }
+
+        if ($this->editingLocale !== $defaultLocale) {
+            $this->meta = $this->syncMediaKeysFromDefault($defaultMeta, $this->localizedSnapshots[$this->editingLocale]['meta'] ?? []);
+        }
+
+    }
+
+    /**
+     * Overlay default locale (EN) icon, image, and media keys onto non-default locale (ID) meta.
+     */
+    protected function syncMediaKeysFromDefault(array $defaultMeta, array $targetMeta): array
+    {
+        $merged = array_merge($defaultMeta, $targetMeta);
+
+        foreach ($merged as $key => &$val) {
+            if (is_array($val) && isset($defaultMeta[$key]) && is_array($defaultMeta[$key])) {
+                foreach ($val as $idx => &$item) {
+                    if (is_array($item) && isset($defaultMeta[$key][$idx]) && is_array($defaultMeta[$key][$idx])) {
+                        foreach ($defaultMeta[$key][$idx] as $subKey => $subVal) {
+                            if (CptEntry::isMediaKey($subKey)) {
+                                $item[$subKey] = $subVal;
+                            }
+                        }
+                    }
+                }
+                unset($item);
+            }
+        }
+        unset($val);
+
+        return $merged;
+    }
+
+    /**
+     * Push any icon, image, and media keys updated in non-default locale (ID) back to the default locale (EN) snapshot.
+     */
+    protected function pushMediaKeysToDefault(array $sourceMeta, array &$defaultMeta): void
+    {
+        foreach ($sourceMeta as $key => $val) {
+            // Top-level media keys
+            if (CptEntry::isMediaKey($key) && ! empty($val)) {
+                $defaultMeta[$key] = $val;
+            }
+
+            // Array media keys (e.g. benefits_cards, features, key_features_list)
+            if (is_array($val) && isset($defaultMeta[$key]) && is_array($defaultMeta[$key])) {
+                foreach ($val as $idx => $item) {
+                    if (is_array($item) && isset($defaultMeta[$key][$idx]) && is_array($defaultMeta[$key][$idx])) {
+                        foreach ($item as $subKey => $subVal) {
+                            if (CptEntry::isMediaKey($subKey) && ! empty($subVal)) {
+                                $defaultMeta[$key][$idx][$subKey] = $subVal;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -299,8 +566,31 @@ class EntryForm extends Component
             return;
         }
 
-        // Snapshot current form into the OLD locale's slot
-        $this->localizedSnapshots[$this->editingLocale] = $this->currentLocaleFormSnapshot();
+        $defaultLocale = CptEntry::defaultLocale();
+
+        // Snapshot current form into the OLD locale's slot.
+        if ($this->editingLocale === $defaultLocale) {
+            $this->localizedSnapshots[$defaultLocale] = $this->currentLocaleFormSnapshot();
+        } else {
+            $snapshot = $this->currentLocaleFormSnapshot();
+            $defaultMeta = &$this->localizedSnapshots[$defaultLocale]['meta'];
+
+            // Push any media/icon edits from ID tab to EN snapshot
+            $this->pushMediaKeysToDefault($snapshot['meta'], $defaultMeta);
+
+            // Extract only non-media meta keys whose values differ from default locale
+            $deltaMeta = [];
+            foreach ($snapshot['meta'] as $key => $value) {
+                if (CptEntry::isMediaKey($key)) {
+                    continue;
+                }
+                if (! array_key_exists($key, $defaultMeta) || $value !== ($defaultMeta[$key] ?? null)) {
+                    $deltaMeta[$key] = $value;
+                }
+            }
+            $snapshot['meta'] = $deltaMeta;
+            $this->localizedSnapshots[$this->editingLocale] = $snapshot;
+        }
 
         // Load NEW locale's snapshot (blank if none yet)
         $next = $this->localizedSnapshots[$newLocale] ?? [];
@@ -309,17 +599,35 @@ class EntryForm extends Component
         $this->content = $next['content'] ?? '';
         $this->excerpt = $next['excerpt'] ?? '';
 
+        // Load NEW locale's meta
+        $defaultMeta = $this->localizedSnapshots[$defaultLocale]['meta'] ?? [];
+        $newLocaleMeta = $next['meta'] ?? [];
+
+        if ($newLocale === $defaultLocale) {
+            $this->meta = $defaultMeta;
+        } else {
+            $this->meta = $this->syncMediaKeysFromDefault($defaultMeta, $newLocaleMeta);
+        }
+
+        // Notify SeoMetaBox to switch locale
+        $this->dispatch('seo-locale-switched', locale: $newLocale);
+        $this->dispatch('tiptap-refresh-content');
+
         $this->editingLocale = $newLocale;
         $this->resetErrorBag();
     }
 
     protected function currentLocaleFormSnapshot(): array
     {
+        $cleanMeta = $this->meta;
+        unset($cleanMeta['_translations']);
+
         return [
             'title' => $this->title,
             'slug' => $this->slug,
             'content' => $this->content,
             'excerpt' => $this->excerpt,
+            'meta' => $cleanMeta,
         ];
     }
 
@@ -386,10 +694,51 @@ class EntryForm extends Component
         $this->featuredImage = null;
     }
 
+    #[On('icon-selected')]
+    public function handleIconSelected(string $field, ?string $value): void
+    {
+        if (str_starts_with($field, 'meta.')) {
+            $path = substr($field, 5);
+            data_set($this->meta, $path, $value);
+        }
+    }
+
+    #[On('set-value')]
+    public function handleSetValue(string $path, mixed $value): void
+    {
+        if (str_starts_with($path, 'meta.')) {
+            $cleanPath = substr($path, 5);
+            data_set($this->meta, $cleanPath, $value);
+        }
+    }
+
     public function save()
     {
-        // Mirror current form into the active locale's snapshot before validating
-        $this->localizedSnapshots[$this->editingLocale] = $this->currentLocaleFormSnapshot();
+        // Mirror current form into the active locale's snapshot before validating.
+        // For non-default locales, store only the delta (same logic as switchLocale).
+        $defaultLocale = CptEntry::defaultLocale();
+        if ($this->editingLocale === $defaultLocale) {
+            $this->localizedSnapshots[$defaultLocale] = $this->currentLocaleFormSnapshot();
+        } else {
+            $snapshot = $this->currentLocaleFormSnapshot();
+            $defaultMeta = &$this->localizedSnapshots[$defaultLocale]['meta'];
+
+            // Push any media/icon edits from ID tab to EN snapshot
+            $this->pushMediaKeysToDefault($snapshot['meta'], $defaultMeta);
+
+            // Extract only non-media meta keys whose values differ from default locale
+            $deltaMeta = [];
+            foreach ($snapshot['meta'] as $key => $value) {
+                if (CptEntry::isMediaKey($key)) {
+                    continue;
+                }
+                if (! array_key_exists($key, $defaultMeta) || $value !== ($defaultMeta[$key] ?? null)) {
+                    $deltaMeta[$key] = $value;
+                }
+            }
+            $snapshot['meta'] = $deltaMeta;
+            $this->localizedSnapshots[$this->editingLocale] = $snapshot;
+        }
 
         try {
             $this->validate();
@@ -401,7 +750,6 @@ class EntryForm extends Component
             throw $e;
         }
 
-        $defaultLocale = CptEntry::defaultLocale();
         $defaultSnap = $this->localizedSnapshots[$defaultLocale] ?? $this->currentLocaleFormSnapshot();
 
         // Default-locale slug uniqueness — only enforce when we have a real slug to dedupe
@@ -409,8 +757,10 @@ class EntryForm extends Component
             $defaultSnap['slug'] = $this->ensureUniqueSlug($defaultSnap['slug']);
         }
 
-        // Build translations JSON from non-default locale snapshots
+        // Build translations JSON and meta _translations JSON from non-default locale snapshots
         $translations = [];
+        $metaTranslations = [];
+
         foreach ($this->localizedSnapshots as $locale => $snap) {
             if ($locale === $defaultLocale) {
                 continue;
@@ -424,7 +774,39 @@ class EntryForm extends Component
             if (! empty($localeFields)) {
                 $translations[$locale] = $localeFields;
             }
+
+            if (! empty($snap['meta']) && is_array($snap['meta'])) {
+                $mSnap = $snap['meta'];
+                $defaultMetaSnap = $defaultSnap['meta'] ?? [];
+                foreach ($mSnap as $mKey => &$mVal) {
+                    if (is_array($mVal) && isset($defaultMetaSnap[$mKey]) && is_array($defaultMetaSnap[$mKey])) {
+                        foreach ($mVal as $idx => &$subItem) {
+                            if (is_array($subItem) && isset($defaultMetaSnap[$mKey][$idx]) && is_array($defaultMetaSnap[$mKey][$idx])) {
+                                foreach ($defaultMetaSnap[$mKey][$idx] as $subKey => $subVal) {
+                                    if (CptEntry::isMediaKey($subKey)) {
+                                        $subItem[$subKey] = $subVal;
+                                    }
+                                }
+                            }
+                        }
+                        unset($subItem);
+                    }
+                }
+                unset($mVal);
+                $metaTranslations[$locale] = $mSnap;
+            }
         }
+
+        $finalMeta = $defaultSnap['meta'] ?? $this->meta;
+        unset($finalMeta['_translations']);
+        if (! empty($metaTranslations)) {
+            $finalMeta['_translations'] = $metaTranslations;
+        }
+
+        $workflow = app(EditorialWorkflowService::class);
+        $resolved = $workflow->resolveStatus($this->status);
+        $this->status = $resolved['status'];
+        $oldStatus = $this->isEdit && $this->entry ? $this->entry->getOriginal('status') : null;
 
         $data = [
             'post_type_id' => $this->postType->id,
@@ -439,7 +821,9 @@ class EntryForm extends Component
                 : ($this->publishedAt ? Carbon::parse($this->publishedAt) : null),
             'parent_id' => $this->parentId,
             'menu_order' => $this->menuOrder,
-            'meta' => $this->meta,
+            'author_id' => $this->isEdit && $this->entry ? $this->entry->author_id : auth()->id(),
+            'updated_by' => auth()->id(),
+            'meta' => $finalMeta,
             'translations' => $translations ?: null,
         ];
 
@@ -451,6 +835,10 @@ class EntryForm extends Component
             $this->entryId = $entry->id;
         }
 
+        $this->entry = $entry;
+
+        $this->releaseLock();
+
         // Sync taxonomy terms
         $allTerms = [];
         foreach ($this->selectedTerms as $termIds) {
@@ -458,23 +846,140 @@ class EntryForm extends Component
         }
         $entry->terms()->sync($allTerms);
 
-        $this->dispatch('notify', [
-            'type' => 'success',
-            'message' => $this->isEdit
-                ? "'{$this->title}' updated successfully."
-                : "'{$this->title}' created successfully.",
-        ]);
+        // Sync Relationship fields into cpt_entry_relationships table
+        foreach ($this->postType->metaFields as $field) {
+            /** @var MetaField $field */
+            if ($field->type === 'relationship') {
+                // Themes can take over syncing of special relationship fields
+                // (e.g. a child → parent pointer). Return true when handled.
+                if (Filter::apply('cpt_entry.sync_relationship_field', false, $field, $entry, $this->meta)) {
+                    continue;
+                }
 
-        if ($this->isEdit) {
-            // If already editing, just notify and stay (or reload to be safe, but staying is faster)
-            // User requested to "move to ... edit", which implies they want to be on the edit page.
-            // If we are already there, we can just return null or redirect to self.
-            // Redirecting to self ensures the URL is correct if they came from somewhere else and keeps logic consistent.
-            return redirect()->route('admin.cpt.entries.edit', ['postTypeSlug' => $this->postType->slug, 'id' => $entry->id]);
+                CptEntryRelationship::where('parent_entry_id', $entry->id)
+                    ->where('meta_field_id', $field->id)
+                    ->delete();
+
+                $val = $this->meta[$field->name] ?? null;
+                if (! empty($val)) {
+                    $childIds = is_array($val) ? $val : [$val];
+                    $uniqueChildIds = array_values(array_unique(array_filter($childIds)));
+                    foreach ($uniqueChildIds as $order => $childId) {
+                        CptEntryRelationship::updateOrCreate([
+                            'parent_entry_id' => $entry->id,
+                            'child_entry_id' => (int) $childId,
+                            'meta_field_id' => $field->id,
+                        ], [
+                            'order' => $order,
+                        ]);
+                    }
+                }
+            }
         }
 
-        // If creating, we MUST redirect to the edit page
-        return redirect()->route('admin.cpt.entries.edit', ['postTypeSlug' => $this->postType->slug, 'id' => $entry->id]);
+        // Notify SeoMetaBox to save/attach
+        $this->dispatch('seo-attach', id: $entry->id);
+
+        // Create revision snapshot
+        CptEntryRevision::create([
+            'cpt_entry_id' => $entry->id,
+            'user_id' => auth()->id(),
+            'title' => $entry->title,
+            'slug' => $entry->slug,
+            'status' => $entry->status,
+            'meta' => $entry->meta,
+            'translations' => $entry->translations,
+            'is_autosave' => false,
+        ]);
+
+        $workflow->handleTransition($entry, $entry->status, $oldStatus);
+
+        $this->dispatch('notify', [
+            'type' => $resolved['downgraded'] ? 'info' : 'success',
+            'message' => $resolved['downgraded']
+                ? $resolved['message']
+                : ($this->isEdit ? "'{$this->title}' updated successfully." : "'{$this->title}' created successfully."),
+        ]);
+
+        $queryParams = array_filter([
+            'lang' => $this->editingLocale !== CptEntry::defaultLocale() ? $this->editingLocale : null,
+            'tab' => $this->activeTab ?: null,
+        ]);
+
+        return redirect()->route('admin.cpt.entries.edit', array_merge(
+            ['postTypeSlug' => $this->postType->slug, 'id' => $entry->id],
+            $queryParams
+        ));
+    }
+
+    public function approveAndPublish()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        if (! $this->isEdit || ! $this->entryId) {
+            return;
+        }
+
+        $entry = CptEntry::findOrFail($this->entryId);
+        $oldStatus = $entry->status;
+        $entry->update([
+            'status' => 'published',
+            'published_at' => $entry->published_at ?? now(),
+            'updated_by' => auth()->id(),
+        ]);
+        $this->status = 'published';
+        $this->publishedAt = $entry->published_at?->format('Y-m-d\TH:i');
+        $this->entry = $entry;
+
+        $workflow->handleTransition($entry, 'published', $oldStatus);
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => "'{$entry->title}' approved and published successfully.",
+        ]);
+    }
+
+    public function openChangeRequestModal()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+        $this->changeRequestNote = '';
+        $this->showChangeRequestModal = true;
+    }
+
+    public function closeChangeRequestModal()
+    {
+        $this->showChangeRequestModal = false;
+    }
+
+    public function submitChangeRequest()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        $this->validate([
+            'changeRequestNote' => 'required|string|min:3|max:1000',
+        ]);
+
+        if (! $this->isEdit || ! $this->entryId) {
+            return;
+        }
+
+        $entry = CptEntry::findOrFail($this->entryId);
+        $oldStatus = $entry->status;
+        $entry->update([
+            'status' => 'draft',
+            'updated_by' => auth()->id(),
+        ]);
+        $this->status = 'draft';
+        $this->entry = $entry;
+
+        $workflow->handleTransition($entry, 'draft', $oldStatus, auth()->user(), $this->changeRequestNote);
+        $this->showChangeRequestModal = false;
+        $this->dispatch('notify', [
+            'type' => 'warning',
+            'message' => "Changes requested on '{$entry->title}'. Entry moved to draft.",
+        ]);
     }
 
     public function saveAsDraft()
@@ -504,6 +1009,28 @@ class EntryForm extends Component
             $this->status = $originalStatus;
             $this->publishedAt = $originalPublishedAt;
             throw $e;
+        }
+    }
+
+    public function updatedStatus($value)
+    {
+        if ($value === 'scheduled' && empty($this->publishedAt)) {
+            $this->publishedAt = now()->addHour()->format('Y-m-d\TH:i');
+        }
+    }
+
+    public function moveToTrash()
+    {
+        if ($this->isEdit && $this->entryId) {
+            $entry = CptEntry::findOrFail($this->entryId);
+            $entry->delete();
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => "'{$entry->title}' moved to trash.",
+            ]);
+
+            return redirect()->route('admin.cpt.entries.index', $this->postType->slug);
         }
     }
 
@@ -601,8 +1128,101 @@ class EntryForm extends Component
         $groupedFields = [];
 
         foreach ($this->postType->metaFields as $field) {
+            /** @var MetaField $field */
             $group = $field->field_group ?: 'default';
             $groupedFields[$group][] = $field;
+        }
+
+        $normalBoxes = collect($metaBoxes)->filter(fn ($box) => ($box['context'] ?? 'normal') === 'normal' && isset($groupedFields[$box['id']]));
+        if (empty($this->activeTab) && $normalBoxes->isNotEmpty()) {
+            $this->activeTab = $normalBoxes->first()['id'];
+        }
+
+        $targetEntriesByField = [];
+        foreach ($this->postType->metaFields as $field) {
+            /** @var MetaField $field */
+            if ($field->type === 'relationship') {
+                $targetCptIds = [];
+
+                if (! empty($field->options['target_post_type_ids']) && is_array($field->options['target_post_type_ids'])) {
+                    $targetCptIds = array_map('intval', $field->options['target_post_type_ids']);
+                } elseif (! empty($field->options['target_cpt_ids']) && is_array($field->options['target_cpt_ids'])) {
+                    $targetCptIds = array_map('intval', $field->options['target_cpt_ids']);
+                } elseif (! empty($field->options['target_cpt']) && is_array($field->options['target_cpt'])) {
+                    $targetCptIds = CustomPostType::whereIn('slug', $field->options['target_cpt'])->pluck('id')->toArray();
+                } elseif (! empty($field->options['target_post_type_id'])) {
+                    $targetCptIds = is_array($field->options['target_post_type_id'])
+                        ? array_map('intval', $field->options['target_post_type_id'])
+                        : [(int) $field->options['target_post_type_id']];
+                } elseif (! empty($field->options['target_cpt'])) {
+                    $targetCpt = CustomPostType::where('slug', $field->options['target_cpt'])->first();
+                    if ($targetCpt) {
+                        $targetCptIds = [$targetCpt->id];
+                    }
+                }
+
+                $selectedValue = $this->meta[$field->name] ?? [];
+                $selectedRaw = is_array($selectedValue) ? $selectedValue : [$selectedValue];
+                $selectedIds = [];
+                foreach ($selectedRaw as $v) {
+                    if ($v !== '' && $v !== null) {
+                        $selectedIds[] = (int) $v;
+                    }
+                }
+                $selectedIds = array_filter($selectedIds);
+
+                $query = CptEntry::query()
+                    ->where('status', 'published')
+                    ->where('id', '!=', $this->entryId ?? 0);
+
+                if (! empty($targetCptIds)) {
+                    $query->where(function ($q) use ($targetCptIds, $selectedIds) {
+                        $q->whereIn('post_type_id', $targetCptIds);
+                        if (! empty($selectedIds)) {
+                            $q->orWhereIn('id', $selectedIds);
+                        }
+                    });
+                } else {
+                    if (! empty($selectedIds)) {
+                        $query->whereIn('id', $selectedIds);
+                    }
+                }
+
+                $targetEntriesByField[$field->id] = $query->orderBy('title')->get(['id', 'title', 'slug']);
+            }
+        }
+
+        $entryModel = ($this->isEdit && $this->entryId) ? CptEntry::find($this->entryId) : null;
+        if (! $entryModel) {
+            $entryModel = new CptEntry([
+                'post_type_id' => $this->postType->id,
+                'slug' => $this->slug ?: 'example-slug',
+            ]);
+            $entryModel->setRelation('postType', $this->postType);
+        }
+
+        $frontendUrl = $entryModel->getUrl($this->editingLocale ?: null);
+        if ($this->isEdit && $this->status !== 'published') {
+            $previewUrl = route('admin.cpt-entries.preview', $this->entryId);
+        } else {
+            $previewUrl = $frontendUrl;
+        }
+
+        $fullPath = parse_url($frontendUrl, PHP_URL_PATH) ?? '/'.$this->postType->slug.'/'.$this->slug;
+        $trimmedPath = rtrim($fullPath, '/');
+        $lastSlashPos = strrpos($trimmedPath, '/');
+        $permalinkPrefix = ($lastSlashPos !== false) ? substr($trimmedPath, 0, $lastSlashPos + 1) : '/'.$this->postType->slug.'/';
+
+        $revisions = ($this->isEdit && $this->entryId)
+            ? CptEntryRevision::with('user')->where('cpt_entry_id', $this->entryId)->latest()->take(20)->get()
+            : collect();
+
+        if ($this->isEdit && $this->entryId && auth()->check()) {
+            $lockService = app(ContentLockService::class);
+            $this->activeLock = $lockService->check('cpt_entry', $this->entryId, auth()->id());
+            if (! $this->activeLock) {
+                $lockService->acquire('cpt_entry', $this->entryId, auth()->id());
+            }
         }
 
         return view('livewire.admin.cpt.entries.entry-form', [
@@ -611,7 +1231,71 @@ class EntryForm extends Component
             'possibleParents' => $possibleParents,
             'metaBoxes' => $metaBoxes,
             'groupedFields' => $groupedFields,
+            'targetEntriesByField' => $targetEntriesByField,
+            'previewUrl' => $previewUrl,
+            'permalinkPrefix' => $permalinkPrefix,
+            'revisions' => $revisions,
         ]);
+    }
+
+    public function refreshLock()
+    {
+        if ($this->isEdit && $this->entryId) {
+            $entry = CptEntry::find($this->entryId);
+            if ($entry && ! $entry->isLockedByOther(auth()->id())) {
+                $entry->lock(auth()->id());
+            }
+        }
+    }
+
+    public function takeOverLock()
+    {
+        if ($this->isEdit && $this->entryId) {
+            $entry = CptEntry::find($this->entryId);
+            if ($entry) {
+                $entry->lock(auth()->id());
+            }
+        }
+    }
+
+    public function releaseLock()
+    {
+        if ($this->isEdit && $this->entryId) {
+            $entry = CptEntry::find($this->entryId);
+            if ($entry && ! $entry->isLockedByOther(auth()->id())) {
+                $entry->unlock();
+            }
+        }
+    }
+
+    public function openRevisionsModal()
+    {
+        $this->showRevisionsModal = true;
+    }
+
+    public function closeRevisionsModal()
+    {
+        $this->showRevisionsModal = false;
+    }
+
+    public function restoreRevision(int $revisionId)
+    {
+        if (! $this->isEdit || ! $this->entryId) {
+            return;
+        }
+
+        $revision = CptEntryRevision::where('cpt_entry_id', $this->entryId)->findOrFail($revisionId);
+
+        $this->title = $revision->title ?? $this->title;
+        $this->slug = $revision->slug ?? $this->slug;
+        $this->status = $revision->status ?? $this->status;
+        if (! empty($revision->meta) && is_array($revision->meta)) {
+            $this->meta = $revision->meta;
+        }
+
+        $this->save();
+        $this->closeRevisionsModal();
+        $this->dispatch('notify', ['type' => 'success', 'message' => 'Restored from CPT revision successfully!']);
     }
 
     private function flattenTerms($allTerms, $parentId = null, $depth = 0)

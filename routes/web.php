@@ -8,18 +8,33 @@ use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PluginController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RolePermissionController;
+use App\Http\Controllers\Admin\SiteHealthController;
 use App\Http\Controllers\Admin\ThemesController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\DeferredSectionController;
+use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FormSubmissionController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\IndexNowController;
+use App\Http\Controllers\LlmsTxtController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\PartnershipController;
 use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\SchemaAggregatorController;
+use App\Http\Controllers\SchemaManifestController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SitemapStyleController;
+use App\Livewire\Admin\Redirects\RedirectTable;
+use App\Livewire\Admin\Seo\SeoBulkEditor;
+use App\Livewire\Admin\Seo\SeoGeneralSettings;
+use App\Livewire\Admin\Seo\SeoIndexNow;
+use App\Livewire\Admin\Seo\SeoOverview;
+use App\Livewire\Admin\Tools\BackupManager;
 use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
 use App\Services\SettingsRegistry;
@@ -31,20 +46,75 @@ $adminPath = config('admin.path', 'admin');
 // Public homepage
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Public SEO
+// Deferred AJAX sections (loaded after initial page paint)
+Route::get('/_deferred/{section}', [DeferredSectionController::class, 'show'])->name('deferred.section');
+
+// Localized homepage (e.g. /id)
+try {
+    $allLocales = array_filter(array_map('trim', explode(',', (string) setting('available_locales', 'id,en'))));
+    $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+} catch (Throwable $e) {
+    $allLocales = ['id', 'en'];
+    $defaultLocale = 'en';
+}
+$nonDefaultLocales = array_values(array_filter($allLocales, fn ($l) => $l !== $defaultLocale));
+
+if (! empty($nonDefaultLocales)) {
+    $localePattern = implode('|', array_map('preg_quote', $nonDefaultLocales));
+    Route::get('/{locale}', [HomeController::class, 'index'])
+        ->where('locale', $localePattern)
+        ->name('locale.home');
+}
+
+// Public Site Search
+Route::get('/search', [SearchController::class, 'index'])->name('search');
+if (! empty($nonDefaultLocales)) {
+    Route::get('/{locale}/search', [SearchController::class, 'index'])
+        ->where('locale', $localePattern)
+        ->name('locale.search');
+}
+
+// Public Language Switcher
+Route::get('/lang/{locale}', function (string $locale) {
+    $available = available_locales();
+    if (in_array($locale, $available, true)) {
+        session(['locale' => $locale]);
+        cookie()->queue('locale', $locale, 60 * 24 * 365);
+        app()->setLocale($locale);
+
+        return redirect(current_page_localized_url($locale));
+    }
+
+    return redirect()->back(fallback: url('/'));
+})->name('locale.switch');
+
+// Public SEO & GEO
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sitemap_index.xml', [SitemapController::class, 'index'])->name('sitemap.index');
+Route::get('/main-sitemap.xsl', SitemapStyleController::class)->name('sitemap.style');
+Route::get('/{type}-sitemap.xml', [SitemapController::class, 'showType'])
+    ->where('type', '[a-zA-Z0-9_\\-]+')
+    ->name('sitemap.type');
 Route::get('/robots.txt', [RobotsController::class, 'index'])->name('robots');
+Route::get('/feed', [FeedController::class, 'index'])->name('feed');
+Route::get('/rss.xml', [FeedController::class, 'index']);
+Route::get('/llms.txt', [LlmsTxtController::class, 'index'])->name('llms-txt');
+Route::get('/schema-manifest.json', SchemaManifestController::class)->name('schema-manifest');
+Route::get('/schema.json', [SchemaAggregatorController::class, 'index'])->name('schema-json');
+Route::get('/schema/{type}', [SchemaAggregatorController::class, 'showCollection'])->name('schema-collection');
+Route::get('/indexnow-{key}.txt', [IndexNowController::class, 'showKey'])->name('indexnow.key');
 
 // Public Form Submission
 Route::prefix('forms')->name('forms.')->group(function () {
     Route::get('/{slug}', [FormSubmissionController::class, 'show'])->name('show');
-    Route::post('/{slug}/submit', [FormSubmissionController::class, 'submit'])->name('submit');
-    Route::post('/{slug}/ajax', [FormSubmissionController::class, 'submitAjax'])->name('submit.ajax');
+    Route::post('/{slug}/submit', [FormSubmissionController::class, 'submit'])
+        ->name('submit')
+        ->middleware('throttle:30,1');
+    Route::post('/{slug}/ajax', [FormSubmissionController::class, 'submitAjax'])
+        ->name('submit.ajax')
+        ->middleware('throttle:30,1');
     Route::get('/{slug}/success', [FormSubmissionController::class, 'success'])->name('success');
 });
-
-// Public Partnership Inquiry
-Route::post('/partner', [PartnershipController::class, 'store'])->name('partner.store');
 
 // Admin base path redirect
 Route::get("/{$adminPath}", [AdminController::class, 'index'])->name('admin.index');
@@ -75,6 +145,10 @@ Route::prefix($adminPath)->group(function () {
 
 // Admin Routes
 Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->group(function () {
+    // Preview routes
+    Route::get('/pages/{id}/preview', [PageController::class, 'preview'])->name('pages.preview');
+    Route::get('/cpt-entries/{id}/preview', [ArchiveController::class, 'previewById'])->name('cpt-entries.preview');
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard')
@@ -128,9 +202,8 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
 
     // Menus Management
     Route::middleware('permission:menus.view')->group(function () {
-        Route::resource('menus', MenuController::class);
-        Route::post('menus/reorder', [MenuController::class, 'reorder'])
-            ->name('menus.reorder');
+        Route::get('menus', [MenuController::class, 'index'])->name('menus.index');
+        Route::post('menus/reorder', [MenuController::class, 'reorder'])->name('menus.reorder');
     });
 
     // Media Management
@@ -171,7 +244,7 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
     });
 
     // Custom Post Types Management
-    Route::prefix('cpt')->name('cpt.')->group(function () {
+    Route::prefix('cpt')->name('cpt.')->middleware('permission:cpt.view')->group(function () {
         Route::get('/', function () {
             return view('admin.cpt.index');
         })->name('index');
@@ -199,6 +272,11 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
 
                 return view('admin.cpt.entries.create', ['postType' => $postType]);
             })->name('create');
+            Route::get('/reorder', function ($postTypeSlug) {
+                $postType = CustomPostType::where('slug', $postTypeSlug)->firstOrFail();
+
+                return view('admin.cpt.entries.reorder', ['postType' => $postType]);
+            })->name('reorder');
             Route::get('/{id}/edit', function ($postTypeSlug, $id) {
                 $postType = CustomPostType::where('slug', $postTypeSlug)->firstOrFail();
 
@@ -231,6 +309,8 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
         Route::post('/', [FormController::class, 'store'])
             ->name('store')
             ->middleware('permission:forms.create');
+        Route::get('/assignments', [FormController::class, 'assignments'])->name('assignments');
+        Route::post('/assignments', [FormController::class, 'saveAssignments'])->name('assignments.save');
         Route::get('/{form}', [FormController::class, 'show'])->name('show');
         Route::get('/{form}/edit', [FormController::class, 'edit'])
             ->name('edit')
@@ -241,6 +321,21 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
         Route::delete('/{form}', [FormController::class, 'destroy'])
             ->name('destroy')
             ->middleware('permission:forms.delete');
+        Route::get('/{form}/studio/{tab?}', [FormController::class, 'studio'])
+            ->name('studio')
+            ->middleware('permission:forms.edit');
+        Route::post('/{form}/studio', [FormController::class, 'saveStudio'])
+            ->name('studio.save')
+            ->middleware('permission:forms.edit');
+        Route::post('/{form}/test-email', [FormController::class, 'sendTestEmail'])
+            ->name('test-email')
+            ->middleware('permission:forms.edit');
+        Route::get('/{form}/notifications', [FormController::class, 'notifications'])
+            ->name('notifications')
+            ->middleware('permission:forms.edit');
+        Route::post('/{form}/notifications', [FormController::class, 'updateNotifications'])
+            ->name('notifications.update')
+            ->middleware('permission:forms.edit');
         Route::get('/{form}/entries', [FormController::class, 'entries'])
             ->name('entries');
         Route::get('/{form}/export', [FormController::class, 'exportEntries'])
@@ -291,11 +386,38 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
         })->name('api-tokens.index');
     });
 
+    // AI & MCP Integration Settings
+    Route::middleware('permission:settings.view')->group(function () {
+        Route::get('/ai-settings', function () {
+            return view('admin.ai.mcp-settings');
+        })->name('ai-settings.index');
+    });
+
     // Webhooks
     Route::middleware('permission:webhooks.view')->group(function () {
         Route::get('/webhooks', function () {
             return view('admin.webhooks.index');
         })->name('webhooks.index');
+    });
+
+    // Site Health & Diagnostics
+    Route::get('/system-health', [SiteHealthController::class, 'index'])
+        ->name('site-health.index')
+        ->middleware('permission:settings.view');
+
+    // Database Backup Manager
+    Route::get('/tools/backups', BackupManager::class)
+        ->name('tools.backups')
+        ->middleware('permission:settings.view');
+
+    // Dedicated SEO Management Suite (Yoast-style)
+    Route::prefix('seo')->name('seo.')->middleware('permission:settings.view')->group(function () {
+        Route::get('/', SeoOverview::class)->name('index');
+        Route::get('/settings', SeoGeneralSettings::class)->name('settings');
+        Route::get('/indexnow', SeoIndexNow::class)->name('indexnow');
+        Route::get('/redirects', RedirectTable::class)->name('redirects');
+        Route::get('/bulk-editor', SeoBulkEditor::class)->name('bulk-editor');
+        Route::get('/tools', fn () => redirect()->route('admin.seo.bulk-editor'))->name('tools');
     });
 
     // Settings (generic, group-based)
@@ -304,6 +426,22 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
             return redirect()->route('admin.settings.show', 'general');
         })->name('index');
         Route::get('/{group}', function (string $group) {
+            if ($group === 'seo') {
+                return redirect()->route('admin.seo.settings');
+            }
+            if ($group === 'redirect') {
+                return redirect()->route('admin.seo.redirects');
+            }
+            if ($group === 'api-tokens' || $group === 'tokens') {
+                return redirect()->route('admin.api-tokens.index');
+            }
+            if ($group === 'ai' || $group === 'mcp') {
+                return redirect()->route('admin.ai-settings.index');
+            }
+            if ($group === 'webhooks') {
+                return redirect()->route('admin.webhooks.index');
+            }
+
             abort_unless(app(SettingsRegistry::class)->hasGroup($group), 404);
 
             return view('admin.settings.show', ['group' => $group]);
@@ -311,7 +449,7 @@ Route::prefix($adminPath)->name('admin.')->middleware(['auth', 'enforce-2fa'])->
     });
 
     // Custom Taxonomies Management
-    Route::prefix('taxonomies')->name('taxonomies.')->group(function () {
+    Route::prefix('taxonomies')->name('taxonomies.')->middleware('permission:taxonomies.view')->group(function () {
         Route::get('/', function () {
             return view('admin.taxonomies.index');
         })->name('index');

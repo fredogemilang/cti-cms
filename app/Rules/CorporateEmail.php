@@ -8,22 +8,39 @@ use Illuminate\Contracts\Validation\ValidationRule;
 /**
  * Validates that an email address is not a free/disposable email provider.
  *
- * When the Events plugin is active, this rule delegates to the canonical
- * implementation in Plugins\Events\Rules\CorporateEmail (which includes
- * a managed free-domain list from the database). When Events is inactive,
- * it falls back to a hardcoded domain list.
+ * Generic core rule — usable from any validation context:
+ * form builder fields (via `validation.rule` in Form Studio JSON),
+ * CPT meta, plugins, or custom controllers.
  *
  * Usage:
- *   'email' => [new CorporateEmail($eventId)]
+ *   // Built-in blocked-domain list
+ *   'email' => [new CorporateEmail()]
+ *
+ *   // Custom blocked domains + custom (e.g. translated) message
+ *   'email' => [new CorporateEmail(['gmail.com', 'yahoo.com'], __('validation.corporate_email'))]
+ *
+ * The blocked-domain list can also be managed from the database via the
+ * `validation.free_email_domains` setting (JSON array). Resolution order:
+ * constructor param → setting → built-in default list.
  */
 class CorporateEmail implements ValidationRule
 {
-    protected ?int $eventId = null;
+    /**
+     * Built-in free/disposable email domains.
+     */
+    public const DEFAULT_FREE_DOMAINS = [
+        'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
+        'aol.com', 'icloud.com', 'live.com', 'msn.com',
+        'ymail.com', 'rocketmail.com', 'mail.com', 'gmx.com',
+        'protonmail.com', 'tutanota.com', 'zoho.com',
+        'inbox.com', 'rediffmail.com', 'mailinator.com',
+        'tempmail.org', '10minutemail.com', 'guerrillamail.com',
+    ];
 
-    public function __construct(?int $eventId = null)
-    {
-        $this->eventId = $eventId;
-    }
+    public function __construct(
+        protected ?array $blockedDomains = null,
+        protected ?string $message = null,
+    ) {}
 
     /**
      * Run the validation rule.
@@ -34,17 +51,8 @@ class CorporateEmail implements ValidationRule
             return;
         }
 
-        // Delegate to the Events plugin's canonical implementation if available
-        if (class_exists(\Plugins\Events\Rules\CorporateEmail::class)) {
-            $rule = new \Plugins\Events\Rules\CorporateEmail($this->eventId);
-            $rule->validate($attribute, $value, $fail);
-
-            return;
-        }
-
-        // Fallback: hardcoded domain check only (no DB lookup)
-        if (! $this->isCorporateEmail($value)) {
-            $fail('Corporate email required. Free email providers (gmail.com, yahoo.com, etc.) are not allowed for this event.');
+        if (! $this->isCorporateEmail((string) $value)) {
+            $fail($this->message ?? 'A corporate email address is required. Free email providers (Gmail, Yahoo, etc.) are not allowed.');
         }
     }
 
@@ -59,15 +67,21 @@ class CorporateEmail implements ValidationRule
             return false;
         }
 
-        $freeDomains = [
-            'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
-            'aol.com', 'icloud.com', 'live.com', 'msn.com',
-            'ymail.com', 'rocketmail.com', 'mail.com', 'gmx.com',
-            'protonmail.com', 'tutanota.com', 'zoho.com',
-            'inbox.com', 'rediffmail.com', 'mailinator.com',
-            'tempmail.org', '10minutemail.com', 'guerrillamail.com',
-        ];
+        return ! in_array($domain, $this->freeDomains(), true);
+    }
 
-        return ! in_array($domain, $freeDomains);
+    /**
+     * Resolve the blocked-domain list: constructor param → database setting
+     * (`validation.free_email_domains`) → built-in defaults.
+     */
+    protected function freeDomains(): array
+    {
+        if ($this->blockedDomains !== null) {
+            return $this->blockedDomains;
+        }
+
+        $configured = setting('validation.free_email_domains', null);
+
+        return is_array($configured) ? $configured : self::DEFAULT_FREE_DOMAINS;
     }
 }

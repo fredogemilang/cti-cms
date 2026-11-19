@@ -133,13 +133,37 @@ class UserController extends Controller
     /**
      * Remove the specified user from storage.
      */
-    public function destroy(User $user)
+    public function destroy(Request $request, User $user)
     {
         // Prevent deleting yourself
         if ($user->id === auth()->id()) {
             return redirect()
                 ->route('admin.users.index')
                 ->with('error', 'You cannot delete your own account.');
+        }
+
+        // Check if user owns content in CMS
+        if ($user->hasAuthoredContent()) {
+            $reassignToId = $request->input('reassign_to_user_id');
+
+            if (! $reassignToId) {
+                return redirect()
+                    ->route('admin.users.index')
+                    ->with('error', 'Cannot delete user because they own published content. Please reassign content to another user first.');
+            }
+
+            $targetUser = User::where('id', $reassignToId)
+                ->where('id', '!=', $user->id)
+                ->where('is_active', true)
+                ->first();
+
+            if (! $targetUser) {
+                return redirect()
+                    ->route('admin.users.index')
+                    ->with('error', 'Invalid target user selected for content reassignment.');
+            }
+
+            $user->reassignContentTo($targetUser);
         }
 
         if ($user->avatar) {

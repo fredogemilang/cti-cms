@@ -52,6 +52,16 @@ class SecurityHeaders
             $headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
 
+        // HTML caching: public pages allow bfcache + revalidation (`no-cache`);
+        // admin responses must never be stored (`no-store`).
+        $adminPath = trim((string) config('admin.path', 'admin'), '/');
+        if ($adminPath !== '' && str_starts_with(ltrim($request->path(), '/'), $adminPath)) {
+            $headers->set('Cache-Control', 'no-store, no-cache, must-revalidate');
+            $headers->set('Pragma', 'no-cache');
+        } else {
+            $headers->set('Cache-Control', 'no-cache');
+        }
+
         // Conservative CSP — allow self + inline (Alpine/Livewire need 'unsafe-inline'),
         // plus the fonts.googleapis CDN that the admin layout uses, plus storage img.
         // Disabled by default; opt-in via env to avoid breaking existing themes.

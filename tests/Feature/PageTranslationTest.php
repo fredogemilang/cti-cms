@@ -83,7 +83,7 @@ class PageTranslationTest extends TestCase
         $page->setTranslation('title', 'en', 'English Title');
         $page->save();
 
-        $this->assertSame('Home', $page->fresh()->title);              // default column untouched
+        $this->assertSame('Home', $page->fresh()->getRawOriginal('title'));              // default column untouched
         $this->assertSame('English Title', $page->fresh()->translations['en']['title']);
     }
 

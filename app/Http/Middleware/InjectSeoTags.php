@@ -1,0 +1,532 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use App\Models\CptEntry;
+use App\Models\CustomPostType;
+use App\Models\CustomTaxonomy;
+use App\Models\Page;
+use App\Models\TaxonomyTerm;
+use App\Services\BreadcrumbService;
+use App\Services\SchemaBuilder;
+use App\Services\SeoRenderer;
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\View;
+use Plugins\Posts\Models\Category;
+use Plugins\Posts\Models\Tag;
+
+/**
+ * Auto-inject SEO meta tags, Open Graph, Twitter Cards, and JSON-LD
+ * into every public HTML response's <head>, regardless of which theme
+ * is active. This ensures GEO/SEO works across ALL themes without
+ * requiring theme developers to manually include SEO components.
+ *
+ * The middleware detects the entity ($page, $entry) from the response's
+ * view data and uses SeoRenderer to build the full SEO payload.
+ */
+class InjectSeoTags
+{
+    public function __construct(
+        protected SeoRenderer $seoRenderer,
+        protected SchemaBuilder $schemaBuilder,
+    ) {}
+
+    public function handle(Request $request, Closure $next): mixed
+    {
+        $response = $next($request);
+
+        // Only process successful HTML responses (not redirects, JSON, admin, etc.)
+        if (! $response instanceof Response) {
+            return $response;
+        }
+        if ($response->getStatusCode() !== 200) {
+            return $response;
+        }
+        $contentType = $response->headers->get('Content-Type', '');
+        if (! str_contains($contentType, 'text/html') && $contentType !== '') {
+            return $response;
+        }
+
+        // Skip admin routes
+        $adminPath = config('admin.path', 'admin');
+        if (str_starts_with(ltrim($request->path(), '/'), $adminPath)) {
+            return $response;
+        }
+
+        $content = $response->getContent();
+        if (! $content || ! str_contains($content, '</head>')) {
+            return $response;
+        }
+
+        // Extract the entity from the view response (if available) or request route/path
+        $entity = $this->resolveEntity($response, $request);
+        $seo = $this->seoRenderer->resolve($entity);
+
+        // Search result pages must always be noindex, follow
+        if ($request->routeIs('search', 'locale.search')) {
+            $seo['robots'] = 'noindex, follow';
+            $seo['title'] = 'Search Results — '.setting('site_name', config('app.name'));
+            $response->headers->set('X-Robots-Tag', 'noindex, follow');
+        }
+
+        // Replace existing <title> tag only if entity was resolved or if existing <title> is generic
+        if ($entity && preg_match('/<title\b[^>]*>(.*?)<\/title>/is', $content)) {
+            $content = (string) preg_replace('/<title\b[^>]*>(.*?)<\/title>/is', '<title>'.e($seo['title']).'</title>', $content);
+        }
+
+        // Robots directive resolution
+        $robotsDirective = $seo['robots'] ?? 'index, follow';
+        $fullRobotsTag = ($robotsDirective === 'index,follow' || $robotsDirective === 'index, follow')
+            ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+            : $robotsDirective;
+
+        // If existing <meta name="robots"> tag is present in HTML, replace it with the resolved directive
+        $hasExistingRobots = (bool) preg_match('/<meta\s+name=["\']robots["\'][^>]*>/is', $content);
+        if ($hasExistingRobots) {
+            $content = (string) preg_replace('/<meta\s+name=["\']robots["\'][^>]*>/is', '<meta name="robots" content="'.e($fullRobotsTag).'">', $content);
+        }
+
+        // Build SEO tags
+        $seoHtml = $this->buildSeoHtml($seo, $entity, $hasExistingRobots);
+
+        // Inject just before </head>, after any existing @stack('meta') content
+        $content = str_replace('</head>', $seoHtml."\n</head>", $content);
+
+        // Inject GTM noscript right after opening <body>
+        if (setting('gsk_enabled', true) && ($gtmId = setting('gsk_gtm_id'))) {
+            $noscript = '<!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id='.e($gtmId).'" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) -->';
+            $content = (string) preg_replace('/(<body\b[^>]*>)/i', '$1'."\n  ".$noscript, $content, 1);
+        }
+
+        $response->setContent($content);
+
+        return $response;
+    }
+
+    /**
+     * Generic CPT entry lookup for custom (theme/plugin) routes whose slug
+     * parameters are not named after a model, e.g. /{parentSlug}/{childSlug}.
+     * The most specific (last) parameter is tried first, against every active CPT.
+     */
+    protected function resolveCptEntryFromRouteParameters(Route $route): ?Model
+    {
+        $reserved = [
+            'locale', 'localeOrSlug', 'slug', 'cptSlug', 'category', 'tag', 'taxonomy',
+            'taxonomySlug', 'term', 'termSlug', 'page', 'section', 'any', 'key', 'type',
+        ];
+
+        $candidates = [];
+        foreach ($route->parameters() as $name => $value) {
+            if (is_string($value) && $value !== '' && ! in_array($name, $reserved, true)) {
+                $candidates[] = $value;
+            }
+        }
+
+        if ($candidates === []) {
+            return null;
+        }
+
+        $cpts = CustomPostType::where('is_active', true)->get();
+        foreach (array_reverse($candidates) as $slug) {
+            foreach ($cpts as $cpt) {
+                $entry = CptEntry::findByLocalizedSlug($cpt, $slug);
+                if ($entry) {
+                    return $entry;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Try to extract the primary entity (Page, CptEntry, etc.)
+     * from the response's view data or current request route/path.
+     */
+    protected function resolveEntity(Response $response, Request $request): ?Model
+    {
+        // 1. Check original view response data (most specific to this action)
+        $original = $response->getOriginalContent();
+
+        if (is_object($original) && method_exists($original, 'getData')) {
+            $data = $original->getData();
+            foreach (['postType', 'cpt', 'category', 'tag', 'term', 'taxonomyTerm', 'page', 'entry', 'cpt_entry', 'post', 'event'] as $key) {
+                if (isset($data[$key]) && $data[$key] instanceof Model) {
+                    return $data[$key];
+                }
+            }
+        }
+
+        // 2. Check request attributes (populated by controllers like ArchiveController or PageController)
+        foreach (['postType', 'cpt', 'category', 'tag', 'term', 'taxonomyTerm', 'page', 'entry', 'cpt_entry', 'post', 'event'] as $key) {
+            $val = $request->attributes->get($key);
+            if ($val instanceof Model) {
+                return $val;
+            }
+        }
+
+        // 3. Check route parameters (theme/plugin custom routes or CPT archives)
+        $route = $request->route();
+        if ($route) {
+            foreach (['postType', 'cpt', 'category', 'tag', 'term', 'taxonomyTerm', 'page', 'entry', 'cpt_entry', 'post', 'event'] as $param) {
+                $val = $route->parameter($param);
+                if ($val instanceof Model) {
+                    return $val;
+                }
+            }
+
+            // CPT Archive route parameter
+            $cptSlug = $route->parameter('cptSlug');
+            if ($cptSlug && class_exists(CustomPostType::class)) {
+                $cptModel = CustomPostType::where('slug', $cptSlug)
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$cptSlug])
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$cptSlug])
+                    ->first();
+                if ($cptModel) {
+                    return $cptModel;
+                }
+            }
+
+            // Theme/plugin custom CPT routes (e.g. /{parentSlug}/{childSlug}):
+            // try free-form string parameters against every active CPT.
+            $entry = $this->resolveCptEntryFromRouteParameters($route);
+            if ($entry) {
+                return $entry;
+            }
+
+            $catSlug = $route->parameter('category');
+            if (is_string($catSlug) && class_exists(Category::class)) {
+                $catModel = Category::where('slug', $catSlug)
+                    ->orWhere('id', $catSlug)
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$catSlug])
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$catSlug])
+                    ->first();
+                if ($catModel) {
+                    return $catModel;
+                }
+            }
+
+            $tagSlug = $route->parameter('tag');
+            if (is_string($tagSlug) && class_exists(Tag::class)) {
+                $tagModel = Tag::where('slug', $tagSlug)
+                    ->orWhere('id', $tagSlug)
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$tagSlug])
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$tagSlug])
+                    ->first();
+                if ($tagModel) {
+                    return $tagModel;
+                }
+            }
+
+            $taxSlug = $route->parameter('taxonomy') ?: $route->parameter('taxonomySlug');
+            $termSlug = $route->parameter('term') ?: $route->parameter('termSlug');
+            if (is_string($taxSlug) && is_string($termSlug) && class_exists(CustomTaxonomy::class)) {
+                $taxonomy = CustomTaxonomy::where('slug', $taxSlug)->first();
+                if ($taxonomy && class_exists(TaxonomyTerm::class)) {
+                    $termModel = TaxonomyTerm::where('taxonomy_id', $taxonomy->id)
+                        ->where('slug', $termSlug)
+                        ->first();
+                    if ($termModel) {
+                        return $termModel;
+                    }
+                }
+            }
+        }
+
+        // Fallback 2: Homepage (including localized homepage like /id)
+        $path = trim($request->path(), '/');
+        $locales = function_exists('available_locales') ? available_locales() : ['en', 'id'];
+        if ($path === '' || $path === '/' || in_array($path, $locales, true)) {
+            return Page::where('slug', 'home')->first();
+        }
+
+        // Strip locale prefix if present
+        $cleanPath = $path;
+        foreach ($locales as $loc) {
+            if (str_starts_with($cleanPath, $loc.'/')) {
+                $cleanPath = substr($cleanPath, strlen($loc) + 1);
+                break;
+            }
+        }
+
+        // Fallback 3: Single page path, CPT archive path, or single CPT entry path
+        if ($cleanPath && ! str_contains($cleanPath, '/')) {
+            $page = Page::findByLocalizedSlug($cleanPath);
+            if ($page) {
+                return $page;
+            }
+            if (class_exists(CustomPostType::class)) {
+                $cpt = CustomPostType::where('slug', $cleanPath)
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$cleanPath])
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$cleanPath])
+                    ->first();
+                if ($cpt) {
+                    return $cpt;
+                }
+            }
+            if (class_exists(CptEntry::class)) {
+                $entry = CptEntry::where('slug', $cleanPath)
+                    ->orWhere('translations->id->slug', $cleanPath)
+                    ->first();
+                if ($entry) {
+                    return $entry;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Build the full SEO/GEO HTML string to inject.
+     */
+    protected function buildSeoHtml(array $seo, ?Model $entity = null, bool $hasExistingRobots = false): string
+    {
+        $lines = [];
+
+        $lines[] = '<!-- CMS SEO/GEO: auto-injected -->';
+
+        // Meta description
+        if ($seo['description']) {
+            $lines[] = '<meta name="description" content="'.e($seo['description']).'">';
+        }
+
+        // Robots
+        if (! $hasExistingRobots) {
+            $robotsDirective = $seo['robots'] ?? 'index, follow';
+            $fullRobotsTag = ($robotsDirective === 'index,follow' || $robotsDirective === 'index, follow')
+                ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+                : $robotsDirective;
+
+            $lines[] = '<meta name="robots" content="'.e($fullRobotsTag).'">';
+        }
+
+        // Canonical
+        if ($seo['canonical']) {
+            $lines[] = '<link rel="canonical" href="'.e($seo['canonical']).'">';
+        }
+
+        // Hreflang alternates
+        if (! empty($seo['hreflangs']) && is_array($seo['hreflangs'])) {
+            foreach ($seo['hreflangs'] as $lang => $url) {
+                if (! empty($url)) {
+                    $lines[] = '<link rel="alternate" hreflang="'.e($lang).'" href="'.e($url).'">';
+                }
+            }
+        }
+
+        // Open Graph
+        if (setting('seo_opengraph_enabled', true)) {
+            $lines[] = '<meta property="og:type" content="'.e($seo['og']['type']).'">';
+            $lines[] = '<meta property="og:title" content="'.e($seo['og']['title']).'">';
+            if ($seo['og']['description']) {
+                $lines[] = '<meta property="og:description" content="'.e($seo['og']['description']).'">';
+            }
+            if ($seo['og']['image']) {
+                $lines[] = '<meta property="og:image" content="'.e($seo['og']['image']).'">';
+            }
+            if ($seo['og']['url']) {
+                $lines[] = '<meta property="og:url" content="'.e($seo['og']['url']).'">';
+            }
+            $lines[] = '<meta property="og:site_name" content="'.e($seo['og']['site_name']).'">';
+
+            // Twitter Card
+            $lines[] = '<meta name="twitter:card" content="'.e($seo['twitter']['card']).'">';
+            $lines[] = '<meta name="twitter:title" content="'.e($seo['twitter']['title']).'">';
+            if ($seo['twitter']['description']) {
+                $lines[] = '<meta name="twitter:description" content="'.e($seo['twitter']['description']).'">';
+            }
+            if ($seo['twitter']['image']) {
+                $lines[] = '<meta name="twitter:image" content="'.e($seo['twitter']['image']).'">';
+            }
+            if ($twHandle = setting('seo_twitter_handle')) {
+                $lines[] = '<meta name="twitter:site" content="'.e($twHandle).'">';
+            }
+        }
+
+        // Site Connections / Webmaster verification (site-wide)
+        if ($gsc = setting('seo_google_verification')) {
+            $lines[] = '<meta name="google-site-verification" content="'.e($gsc).'">';
+        }
+        if ($bing = setting('seo_bing_verification')) {
+            $lines[] = '<meta name="msvalidate.01" content="'.e($bing).'">';
+        }
+        if ($baidu = setting('seo_baidu_verification')) {
+            $lines[] = '<meta name="baidu-site-verification" content="'.e($baidu).'">';
+        }
+        if ($pinterest = setting('seo_pinterest_verification')) {
+            $lines[] = '<meta name="p:domain_verify" content="'.e($pinterest).'">';
+        }
+        if ($yandex = setting('seo_yandex_verification')) {
+            $lines[] = '<meta name="yandex-verification" content="'.e($yandex).'">';
+        }
+        if ($ahrefs = setting('seo_ahrefs_verification')) {
+            $lines[] = '<meta name="ahrefs-site-verification" content="'.e($ahrefs).'">';
+        }
+        // Google Site Kit Tracking Snippets (GA4, GTM, Ads - Optimized Smart Delayed Loading)
+        if (setting('gsk_enabled', true)) {
+            if ($gtmId = setting('gsk_gtm_id')) {
+                $lines[] = '<!-- Google Tag Manager (Smart Delayed Load) -->';
+                $lines[] = '<script data-no-optimize="1">window.dataLayer=window.dataLayer||[];(function(){var l=false;function g(){if(l)return;l=true;["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.removeEventListener(e,g,{passive:true})});(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src="https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);})(window,document,"script","dataLayer","'.e($gtmId).'");}["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.addEventListener(e,g,{once:true,passive:true})});if("requestIdleCallback" in window){requestIdleCallback(function(){setTimeout(g,4000);});}else if(document.readyState==="complete"){setTimeout(g,4000);}else{window.addEventListener("load",function(){setTimeout(g,4000);},{once:true,passive:true});}})();</script>';
+            } elseif ($ga4Id = setting('gsk_ga4_tag_id')) {
+                $lines[] = '<!-- Google Analytics (gtag.js - Smart Delayed Load) -->';
+                $lines[] = '<script data-no-optimize="1">window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","'.e($ga4Id).'");(function(){var l=false;function g(){if(l)return;l=true;["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.removeEventListener(e,g,{passive:true})});var s=document.createElement("script");s.async=true;s.src="https://www.googletagmanager.com/gtag/js?id='.e($ga4Id).'";document.head.appendChild(s);}["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.addEventListener(e,g,{once:true,passive:true})});if("requestIdleCallback" in window){requestIdleCallback(function(){setTimeout(g,4000);});}else if(document.readyState==="complete"){setTimeout(g,4000);}else{window.addEventListener("load",function(){setTimeout(g,4000);},{once:true,passive:true});}})();</script>';
+            }
+            if ($adsId = setting('gsk_ads_id')) {
+                $lines[] = '<!-- Google Ads -->';
+                $lines[] = '<script async src="https://www.googletagmanager.com/gtag/js?id='.e($adsId).'"></script>';
+                $lines[] = '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","'.e($adsId).'");</script>';
+            }
+        }
+
+        // JSON-LD Schema (site-wide toggle)
+        if (setting('seo_schema_enabled', true)) {
+            // Per-entity schema
+            if (! empty($seo['schema'])) {
+                $lines[] = '<script type="application/ld+json">'.json_encode($seo['schema'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</script>';
+            }
+
+            // WebSite schema
+            $websiteSchema = $this->buildWebSiteSchema();
+            if ($websiteSchema) {
+                $lines[] = '<script type="application/ld+json">'.json_encode($websiteSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</script>';
+            }
+
+            // Organization schema
+            $orgSchema = $this->buildOrganizationSchema();
+            if ($orgSchema) {
+                $lines[] = '<script type="application/ld+json">'.json_encode($orgSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</script>';
+            }
+
+            // BreadcrumbList schema (auto-injected for Google Rich Snippets)
+            if (setting('seo_breadcrumbs_enabled', true)) {
+                /** @var BreadcrumbService $bcService */
+                $bcService = app(BreadcrumbService::class);
+                $bcItems = $bcService->getItems($entity);
+                $bcSchema = $this->schemaBuilder->breadcrumbList($bcItems);
+                $lines[] = '<script type="application/ld+json">'.json_encode($bcSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).'</script>';
+            }
+        }
+
+        $lines[] = '<!-- /CMS SEO/GEO -->';
+
+        return implode("\n    ", $lines);
+    }
+
+    /**
+     * Build the WebSite JSON-LD schema with alternateName & Sitelinks Search Box.
+     */
+    protected function buildWebSiteSchema(): ?array
+    {
+        $siteName = (string) setting('site_name', config('app.name'));
+        $altName = (string) setting('seo_site_alternate_name', '');
+
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            '@id' => url('/#website'),
+            'url' => url('/'),
+            'name' => $siteName,
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'target' => [
+                    '@type' => 'EntryPoint',
+                    'urlTemplate' => url('/search?q={search_term_string}'),
+                ],
+                'query-input' => 'required name=search_term_string',
+            ],
+        ];
+
+        if ($altName !== '') {
+            $schema['alternateName'] = $altName;
+        }
+
+        return $schema;
+    }
+
+    /**
+     * Build the enriched Organization JSON-LD schema with
+     * Yoast-inspired fields + Publishing Principles for GEO.
+     */
+    protected function buildOrganizationSchema(): ?array
+    {
+        $siteName = (string) setting('site_name', config('app.name'));
+        $altName = (string) setting('seo_site_alternate_name', '');
+
+        $orgType = (string) setting('seo_org_type', 'Organization');
+        $orgName = (string) setting('seo_org_name', '') ?: $siteName;
+        $orgAltName = (string) setting('seo_org_alternate_name', '') ?: $altName;
+
+        $logo = setting('seo_org_logo') ? url((string) setting('seo_org_logo')) : (setting('site_logo') ? url((string) setting('site_logo')) : (setting('seo_default_og_image') ? url((string) setting('seo_default_og_image')) : null));
+
+        $schema = array_filter([
+            '@context' => 'https://schema.org',
+            '@type' => $orgType,
+            'name' => $orgName,
+            'url' => url('/'),
+            'logo' => $logo,
+
+            // Enriched fields (Yoast-inspired)
+            'description' => setting('seo_org_description') ?: null,
+            'email' => setting('seo_org_email') ?: null,
+            'telephone' => setting('seo_org_phone') ?: null,
+            'legalName' => setting('seo_org_legal_name') ?: null,
+            'foundingDate' => setting('seo_org_founding_date') ?: null,
+            'vatID' => setting('seo_org_vat_id') ?: null,
+            'taxID' => setting('seo_org_tax_id') ?: null,
+            'duns' => setting('seo_org_duns') ?: null,
+            'naics' => setting('seo_org_naics') ?: null,
+
+            // Social profiles
+            'sameAs' => array_values(array_filter([
+                setting('seo_facebook_url') ?: null,
+                ($tw = setting('seo_twitter_handle')) ? (str_starts_with((string) $tw, 'http') ? $tw : "https://x.com/{$tw}") : null,
+                setting('seo_linkedin_url') ?: null,
+                setting('seo_instagram_url') ?: null,
+                setting('seo_youtube_url') ?: null,
+                setting('seo_wikipedia_url') ?: null,
+            ])),
+
+            // Publishing Principles (GEO/E-E-A-T)
+            'publishingPrinciples' => $this->resolvePolicyUrl((int) setting('seo_policy_publishing_principles')),
+            'correctionsPolicy' => $this->resolvePolicyUrl((int) setting('seo_policy_corrections')),
+            'ethicsPolicy' => $this->resolvePolicyUrl((int) setting('seo_policy_ethics')),
+            'diversityPolicy' => $this->resolvePolicyUrl((int) setting('seo_policy_diversity')),
+            'ownershipFundingInfo' => $this->resolvePolicyUrl((int) setting('seo_policy_ownership_funding')),
+        ], fn ($v) => $v !== null && $v !== '' && $v !== []);
+
+        if ($orgAltName !== '') {
+            $schema['alternateName'] = $orgAltName;
+        }
+
+        // numberOfEmployees as QuantitativeValue (Yoast pattern)
+        $employees = setting('seo_org_employees');
+        if ($employees) {
+            $range = explode('-', (string) $employees);
+            $schema['numberOfEmployees'] = ['@type' => 'QuantitativeValue'];
+            if (count($range) === 2) {
+                $schema['numberOfEmployees']['minValue'] = trim($range[0]);
+                $schema['numberOfEmployees']['maxValue'] = trim($range[1]);
+            } else {
+                $schema['numberOfEmployees']['value'] = $employees;
+            }
+        }
+
+        return $schema;
+    }
+
+    protected function resolvePolicyUrl(int $pageId): ?string
+    {
+        if ($pageId <= 0) {
+            return null;
+        }
+
+        $page = Page::find($pageId);
+
+        return $page ? $page->getUrl() : null;
+    }
+}

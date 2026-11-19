@@ -16,31 +16,34 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Administrator',
                 'slug' => 'administrator',
-                'description' => 'Super admin dengan akses penuh ke semua fitur',
+                'description' => 'Full access to all CMS features.',
                 'is_super_admin' => true,
             ],
             [
                 'name' => 'Editor',
                 'slug' => 'editor',
-                'description' => 'Dapat mengelola konten dan user',
+                'description' => 'Can manage content and users.',
                 'is_super_admin' => false,
             ],
             [
                 'name' => 'Author',
                 'slug' => 'author',
-                'description' => 'Dapat membuat dan mengelola konten sendiri',
+                'description' => 'Can create and manage own content.',
                 'is_super_admin' => false,
             ],
             [
                 'name' => 'Subscriber',
                 'slug' => 'subscriber',
-                'description' => 'Akses read-only ke dashboard',
+                'description' => 'Read-only access to the dashboard.',
                 'is_super_admin' => false,
             ],
         ];
 
         foreach ($roles as $role) {
-            Role::create($role);
+            Role::updateOrCreate(
+                ['slug' => $role['slug']],
+                $role
+            );
         }
     }
 }

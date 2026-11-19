@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\CacheManager;
 use App\Services\SettingsRegistry;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Model;
@@ -18,13 +19,23 @@ class Setting extends Model
 
     protected static array $memo = [];
 
+    /**
+     * Flush in-memory setting memo array for long-running processes.
+     */
+    public static function flushMemo(): void
+    {
+        static::$memo = [];
+    }
+
     /** Cache of encrypted-key lookup, populated lazily from the SettingsRegistry. */
     protected static ?array $encryptedKeys = null;
 
     protected static function booted(): void
     {
         static::saved(function (self $s) {
+            static::flushMemo();
             static::forgetCache($s->key, $s->group);
+            CacheManager::purgeAll();
 
             // Audit log: record setting changes when an authenticated user is acting
             // (skip system/cli bootstraps where no user context exists)
@@ -59,23 +70,32 @@ class Setting extends Model
             return static::$memo[$key];
         }
 
-        $value = Cache::rememberForever(static::cacheKey($key), function () use ($key, $default) {
-            // Tolerate missing table (fresh install before migrate) — return default.
-            try {
-                $row = static::query()->where('key', $key)->first();
-            } catch (\Throwable $e) {
-                return ['__missing' => true, 'default' => $default];
-            }
-            if (! $row) {
-                return ['__missing' => true, 'default' => $default];
-            }
-            $cast = static::castFromStorage($row->value, $row->type);
+        try {
+            $value = Cache::rememberForever(static::cacheKey($key), function () use ($key) {
+                // Tolerate missing table (fresh install before migrate) — return missing payload.
+                try {
+                    $row = static::query()->where('key', $key)->first();
+                } catch (\Throwable $e) {
+                    return ['__missing' => true];
+                }
+                if (! $row) {
+                    return ['__missing' => true];
+                }
+                $cast = static::castFromStorage($row->value, $row->type);
 
-            // Decrypt at the cache boundary so subsequent reads stay fast.
-            return ['value' => static::decryptIfNeeded($key, $cast)];
-        });
+                // Decrypt at the cache boundary so subsequent reads stay fast.
+                return ['value' => static::decryptIfNeeded($key, $cast)];
+            });
+        } catch (\Throwable $e) {
+            // Database file or cache store not ready (e.g. composer package:discover before migrate)
+            return $default;
+        }
 
-        $resolved = ($value['__missing'] ?? false) ? $default : $value['value'];
+        if ($value['__missing'] ?? false) {
+            return $default;
+        }
+
+        $resolved = $value['value'];
         static::$memo[$key] = $resolved;
 
         return $resolved;
@@ -146,7 +166,7 @@ class Setting extends Model
     }
 
     /** Lazily computed set of setting keys whose values must be encrypted at rest. */
-    protected static function isEncryptedKey(string $key): bool
+    public static function isEncryptedKey(string $key): bool
     {
         if (static::$encryptedKeys === null) {
             static::$encryptedKeys = [];
@@ -167,6 +187,29 @@ class Setting extends Model
         }
 
         return isset(static::$encryptedKeys[$key]);
+    }
+
+    /** Determine if a setting key contains sensitive/secret data (passwords, secrets, keys, credentials). */
+    public static function isSensitiveKey(string $key): bool
+    {
+        if (static::isEncryptedKey($key)) {
+            return true;
+        }
+
+        $lower = strtolower($key);
+        $sensitiveTerms = [
+            'password', 'secret', 'private_key', 'api_key', 'signing_key',
+            'mail_host', 'mail_port', 'mail_username', 'mail_password',
+            'brevo', 'token',
+        ];
+
+        foreach ($sensitiveTerms as $term) {
+            if (str_contains($lower, $term)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** For tests or after registry mutation, force reload of encrypted-key cache. */

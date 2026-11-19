@@ -80,6 +80,9 @@ class SettingsRegistry
     {
         $out = [];
         foreach ($this->fields($slug) as $field) {
+            if (($field['type'] ?? '') === 'info') {
+                continue;
+            }
             $out[$field['key']] = $field['default'] ?? null;
         }
 
@@ -90,6 +93,9 @@ class SettingsRegistry
     {
         $out = [];
         foreach ($this->fields($slug) as $field) {
+            if (($field['type'] ?? '') === 'info') {
+                continue;
+            }
             $out[$field['key']] = $field['rules'] ?? ['nullable'];
         }
 
@@ -100,6 +106,9 @@ class SettingsRegistry
     {
         $out = [];
         foreach ($this->fields($slug) as $field) {
+            if (($field['type'] ?? '') === 'info') {
+                continue;
+            }
             $out[$field['key']] = $field['label'] ?? $field['key'];
         }
 

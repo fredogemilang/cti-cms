@@ -64,7 +64,7 @@ class TemplateResolver
             'taxonomy' => $this->buildTaxonomyHierarchy($context),
             'page' => $this->buildPageHierarchy($context),
             'home' => ['layouts.home', 'layouts.index'],
-            'search' => ['layouts.search', 'layouts.archive'],
+            'search' => ['search', 'layouts.search', 'layouts.archive'],
             '404' => ['layouts.404'],
             default => ["layouts.{$type}"]
         };
@@ -217,9 +217,9 @@ class TemplateResolver
             'archive' => 'layouts.archive',
             'page' => 'layouts.page',
             'home' => 'layouts.home',
-            'search' => 'layouts.search',
+            'search' => View::exists('search') ? 'search' : 'layouts.search',
             '404' => 'layouts.404',
-            default => "layouts.{$type}"
+            default => "layouts.{$type}",
         };
     }
 }

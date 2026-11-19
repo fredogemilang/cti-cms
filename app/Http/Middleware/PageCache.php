@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\CacheManager;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -22,20 +23,28 @@ class PageCache
 
         // Cache hit
         if ($cached = Cache::get($key)) {
-            return response($cached['content'], $cached['status'], $cached['headers'] + ['X-Page-Cache' => 'HIT']);
+            $cachedContent = (string) ($cached['content'] ?? '');
+            if (strlen(trim($cachedContent)) > 100) {
+                return response($cachedContent, $cached['status'] ?? 200, ($cached['headers'] ?? []) + ['X-Page-Cache' => 'HIT']);
+            }
+            // Invalid/empty cached entry — purge key and fall through to fresh render
+            Cache::forget($key);
         }
 
         /** @var Response $response */
         $response = $next($request);
 
-        // Only cache HTML 200s
+        $content = (string) $response->getContent();
+
+        // Only cache valid HTML 200s with non-empty content (> 100 bytes)
         if ($response->getStatusCode() === 200
-            && str_contains((string) $response->headers->get('Content-Type'), 'text/html')) {
+            && strlen(trim($content)) > 100
+            && str_contains((string) $response->headers->get('Content-Type', 'text/html'), 'text/html')) {
 
             Cache::put($key, [
-                'content' => $response->getContent(),
+                'content' => $content,
                 'status' => 200,
-                'headers' => ['Content-Type' => $response->headers->get('Content-Type')],
+                'headers' => ['Content-Type' => (string) $response->headers->get('Content-Type', 'text/html; charset=UTF-8')],
             ], $ttl);
         }
 
@@ -46,6 +55,11 @@ class PageCache
 
     protected function shouldCache(Request $request): bool
     {
+        // When running on LiteSpeed, server-level LSCache handles caching — bypass PHP-level cache
+        if (CacheManager::isLiteSpeed()) {
+            return false;
+        }
+
         if (! setting('page_cache_enabled', false)) {
             return false;
         }
@@ -53,6 +67,11 @@ class PageCache
             return false;
         }
         if (auth()->check()) {
+            return false;
+        }
+
+        // Skip deferred AJAX fragment paths
+        if (str_starts_with(ltrim($request->path(), '/'), '_deferred')) {
             return false;
         }
 

@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Media;
 use App\Services\MediaService;
+use App\Services\MediaUsageService;
 use Livewire\Component;
 
 class MediaDetails extends Component
@@ -17,6 +18,8 @@ class MediaDetails extends Component
     public $title;
 
     public $description;
+
+    public array $usedLocations = [];
 
     public $showModal = false;
 
@@ -37,6 +40,7 @@ class MediaDetails extends Component
             $this->alt_text = $this->media->alt_text;
             $this->title = $this->media->title;
             $this->description = $this->media->description;
+            $this->usedLocations = app(MediaUsageService::class)->getUsagesForMedia($this->media);
             $this->showModal = true;
         }
     }
@@ -97,7 +101,7 @@ class MediaDetails extends Component
     public function closeModal()
     {
         $this->showModal = false;
-        $this->reset(['mediaId', 'media', 'alt_text', 'title', 'description']);
+        $this->reset(['mediaId', 'media', 'alt_text', 'title', 'description', 'usedLocations']);
     }
 
     public function render()

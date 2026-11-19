@@ -28,6 +28,53 @@ class PluginManager
     }
 
     /**
+     * Scan /plugins directory for any un-registered plugins containing a plugin.json manifest.
+     *
+     * @return array<int, Plugin>
+     */
+    public function discoverPlugins(): array
+    {
+        if (! File::exists($this->pluginPath)) {
+            return [];
+        }
+
+        $directories = File::directories($this->pluginPath);
+        $discovered = [];
+
+        foreach ($directories as $dir) {
+            $manifestPath = $dir.'/plugin.json';
+            if (! File::exists($manifestPath)) {
+                continue;
+            }
+
+            $manifest = json_decode(file_get_contents($manifestPath), true);
+            if (! is_array($manifest) || ! isset($manifest['name'], $manifest['slug'], $manifest['provider'])) {
+                continue;
+            }
+
+            $slug = $manifest['slug'];
+            $plugin = Plugin::where('slug', $slug)->first();
+
+            if (! $plugin) {
+                $plugin = Plugin::create([
+                    'name' => $manifest['name'],
+                    'slug' => $slug,
+                    'version' => $manifest['version'] ?? '1.0.0',
+                    'description' => $manifest['description'] ?? null,
+                    'author' => $manifest['author'] ?? null,
+                    'provider' => $manifest['provider'],
+                    'is_active' => false,
+                    'installed_at' => now(),
+                ]);
+            }
+
+            $discovered[] = $plugin;
+        }
+
+        return $discovered;
+    }
+
+    /**
      * Install a plugin from a zip file.
      */
     public function install(string $zipPath): Plugin

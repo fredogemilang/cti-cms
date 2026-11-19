@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Form;
 use App\Models\FormEntry;
+use App\Models\Setting;
+use App\Services\FormNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -65,6 +67,7 @@ class FormController extends Controller
                 'notifications' => $request->notifications,
                 'confirmations' => $request->confirmations,
                 'spam_protection' => $request->spam_protection,
+                'translations' => $request->translations ?? null,
             ]);
 
             // Create form fields
@@ -81,8 +84,9 @@ class FormController extends Controller
                     'help_text' => $fieldData['help_text'] ?? null,
                     'default_value' => $fieldData['default_value'] ?? null,
                     'column_width' => $fieldData['column_width'] ?? 'full',
-                    'advanced_settings' => $fieldData['advanced_settings'] ?? null,
+                    'advanced_settings' => $this->prepareAdvancedSettings($fieldData),
                     'conditional_logic' => $fieldData['conditional_logic'] ?? null,
+                    'translations' => $this->prepareTranslations($fieldData),
                 ]);
             }
 
@@ -116,9 +120,7 @@ class FormController extends Controller
      */
     public function edit(Form $form)
     {
-        $form->load('fields');
-
-        return view('admin.forms.edit', compact('form'));
+        return redirect()->route('admin.forms.studio', [$form->id, 'fields']);
     }
 
     /**
@@ -143,6 +145,10 @@ class FormController extends Controller
         }
 
         try {
+            $existingTranslations = $form->translations ?? [];
+            $incomingTranslations = $request->translations ?? [];
+            $mergedTranslations = array_replace_recursive($existingTranslations, $incomingTranslations);
+
             $form->update([
                 'name' => $request->name,
                 'slug' => $request->slug ?: Str::slug($request->name),
@@ -153,6 +159,7 @@ class FormController extends Controller
                 'notifications' => $request->notifications,
                 'confirmations' => $request->confirmations,
                 'spam_protection' => $request->spam_protection,
+                'translations' => $mergedTranslations,
             ]);
 
             // Delete existing fields and recreate
@@ -171,8 +178,9 @@ class FormController extends Controller
                     'help_text' => $fieldData['help_text'] ?? null,
                     'default_value' => $fieldData['default_value'] ?? null,
                     'column_width' => $fieldData['column_width'] ?? 'full',
-                    'advanced_settings' => $fieldData['advanced_settings'] ?? null,
+                    'advanced_settings' => $this->prepareAdvancedSettings($fieldData),
                     'conditional_logic' => $fieldData['conditional_logic'] ?? null,
+                    'translations' => $this->prepareTranslations($fieldData),
                 ]);
             }
 
@@ -382,5 +390,274 @@ class FormController extends Controller
                 'message' => 'Failed to delete entry: '.$e->getMessage(),
             ], 500);
         }
+    }
+
+    /**
+     * Display theme form assignments.
+     */
+    public function assignments()
+    {
+        $theme = active_theme();
+        if (! $theme) {
+            return redirect()->route('admin.forms.index')
+                ->with('error', 'No active theme found.');
+        }
+
+        $config = $theme->loadConfig();
+        $placeholders = $config['form_placeholders'] ?? [];
+
+        $forms = Form::where('is_active', true)->get();
+        $currentAssignments = Setting::get("theme_{$theme->slug}_form_assignments", []);
+
+        return view('admin.forms.assignments', compact('theme', 'placeholders', 'forms', 'currentAssignments'));
+    }
+
+    /**
+     * Save theme form assignments.
+     */
+    public function saveAssignments(Request $request)
+    {
+        $theme = active_theme();
+        if (! $theme) {
+            return redirect()->route('admin.forms.index')
+                ->with('error', 'No active theme found.');
+        }
+
+        $assignments = $request->input('assignments', []);
+
+        // Clean up empty assignments
+        $assignments = array_filter($assignments, fn ($v) => ! empty($v));
+
+        Setting::set("theme_{$theme->slug}_form_assignments", $assignments, 'theme', 'array');
+
+        return redirect()->route('admin.forms.assignments')
+            ->with('success', 'Form assignments saved successfully.');
+    }
+
+    /**
+     * Display Form Studio Workspace (Unified UI/UX).
+     */
+    public function studio($id, $tab = 'fields')
+    {
+        $form = Form::with(['fields', 'entries' => function ($q) {
+            $q->latest();
+        }])->findOrFail($id);
+
+        $theme = active_theme();
+        $placeholders = [];
+        $currentAssignments = [];
+
+        if ($theme) {
+            $config = $theme->loadConfig();
+            $placeholders = $config['form_placeholders'] ?? [];
+            $currentAssignments = Setting::get("theme_{$theme->slug}_form_assignments", []);
+        }
+
+        $activeTab = in_array($tab, ['fields', 'settings', 'emails', 'entries']) ? $tab : 'fields';
+
+        return view('admin.forms.studio', compact('form', 'activeTab', 'placeholders', 'currentAssignments', 'theme'));
+    }
+
+    /**
+     * Save Unified Form Studio changes.
+     */
+    public function saveStudio(Request $request, $id)
+    {
+        $form = Form::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:forms,slug,'.$form->id,
+            'description' => 'nullable|string',
+            'is_active' => 'nullable|boolean',
+            'submit_button_text' => 'nullable|string',
+            'fields' => 'nullable|array',
+            'notifications' => 'nullable|array',
+            'confirmations' => 'nullable|array',
+            'spam_protection' => 'nullable|array',
+            'theme_slot' => 'nullable|string',
+            'translations' => 'nullable|array',
+        ]);
+
+        $notifications = $validated['notifications'] ?? $form->notifications ?? [];
+        $notifications['notify_admin'] = (bool) ($notifications['notify_admin'] ?? false);
+        $notifications['send_to_user'] = (bool) ($notifications['send_to_user'] ?? false);
+        $notifications['enabled'] = $notifications['notify_admin'] || $notifications['send_to_user'];
+
+        // Merge translations safely (incoming partial data won't overwrite unrelated keys)
+        $existingTranslations = $form->translations ?? [];
+        $incomingTranslations = $validated['translations'] ?? [];
+        $mergedTranslations = array_replace_recursive($existingTranslations, $incomingTranslations);
+
+        $form->update([
+            'name' => $validated['name'],
+            'slug' => $validated['slug'] ?: Str::slug($validated['name']),
+            'description' => $validated['description'] ?? null,
+            'is_active' => (bool) ($validated['is_active'] ?? true),
+            'submit_button_text' => $validated['submit_button_text'] ?? 'Submit',
+            'notifications' => $notifications,
+            'confirmations' => $validated['confirmations'] ?? $form->confirmations ?? [],
+            'spam_protection' => $validated['spam_protection'] ?? $form->spam_protection ?? [],
+            'translations' => $mergedTranslations,
+        ]);
+
+        // Save fields if provided
+        if (isset($validated['fields'])) {
+            $form->fields()->delete();
+            foreach ($validated['fields'] as $index => $fieldData) {
+                $form->fields()->create([
+                    'label' => $fieldData['label'],
+                    'field_id' => $fieldData['field_id'],
+                    'type' => $fieldData['type'],
+                    'options' => $fieldData['options'] ?? null,
+                    'validation' => $fieldData['validation'] ?? null,
+                    'order' => $index,
+                    'is_required' => ! empty($fieldData['is_required']),
+                    'placeholder' => $fieldData['placeholder'] ?? null,
+                    'help_text' => $fieldData['help_text'] ?? null,
+                    'default_value' => $fieldData['default_value'] ?? null,
+                    'column_width' => $fieldData['column_width'] ?? 'full',
+                    'advanced_settings' => $this->prepareAdvancedSettings($fieldData),
+                    'conditional_logic' => $fieldData['conditional_logic'] ?? null,
+                    'translations' => $this->prepareTranslations($fieldData),
+                ]);
+            }
+        }
+
+        // Save theme slot assignment if specified
+        $theme = active_theme();
+        if ($theme && ! empty($request->theme_slot)) {
+            $currentAssignments = Setting::get("theme_{$theme->slug}_form_assignments", []);
+            $currentAssignments[$request->theme_slot] = $form->id;
+            Setting::set("theme_{$theme->slug}_form_assignments", $currentAssignments, 'theme', 'array');
+        }
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Form saved successfully!',
+                'redirect_url' => route('admin.forms.studio', [$form->id, $request->input('tab', 'fields')]),
+            ]);
+        }
+
+        return redirect()->route('admin.forms.studio', [$form->id, $request->input('tab', 'fields')])
+            ->with('success', 'Form saved successfully!');
+    }
+
+    /**
+     * Send test email notification to currently logged in admin.
+     */
+    public function sendTestEmail(Request $request, $id)
+    {
+        $form = Form::with('fields')->findOrFail($id);
+        $targetEmail = $request->input('test_email', auth()->user()->email ?? config('mail.from.address'));
+        $emailType = $request->input('email_type', 'admin'); // 'admin' or 'user'
+
+        $mockEntry = new FormEntry([
+            'id' => 999,
+            'form_id' => $form->id,
+            'data' => [
+                'name' => auth()->user()->name ?? 'Test Admin',
+                'corporate_email' => $targetEmail,
+                'email' => $targetEmail,
+                'company_name' => 'Example Company Test',
+                'company' => 'Example Company Test',
+                'phone_number' => '+62 812-3456-7890',
+            ],
+            'ip_address' => '127.0.0.1',
+            'created_at' => now(),
+        ]);
+
+        $service = app(FormNotificationService::class);
+
+        try {
+            $notifications = $form->notifications ?? [];
+            if ($emailType === 'user') {
+                $service->sendNotifications($form, $mockEntry);
+            } else {
+                $service->sendNotifications($form, $mockEntry);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => "Test email ({$emailType}) dispatched successfully to {$targetEmail}!",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send test email: '.$e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Display form notification settings page.
+     */
+    public function notifications($id)
+    {
+        return redirect()->route('admin.forms.studio', [$id, 'emails']);
+    }
+
+    /**
+     * Update form notification settings.
+     */
+    public function updateNotifications(Request $request, $id)
+    {
+        return $this->saveStudio($request, $id);
+    }
+
+    /**
+     * Prepare advanced settings array from field data.
+     */
+    private function prepareAdvancedSettings(array $fieldData): ?array
+    {
+        $advanced = $fieldData['advanced_settings'] ?? [];
+        if (is_string($advanced)) {
+            $advanced = json_decode($advanced, true) ?? [];
+        }
+
+        if (! empty($fieldData['consent_text'])) {
+            $advanced['consent_text'] = $fieldData['consent_text'];
+        }
+        if (! empty($fieldData['privacy_content'])) {
+            $advanced['consent_text'] = $fieldData['privacy_content'];
+        }
+        if (! empty($fieldData['terms_text'])) {
+            $advanced['terms_text'] = $fieldData['terms_text'];
+        }
+        if (! empty($fieldData['html_content'])) {
+            $advanced['html_content'] = $fieldData['html_content'];
+        }
+
+        return ! empty($advanced) ? $advanced : null;
+    }
+
+    /**
+     * Build translations JSON from flat form data.
+     * Expects keys like translations_id_label, translations_id_placeholder.
+     */
+    private function prepareTranslations(array $fieldData): ?array
+    {
+        $translations = [];
+
+        $idLabel = $fieldData['translations_id_label'] ?? '';
+        $idPlaceholder = $fieldData['translations_id_placeholder'] ?? '';
+        $idConsentText = $fieldData['translations_id_consent_text'] ?? '';
+
+        if (! empty($idLabel) || ! empty($idPlaceholder) || ! empty($idConsentText)) {
+            $id = [];
+            if (! empty($idLabel)) {
+                $id['label'] = $idLabel;
+            }
+            if (! empty($idPlaceholder)) {
+                $id['placeholder'] = $idPlaceholder;
+            }
+            if (! empty($idConsentText)) {
+                $id['consent_text'] = $idConsentText;
+            }
+            $translations['id'] = $id;
+        }
+
+        return ! empty($translations) ? $translations : null;
     }
 }

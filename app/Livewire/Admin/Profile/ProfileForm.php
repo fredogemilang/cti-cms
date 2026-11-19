@@ -93,6 +93,33 @@ class ProfileForm extends Component
         }
     }
 
+    public function save(): void
+    {
+        $user = auth()->user();
+
+        $validated = $this->validate([
+            'name' => 'required|string|max:255',
+            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'bio' => 'nullable|string|max:500',
+        ]);
+
+        try {
+            $user->fill($validated);
+            $user->save();
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'Profile updated successfully',
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Failed to update profile',
+            ]);
+        }
+    }
+
     public function updated($propertyName)
     {
         if ($propertyName === 'avatar') {

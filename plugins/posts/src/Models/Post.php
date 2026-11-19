@@ -2,19 +2,34 @@
 
 namespace Plugins\Posts\Models;
 
-use App\Models\User;
+use App\Models\CptEntry;
 use App\Traits\FindsByLocalizedSlug;
+use App\Traits\HasSanitizedContent;
+use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string|null $excerpt
+ * @property string|null $content
+ * @property string|null $featured_image
+ * @property string $status
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $published_at
+ */
 class Post extends Model
 {
-    use FindsByLocalizedSlug, HasTranslations, SoftDeletes;
+    use FindsByLocalizedSlug, HasSanitizedContent, HasSeoMeta, HasTranslations, SoftDeletes;
 
     protected static function baseLocalizedSlugQuery(): Builder
     {
@@ -59,15 +74,20 @@ class Post extends Model
             if (empty($post->slug)) {
                 $post->slug = Str::slug($post->title);
             }
-            if (empty($post->author_id)) {
-                $post->author_id = auth()->id();
+            if (empty($post->author_id) && auth()->check()) {
+                $currentUser = auth()->user();
+                $author = PostAuthor::firstOrCreate(
+                    ['name' => $currentUser->name],
+                    ['slug' => Str::slug($currentUser->name), 'email' => $currentUser->email]
+                );
+                $post->author_id = $author->id;
             }
         });
     }
 
     public function author(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsTo(PostAuthor::class, 'author_id');
     }
 
     public function categories(): BelongsToMany
@@ -84,6 +104,47 @@ class Post extends Model
     {
         return $query->where('status', 'published')
             ->where('published_at', '<=', now());
+    }
+
+    public function hasTranslationForLocale(string $locale): bool
+    {
+        $defaultLocale = function_exists('setting') ? setting('default_locale', config('app.locale', 'en')) : config('app.locale', 'en');
+        if ($locale === $defaultLocale) {
+            return true;
+        }
+
+        if (! empty($this->translations[$locale]) && is_array($this->translations[$locale]) && count(array_filter($this->translations[$locale])) > 0) {
+            return true;
+        }
+
+        $transSlug = $this->getTranslation('slug', $locale, false);
+        if (! empty($transSlug) && trim((string) $transSlug) !== '') {
+            return true;
+        }
+
+        $transTitle = $this->getTranslation('title', $locale, false);
+
+        return ! empty($transTitle) && trim((string) $transTitle) !== '';
+    }
+
+    public function getUrl(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $defaultLocale = function_exists('setting') ? setting('default_locale', config('app.locale', 'en')) : config('app.locale', 'en');
+
+        // If requested locale is non-default and post DOES NOT have a translation for it, fallback to default locale URL
+        if ($locale !== $defaultLocale && ! $this->hasTranslationForLocale($locale)) {
+            $locale = $defaultLocale;
+        }
+
+        $prefix = ($locale !== $defaultLocale) ? '/'.$locale : '';
+        $slug = $this->getTranslation('slug', $locale, fallback: false) ?: $this->slug;
+        $archiveSlug = 'blog-news';
+        if (class_exists(Setting::class)) {
+            $archiveSlug = Setting::getArchiveSlug($locale);
+        }
+
+        return trailing_slash_url(url($prefix.'/'.$archiveSlug.'/'.$slug));
     }
 
     public function scopeDraft($query)
@@ -105,5 +166,28 @@ class Post extends Model
             'archived' => ['color' => 'amber', 'label' => 'Archived'],
             default => ['color' => 'gray', 'label' => ucfirst($this->status)],
         };
+    }
+
+    public function cptEntries(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            CptEntry::class,
+            'post_cpt_relations',
+            'post_id',
+            'cpt_entry_id'
+        )->withPivot('cpt_slug')->withTimestamps();
+    }
+
+    public function getReadingTime(?string $locale = null, int $wpm = 200): int
+    {
+        $locale ??= app()->getLocale();
+        $rawContent = $this->getTranslation('content', $locale) ?: ($this->content ?? '');
+        $plainText = trim(strip_tags($rawContent));
+        if (empty($plainText)) {
+            return 1;
+        }
+        $wordCount = str_word_count($plainText);
+
+        return max(1, (int) ceil($wordCount / $wpm));
     }
 }

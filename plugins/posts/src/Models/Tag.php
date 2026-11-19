@@ -3,6 +3,7 @@
 namespace Plugins\Posts\Models;
 
 use App\Traits\FindsByLocalizedSlug;
+use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,7 +11,7 @@ use Illuminate\Support\Str;
 
 class Tag extends Model
 {
-    use FindsByLocalizedSlug, HasTranslations;
+    use FindsByLocalizedSlug, HasSeoMeta, HasTranslations;
 
     protected $fillable = [
         'name',
@@ -43,5 +44,24 @@ class Tag extends Model
     public function getPostsCountAttribute(): int
     {
         return $this->posts()->count();
+    }
+
+    public function getUrl(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $defaultLocale = function_exists('default_locale') ? default_locale() : (function_exists('setting') ? setting('default_locale', config('app.locale', 'en')) : config('app.locale', 'en'));
+
+        $prefix = ($locale !== $defaultLocale) ? '/'.$locale : '';
+        $slug = $this->getTranslation('slug', $locale, fallback: false) ?: $this->slug;
+        $archiveSlug = 'blog-news';
+        if (class_exists(Setting::class)) {
+            $archiveSlug = Setting::getArchiveSlug($locale);
+        }
+        $tagBase = 'tag';
+        if (class_exists(\App\Models\Setting::class)) {
+            $tagBase = \App\Models\Setting::get('permalink_tag_base', 'tag');
+        }
+
+        return trailing_slash_url(url($prefix.'/'.$archiveSlug.'/'.$tagBase.'/'.$slug));
     }
 }

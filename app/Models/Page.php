@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\SeoRenderer;
 use App\Services\ThemeLoader;
 use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -24,11 +26,15 @@ class Page extends Model
         'status',
         'published_at',
         'author_id',
+        'updated_by',
         'template',
         'featured_image',
         'seo',
         'settings',
         'translations',
+        'is_system',
+        'locked_by',
+        'locked_at',
     ];
 
     /** Fields that can carry per-locale values via the translations JSON column. */
@@ -42,6 +48,8 @@ class Page extends Model
             'settings' => 'array',
             'translations' => 'array',
             'menu_order' => 'integer',
+            'is_system' => 'boolean',
+            'locked_at' => 'datetime',
         ];
     }
 
@@ -79,6 +87,11 @@ class Page extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
+    public function updatedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Page::class, 'parent_id');
@@ -104,6 +117,11 @@ class Page extends Model
         return $this->hasMany(PageRevision::class)->orderBy('created_at', 'desc');
     }
 
+    public function lockedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'locked_by');
+    }
+
     // === SCOPES ===
 
     public function scopePublished($query)
@@ -111,6 +129,7 @@ class Page extends Model
         return $query->where('status', 'published')
             ->where(function ($q) {
                 $q->whereNull('published_at')
+                    ->orWhere('published_at', '')
                     ->orWhere('published_at', '<=', now());
             });
     }
@@ -135,6 +154,18 @@ class Page extends Model
         return $query->whereNull('parent_id');
     }
 
+    public function scopeSystem($query)
+    {
+        return $query->where('is_system', true);
+    }
+
+    public function scopeUserCreated($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('is_system', false)->orWhereNull('is_system');
+        });
+    }
+
     // === HELPERS ===
 
     public function getBlock(string $name): ?PageBlock
@@ -146,7 +177,145 @@ class Page extends Model
     {
         $block = $this->getBlock($name);
 
-        return $block ? $block->value : $default;
+        return $block ? $block->localizedValue() : $default;
+    }
+
+    /**
+     * Shortcut alias for getBlockValue().
+     */
+    public function block(string $name, $default = null)
+    {
+        return $this->getBlockValue($name, $default);
+    }
+
+    /**
+     * Set or update a block value on this page.
+     */
+    public function setBlock(string $name, $value, string $type = 'media', ?string $label = null): PageBlock
+    {
+        $block = $this->allBlocks()->where('name', $name)->first();
+        if ($block instanceof PageBlock) {
+            $block->value = $value;
+            $block->save();
+
+            return $block;
+        }
+
+        $created = $this->blocks()->create([
+            'name' => $name,
+            'type' => $type,
+            'label' => $label ?? Str::headline($name),
+            'value' => $value,
+            'order' => ($this->blocks()->max('order') ?? 0) + 1,
+            'is_active' => true,
+        ]);
+
+        if (! $created instanceof PageBlock) {
+            throw new \RuntimeException('Failed to create PageBlock.');
+        }
+
+        return $created;
+    }
+
+    /**
+     * Get array payload of a repeater block.
+     */
+    public function repeaterBlock(string $name, array $default = []): array
+    {
+        $value = $this->block($name);
+        if (is_array($value)) {
+            return $value;
+        }
+        if (is_string($value) && ! empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get array payload of a compound title block (prefix + main).
+     *
+     * @param  array<string, mixed>  $default
+     * @return array<string, mixed>
+     */
+    public function titleBlock(string $name, array $default = []): array
+    {
+        $value = $this->block($name);
+        if (is_string($value) && ! empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                $value = $decoded;
+            }
+        }
+
+        if (is_array($value)) {
+            return array_merge($default, array_filter($value, fn ($v) => $v !== null && $v !== ''));
+        }
+
+        if (is_string($value) && ! empty($value)) {
+            return array_merge($default, ['main' => $value]);
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get array payload of a compound button block (text + url + target).
+     *
+     * @param  array<string, mixed>  $default
+     * @return array<string, mixed>
+     */
+    public function buttonBlock(string $name, array $default = []): array
+    {
+        $value = $this->block($name);
+        if (is_string($value) && ! empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                $value = $decoded;
+            }
+        }
+
+        if (is_array($value)) {
+            return array_merge(['target' => '_self'], $default, array_filter($value, fn ($v) => $v !== null && $v !== ''));
+        }
+
+        if (! empty($default)) {
+            return array_merge(['target' => '_self'], $default);
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get array payload of a compound card block.
+     *
+     * @param  array<string, mixed>  $default
+     * @return array<string, mixed>
+     */
+    public function cardBlock(string $name, array $default = []): array
+    {
+        $value = $this->block($name);
+        if (is_string($value) && ! empty($value)) {
+            $decoded = json_decode($value, true);
+            if (is_array($decoded)) {
+                $value = $decoded;
+            }
+        }
+
+        if (is_array($value)) {
+            return array_merge($default, array_filter($value, fn ($v) => $v !== null && $v !== ''));
+        }
+
+        return $default;
+    }
+
+    public function isSystem(): bool
+    {
+        return (bool) $this->is_system;
     }
 
     public function isPublished(): bool
@@ -170,12 +339,44 @@ class Page extends Model
         return $this->status === 'private';
     }
 
+    public function isLocked(): bool
+    {
+        return $this->locked_by !== null && $this->locked_at !== null && Carbon::parse($this->locked_at)->diffInMinutes(now()) < 2;
+    }
+
+    public function isLockedByOther(?int $userId): bool
+    {
+        return $this->isLocked() && $this->locked_by !== $userId;
+    }
+
+    public function lock(int $userId): void
+    {
+        $this->update([
+            'locked_by' => $userId,
+            'locked_at' => now(),
+        ]);
+    }
+
+    public function unlock(): void
+    {
+        $this->update([
+            'locked_by' => null,
+            'locked_at' => null,
+        ]);
+    }
+
     public function ancestors(): Collection
     {
         $ancestors = collect();
         $current = $this->parent;
+        $seen = [$this->id];
+        $maxDepth = 20;
 
-        while ($current) {
+        while ($current && $maxDepth-- > 0) {
+            if (in_array($current->id, $seen, true)) {
+                break; // Circular reference detected
+            }
+            $seen[] = $current->id;
             $ancestors->prepend($current);
             $current = $current->parent;
         }
@@ -207,9 +408,47 @@ class Page extends Model
         return $path;
     }
 
-    public function getUrl(): string
+    public function hasTranslationForLocale(string $locale): bool
     {
-        return url($this->getFullPath());
+        if ($locale === static::defaultLocale()) {
+            return true;
+        }
+
+        if (! empty($this->translations[$locale]) && is_array($this->translations[$locale]) && count(array_filter($this->translations[$locale])) > 0) {
+            return true;
+        }
+
+        $transSlug = $this->getTranslation('slug', $locale, false);
+        if (! empty($transSlug) && trim((string) $transSlug) !== '') {
+            return true;
+        }
+
+        $transTitle = $this->getTranslation('title', $locale, false);
+
+        return ! empty($transTitle) && trim((string) $transTitle) !== '';
+    }
+
+    public function getUrl(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $defaultLocale = static::defaultLocale();
+
+        if ($locale !== $defaultLocale && ! $this->hasTranslationForLocale($locale)) {
+            $locale = $defaultLocale;
+        }
+
+        $prefix = ($locale !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix')
+            ? '/'.$locale
+            : '';
+
+        $slug = $this->getTranslation('slug', $locale, false) ?: $this->slug;
+
+        // Homepage resolves to root URL, not /home
+        if ($slug === 'home' || $this->slug === 'home') {
+            return trailing_slash_url(url($prefix ?: '/'));
+        }
+
+        return trailing_slash_url(url($prefix.'/'.$slug));
     }
 
     /**
@@ -249,14 +488,14 @@ class Page extends Model
      */
     public function localizedUrl(string $locale): string
     {
-        $slug = $this->getTranslation('slug', $locale);
-
-        return url('/'.ltrim($slug, '/'));
+        return $this->getUrl($locale);
     }
 
     public function getMetaTitle(): string
     {
-        return $this->seo['meta_title'] ?? $this->title;
+        $resolved = app(SeoRenderer::class)->resolve($this);
+
+        return $resolved['title'];
     }
 
     public function getMetaDescription(): ?string
@@ -268,6 +507,12 @@ class Page extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::saving(function ($page) {
+            if (auth()->check()) {
+                $page->updated_by = auth()->id();
+            }
+        });
 
         static::creating(function ($page) {
             if (empty($page->slug)) {
@@ -284,6 +529,16 @@ class Page extends Model
         });
 
         static::updating(function ($page) {
+            // Protect system page slug and template from being changed
+            if ($page->is_system) {
+                if ($page->isDirty('slug')) {
+                    $page->slug = $page->getOriginal('slug');
+                }
+                if ($page->isDirty('template')) {
+                    $page->template = $page->getOriginal('template');
+                }
+            }
+
             // Ensure unique slug on update
             if ($page->isDirty('slug')) {
                 $originalSlug = $page->slug;
@@ -292,6 +547,13 @@ class Page extends Model
                     $page->slug = $originalSlug.'-'.$counter;
                     $counter++;
                 }
+            }
+        });
+
+        static::deleting(function ($page) {
+            // Prevent soft-deleting system pages
+            if ($page->is_system) {
+                return false;
             }
         });
     }

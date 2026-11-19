@@ -5,7 +5,7 @@
     @if($block['value'])
         <div class="relative group">
             @if(Str::startsWith($block['value'], ['image/', 'data:image']) || preg_match('/\.(jpg|jpeg|png|gif|webp|svg)$/i', $block['value']))
-                <img src="{{ asset('storage/' . $block['value']) }}" alt="Media"
+                <img src="{{ resolve_block_asset($block['value']) }}" alt="Media"
                     class="w-full h-48 object-cover rounded-xl border border-gray-200 dark:border-[#272B30]" />
             @else
                 <div class="w-full h-48 rounded-xl border border-gray-200 dark:border-[#272B30] bg-[#F4F5F6] dark:bg-[#0B0B0B] flex flex-col items-center justify-center">

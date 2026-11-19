@@ -32,9 +32,9 @@ class ThemeManager
             throw new Exception('The PHP Zip extension is not enabled. Please enable it in your php.ini configuration.');
         }
 
-        // Validate file size (10MB max)
-        if (filesize($zipPath) > 10 * 1024 * 1024) {
-            throw new Exception('Theme file is too large. Maximum size is 10MB.');
+        // Validate file size (100MB max)
+        if (filesize($zipPath) > 100 * 1024 * 1024) {
+            throw new Exception('Theme file is too large. Maximum size is 100MB.');
         }
 
         $zip = new ZipArchive;
@@ -123,8 +123,8 @@ class ThemeManager
             $filename = $zip->getNameIndex($i);
             $content = $zip->getFromIndex($i);
 
-            // Only check text files (PHP, JS, JSON)
-            if (! preg_match('/\.(php|js|json)$/i', $filename)) {
+            // Only check PHP server-side execution files (.php, .phtml, .blade.php)
+            if (! preg_match('/\.p(hp|html)$/i', $filename)) {
                 continue;
             }
 
@@ -199,11 +199,16 @@ class ThemeManager
             'activated_at' => now(),
         ]);
 
+        // Dynamically refresh active theme in singleton registry
+        if (class_exists(ThemeLoader::class)) {
+            app(ThemeLoader::class)->setActiveTheme($theme);
+        }
+
         // Publish assets
         $this->publishAssets($theme);
 
-        // Auto-create pages defined in theme.json page_templates
-        $this->seedTemplatePages($theme);
+        // Auto-create pages defined in theme.json seed_pages
+        $this->seedPages($theme);
 
         // Clear caches
         $this->clearCaches();
@@ -389,16 +394,50 @@ class ThemeManager
     }
 
     /**
-     * Auto-create pages defined in theme.json page_templates on activation.
+     * Auto-create pages defined in theme.json seed_pages on activation.
+     * Pages are marked as system pages (is_system = true) and cannot be deleted by admins.
+     * Falls back to page_templates-based seeding if no seed_pages are defined.
      */
-    protected function seedTemplatePages(Theme $theme): void
+    protected function seedPages(Theme $theme): void
     {
+        $seedPages = $theme->getSeedPages();
+        $templateService = app(PageTemplateService::class);
+
+        // If seed_pages is defined, use it
+        if (! empty($seedPages)) {
+            foreach ($seedPages as $pageDef) {
+                $page = Page::withTrashed()->where('slug', $pageDef['slug'])->first();
+
+                if ($page) {
+                    // Restore if trashed, mark as system
+                    if ($page->trashed()) {
+                        $page->restore();
+                    }
+                    $page->update(['is_system' => true]);
+                } else {
+                    $page = Page::create([
+                        'title' => $pageDef['title'],
+                        'slug' => $pageDef['slug'],
+                        'template' => $pageDef['template'] ?? 'default',
+                        'status' => $pageDef['status'] ?? 'draft',
+                        'menu_order' => $pageDef['menu_order'] ?? 0,
+                        'author_id' => auth()->id() ?? 1,
+                        'is_system' => true,
+                    ]);
+                }
+
+                // Seed blocks from template schema if available
+                $templateService->seedBlocks($page);
+            }
+
+            return;
+        }
+
+        // Fallback: seed from page_templates (legacy behavior)
         $pageTemplates = $theme->getPageTemplates();
         if (empty($pageTemplates)) {
             return;
         }
-
-        $templateService = app(PageTemplateService::class);
 
         foreach ($pageTemplates as $templateKey => $templateDef) {
             $page = Page::firstOrCreate(
@@ -407,7 +446,7 @@ class ThemeManager
                     'title' => $templateDef['label'] ?? ucfirst($templateKey),
                     'status' => 'published',
                     'template' => $templateKey,
-                    'author_id' => 1,
+                    'author_id' => auth()->id() ?? 1,
                 ]
             );
             $templateService->seedBlocks($page);

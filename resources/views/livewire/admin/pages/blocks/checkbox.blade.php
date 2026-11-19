@@ -1,6 +1,7 @@
 {{-- Checkbox Block --}}
 @php
-    $selectedValues = is_string($block['value']) ? json_decode($block['value'], true) ?? [] : ($block['value'] ?? []);
+    $value = $block['value'] ?? null;
+    $selectedValues = is_array($value) ? $value : (is_string($value) ? (json_decode($value, true) ?? []) : []);
 @endphp
 
 <div class="space-y-4">

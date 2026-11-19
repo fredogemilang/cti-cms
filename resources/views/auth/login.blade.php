@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CMS Login - Welcome Back</title>
     @if(setting('site_favicon'))
-        <link rel="icon" type="image/png" href="{{ asset('storage/' . setting('site_favicon')) }}">
+        <link rel="icon" href="{{ resolve_block_asset(setting('site_favicon')) }}">
     @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -30,19 +30,13 @@
 </head>
 <body class="login-body text-[#111827] dark:text-[#FCFCFC] transition-colors duration-200 antialiased min-h-screen flex items-center justify-center p-4">
     <!-- Theme Toggle -->
-    <div class="fixed top-8 right-8" x-data="{ 
-        darkMode: document.documentElement.classList.contains('dark'),
-        toggle() {
-            this.darkMode = !this.darkMode;
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
-        }
-    }">
+    <div class="fixed top-8 right-8">
         <button 
-            @click="toggle()"
-            class="flex h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-[#272B30] text-[#6F767E] dark:text-[#FCFCFC] shadow-lg hover:bg-gray-50 dark:hover:bg-[#3a3f47] transition-all focus:outline-none border border-gray-200 dark:border-white/5">
-            <span class="material-symbols-outlined text-[24px]" x-show="!darkMode" x-cloak>dark_mode</span>
-            <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
+            id="themeToggleBtn"
+            type="button"
+            class="flex h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-[#272B30] text-[#6F767E] dark:text-[#FCFCFC] shadow-lg hover:bg-gray-50 dark:hover:bg-[#3a3f47] transition-all focus:outline-none border border-gray-200 dark:border-white/5"
+            aria-label="Toggle dark mode">
+            <span id="themeToggleIcon" class="material-symbols-outlined text-[24px]">dark_mode</span>
         </button>
     </div>
 
@@ -138,7 +132,7 @@
                 </div>
 
                 <!-- Password Field -->
-                <div x-data="{ showPassword: false }">
+                <div>
                     <div class="flex items-center justify-between mb-2">
                         <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider" for="password">
                             Password
@@ -151,20 +145,20 @@
                     </div>
                     <div class="relative">
                         <input 
+                            type="password"
                             class="input-field pr-12 @error('password') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror" 
                             id="password" 
                             name="password"
-                            :type="showPassword ? 'text' : 'password'"
                             placeholder="••••••••"
                             required
                         >
                         <button 
                             type="button"
-                            @click="showPassword = !showPassword"
+                            id="togglePasswordBtn"
                             class="absolute right-4 top-1/2 -translate-y-1/2 text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-colors focus:outline-none"
+                            aria-label="Toggle password visibility"
                         >
-                            <span class="material-symbols-outlined text-xl" x-show="!showPassword" x-cloak>visibility</span>
-                            <span class="material-symbols-outlined text-xl" x-show="showPassword" x-cloak>visibility_off</span>
+                            <span id="togglePasswordIcon" class="material-symbols-outlined text-xl">visibility</span>
                         </button>
                     </div>
                 </div>
@@ -202,6 +196,42 @@
         </p>
     </div>
 
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        (function() {
+            // Password Visibility Toggle
+            const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+            const passwordInput = document.getElementById('password');
+            const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+
+            if (togglePasswordBtn && passwordInput && togglePasswordIcon) {
+                togglePasswordBtn.addEventListener('click', function() {
+                    const isPassword = passwordInput.type === 'password';
+                    passwordInput.type = isPassword ? 'text' : 'password';
+                    togglePasswordIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
+                });
+            }
+
+            // Theme Toggle
+            const themeBtn = document.getElementById('themeToggleBtn');
+            const themeIcon = document.getElementById('themeToggleIcon');
+
+            function syncThemeIcon() {
+                const isDark = document.documentElement.classList.contains('dark');
+                if (themeIcon) {
+                    themeIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
+                }
+            }
+
+            syncThemeIcon();
+
+            if (themeBtn) {
+                themeBtn.addEventListener('click', function() {
+                    const isDark = document.documentElement.classList.toggle('dark');
+                    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                    syncThemeIcon();
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

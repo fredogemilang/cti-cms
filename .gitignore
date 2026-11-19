@@ -19,10 +19,43 @@
 /storage/*.key
 /storage/*.zip
 /storage/pail
+/storage/cms_installed
+/storage/framework/lsp-*.php
 /vendor
+# ── Core boundary (allowlist) ─────────────────────────────
+# main tracks ONLY core themes/plugins. Each project/<name> branch MUST
+# un-ignore its own theme/plugins, e.g. on project/cdt:
+#   !/themes/cdt  !/public/themes/cdt  !/plugins/youtube
+/themes/*
+!/themes/default
+!/themes/iccom
+/public/themes/*
+!/public/themes/iccom
+/plugins/*
+!/plugins/posts
+!/plugins/google-site-kit
+!/plugins/events
+!/plugins/membership
+!/plugins/article-submission
+
 Homestead.json
 Homestead.yaml
 Thumbs.db
 /.claude
 /.playwright-mcp
-event-dashboard-revamp.html
+/public/assets
+/crawled_data/
+/qa-reports/
+/scratch/*
+!/scratch/.gitkeep
+
+testsprite_tests\tmp\config.json
+
+# cPanel & Hosting Artifacts
+.well-known
+.well-known/
+cgi-bin/
+error_log
+*/error_log
+.user.ini
+

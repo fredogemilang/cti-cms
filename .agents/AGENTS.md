@@ -1,0 +1,81 @@
+# Project Rules & Guidelines for CTI CMS
+
+## CPT MetaBox & Field Group Strict Alignment Rule
+Whenever adding or modifying a `MetaField` for any `CustomPostType` (`cpt_entries`):
+1. **Register MetaBox Tab**: Always inspect `$cpt->settings['meta_boxes']`. If adding a new field or field group, register `{"id": "box_id", "title": "Box Title", "context": "normal"}` into `$cpt->settings['meta_boxes']`.
+2. **Match Field Group**: Always set `MetaField.field_group = "box_id"` matching the exact `id` in `$cpt->settings['meta_boxes']`.
+3. **Avoid Unmapped Fields**: Never leave `field_group` as `null` or unmapped, otherwise the field falls out of the main tab container into an unorganized fallback box (`CUSTOM FIELDS`).
+
+## Mandatory SEO Breadcrumbs Rule
+**NEVER** write custom, manual, or hardcoded `<nav>` breadcrumb HTML in theme views!
+1. **ALWAYS Use Component**: Always render breadcrumbs using `<x-seo-breadcrumbs :entity="$entry" />` (or `:entity="$page"` / `:entity="$postType"`).
+2. **Never Reinvent Breadcrumb HTML**: Do not write custom `<nav>` tags, manual `<a>` links, or inline chevron SVG loops in template files.
+3. **Integrates with BreadcrumbService**: The component automatically resolves `$postType->has_archive`, parent/child entry hierarchies, current locale translations, and syncs with JSON-LD schema structured data in `<head>`.
+4. **Pass Custom Styling via Attributes**: Customize text colors and margins directly via Blade attributes (e.g. `<x-seo-breadcrumbs :entity="$entry" class="text-white/70 mb-10" />`).
+
+## Mandatory MediaService Image Import Rule
+1. **Always Use `MediaService`**: All images during import MUST be processed via `app(App\Services\MediaService::class)->upload($file, $metadata)`.
+2. **Automatic Optimization**: Calling `MediaService` ensures images are compressed, converted to WebP, provided with responsive variants (`sm`, `md`, `lg`, `xl`, `thumb`), and registered in the `media` table.
+3. **Store Relative Paths**: Store `$media->path` in database fields, NEVER hardcode external URLs or direct un-tracked file copies.
+
+## Mandatory Local Asset Rule (No External CDN)
+1. **Zero External CDN Dependencies**: ALL frontend assets (CSS, JS libraries like Swiper/Alpine/jQuery, fonts, icons, etc.) MUST be downloaded and stored locally.
+2. **Theme Asset Helper**: Place theme scripts and styles inside `themes/{theme}/assets/` and load them via `{{ theme_asset('filename.js') }}`.
+3. **No External URLs**: NEVER write external CDN `<script src="https://cdn...">` or `<link href="https://cdn...">` tags in Blade views or layouts. All asset dependencies must work 100% offline.
+
+## Mandatory Reference Inspection & User Confirmation Rule for Pages
+1. **Inspect HTML Reference First**: ALWAYS inspect the original HTML export (`dist/index.html`) to verify whether sections (e.g. About, Contact) are designed as *One-Page Scroll Anchors* (`/#about`, `/#contact`) or *Dedicated Standalone Pages*.
+2. **Never Assume Dedicated Pages**: DO NOT create separate dedicated `Page` records in the database without checking reference files first.
+3. **Ask in Implementation Plan**: If there is ambiguity or options on page creation vs single-page scroll layout, list the question explicitly under `## Open Questions` in `implementation_plan.md` for user confirmation BEFORE executing.
+
+## Mandatory Plugin Status Fail-Safe Rule
+1. **Always Check Plugin Status**: Theme views MUST check `is_plugin_active('posts') && class_exists(\Plugins\Posts\Models\Post::class)` before querying model classes from optional plugins.
+2. **Graceful Fallback**: If a plugin is deactivated in the admin panel, the view MUST fallback gracefully (e.g. returning an empty collection or hiding the section) without throwing `ClassNotFoundException` or crashing the app.
+
+## Mandatory Public Locale Switcher Compliance Rule
+1. **Never Hardcode Static Locales**: DILARANG meng-hardcode tombol/pill bahasa (misal statis `EN | ID`) di view header, footer, atau navigation bar tema tanpa memeriksa pengaturan CMS `locale_switcher_enabled` dan `available_locales()`.
+2. **Always Obey Admin Setting & Locales Count**: Switcher bahasa DILARANG tampil di frontend jika setting `locale_switcher_enabled` bernilai false (dimatikan di `/ctrlpanel/settings/languages`) ATAU jika bahasa aktif yang terdaftar di `available_locales()` hanya 1 bahasa saja.
+3. **Use Component or Guarded Custom UI**: Gunakan komponen `<x-locale-switcher />` ATAU jika tema membutuhkan styling custom (misal toggle pill), WAJIB membungkusnya dengan pengecekan:
+   ```blade
+   @php
+       $availableLocales = available_locales();
+       $showLocaleSwitcher = filter_var(setting('locale_switcher_enabled', false), FILTER_VALIDATE_BOOLEAN) && count($availableLocales) > 1;
+   @endphp
+   @if($showLocaleSwitcher)
+       ...
+       @foreach($availableLocales as $loc)
+           <a href="{{ current_page_localized_url($loc) }}">{{ strtoupper($loc) }}</a>
+       @endforeach
+   @endif
+   ```
+4. **Preserve Route Context**: Selalu gunakan helper `current_page_localized_url($loc)` (atau `localized_url()`) untuk menghasilkan link pergantian bahasa agar slug halaman, CPT, atau archive blog yang aktif berpindah ke padanan terjemahannya secara tepat.
+
+## Mandatory Frontend Admin Bar Compliance Rule (<x-admin-bar />)
+1. **Always Include `<x-admin-bar />` in Themes**: Setiap tema CMS WAJIB menyertakan komponen Admin Bar (`<x-admin-bar />`) untuk user yang sedang terautentikasi (`@auth`). DILARANG membuat tema baru tanpa mengintegrasikan Admin Bar.
+2. **Standard Theme Integration Pattern**:
+   - Buat file wrapper partial di `themes/{theme}/views/partials/admin-bar.blade.php`:
+     ```blade
+     {{-- Delegated to Core <x-admin-bar /> Component --}}
+     <x-admin-bar />
+     ```
+   - Di layout utama `themes/{theme}/views/layouts/app.blade.php`, render di bagian paling atas body:
+     ```blade
+     <body class="... {{ auth()->check() ? 'has-admin-bar' : '' }}">
+         @auth
+             @include('{theme}::partials.admin-bar')
+         @endauth
+     ```
+   - Berikan offset sticky/fixed header pada CSS tema saat `body.has-admin-bar` aktif (tinggi standar bar = 32px):
+     ```css
+     body.has-admin-bar .header-sticky {
+         top: 32px !important;
+     }
+     ```
+3. **Automatic Contextual Edit**: Komponen `<x-admin-bar />` secara otomatis mendeteksi entitas aktif (`Page`, `KouventaPage`, `Post`, `CptEntry`) dan merender tombol kontekstual edit (*"Edit Page"*, *"Edit Post"*, dll.) yang mengarah langsung ke form edit di Control Panel, lengkap dengan avatar profil, status login, dan tombol logout.
+4. **LiteSpeed Cache Bypass**: Core CMS otomatis mem-bypass LiteSpeed Cache saat user login via cookie `cms_logged_in` di `.htaccess`.
+5. **Zero External CSS Dependency (100% Self-Contained)**: Komponen `<x-admin-bar />` WAJIB 100% self-contained dengan CSS scoped (`#cms-admin-bar`) dan atribut inline/eksplisit `width`/`height` pada setiap elemen SVG. DILARANG hanya mengandalkan utility classes Tailwind CSS (seperti `w-full`, `h-8`, `flex`, `w-3`, `h-3`) karena tema frontend (seperti Kouventa) tidak menggunakan compiler/runtime Tailwind CSS.
+
+## Mandatory Clean UI Rule for Interactive Visualizations (No Artificial Headers/Footers)
+1. **Pure Animation & Realistic UI Only**: DILARANG menambahkan header atau footer buatan/dekoratif (seperti banner judul penjelasan *"AI Resume Screening & Match Ranking"*, metric counter *"101 CVs Scanned"*, atau status bar sintetis *"✓ 101 CVs auto-screened / 0.8s"*, *"⚡ Semantic Search: 0.18s"*, dll.) pada card/ilustrasi simulasi produk.
+2. **Self-Explanatory Animations**: Biarkan animasi dan antarmuka software yang realistis (chat WhatsApp, ATS leaderboard, multi-party calendar matrix, dossier kartu profil kandidat) berbicara sendiri tanpa perlu narasi ringkasan buatan di atas/bawah.
+3. **Centered & Proportional Spacing**: Manfaatkan ruang vertikal untuk memusatkan (`justify-content: center;`) elemen simulasi dengan padding dan kontras yang proporsional sehingga bersih (*clean*), elegan, dan tidak bocor (*zero visual leaks*).

@@ -5,14 +5,54 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use App\Services\ThemeLoader;
 use Illuminate\Support\Facades\View;
+use Plugins\Posts\Models\Post;
 
 class PageController extends Controller
 {
-    public function show(string $slug)
+    public function show(?string $localeOrSlug = null, ?string $slug = null)
     {
+        $targetSlug = $slug ?? $localeOrSlug;
+        if (! $targetSlug) {
+            abort(404);
+        }
+
         // Locale-aware slug lookup — auto-switches app locale if matched on a translated slug.
-        $page = Page::findByLocalizedSlug($slug);
+        $page = Page::findByLocalizedSlug($targetSlug);
+
+        // Legacy Fallback: If not a Page, check if it's a legacy WordPress root-level article (%postname% permalink)
+        if (! $page && is_plugin_active('posts') && class_exists(Post::class)) {
+            $post = Post::findByLocalizedSlug($targetSlug);
+            if ($post) {
+                $targetLocale = ($slug !== null && in_array($localeOrSlug, available_locales(), true))
+                    ? $localeOrSlug
+                    : app()->getLocale();
+                $canonicalUrl = $post->getUrl($targetLocale);
+                $queryString = request()->getQueryString();
+
+                return redirect($canonicalUrl.($queryString ? "?{$queryString}" : ''), 301);
+            }
+        }
+
         abort_if(! $page, 404);
+
+        // Redirect homepage slug to canonical root URL to avoid duplicate content.
+        // The homepage has its own dedicated controller (HomeController) at '/'.
+        if ($page->slug === 'home') {
+            $locale = app()->getLocale();
+            $default = setting('default_locale', config('app.locale', 'en'));
+            $target = $locale !== $default ? url("/{$locale}") : url('/');
+
+            return redirect($target, 301);
+        }
+
+        // Enforce canonical localized URL redirect (e.g. /id/about-us -> /id/tentang-kami)
+        $canonicalUrl = $page->getUrl(app()->getLocale());
+        $currentUrl = request()->url();
+        if (rtrim($currentUrl, '/') !== rtrim($canonicalUrl, '/')) {
+            $queryString = request()->getQueryString();
+
+            return redirect($canonicalUrl.($queryString ? "?{$queryString}" : ''), 301);
+        }
 
         // Load blocks (shared across locales for now)
         $page->load(['blocks' => function ($q) {
@@ -20,6 +60,8 @@ class PageController extends Controller
                 ->with('childBlocks')
                 ->orderBy('order');
         }]);
+
+        View::share('page', $page);
 
         $viewName = $this->resolveTemplate($page->template, $page->slug);
 
@@ -31,22 +73,26 @@ class PageController extends Controller
 
     protected function resolveTemplate(string $template, string $slug): string
     {
-        // Use active theme's slug as namespace, fallback to 'iccom'
+        // Use active theme's slug as namespace (null if no active theme)
         $theme = app(ThemeLoader::class)->getActiveTheme();
-        $themeNamespace = $theme?->slug ?? 'iccom';
+        $themeNamespace = $theme?->slug;
 
-        $candidates = [
-            // Theme Specific
-            "{$themeNamespace}::pages.{$slug}",
-            "{$themeNamespace}::pages.template-{$template}",
-            "{$themeNamespace}::pages.single",
+        $candidates = [];
 
-            // Default
-            "pages.{$slug}",                    // page-about-us.blade.php
-            "pages.template-{$template}",       // page-template-landing.blade.php
-            'pages.single',                     // pages/single.blade.php
-            'layouts.page',                     // layouts/page.blade.php
-        ];
+        // Theme-specific candidates (only if a theme is active)
+        if ($themeNamespace) {
+            $candidates[] = "{$themeNamespace}::pages.{$slug}";
+            $candidates[] = "{$themeNamespace}::pages.template-{$template}";
+            $candidates[] = "{$themeNamespace}::pages.{$template}";
+            $candidates[] = "{$themeNamespace}::pages.single";
+        }
+
+        // Default fallback candidates
+        $candidates[] = "pages.{$slug}";
+        $candidates[] = "pages.template-{$template}";
+        $candidates[] = "pages.{$template}";
+        $candidates[] = 'pages.single';
+        $candidates[] = 'layouts.page';
 
         foreach ($candidates as $view) {
             if (View::exists($view)) {
@@ -68,11 +114,18 @@ class PageController extends Controller
             abort(403);
         }
 
+        $locale = request()->query('lang', app()->getLocale());
+        if (in_array($locale, available_locales(), true)) {
+            app()->setLocale($locale);
+        }
+
         $page = Page::with(['blocks' => function ($q) {
             $q->whereNull('parent_block_id')
                 ->with('childBlocks')
                 ->orderBy('order');
         }])->findOrFail($id);
+
+        View::share('page', $page);
 
         $viewName = $this->resolveTemplate($page->template, $page->slug);
 

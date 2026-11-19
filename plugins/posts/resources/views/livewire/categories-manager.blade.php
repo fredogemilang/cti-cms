@@ -1,11 +1,4 @@
 <div class="flex flex-col gap-6">
-    <div class="flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold text-[#111827] dark:text-[#FCFCFC]">Categories</h2>
-            <p class="text-[#6F767E] mt-1">Organize your posts with categories</p>
-        </div>
-    </div>
-
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Left Column: Form -->
         <div class="lg:col-span-1 space-y-6">
@@ -14,6 +7,16 @@
                     {{ $editingCategory ? 'Edit Category' : 'Add New Category' }}
                 </h3>
                 
+                {{-- Language Switcher Tabs --}}
+                <div class="flex items-center gap-1.5 p-1 bg-gray-100 dark:bg-[#0B0B0B] rounded-xl mb-4 border border-gray-200 dark:border-[#272B30]">
+                    <button type="button" wire:click="setLocale('en')" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeLocale === 'en' ? 'bg-[#8B5CF6] text-white shadow-sm' : 'text-[#6F767E] hover:text-gray-900 dark:hover:text-white' }}">
+                        🇬🇧 EN (English)
+                    </button>
+                    <button type="button" wire:click="setLocale('id')" class="flex-1 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeLocale === 'id' ? 'bg-[#8B5CF6] text-white shadow-sm' : 'text-[#6F767E] hover:text-gray-900 dark:hover:text-white' }}">
+                        🇮🇩 ID (Indonesia)
+                    </button>
+                </div>
+
                 <form wire:submit.prevent="{{ $editingCategory ? 'update' : 'store' }}" class="space-y-4">
                     <!-- Name -->
                     <div>

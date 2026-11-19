@@ -14,18 +14,35 @@ trait HasSeoMeta
 
     public function getOrCreateSeoMeta(): SeoMeta
     {
+        /** @var SeoMeta */
         return $this->seoMeta()->firstOrCreate([]);
     }
 
     public function getResolvedSeoTitle(): string
     {
-        $custom = $this->seoMeta?->title;
+        /** @var SeoMeta|null $seoMeta */
+        $seoMeta = $this->seoMeta;
+        if ($seoMeta && ! empty($seoMeta->title)) {
+            return $seoMeta->title;
+        }
 
-        return $custom ?: ($this->title ?? config('app.name'));
+        /** @var mixed $title */
+        $title = $this->getAttribute('title');
+
+        return ! empty($title) ? (string) $title : (string) config('app.name');
     }
 
     public function getResolvedSeoDescription(): ?string
     {
-        return $this->seoMeta?->description ?? ($this->excerpt ?? null);
+        /** @var SeoMeta|null $seoMeta */
+        $seoMeta = $this->seoMeta;
+        if ($seoMeta && ! empty($seoMeta->description)) {
+            return $seoMeta->description;
+        }
+
+        /** @var mixed $excerpt */
+        $excerpt = $this->getAttribute('excerpt');
+
+        return ! empty($excerpt) ? (string) $excerpt : null;
     }
 }

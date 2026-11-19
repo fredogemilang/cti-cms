@@ -13,6 +13,7 @@ class SeoMeta extends Model
     protected $fillable = [
         'seoable_type',
         'seoable_id',
+        'locale',
         'title',
         'description',
         'canonical_url',
@@ -26,12 +27,15 @@ class SeoMeta extends Model
         'focus_keyword',
         'seo_score',
         'readability_score',
+        'ai_summary',
+        'is_cornerstone',
     ];
 
     protected $casts = [
         'schema_data' => 'array',
         'seo_score' => 'integer',
         'readability_score' => 'integer',
+        'is_cornerstone' => 'boolean',
     ];
 
     public function seoable(): MorphTo

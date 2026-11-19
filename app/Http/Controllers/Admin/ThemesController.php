@@ -35,7 +35,7 @@ class ThemesController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'theme_zip' => ['required', 'file', 'mimes:zip', 'max:10240'], // 10MB max
+            'theme_zip' => ['required', 'file', 'mimes:zip', 'max:102400'], // 100MB max
         ]);
 
         try {

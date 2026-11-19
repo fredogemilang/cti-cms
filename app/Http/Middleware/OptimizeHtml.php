@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
  * - Removes ?ver= query strings from asset URLs
  * - Rewrites configured local paths to a CDN base URL
  * - Adds loading="lazy" to <img> tags
+ * - DNS prefetch injection for external domains
+ * - Elide redundant boolean HTML attributes
  */
 class OptimizeHtml
 {
@@ -23,7 +25,12 @@ class OptimizeHtml
             return $response;
         }
 
-        $html = $response->getContent();
+        $originalHtml = (string) $response->getContent();
+        if (strlen(trim($originalHtml)) === 0) {
+            return $response;
+        }
+
+        $html = $originalHtml;
 
         if (setting('cdn_enabled', false) && setting('cdn_base_url', '')) {
             $html = $this->rewriteCdn($html);
@@ -42,15 +49,42 @@ class OptimizeHtml
         }
 
         if ($critical = trim((string) setting('pageopt_critical_css', ''))) {
-            $html = $this->inlineCriticalCss($html, $critical);
-            $html = $this->deferStylesheets($html);
+            // When "Homepage Only" is on, skip critical CSS injection for non-homepage paths
+            if (setting('pageopt_critical_css_homepage_only', false)) {
+                $path = ltrim($request->path(), '/');
+                $isHomepage = $path === ''
+                    || $path === '/'
+                    || (function_exists('available_locales') && in_array($path, available_locales(), true));
+
+                if (! $isHomepage) {
+                    $critical = null;
+                }
+            }
+
+            if ($critical) {
+                $html = $this->inlineCriticalCss($html, $critical);
+                $html = $this->deferStylesheets($html);
+            }
+        }
+
+        if (setting('pageopt_dns_prefetch', false)) {
+            $html = $this->insertDnsPrefetch($html);
+        }
+
+        if (setting('pageopt_elide_attributes', false)) {
+            $html = $this->elideAttributes($html);
         }
 
         if (setting('pageopt_minify_html', false)) {
             $html = $this->minify($html);
         }
 
-        $response->setContent($html);
+        // Fail-safe: if transformed HTML is empty, preserve original HTML
+        if (strlen(trim($html)) > 0) {
+            $response->setContent($html);
+        } else {
+            $response->setContent($originalHtml);
+        }
 
         return $response;
     }
@@ -90,10 +124,14 @@ class OptimizeHtml
 
     protected function inlineCriticalCss(string $html, string $css): string
     {
-        // Strip line comments from CSS to keep payload lean, but preserve /* ... */ for safety
+        // The whole point of critical CSS is to paint above-the-fold content
+        // before the full stylesheet arrives. Do NOT hide <body> until the
+        // deferred stylesheets load: that gate pushed FCP/LCP behind the slowest
+        // CSS request (+2s failsafe) on mobile and cost ~20 Lighthouse points.
+        // If the page flashes unstyled, the curated critical CSS is incomplete —
+        // fix the CSS (Settings → Page Optimization), don't re-add a gate.
         $tag = '<style data-critical>'.$css.'</style>';
 
-        // Insert just before </head>; fall back to prepend if no </head>
         if (stripos($html, '</head>') !== false) {
             return preg_replace('/<\/head>/i', $tag.'</head>', $html, 1) ?? $html;
         }
@@ -108,14 +146,25 @@ class OptimizeHtml
             return $html;
         }
 
-        // Use the rel=preload + onload swap trick for non-blocking CSS
-        return preg_replace_callback(
+        // When the deferred stylesheet finally applies, every element whose
+        // computed style differs from the critical-CSS state starts its CSS
+        // transition at once (344 animations in one 200ms task on a real
+        // production homepage) and shifts layout. Suppress transitions while <html> carries
+        // `css-pending`; the last deferred link's onload removes it. No-JS users
+        // keep the class (transitions off) but still get the <noscript> sheet.
+        $onload = 'this.onload=null;this.rel=\'stylesheet\';'
+            .'if(!document.querySelector(\'link[data-deferred-css][rel=preload]\'))'
+            .'document.documentElement.classList.remove(\'css-pending\')';
+
+        $deferred = 0;
+        $html = preg_replace_callback(
             '/<link\b([^>]*\brel=("|\')stylesheet\2[^>]*\bhref=("|\')([^"\']+)\3[^>]*)\/?>/i',
-            function ($m) use ($patterns) {
+            function ($m) use ($patterns, $onload, &$deferred) {
                 $href = $m[4];
                 foreach ($patterns as $pat) {
                     if ($pat !== '' && str_contains($href, $pat)) {
-                        $rest = preg_replace('/\brel=("|\')stylesheet\1/', 'rel="preload" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"', $m[1]);
+                        $deferred++;
+                        $rest = preg_replace('/\brel=("|\')stylesheet\1/', 'rel="preload" as="style" data-deferred-css onload="'.$onload.'"', $m[1]);
 
                         // Provide a <noscript> fallback for users without JS
                         return '<link'.$rest.'><noscript><link rel="stylesheet" href="'.htmlspecialchars($href, ENT_QUOTES).'"></noscript>';
@@ -126,6 +175,22 @@ class OptimizeHtml
             },
             $html,
         ) ?? $html;
+
+        if ($deferred === 0) {
+            return $html;
+        }
+
+        $suppress = '<style data-critical-pending>html.css-pending *,html.css-pending *::before,html.css-pending *::after{transition:none!important}</style>';
+        $html = preg_replace('/<\/head>/i', $suppress.'</head>', $html, 1) ?? $html;
+
+        return preg_replace_callback('/<html\b([^>]*)>/i', function ($m) {
+            $attrs = $m[1];
+            if (preg_match('/\bclass=("|\')([^"\']*)\1/i', $attrs, $c)) {
+                return '<html'.str_replace($c[0], 'class='.$c[1].trim($c[2].' css-pending').$c[1], $attrs).'>';
+            }
+
+            return '<html'.$attrs.' class="css-pending">';
+        }, $html, 1) ?? $html;
     }
 
     protected function shouldProcess(Request $request, Response $response): bool
@@ -133,7 +198,8 @@ class OptimizeHtml
         if ($response->getStatusCode() !== 200) {
             return false;
         }
-        if (! str_contains((string) $response->headers->get('Content-Type'), 'text/html')) {
+        $contentType = (string) $response->headers->get('Content-Type', '');
+        if ($contentType !== '' && ! str_contains($contentType, 'text/html')) {
             return false;
         }
 
@@ -190,13 +256,111 @@ class OptimizeHtml
 
     protected function minify(string $html): string
     {
-        // Strip HTML comments (preserve IE conditionals)
-        $html = preg_replace('/<!--(?!\[if).*?-->/s', '', $html) ?? $html;
-        // Collapse whitespace between tags
-        $html = preg_replace('/>\s+</', '><', $html) ?? $html;
+        // Protect <script>, <style>, <textarea>, <pre> contents from whitespace collapsing
+        $placeholders = [];
+        $html = preg_replace_callback('/<(script|style|textarea|pre)\b[^>]*>.*?<\/\1>/is', function ($m) use (&$placeholders) {
+            $key = '___PROTECTED_TAG_'.count($placeholders).'___';
+            $placeholders[$key] = $m[0];
+
+            return $key;
+        }, $html) ?? $html;
+
+        // Protect Livewire/Alpine directive attributes from whitespace damage
+        $html = preg_replace_callback('/\b(wire:snapshot|wire:effects|x-data|x-init)\s*=\s*(["\'])(.*?)\2/is', function ($m) use (&$placeholders) {
+            $key = '___PROTECTED_TAG_'.count($placeholders).'___';
+            $placeholders[$key] = $m[0];
+
+            return $key;
+        }, $html) ?? $html;
+
+        // Strip HTML comments (preserve IE conditionals and Livewire markers)
+        $html = preg_replace('/<!--(?!\[if|\s*\[if|\s*wire:).*?-->/s', '', $html) ?? $html;
+        // Collapse whitespace between tags — keep ONE space for Livewire/Alpine.js compatibility
+        $html = preg_replace('/> +</', '> <', $html) ?? $html;
+        $html = preg_replace('/>\s*\n\s*</', '> <', $html) ?? $html;
         // Collapse runs of whitespace inside text nodes
         $html = preg_replace('/\s{2,}/', ' ', $html) ?? $html;
 
+        // Restore protected tags
+        if (! empty($placeholders)) {
+            $html = strtr($html, $placeholders);
+        }
+
         return trim($html);
+    }
+
+    /**
+     * Inject <link rel="dns-prefetch"> for external domains found in the HTML.
+     * Reduces DNS lookup latency for external resources.
+     */
+    protected function insertDnsPrefetch(string $html): string
+    {
+        // Extract URLs from HTML tag attributes (src, href)
+        preg_match_all(
+            '#<(?:link|img|a|iframe|video|audio|source|script)\s[^>]*\b(?:src|href)=["\']([^"\']+)["\']#i',
+            $html,
+            $matches
+        );
+
+        if (empty($matches[1])) {
+            return $html;
+        }
+
+        // Filter to keep only external URLs (http:// or https://)
+        $externalUrls = array_filter($matches[1], fn ($url) => preg_match('#^https?://#i', $url));
+
+        if (empty($externalUrls)) {
+            return $html;
+        }
+
+        // Extract unique domains and build prefetch links
+        $appHost = parse_url((string) config('app.url'), PHP_URL_HOST);
+        $domains = [];
+        foreach ($externalUrls as $url) {
+            $host = parse_url($url, PHP_URL_HOST);
+            if ($host && $host !== $appHost && ! isset($domains[$host])) {
+                $domains[$host] = true;
+            }
+        }
+
+        if (empty($domains)) {
+            return $html;
+        }
+
+        $prefetchTags = implode("\n", array_map(
+            fn ($domain) => '<link rel="dns-prefetch" href="//'.$domain.'">',
+            array_keys($domains)
+        ));
+
+        // Inject right after <head>
+        if (stripos($html, '<head>') !== false) {
+            return preg_replace('/<head>/i', '<head>'."\n".$prefetchTags, $html, 1) ?? $html;
+        }
+
+        return $html;
+    }
+
+    /**
+     * Shorten redundant boolean HTML attributes and remove default method="get".
+     * E.g.: disabled="disabled" → disabled, selected="selected" → selected
+     */
+    protected function elideAttributes(string $html): string
+    {
+        $replace = [
+            '/ method=("get"|get)/i' => '',
+            '/ disabled=[^ >]*/i' => ' disabled',
+            '/ selected=[^ >]*/i' => ' selected',
+            '/ readonly=[^ >]*/i' => ' readonly',
+            '/ checked=[^ >]*/i' => ' checked',
+            '/ required=[^ >]*/i' => ' required',
+            '/ autofocus=[^ >]*/i' => ' autofocus',
+            '/ autoplay=[^ >]*/i' => ' autoplay',
+            '/ muted=[^ >]*/i' => ' muted',
+            '/ loop=[^ >]*/i' => ' loop',
+            '/ novalidate=[^ >]*/i' => ' novalidate',
+            '/ multiple=[^ >]*/i' => ' multiple',
+        ];
+
+        return preg_replace(array_keys($replace), array_values($replace), $html) ?? $html;
     }
 }

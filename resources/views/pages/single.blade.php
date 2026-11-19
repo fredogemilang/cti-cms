@@ -16,6 +16,9 @@
     @if($page->seo['og_image'] ?? null)
         <meta property="og:image" content="{{ asset('storage/' . $page->seo['og_image']) }}">
     @endif
+    @isset($isPreview)
+        <meta name="robots" content="noindex, nofollow">
+    @endisset
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -56,7 +59,7 @@
                                 @break
 
                             @case('wysiwyg')
-                                <div class="prose prose-lg max-w-none">
+                                <div class="prose prose-lg max-w-none prose-a:text-blue-500 hover:prose-a:text-blue-600 prose-a:underline">
                                     {!! $block->value !!}
                                 </div>
                                 @break

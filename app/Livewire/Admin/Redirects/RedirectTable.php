@@ -181,6 +181,8 @@ class RedirectTable extends Component
 
         return view('livewire.admin.redirects.redirect-table', [
             'redirects' => $redirects,
+        ])->layout('layouts.admin', [
+            'title' => 'Redirects Manager',
         ]);
     }
 }

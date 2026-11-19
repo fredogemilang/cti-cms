@@ -19,6 +19,10 @@ class ApiAuth
     {
         $bearer = $request->bearerToken();
         if (! $bearer) {
+            if ($request->user()) {
+                return $next($request);
+            }
+
             return $this->unauthorized('Missing bearer token.');
         }
 

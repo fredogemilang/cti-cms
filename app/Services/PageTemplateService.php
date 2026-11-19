@@ -29,6 +29,16 @@ class PageTemplateService
     {
         $seeded = [];
         $schema = $this->getTemplateSchema($page->template);
+        $schemaBlockNames = collect($schema)->pluck('name')->toArray();
+
+        // 1. Delete orphaned blocks no longer defined in template schema
+        if (! empty($schemaBlockNames)) {
+            PageBlock::where('page_id', $page->id)
+                ->whereNull('parent_block_id')
+                ->whereNotIn('name', $schemaBlockNames)
+                ->delete();
+        }
+
         $existingNames = $page->allBlocks()->pluck('name')->toArray();
 
         foreach ($schema as $order => $blockDef) {
@@ -36,13 +46,23 @@ class PageTemplateService
                 continue; // already exists, skip
             }
 
+            $defaultValue = $blockDef['default'] ?? $this->defaultForType($blockDef['type']);
+            if (is_array($defaultValue)) {
+                $defaultValue = json_encode($defaultValue);
+            }
+
+            $options = $blockDef['options'] ?? [];
+            if (isset($blockDef['children'])) {
+                $options['children'] = $blockDef['children'];
+            }
+
             PageBlock::create([
                 'page_id' => $page->id,
                 'name' => $blockDef['name'],
                 'type' => $blockDef['type'],
                 'label' => $blockDef['label'] ?? ucfirst(str_replace('_', ' ', $blockDef['name'])),
-                'value' => $blockDef['default'] ?? $this->defaultForType($blockDef['type']),
-                'options' => $blockDef['options'] ?? [],
+                'value' => $defaultValue,
+                'options' => $options,
                 'order' => $order,
                 'is_active' => true,
             ]);
@@ -61,6 +81,9 @@ class PageTemplateService
         return match ($type) {
             'switcher' => false,
             'number' => 0,
+            'button' => '{"text":"","url":"","target":"_self"}',
+            'title' => '{"prefix":"","main":""}',
+            'card' => '{"title":"","description":"","asset_type":"image","image":"","icon":"lucide:sparkles","description_type":"text","list_icon":"lucide:check-circle","list_items":"","wysiwyg_content":"","button_text":"","button_url":"","button_target":"_self"}',
             'checkbox', 'gallery', 'posts', 'repeater' => '[]',
             default => '',
         };

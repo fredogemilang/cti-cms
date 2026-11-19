@@ -2,22 +2,19 @@
 
 @section('title', 'Add Media')
 @section('page-title', 'Add Media')
+@section('page-subtitle', 'Upload new media files to your library')
+
+@section('page-actions')
+    <a wire:navigate
+        href="{{ route('admin.media.index') }}"
+        class="flex items-center gap-2 px-6 py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-[#272B30] text-[#111827] dark:text-[#FCFCFC] rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-[#272B30] transition-all shadow-sm">
+        <span class="material-symbols-outlined text-xl">arrow_back</span>
+        <span>Back to Library</span>
+    </a>
+@endsection
 
 @section('content')
 <div class="space-y-6">
-    {{-- Header --}}
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-2xl font-bold text-[#111827] dark:text-[#FCFCFC]">Add Media</h1>
-            <p class="text-sm text-[#6F767E] mt-1">Upload new media files to your library</p>
-        </div>
-        <a wire:navigate
-            href="{{ route('admin.media.index') }}"
-            class="flex items-center gap-2 px-6 py-3 bg-white dark:bg-[#1A1A1A] border border-gray-300 dark:border-[#272B30] text-[#111827] dark:text-[#FCFCFC] rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-[#272B30] transition-all shadow-sm">
-            <span class="material-symbols-outlined text-xl">arrow_back</span>
-            <span>Back to Library</span>
-        </a>
-    </div>
 
     {{-- Flash Messages --}}
     @if (session('success'))

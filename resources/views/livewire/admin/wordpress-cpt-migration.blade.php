@@ -116,6 +116,39 @@
                         @endforeach
                     </div>
                 </div>
+
+                {{-- Taxonomy Import Options Card --}}
+                <div class="border-t border-gray-100 dark:border-[#272B30] pt-4 space-y-3">
+                    <h4 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-2">
+                        <span class="material-symbols-outlined text-purple-500 text-lg">schema</span>
+                        Taxonomy Import Options
+                    </h4>
+                    <p class="text-xs text-[#6F767E]">Choose which taxonomies should be auto-created and linked to your imported posts.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                        <label class="flex items-center gap-3 p-3.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] cursor-pointer hover:bg-gray-100 dark:hover:bg-[#151515] transition-all">
+                            <input type="checkbox" wire:model.live="importCategories" class="w-4 h-4 rounded text-[#8B5CF6] focus:ring-[#8B5CF6] border-gray-300">
+                            <div>
+                                <p class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-amber-500 text-base">folder</span>
+                                    Import Categories
+                                </p>
+                                <p class="text-xs text-[#6F767E]">Fetch WP categories and link them to imported posts</p>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-3.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] cursor-pointer hover:bg-gray-100 dark:hover:bg-[#151515] transition-all">
+                            <input type="checkbox" wire:model.live="importTags" class="w-4 h-4 rounded text-[#8B5CF6] focus:ring-[#8B5CF6] border-gray-300">
+                            <div>
+                                <p class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-blue-500 text-base">label</span>
+                                    Import Tags
+                                </p>
+                                <p class="text-xs text-[#6F767E]">Fetch WP tags and associate them with imported posts</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -144,8 +177,124 @@
     </div>
     @endif
 
-    {{-- Step 3: Field Mapping --}}
+    {{-- Step 3: Preview & Select Posts --}}
     @if($step === 3)
+    <div class="space-y-6">
+        <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="h-12 w-12 rounded-2xl bg-amber-500/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-amber-500 text-2xl">preview</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">Preview & Select Posts</h2>
+                        <p class="text-sm text-[#6F767E]">{{ count($previewPosts) }} posts found · {{ $totalPosts }} total in WordPress</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="px-3 py-1.5 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 text-sm font-medium">
+                        {{ count($selectedPostIds) }} selected
+                    </span>
+                    <button wire:click="continueToFieldMapping"
+                        class="h-11 px-6 rounded-xl bg-[#8B5CF6] text-white font-bold text-sm hover:bg-purple-700 transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2">
+                        Continue to Mapping
+                        <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Language Filter (Polylang only) --}}
+            @if($isPolylang)
+            <div class="mb-4 p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800">
+                <p class="text-sm font-bold text-blue-700 dark:text-blue-300 mb-3 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">translate</span>
+                    Filter by Language
+                </p>
+                <div class="flex flex-wrap gap-2">
+                    @foreach($polylangLanguages as $lang => $count)
+                    <button wire:click="toggleLanguage('{{ $lang }}')"
+                        class="px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2
+                            {{ in_array($lang, $selectedLanguages) ? 'bg-blue-500 text-white shadow-md' : 'bg-white dark:bg-[#0B0B0B] text-[#6F767E] border border-gray-200 dark:border-[#272B30]' }}">
+                        {{ strtoupper($lang) }}
+                        <span class="text-xs opacity-70">({{ $count }})</span>
+                    </button>
+                    @endforeach
+                </div>
+                <p class="text-xs text-[#6F767E] mt-2">
+                    Importing <strong>{{ strtoupper($defaultImportLocale) }}</strong> as primary, other languages as translations
+                </p>
+            </div>
+            @endif
+
+            {{-- Select All Toggle --}}
+            <div class="mb-4 flex items-center gap-3">
+                <button wire:click="toggleAllPosts"
+                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all
+                        {{ $selectAllPosts ? 'bg-[#8B5CF6] text-white' : 'bg-gray-100 dark:bg-[#0B0B0B] text-[#6F767E] border border-gray-200 dark:border-[#272B30]' }}">
+                    {{ $selectAllPosts ? '✓ All Selected' : 'Select All' }}
+                </button>
+                <span class="text-xs text-[#6F767E]">Click individual posts to toggle</span>
+            </div>
+
+            {{-- Post List --}}
+            <div class="max-h-[500px] overflow-y-auto rounded-2xl border border-gray-100 dark:border-[#272B30] divide-y divide-gray-100 dark:divide-[#272B30]">
+                @if($fetchAllDone)
+                    @foreach($previewPosts as $post)
+                    <div wire:click="togglePost({{ $post['id'] }})"
+                        class="flex items-center gap-4 px-5 py-3 cursor-pointer transition-all
+                            {{ in_array($post['id'], $selectedPostIds) ? 'bg-purple-50/50 dark:bg-purple-900/10 hover:bg-purple-100 dark:hover:bg-purple-900/20' : 'hover:bg-gray-50 dark:hover:bg-[#0B0B0B] opacity-60' }}">
+                        <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center shrink-0 transition-all
+                            {{ in_array($post['id'], $selectedPostIds) ? 'bg-[#8B5CF6] border-[#8B5CF6]' : 'border-gray-300 dark:border-[#272B30]' }}">
+                            @if(in_array($post['id'], $selectedPostIds))
+                            <span class="material-symbols-outlined text-white text-sm">check</span>
+                            @endif
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] truncate">{{ $post['title'] }}</p>
+                            <p class="text-xs text-[#6F767E]">{{ $post['slug'] }}</p>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            @if($post['lang'])
+                            <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase
+                                {{ $post['lang'] === 'en' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' }}">
+                                {{ $post['lang'] }}
+                            </span>
+                            @endif
+                            @if($post['has_image'])
+                            <span class="material-symbols-outlined text-sm text-[#6F767E]" title="Has featured image">image</span>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
+                @else
+                    <div class="p-12 text-center">
+                        <svg wire:loading class="animate-spin h-8 w-8 text-[#8B5CF6] mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="text-sm text-[#6F767E]">Fetching posts for preview...</p>
+                    </div>
+                @endif
+            </div>
+
+            {{-- Bottom nav --}}
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-[#272B30] mt-4">
+                <button wire:click="goBack" class="h-11 px-6 rounded-xl bg-gray-100 dark:bg-[#0B0B0B] text-sm font-bold text-[#6F767E] hover:bg-gray-200 dark:hover:bg-[#272B30] transition-all flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">arrow_back</span>
+                    Back
+                </button>
+                <button wire:click="continueToFieldMapping"
+                    class="h-11 px-6 rounded-xl bg-[#8B5CF6] text-white font-bold text-sm hover:bg-purple-700 transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2">
+                    Continue to Field Mapping
+                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Step 4: Field Mapping --}}
+    @if($step === 4)
     <div class="space-y-6">
         {{-- Summary --}}
         <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] p-6">
@@ -157,6 +306,17 @@
                     <div>
                         <h2 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">Field Mapping</h2>
                         <p class="text-sm text-[#6F767E]">{{ $totalPosts }} items found in "{{ $selectedWpCpt }}"</p>
+                        @if($isPolylang)
+                        <p class="text-xs text-green-600 dark:text-green-400 mt-1 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">translate</span>
+                            Polylang detected —
+                            @foreach($polylangLanguages as $lang => $count)
+                                <strong>{{ strtoupper($lang) }}</strong> ({{ $count }})
+                                @if(!$loop->last) + @endif
+                            @endforeach
+                            · importing <strong>{{ strtoupper($defaultImportLocale) }}</strong> as primary
+                        </p>
+                        @endif
                     </div>
                 </div>
                 <span class="px-3 py-1.5 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-[#8B5CF6] text-sm font-bold">
@@ -177,6 +337,21 @@
                     @endforeach
                 </select>
             </div>
+
+            {{-- CLI Command Box --}}
+            <div class="mt-4 p-4 rounded-2xl bg-gray-900 text-gray-100 dark:bg-[#0B0B0B] dark:border dark:border-[#272B30]">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-purple-400 text-lg">terminal</span>
+                        <span class="text-xs font-bold uppercase tracking-wider text-purple-300">Run via CLI (Unlimited Execution Time)</span>
+                    </div>
+                    <span class="text-[11px] text-gray-400">Bypass 120s timeout</span>
+                </div>
+                <div class="flex items-center gap-2 bg-black/50 p-3 rounded-xl font-mono text-xs text-green-400 overflow-x-auto select-all">
+                    <code>php artisan cms:import-wp --url={{ $wpUrl ?: 'https://example.com' }} --wp-cpt={{ $selectedWpCpt ?: 'post' }} --target={{ $selectedCmsCpt ?: 'plugin_post' }}</code>
+                </div>
+                <p class="text-[11px] text-gray-400 mt-2">💡 Salin perintah di atas dan jalankan di Terminal CLI Laragon untuk mengimpor seluruh postingan & gambar secara cepat tanpa batas waktu.</p>
+            </div>
         </div>
 
         {{-- Field Mapping Table --}}
@@ -185,23 +360,70 @@
             
             <div class="space-y-3">
                 @foreach($cmsCptFields as $cmsField)
-                <div class="flex items-center gap-4 p-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B]">
-                    <div class="w-1/3">
-                        <p class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">{{ $cmsField['label'] }}</p>
-                        <p class="text-xs text-[#6F767E]">{{ $cmsField['key'] }}</p>
+                <div class="p-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] space-y-3">
+                    <div class="flex items-center gap-4">
+                        <div class="w-1/3">
+                            <p class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">{{ $cmsField['label'] }}</p>
+                            <p class="text-xs text-[#6F767E]">{{ $cmsField['key'] }}</p>
+                        </div>
+                        <span class="material-symbols-outlined text-[#6F767E]">arrow_forward</span>
+                        <div class="flex-1">
+                            <select
+                                wire:model.live="fieldMappings.{{ $cmsField['key'] }}"
+                                class="w-full h-10 rounded-lg border-none bg-white dark:bg-[#1A1A1A] px-3 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#8B5CF6]"
+                            >
+                                <option value="">-- Don't import --</option>
+                                @foreach($wpCptFields as $wpField)
+                                <option value="{{ $wpField['path'] }}">{{ $wpField['label'] }} {{ $wpField['sample'] ? '(' . $wpField['sample'] . ')' : '' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                    <span class="material-symbols-outlined text-[#6F767E]">arrow_forward</span>
-                    <div class="flex-1">
-                        <select
-                            wire:model.live="fieldMappings.{{ $cmsField['key'] }}"
-                            class="w-full h-10 rounded-lg border-none bg-white dark:bg-[#1A1A1A] px-3 text-sm font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#8B5CF6]"
-                        >
-                            <option value="">-- Don't import --</option>
-                            @foreach($wpCptFields as $wpField)
-                            <option value="{{ $wpField['path'] }}">{{ $wpField['label'] }} {{ $wpField['sample'] ? '(' . $wpField['sample'] . ')' : '' }}</option>
-                            @endforeach
-                        </select>
+
+                    @php
+                        $selectedWpRepeaterPath = data_get($fieldMappings, $cmsField['key']);
+                        $availableWpSubFields = $this->getWpRepeaterSubFields($selectedWpRepeaterPath);
+                    @endphp
+
+                    {{-- Repeater Sub-field Mapping UI --}}
+                    @if(($cmsField['type'] ?? '') === 'repeater' && !empty($selectedWpRepeaterPath) && !empty($cmsField['sub_fields']))
+                    <div class="ml-4 md:ml-6 p-4 rounded-2xl bg-purple-50/60 dark:bg-purple-900/15 border border-purple-200/80 dark:border-purple-800/40 space-y-3">
+                        <div class="flex items-center justify-between mb-1">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-purple-500 text-sm">account_tree</span>
+                                <p class="text-xs font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wider">Sub-field Pairing for "{{ $cmsField['label'] }}"</p>
+                            </div>
+                            <span class="text-[11px] text-[#6F767E]">Pair inner sub-fields from WordPress</span>
+                        </div>
+
+                        @foreach($cmsField['sub_fields'] as $subField)
+                        <div class="flex items-center gap-3 p-2 rounded-xl bg-white dark:bg-[#111111] border border-purple-100 dark:border-purple-900/30">
+                            <div class="w-1/3 pl-2">
+                                <span class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $subField['label'] }}</span>
+                                <span class="text-[10px] text-[#6F767E] block font-mono">key: {{ $subField['name'] }} ({{ $subField['type'] }})</span>
+                            </div>
+                            <span class="material-symbols-outlined text-xs text-purple-400">subdirectory_arrow_right</span>
+                            <div class="flex-1">
+                                <select
+                                    wire:model.live="repeaterSubMappings.{{ $cmsField['key'] }}.{{ $subField['name'] }}"
+                                    class="w-full h-9 rounded-lg border-none bg-gray-50 dark:bg-[#1A1A1A] px-3 text-xs font-medium text-[#111827] dark:text-[#FCFCFC] ring-1 ring-gray-200 dark:ring-[#272B30] focus:ring-2 focus:ring-[#8B5CF6]"
+                                >
+                                    <option value="">-- Don't import sub-field --</option>
+                                    @if(!empty($availableWpSubFields))
+                                        @foreach($availableWpSubFields as $wpSubName)
+                                        <option value="{{ $wpSubName }}">WP Sub-field: {{ $wpSubName }}</option>
+                                        @endforeach
+                                    @else
+                                        @foreach($wpCptFields as $wpField)
+                                        <option value="{{ $wpField['path'] }}">{{ $wpField['label'] }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
+                    @endif
                 </div>
                 @endforeach
             </div>
@@ -250,18 +472,33 @@
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Import All {{ $totalPosts }} Items
+                Import {{ count($selectedPostIds) }} Selected Items
             </button>
         </div>
     </div>
     @endif
 
-    {{-- Step 4: Import Results --}}
-    @if($step === 4)
-    <div class="space-y-6">
+    {{-- Step 5: Import Results & Batch Progress --}}
+    @if($step === 5)
+    <div class="space-y-6" @if($isBatchImporting) wire:poll.200ms="processNextBatch" @endif>
         <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] shadow-sm border border-gray-200 dark:border-[#272B30] p-8">
             <div class="flex flex-col items-center text-center">
-                @if($importResults['failed'] === 0)
+                @if($isBatchImporting)
+                <div class="h-16 w-16 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center mb-6">
+                    <svg class="animate-spin h-8 w-8 text-[#8B5CF6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-[#111827] dark:text-[#FCFCFC] mb-2">Importing Batch {{ $currentBatchIndex }} of {{ $totalBatchCount }}...</h2>
+                <p class="text-[#6F767E] mb-6">Processing 5 items per batch to avoid HTTP timeout. Progress: {{ $importProgress }}%</p>
+
+                {{-- Progress Bar --}}
+                <div class="w-full max-w-lg bg-gray-200 dark:bg-[#272B30] h-4 rounded-full overflow-hidden mb-8">
+                    <div class="bg-[#8B5CF6] h-full transition-all duration-300 rounded-full" style="width: {{ $importProgress }}%"></div>
+                </div>
+                @else
+                @if(($importResults['failed'] ?? 0) === 0)
                 <div class="h-16 w-16 rounded-full bg-[#83BF6E]/10 flex items-center justify-center mb-6">
                     <span class="material-symbols-outlined text-[#83BF6E] text-3xl">check_circle</span>
                 </div>
@@ -272,10 +509,11 @@
                 </div>
                 <h2 class="text-2xl font-bold text-[#111827] dark:text-[#FCFCFC] mb-2">Import Completed with Issues</h2>
                 @endif
-                <p class="text-[#6F767E] mb-8">Your WordPress CPT entries have been imported.</p>
+                <p class="text-[#6F767E] mb-8">Your WordPress CPT entries have been imported safely.</p>
+                @endif
 
                 {{-- Stats --}}
-                <div class="grid grid-cols-3 gap-4 w-full max-w-md mb-8">
+                <div class="grid grid-cols-4 gap-4 w-full max-w-lg mb-4">
                     <div class="p-4 rounded-2xl bg-[#83BF6E]/10 border border-[#83BF6E]/20">
                         <p class="text-3xl font-bold text-[#83BF6E]">{{ $importResults['success'] }}</p>
                         <p class="text-sm font-medium text-[#6F767E]">Imported</p>
@@ -284,11 +522,48 @@
                         <p class="text-3xl font-bold text-amber-500">{{ $importResults['skipped'] }}</p>
                         <p class="text-sm font-medium text-[#6F767E]">Skipped</p>
                     </div>
+                    <div class="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20">
+                        <p class="text-3xl font-bold text-blue-500">{{ $importResults['translated'] ?? 0 }}</p>
+                        <p class="text-sm font-medium text-[#6F767E]">Translated</p>
+                    </div>
                     <div class="p-4 rounded-2xl bg-red-500/10 border border-red-500/20">
                         <p class="text-3xl font-bold text-red-500">{{ $importResults['failed'] }}</p>
                         <p class="text-sm font-medium text-[#6F767E]">Failed</p>
                     </div>
                 </div>
+
+                {{-- Taxonomy & Hierarchy Stats --}}
+                @if(!empty($importResults['categories']) || !empty($importResults['tags']) || !empty($importResults['hierarchical_parents']))
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg mb-8">
+                    @if(!empty($importResults['categories']))
+                    <div class="p-3.5 rounded-2xl bg-purple-500/10 border border-purple-500/20 text-left flex items-center gap-3">
+                        <span class="material-symbols-outlined text-purple-500 text-2xl">folder</span>
+                        <div>
+                            <p class="text-xl font-bold text-purple-600 dark:text-purple-400">{{ $importResults['categories'] ?? 0 }}</p>
+                            <p class="text-xs font-medium text-[#6F767E]">Categories Linked</p>
+                        </div>
+                    </div>
+                    @endif
+                    @if(!empty($importResults['tags']))
+                    <div class="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-left flex items-center gap-3">
+                        <span class="material-symbols-outlined text-indigo-500 text-2xl">label</span>
+                        <div>
+                            <p class="text-xl font-bold text-indigo-600 dark:text-indigo-400">{{ $importResults['tags'] ?? 0 }}</p>
+                            <p class="text-xs font-medium text-[#6F767E]">Tags Linked</p>
+                        </div>
+                    </div>
+                    @endif
+                    @if(!empty($importResults['hierarchical_parents']))
+                    <div class="p-3.5 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-left flex items-center gap-3">
+                        <span class="material-symbols-outlined text-teal-500 text-2xl">account_tree</span>
+                        <div>
+                            <p class="text-xl font-bold text-teal-600 dark:text-teal-400">{{ $importResults['hierarchical_parents'] ?? 0 }}</p>
+                            <p class="text-xs font-medium text-[#6F767E]">Hierarchical Parents Linked</p>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                @endif
 
                 {{-- Skipped Posts List --}}
                 @if(!empty($importResults['skipped_posts']))

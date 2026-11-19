@@ -1,60 +1,38 @@
 @extends('layouts.admin')
 
 @section('title', 'Edit Form - ' . $form->name)
-@section('hide-header', true)
+@section('hide-title', true)
 
 @section('content')
 <div class="flex flex-col h-full" x-data="formBuilder()">
-    {{-- Header --}}
-    <header class="sticky top-0 z-30 flex flex-col gap-6 md:flex-row md:items-center md:justify-between px-6 py-6 md:px-10 md:pt-8 md:pb-6 bg-[#F4F5F6]/95 dark:bg-[#0B0B0B]/95 backdrop-blur-sm border-b border-gray-200 dark:border-[#272B30]">
-        <div class="flex items-center gap-4">
-            <a class="h-10 w-10 flex items-center justify-center rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-all"
-                href="{{ route('admin.forms.index') }}">
-                <span class="material-symbols-outlined text-xl">arrow_back</span>
-            </a>
-            <div>
-                <h1 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">
-                    Edit Form
+    {{-- Context Bar --}}
+    <div class="flex items-center gap-3 px-6 py-4 md:px-10 border-b border-gray-200 dark:border-[#272B30] bg-white/50 dark:bg-[#0B0B0B]/50 shrink-0">
+        <a class="h-9 w-9 flex items-center justify-center rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-all shrink-0"
+            href="{{ route('admin.forms.index') }}">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+        </a>
+        <div class="flex items-center gap-3 min-w-0 flex-1 justify-between">
+            <div class="flex items-center gap-3">
+                <h1 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] truncate">
+                    Edit Form - {{ $form->name }}
                 </h1>
-                <div class="flex items-center gap-2 text-xs text-[#6F767E] mt-0.5" x-cloak>
-                    <span class="w-2 h-2 rounded-full inline-block"
-                        :class="isActive ? 'bg-green-500' : 'bg-gray-400'"></span>
-                    <span x-text="isActive ? 'Active' : 'Inactive'"></span>
+                <div class="flex items-center gap-2 text-xs text-[#6F767E] shrink-0" x-cloak>
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider"
+                        :class="isActive == '1' || isActive == true ? 'bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400' : 'bg-gray-100 dark:bg-gray-500/10 text-gray-600 dark:text-gray-400'">
+                        <span class="w-1.5 h-1.5 rounded-full" :class="isActive == '1' || isActive == true ? 'bg-emerald-500' : 'bg-gray-500'"></span>
+                        <span x-text="isActive == '1' || isActive == true ? 'Active' : 'Inactive'"></span>
+                    </span>
                 </div>
             </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <div class="flex items-center gap-2">
-                <!-- Theme Toggle -->
-                <button 
-                    x-data="{ 
-                        darkMode: document.documentElement.classList.contains('dark'),
-                        toggle() {
-                            this.darkMode = !this.darkMode;
-                            document.documentElement.classList.toggle('dark');
-                            localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
-                        }
-                    }"
-                    @click="toggle()"
-                    class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#FCFCFC] transition-colors focus:outline-none ml-2">
-                    <span class="material-symbols-outlined text-[24px]" x-show="!darkMode" x-cloak>dark_mode</span>
-                    <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
-                </button>
-            </div>
-            
-            <div class="h-8 w-px bg-gray-200 dark:bg-[#272B30]"></div>
 
-            <div class="flex items-center gap-3">
-                <button @click="updateForm"
-                    class="flex h-10 items-center gap-2 rounded-xl bg-[#2563EB] px-5 text-sm font-bold text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20"
-                    :class="{ 'opacity-50 cursor-not-allowed': isSaving }" :disabled="isSaving">
-                    <span class="material-symbols-outlined text-lg"
-                        x-text="isSaving ? 'hourglass_empty' : 'save'"></span>
-                    <span x-text="isSaving ? 'Saving...' : 'Update Form'"></span>
-                </button>
+            {{-- Sub-navigation Tabs --}}
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="{{ route('admin.forms.edit', $form) }}" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-primary text-white shadow-sm">Form Builder</a>
+                <a href="{{ route('admin.forms.notifications', $form) }}" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all">Email Notifications</a>
+                <a href="{{ route('admin.forms.entries', $form) }}" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all">Entries ({{ $form->entries()->count() }})</a>
             </div>
         </div>
-    </header>
+    </div>
 
     {{-- Main Content --}}
     <div class="flex-1 flex overflow-hidden">
@@ -129,53 +107,6 @@
 
                                 <div class="space-y-4">
                                     <div class="flex items-start gap-4">
-                                        {{-- Field Type Icon --}}
-                                        <div class="h-10 w-10 rounded-xl bg-gray-50 dark:bg-[#272B30] flex items-center justify-center shrink-0">
-                                            <span class="material-symbols-outlined text-[#6F767E]" x-text="getFieldIcon(field.type)"></span>
-                                        </div>
-                                        
-                                        <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1">Label</label>
-                                                <input x-model="field.label" type="text" 
-                                                    x-on:input="field.field_id = $event.target.value.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '')"
-                                                    class="w-full bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-semibold rounded-lg focus:ring-2 focus:ring-primary px-3 py-2 text-[#111827] dark:text-[#FCFCFC]" 
-                                                    placeholder="Enter Field Label" required>
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1">Field ID</label>
-                                                <input x-model="field.field_id" type="text" 
-                                                    class="w-full bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium rounded-lg focus:ring-2 focus:ring-primary px-3 py-2 text-[#111827] dark:text-[#FCFCFC]" 
-                                                    placeholder="unique_id" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    {{-- Expanded Settings --}}
-                                    <div class="pl-[56px] space-y-4">
-                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                            <div>
-                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1">Placeholder</label>
-                                                <input x-model="field.placeholder" type="text" 
-                                                    class="w-full bg-transparent border border-gray-200 dark:border-[#272B30] text-sm rounded-lg focus:ring-2 focus:ring-primary px-3 py-2 text-[#111827] dark:text-[#FCFCFC]">
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1">Help Text</label>
-                                                <input x-model="field.help_text" type="text" 
-                                                    class="w-full bg-transparent border border-gray-200 dark:border-[#272B30] text-sm rounded-lg focus:ring-2 focus:ring-primary px-3 py-2 text-[#111827] dark:text-[#FCFCFC]">
-                                            </div>
-                                            <div>
-                                                <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-1">Width</label>
-                                                <select x-model="field.column_width" 
-                                                    class="w-full bg-transparent border border-gray-200 dark:border-[#272B30] text-sm rounded-lg focus:ring-2 focus:ring-primary px-3 py-2 text-[#111827] dark:text-[#FCFCFC]">
-                                                    <option value="full">Full Width</option>
-                                                    <option value="half">Half (1/2)</option>
-                                                    <option value="third">Third (1/3)</option>
-                                                    <option value="quarter">Quarter (1/4)</option>
-                                                </select>
-                                            </div>
-                                        </div>
 
                                         {{-- Options for select/radio/checkbox --}}
                                         <div x-show="['select', 'radio', 'checkbox'].includes(field.type)" class="bg-[#F4F5F6] dark:bg-[#0B0B0B] rounded-xl p-4">
@@ -386,143 +317,146 @@
         </div>
 
         {{-- Right Panel: Settings --}}
-        <aside class="w-[360px] bg-white dark:bg-[#1A1A1A] border-l border-gray-200 dark:border-[#272B30] overflow-y-auto no-scrollbar hidden lg:block">
+        <aside class="w-[360px] bg-[#F4F5F6] dark:bg-[#0B0B0B] border-l border-gray-200 dark:border-[#272B30] overflow-y-auto no-scrollbar hidden lg:block">
             <div class="p-6 space-y-6">
-                {{-- Settings Tabs --}}
-                <div class="flex gap-1 p-1 bg-[#F4F5F6] dark:bg-[#0B0B0B] rounded-xl">
-                    <button @click="settingsTab = 'general'" 
-                        :class="settingsTab === 'general' ? 'bg-white dark:bg-[#272B30] shadow-sm' : 'text-[#6F767E]'"
-                        class="flex-1 px-3 py-2 rounded-lg text-xs font-bold transition-all">General</button>
-                    <button @click="settingsTab = 'notifications'" 
-                        :class="settingsTab === 'notifications' ? 'bg-white dark:bg-[#272B30] shadow-sm' : 'text-[#6F767E]'"
-                        class="flex-1 px-3 py-2 rounded-lg text-xs font-bold transition-all">Notify</button>
-                    <button @click="settingsTab = 'confirmations'" 
-                        :class="settingsTab === 'confirmations' ? 'bg-white dark:bg-[#272B30] shadow-sm' : 'text-[#6F767E]'"
-                        class="flex-1 px-3 py-2 rounded-lg text-xs font-bold transition-all">Confirm</button>
+                {{-- Actions Card --}}
+                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none">
+                    <div class="flex items-center gap-2 mb-4 text-[#6F767E]">
+                        <span class="material-symbols-outlined text-lg">rocket_launch</span>
+                        <span class="text-xs font-bold uppercase tracking-widest">Actions</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button type="button" @click="updateForm" :disabled="isSaving"
+                            class="w-full px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50">
+                            <span class="material-symbols-outlined text-lg" x-show="!isSaving">save</span>
+                            <span x-show="!isSaving">Update Form</span>
+                            <span x-show="isSaving">Saving...</span>
+                        </button>
+                    </div>
                 </div>
-                
-                {{-- General Settings Tab --}}
-                <div x-show="settingsTab === 'general'" class="space-y-4">
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Status</label>
-                        <select x-model="isActive"
-                            class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary">
-                            <option value="1">Active</option>
-                            <option value="0">Inactive</option>
-                        </select>
+
+                {{-- Form Settings Card --}}
+                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none space-y-6">
+                    <div class="flex items-center gap-2 text-[#6F767E]">
+                        <span class="material-symbols-outlined text-lg">tune</span>
+                        <span class="text-xs font-bold uppercase tracking-widest">Form Settings</span>
                     </div>
 
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Description</label>
-                        <textarea x-model="description" rows="3"
-                            class="w-full rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary p-3 resize-none"
-                            placeholder="Describe this form..."></textarea>
+                    {{-- Settings Tabs --}}
+                    <div class="flex gap-1 p-1 bg-[#F4F5F6] dark:bg-[#0B0B0B] rounded-xl">
+                        <button @click="settingsTab = 'general'" 
+                            :class="settingsTab === 'general' ? 'bg-white dark:bg-[#272B30] text-[#111827] dark:text-[#FCFCFC] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]'"
+                            class="flex-1 px-3 py-2 rounded-lg text-xs font-bold transition-all">General</button>
+                        <button @click="settingsTab = 'notifications'" 
+                            :class="settingsTab === 'notifications' ? 'bg-white dark:bg-[#272B30] text-[#111827] dark:text-[#FCFCFC] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]'"
+                            class="flex-1 px-3 py-2 rounded-lg text-xs font-bold transition-all">Notify</button>
+                        <button @click="settingsTab = 'confirmations'" 
+                            :class="settingsTab === 'confirmations' ? 'bg-white dark:bg-[#272B30] text-[#111827] dark:text-[#FCFCFC] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]'"
+                            class="flex-1 px-3 py-2 rounded-lg text-xs font-bold transition-all">Confirm</button>
                     </div>
                     
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Submit Button Text</label>
-                        <input x-model="submitButtonText" type="text"
-                            class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                            placeholder="Submit">
-                    </div>
-                    
-                    {{-- Spam Protection --}}
-                    <div class="pt-4 border-t border-gray-200 dark:border-[#272B30]">
-                        <h5 class="text-[11px] font-bold text-[#6F767E] uppercase tracking-widest mb-3">Spam Protection</h5>
-                        <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] mb-3">
-                            <input type="checkbox" x-model="spamProtection.honeypot" class="rounded border-gray-300 text-primary focus:ring-primary">
-                            <div>
-                                <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">Honeypot</span>
-                                <p class="text-xs text-[#6F767E]">Invisible trap field for bots</p>
-                            </div>
-                        </label>
-                        
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">CAPTCHA Provider</label>
-                            <select x-model="spamProtection.captcha_provider"
-                                class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3">
-                                <option value="none">No CAPTCHA</option>
-                                <option value="recaptcha_v2">Google reCAPTCHA v2</option>
-                                <option value="recaptcha_v3">Google reCAPTCHA v3 (Invisible)</option>
-                                <option value="turnstile">Cloudflare Turnstile</option>
-                            </select>
-                            <p class="text-xs text-[#6F767E]" x-show="spamProtection.captcha_provider !== 'none'">
-                                Configure API keys in .env file
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                
-                {{-- Notifications Tab --}}
-                <div x-show="settingsTab === 'notifications'" class="space-y-4">
-                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B]">
-                        <input type="checkbox" x-model="notifications.enabled" class="rounded border-gray-300 text-primary focus:ring-primary">
-                        <div>
-                            <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">Email Notifications</span>
-                            <p class="text-xs text-[#6F767E]">Send email on form submission</p>
-                        </div>
-                    </label>
-                    
-                    <div x-show="notifications.enabled" class="space-y-4">
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Admin Email</label>
-                            <input x-model="notifications.admin_email" type="email"
-                                class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                                placeholder="admin@example.com">
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Email Subject</label>
-                            <input x-model="notifications.subject" type="text"
-                                class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                                placeholder="New Form Submission">
-                        </div>
-                        
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" x-model="notifications.send_to_user" class="rounded border-gray-300 text-primary focus:ring-primary">
-                            <span class="text-sm text-[#111827] dark:text-[#FCFCFC]">Send confirmation to user</span>
-                        </label>
-                    </div>
-                </div>
-                
-                {{-- Confirmations Tab --}}
-                <div x-show="settingsTab === 'confirmations'" class="space-y-4">
-                    <div class="space-y-2">
-                        <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">After Submission</label>
-                        <select x-model="confirmations.type"
-                            class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary">
-                            <option value="message">Show Message</option>
-                            <option value="redirect">Redirect to URL</option>
-                            <option value="success_page">Redirect to Success Page</option>
-                        </select>
-                    </div>
-                    
-                    <div x-show="confirmations.type === 'message'" class="space-y-2">
-                        <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Success Message</label>
-                        <textarea x-model="confirmations.message" rows="3"
-                            class="w-full rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary p-3 resize-none"
-                            placeholder="Thank you for your submission!"></textarea>
-                    </div>
-                    
-                    <div x-show="confirmations.type === 'redirect'" class="space-y-2">
-                        <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Redirect URL</label>
-                        <input x-model="confirmations.redirect_url" type="url"
-                            class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                            placeholder="https://example.com/thank-you">
-                    </div>
-                    
-                    <div x-show="confirmations.type === 'success_page'" class="space-y-4">
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Title</label>
-                            <input x-model="confirmations.success_title" type="text"
-                                class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                                placeholder="Thank You!">
-                        </div>
+                    {{-- General Settings Tab --}}
+                    <div x-show="settingsTab === 'general'" class="space-y-4">
+                        <x-admin.ui.select 
+                            name="isActive" 
+                            label="Status" 
+                            x-model="isActive" 
+                            class="!h-10 !py-0 !rounded-lg !bg-[#F4F5F6] dark:!bg-[#0B0B0B] !border-none text-sm font-medium"
+                        >
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </x-admin.ui.select>
+
                         <div class="space-y-2">
                             <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Description</label>
-                            <textarea x-model="confirmations.success_description" rows="3"
+                            <textarea x-model="description" rows="3"
+                                class="w-full rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary p-3 resize-none"
+                                placeholder="Describe this form..."></textarea>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Submit Button Text</label>
+                            <input x-model="submitButtonText" type="text"
+                                class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
+                                placeholder="Submit">
+                        </div>
+                        
+                        {{-- Spam Protection --}}
+                        <div class="pt-4 border-t border-gray-200 dark:border-[#272B30]">
+                            <h5 class="text-[11px] font-bold text-[#6F767E] uppercase tracking-widest mb-3">Spam Protection</h5>
+                            <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] mb-3">
+                                <input type="checkbox" x-model="spamProtection.honeypot" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <div>
+                                    <span class="text-sm font-medium text-[#111827] dark:text-[#FCFCFC]">Honeypot</span>
+                                    <p class="text-xs text-[#6F767E]">Invisible trap field for bots</p>
+                                </div>
+                            </label>
+                            
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">CAPTCHA Provider</label>
+                                <select x-model="spamProtection.captcha_provider"
+                                    class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3">
+                                    <option value="none">No CAPTCHA</option>
+                                    <option value="recaptcha_v2">Google reCAPTCHA v2</option>
+                                    <option value="recaptcha_v3">Google reCAPTCHA v3 (Invisible)</option>
+                                    <option value="turnstile">Cloudflare Turnstile</option>
+                                </select>
+                                <p class="text-xs text-[#6F767E]" x-show="spamProtection.captcha_provider !== 'none'">
+                                    Configure API keys in .env file
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {{-- Link to Dedicated Email Notifications Page --}}
+                    <div class="pt-4 border-t border-gray-200 dark:border-[#272B30]">
+                        <a href="{{ route('admin.forms.notifications', $form) }}" class="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/20 text-primary hover:bg-primary/10 transition-all">
+                            <div class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-lg">mail</span>
+                                <span class="text-xs font-bold">Email Notifications Page</span>
+                            </div>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </a>
+                    </div>
+                    
+                    {{-- Confirmations Tab --}}
+                    <div x-show="settingsTab === 'confirmations'" class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">After Submission</label>
+                            <select x-model="confirmations.type"
+                                class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary">
+                                <option value="message">Show Message</option>
+                                <option value="redirect">Redirect to URL</option>
+                                <option value="success_page">Redirect to Success Page</option>
+                            </select>
+                        </div>
+                        
+                        <div x-show="confirmations.type === 'message'" class="space-y-2">
+                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Success Message</label>
+                            <textarea x-model="confirmations.message" rows="3"
                                 class="w-full rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary p-3 resize-none"
                                 placeholder="Thank you for your submission!"></textarea>
+                        </div>
+                        
+                        <div x-show="confirmations.type === 'redirect'" class="space-y-2">
+                            <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Redirect URL</label>
+                            <input x-model="confirmations.redirect_url" type="url"
+                                class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
+                                placeholder="https://example.com/thank-you">
+                        </div>
+                        
+                        <div x-show="confirmations.type === 'success_page'" class="space-y-4">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Title</label>
+                                <input x-model="confirmations.success_title" type="text"
+                                    class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
+                                    placeholder="Thank You!">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-[#111827] dark:text-[#FCFCFC]">Description</label>
+                                <textarea x-model="confirmations.success_description" rows="3"
+                                    class="w-full rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary p-3 resize-none"
+                                    placeholder="Thank you for your submission!"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>

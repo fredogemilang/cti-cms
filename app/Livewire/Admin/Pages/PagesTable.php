@@ -86,9 +86,9 @@ class PagesTable extends Component
     protected function buildQuery()
     {
         if ($this->status === 'trash') {
-            $query = Page::onlyTrashed()->with(['author']);
+            $query = Page::onlyTrashed()->with(['author', 'updatedBy']);
         } else {
-            $query = Page::with(['author']);
+            $query = Page::with(['author', 'updatedBy']);
 
             if ($this->status) {
                 $query->where('status', $this->status);
@@ -109,6 +109,13 @@ class PagesTable extends Component
 
     public function confirmDelete(int $id)
     {
+        $page = Page::find($id);
+        if ($page && $page->isSystem()) {
+            $this->dispatch('notify', type: 'error', message: 'System pages cannot be deleted.');
+
+            return;
+        }
+
         $this->pageToDelete = $id;
         $this->showDeleteModal = true;
     }
@@ -146,11 +153,18 @@ class PagesTable extends Component
 
     public function bulkDelete()
     {
-        Page::whereIn('id', $this->selectedPages)->delete();
+        // Filter out system pages
+        $deletableIds = Page::whereIn('id', $this->selectedPages)
+            ->where(function ($q) {
+                $q->where('is_system', false)->orWhereNull('is_system');
+            })
+            ->pluck('id');
+
+        Page::whereIn('id', $deletableIds)->delete();
         $this->selectedPages = [];
         $this->selectAll = false;
         $this->showBulkDeleteModal = false;
-        $this->dispatch('notify', type: 'success', message: 'Selected pages moved to trash!');
+        $this->dispatch('notify', type: 'success', message: 'Selected pages moved to trash! (System pages were skipped.)');
     }
 
     // === TRASH OPERATIONS ===
@@ -259,12 +273,13 @@ class PagesTable extends Component
     {
         $page = Page::with('allBlocks')->find($id);
         if ($page) {
-            // Create duplicate page
+            // Create duplicate page (always as non-system, user-created)
             $newPage = $page->replicate();
             $newPage->title = $page->title.' (Copy)';
             $newPage->slug = $page->slug.'-copy';
             $newPage->status = 'draft';
             $newPage->published_at = null;
+            $newPage->is_system = false;
             $newPage->save();
 
             // Duplicate blocks
@@ -286,6 +301,50 @@ class PagesTable extends Component
         }
     }
 
+    public bool $showQuickEditModal = false;
+
+    public ?int $quickEditId = null;
+
+    public string $quickEditTitle = '';
+
+    public string $quickEditSlug = '';
+
+    public string $quickEditStatus = 'draft';
+
+    public function openQuickEdit(int $id)
+    {
+        $page = Page::findOrFail($id);
+        $this->quickEditId = $page->id;
+        $this->quickEditTitle = $page->title;
+        $this->quickEditSlug = $page->slug;
+        $this->quickEditStatus = $page->status;
+        $this->showQuickEditModal = true;
+    }
+
+    public function saveQuickEdit()
+    {
+        if (! $this->quickEditId) {
+            return;
+        }
+
+        $page = Page::findOrFail($this->quickEditId);
+        $this->validate([
+            'quickEditTitle' => 'required|string|max:255',
+            'quickEditSlug' => 'required|string|max:255|unique:pages,slug,'.$page->id,
+            'quickEditStatus' => 'required|in:draft,pending,pending_review,published,scheduled,private',
+        ]);
+
+        $page->update([
+            'title' => $this->quickEditTitle,
+            'slug' => $this->quickEditSlug,
+            'status' => $this->quickEditStatus,
+            'updated_by' => auth()->id(),
+        ]);
+
+        $this->showQuickEditModal = false;
+        $this->dispatch('notify', type: 'success', message: 'Page updated via Quick Edit!');
+    }
+
     public function render()
     {
         $pages = $this->buildQuery()->paginate($this->perPage);
@@ -293,6 +352,7 @@ class PagesTable extends Component
         $statusCounts = [
             'all' => Page::count(),
             'published' => Page::where('status', 'published')->count(),
+            'pending_review' => Page::where('status', 'pending_review')->count(),
             'draft' => Page::where('status', 'draft')->count(),
             'scheduled' => Page::where('status', 'scheduled')->count(),
             'private' => Page::where('status', 'private')->count(),

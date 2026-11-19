@@ -1,12 +1,23 @@
 <?php
 
+use App\Models\CptEntry;
+use App\Models\Form;
+use App\Models\FormField;
+use App\Models\Page;
+use App\Models\Plugin;
 use App\Models\Setting;
+use App\Models\StringTranslation;
 use App\Models\Theme;
 use App\Services\ActivityLogger;
+use App\Services\IconLibraryService;
 use App\Services\ThemeLoader;
+use App\Support\Action;
+use App\Support\Filter;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\ViewErrorBag;
+use Plugins\Posts\Models\Post;
 
 if (! function_exists('activity')) {
     /**
@@ -170,5 +181,639 @@ if (! function_exists('theme_path')) {
         }
 
         return $basePath;
+    }
+}
+
+if (! function_exists('get_assigned_form')) {
+    /**
+     * Get the Form model assigned to the active theme's placeholder slot.
+     * Returns null if unassigned or if the assigned form is inactive/deleted.
+     */
+    function get_assigned_form(string $placeholder): ?Form
+    {
+        $theme = active_theme();
+        if (! $theme) {
+            return null;
+        }
+
+        $assignments = setting("theme_{$theme->slug}_form_assignments", []);
+        $formId = $assignments[$placeholder] ?? null;
+
+        if (! $formId) {
+            return null;
+        }
+
+        return Form::where('id', $formId)
+            ->where('is_active', true)
+            ->with('fields')
+            ->first();
+    }
+}
+
+if (! function_exists('render_theme_form')) {
+    /**
+     * Render the form assigned to the active theme's placeholder.
+     *
+     * @deprecated Use tailwind-form.blade.php partial instead. See Gotcha G2.
+     */
+    function render_theme_form(string $placeholder): string
+    {
+        $theme = active_theme();
+        if (! $theme) {
+            return '';
+        }
+
+        $assignments = setting("theme_{$theme->slug}_form_assignments", []);
+        $formId = $assignments[$placeholder] ?? null;
+
+        if (! $formId) {
+            return '';
+        }
+
+        $form = Form::where('id', $formId)
+            ->where('is_active', true)
+            ->with('fields')
+            ->first();
+
+        if (! $form) {
+            return '';
+        }
+
+        $html = '';
+
+        // Flash message handling
+        if (session('success')) {
+            $html .= '<div id="form-success-'.$form->slug.'" class="alert alert-success alert-dismissible fade show mb-4 elementor-message elementor-message-success" role="alert">';
+            $html .= '<strong>Success!</strong> '.e(session('success'));
+            $html .= '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+            $html .= '</div>';
+        }
+
+        if (session('form_success_message')) {
+            $html .= '<div id="form-success-'.$form->slug.'" class="alert alert-success alert-dismissible fade show mb-4 elementor-message elementor-message-success" role="alert">';
+            $html .= '<strong>Success!</strong> '.e(session('form_success_message'));
+            $html .= '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+            $html .= '</div>';
+        }
+
+        $errors = session('errors');
+        if ($errors instanceof ViewErrorBag && $errors->any()) {
+            $html .= '<div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">';
+            $html .= '<strong>Please fix the following errors:</strong>';
+            $html .= '<ul class="mb-0 mt-2">';
+            foreach ($errors->all() as $error) {
+                $html .= '<li>'.e($error).'</li>';
+            }
+            $html .= '</ul>';
+            $html .= '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+            $html .= '</div>';
+        }
+
+        $html .= $form->renderForm(['class' => 'needs-validation form-dynamic', 'novalidate' => true]);
+
+        return $html;
+    }
+}
+
+if (! function_exists('resolve_block_asset')) {
+    /**
+     * Resolve a block image or media asset path to a valid public URL.
+     * Optionally request a variant ('thumb', 'sm', 'md', 'lg', 'xl').
+     */
+    function resolve_block_asset(?string $path, ?string $variant = null): string
+    {
+        if (empty($path)) {
+            return '';
+        }
+
+        if ($variant) {
+            $ext = pathinfo($path, PATHINFO_EXTENSION);
+            $dir = pathinfo($path, PATHINFO_DIRNAME);
+            $filename = pathinfo($path, PATHINFO_FILENAME);
+
+            // Check variant in webp first, then original extension
+            $candidatePaths = [
+                "{$dir}/{$filename}-{$variant}.webp",
+                "{$dir}/{$filename}-{$variant}.{$ext}",
+            ];
+
+            foreach ($candidatePaths as $candidate) {
+                $cleanCand = ltrim($candidate, '/');
+                if (file_exists(public_path($cleanCand)) || file_exists(public_path('storage/'.$cleanCand))) {
+                    $path = $candidate;
+                    break;
+                }
+            }
+        }
+
+        static $cache = [];
+        if (isset($cache[$path])) {
+            return $cache[$path];
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $cache[$path] = $path;
+        }
+
+        $cleanPath = ltrim($path, '/');
+        $webpCleanPath = preg_replace('/\.(png|jpe?g)$/i', '.webp', $cleanPath);
+
+        if (str_starts_with($cleanPath, 'themes/')) {
+            if ($webpCleanPath !== $cleanPath && file_exists(public_path($webpCleanPath))) {
+                return $cache[$path] = asset($webpCleanPath);
+            }
+
+            return $cache[$path] = asset($cleanPath);
+        }
+
+        if (str_starts_with($cleanPath, 'storage/')) {
+            $storageSub = substr($cleanPath, 8);
+            $webpStorageSub = preg_replace('/\.(png|jpe?g)$/i', '.webp', $storageSub);
+            if ($webpStorageSub !== $storageSub && file_exists(public_path('storage/'.$webpStorageSub))) {
+                return $cache[$path] = asset('storage/'.$webpStorageSub);
+            }
+            if (! file_exists(public_path($cleanPath))) {
+                $unhashed = preg_replace('/-\d+-[a-zA-Z0-9]+\.([a-zA-Z0-9]+)$/', '.$1', $cleanPath);
+                if (file_exists(public_path($unhashed))) {
+                    return $cache[$path] = asset($unhashed);
+                }
+            }
+
+            return $cache[$path] = asset($cleanPath);
+        }
+
+        $theme = active_theme();
+        $activeThemeSlug = $theme ? $theme->slug : 'default';
+
+        if (str_starts_with($cleanPath, 'assets/')) {
+            $themeAssetWebp = "themes/{$activeThemeSlug}/{$webpCleanPath}";
+            if ($webpCleanPath !== $cleanPath && (file_exists(public_path($themeAssetWebp)) || file_exists(base_path($themeAssetWebp)))) {
+                return $cache[$path] = asset($themeAssetWebp);
+            }
+
+            return $cache[$path] = asset("themes/{$activeThemeSlug}/{$cleanPath}");
+        }
+
+        // Check if file exists in active theme assets
+        $themeAssetRel = "themes/{$activeThemeSlug}/assets/{$cleanPath}";
+        $themeAssetWebp = "themes/{$activeThemeSlug}/assets/{$webpCleanPath}";
+        if ($webpCleanPath !== $cleanPath && (file_exists(public_path($themeAssetWebp)) || file_exists(base_path($themeAssetWebp)))) {
+            return $cache[$path] = asset($themeAssetWebp);
+        }
+        if (file_exists(public_path($themeAssetRel)) || file_exists(base_path($themeAssetRel))) {
+            return $cache[$path] = asset($themeAssetRel);
+        }
+
+        // Prefer webp in storage
+        if ($webpCleanPath !== $cleanPath && file_exists(public_path('storage/'.$webpCleanPath))) {
+            return $cache[$path] = asset('storage/'.$webpCleanPath);
+        }
+
+        if (! file_exists(public_path('storage/'.$cleanPath))) {
+            $unhashed = preg_replace('/-\d+-[a-zA-Z0-9]+\.([a-zA-Z0-9]+)$/', '.$1', $cleanPath);
+            if (file_exists(public_path('storage/'.$unhashed))) {
+                return $cache[$path] = asset('storage/'.$unhashed);
+            }
+        }
+
+        return $cache[$path] = asset('storage/'.$cleanPath);
+    }
+}
+
+if (! function_exists('get_form_field_types')) {
+    /**
+     * Get all available form field types including theme-registered custom types.
+     * Returns the merged array of built-in + theme custom field types.
+     */
+    function get_form_field_types(): array
+    {
+        return FormField::getAvailableFieldTypes();
+    }
+}
+
+if (! function_exists('render_icon')) {
+    /**
+     * Render SVG icon markup for a given icon key (e.g., 'lucide:shield' or 'shield').
+     */
+    function render_icon(?string $iconKey, string $class = 'w-5 h-5'): string
+    {
+        return app(IconLibraryService::class)->renderSvg($iconKey, $class);
+    }
+}
+
+if (! function_exists('apply_filters')) {
+    function apply_filters(string $tag, mixed $value, ...$args): mixed
+    {
+        return Filter::apply($tag, $value, ...$args);
+    }
+}
+
+if (! function_exists('add_filter')) {
+    function add_filter(string $tag, callable $callback, int $priority = 10): void
+    {
+        Filter::add($tag, $callback, $priority);
+    }
+}
+
+if (! function_exists('add_action')) {
+    function add_action(string $tag, callable $callback, int $priority = 10): void
+    {
+        Action::add($tag, $callback, $priority);
+    }
+}
+
+if (! function_exists('do_action')) {
+    function do_action(string $tag, mixed ...$args): void
+    {
+        Action::run($tag, ...$args);
+    }
+}
+
+if (! function_exists('resolve_frontend_entry')) {
+    function resolve_frontend_entry(string $path, ?string $locale = null): ?CptEntry
+    {
+        $locale ??= app()->getLocale();
+
+        return apply_filters('frontend.resolve_entry', null, $path, $locale);
+    }
+}
+
+if (! function_exists('current_page_localized_url')) {
+    /**
+     * Get the URL for the current request/entry/page in a specific target locale.
+     */
+    function current_page_localized_url(string $targetLocale): string
+    {
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+        $urlStructure = setting('locale_url_structure', 'prefix');
+        $hideDefault = (bool) setting('locale_prefix_hide_default', true);
+
+        // 1. If viewing a Post (single blog detail)
+        $post = request()->attributes->get('post')
+            ?? view()->shared('post')
+            ?? null;
+
+        if (class_exists(Post::class) && $post instanceof Post) {
+            return $post->getUrl($targetLocale);
+        }
+
+        // 2. If viewing a CPT Entry (passed via view data or request attributes)
+        $entry = request()->attributes->get('cpt_entry')
+            ?? view()->shared('entry')
+            ?? null;
+
+        if ($entry instanceof CptEntry) {
+            return $entry->getUrl($targetLocale);
+        }
+
+        // 3. If viewing a Page
+        $page = view()->shared('page') ?? null;
+
+        // 4. Fallback: Parse request path
+        $path = ltrim(request()->path(), '/');
+
+        // Strip current non-default locale prefix if present at start of path
+        $available = available_locales();
+        $nonDefault = array_values(array_filter($available, fn ($l) => $l !== $defaultLocale));
+        $cleanPath = $path;
+        foreach ($nonDefault as $l) {
+            if ($cleanPath === $l) {
+                $cleanPath = '';
+                break;
+            }
+            if (str_starts_with($cleanPath, $l.'/')) {
+                $cleanPath = substr($cleanPath, strlen($l) + 1);
+                break;
+            }
+        }
+
+        // 5. If path is a Blog archive or single post detail (e.g. blog-news, blog-berita, etc.)
+        if (class_exists(Plugins\Posts\Models\Setting::class) && ! empty($cleanPath)) {
+            $segments = explode('/', $cleanPath);
+            $firstSeg = $segments[0];
+            $isBlogPath = false;
+
+            foreach ($available as $loc) {
+                if ($firstSeg === Plugins\Posts\Models\Setting::getArchiveSlug($loc) || $firstSeg === 'blog-news' || $firstSeg === 'blog') {
+                    $isBlogPath = true;
+                    break;
+                }
+            }
+
+            if ($isBlogPath) {
+                // If single post detail page (/blog-news/{post_slug})
+                if (count($segments) >= 2 && class_exists(Post::class)) {
+                    $postSlug = end($segments);
+                    $foundPost = Post::findByLocalizedSlug($postSlug);
+                    if ($foundPost) {
+                        return $foundPost->getUrl($targetLocale);
+                    }
+                }
+
+                $targetSlug = Plugins\Posts\Models\Setting::getArchiveSlug($targetLocale);
+                $segments[0] = $targetSlug;
+                $newPath = implode('/', $segments);
+
+                if ($targetLocale === $defaultLocale && $hideDefault) {
+                    return url('/'.$newPath);
+                }
+
+                return url('/'.$targetLocale.'/'.$newPath);
+            }
+        }
+
+        if (! $page && $cleanPath !== '' && ! str_contains($cleanPath, '/')) {
+            $page = Page::findByLocalizedSlug($cleanPath);
+        }
+
+        if ($page instanceof Page) {
+            return $page->getUrl($targetLocale);
+        }
+
+        // Home page
+        if ($cleanPath === '' || $cleanPath === 'home') {
+            if ($targetLocale === $defaultLocale && $hideDefault) {
+                return trailing_slash_url(url('/'));
+            }
+
+            return trailing_slash_url(url('/'.$targetLocale));
+        }
+
+        // Prefix structure
+        if ($urlStructure === 'prefix') {
+            if ($targetLocale === $defaultLocale && $hideDefault) {
+                return trailing_slash_url(url('/'.$cleanPath));
+            }
+
+            return trailing_slash_url(url('/'.$targetLocale.'/'.$cleanPath));
+        }
+
+        return trailing_slash_url(url('/'.$cleanPath));
+    }
+}
+
+if (! function_exists('is_locale_available_for_current_page')) {
+    /**
+     * Check if a given locale is available/translated for the current page or entry.
+     */
+    function is_locale_available_for_current_page(string $locale): bool
+    {
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+
+        // Default locale is always available
+        if ($locale === $defaultLocale) {
+            return true;
+        }
+
+        // Check if locale is in available_locales setting
+        if (! in_array($locale, available_locales(), true)) {
+            return false;
+        }
+
+        // 1. If viewing a CPT Entry
+        $entry = request()->attributes->get('cpt_entry')
+            ?? view()->shared('entry')
+            ?? null;
+
+        if ($entry instanceof CptEntry) {
+            return $entry->hasTranslationForLocale($locale);
+        }
+
+        // 2. If viewing a Page
+        $page = view()->shared('page') ?? null;
+        if ($page instanceof Page) {
+            return $page->hasTranslationForLocale($locale);
+        }
+
+        // 3. For general routes (homepage, blog index, static routes)
+        return true;
+    }
+}
+
+if (! function_exists('t')) {
+    /**
+     * Translate a UI string key using the central StringTranslation system.
+     */
+    function t(string $key, ?string $default = null, array $replace = []): string
+    {
+        $locale = app()->getLocale();
+        $dictionary = StringTranslation::getDictionary($locale);
+        $translation = $dictionary[$key] ?? null;
+
+        if (empty($translation)) {
+            $translation = $default ?? $key;
+        }
+
+        foreach ($replace as $placeholder => $value) {
+            $translation = str_replace(':'.$placeholder, (string) $value, $translation);
+        }
+
+        return $translation;
+    }
+}
+
+if (! function_exists('localized_url')) {
+    /**
+     * Generate a localized URL for a given path in the current or specified locale.
+     */
+    function localized_url(?string $path = '/', ?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $defaultLocale = setting('default_locale', config('app.locale', 'en'));
+        $hideDefault = (bool) setting('locale_prefix_hide_default', true);
+        $urlStructure = setting('locale_url_structure', 'prefix');
+
+        if ($path === null || $path === '') {
+            $path = '/';
+        }
+
+        // 1. Separate fragment (#anchor) and query string (?foo=bar) if present
+        $fragment = '';
+        $query = '';
+
+        $hashPos = strpos($path, '#');
+        if ($hashPos !== false) {
+            $fragment = substr($path, $hashPos);
+            $path = substr($path, 0, $hashPos);
+        }
+
+        $queryPos = strpos($path, '?');
+        if ($queryPos !== false) {
+            $query = substr($path, $queryPos);
+            $path = substr($path, 0, $queryPos);
+        }
+
+        $cleanPath = trim((string) $path, '/');
+
+        // 2. Blog Posts Archive handling
+        if (class_exists(Plugins\Posts\Models\Setting::class) && ! empty($cleanPath)) {
+            $segments = explode('/', $cleanPath);
+            $firstSeg = $segments[0];
+            $isBlogPath = false;
+            foreach (available_locales() as $loc) {
+                if ($firstSeg === Plugins\Posts\Models\Setting::getArchiveSlug($loc) || $firstSeg === 'blog-news' || $firstSeg === 'blog') {
+                    $isBlogPath = true;
+                    break;
+                }
+            }
+
+            if ($isBlogPath) {
+                $targetSlug = Plugins\Posts\Models\Setting::getArchiveSlug($locale);
+                $segments[0] = $targetSlug;
+                $cleanPath = implode('/', $segments);
+
+                if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
+                    return trailing_slash_url(url("/{$locale}/{$cleanPath}")).$query.$fragment;
+                }
+
+                $base = $hideDefault || $urlStructure !== 'prefix' ? "/{$cleanPath}" : "/{$defaultLocale}/{$cleanPath}";
+
+                return trailing_slash_url(url($base)).$query.$fragment;
+            }
+        }
+
+        // 3. Page Slug Resolution (single segment paths like "careers", "about-us", "karir", etc.)
+        if ($cleanPath !== '' && ! str_contains($cleanPath, '/')) {
+            $page = Page::findByLocalizedSlug($cleanPath);
+            if ($page) {
+                $targetSlug = $page->getTranslation('slug', $locale) ?? $page->slug;
+                if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
+                    return trailing_slash_url(url("/{$locale}/{$targetSlug}")).$query.$fragment;
+                }
+
+                $base = $hideDefault || $urlStructure !== 'prefix' ? "/{$targetSlug}" : "/{$defaultLocale}/{$targetSlug}";
+
+                return trailing_slash_url(url($base)).$query.$fragment;
+            }
+        }
+
+        // 4. Default Fallback
+        if ($locale !== $defaultLocale && $urlStructure === 'prefix') {
+            $base = $cleanPath !== '' ? "/{$locale}/{$cleanPath}" : "/{$locale}";
+
+            return trailing_slash_url(url($base)).$query.$fragment;
+        }
+
+        if (! $hideDefault && $urlStructure === 'prefix') {
+            $base = $cleanPath !== '' ? "/{$defaultLocale}/{$cleanPath}" : "/{$defaultLocale}";
+
+            return trailing_slash_url(url($base)).$query.$fragment;
+        }
+
+        $base = $cleanPath !== '' ? "/{$cleanPath}" : '/';
+
+        return trailing_slash_url(url($base)).$query.$fragment;
+    }
+}
+
+if (! function_exists('safe_email')) {
+    /**
+     * Render an email address safely via JavaScript (Alpine.js / Base64) to prevent Cloudflare
+     * email obfuscation from turning mailto links into /cdn-cgi/l/email-protection (which causes 404s in Ahrefs).
+     */
+    function safe_email(?string $email, string $class = 'text-primary hover:underline font-medium', bool $isLink = true): string
+    {
+        if (empty($email)) {
+            return '';
+        }
+
+        $base64 = base64_encode($email);
+
+        if (! $isLink) {
+            return '<span x-data="{ e: \''.$base64.'\' }" x-text="atob(e)"></span>';
+        }
+
+        return '<a href="#" x-data="{ e: \''.$base64.'\' }" x-init="$el.href = \'mailto:\' + atob(e)" x-text="atob(e)" class="'.e($class).'"></a>';
+    }
+}
+
+if (! function_exists('safe_phone')) {
+    /**
+     * Render a phone number safely with custom CSS class and setting support.
+     */
+    function safe_phone(?string $phone, string $class = 'hover:text-primary transition-colors font-medium', ?string $tel = null): string
+    {
+        if (empty($phone)) {
+            return '';
+        }
+
+        $telNumber = $tel ?? preg_replace('/[^\d+]/', '', $phone);
+
+        return '<a href="tel:'.e($telNumber).'" class="'.e($class).'">'.e($phone).'</a>';
+    }
+}
+
+if (! function_exists('is_plugin_active')) {
+    /**
+     * Check if a plugin is active in the system.
+     */
+    function is_plugin_active(string $slug): bool
+    {
+        return Plugin::where('slug', $slug)->where('is_active', true)->exists();
+    }
+}
+
+if (! function_exists('trailing_slash_url')) {
+    /**
+     * Pastikan URL publik berakhiran '/', kecuali file, query string, fragment, dan endpoint sistem.
+     */
+    function trailing_slash_url(string $url): string
+    {
+        // Punya query string atau fragment → biarkan
+        if (str_contains($url, '?') || str_contains($url, '#')) {
+            return $url;
+        }
+
+        $path = parse_url($url, PHP_URL_PATH) ?? '';
+
+        // Root domain
+        if ($path === '' || $path === '/') {
+            return rtrim($url, '/').'/';
+        }
+
+        // Sudah berakhiran slash
+        if (str_ends_with($url, '/')) {
+            return $url;
+        }
+
+        // Berakhiran ekstensi file → biarkan
+        if (preg_match('#\.[a-zA-Z0-9]{1,6}$#', $path)) {
+            return $url;
+        }
+
+        // Endpoint sistem → biarkan
+        $excluded = ['/ctrlpanel', '/feed', '/search', '/lang/', '/forms/', '/api/', '/livewire/', '/_deferred/'];
+        foreach ($excluded as $prefix) {
+            if (str_starts_with($path, $prefix)) {
+                return $url;
+            }
+        }
+
+        return $url.'/';
+    }
+}
+
+if (! function_exists('strip_leading_image')) {
+    /**
+     * Strip the first image from HTML content if it appears before any text.
+     * Useful when the featured image is already rendered separately above the content.
+     */
+    function strip_leading_image(?string $html): string
+    {
+        if (empty($html)) {
+            return '';
+        }
+
+        $emptyBlocks = '(?:\s*<p[^>]*>\s*(?:&nbsp;|\s)*<\/p>\s*|<br\s*\/?>\s*)*';
+
+        $pattern = '/^'.$emptyBlocks.
+                   '(?:'.
+                   '<(?:figure|p|div|h[1-6]|header)[^>]*>\s*(?:<a[^>]*>)?\s*<img[^>]+>\s*(?:<\/a>)?\s*(?:<figcaption[^>]*>.*?<\/figcaption>)?\s*<\/(?:figure|p|div|h[1-6]|header)>'.
+                   '|'.
+                   '(?:<a[^>]*>)?\s*<img[^>]+>\s*(?:<\/a>)?'.
+                   ')'.
+                   $emptyBlocks.'/is';
+
+        return (string) preg_replace($pattern, '', $html, 1);
     }
 }

@@ -10,6 +10,7 @@ use App\Models\Page;
 use App\Models\PageBlock;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Plugins\Posts\Models\Post;
 
 /**
  * Scans content tables to figure out which Media rows are referenced anywhere
@@ -48,18 +49,37 @@ class MediaUsageService
                 $map[$id] = ($map[$id] ?? 0) + 1;
             };
 
-            // Build path → media id lookup; both `path` (original) and `webp_path` (companion)
-            // can be referenced by content rows, so include both.
             $pathToId = [];
-            foreach (Media::query()->get(['id', 'path', 'webp_path']) as $m) {
+            foreach (Media::query()->get(['id', 'path', 'webp_path', 'original_filename', 'filename']) as $m) {
                 if ($m->path) {
                     $pathToId[$m->path] = $m->id;
+                    $pathToId[basename($m->path)] = $m->id;
                 }
                 if ($m->webp_path) {
                     $pathToId[$m->webp_path] = $m->id;
+                    $pathToId[basename($m->webp_path)] = $m->id;
+                }
+                if ($m->filename) {
+                    $pathToId[$m->filename] = $m->id;
+                }
+                if ($m->original_filename) {
+                    $pathToId[$m->original_filename] = $m->id;
                 }
             }
-            $resolveByPath = fn ($v) => is_string($v) ? ($pathToId[ltrim($v, '/')] ?? $pathToId[$v] ?? null) : null;
+            $resolveByPath = function ($v) use (&$pathToId) {
+                if (! is_string($v) || empty($v)) {
+                    return null;
+                }
+                $path = parse_url($v, PHP_URL_PATH) ?? $v;
+                $clean = ltrim($path, '/');
+                if (str_starts_with($clean, 'storage/')) {
+                    $clean = substr($clean, 8);
+                }
+
+                $filename = basename($clean);
+
+                return $pathToId[$clean] ?? $pathToId[ltrim($path, '/')] ?? $pathToId[$filename] ?? $pathToId[$v] ?? null;
+            };
 
             foreach (Page::select('featured_image', 'seo')->get() as $p) {
                 $bump($resolveByPath($p->featured_image));
@@ -68,20 +88,25 @@ class MediaUsageService
                 }
             }
 
-            // PageBlock values
+            // PageBlock values — scan all block types (media, gallery, card, repeater, wysiwyg, etc.)
             foreach (PageBlock::select('type', 'value')->get() as $b) {
                 $val = $b->value;
-                if ($b->type === 'media') {
-                    // value can be a media id or a path
-                    if (is_numeric($val)) {
-                        $bump($val);
+                if (is_array($val)) {
+                    $this->scanMetaForMediaReferences($val, $bump, $resolveByPath);
+                } elseif (is_numeric($val)) {
+                    $bump($val);
+                } elseif (is_string($val) && ! empty($val)) {
+                    $decoded = json_decode($val, true);
+                    if (is_array($decoded)) {
+                        $this->scanMetaForMediaReferences($decoded, $bump, $resolveByPath);
                     } else {
                         $bump($resolveByPath($val));
-                    }
-                } elseif ($b->type === 'gallery') {
-                    $arr = is_array($val) ? $val : (json_decode((string) $val, true) ?: []);
-                    foreach ($arr as $v) {
-                        is_numeric($v) ? $bump($v) : $bump($resolveByPath($v));
+                        if (str_contains($val, '<img')) {
+                            preg_match_all('/<img[^>]+src=("|\')([^"\']+)\1/i', $val, $m);
+                            foreach ($m[2] ?? [] as $src) {
+                                $bump($resolveByPath($src));
+                            }
+                        }
                     }
                 }
             }
@@ -107,29 +132,61 @@ class MediaUsageService
                     }
                 }
 
-                // Meta media fields — resolve by known schema
-                if (is_array($e->meta) && isset($mediaFieldsByCpt[$e->post_type_id])) {
-                    foreach ($mediaFieldsByCpt[$e->post_type_id] as $field => $type) {
-                        $value = $e->meta[$field] ?? null;
-                        if ($value === null || $value === '') {
-                            continue;
-                        }
+                // Meta media fields — resolve by known schema or deep recursive scan
+                if (is_array($e->meta)) {
+                    $this->scanMetaForMediaReferences($e->meta, $bump, $resolveByPath);
+                }
+            }
 
-                        if ($type === 'gallery' && is_array($value)) {
-                            foreach ($value as $v) {
-                                is_numeric($v) ? $bump($v) : $bump($resolveByPath($v));
-                            }
-                        } else {
-                            // media/image — single value (id or path)
-                            is_numeric($value) ? $bump($value) : $bump($resolveByPath($value));
-                        }
+            // Global Settings (site_logo, site_favicon, seo_default_og_image, etc.)
+            foreach (DB::table('settings')->whereNotNull('value')->pluck('value') as $val) {
+                if (is_string($val)) {
+                    $json = json_decode($val, true);
+                    if (is_array($json)) {
+                        $this->scanMetaForMediaReferences($json, $bump, $resolveByPath);
+                    } else {
+                        is_numeric($val) ? $bump($val) : $bump($resolveByPath($val));
                     }
                 }
+            }
+
+            // SeoMeta table (og_image_id)
+            foreach (DB::table('seo_meta')->whereNotNull('og_image_id')->pluck('og_image_id') as $ogId) {
+                $bump($ogId);
             }
 
             // User avatars (string path)
             foreach (DB::table('users')->whereNotNull('avatar')->pluck('avatar') as $av) {
                 $bump($resolveByPath($av));
+            }
+
+            // Post plugin posts (featured_image & content HTML img src, including translations)
+            // class_exists() alone is not enough: the plugin's classes stay autoloadable when the
+            // plugin is deactivated, but its tables may be absent — querying then throws.
+            if (is_plugin_active('posts') && class_exists(Post::class)) {
+                foreach (Post::all() as $post) {
+                    $bump($resolveByPath($post->featured_image));
+
+                    // Scan content for <img src="..."> in default locale & all translations
+                    $contentTranslations = method_exists($post, 'getTranslations')
+                        ? $post->getTranslations('content')
+                        : [$post->content];
+
+                    if (! is_array($contentTranslations)) {
+                        $contentTranslations = [$post->content];
+                    }
+
+                    foreach ($contentTranslations as $htmlContent) {
+                        if (is_string($htmlContent) && ! empty($htmlContent)) {
+                            preg_match_all('/<img[^>]+src=("|\')([^"\']+)\1/i', $htmlContent, $m);
+                            if (! empty($m[2])) {
+                                foreach ($m[2] as $src) {
+                                    $bump($resolveByPath($src));
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             return $map;
@@ -154,22 +211,188 @@ class MediaUsageService
         Cache::forget(self::CACHE_KEY);
     }
 
-    protected function scanMetaForMediaIds(array $meta, callable $bump): void
+    /**
+     * Get detailed list of locations (Pages, CPT Entries, Posts, Settings) referencing this media item.
+     *
+     * @return array<int, array{type: string, title: string, edit_url: ?string, public_url: ?string, context: string, icon: string, color: string}>
+     */
+    public function getUsagesForMedia(Media $media): array
     {
-        foreach ($meta as $value) {
-            if (is_array($value)) {
-                // Possibly a gallery field (array of ids) or a repeater (nested)
-                $allInt = ! empty($value) && array_filter($value, fn ($v) => is_int($v) || (is_string($v) && ctype_digit($v))) === array_values($value);
-                if ($allInt) {
-                    foreach ($value as $id) {
-                        $bump($id);
+        $locations = [];
+        $mediaId = (int) $media->id;
+        $paths = array_values(array_filter([
+            $media->path,
+            $media->webp_path,
+            $media->filename ? 'media/'.$media->filename : null,
+            $media->original_filename ? 'media/'.$media->original_filename : null,
+        ]));
+
+        $matchesValue = function ($val) use ($mediaId, $paths) {
+            if (empty($val)) {
+                return false;
+            }
+            if (is_numeric($val) && (int) $val === $mediaId) {
+                return true;
+            }
+            if (is_string($val)) {
+                foreach ($paths as $p) {
+                    if ($p && (str_contains($val, $p) || str_contains($val, basename($p)))) {
+                        return true;
                     }
-                } else {
-                    $this->scanMetaForMediaIds($value, $bump);
                 }
             }
-            // Heuristic: integer scalar might be a media id — but too noisy to assume,
-            // so we don't bump on bare integers without context.
+
+            return false;
+        };
+
+        // 1. Pages & PageBlocks
+        $pages = Page::all();
+        foreach ($pages as $page) {
+            $foundContext = null;
+            if ($matchesValue($page->featured_image)) {
+                $foundContext = 'Featured Image';
+            } elseif (is_array($page->seo) && ! empty($page->seo['og_image']) && $matchesValue($page->seo['og_image'])) {
+                $foundContext = 'SEO OG Image';
+            } else {
+                $blocks = PageBlock::where('page_id', $page->id)->get();
+                foreach ($blocks as $block) {
+                    $val = $block->value;
+                    if (is_array($val) && $this->metaContainsMedia($val, $matchesValue)) {
+                        $foundContext = 'Block: '.ucfirst($block->name ?? $block->type);
+                        break;
+                    } elseif (is_string($val) && ! empty($val)) {
+                        $decoded = json_decode($val, true);
+                        if (is_array($decoded) && $this->metaContainsMedia($decoded, $matchesValue)) {
+                            $foundContext = 'Block: '.ucfirst($block->name ?? $block->type);
+                            break;
+                        } elseif ($matchesValue($val)) {
+                            $foundContext = 'Block: '.ucfirst($block->name ?? $block->type);
+                            break;
+                        }
+                    } elseif ($matchesValue($val)) {
+                        $foundContext = 'Block: '.ucfirst($block->name ?? $block->type);
+                        break;
+                    }
+                }
+            }
+
+            if ($foundContext) {
+                $locations[] = [
+                    'type' => 'Page',
+                    'title' => $page->title ?: 'Page #'.$page->id,
+                    'edit_url' => route('admin.pages.edit', $page->id),
+                    'public_url' => url($page->slug ?: '/'),
+                    'context' => $foundContext,
+                    'icon' => 'description',
+                    'color' => 'blue',
+                ];
+            }
+        }
+
+        // 2. CPT Entries
+        $cptEntries = CptEntry::with('postType')->get();
+        foreach ($cptEntries as $entry) {
+            $foundContext = null;
+            if ($matchesValue($entry->featured_image)) {
+                $foundContext = 'Featured Image';
+            } elseif (! empty($entry->content) && $matchesValue($entry->content)) {
+                $foundContext = 'Content Body';
+            } elseif (is_array($entry->meta) && $this->metaContainsMedia($entry->meta, $matchesValue)) {
+                $foundContext = 'Custom Field';
+            }
+
+            if ($foundContext) {
+                $postTypeName = $entry->postType->singular_label ?? 'CPT';
+                $cptSlug = $entry->postType->slug ?? 'cpt';
+                $editUrl = route('admin.cpt.entries.edit', [$cptSlug, $entry->id]);
+                $publicUrl = method_exists($entry, 'getUrl') ? $entry->getUrl() : null;
+
+                $locations[] = [
+                    'type' => $postTypeName,
+                    'title' => $entry->title ?: 'Entry #'.$entry->id,
+                    'edit_url' => $editUrl,
+                    'public_url' => $publicUrl,
+                    'context' => $foundContext,
+                    'icon' => 'widgets',
+                    'color' => 'purple',
+                ];
+            }
+        }
+
+        // 3. Blog Posts — see note above on why class_exists() alone is insufficient.
+        if (is_plugin_active('posts') && class_exists(Post::class)) {
+            $posts = Post::all();
+            foreach ($posts as $post) {
+                $foundContext = null;
+                if ($matchesValue($post->featured_image)) {
+                    $foundContext = 'Featured Image';
+                } elseif (! empty($post->content) && $matchesValue($post->content)) {
+                    $foundContext = 'Content Body';
+                }
+
+                if ($foundContext) {
+                    $locations[] = [
+                        'type' => 'Blog Post',
+                        'title' => $post->title ?: 'Post #'.$post->id,
+                        'edit_url' => route('admin.posts.edit', $post->id),
+                        'public_url' => method_exists($post, 'getUrl') ? $post->getUrl() : null,
+                        'context' => $foundContext,
+                        'icon' => 'article',
+                        'color' => 'amber',
+                    ];
+                }
+            }
+        }
+
+        // 4. Global Settings
+        $settings = DB::table('settings')->whereNotNull('value')->get();
+        foreach ($settings as $setting) {
+            if ($matchesValue($setting->value)) {
+                $settingName = str_replace('_', ' ', ucfirst($setting->key));
+                $locations[] = [
+                    'type' => 'Setting',
+                    'title' => $settingName,
+                    'edit_url' => url('/ctrlpanel/settings/general'),
+                    'public_url' => null,
+                    'context' => 'Global Setting',
+                    'icon' => 'settings',
+                    'color' => 'green',
+                ];
+            }
+        }
+
+        return $locations;
+    }
+
+    protected function metaContainsMedia(array $meta, callable $matchesValue): bool
+    {
+        foreach ($meta as $val) {
+            if (is_array($val)) {
+                if ($this->metaContainsMedia($val, $matchesValue)) {
+                    return true;
+                }
+            } elseif ($matchesValue($val)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function scanMetaForMediaReferences(array $meta, callable $bump, callable $resolveByPath): void
+    {
+        foreach ($meta as $key => $value) {
+            if (is_array($value)) {
+                $this->scanMetaForMediaReferences($value, $bump, $resolveByPath);
+            } elseif (is_string($value) && ! empty($value)) {
+                if (is_numeric($value)) {
+                    $bump($value);
+                } else {
+                    $bump($resolveByPath($value));
+                }
+            } elseif (is_int($value)) {
+                $bump($value);
+            }
         }
     }
 }

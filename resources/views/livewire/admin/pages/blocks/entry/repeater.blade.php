@@ -25,7 +25,10 @@
 
             {{-- Fields Loop (Schema) --}}
             <div class="space-y-4">
-                @foreach($block['children'] ?? [] as $childIndex => $child)
+                @php
+                    $children = !empty($block['children']) ? $block['children'] : ($block['options']['children'] ?? []);
+                @endphp
+                @foreach($children as $childIndex => $child)
                     <div class="space-y-1" wire:key="repeater-field-{{ $index }}-{{ $rowIndex }}-{{ $childIndex }}">
                         <label class="text-[10px] font-bold text-[#6F767E] uppercase">
                             {{ $child['label'] ?? $child['name'] ?? 'Field' }}
@@ -68,10 +71,19 @@
                                         placeholder="#000000" />
                                 </div>
                                 @break
+                            @case('icon')
+                                <livewire:admin.icon-picker 
+                                    :field="$modelPath"
+                                    :value="$fieldValue"
+                                    :label="$child['label'] ?? $child['name'] ?? 'Icon'"
+                                    :compact="true"
+                                    :key="'page-icon-' . $index . '-' . $rowIndex . '-' . $fieldName"
+                                />
+                                @break
                             @case('media')
                                 @if($fieldValue)
                                     <div class="relative group/media w-fit">
-                                        <img src="{{ asset('storage/' . $fieldValue) }}" alt="Media"
+                                        <img src="{{ resolve_block_asset($fieldValue) }}" alt="Media"
                                             class="h-32 w-auto max-w-full object-contain rounded-lg border border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#1A1A1A]" />
                                         <button wire:click="$set('{{ $modelPath }}', '')" type="button"
                                             class="absolute top-1 right-1 h-6 w-6 rounded-full bg-red-500 text-white opacity-0 group-hover/media:opacity-100 transition-opacity flex items-center justify-center shadow-sm">

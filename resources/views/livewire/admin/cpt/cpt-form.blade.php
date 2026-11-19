@@ -1,63 +1,39 @@
-<div x-data="{ iconPickerOpen: false }" class="bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] transition-colors duration-200 antialiased min-h-screen font-sans relative">
-    <header class="sticky top-0 z-30 flex flex-col gap-6 md:flex-row md:items-center md:justify-between px-6 py-6 md:px-10 md:pt-8 md:pb-6 bg-[#F4F5F6]/95 dark:bg-[#0B0B0B]/95 backdrop-blur-sm">
-        <div class="flex items-center gap-4">
-            <a href="{{ route('admin.cpt.index') }}" class="h-10 w-10 flex items-center justify-center rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-all">
-                <span class="material-symbols-outlined text-xl">arrow_back</span>
-            </a>
-            <h1 class="text-xl font-bold tracking-tight text-[#111827] dark:text-[#FCFCFC]">
+<div x-data="{ iconPickerOpen: false }" class="flex flex-col h-full bg-[#F4F5F6] dark:bg-[#0B0B0B] text-[#111827] dark:text-[#FCFCFC] transition-colors duration-200 antialiased font-sans relative">
+    {{-- Context Bar --}}
+    <div class="flex items-center gap-3 px-6 py-4 md:px-10 border-b border-gray-200 dark:border-[#272B30] bg-white/50 dark:bg-[#0B0B0B]/50 shrink-0">
+        <a class="h-9 w-9 flex items-center justify-center rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-all shrink-0"
+            href="{{ route('admin.cpt.index') }}">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+        </a>
+        <div class="flex items-center gap-3 min-w-0 flex-1">
+            <h1 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] truncate">
                 {{ $isEdit ? 'Edit Custom Post Type' : 'Add New Custom Post Type' }}
             </h1>
         </div>
-        <div class="flex items-center gap-3">
-            <div class="flex items-center gap-2">
-                <button 
-                    x-data="{ 
-                        darkMode: document.documentElement.classList.contains('dark'),
-                        toggle() {
-                            this.darkMode = !this.darkMode;
-                            document.documentElement.classList.toggle('dark');
-                            localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
-                        }
-                    }"
-                    @click="toggle()"
-                    class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#FCFCFC] transition-colors focus:outline-none ml-2"
-                    title="Toggle Theme">
-                    <span class="material-symbols-outlined text-[24px]" x-show="!darkMode" x-cloak>dark_mode</span>
-                    <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
-                </button>
-            </div>
-            <div class="h-8 w-px bg-gray-200 dark:bg-[#272B30]"></div>
-            @if($isEdit)
-                <button 
-                    type="button"
-                    wire:click="delete"
-                    wire:confirm="Are you sure you want to delete this Post Type? This will delete all associated entries and settings."
-                    class="px-5 py-2.5 rounded-xl text-sm font-semibold text-red-600 bg-red-50 dark:bg-red-900/10 border border-transparent hover:border-red-200 hover:bg-red-100 dark:hover:bg-red-900/20 transition-all"
-                >
-                    Delete
-                </button>
-            @endif
-            <button 
-                wire:click="save" 
-                wire:loading.attr="disabled"
-                class="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-                <span wire:loading wire:target="save" class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
-                <span>{{ $isEdit ? 'Update Post Type' : 'Publish' }}</span>
-            </button>
-        </div>
-    </header>
+    </div>
 
-    <div class="px-6 pb-20 md:px-10">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Main Column -->
-            <div class="lg:col-span-8 space-y-6">
+    {{-- Main Content --}}
+    <div class="flex-1 flex overflow-hidden">
+        {{-- Left Panel: Main Content Editor --}}
+        <div class="flex-1 overflow-y-auto p-6 md:p-10 no-scrollbar">
+            <div class="max-w-4xl mx-auto space-y-8">
                 <!-- Post Type Labels -->
-                <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] p-8 border border-transparent dark:border-[#272B30]/50 shadow-sm">
-                    <h2 class="text-lg font-bold mb-6 flex items-center gap-2 text-gray-900 dark:text-white">
-                        <span class="material-symbols-outlined text-blue-600">label</span>
-                        Post Type Labels
-                    </h2>
+                <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] p-8 border border-gray-200 dark:border-[#272B30] shadow-sm">
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-[#272B30]">
+                        <h2 class="text-lg font-bold flex items-center gap-2 text-gray-900 dark:text-white">
+                            <span class="material-symbols-outlined text-blue-600">label</span>
+                            Post Type Labels & Slugs
+                        </h2>
+                        {{-- Language Switcher Tabs --}}
+                        <div class="flex items-center bg-gray-100 dark:bg-[#272B30] p-1 rounded-xl">
+                            <button type="button" wire:click="setLocale('en')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeLocale === 'en' ? 'bg-white dark:bg-[#111827] text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white' }}">
+                                🇬🇧 English (EN)
+                            </button>
+                            <button type="button" wire:click="setLocale('id')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all {{ $activeLocale === 'id' ? 'bg-white dark:bg-[#111827] text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-900 dark:hover:text-white' }}">
+                                🇮🇩 Bahasa Indonesia (ID)
+                            </button>
+                        </div>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
                             <label class="text-xs font-bold uppercase tracking-wider text-[#6F767E]">Singular Name</label>
@@ -249,7 +225,7 @@
                                                             </button>
                                                         </div>
                                                         <div class="space-y-2">
-                                                            @foreach($field['options']['options_list'] ?? [] as $optionIndex => $option)
+                                                            @foreach(is_array($field['options']['options_list'] ?? null) ? $field['options']['options_list'] : [] as $optionIndex => $option)
                                                                 <div class="flex items-center gap-2">
                                                                     <div class="flex-1 grid grid-cols-2 gap-2">
                                                                         <input 
@@ -290,6 +266,44 @@
                                                                     No options added yet.
                                                                 </div>
                                                             @endif
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                {{-- Relationship Settings --}}
+                                                @if($field['type'] === 'relationship')
+                                                    <div class="mt-4 p-4 bg-gray-50 dark:bg-[#0B0B0B]/30 rounded-xl border border-gray-200 dark:border-[#272B30] space-y-4">
+                                                        <h4 class="text-xs font-bold uppercase tracking-wider text-[#6F767E]">Relationship Configuration</h4>
+                                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            <div class="space-y-1">
+                                                                <label class="text-[10px] font-bold uppercase tracking-wider text-[#6F767E]">Target Post Type</label>
+                                                                <select wire:model="metaFields.{{ $fieldIndex }}.options.target_post_type_id" class="w-full rounded-lg border-none bg-white dark:bg-[#272B30] py-1.5 px-3 text-xs text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-600">
+                                                                    <option value="">Select Target Post Type</option>
+                                                                    @foreach($availableCpts as $targetCpt)
+                                                                        <option value="{{ $targetCpt->id }}">{{ $targetCpt->singular_label }} ({{ $targetCpt->name }})</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                            <div class="space-y-1">
+                                                                <label class="text-[10px] font-bold uppercase tracking-wider text-[#6F767E]">Cardinality</label>
+                                                                <select wire:model="metaFields.{{ $fieldIndex }}.options.cardinality" class="w-full rounded-lg border-none bg-white dark:bg-[#272B30] py-1.5 px-3 text-xs text-gray-900 dark:text-white focus:ring-1 focus:ring-blue-600">
+                                                                    <option value="many_to_many">Many to Many (Multiple Selection)</option>
+                                                                    <option value="one_to_many">One to Many (Single Selection)</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="md:col-span-2 pt-2 border-t border-gray-200 dark:border-[#272B30]/60">
+                                                                <label class="flex items-center justify-between cursor-pointer">
+                                                                    <div>
+                                                                        <span class="text-xs font-bold text-gray-900 dark:text-white">Rewrite URL (Nested Permalink)</span>
+                                                                        <p class="text-[11px] text-[#6F767E]">If enabled, entries of this CPT will inherit the target parent entry's URL path (e.g. /parent-cpt/parent-slug/child-slug). Default: OFF.</p>
+                                                                    </div>
+                                                                    <input 
+                                                                        type="checkbox" 
+                                                                        wire:model="metaFields.{{ $fieldIndex }}.options.rewrite_url" 
+                                                                        class="rounded border-gray-300 dark:border-[#272B30] bg-white dark:bg-[#1A1A1A] text-blue-600 focus:ring-blue-600 h-5 w-5"
+                                                                    >
+                                                                </label>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 @endif
@@ -539,15 +553,50 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Sidebar Column -->
-            <div class="lg:col-span-4 space-y-6">
-                <!-- Settings -->
-                <div class="rounded-3xl bg-white dark:bg-[#1A1A1A] p-8 border border-transparent dark:border-[#272B30]/50 shadow-sm">
-                    <h2 class="text-lg font-bold mb-6 flex items-center gap-2 text-gray-900 dark:text-white">
-                        <span class="material-symbols-outlined text-blue-600">settings</span>
-                        Settings
-                    </h2>
+        {{-- Right Panel: Sidebar --}}
+        <aside class="w-[360px] bg-[#F4F5F6] dark:bg-[#0B0B0B] border-l border-gray-200 dark:border-[#272B30] overflow-y-auto no-scrollbar hidden lg:block shrink-0">
+            <div class="p-6 space-y-6">
+                <!-- Actions Card -->
+                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] p-5 border border-gray-200 dark:border-[#272B30] shadow-sm dark:shadow-none">
+                    <div class="flex items-center gap-2 mb-4 text-[#6F767E]">
+                        <span class="material-symbols-outlined text-lg">rocket_launch</span>
+                        <span class="text-xs font-bold uppercase tracking-widest">Actions</span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button 
+                            type="button"
+                            wire:click="save" 
+                            wire:loading.attr="disabled"
+                            class="w-full px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            <span wire:loading.remove wire:target="save" class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-lg">save</span>
+                                <span>{{ $isEdit ? 'Update Post Type' : 'Publish' }}</span>
+                            </span>
+                            <span wire:loading wire:target="save">Saving...</span>
+                        </button>
+                        @if($isEdit)
+                            <button 
+                                type="button"
+                                wire:click="delete"
+                                wire:confirm="Are you sure you want to delete this Post Type? This will delete all associated entries and settings."
+                                class="w-full px-4 py-2 rounded-xl text-sm font-semibold text-red-600 hover:text-red-700 bg-red-50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/20 transition-all flex items-center justify-center gap-2"
+                            >
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                                Delete
+                            </button>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Settings Card -->
+                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] p-5 border border-gray-200 dark:border-[#272B30] shadow-sm dark:shadow-none space-y-6">
+                    <div class="flex items-center gap-2 mb-4 text-[#6F767E]">
+                        <span class="material-symbols-outlined text-lg">settings</span>
+                        <span class="text-xs font-bold uppercase tracking-widest">Settings</span>
+                    </div>
                     <div class="space-y-6">
                         <div class="flex items-center justify-between">
                             <div class="flex flex-col">
@@ -572,10 +621,20 @@
                         <div class="flex items-center justify-between">
                             <div class="flex flex-col">
                                 <span class="text-sm font-semibold text-gray-900 dark:text-[#FCFCFC]">Has Archive</span>
-                                <span class="text-[11px] text-[#6F767E]">Enable archive pages</span>
+                                <span class="text-[11px] text-[#6F767E]">Enable archive listing page (e.g. /posts)</span>
                             </div>
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input type="checkbox" wire:model="hasArchive" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 dark:bg-[#272B30] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#6F767E] peer-checked:after:bg-blue-600 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600/20"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-semibold text-gray-900 dark:text-[#FCFCFC]">Publicly Queryable</span>
+                                <span class="text-[11px] text-[#6F767E]">Each entry has its own URL & page</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" wire:model="publiclyQueryable" class="sr-only peer">
                                 <div class="w-11 h-6 bg-gray-200 dark:bg-[#272B30] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#6F767E] peer-checked:after:bg-blue-600 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600/20"></div>
                             </label>
                         </div>
@@ -630,7 +689,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </aside>
     </div>
 
 

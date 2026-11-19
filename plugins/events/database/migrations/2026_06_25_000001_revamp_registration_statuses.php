@@ -29,7 +29,13 @@ return new class extends Migration
             ->update(['check_in' => true]);
 
         //    Temporarily allow all values by switching to VARCHAR
-        DB::statement("ALTER TABLE event_registrations MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'pending'");
+        if (DB::getDriverName() === 'sqlite') {
+            Schema::table('event_registrations', function (Blueprint $table) {
+                $table->string('status', 20)->default('pending')->change();
+            });
+        } else {
+            DB::statement("ALTER TABLE event_registrations MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'pending'");
+        }
 
         //    Rename status values
         DB::table('event_registrations')
@@ -41,7 +47,13 @@ return new class extends Migration
             ->update(['status' => 'rejected']);
 
         // 2. Schema changes — set new enum and rename columns
-        DB::statement("ALTER TABLE event_registrations MODIFY COLUMN status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending'");
+        if (DB::getDriverName() === 'sqlite') {
+            Schema::table('event_registrations', function (Blueprint $table) {
+                $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending')->change();
+            });
+        } else {
+            DB::statement("ALTER TABLE event_registrations MODIFY COLUMN status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending'");
+        }
 
         Schema::table('event_registrations', function (Blueprint $table) {
             $table->renameColumn('confirmed_at', 'approved_at');

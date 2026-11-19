@@ -2,46 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CptEntry;
-use App\Models\CustomPostType;
 use App\Models\Page;
+use App\Services\ThemeLoader;
+use App\Support\Filter;
+use Illuminate\Support\Facades\View;
 
 /**
- * Public homepage controller. Pulls the active theme's home view with:
- *   - $page          — Page (slug=home) with eager-loaded top-level blocks
- *   - $testimonials  — latest 6 published testimonial CPT entries
- *   - $partners      — all published "our-partners" CPT entries
+ * Public homepage controller. Renders the active theme's home view with:
+ *   - $page — Page (slug=home) with eager-loaded top-level blocks
  *
- * Themes can rely on these always being defined (empty collection if no data).
+ * Themes add their own home data (testimonials, partners, ...) through the
+ * `home.view_data` filter: Filter::add('home.view_data', fn (array $data, Page $page) => $data + [...]).
  */
 class HomeController extends Controller
 {
     public function index()
     {
-        return view('iccom::pages.home', [
-            'testimonials' => $this->latestEntries('testimonials', 6),
-            'partners' => $this->latestEntries('our-partners'),
-            'page' => $this->loadHomePage(),
+        $theme = app(ThemeLoader::class)->getActiveTheme();
+        $themeNamespace = $theme?->slug;
+
+        $candidates = array_filter([
+            ! empty($themeNamespace) ? "{$themeNamespace}::pages.home" : null,
+            'pages.home',
+            'default::pages.home',
         ]);
-    }
 
-    protected function latestEntries(string $cptSlug, ?int $limit = null)
-    {
-        $cpt = CustomPostType::where('slug', $cptSlug)->first();
-        if (! $cpt) {
-            return collect();
+        $viewName = 'welcome';
+        foreach ($candidates as $candidate) {
+            if (view()->exists($candidate)) {
+                $viewName = $candidate;
+                break;
+            }
         }
 
-        $q = CptEntry::with('author')
-            ->where('post_type_id', $cpt->id)
-            ->where('status', 'published')
-            ->latest();
+        $page = $this->loadHomePage();
+        abort_if(! $page, 404, 'Homepage not found. Create a page with slug "home".');
 
-        if ($limit) {
-            $q->take($limit);
-        }
+        request()->attributes->set('page', $page);
+        View::share('page', $page);
 
-        return $q->get();
+        $data = Filter::apply('home.view_data', ['page' => $page], $page);
+
+        return view($viewName, $data);
     }
 
     protected function loadHomePage(): ?Page

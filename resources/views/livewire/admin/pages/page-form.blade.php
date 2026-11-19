@@ -1,78 +1,50 @@
 <div class="flex flex-col h-full" wire:poll.30s="autosave">
-    {{-- Header --}}
-    <header class="sticky top-0 z-30 flex flex-col gap-6 md:flex-row md:items-center md:justify-between px-6 py-6 md:px-10 md:pt-8 md:pb-6 bg-[#F4F5F6]/95 dark:bg-[#0B0B0B]/95 backdrop-blur-sm border-b border-gray-200 dark:border-[#272B30]">
-        <div class="flex items-center gap-4">
-            <a class="h-10 w-10 flex items-center justify-center rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-all"
-                href="{{ route('admin.pages.index') }}">
-                <span class="material-symbols-outlined text-xl">arrow_back</span>
-            </a>
-            <div>
-                <h1 class="text-xl font-bold text-[#111827] dark:text-[#FCFCFC]">
-                    {{ $isEdit ? 'Edit Page' : 'Add New Page' }}
-                </h1>
-                <div class="flex items-center gap-2 text-xs text-[#6F767E] mt-0.5">
-                    @if($status === 'published')
-                        <span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
-                        <span>Published</span>
-                    @elseif($status === 'draft')
-                        <span class="w-2 h-2 rounded-full bg-yellow-500 inline-block"></span>
-                        <span>Draft</span>
-                    @elseif($status === 'scheduled')
-                        <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
-                        <span>Scheduled</span>
-                    @else
-                        <span class="w-2 h-2 rounded-full bg-gray-500 inline-block"></span>
-                        <span>{{ ucfirst($status) }}</span>
-                    @endif
-                    @if($lastSavedAt)
-                        <span class="mx-1">•</span>
-                        <span>Saved at {{ $lastSavedAt }}</span>
-                    @elseif($hasUnsavedChanges)
-                        <span class="mx-1">•</span>
-                        <span class="text-amber-500">Unsaved changes</span>
-                    @endif
-                </div>
+    {{-- Context Bar --}}
+    <div class="flex items-center gap-3 px-6 py-4 md:px-10 border-b border-gray-200 dark:border-[#272B30] bg-white/50 dark:bg-[#0B0B0B]/50">
+        <a class="h-9 w-9 flex items-center justify-center rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC] transition-all shrink-0"
+            href="{{ route('admin.pages.index') }}">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+        </a>
+        <div class="flex items-center gap-3 min-w-0">
+            <h1 class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC] truncate">
+                {{ $isEdit ? 'Edit Page' : 'Add New Page' }}
+            </h1>
+            <div class="flex items-center gap-2 text-xs text-[#6F767E] shrink-0">
+                @if($isSystemPage)
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 uppercase tracking-wider">
+                        <span class="material-symbols-outlined text-[10px]">shield</span>
+                        System
+                    </span>
+                @endif
+                @if($status === 'published')
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Published
+                    </span>
+                @elseif($status === 'draft')
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-yellow-100 dark:bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 text-[10px] font-bold uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+                        Draft
+                    </span>
+                @elseif($status === 'scheduled')
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                        Scheduled
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-gray-100 dark:bg-gray-500/10 text-gray-600 dark:text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                        <span class="w-1.5 h-1.5 rounded-full bg-gray-500"></span>
+                        {{ ucfirst($status) }}
+                    </span>
+                @endif
+                @if($lastSavedAt)
+                    <span class="hidden sm:inline text-[11px] text-[#6F767E]">Saved {{ $lastSavedAt }}</span>
+                @elseif($hasUnsavedChanges)
+                    <span class="hidden sm:inline text-[11px] text-amber-500 font-medium">Unsaved changes</span>
+                @endif
             </div>
         </div>
-        <div class="flex items-center gap-4">
-            <div class="flex items-center gap-2">
-                <button 
-                    x-data="{ 
-                        darkMode: document.documentElement.classList.contains('dark'),
-                        toggle() {
-                            this.darkMode = !this.darkMode;
-                            document.documentElement.classList.toggle('dark');
-                            localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
-                        }
-                    }"
-                    @click="toggle()"
-                    class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#6F767E] shadow-sm hover:bg-gray-50 hover:text-[#111827] dark:bg-[#272B30] dark:text-[#FCFCFC] transition-colors focus:outline-none ml-2"
-                    title="Toggle Theme">
-                    <span class="material-symbols-outlined text-[24px]" x-show="!darkMode" x-cloak>dark_mode</span>
-                    <span class="material-symbols-outlined text-[24px]" x-show="darkMode" x-cloak>light_mode</span>
-                </button>
-            </div>
-            <div class="h-8 w-px bg-gray-200 dark:bg-[#272B30]"></div>
-            <div class="flex items-center gap-3">
-            <button wire:click="saveAsDraft" wire:loading.attr="disabled"
-                class="px-4 py-2 rounded-lg text-sm font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white transition-all disabled:opacity-50">
-                <span wire:loading.remove wire:target="saveAsDraft">Save Draft</span>
-                <span wire:loading wire:target="saveAsDraft">Saving...</span>
-            </button>
-            @if($isEdit)
-            <a href="{{ url($slug) }}" target="_blank"
-                class="px-4 py-2 rounded-lg text-sm font-semibold text-[#111827] dark:text-white bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] hover:border-[#6F767E] transition-all">
-                Preview
-            </a>
-            @endif
-            <button wire:click="publish" wire:loading.attr="disabled"
-                class="px-6 py-2 rounded-lg text-sm font-bold text-white bg-primary hover:bg-blue-600 shadow-lg shadow-primary/20 transition-all flex items-center gap-2 disabled:opacity-50">
-                <span wire:loading.remove wire:target="publish">Publish</span>
-                <span wire:loading wire:target="publish">Publishing...</span>
-            </button>
-            </div>
-        </div>
-    </header>
+    </div>
 
     {{-- Main Content --}}
     <div class="flex-1 flex overflow-hidden">
@@ -126,17 +98,26 @@
                         <p class="text-red-500 text-sm">{{ $message }}</p>
                     @enderror
 
-                    @if($slug)
+                    @if($slug || $isEdit)
                     <div class="flex items-center gap-2 text-xs font-bold text-[#6F767E] uppercase tracking-wider pl-1">
                         <span>PERMALINK:</span>
-                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}/</span>
-                        <div x-data="{ editing: false }" class="relative flex items-center gap-2">
-                            <span x-show="!editing" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30]">{{ $slug }}</span>
-                            <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[100px]" x-cloak>
-                            <button @click="editing = !editing; $nextTick(() => $el.previousElementSibling.focus())" class="text-[#6F767E] hover:text-[#FCFCFC] transition-colors">
-                                <span class="material-symbols-outlined text-[14px]">edit</span>
-                            </button>
-                        </div>
+                        <span class="text-[#6F767E] lowercase font-normal">{{ url('/') }}{{ $editingLocale && $editingLocale !== $defaultLocale ? '/' . $editingLocale : '' }}/</span>
+                        @if($isSystemPage)
+                            <span class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30] flex items-center gap-1">
+                                {{ $slug ?: ($page->slug ?? 'home') }}
+                                <span class="material-symbols-outlined text-[12px] text-amber-500" title="System page slug is locked">lock</span>
+                            </span>
+                        @else
+                            <div x-data="{ editing: false }" class="relative flex items-center gap-2">
+                                <span x-show="!editing" @click="editing = true" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#272B30] cursor-pointer hover:border-[#2563EB] {{ empty($slug) ? 'italic text-gray-400' : '' }}">
+                                    {{ !empty($slug) ? $slug : (($page ? $page->slug : '') ?: 'enter-slug') }}
+                                </span>
+                                <input x-show="editing" wire:model.blur="slug" @blur="editing = false" @keydown.enter="editing = false" type="text" class="bg-[#1A1A1A] px-2 py-0.5 rounded text-[#FCFCFC] lowercase font-normal border border-[#2563EB] focus:outline-none w-auto min-w-[120px]" placeholder="{{ $page ? $page->slug : 'slug' }}" x-cloak>
+                                <button @click="editing = !editing; $nextTick(() => $el.previousElementSibling.focus())" class="text-[#6F767E] hover:text-[#FCFCFC] transition-colors">
+                                    <span class="material-symbols-outlined text-[14px]">edit</span>
+                                </button>
+                            </div>
+                        @endif
                     </div>
                     @endif
                     @error('slug')
@@ -193,210 +174,313 @@
                     @enderror
                 </div>
 
-                {{-- SEO Settings --}}
-                <div x-data="{ activeTab: 'meta' }" class="bg-white dark:bg-[#1A1A1A] rounded-3xl border border-gray-200 dark:border-[#272B30] overflow-hidden">
-                    {{-- Header with title left + tabs right --}}
-                    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-[#272B30]">
-                        <h3 class="text-xs font-bold text-[#6F767E] uppercase tracking-widest">SEO Settings</h3>
-                        <div class="flex items-center bg-[#F4F5F6] dark:bg-[#0B0B0B] rounded-lg p-0.5">
-                            <button type="button" @click="activeTab = 'meta'"
-                                :class="activeTab === 'meta' ? 'bg-white dark:bg-[#272B30] text-[#111827] dark:text-[#FCFCFC] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]'"
-                                class="px-4 py-1.5 rounded-md text-xs font-bold transition-all">
-                                Meta Data
-                            </button>
-                            <button type="button" @click="activeTab = 'og'"
-                                :class="activeTab === 'og' ? 'bg-white dark:bg-[#272B30] text-[#111827] dark:text-[#FCFCFC] shadow-sm' : 'text-[#6F767E] hover:text-[#111827] dark:hover:text-[#FCFCFC]'"
-                                class="px-4 py-1.5 rounded-md text-xs font-bold transition-all">
-                                Open Graph
-                            </button>
-                        </div>
-                    </div>
-
-                    {{-- Meta Data Tab --}}
-                    <div x-show="activeTab === 'meta'" class="p-6 space-y-5">
-                        <div class="space-y-2">
-                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">Meta Title</label>
-                            <input wire:model="metaTitle" type="text"
-                                class="w-full h-11 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-4"
-                                placeholder="Page Title for Search Engines" />
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">Meta Description</label>
-                            <textarea wire:model="metaDescription" rows="3"
-                                class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary p-4 resize-y"
-                                placeholder="Brief description for search engine results"></textarea>
-                        </div>
-                    </div>
-
-                    {{-- Open Graph Tab --}}
-                    <div x-show="activeTab === 'og'" style="display: none;" class="p-6 space-y-5">
-                        <div class="space-y-2">
-                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">OG Title</label>
-                            <input wire:model="ogTitle" type="text"
-                                class="w-full h-11 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-4"
-                                placeholder="Social Media Title" />
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">OG Description</label>
-                            <textarea wire:model="ogDescription" rows="3"
-                                class="w-full rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary p-4 resize-y"
-                                placeholder="Social Media Description"></textarea>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <label class="text-[11px] font-bold text-[#6F767E] uppercase tracking-wider">OG Image</label>
-                                @if($ogImage)
-                                    <button type="button" wire:click="clearOgImage" class="text-[11px] font-bold text-red-500 hover:text-red-600 transition-colors">Remove</button>
-                                @endif
-                            </div>
-                            @if($ogImage)
-                                <div class="relative aspect-video w-full rounded-xl overflow-hidden border border-gray-200 dark:border-[#272B30]">
-                                    <img src="{{ asset('storage/' . $ogImage) }}" alt="OG Image" class="w-full h-full object-cover" />
-                                    <button type="button" wire:click="openMediaPicker('og_image')"
-                                        class="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold text-sm gap-2">
-                                        <span class="material-symbols-outlined text-lg">swap_horiz</span>
-                                        Change Image
-                                    </button>
-                                </div>
-                            @else
-                                <div wire:click="openMediaPicker('og_image')"
-                                    class="w-full h-28 rounded-xl bg-[#F4F5F6] dark:bg-[#0B0B0B] border-2 border-dashed border-gray-200 dark:border-[#272B30] flex flex-col items-center justify-center gap-1.5 hover:bg-gray-100 dark:hover:bg-[#1A1A1A] hover:border-primary/40 transition-all cursor-pointer">
-                                    <span class="material-symbols-outlined text-2xl text-gray-300 dark:text-[#272B30]">add_photo_alternate</span>
-                                    <span class="text-[11px] font-bold text-[#6F767E]">Upload OG Image</span>
-                                </div>
-                            @endif
-                            <p class="text-[11px] text-[#6F767E]">Leave empty to use featured image</p>
-                        </div>
-                    </div>
-                </div>
+                {{-- SEO Settings (Centralized Component) --}}
+                <livewire:admin.seo.seo-meta-box
+                    seoable-type="App\Models\Page"
+                    :seoable-id="$pageId"
+                    :locale="$editingLocale"
+                    :key="'seo-page-' . ($pageId ?? 'new')"
+                />
             </div>
         </div>
 
         {{-- Right Panel: Settings --}}
         <aside class="w-[320px] bg-[#F4F5F6] dark:bg-[#0B0B0B] border-l border-gray-200 dark:border-[#272B30] overflow-y-auto no-scrollbar hidden lg:block">
             <div class="p-6 space-y-6">
-                {{-- Page Settings Card --}}
-                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none" x-data="{ editingStatus: false, editingTemplate: false, editingParent: false }">
-                    <div class="flex items-center gap-2 mb-6 text-[#6F767E]">
-                        <span class="material-symbols-outlined text-lg">tune</span>
-                        <span class="text-xs font-bold uppercase tracking-widest">Page Settings</span>
+                <!-- Unified Publishing & Actions Card (Optimized for Narrow Sidebar) -->
+                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none space-y-5">
+                    
+                    <!-- Title / Header (Aligned with Featured Image card) -->
+                    <div class="flex items-center gap-2 text-[#6F767E]">
+                        <span class="material-symbols-outlined text-lg">rocket_launch</span>
+                        <span class="text-xs font-bold uppercase tracking-widest">Publishing & Actions</span>
                     </div>
 
-                    <div class="space-y-4">
-                        {{-- Status --}}
-                        <div class="group">
-                            <div class="flex items-center justify-between" x-show="!editingStatus">
-                                <span class="text-sm text-[#6F767E]">Status:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ ucfirst($status) }}</span>
-                                    <button @click="editingStatus = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
-                            </div>
-                            <div x-show="editingStatus" class="bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <select wire:model="status" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                    <option value="draft">Draft</option>
+                    <!-- Main Primary Submit / Action Button (Top Highlight) -->
+                    <button 
+                        type="button"
+                        wire:click="publish"
+                        wire:loading.attr="disabled"
+                        class="w-full py-3 px-4 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                    >
+                        <span wire:loading.remove wire:target="publish" class="flex items-center gap-2">
+                            @if($status === 'scheduled')
+                                <span class="material-symbols-outlined text-lg">event</span>
+                                <span>Schedule Page</span>
+                            @elseif($status === 'published')
+                                <span class="material-symbols-outlined text-lg">published_with_changes</span>
+                                <span>Update Page</span>
+                            @else
+                                <span class="material-symbols-outlined text-lg">publish</span>
+                                <span>Publish Page</span>
+                            @endif
+                        </span>
+                        <span wire:loading wire:target="publish" class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg animate-spin">sync</span>
+                            <span>Saving...</span>
+                        </span>
+                    </button>
+
+                    <!-- Secondary Actions Row (Save Draft & Preview) -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <button 
+                            type="button" 
+                            wire:click="saveAsDraft" 
+                            wire:loading.attr="disabled"
+                            class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-50 dark:bg-[#0B0B0B] hover:bg-gray-100 dark:hover:bg-[#272B30] border border-gray-200 dark:border-[#272B30] transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                        >
+                            <span wire:loading.remove wire:target="saveAsDraft" class="flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-base">save</span>
+                                <span>Save Draft</span>
+                            </span>
+                            <span wire:loading wire:target="saveAsDraft" class="flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-base animate-spin">sync</span>
+                                <span>Saving...</span>
+                            </span>
+                        </button>
+
+                        @if($isEdit && $previewUrl)
+                        <a 
+                            href="{{ $previewUrl }}" 
+                            target="_blank"
+                            class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-[#6F767E] hover:text-[#111827] dark:hover:text-white bg-gray-50 dark:bg-[#0B0B0B] hover:bg-gray-100 dark:hover:bg-[#272B30] border border-gray-200 dark:border-[#272B30] transition-all flex items-center justify-center gap-1.5"
+                        >
+                            <span class="material-symbols-outlined text-base">visibility</span>
+                            <span>Preview</span>
+                        </a>
+                        @else
+                        <div class="w-full py-2 px-3 rounded-xl text-xs font-semibold text-gray-400 bg-gray-50/50 dark:bg-[#0B0B0B]/50 border border-dashed border-gray-200 dark:border-[#272B30] flex items-center justify-center gap-1.5 opacity-50 cursor-not-allowed">
+                            <span class="material-symbols-outlined text-base">visibility_off</span>
+                            <span>Preview</span>
+                        </div>
+                        @endif
+                    </div>
+
+                    <!-- Publishing Controls Box (Status Dropdown & Schedule Date Picker) -->
+                    <div class="pt-3 border-t border-gray-100 dark:border-white/5 space-y-4">
+                        
+                        <!-- Status Selector Field -->
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-base text-gray-400">key</span>
+                                <span>Status</span>
+                            </label>
+                            <select 
+                                wire:model.live="status" 
+                                class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all"
+                            >
+                                <option value="draft">Draft</option>
+                                <option value="pending_review">Pending Review</option>
+                                @if($canApprove)
                                     <option value="published">Published</option>
                                     <option value="scheduled">Scheduled</option>
-                                    <option value="private">Private</option>
-                                </select>
-                                <div class="flex justify-end">
-                                    <button @click="editingStatus = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
-                            </div>
+                                @endif
+                                <option value="private">Private</option>
+                            </select>
                         </div>
 
-                        {{-- Publish Date --}}
-                        @if($status === 'scheduled' || $status === 'published')
-                        <div class="group" x-data="{ editingPublish: false }">
-                            <div class="flex items-center justify-between" x-show="!editingPublish">
-                                <span class="text-sm text-[#6F767E]">Publish:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">
-                                        {{ $publishedAt ? \Carbon\Carbon::parse($publishedAt)->format('M d, Y H:i') : 'Immediately' }}
-                                    </span>
-                                    <button @click="editingPublish = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
+                        {{-- Pending Review Notice & Approver Actions --}}
+                        @if($status === 'pending_review' || ($isEdit && $page?->status === 'pending_review'))
+                        <div class="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/40 space-y-2.5">
+                            <div class="flex items-center gap-2 text-amber-800 dark:text-amber-400 font-bold text-xs">
+                                <span class="material-symbols-outlined text-base">rate_review</span>
+                                <span>Pending Editorial Review</span>
                             </div>
-                            <div x-show="editingPublish" class="bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <input wire:model="publishedAt" type="datetime-local"
-                                    class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                <div class="flex justify-end">
-                                    <button @click="editingPublish = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
+                            <p class="text-[11px] text-amber-700 dark:text-amber-400/80 leading-relaxed">
+                                This content has been submitted for review and requires editorial approval to be published.
+                            </p>
+                            @if($canApprove && $isEdit)
+                            <div class="pt-2 border-t border-amber-200/60 dark:border-amber-800/40 flex flex-col gap-1.5">
+                                <button
+                                    type="button"
+                                    wire:click="approveAndPublish"
+                                    class="w-full py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-colors"
+                                >
+                                    <span class="material-symbols-outlined text-base">check_circle</span>
+                                    <span>Approve & Publish</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    wire:click="openChangeRequestModal"
+                                    class="w-full py-1.5 px-3 rounded-xl bg-amber-100 dark:bg-amber-900/40 hover:bg-amber-200 text-amber-900 dark:text-amber-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors"
+                                >
+                                    <span class="material-symbols-outlined text-base">assignment_late</span>
+                                    <span>Request Changes</span>
+                                </button>
                             </div>
+                            @endif
                         </div>
                         @endif
 
-                        {{-- Template --}}
-                        <div class="group">
-                            <div class="flex items-center justify-between" x-show="!editingTemplate">
-                                <span class="text-sm text-[#6F767E]">Template:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $templates[$template] ?? ucfirst($template) }}</span>
-                                    <button @click="editingTemplate = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
+                        @if($isEdit && $pageId)
+                        @php
+                            $editorialNotes = \App\Models\EditorialNote::where('noteable_type', 'App\Models\Page')
+                                ->where('noteable_id', $pageId)
+                                ->with('user')
+                                ->latest()
+                                ->take(5)
+                                ->get();
+                        @endphp
+                        @if($editorialNotes->isNotEmpty())
+                        <div class="pt-3 border-t border-gray-100 dark:border-white/5 space-y-2">
+                            <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-base text-gray-400">notes</span>
+                                <span>Editorial Feedback ({{ $editorialNotes->count() }})</span>
+                            </label>
+                            <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                                @foreach($editorialNotes as $enote)
+                                <div class="p-2.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs">
+                                    <div class="flex items-center justify-between text-[10px] text-gray-400 mb-1">
+                                        <span class="font-bold text-gray-700 dark:text-gray-300">{{ $enote->user?->name ?? 'Approver' }}</span>
+                                        <span>{{ $enote->created_at->diffForHumans() }}</span>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-400 leading-snug">{{ $enote->note }}</p>
                                 </div>
+                                @endforeach
                             </div>
-                            <div x-show="editingTemplate" class="bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <select wire:model="template" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                    @foreach($templates as $value => $label)
-                                        <option value="{{ $value }}">{{ $label }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="flex justify-end">
-                                    <button @click="editingTemplate = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
+                        </div>
+                        @endif
+                        @endif
+
+                        <!-- Schedule / Publish Date & Time (2-Line Layout Matching Status) -->
+                        <div class="space-y-1.5 pt-3 border-t border-gray-100 dark:border-white/5" x-data="{ editingDate: false }">
+                            <!-- Line 1: Header / Label + Edit Action -->
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-base text-gray-400">calendar_month</span>
+                                    <span>Publish Date & Time</span>
+                                </label>
+                                <button 
+                                    type="button" 
+                                    @click="editingDate = !editingDate" 
+                                    class="text-[11px] font-bold text-[#2563EB] hover:underline uppercase flex items-center gap-0.5 transition-colors"
+                                >
+                                    <span class="material-symbols-outlined text-xs" x-text="editingDate ? 'close' : 'edit'">edit</span>
+                                    <span x-text="editingDate ? 'Cancel' : 'Edit'">Edit</span>
+                                </button>
+                            </div>
+
+                            <!-- Line 2 View Mode: Full-width Formatted Value Box -->
+                            <div x-show="!editingDate && status !== 'scheduled'" class="w-full min-h-[36px] px-3 py-2 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] flex items-center justify-between">
+                                <span>{{ $publishedAt ? \Carbon\Carbon::parse($publishedAt)->format('M d, Y @ H:i') : 'Immediately' }}</span>
+                                @if($publishedAt)
+                                <span class="text-[10px] text-gray-400 font-normal">Custom</span>
+                                @else
+                                <span class="text-[10px] text-emerald-500 font-bold">Instant</span>
+                                @endif
+                            </div>
+
+                            <!-- Line 2 Edit Mode: Expandable Datetime Picker Box -->
+                            <div x-show="editingDate || status === 'scheduled'" class="p-3.5 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] space-y-3 mt-1" x-cloak x-transition>
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-sm text-blue-500">schedule</span>
+                                        <span>Set Date & Time</span>
+                                    </span>
+                                    @if($publishedAt)
+                                    <button 
+                                        type="button" 
+                                        wire:click="$set('publishedAt', null)" 
+                                        class="text-[11px] font-semibold text-gray-400 hover:text-red-500 transition-colors"
+                                    >
+                                        Immediately
+                                    </button>
+                                    @endif
+                                </div>
+
+                                <input 
+                                    type="datetime-local" 
+                                    wire:model.live="publishedAt"
+                                    class="w-full h-10 px-3 rounded-xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent transition-all shadow-sm"
+                                >
+
+                                <div class="flex items-center justify-between pt-1 border-t border-gray-200/50 dark:border-white/5">
+                                    <p class="text-[11px] text-gray-400 leading-tight">
+                                        @if($status === 'scheduled')
+                                            📅 Will publish automatically at this time.
+                                        @elseif($publishedAt)
+                                            Published on {{ \Carbon\Carbon::parse($publishedAt)->format('M d, Y @ H:i') }}
+                                        @else
+                                            Publishes immediately upon save.
+                                        @endif
+                                    </p>
+                                    @if($status !== 'scheduled')
+                                    <button 
+                                        type="button" 
+                                        @click="editingDate = false" 
+                                        class="px-3 py-1 bg-[#2563EB] hover:bg-blue-600 text-white rounded-lg text-xs font-bold transition-colors shrink-0"
+                                    >
+                                        Done
+                                    </button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Parent Page --}}
-                        <div class="group">
-                            <div class="flex items-center justify-between" x-show="!editingParent">
-                                <span class="text-sm text-[#6F767E]">Parent:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $parentId ? ($parentPages->find($parentId)->title ?? 'Unknown') : 'Top Level' }}</span>
-                                    <button @click="editingParent = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
-                            </div>
-                            <div x-show="editingParent" class="bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <select wire:model="parentId" class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                    <option value="">None (Top Level)</option>
-                                    @foreach($parentPages as $parentPage)
-                                        <option value="{{ $parentPage->id }}">{{ $parentPage->title }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="flex justify-end">
-                                    <button @click="editingParent = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Menu Order --}}
-                        <div class="group" x-data="{ editingOrder: false }">
-                            <div class="flex items-center justify-between" x-show="!editingOrder">
-                                <span class="text-sm text-[#6F767E]">Menu Order:</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-bold text-[#111827] dark:text-[#FCFCFC]">{{ $menuOrder ?? 0 }}</span>
-                                    <button @click="editingOrder = true" class="text-[10px] font-bold text-[#2563EB] hover:underline uppercase">Edit</button>
-                                </div>
-                            </div>
-                            <div x-show="editingOrder" class="bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] p-3 rounded-lg space-y-2" x-cloak>
-                                <input wire:model="menuOrder" type="number" min="0"
-                                    class="w-full h-8 rounded-md bg-white dark:bg-[#0B0B0B] border-gray-200 dark:border-[#272B30] text-xs font-medium text-[#111827] dark:text-[#FCFCFC] focus:ring-1 focus:ring-[#2563EB]">
-                                <div class="flex justify-end">
-                                    <button @click="editingOrder = false" class="text-xs text-[#2563EB] font-bold hover:underline">Done</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
-                    {{-- Delete action --}}
-                    @if($isEdit)
-                    <div class="mt-8 pt-4 border-t border-gray-100 dark:border-[#272B30] flex items-center justify-end">
-                        <button wire:click="delete" wire:confirm="Are you sure you want to delete this page?" class="text-xs font-bold text-[#FF6A55] hover:text-[#ff4f38] transition-colors">
-                            Move to Trash
+                    <!-- Bottom Actions (Delete Page) -->
+                    @if($isEdit && !$isSystemPage)
+                    <div class="pt-3 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs">
+                        <button 
+                            type="button" 
+                            wire:click="delete" 
+                            wire:confirm="Are you sure you want to delete this page?"
+                            class="font-bold text-red-600 hover:text-red-700 dark:text-red-400 hover:underline transition-colors flex items-center gap-1"
+                        >
+                            <span class="material-symbols-outlined text-base">delete</span>
+                            <span>Delete Page</span>
                         </button>
                     </div>
                     @endif
+
+                </div>
+
+                <!-- Page Attributes Card (Template & Parent) -->
+                <div class="rounded-2xl bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] p-5 shadow-sm dark:shadow-none space-y-4">
+                    <div class="flex items-center gap-2 mb-2 text-[#6F767E]">
+                        <span class="material-symbols-outlined text-lg">tune</span>
+                        <span class="text-xs font-bold uppercase tracking-widest">Page Attributes</span>
+                    </div>
+
+                    <!-- Template -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-700 dark:text-gray-300">Template</label>
+                        @if($isSystemPage)
+                            <div class="w-full h-9 px-3 rounded-xl bg-gray-100 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-gray-500 flex items-center justify-between">
+                                <span>{{ $templates[$template] ?? ucfirst($template) }}</span>
+                                <span class="material-symbols-outlined text-sm text-amber-500" title="System page template is locked">lock</span>
+                            </div>
+                        @else
+                            <select wire:model="template" class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB]">
+                                @foreach($templates as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        @endif
+                    </div>
+
+                    <!-- Parent Page -->
+                    <div class="space-y-1.5 pt-2">
+                        <label class="text-xs font-bold text-gray-700 dark:text-gray-300">Parent Page</label>
+                        <select wire:model="parentId" class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB]">
+                            <option value="">(No Parent)</option>
+                            @foreach($parentPages as $parentPage)
+                                <option value="{{ $parentPage->id }}">{{ $parentPage->title }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Menu Order -->
+                    <div class="space-y-1.5 pt-2">
+                        <label class="text-xs font-bold text-gray-700 dark:text-gray-300">Menu Order</label>
+                        <input 
+                            type="number" 
+                            wire:model="menuOrder" 
+                            min="0"
+                            class="w-full h-9 px-3 rounded-xl bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs font-semibold text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB]"
+                        >
+                    </div>
                 </div>
 
                 {{-- Featured Image Card --}}
@@ -473,6 +557,57 @@
 
     {{-- Media Picker Modal --}}
     @if($showMediaPicker)
-        <livewire:admin.media-picker :field="$mediaPickerField" />
+        <livewire:admin.media-picker :field="$mediaPickerField" :show-modal="true" :key="'page-media-picker-'.$mediaPickerField" />
+    @endif
+
+    {{-- Change Request Modal --}}
+    @if($showChangeRequestModal)
+    <div class="fixed inset-0 z-[100] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
+            <div class="fixed inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-sm transition-opacity" wire:click="closeChangeRequestModal"></div>
+            <div class="inline-block bg-white dark:bg-[#1A1A1A] rounded-3xl px-6 pt-6 pb-6 text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full border border-gray-200 dark:border-[#272B30] relative z-10">
+                <div class="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-white/5">
+                    <h3 class="text-base font-bold text-[#111827] dark:text-[#FCFCFC] flex items-center gap-2">
+                        <span class="material-symbols-outlined text-amber-500">assignment_late</span>
+                        Request Changes
+                    </h3>
+                    <button wire:click="closeChangeRequestModal" class="h-8 w-8 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#272B30] transition-colors">
+                        <span class="material-symbols-outlined text-base">close</span>
+                    </button>
+                </div>
+                <div class="mt-4 space-y-3">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Explain clearly what revisions or corrections are needed before this content can be approved. The page will return to <strong>Draft</strong> status and the author will receive a notification alert.
+                    </p>
+                    <textarea
+                        wire:model="changeRequestNote"
+                        rows="4"
+                        placeholder="e.g. Please update the enterprise stats section and check broken links..."
+                        class="w-full rounded-2xl p-3.5 bg-gray-50 dark:bg-[#0B0B0B] border border-gray-200 dark:border-[#272B30] text-xs text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-[#2563EB] focus:border-transparent resize-none font-medium"
+                    ></textarea>
+                    @error('changeRequestNote')
+                        <p class="text-xs text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div class="mt-6 flex items-center justify-end gap-2.5">
+                    <button
+                        type="button"
+                        wire:click="closeChangeRequestModal"
+                        class="px-5 py-2.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#272B30] transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="button"
+                        wire:click="submitChangeRequest"
+                        class="px-5 py-2.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-sm transition-colors flex items-center gap-1.5"
+                    >
+                        <span class="material-symbols-outlined text-sm">send</span>
+                        <span>Submit Feedback</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
 </div>

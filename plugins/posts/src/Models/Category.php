@@ -3,6 +3,7 @@
 namespace Plugins\Posts\Models;
 
 use App\Traits\FindsByLocalizedSlug;
+use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Illuminate\Support\Str;
 
 class Category extends Model
 {
-    use FindsByLocalizedSlug, HasTranslations;
+    use FindsByLocalizedSlug, HasSeoMeta, HasTranslations;
 
     protected $fillable = [
         'name',
@@ -38,6 +39,12 @@ class Category extends Model
                 $category->slug = Str::slug($category->name);
             }
         });
+
+        static::deleting(function ($category) {
+            if ($category->slug === 'uncategorized') {
+                return false;
+            }
+        });
     }
 
     public function parent(): BelongsTo
@@ -58,5 +65,24 @@ class Category extends Model
     public function getPostsCountAttribute(): int
     {
         return $this->posts()->count();
+    }
+
+    public function getUrl(?string $locale = null): string
+    {
+        $locale ??= app()->getLocale();
+        $defaultLocale = function_exists('default_locale') ? default_locale() : (function_exists('setting') ? setting('default_locale', config('app.locale', 'en')) : config('app.locale', 'en'));
+
+        $prefix = ($locale !== $defaultLocale) ? '/'.$locale : '';
+        $slug = $this->getTranslation('slug', $locale, fallback: false) ?: $this->slug;
+        $archiveSlug = 'blog-news';
+        if (class_exists(Setting::class)) {
+            $archiveSlug = Setting::getArchiveSlug($locale);
+        }
+        $categoryBase = 'category';
+        if (class_exists(\App\Models\Setting::class)) {
+            $categoryBase = \App\Models\Setting::get('permalink_category_base', 'category');
+        }
+
+        return trailing_slash_url(url($prefix.'/'.$archiveSlug.'/'.$categoryBase.'/'.$slug));
     }
 }

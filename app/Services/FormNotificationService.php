@@ -16,16 +16,21 @@ class FormNotificationService
     {
         $notifications = $form->notifications ?? [];
 
-        if (empty($notifications['enabled'])) {
+        $notifyAdmin = ! empty($notifications['notify_admin']) || (! isset($notifications['notify_admin']) && ! empty($notifications['enabled']));
+        $sendToUser = ! empty($notifications['send_to_user']);
+
+        if (! $notifyAdmin && ! $sendToUser) {
             return;
         }
 
         try {
-            // Send admin notification
-            $this->sendAdminNotification($form, $entry, $notifications);
+            // Send admin notification if enabled
+            if ($notifyAdmin) {
+                $this->sendAdminNotification($form, $entry, $notifications);
+            }
 
             // Send user confirmation if enabled
-            if (! empty($notifications['send_to_user'])) {
+            if ($sendToUser) {
                 $this->sendUserConfirmation($form, $entry, $notifications);
             }
         } catch (\Exception $e) {
@@ -47,16 +52,33 @@ class FormNotificationService
             return;
         }
 
+        $toEmails = $this->parseEmailList($adminEmail);
+        if (empty($toEmails)) {
+            return;
+        }
+
+        $ccEmails = $this->parseEmailList($notifications['cc_email'] ?? $notifications['admin_cc'] ?? null);
+        $bccEmails = $this->parseEmailList($notifications['bcc_email'] ?? $notifications['admin_bcc'] ?? null);
+
         $subject = $notifications['subject'] ?? "New Form Submission: {$form->name}";
         $data = $entry->data ?? [];
 
-        $html = $this->buildAdminEmailHtml($form, $entry, $data);
+        $html = $this->buildAdminEmailHtml($form, $entry, $data, $notifications['admin_email_body'] ?? null);
 
         // Pre-resolve the visitor's email so we can set Reply-To inside the Mail closure.
         $replyTo = $this->findUserEmailFromData($form, $data);
 
-        Mail::html($html, function ($message) use ($adminEmail, $subject, $replyTo) {
-            $message->to($adminEmail)->subject($subject);
+        Mail::html($html, function ($message) use ($toEmails, $ccEmails, $bccEmails, $subject, $replyTo) {
+            $message->to($toEmails)->subject($subject);
+
+            if (! empty($ccEmails)) {
+                $message->cc($ccEmails);
+            }
+
+            if (! empty($bccEmails)) {
+                $message->bcc($bccEmails);
+            }
+
             if ($replyTo) {
                 $message->replyTo($replyTo);
             }
@@ -75,16 +97,43 @@ class FormNotificationService
             return;
         }
 
-        $subject = "Thank you for your submission - {$form->name}";
-        $confirmations = $form->confirmations ?? [];
-        $message = $confirmations['message'] ?? 'Thank you for your submission. We will get back to you soon.';
+        $subject = $notifications['user_subject'] ?? "Thank you for your submission - {$form->name}";
+        $customBody = $notifications['user_email_body'] ?? null;
+        $userCcEmails = $this->parseEmailList($notifications['user_cc_email'] ?? null);
 
-        $html = $this->buildUserConfirmationHtml($form, $message, $data);
+        $html = $this->buildUserConfirmationHtml($form, $customBody, $data);
 
-        Mail::html($html, function ($mail) use ($userEmail, $subject) {
+        Mail::html($html, function ($mail) use ($userEmail, $userCcEmails, $subject) {
             $mail->to($userEmail)
                 ->subject($subject);
+
+            if (! empty($userCcEmails)) {
+                $mail->cc($userCcEmails);
+            }
         });
+    }
+
+    /**
+     * Parse and validate email list from string (comma/semicolon/newline separated) or array.
+     *
+     * @param  string|array<string>|null  $emails
+     * @return array<string>
+     */
+    public function parseEmailList(string|array|null $emails): array
+    {
+        if (empty($emails)) {
+            return [];
+        }
+
+        if (is_array($emails)) {
+            $list = $emails;
+        } else {
+            $list = preg_split('/[\r\n,;]+/', (string) $emails, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        }
+
+        return array_values(array_filter(array_map('trim', $list), function ($email) {
+            return ! empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL);
+        }));
     }
 
     /**
@@ -116,10 +165,73 @@ class FormNotificationService
     /**
      * Build HTML for admin notification email.
      */
-    protected function buildAdminEmailHtml(Form $form, FormEntry $entry, array $data): string
+    protected function buildAdminEmailHtml(Form $form, FormEntry $entry, array $data, ?string $customBody = null): string
     {
         $formUrl = route('admin.forms.entries', $form->id);
-        $timestamp = $entry->created_at->format('F j, Y \a\t g:i A');
+        $timestamp = $entry->created_at ? $entry->created_at->format('F j, Y \a\t g:i A') : date('F j, Y \a\t g:i A');
+        $userName = $this->findUserName($data) ?? 'Visitor';
+        $userEmail = $this->findUserEmailFromData($form, $data) ?? '';
+
+        // Build submission table HTML for placeholder or default template
+        $tableHtml = '<div class="fields-wrapper" style="margin-top: 15px; margin-bottom: 15px;">';
+        foreach ($form->fields as $field) {
+            if (in_array($field->type, ['section', 'divider', 'html'])) {
+                continue;
+            }
+            $val = $data[$field->field_id] ?? '';
+            if (is_array($val)) {
+                $val = implode(', ', array_filter($val));
+            }
+            $valStr = empty($val) ? '<em style="color: #9ca3af;">Not provided</em>' : e($val);
+
+            $tableHtml .= '
+            <div style="margin-bottom: 12px; padding: 12px; background: #ffffff; border-radius: 6px; border-left: 4px solid #b82d25; border: 1px solid #e5e7eb;">
+                <div style="font-weight: 600; color: #374151; font-size: 12px; text-transform: uppercase; margin-bottom: 4px;">'.e($field->label).'</div>
+                <div style="color: #111827; font-size: 14px;">'.$valStr.'</div>
+            </div>';
+        }
+        $tableHtml .= '</div>';
+
+        if (! empty($customBody)) {
+            $parsedContent = strtr($customBody, [
+                '{name}' => e($userName),
+                '{email}' => e($userEmail),
+                '{corporate_email}' => e($userEmail),
+                '{form_name}' => e($form->name),
+                '{submission_table}' => $tableHtml,
+                '{admin_url}' => $formUrl,
+                '{submission_date}' => $timestamp,
+            ]);
+
+            return '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+                    .container { max-width: 600px; margin: 20px auto; padding: 0; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: #ffffff; }
+                    .header { background: #111827; color: white; padding: 24px 30px; }
+                    .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
+                    .content { padding: 30px; background: #f9fafb; color: #111827; font-size: 15px; }
+                    .footer { background: #f3f4f6; padding: 16px; text-align: center; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>📬 New Submission: '.e($form->name).'</h1>
+                    </div>
+                    <div class="content">
+                        '.$parsedContent.'
+                    </div>
+                    <div class="footer">
+                        <p>Automated Admin Notification — '.e((string) setting('site_name', config('app.name'))).'</p>
+                    </div>
+                </div>
+            </body>
+            </html>';
+        }
 
         $html = '
         <!DOCTYPE html>
@@ -146,35 +258,7 @@ class FormNotificationService
                     <h1>📬 New Submission</h1>
                     <p style="margin: 5px 0 0; opacity: 0.9;">'.e($form->name).'</p>
                 </div>
-                <div class="content">';
-
-        foreach ($form->fields as $field) {
-            // Skip layout fields
-            if (in_array($field->type, ['section', 'divider', 'html'])) {
-                continue;
-            }
-
-            $value = $data[$field->field_id] ?? '';
-
-            // Format array values
-            if (is_array($value)) {
-                $value = implode(', ', array_filter($value));
-            }
-
-            if (empty($value)) {
-                $value = '<em style="color: #9ca3af;">Not provided</em>';
-            } else {
-                $value = e($value);
-            }
-
-            $html .= '
-                    <div class="field">
-                        <div class="field-label">'.e($field->label).'</div>
-                        <div class="field-value">'.$value.'</div>
-                    </div>';
-        }
-
-        $html .= '
+                <div class="content">'.$tableHtml.'
                     <div class="meta">
                         <p>📅 Submitted: '.$timestamp.'</p>
                         <p>🌐 IP Address: '.($entry->ip_address ?? 'Unknown').'</p>
@@ -196,11 +280,54 @@ class FormNotificationService
     /**
      * Build HTML for user confirmation email.
      */
-    protected function buildUserConfirmationHtml(Form $form, string $message, array $data): string
+    protected function buildUserConfirmationHtml(Form $form, ?string $customBody, array $data): string
     {
-        // Find user's name if available
-        $userName = $this->findUserName($data);
-        $greeting = $userName ? "Dear {$userName}," : 'Hello,';
+        $userName = $this->findUserName($data) ?? 'Valued Customer';
+        $userEmail = $this->findUserEmailFromData($form, $data) ?? '';
+        $companyName = is_string($data['company_name'] ?? null) ? $data['company_name'] : (is_string($data['company'] ?? null) ? $data['company'] : '');
+
+        if (! empty($customBody)) {
+            $parsedContent = strtr($customBody, [
+                '{name}' => e($userName),
+                '{email}' => e($userEmail),
+                '{corporate_email}' => e($userEmail),
+                '{company_name}' => e($companyName),
+                '{company}' => e($companyName),
+                '{form_name}' => e($form->name),
+            ]);
+
+            return '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <style>
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+                    .container { max-width: 600px; margin: 20px auto; padding: 0; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: #ffffff; }
+                    .header { background: #b82d25; color: white; padding: 24px 30px; text-align: center; }
+                    .header h1 { margin: 0; font-size: 20px; font-weight: bold; }
+                    .content { padding: 30px; background: #ffffff; color: #111827; font-size: 15px; }
+                    .footer { background: #f9fafb; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb; font-size: 12px; color: #6b7280; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>'.e($form->name).'</h1>
+                    </div>
+                    <div class="content">
+                        '.$parsedContent.'
+                    </div>
+                    <div class="footer">
+                        <p>This email was sent because you submitted a request on '.e((string) setting('site_name', config('app.name'))).'.</p>
+                    </div>
+                </div>
+            </body>
+            </html>';
+        }
+
+        $greeting = "Dear {$userName},";
+        $message = 'Thank you for your submission. We will get back to you soon.';
 
         $html = '
         <!DOCTYPE html>

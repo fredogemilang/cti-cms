@@ -1,7 +1,8 @@
 @extends('layouts.admin')
 
-@section('title', 'WordPress Migration')
-@section('page-title', 'Import from WordPress')
+@section('title', 'Import Posts')
+@section('page-title', 'Import Posts')
+@section('page-subtitle', 'Import blog posts, categories, tags, and media directly from WordPress')
 
 @section('content')
 <div class="space-y-6">
