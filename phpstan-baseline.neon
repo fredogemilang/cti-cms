@@ -1,6 +1,30 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Offset ''value'' on \*NEVER\* in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: app/Console/Commands/CleanImportedContentCommand.php
+
+		-
+			message: '#^Right side of && is always false\.$#'
+			identifier: booleanAnd.rightAlwaysFalse
+			count: 1
+			path: app/Console/Commands/CleanImportedContentCommand.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 2
+			path: app/Console/Commands/CleanImportedContentCommand.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Console/Commands/ImportWordPressCptCommand.php
+
+		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -13,10 +37,22 @@ parameters:
 			path: app/Console/Commands/ImportWordPressCptCommand.php
 
 		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
+			message: '#^Access to an undefined property Plugins\\Posts\\Models\\Post\:\:\$translations\.$#'
+			identifier: property.notFound
 			count: 1
-			path: app/Console/Commands/ImportWordPressCptCommand.php
+			path: app/Console/Commands/RemovePostLeadingImages.php
+
+		-
+			message: '#^Method Illuminate\\Http\\Client\\Response\:\:header\(\) invoked with 2 parameters, 1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: app/Console/Commands/SyncWordPressPosts.php
+
+		-
+			message: '#^Variable \$primaryContent on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: app/Console/Commands/SyncWordPressPosts.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
@@ -79,10 +115,22 @@ parameters:
 			path: app/Http/Controllers/Auth/AuthController.php
 
 		-
+			message: '#^Using nullsafe property access "\?\-\>slug" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Http/Controllers/DeferredSectionController.php
+
+		-
 			message: '#^Cannot call method format\(\) on string\.$#'
 			identifier: method.nonObject
 			count: 1
 			path: app/Http/Controllers/FeedController.php
+
+		-
+			message: '#^Offset ''robots'' on array\{title\: string, description\: string\|null, canonical\: string\|null, robots\: string, og\: array, twitter\: array, schema\: array\|null\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Http/Middleware/InjectSeoTags.php
 
 		-
 			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and '''' will always evaluate to true\.$#'
@@ -349,6 +397,12 @@ parameters:
 			path: app/Livewire/Admin/Cpt/CptForm.php
 
 		-
+			message: '#^Access to an undefined property App\\Models\\CustomPostType\:\:\$hierarchical\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Admin/Cpt/Entries/EntriesReorder.php
+
+		-
 			message: '#^Access to an undefined property App\\Livewire\\Admin\\Cpt\\Entries\\EntriesTable\:\:\$statusCounts\.$#'
 			identifier: property.notFound
 			count: 1
@@ -495,7 +549,7 @@ parameters:
 		-
 			message: '#^Cannot call method format\(\) on string\.$#'
 			identifier: method.nonObject
-			count: 1
+			count: 2
 			path: app/Livewire/Admin/Pages/PageForm.php
 
 		-
@@ -685,15 +739,489 @@ parameters:
 			path: app/Mail/Transport/BrevoApiTransport.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Prompts/CreateCptEntryPrompt.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_required\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Prompts/CreateCptEntryPrompt.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$label\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Prompts/CreateCptEntryPrompt.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Prompts/CreateCptEntryPrompt.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Prompts/CreateCptEntryPrompt.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Mcp/Prompts/CreateCptEntryPrompt.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\Theme\:\:getConfig\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Mcp/Prompts/CreatePagePrompt.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\Theme\:\:getName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Mcp/Prompts/ThemeDevelopmentPrompt.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\Theme\:\:getPath\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Mcp/Prompts/ThemeDevelopmentPrompt.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: app/Mcp/Resources/RouteMapResource.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\Services\\EditorialWorkflowService\:\:canApprove\(\) expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Mcp/Tools/Content/CreateCptEntryTool.php
+
+		-
+			message: '#^Parameter \#4 \$actor of method App\\Services\\EditorialWorkflowService\:\:handleTransition\(\) expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Mcp/Tools/Content/CreateCptEntryTool.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\Services\\EditorialWorkflowService\:\:canApprove\(\) expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Mcp/Tools/Content/CreatePageTool.php
+
+		-
+			message: '#^Parameter \#4 \$actor of method App\\Services\\EditorialWorkflowService\:\:handleTransition\(\) expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Mcp/Tools/Content/CreatePageTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$canonical_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetCptEntryTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetCptEntryTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$meta_description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetCptEntryTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$meta_title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetCptEntryTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetCptEntryTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$og_description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetCptEntryTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$og_image\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetCptEntryTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$og_title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetCptEntryTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetCptEntryTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$taxonomy_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetCptEntryTool.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Mcp/Tools/Content/GetCptEntryTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$canonical_url\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$key\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$meta_description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$meta_title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$og_description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$og_image\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$og_title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$sort_order\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$value\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Mcp/Tools/Content/GetPageTool.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\Services\\EditorialWorkflowService\:\:canApprove\(\) expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Mcp/Tools/Content/UpdateCptEntryTool.php
+
+		-
+			message: '#^Parameter \#4 \$actor of method App\\Services\\EditorialWorkflowService\:\:handleTransition\(\) expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Mcp/Tools/Content/UpdateCptEntryTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$value\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Content/UpdatePageTool.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\Services\\EditorialWorkflowService\:\:canApprove\(\) expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Mcp/Tools/Content/UpdatePageTool.php
+
+		-
+			message: '#^Parameter \#4 \$actor of method App\\Services\\EditorialWorkflowService\:\:handleTransition\(\) expects App\\Models\\User\|null, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Mcp/Tools/Content/UpdatePageTool.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Form\:\:\$notification_email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Forms/GetFormWithFieldsTool.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Form\:\:\$success_message\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Forms/GetFormWithFieldsTool.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\FormField\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Forms/GetFormWithFieldsTool.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\FormField\:\:\$sort_order\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Forms/GetFormWithFieldsTool.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\FormField\:\:\$validation_rules\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Forms/GetFormWithFieldsTool.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\FormField\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Mcp/Tools/Forms/GetFormWithFieldsTool.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Media\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\Media\>\:\:\$disk\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Media/GetMediaInfoTool.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\Media\:\:getUrl\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Mcp/Tools/Media/UploadMediaTool.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>tokenable_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Mcp/Tools/Media/UploadMediaTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Reports/ActivityLogTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Reports/ActivityLogTool.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,App\\Models\\Activity\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Mcp/Tools/Reports/ActivityLogTool.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Carbon\\Carbon\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Mcp/Tools/Reports/ActivityLogTool.php
+
+		-
+			message: '#^Offset ''meta_description'' does not exist on array\{\}\|string\.$#'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: app/Mcp/Tools/Reports/SeoAuditTool.php
+
+		-
+			message: '#^Offset ''meta_description'' on array\{\}\|string in empty\(\) does not exist\.$#'
+			identifier: empty.offset
+			count: 2
+			path: app/Mcp/Tools/Reports/SeoAuditTool.php
+
+		-
+			message: '#^Offset ''meta_title'' does not exist on array\{\}\|string\.$#'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: app/Mcp/Tools/Reports/SeoAuditTool.php
+
+		-
+			message: '#^Offset ''meta_title'' on array\{\}\|string in empty\(\) does not exist\.$#'
+			identifier: empty.offset
+			count: 2
+			path: app/Mcp/Tools/Reports/SeoAuditTool.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 2
+			path: app/Mcp/Tools/Reports/SeoAuditTool.php
+
+		-
+			message: '#^Variable \$pageIssues in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 1
+			path: app/Mcp/Tools/Reports/SeoAuditTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/GetCptSchemaTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$key\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/GetCptSchemaTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$label\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/GetCptSchemaTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$options\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/GetCptSchemaTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$order\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/GetCptSchemaTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/GetCptSchemaTool.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Mcp/Tools/Schema/GetCptSchemaTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/ListMetaFieldsTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$key\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/ListMetaFieldsTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$label\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/ListMetaFieldsTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$options\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/ListMetaFieldsTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$order\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/ListMetaFieldsTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/ListMetaFieldsTool.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Mcp/Tools/Schema/ListMetaFieldsTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/ListTaxonomiesTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/ListTaxonomiesTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$parent_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/ListTaxonomiesTool.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mcp/Tools/Schema/ListTaxonomiesTool.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Mcp/Tools/Schema/ListTaxonomiesTool.php
+
+		-
 			message: '#^Access to an undefined property App\\Models\\CptEntry\:\:\$translations\.$#'
 			identifier: property.notFound
 			count: 2
-			path: app/Models/CptEntry.php
-
-		-
-			message: '#^Match arm comparison between ''archived'' and ''archived'' is always true\.$#'
-			identifier: match.alwaysTrue
-			count: 1
 			path: app/Models/CptEntry.php
 
 		-
@@ -787,25 +1315,7 @@ parameters:
 			path: app/Models/StringTranslation.php
 
 		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Models/User.php
-
-		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$permissions\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Models/User.php
-
-		-
-			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Models/User.php
@@ -823,10 +1333,28 @@ parameters:
 			path: app/Notifications/PasswordResetNotification.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Observers/CptEntryObserver.php
+
+		-
 			message: '#^Using nullsafe property access "\?\-\>singular_label" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Observers/CptEntryObserver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Observers/PageObserver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Observers/PostObserver.php
 
 		-
 			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
@@ -851,6 +1379,84 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 2
 			path: app/Services/ActivityLogger.php
+
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 1
+			path: app/Services/CacheManager.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
+			path: app/Services/CacheManager.php
+
+		-
+			message: '#^Call to function is_string\(\) with non\-falsy\-string will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Services/ContentSanitizerService.php
+
+		-
+			message: '#^Offset 2 does not exist on array\{non\-falsy\-string, string\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: app/Services/ContentSanitizerService.php
+
+		-
+			message: '#^Offset ''description'' on array\{title\: string, description\: string\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 3
+			path: app/Services/ContentTextExtractor.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Database\\Eloquent\\Collection\<int,Illuminate\\Database\\Eloquent\\Model\>\:\:mapWithKeys\(\) expects callable\(Illuminate\\Database\\Eloquent\\Model, int\)\: array\<string, string\>, Closure\(App\\Models\\PageBlock\)\: non\-empty\-array\<string, string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/ContentTextExtractor.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-empty\-string and array\{\} will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Services/ContentTextExtractor.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between string and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: app/Services/ContentTextExtractor.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$author\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/EditorialWorkflowService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$author_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/EditorialWorkflowService.php
+
+		-
+			message: '#^Call to function method_exists\(\) with App\\Models\\User and ''hasPermission'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Services/EditorialWorkflowService.php
+
+		-
+			message: '#^Call to function method_exists\(\) with App\\Models\\User and ''hasRole'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: app/Services/EditorialWorkflowService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/EditorialWorkflowService.php
 
 		-
 			message: '#^Offset ''conditions'' on non\-empty\-array on left side of \?\? always exists and is not nullable\.$#'
@@ -903,13 +1509,13 @@ parameters:
 		-
 			message: '#^Offset 2 on array\{list\<string\>, list\<non\-empty\-string\>, list\<non\-empty\-string\>\} on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.offset
-			count: 1
+			count: 2
 			path: app/Services/MediaUsageService.php
 
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 3
+			count: 4
 			path: app/Services/MediaUsageService.php
 
 		-
@@ -949,6 +1555,18 @@ parameters:
 			path: app/Services/SchemaBuilder.php
 
 		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$is_active\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/SearchIndexer.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$publicly_queryable\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/SearchIndexer.php
+
+		-
 			message: '#^Using nullsafe property access "\?\-\>canonical_url" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 1
@@ -965,6 +1583,12 @@ parameters:
 			identifier: nullsafe.neverNull
 			count: 1
 			path: app/Services/SeoRenderer.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Services/SvgSanitizerService.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\View\\ViewFinderInterface\:\:getPaths\(\)\.$#'

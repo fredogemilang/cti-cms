@@ -39,22 +39,22 @@
         <div class="md:col-span-2 bg-[#1A1A1A] border border-[#272B30] rounded-2xl p-6 space-y-6">
             <h3 class="text-md font-bold text-white">OAuth Credentials</h3>
             
-            <form wire:submit.prevent="save" class="space-y-4">
+            <form wire:submit="save" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-2">OAuth Client ID</label>
-                    <input type="text" wire:model.defer="clientId" class="w-full bg-[#111] border border-[#272B30] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="Paste your Google OAuth Client ID">
+                    <input type="text" wire:model="clientId" class="w-full bg-[#111] border border-[#272B30] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="Paste your Google OAuth Client ID">
                     @error('clientId') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-2">OAuth Client Secret</label>
-                    <input type="password" wire:model.defer="clientSecret" class="w-full bg-[#111] border border-[#272B30] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="••••••••••••••••">
+                    <input type="password" wire:model="clientSecret" class="w-full bg-[#111] border border-[#272B30] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="••••••••••••••••">
                     @error('clientSecret') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-[#6F767E] uppercase tracking-wider mb-2">Google Analytics 4 Property ID</label>
-                    <input type="text" wire:model.defer="propertyId" class="w-full bg-[#111] border border-[#272B30] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. 123456789">
+                    <input type="text" wire:model="propertyId" class="w-full bg-[#111] border border-[#272B30] rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. 123456789">
                     <p class="text-xs text-[#6F767E] mt-1">Can be found in GA4 Admin → Property Settings → Property Details.</p>
                     @error('propertyId') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
                 </div>

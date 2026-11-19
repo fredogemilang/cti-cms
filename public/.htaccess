@@ -98,10 +98,24 @@ FileETag None
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # Redirect Trailing Slashes If Not A Folder...
+    # ==========================================
+    # Site-specific canonical host / legacy redirect maps go HERE,
+    # BEFORE the trailing slash block (project branches only).
+    # ==========================================
+
+    # ==========================================
+    # Add trailing slash (inverse of Laravel default).
+    # Must match trailing_slash_url() in app/helpers.php.
+    # ==========================================
+    # GET & HEAD only so POST/AJAX/Livewire are never redirected
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+    RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
+    RewriteCond %{REQUEST_URI} !^/(ctrlpanel|api|livewire|_deferred|storage|build|themes|vendor|wp-content)
+    RewriteCond %{REQUEST_URI} !^/(feed|search|lang/|forms/|indexnow-)
+    RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]{1,6}$
+    RewriteCond %{REQUEST_URI} !/$
+    RewriteRule ^(.*)$ /$1/ [R=301,L]
 
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d

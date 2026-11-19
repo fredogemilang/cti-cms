@@ -7,6 +7,7 @@ use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
 use App\Models\Page;
 use App\Models\TaxonomyTerm;
+use App\Support\Filter;
 use Illuminate\Database\Eloquent\Model;
 use Plugins\Posts\Models\Category;
 use Plugins\Posts\Models\Post;
@@ -96,12 +97,9 @@ class BreadcrumbService
         }
 
         if ($entity instanceof CustomPostType) {
-            $cptLabel = $entity->getTranslation('plural_label', $locale) ?: match ($entity->slug) {
-                'technology-alliance' => t('common.technology_alliance', 'Technology Alliance'),
-                'solution' => t('nav.solutions', 'Solutions'),
-                'industry' => t('industry.subtitle', 'Industry'),
-                default => $entity->plural_label ?: ucfirst((string) $entity->name),
-            };
+            // Themes can supply labels for CPTs without a translated plural label.
+            $cptLabel = Filter::apply('breadcrumb.cpt_label', $entity->getTranslation('plural_label', $locale) ?: null, $entity, $locale)
+                ?: ($entity->plural_label ?: ucfirst((string) $entity->name));
 
             $archiveUrl = $entity->getArchiveUrl($locale);
 
@@ -123,12 +121,9 @@ class BreadcrumbService
 
             // CPT Archive level
             if ($postType) {
-                $cptLabel = $postType->getTranslation('plural_label', $locale) ?: match ($postType->slug) {
-                    'technology-alliance' => t('common.technology_alliance', 'Technology Alliance'),
-                    'solution' => t('nav.solutions', 'Solutions'),
-                    'industry' => t('industry.subtitle', 'Industry'),
-                    default => $postType->plural_label ?: ucfirst((string) $postType->name),
-                };
+                // Themes can supply labels for CPTs without a translated plural label.
+                $cptLabel = Filter::apply('breadcrumb.cpt_label', $postType->getTranslation('plural_label', $locale) ?: null, $postType, $locale)
+                    ?: ($postType->plural_label ?: ucfirst((string) $postType->name));
 
                 $archiveUrl = $postType->getArchiveUrl($locale);
 

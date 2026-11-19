@@ -226,7 +226,7 @@ class FormNotificationService
                         '.$parsedContent.'
                     </div>
                     <div class="footer">
-                        <p>Automated Admin Notification — Central Data Technology CMS</p>
+                        <p>Automated Admin Notification — '.e((string) setting('site_name', config('app.name'))).'</p>
                     </div>
                 </div>
             </body>
@@ -319,7 +319,7 @@ class FormNotificationService
                         '.$parsedContent.'
                     </div>
                     <div class="footer">
-                        <p>This email was sent because you submitted a request on Central Data Technology.</p>
+                        <p>This email was sent because you submitted a request on '.e((string) setting('site_name', config('app.name'))).'.</p>
                     </div>
                 </div>
             </body>

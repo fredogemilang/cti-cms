@@ -9,6 +9,7 @@ use App\Models\CustomTaxonomy;
 use App\Services\PermissionRegistry;
 use App\Services\PluginLoader;
 use App\Services\PluginManager;
+use App\Support\Action;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
@@ -48,30 +49,9 @@ class PluginServiceProvider extends ServiceProvider
 
                 $localePattern = $this->nonDefaultLocalesPattern();
 
-                // Register CDT theme short CPT routes
-                if (active_theme()?->slug === 'cdt') {
-                    if ($localePattern !== 'nothing-to-match') {
-                        Route::get('/{locale}/{vendorSlug}/{productSlug}', [ArchiveController::class, 'localeShortProductSingle'])
-                            ->where('locale', $localePattern)
-                            ->where('vendorSlug', '[a-zA-Z0-9\-]+')
-                            ->where('productSlug', '[a-zA-Z0-9\-]+')
-                            ->name('locale.cdt.product.single');
-
-                        Route::get('/{locale}/{vendorSlug}', [ArchiveController::class, 'localeShortVendorSingle'])
-                            ->where('locale', $localePattern)
-                            ->where('vendorSlug', '(?!'.preg_quote($adminPath, '/').')[a-zA-Z0-9\-]+')
-                            ->name('locale.cdt.vendor.single');
-                    }
-
-                    Route::get('/{vendorSlug}/{productSlug}', [ArchiveController::class, 'shortProductSingle'])
-                        ->where('vendorSlug', '[a-zA-Z0-9\-]+')
-                        ->where('productSlug', '[a-zA-Z0-9\-]+')
-                        ->name('cdt.product.single');
-
-                    Route::get('/{vendorSlug}', [ArchiveController::class, 'shortVendorSingle'])
-                        ->where('vendorSlug', '(?!'.preg_quote($adminPath, '/').')[a-zA-Z0-9\-]+')
-                        ->name('cdt.vendor.single');
-                }
+                // Theme/plugin URL schemes that must win over the page catch-all
+                // (e.g. /{vendor}/{product}) hook in here — see App\Support\Action.
+                Action::run('routes.before_catch_all', $adminPath, $localePattern);
 
                 if ($localePattern !== 'nothing-to-match') {
                     // Localized Catch-all: Pages (e.g. /id/about-us)

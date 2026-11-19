@@ -27,8 +27,8 @@ test('translation registry models and relationships work correctly', function ()
     $source = StringTranslationSource::create([
         'translation_key_id' => $key->id,
         'source_type' => 'theme',
-        'source_name' => 'cdt',
-        'source_file' => 'themes/cdt/views/header.blade.php',
+        'source_name' => 'example-theme',
+        'source_file' => 'themes/example-theme/views/header.blade.php',
     ]);
 
     expect($key->translations)->toHaveCount(1)

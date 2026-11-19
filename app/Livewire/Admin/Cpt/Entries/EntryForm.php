@@ -10,6 +10,8 @@ use App\Models\CustomTaxonomy;
 use App\Models\MetaField;
 use App\Models\TaxonomyTerm;
 use App\Services\ContentLockService;
+use App\Services\EditorialWorkflowService;
+use App\Support\Filter;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -26,7 +28,17 @@ class EntryForm extends Component
 
     public ?int $entryId = null;
 
+    public ?CptEntry $entry = null;
+
     public bool $isEdit = false;
+
+    public bool $canApprove = false;
+
+    public array $allowedStatuses = [];
+
+    public bool $showChangeRequestModal = false;
+
+    public string $changeRequestNote = '';
 
     public ?array $activeLock = null;
 
@@ -170,7 +182,7 @@ class EntryForm extends Component
             'slug' => $isDefaultLocale ? 'required|string|max:255' : 'nullable|string|max:255',
             'content' => 'nullable|string',
             'excerpt' => 'nullable|string|max:500',
-            'status' => 'required|in:draft,pending,published,scheduled,archived',
+            'status' => 'required|in:draft,pending,pending_review,published,scheduled,archived',
             'publishedAt' => 'nullable|date',
             'parentId' => 'nullable|integer|exists:cpt_entries,id',
             'menuOrder' => 'integer|min:0',
@@ -221,6 +233,10 @@ class EntryForm extends Component
         $this->postType = $postType;
         $this->availableLocales = available_locales();
         $this->editingLocale = CptEntry::defaultLocale();
+
+        $workflow = app(EditorialWorkflowService::class);
+        $this->canApprove = $workflow->canApprove();
+        $this->allowedStatuses = $workflow->allowedStatuses();
 
         // Initialize meta fields with defaults
         foreach ($postType->metaFields as $field) {
@@ -375,6 +391,7 @@ class EntryForm extends Component
     protected function loadEntry()
     {
         $entry = CptEntry::with('terms')->findOrFail($this->entryId);
+        $this->entry = $entry;
 
         $this->title = $entry->title;
         $this->slug = $entry->slug;
@@ -446,14 +463,8 @@ class EntryForm extends Component
             }
         }
 
-        // Load reverse relationship (where current entry is child_entry_id)
-        $childRels = CptEntryRelationship::where('child_entry_id', $entry->id)->get();
-        foreach ($childRels as $cRel) {
-            $parentVendorField = $this->postType->metaFields->where('name', 'parent_vendor_id')->first();
-            if ($parentVendorField) {
-                $this->meta['parent_vendor_id'] = (string) $cRel->parent_entry_id;
-            }
-        }
+        // Let themes hydrate extra relationship meta (e.g. child → parent pointers).
+        $this->meta = (array) Filter::apply('cpt_entry.form_meta', $this->meta, $entry, $this->postType);
 
         // Hydrate per-locale snapshots from translations JSON column AND meta _translations
         $defaultLocale = CptEntry::defaultLocale();
@@ -569,9 +580,8 @@ class EntryForm extends Component
 
             // Extract only non-media meta keys whose values differ from default locale
             $deltaMeta = [];
-            $mediaKeyList = ['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'];
             foreach ($snapshot['meta'] as $key => $value) {
-                if (in_array($key, $mediaKeyList, true)) {
+                if (CptEntry::isMediaKey($key)) {
                     continue;
                 }
                 if (! array_key_exists($key, $defaultMeta) || $value !== ($defaultMeta[$key] ?? null)) {
@@ -718,9 +728,8 @@ class EntryForm extends Component
 
             // Extract only non-media meta keys whose values differ from default locale
             $deltaMeta = [];
-            $mediaKeyList = ['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'];
             foreach ($snapshot['meta'] as $key => $value) {
-                if (in_array($key, $mediaKeyList, true)) {
+                if (CptEntry::isMediaKey($key)) {
                     continue;
                 }
                 if (! array_key_exists($key, $defaultMeta) || $value !== ($defaultMeta[$key] ?? null)) {
@@ -773,9 +782,9 @@ class EntryForm extends Component
                     if (is_array($mVal) && isset($defaultMetaSnap[$mKey]) && is_array($defaultMetaSnap[$mKey])) {
                         foreach ($mVal as $idx => &$subItem) {
                             if (is_array($subItem) && isset($defaultMetaSnap[$mKey][$idx]) && is_array($defaultMetaSnap[$mKey][$idx])) {
-                                foreach (['icon', 'icon_type', 'image', 'logo', 'media', 'banner_logo', 'about_image'] as $mediaKey) {
-                                    if (isset($defaultMetaSnap[$mKey][$idx][$mediaKey])) {
-                                        $subItem[$mediaKey] = $defaultMetaSnap[$mKey][$idx][$mediaKey];
+                                foreach ($defaultMetaSnap[$mKey][$idx] as $subKey => $subVal) {
+                                    if (CptEntry::isMediaKey($subKey)) {
+                                        $subItem[$subKey] = $subVal;
                                     }
                                 }
                             }
@@ -794,6 +803,11 @@ class EntryForm extends Component
             $finalMeta['_translations'] = $metaTranslations;
         }
 
+        $workflow = app(EditorialWorkflowService::class);
+        $resolved = $workflow->resolveStatus($this->status);
+        $this->status = $resolved['status'];
+        $oldStatus = $this->isEdit && $this->entry ? $this->entry->getOriginal('status') : null;
+
         $data = [
             'post_type_id' => $this->postType->id,
             'title' => $defaultSnap['title'] ?? '',
@@ -807,6 +821,7 @@ class EntryForm extends Component
                 : ($this->publishedAt ? Carbon::parse($this->publishedAt) : null),
             'parent_id' => $this->parentId,
             'menu_order' => $this->menuOrder,
+            'author_id' => $this->isEdit && $this->entry ? $this->entry->author_id : auth()->id(),
             'updated_by' => auth()->id(),
             'meta' => $finalMeta,
             'translations' => $translations ?: null,
@@ -819,6 +834,8 @@ class EntryForm extends Component
             $entry = CptEntry::create($data);
             $this->entryId = $entry->id;
         }
+
+        $this->entry = $entry;
 
         $this->releaseLock();
 
@@ -833,56 +850,28 @@ class EntryForm extends Component
         foreach ($this->postType->metaFields as $field) {
             /** @var MetaField $field */
             if ($field->type === 'relationship') {
-                if ($field->name === 'parent_vendor_id') {
-                    $parentMetaFieldId = MetaField::where('name', 'product_id')
-                        ->where('options->target_cpt', 'tech-products')
-                        ->value('id') ?? 43;
+                // Themes can take over syncing of special relationship fields
+                // (e.g. a child → parent pointer). Return true when handled.
+                if (Filter::apply('cpt_entry.sync_relationship_field', false, $field, $entry, $this->meta)) {
+                    continue;
+                }
 
-                    CptEntryRelationship::where('child_entry_id', $entry->id)
-                        ->where('meta_field_id', $parentMetaFieldId)
-                        ->delete();
+                CptEntryRelationship::where('parent_entry_id', $entry->id)
+                    ->where('meta_field_id', $field->id)
+                    ->delete();
 
-                    $parentVendorId = $this->meta['parent_vendor_id'] ?? null;
-                    if (! empty($parentVendorId)) {
-                        $parentEntryId = (int) (is_array($parentVendorId) ? ($parentVendorId[0] ?? 0) : $parentVendorId);
-                        if ($parentEntryId > 0) {
-                            CptEntryRelationship::create([
-                                'parent_entry_id' => $parentEntryId,
-                                'child_entry_id' => $entry->id,
-                                'meta_field_id' => $parentMetaFieldId,
-                                'order' => 0,
-                            ]);
-
-                            $parentEntry = CptEntry::find($parentEntryId);
-                            if ($parentEntry) {
-                                $metaData = $entry->meta ?? [];
-                                $metaData['parent_vendor'] = $parentEntry->slug;
-                                $entry->meta = $metaData;
-                                if (empty($entry->featured_image) && ! empty($parentEntry->featured_image)) {
-                                    $entry->featured_image = $parentEntry->featured_image;
-                                }
-                                $entry->save();
-                            }
-                        }
-                    }
-                } else {
-                    CptEntryRelationship::where('parent_entry_id', $entry->id)
-                        ->where('meta_field_id', $field->id)
-                        ->delete();
-
-                    $val = $this->meta[$field->name] ?? null;
-                    if (! empty($val)) {
-                        $childIds = is_array($val) ? $val : [$val];
-                        $uniqueChildIds = array_values(array_unique(array_filter($childIds)));
-                        foreach ($uniqueChildIds as $order => $childId) {
-                            CptEntryRelationship::updateOrCreate([
-                                'parent_entry_id' => $entry->id,
-                                'child_entry_id' => (int) $childId,
-                                'meta_field_id' => $field->id,
-                            ], [
-                                'order' => $order,
-                            ]);
-                        }
+                $val = $this->meta[$field->name] ?? null;
+                if (! empty($val)) {
+                    $childIds = is_array($val) ? $val : [$val];
+                    $uniqueChildIds = array_values(array_unique(array_filter($childIds)));
+                    foreach ($uniqueChildIds as $order => $childId) {
+                        CptEntryRelationship::updateOrCreate([
+                            'parent_entry_id' => $entry->id,
+                            'child_entry_id' => (int) $childId,
+                            'meta_field_id' => $field->id,
+                        ], [
+                            'order' => $order,
+                        ]);
                     }
                 }
             }
@@ -903,11 +892,13 @@ class EntryForm extends Component
             'is_autosave' => false,
         ]);
 
+        $workflow->handleTransition($entry, $entry->status, $oldStatus);
+
         $this->dispatch('notify', [
-            'type' => 'success',
-            'message' => $this->isEdit
-                ? "'{$this->title}' updated successfully."
-                : "'{$this->title}' created successfully.",
+            'type' => $resolved['downgraded'] ? 'info' : 'success',
+            'message' => $resolved['downgraded']
+                ? $resolved['message']
+                : ($this->isEdit ? "'{$this->title}' updated successfully." : "'{$this->title}' created successfully."),
         ]);
 
         $queryParams = array_filter([
@@ -919,6 +910,76 @@ class EntryForm extends Component
             ['postTypeSlug' => $this->postType->slug, 'id' => $entry->id],
             $queryParams
         ));
+    }
+
+    public function approveAndPublish()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        if (! $this->isEdit || ! $this->entryId) {
+            return;
+        }
+
+        $entry = CptEntry::findOrFail($this->entryId);
+        $oldStatus = $entry->status;
+        $entry->update([
+            'status' => 'published',
+            'published_at' => $entry->published_at ?? now(),
+            'updated_by' => auth()->id(),
+        ]);
+        $this->status = 'published';
+        $this->publishedAt = $entry->published_at?->format('Y-m-d\TH:i');
+        $this->entry = $entry;
+
+        $workflow->handleTransition($entry, 'published', $oldStatus);
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => "'{$entry->title}' approved and published successfully.",
+        ]);
+    }
+
+    public function openChangeRequestModal()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+        $this->changeRequestNote = '';
+        $this->showChangeRequestModal = true;
+    }
+
+    public function closeChangeRequestModal()
+    {
+        $this->showChangeRequestModal = false;
+    }
+
+    public function submitChangeRequest()
+    {
+        $workflow = app(EditorialWorkflowService::class);
+        abort_unless($workflow->canApprove(), 403);
+
+        $this->validate([
+            'changeRequestNote' => 'required|string|min:3|max:1000',
+        ]);
+
+        if (! $this->isEdit || ! $this->entryId) {
+            return;
+        }
+
+        $entry = CptEntry::findOrFail($this->entryId);
+        $oldStatus = $entry->status;
+        $entry->update([
+            'status' => 'draft',
+            'updated_by' => auth()->id(),
+        ]);
+        $this->status = 'draft';
+        $this->entry = $entry;
+
+        $workflow->handleTransition($entry, 'draft', $oldStatus, auth()->user(), $this->changeRequestNote);
+        $this->showChangeRequestModal = false;
+        $this->dispatch('notify', [
+            'type' => 'warning',
+            'message' => "Changes requested on '{$entry->title}'. Entry moved to draft.",
+        ]);
     }
 
     public function saveAsDraft()

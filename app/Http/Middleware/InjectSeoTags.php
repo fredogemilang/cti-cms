@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\CptEntry;
+use App\Models\CustomPostType;
 use App\Models\CustomTaxonomy;
 use App\Models\Page;
 use App\Models\TaxonomyTerm;
@@ -12,6 +14,8 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\View;
 use Plugins\Posts\Models\Category;
 use Plugins\Posts\Models\Tag;
 
@@ -62,25 +66,81 @@ class InjectSeoTags
         $entity = $this->resolveEntity($response, $request);
         $seo = $this->seoRenderer->resolve($entity);
 
+        // Search result pages must always be noindex, follow
+        if ($request->routeIs('search', 'locale.search')) {
+            $seo['robots'] = 'noindex, follow';
+            $seo['title'] = 'Search Results — '.setting('site_name', config('app.name'));
+            $response->headers->set('X-Robots-Tag', 'noindex, follow');
+        }
+
         // Replace existing <title> tag only if entity was resolved or if existing <title> is generic
         if ($entity && preg_match('/<title\b[^>]*>(.*?)<\/title>/is', $content)) {
             $content = (string) preg_replace('/<title\b[^>]*>(.*?)<\/title>/is', '<title>'.e($seo['title']).'</title>', $content);
         }
 
-        // Replace existing <meta name="robots"> if present so noindex,follow takes full precedence
-        if ($seo['robots'] !== 'index,follow' && preg_match('/<meta\s+name=["\']robots["\'][^>]*>/is', $content)) {
-            $content = (string) preg_replace('/<meta\s+name=["\']robots["\'][^>]*>/is', '<meta name="robots" content="'.e($seo['robots']).'">', $content);
+        // Robots directive resolution
+        $robotsDirective = $seo['robots'] ?? 'index, follow';
+        $fullRobotsTag = ($robotsDirective === 'index,follow' || $robotsDirective === 'index, follow')
+            ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+            : $robotsDirective;
+
+        // If existing <meta name="robots"> tag is present in HTML, replace it with the resolved directive
+        $hasExistingRobots = (bool) preg_match('/<meta\s+name=["\']robots["\'][^>]*>/is', $content);
+        if ($hasExistingRobots) {
+            $content = (string) preg_replace('/<meta\s+name=["\']robots["\'][^>]*>/is', '<meta name="robots" content="'.e($fullRobotsTag).'">', $content);
         }
 
         // Build SEO tags
-        $seoHtml = $this->buildSeoHtml($seo, $entity);
+        $seoHtml = $this->buildSeoHtml($seo, $entity, $hasExistingRobots);
 
         // Inject just before </head>, after any existing @stack('meta') content
         $content = str_replace('</head>', $seoHtml."\n</head>", $content);
 
+        // Inject GTM noscript right after opening <body>
+        if (setting('gsk_enabled', true) && ($gtmId = setting('gsk_gtm_id'))) {
+            $noscript = '<!-- Google Tag Manager (noscript) --><noscript><iframe src="https://www.googletagmanager.com/ns.html?id='.e($gtmId).'" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript><!-- End Google Tag Manager (noscript) -->';
+            $content = (string) preg_replace('/(<body\b[^>]*>)/i', '$1'."\n  ".$noscript, $content, 1);
+        }
+
         $response->setContent($content);
 
         return $response;
+    }
+
+    /**
+     * Generic CPT entry lookup for custom (theme/plugin) routes whose slug
+     * parameters are not named after a model, e.g. /{parentSlug}/{childSlug}.
+     * The most specific (last) parameter is tried first, against every active CPT.
+     */
+    protected function resolveCptEntryFromRouteParameters(Route $route): ?Model
+    {
+        $reserved = [
+            'locale', 'localeOrSlug', 'slug', 'cptSlug', 'category', 'tag', 'taxonomy',
+            'taxonomySlug', 'term', 'termSlug', 'page', 'section', 'any', 'key', 'type',
+        ];
+
+        $candidates = [];
+        foreach ($route->parameters() as $name => $value) {
+            if (is_string($value) && $value !== '' && ! in_array($name, $reserved, true)) {
+                $candidates[] = $value;
+            }
+        }
+
+        if ($candidates === []) {
+            return null;
+        }
+
+        $cpts = CustomPostType::where('is_active', true)->get();
+        foreach (array_reverse($candidates) as $slug) {
+            foreach ($cpts as $cpt) {
+                $entry = CptEntry::findByLocalizedSlug($cpt, $slug);
+                if ($entry) {
+                    return $entry;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -89,25 +149,53 @@ class InjectSeoTags
      */
     protected function resolveEntity(Response $response, Request $request): ?Model
     {
+        // 1. Check original view response data (most specific to this action)
         $original = $response->getOriginalContent();
 
         if (is_object($original) && method_exists($original, 'getData')) {
             $data = $original->getData();
-            foreach (['page', 'entry', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm'] as $key) {
+            foreach (['postType', 'cpt', 'category', 'tag', 'term', 'taxonomyTerm', 'page', 'entry', 'cpt_entry', 'post', 'event'] as $key) {
                 if (isset($data[$key]) && $data[$key] instanceof Model) {
                     return $data[$key];
                 }
             }
         }
 
-        // Fallback 1: Route parameters
+        // 2. Check request attributes (populated by controllers like ArchiveController or PageController)
+        foreach (['postType', 'cpt', 'category', 'tag', 'term', 'taxonomyTerm', 'page', 'entry', 'cpt_entry', 'post', 'event'] as $key) {
+            $val = $request->attributes->get($key);
+            if ($val instanceof Model) {
+                return $val;
+            }
+        }
+
+        // 3. Check route parameters (theme/plugin custom routes or CPT archives)
         $route = $request->route();
         if ($route) {
-            foreach (['page', 'entry', 'post', 'event', 'category', 'tag', 'term', 'taxonomyTerm'] as $param) {
+            foreach (['postType', 'cpt', 'category', 'tag', 'term', 'taxonomyTerm', 'page', 'entry', 'cpt_entry', 'post', 'event'] as $param) {
                 $val = $route->parameter($param);
                 if ($val instanceof Model) {
                     return $val;
                 }
+            }
+
+            // CPT Archive route parameter
+            $cptSlug = $route->parameter('cptSlug');
+            if ($cptSlug && class_exists(CustomPostType::class)) {
+                $cptModel = CustomPostType::where('slug', $cptSlug)
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$cptSlug])
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$cptSlug])
+                    ->first();
+                if ($cptModel) {
+                    return $cptModel;
+                }
+            }
+
+            // Theme/plugin custom CPT routes (e.g. /{parentSlug}/{childSlug}):
+            // try free-form string parameters against every active CPT.
+            $entry = $this->resolveCptEntryFromRouteParameters($route);
+            if ($entry) {
+                return $entry;
             }
 
             $catSlug = $route->parameter('category');
@@ -149,15 +237,45 @@ class InjectSeoTags
             }
         }
 
-        // Fallback 2: Homepage
+        // Fallback 2: Homepage (including localized homepage like /id)
         $path = trim($request->path(), '/');
-        if ($path === '' || $path === '/') {
+        $locales = function_exists('available_locales') ? available_locales() : ['en', 'id'];
+        if ($path === '' || $path === '/' || in_array($path, $locales, true)) {
             return Page::where('slug', 'home')->first();
         }
 
-        // Fallback 3: Single page path
-        if ($path && ! str_contains($path, '/')) {
-            return Page::findByLocalizedSlug($path);
+        // Strip locale prefix if present
+        $cleanPath = $path;
+        foreach ($locales as $loc) {
+            if (str_starts_with($cleanPath, $loc.'/')) {
+                $cleanPath = substr($cleanPath, strlen($loc) + 1);
+                break;
+            }
+        }
+
+        // Fallback 3: Single page path, CPT archive path, or single CPT entry path
+        if ($cleanPath && ! str_contains($cleanPath, '/')) {
+            $page = Page::findByLocalizedSlug($cleanPath);
+            if ($page) {
+                return $page;
+            }
+            if (class_exists(CustomPostType::class)) {
+                $cpt = CustomPostType::where('slug', $cleanPath)
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.id.slug") = ?', [$cleanPath])
+                    ->orWhereRaw('JSON_EXTRACT(translations, "$.en.slug") = ?', [$cleanPath])
+                    ->first();
+                if ($cpt) {
+                    return $cpt;
+                }
+            }
+            if (class_exists(CptEntry::class)) {
+                $entry = CptEntry::where('slug', $cleanPath)
+                    ->orWhere('translations->id->slug', $cleanPath)
+                    ->first();
+                if ($entry) {
+                    return $entry;
+                }
+            }
         }
 
         return null;
@@ -166,7 +284,7 @@ class InjectSeoTags
     /**
      * Build the full SEO/GEO HTML string to inject.
      */
-    protected function buildSeoHtml(array $seo, ?Model $entity = null): string
+    protected function buildSeoHtml(array $seo, ?Model $entity = null, bool $hasExistingRobots = false): string
     {
         $lines = [];
 
@@ -178,13 +296,27 @@ class InjectSeoTags
         }
 
         // Robots
-        if ($seo['robots'] !== 'index,follow') {
-            $lines[] = '<meta name="robots" content="'.e($seo['robots']).'">';
+        if (! $hasExistingRobots) {
+            $robotsDirective = $seo['robots'] ?? 'index, follow';
+            $fullRobotsTag = ($robotsDirective === 'index,follow' || $robotsDirective === 'index, follow')
+                ? 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+                : $robotsDirective;
+
+            $lines[] = '<meta name="robots" content="'.e($fullRobotsTag).'">';
         }
 
         // Canonical
         if ($seo['canonical']) {
             $lines[] = '<link rel="canonical" href="'.e($seo['canonical']).'">';
+        }
+
+        // Hreflang alternates
+        if (! empty($seo['hreflangs']) && is_array($seo['hreflangs'])) {
+            foreach ($seo['hreflangs'] as $lang => $url) {
+                if (! empty($url)) {
+                    $lines[] = '<link rel="alternate" hreflang="'.e($lang).'" href="'.e($url).'">';
+                }
+            }
         }
 
         // Open Graph
@@ -235,16 +367,14 @@ class InjectSeoTags
         if ($ahrefs = setting('seo_ahrefs_verification')) {
             $lines[] = '<meta name="ahrefs-site-verification" content="'.e($ahrefs).'">';
         }
-        // Google Site Kit Tracking Snippets (GA4, GTM, Ads)
+        // Google Site Kit Tracking Snippets (GA4, GTM, Ads - Optimized Smart Delayed Loading)
         if (setting('gsk_enabled', true)) {
-            if ($ga4Id = setting('gsk_ga4_tag_id')) {
-                $lines[] = '<!-- Google Analytics (gtag.js) -->';
-                $lines[] = '<script async src="https://www.googletagmanager.com/gtag/js?id='.e($ga4Id).'"></script>';
-                $lines[] = '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","'.e($ga4Id).'");</script>';
-            }
             if ($gtmId = setting('gsk_gtm_id')) {
-                $lines[] = '<!-- Google Tag Manager -->';
-                $lines[] = '<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src="https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);})(window,document,"script","dataLayer","'.e($gtmId).'");</script>';
+                $lines[] = '<!-- Google Tag Manager (Smart Delayed Load) -->';
+                $lines[] = '<script data-no-optimize="1">window.dataLayer=window.dataLayer||[];(function(){var l=false;function g(){if(l)return;l=true;["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.removeEventListener(e,g,{passive:true})});(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src="https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);})(window,document,"script","dataLayer","'.e($gtmId).'");}["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.addEventListener(e,g,{once:true,passive:true})});if("requestIdleCallback" in window){requestIdleCallback(function(){setTimeout(g,4000);});}else if(document.readyState==="complete"){setTimeout(g,4000);}else{window.addEventListener("load",function(){setTimeout(g,4000);},{once:true,passive:true});}})();</script>';
+            } elseif ($ga4Id = setting('gsk_ga4_tag_id')) {
+                $lines[] = '<!-- Google Analytics (gtag.js - Smart Delayed Load) -->';
+                $lines[] = '<script data-no-optimize="1">window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","'.e($ga4Id).'");(function(){var l=false;function g(){if(l)return;l=true;["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.removeEventListener(e,g,{passive:true})});var s=document.createElement("script");s.async=true;s.src="https://www.googletagmanager.com/gtag/js?id='.e($ga4Id).'";document.head.appendChild(s);}["scroll","mousemove","touchstart","click","keydown"].forEach(function(e){window.addEventListener(e,g,{once:true,passive:true})});if("requestIdleCallback" in window){requestIdleCallback(function(){setTimeout(g,4000);});}else if(document.readyState==="complete"){setTimeout(g,4000);}else{window.addEventListener("load",function(){setTimeout(g,4000);},{once:true,passive:true});}})();</script>';
             }
             if ($adsId = setting('gsk_ads_id')) {
                 $lines[] = '<!-- Google Ads -->';

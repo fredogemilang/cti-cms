@@ -331,7 +331,7 @@ class PagesTable extends Component
         $this->validate([
             'quickEditTitle' => 'required|string|max:255',
             'quickEditSlug' => 'required|string|max:255|unique:pages,slug,'.$page->id,
-            'quickEditStatus' => 'required|in:draft,pending,published,scheduled,private',
+            'quickEditStatus' => 'required|in:draft,pending,pending_review,published,scheduled,private',
         ]);
 
         $page->update([
@@ -352,6 +352,7 @@ class PagesTable extends Component
         $statusCounts = [
             'all' => Page::count(),
             'published' => Page::where('status', 'published')->count(),
+            'pending_review' => Page::where('status', 'pending_review')->count(),
             'draft' => Page::where('status', 'draft')->count(),
             'scheduled' => Page::where('status', 'scheduled')->count(),
             'private' => Page::where('status', 'private')->count(),

@@ -61,7 +61,7 @@ class Settings extends Component
         $this->rss_full_text = (bool) Setting::get('rss_full_text', false);
         $this->rss_items = (int) Setting::get('rss_items', 10);
 
-        $this->paired_cpts = json_decode(Setting::get('paired_cpts', json_encode(['technology-alliance'])), true) ?: ['technology-alliance'];
+        $this->paired_cpts = json_decode(Setting::get('paired_cpts', '[]'), true) ?: [];
     }
 
     public function save()

@@ -78,7 +78,7 @@ class PageBlockHelperTest extends TestCase
         $default = [
             'title' => 'Blog, News & Video',
             'description' => 'Explore insights',
-            'image' => 'themes/cdt/assets/blog.jpg',
+            'image' => 'themes/default/assets/blog.jpg',
         ];
         $result = $page->cardBlock('blog_callout', $default);
         $this->assertSame($default, $result);

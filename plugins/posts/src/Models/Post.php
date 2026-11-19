@@ -144,7 +144,7 @@ class Post extends Model
             $archiveSlug = Setting::getArchiveSlug($locale);
         }
 
-        return url($prefix.'/'.$archiveSlug.'/'.$slug);
+        return trailing_slash_url(url($prefix.'/'.$archiveSlug.'/'.$slug));
     }
 
     public function scopeDraft($query)

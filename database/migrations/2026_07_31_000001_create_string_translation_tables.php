@@ -38,7 +38,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('translation_key_id')->constrained('string_translation_keys')->cascadeOnDelete();
             $table->string('source_type', 20)->default('core')->index(); // core, theme, plugin
-            $table->string('source_name', 50)->default('default'); // cdt, site-kit, etc.
+            $table->string('source_name', 50)->default('default'); // theme slug, site-kit, etc.
             $table->string('source_file')->nullable();
             $table->timestamps();
 

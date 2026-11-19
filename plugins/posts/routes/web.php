@@ -130,11 +130,11 @@ Route::middleware(['web'])->group(function () {
 
         $featuredPosts = Post::where('status', 'published')
             ->where('is_featured', true)
-            ->latest()
+            ->latest('published_at')
             ->take(4)
             ->get();
 
-        $postsQuery = Post::published()->latest();
+        $postsQuery = Post::published()->latest('published_at');
 
         if ($selectedCategory) {
             $postsQuery->whereHas('categories', function ($q) use ($selectedCategory) {
@@ -202,7 +202,7 @@ Route::middleware(['web'])->group(function () {
 
         $view = "{$themeSlug}::posts.index";
         if (! view()->exists($view)) {
-            $view = view()->exists('iccom::posts.index') ? 'iccom::posts.index' : 'posts::blog-index';
+            $view = 'posts::blog-index';
         }
 
         $category = $selectedCategory ? Category::where('slug', $selectedCategory)->orWhere('id', $selectedCategory)->first() : null;
@@ -255,7 +255,7 @@ Route::middleware(['web'])->group(function () {
         $canonicalUrl = $post->getUrl($currentLocale);
         $currentFullUrl = request()->url();
 
-        if ($currentFullUrl !== $canonicalUrl) {
+        if (rtrim($currentFullUrl, '/') !== rtrim($canonicalUrl, '/')) {
             $queryString = request()->getQueryString();
             $targetUrl = $canonicalUrl.($queryString ? "?{$queryString}" : '');
 
@@ -284,7 +284,7 @@ Route::middleware(['web'])->group(function () {
 
         $viewName = "{$themeSlug}::posts.single";
         if (! view()->exists($viewName)) {
-            $viewName = view()->exists('iccom::posts.single') ? 'iccom::posts.single' : 'posts::show';
+            $viewName = 'posts::show';
         }
 
         return view($viewName, [

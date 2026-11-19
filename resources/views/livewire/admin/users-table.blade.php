@@ -200,8 +200,7 @@
                     @can('users.delete')
                     @if($user->id !== auth()->id())
                     <button 
-                        x-data
-                        @click="$dispatch('open-delete-modal', { userId: {{ $user->id }}, userName: '{{ addslashes($user->name) }}' })"
+                        wire:click="confirmDeleteUser({{ $user->id }})"
                         class="w-9 h-9 p-2 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-colors"
                         data-tooltip="Delete User">
                         <span class="material-symbols-outlined text-[20px]">delete</span>
@@ -353,16 +352,119 @@
     </div>
     @endif
 
-    <!-- Delete Modal -->
+    <!-- WordPress-Style Individual Delete & Reassignment Modal -->
+    @if($showDeleteModal)
     <div 
-        x-data="{ 
-            show: false, 
-            userId: null, 
-            userName: '',
-            bulk: false
-        }"
-        @open-delete-modal.window="show = true; userId = $event.detail.userId; userName = $event.detail.userName; bulk = false"
-        @open-bulk-delete-modal.window="show = true; bulk = true"
+        class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-gray-900/60 dark:bg-[#0B0B0B]/85 backdrop-blur-sm"
+        x-data
+        x-cloak>
+        <div 
+            @click.outside="$wire.cancelDeleteUser()"
+            class="w-full max-w-[500px] bg-white dark:bg-[#1A1A1A] border border-gray-100 dark:border-[#272B30] rounded-3xl shadow-2xl p-6 sm:p-8 animate-in fade-in zoom-in-95 duration-200">
+            
+            @php
+                $totalContent = array_sum($userToDeleteContent);
+            @endphp
+
+            @if($totalContent > 0)
+                <!-- User has content: WordPress-Style Reassignment Required -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="h-16 w-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-5">
+                        <span class="material-symbols-outlined text-amber-500 text-3xl">warning</span>
+                    </div>
+                    
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-[#FCFCFC] mb-2">Content Reassignment Required</h3>
+                    
+                    <p class="text-gray-600 dark:text-[#A0A0A0] text-sm leading-relaxed mb-5">
+                        The user <span class="font-bold text-gray-900 dark:text-white">"{{ $userToDeleteName }}"</span> owns published content in the system. To prevent data loss, this content must be transferred to another administrator before deletion.
+                    </p>
+
+                    <!-- Content Breakdown Badges -->
+                    <div class="w-full grid grid-cols-3 gap-2 mb-6 text-left">
+                        <div class="p-3 rounded-2xl bg-gray-50 dark:bg-[#22262B] border border-gray-100 dark:border-[#2C3138]">
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Pages</p>
+                            <p class="text-lg font-extrabold text-blue-600 dark:text-blue-400">{{ $userToDeleteContent['pages'] ?? 0 }}</p>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-gray-50 dark:bg-[#22262B] border border-gray-100 dark:border-[#2C3138]">
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">CPT Entries</p>
+                            <p class="text-lg font-extrabold text-purple-600 dark:text-purple-400">{{ $userToDeleteContent['cpt_entries'] ?? 0 }}</p>
+                        </div>
+                        <div class="p-3 rounded-2xl bg-gray-50 dark:bg-[#22262B] border border-gray-100 dark:border-[#2C3138]">
+                            <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Media Files</p>
+                            <p class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">{{ $userToDeleteContent['media'] ?? 0 }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Target User Selection -->
+                    <div class="w-full text-left mb-6">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
+                            Attribute all content to:
+                        </label>
+                        <select 
+                            wire:model="reassignToUserId"
+                            class="w-full rounded-2xl border-gray-200 dark:border-[#272B30] bg-gray-50 dark:bg-[#0B0B0B] text-gray-900 dark:text-[#FCFCFC] py-3 px-4 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            @foreach($this->availableReassignUsers as $candidate)
+                                <option value="{{ $candidate->id }}">
+                                    {{ $candidate->name }} ({{ $candidate->email }}) {{ $candidate->id === auth()->id() ? '— (You)' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-3 w-full">
+                        <x-admin.ui.button 
+                            type="button" 
+                            variant="secondary" 
+                            wire:click="cancelDeleteUser" 
+                            class="flex-1 py-3">
+                            Cancel
+                        </x-admin.ui.button>
+                        <x-admin.ui.button 
+                            type="button" 
+                            variant="danger" 
+                            wire:click="deleteUserConfirmed" 
+                            class="flex-1 py-3 flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-lg">swap_horiz</span>
+                            <span>Reassign & Delete</span>
+                        </x-admin.ui.button>
+                    </div>
+                </div>
+            @else
+                <!-- User has NO content: Standard Confirmation -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="h-16 w-16 rounded-full bg-[#FF6A55]/10 flex items-center justify-center mb-5">
+                        <span class="material-symbols-outlined text-[#FF6A55] text-3xl">delete_forever</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-[#FCFCFC] mb-3">Delete User</h3>
+                    <p class="text-gray-500 dark:text-[#6F767E] leading-relaxed mb-6">
+                        Are you sure you want to delete <span class="font-bold text-gray-900 dark:text-white">"{{ $userToDeleteName }}"</span>? This user has no authored content. This action cannot be undone.
+                    </p>
+                    <div class="flex items-center gap-3 w-full">
+                        <x-admin.ui.button 
+                            type="button" 
+                            variant="secondary" 
+                            wire:click="cancelDeleteUser" 
+                            class="flex-1 py-3">
+                            Cancel
+                        </x-admin.ui.button>
+                        <x-admin.ui.button 
+                            type="button" 
+                            variant="danger" 
+                            wire:click="deleteUserConfirmed" 
+                            class="flex-1 py-3">
+                            Delete User
+                        </x-admin.ui.button>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+    @endif
+
+    <!-- Bulk Delete Modal -->
+    <div 
+        x-data="{ show: false }"
+        @open-bulk-delete-modal.window="show = true"
         x-show="show"
         x-cloak
         class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-900/50 dark:bg-[#0B0B0B]/80 backdrop-blur-sm"
@@ -386,30 +488,18 @@
                 <div class="h-16 w-16 rounded-full bg-[#FF6A55]/10 flex items-center justify-center mb-6">
                     <span class="material-symbols-outlined text-[#FF6A55] text-3xl">delete_forever</span>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-[#FCFCFC] mb-3">Delete User</h3>
-                <p class="text-gray-500 dark:text-[#6F767E] leading-relaxed mb-8">
-                    <template x-if="bulk">
-                        <span>Are you sure you want to delete <span class="font-bold">{{ count($selectedUsers) }}</span> selected user(s)? This action cannot be undone.</span>
-                    </template>
-                    <template x-if="!bulk">
-                        <span>Are you sure you want to delete "<span class="font-bold" x-text="userName"></span>"? This action cannot be undone.</span>
-                    </template>
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-[#FCFCFC] mb-3">Delete Selected Users</h3>
+                <p class="text-gray-500 dark:text-[#6F767E] leading-relaxed mb-6">
+                    Are you sure you want to delete <span class="font-bold">{{ count($selectedUsers) }}</span> selected user(s)? Users who own published content will be safely skipped.
                 </p>
                 <div class="flex items-center gap-3 w-full">
                     <x-admin.ui.button type="button" variant="secondary" @click="show = false" class="flex-1">
                         Cancel
                     </x-admin.ui.button>
                     <x-admin.ui.button 
-                        type="button"
-                        variant="danger"
-                        @click="
-                            if (bulk) {
-                                $wire.deleteSelected();
-                            } else {
-                                $wire.deleteUser(userId);
-                            }
-                            show = false;
-                        "
+                        type="button" 
+                        variant="danger" 
+                        @click="$wire.deleteSelected(); show = false;" 
                         class="flex-1">
                         Delete
                     </x-admin.ui.button>

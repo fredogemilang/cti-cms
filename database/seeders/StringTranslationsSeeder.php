@@ -58,7 +58,7 @@ class StringTranslationsSeeder extends Seeder
 
         foreach ($translations as $item) {
             StringTranslationKey::where('group', $item['group'])->where('key', $item['key'])->delete();
-            StringTranslationKey::where('group', 'ui')->where('key', $item['group'] . '.' . $item['key'])->delete();
+            StringTranslationKey::where('group', 'ui')->where('key', $item['group'].'.'.$item['key'])->delete();
 
             $tk = StringTranslationKey::create([
                 'group' => $item['group'],

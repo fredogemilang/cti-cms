@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Services\Sitemap\SitemapBuilder;
+use App\Traits\HasSeoMeta;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 
 class CustomPostType extends Model
 {
+    use HasSeoMeta;
+
     protected $fillable = [
         'name',
         'singular_label',
@@ -235,9 +238,9 @@ class CustomPostType extends Model
         $targetSlug = $this->getLocalizedSlug($locale);
 
         if ($locale !== $defaultLocale) {
-            $url = url('/'.$locale.'/'.$targetSlug);
+            $url = trailing_slash_url(url('/'.$locale.'/'.$targetSlug));
         } else {
-            $url = url('/'.$targetSlug);
+            $url = trailing_slash_url(url('/'.$targetSlug));
         }
 
         return apply_filters('cpt.archive_url', $url, $this, $locale);

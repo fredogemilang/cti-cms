@@ -56,7 +56,7 @@ return [
     */
     'webp' => [
         'enabled' => env('MEDIA_WEBP_ENABLED', true),
-        'quality' => env('MEDIA_WEBP_QUALITY', 80),
+        'quality' => env('MEDIA_WEBP_QUALITY', 75),
         'convert_types' => ['image/jpeg', 'image/jpg', 'image/png'],
     ],
 

@@ -11,6 +11,9 @@ class ThemeLoader
 {
     protected ?Theme $activeTheme = null;
 
+    /** @var array<string, true> Theme namespaces that already have an autoloader */
+    protected static array $autoloadedThemes = [];
+
     public function boot(): void
     {
         try {
@@ -103,10 +106,11 @@ class ThemeLoader
             View::prependNamespace('errors', "{$themePath}/errors");
         }
 
-        // Register available theme namespaces as fallbacks
-        foreach (['cdt', 'default'] as $fallbackSlug) {
-            $fallbackPath = base_path("themes/{$fallbackSlug}/views");
-            if (is_dir($fallbackPath)) {
+        // Register every installed theme as a view namespace fallback
+        // (e.g. '{slug}::partials.x' keeps working for non-active themes).
+        foreach (glob(base_path('themes/*/views'), GLOB_ONLYDIR) ?: [] as $fallbackPath) {
+            $fallbackSlug = basename(dirname($fallbackPath));
+            if ($fallbackSlug !== $theme->slug) {
                 View::addNamespace($fallbackSlug, $fallbackPath);
             }
         }
@@ -185,11 +189,18 @@ class ThemeLoader
     /**
      * Boot the active theme's service provider if it exists.
      * Convention: themes/{slug}/{StudlySlug}ThemeServiceProvider.php
+     *
+     * Theme classes (controllers, services, ...) live in themes/{slug}/src/
+     * under the Themes\{StudlySlug}\ namespace and are autoloaded at runtime,
+     * so no per-site composer.json entry is needed.
      */
     protected function bootThemeServiceProvider(Theme $theme): void
     {
         $slug = $theme->slug;
         $studly = str_replace(' ', '', ucwords(str_replace('-', ' ', $slug)));
+
+        $this->registerThemeAutoloader($slug, $studly);
+
         $file = base_path("themes/{$slug}/{$studly}ThemeServiceProvider.php");
 
         if (! file_exists($file)) {
@@ -218,5 +229,33 @@ class ThemeLoader
         if (method_exists($provider, 'boot')) {
             app()->call([$provider, 'boot']);
         }
+    }
+
+    /**
+     * Map Themes\{StudlySlug}\Foo\Bar to themes/{slug}/src/Foo/Bar.php.
+     */
+    protected function registerThemeAutoloader(string $slug, string $studly): void
+    {
+        $srcPath = base_path("themes/{$slug}/src");
+
+        if (isset(static::$autoloadedThemes[$studly]) || ! is_dir($srcPath)) {
+            return;
+        }
+
+        static::$autoloadedThemes[$studly] = true;
+        $prefix = "Themes\\{$studly}\\";
+
+        spl_autoload_register(function (string $class) use ($prefix, $srcPath): void {
+            if (! str_starts_with($class, $prefix)) {
+                return;
+            }
+
+            $relative = str_replace('\\', DIRECTORY_SEPARATOR, substr($class, strlen($prefix)));
+            $file = $srcPath.DIRECTORY_SEPARATOR.$relative.'.php';
+
+            if (is_file($file)) {
+                require_once $file;
+            }
+        });
     }
 }

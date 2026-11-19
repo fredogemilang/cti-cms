@@ -62,7 +62,7 @@
                 <div class="flex gap-2">
                     <input wire:model="blocks.{{ $index }}.value.image" type="text"
                         class="w-full h-10 rounded-lg bg-[#F4F5F6] dark:bg-[#0B0B0B] border-none text-sm text-[#111827] dark:text-[#FCFCFC] focus:ring-2 focus:ring-primary px-3"
-                        placeholder="e.g. themes/cdt/assets/... or uploads/..." />
+                        placeholder="e.g. themes/{theme}/assets/... or uploads/..." />
                     <button wire:click="openMediaPicker('block_{{ $index }}.image')" type="button"
                         class="h-10 px-3 shrink-0 rounded-lg bg-[#EFEFEF] dark:bg-[#272B30] hover:bg-gray-300 dark:hover:bg-[#353940] text-xs font-semibold flex items-center gap-1 transition-colors text-[#111827] dark:text-[#FCFCFC]">
                         <span class="material-symbols-outlined text-base">perm_media</span> Select

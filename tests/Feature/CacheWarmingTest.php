@@ -45,7 +45,7 @@ class CacheWarmingTest extends TestCase
         $this->assertSame(0, $result['failed']);
 
         Http::assertSent(function ($request) {
-            return str_contains($request->header('User-Agent')[0] ?? '', 'CdtCacheCrawler');
+            return str_contains($request->header('User-Agent')[0] ?? '', 'CmsCacheCrawler');
         });
     }
 

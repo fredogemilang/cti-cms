@@ -190,14 +190,14 @@ class SeoGeneralSettings extends Component
         $this->diversityPolicyPageId = (int) setting('seo_policy_diversity', 0);
 
         $this->orgType = (string) setting('seo_org_type', 'Organization');
-        $this->orgName = (string) setting('seo_org_name', 'Central Data Technology');
-        $this->orgAlternateName = (string) setting('seo_org_alternate_name', 'CDT');
+        $this->orgName = (string) setting('seo_org_name', (string) setting('site_name', config('app.name')));
+        $this->orgAlternateName = (string) setting('seo_org_alternate_name', '');
         $this->orgLogo = (string) setting('seo_org_logo', '');
         $this->orgDescription = (string) setting('seo_org_description', '');
-        $this->orgEmail = (string) setting('seo_org_email', (string) setting('site_email', 'marketing@centraldatatech.com'));
-        $this->orgPhone = (string) setting('seo_org_phone', (string) setting('site_phone', '(+62 21) 80622200'));
-        $this->orgAddress = (string) setting('seo_org_address', (string) setting('contact_address', 'Centennial Tower 12th Floor Jl. Jend. Gatot Subroto Kav. 24-25 Jakarta, 12930. Indonesia'));
-        $this->orgLegalName = (string) setting('seo_org_legal_name', 'PT Central Data Technology');
+        $this->orgEmail = (string) setting('seo_org_email', (string) setting('site_email', ''));
+        $this->orgPhone = (string) setting('seo_org_phone', (string) setting('site_phone', ''));
+        $this->orgAddress = (string) setting('seo_org_address', (string) setting('contact_address', ''));
+        $this->orgLegalName = (string) setting('seo_org_legal_name', '');
 
         $this->facebookUrl = (string) setting('seo_facebook_url', '');
         $this->twitterHandle = (string) setting('seo_twitter_handle', '');

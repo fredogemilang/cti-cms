@@ -124,36 +124,19 @@ class OptimizeHtml
 
     protected function inlineCriticalCss(string $html, string $css): string
     {
-        // Prepend body hiding rule to prevent FOUC during stylesheet swap
-        $hideBody = 'body{opacity:0;transition:opacity .15s ease-in}body.css-loaded{opacity:1}';
-        $tag = '<style data-critical>'.$hideBody.$css.'</style>';
+        // The whole point of critical CSS is to paint above-the-fold content
+        // before the full stylesheet arrives. Do NOT hide <body> until the
+        // deferred stylesheets load: that gate pushed FCP/LCP behind the slowest
+        // CSS request (+2s failsafe) on mobile and cost ~20 Lighthouse points.
+        // If the page flashes unstyled, the curated critical CSS is incomplete —
+        // fix the CSS (Settings → Page Optimization), don't re-add a gate.
+        $tag = '<style data-critical>'.$css.'</style>';
 
-        // Tiny JS: reveal page once deferred stylesheets finish loading (2s failsafe)
-        $reveal = '<script>'.
-            '(function(){'.
-                'function r(){document.body.classList.add("css-loaded")}'.
-                'var s=document.querySelectorAll("link[rel=preload][as=style]");'.
-                'if(!s.length){r();return}'.
-                'var n=s.length;'.
-                's.forEach(function(l){l.addEventListener("load",function(){if(--n<=0)r()})});'.
-                'setTimeout(r,2000)'.
-            '})();'.
-        '</script>';
-
-        // Insert critical style before </head>, reveal script before </body>
         if (stripos($html, '</head>') !== false) {
-            $html = preg_replace('/<\/head>/i', $tag.'</head>', $html, 1) ?? $html;
-        } else {
-            $html = $tag.$html;
+            return preg_replace('/<\/head>/i', $tag.'</head>', $html, 1) ?? $html;
         }
 
-        if (stripos($html, '</body>') !== false) {
-            $html = preg_replace('/<\/body>/i', $reveal.'</body>', $html, 1) ?? $html;
-        } else {
-            $html .= $reveal;
-        }
-
-        return $html;
+        return $tag.$html;
     }
 
     protected function deferStylesheets(string $html): string
@@ -163,14 +146,25 @@ class OptimizeHtml
             return $html;
         }
 
-        // Use the rel=preload + onload swap trick for non-blocking CSS
-        return preg_replace_callback(
+        // When the deferred stylesheet finally applies, every element whose
+        // computed style differs from the critical-CSS state starts its CSS
+        // transition at once (344 animations in one 200ms task on a real
+        // production homepage) and shifts layout. Suppress transitions while <html> carries
+        // `css-pending`; the last deferred link's onload removes it. No-JS users
+        // keep the class (transitions off) but still get the <noscript> sheet.
+        $onload = 'this.onload=null;this.rel=\'stylesheet\';'
+            .'if(!document.querySelector(\'link[data-deferred-css][rel=preload]\'))'
+            .'document.documentElement.classList.remove(\'css-pending\')';
+
+        $deferred = 0;
+        $html = preg_replace_callback(
             '/<link\b([^>]*\brel=("|\')stylesheet\2[^>]*\bhref=("|\')([^"\']+)\3[^>]*)\/?>/i',
-            function ($m) use ($patterns) {
+            function ($m) use ($patterns, $onload, &$deferred) {
                 $href = $m[4];
                 foreach ($patterns as $pat) {
                     if ($pat !== '' && str_contains($href, $pat)) {
-                        $rest = preg_replace('/\brel=("|\')stylesheet\1/', 'rel="preload" as="style" onload="this.onload=null;this.rel=\'stylesheet\'"', $m[1]);
+                        $deferred++;
+                        $rest = preg_replace('/\brel=("|\')stylesheet\1/', 'rel="preload" as="style" data-deferred-css onload="'.$onload.'"', $m[1]);
 
                         // Provide a <noscript> fallback for users without JS
                         return '<link'.$rest.'><noscript><link rel="stylesheet" href="'.htmlspecialchars($href, ENT_QUOTES).'"></noscript>';
@@ -181,6 +175,22 @@ class OptimizeHtml
             },
             $html,
         ) ?? $html;
+
+        if ($deferred === 0) {
+            return $html;
+        }
+
+        $suppress = '<style data-critical-pending>html.css-pending *,html.css-pending *::before,html.css-pending *::after{transition:none!important}</style>';
+        $html = preg_replace('/<\/head>/i', $suppress.'</head>', $html, 1) ?? $html;
+
+        return preg_replace_callback('/<html\b([^>]*)>/i', function ($m) {
+            $attrs = $m[1];
+            if (preg_match('/\bclass=("|\')([^"\']*)\1/i', $attrs, $c)) {
+                return '<html'.str_replace($c[0], 'class='.$c[1].trim($c[2].' css-pending').$c[1], $attrs).'>';
+            }
+
+            return '<html'.$attrs.' class="css-pending">';
+        }, $html, 1) ?? $html;
     }
 
     protected function shouldProcess(Request $request, Response $response): bool

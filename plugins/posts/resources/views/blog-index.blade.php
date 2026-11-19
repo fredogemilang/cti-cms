@@ -1,7 +1,11 @@
-@if(view()->exists('cdt::posts.index'))
-    @include('cdt::posts.index')
+@php
+    $blogThemeSlug = active_theme()?->slug ?? 'default';
+    $blogLayout = view()->exists($blogThemeSlug.'::layouts.app') ? $blogThemeSlug.'::layouts.app' : 'default::layouts.app';
+@endphp
+@if(view()->exists($blogThemeSlug.'::posts.index'))
+    @include($blogThemeSlug.'::posts.index')
 @else
-    @extends('cdt::layouts.app')
+    @extends($blogLayout)
 
     @php
         $locale = app()->getLocale();
@@ -41,9 +45,14 @@
 
         $allCategories = \Plugins\Posts\Models\Category::orderBy('name')->get();
         $allTags = \Plugins\Posts\Models\Tag::orderBy('name')->get();
+
+        // Posts without a featured image fall back to the default social image (SEO settings).
+        $fallbackImage = setting('seo_default_og_image')
+            ? resolve_block_asset((string) setting('seo_default_og_image'))
+            : 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 9%22%3E%3Crect width=%2216%22 height=%229%22 fill=%22%23e4e4e7%22/%3E%3C/svg%3E';
     @endphp
 
-    @section('title', 'Blog & News - ' . setting('site_name', 'Central Data Technology'))
+    @section('title', 'Blog & News - ' . setting('site_name', config('app.name')))
 
     @section('content')
     <!-- Minimal Page Header & Featured Section -->
@@ -75,7 +84,7 @@
                 $fTitle = $fPost->getTranslation('title', $locale) ?: $fPost->title;
                 $fExcerpt = $fPost->getTranslation('excerpt', $locale) ?: ($fPost->excerpt ?: Str::limit(strip_tags($fPost->content), 160));
                 $fCategory = $fPost->categories->first()?->name ?? 'Technology';
-                $fImage = $fPost->featured_image ? (str_starts_with($fPost->featured_image, 'http') ? $fPost->featured_image : asset('storage/' . ltrim($fPost->featured_image, '/'))) : asset('themes/cdt/assets/Strategi-IoT-Monitoring-2026-1536x864.jpg');
+                $fImage = $fPost->featured_image ? (str_starts_with($fPost->featured_image, 'http') ? $fPost->featured_image : asset('storage/' . ltrim($fPost->featured_image, '/'))) : $fallbackImage;
                 $fDate = $fPost->published_at ? $fPost->published_at->format('M d, Y') : now()->format('M d, Y');
                 $fAuthor = $fPost->author?->name ?? 'Admin';
                 $fPostUrl = url($archiveSlug . '/' . $fPost->slug);
@@ -148,7 +157,7 @@
               $pTitle = $post->getTranslation('title', $locale) ?: $post->title;
               $pExcerpt = $post->getTranslation('excerpt', $locale) ?: ($post->excerpt ?: Str::limit(strip_tags($post->content), 140));
               $pCategory = $post->categories->first()?->name ?? 'News';
-              $pImage = $post->featured_image ? (str_starts_with($post->featured_image, 'http') ? $post->featured_image : asset('storage/' . ltrim($post->featured_image, '/'))) : asset('themes/cdt/assets/modern-data-architecture-1-1536x864.jpg');
+              $pImage = $post->featured_image ? (str_starts_with($post->featured_image, 'http') ? $post->featured_image : asset('storage/' . ltrim($post->featured_image, '/'))) : $fallbackImage;
               $pDate = $post->published_at ? $post->published_at->format('M d, Y') : now()->format('M d, Y');
               $pAuthor = $post->author?->name ?? 'Admin';
               $pPostUrl = url($archiveSlug . '/' . $post->slug);

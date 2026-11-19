@@ -1,9 +1,9 @@
 @php
-    $activeThemeSlug = app(App\Services\ThemeLoader::class)->getActiveTheme()?->slug ?? 'cdt';
+    $activeThemeSlug = app(App\Services\ThemeLoader::class)->getActiveTheme()?->slug ?? 'default';
     $singleView = $activeThemeSlug . '::posts.single';
     $layoutView = view()->exists($activeThemeSlug . '::layouts.app')
         ? ($activeThemeSlug . '::layouts.app')
-        : (view()->exists('cdt::layouts.app') ? 'cdt::layouts.app' : 'default::layouts.app');
+        : 'default::layouts.app';
 @endphp
 
 @if(view()->exists($singleView))
@@ -60,7 +60,7 @@
             ->get();
     @endphp
 
-    @section('title', $postTitle . ' - ' . setting('site_name', 'Central Data Technology'))
+    @section('title', $postTitle . ' - ' . setting('site_name', config('app.name')))
 
     @section('content')
     <!-- Article Header & Hero Section -->

@@ -711,7 +711,7 @@ class WordPressCptMigration extends Component
     protected function checkJetEngineHelper(): void
     {
         try {
-            $response = Http::timeout(10)->get($this->wpUrl.'/wp-json/cdt-migrate/v1/jet-fields');
+            $response = Http::timeout(10)->get($this->wpUrl.'/wp-json/cms-migrate/v1/jet-fields');
             $this->jetEngineHelperInstalled = $response->successful();
         } catch (\Exception $e) {
             $this->jetEngineHelperInstalled = false;
@@ -725,7 +725,7 @@ class WordPressCptMigration extends Component
     {
         try {
             // First, get field definitions from the helper
-            $response = Http::timeout(15)->get($this->wpUrl.'/wp-json/cdt-migrate/v1/jet-fields', [
+            $response = Http::timeout(15)->get($this->wpUrl.'/wp-json/cms-migrate/v1/jet-fields', [
                 'post_type' => $postType,
             ]);
 
@@ -736,7 +736,7 @@ class WordPressCptMigration extends Component
                 $this->jetEngineFields = $fieldDefs;
 
                 // Now fetch a sample post with JetEngine meta included
-                $metaResponse = Http::timeout(15)->get($this->wpUrl.'/wp-json/cdt-migrate/v1/jet-posts', [
+                $metaResponse = Http::timeout(15)->get($this->wpUrl.'/wp-json/cms-migrate/v1/jet-posts', [
                     'post_type' => $postType,
                     'per_page' => 1,
                 ]);
@@ -821,13 +821,13 @@ class WordPressCptMigration extends Component
     {
         return <<<'SNIPPET'
 /**
- * CDT Migration Helper - Exposes JetEngine meta fields via REST API.
+ * CMS Migration Helper - Exposes JetEngine meta fields via REST API.
  * Add this as a Code Snippet in WordPress (or in functions.php).
  * Can be safely removed after migration is complete.
  */
 add_action('rest_api_init', function () {
     // Endpoint: List JetEngine field definitions for a post type
-    register_rest_route('cdt-migrate/v1', '/jet-fields', [
+    register_rest_route('cms-migrate/v1', '/jet-fields', [
         'methods'  => 'GET',
         'callback' => function (WP_REST_Request $request) {
             $post_type = $request->get_param('post_type');
@@ -863,7 +863,7 @@ add_action('rest_api_init', function () {
     ]);
 
     // Endpoint: Get posts with their JetEngine meta values
-    register_rest_route('cdt-migrate/v1', '/jet-posts', [
+    register_rest_route('cms-migrate/v1', '/jet-posts', [
         'methods'  => 'GET',
         'callback' => function (WP_REST_Request $request) {
             $post_type = $request->get_param('post_type') ?: 'post';
@@ -1241,7 +1241,7 @@ SNIPPET;
         }
 
         try {
-            $response = Http::timeout(30)->get($this->wpUrl.'/wp-json/cdt-migrate/v1/jet-posts', [
+            $response = Http::timeout(30)->get($this->wpUrl.'/wp-json/cms-migrate/v1/jet-posts', [
                 'post_type' => $this->selectedWpCpt,
                 'ids' => implode(',', $ids),
                 'per_page' => count($ids),

@@ -3,6 +3,7 @@
 namespace Plugins\Posts\Models;
 
 use App\Traits\FindsByLocalizedSlug;
+use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,7 +11,7 @@ use Illuminate\Support\Str;
 
 class Tag extends Model
 {
-    use FindsByLocalizedSlug, HasTranslations;
+    use FindsByLocalizedSlug, HasSeoMeta, HasTranslations;
 
     protected $fillable = [
         'name',
@@ -61,6 +62,6 @@ class Tag extends Model
             $tagBase = \App\Models\Setting::get('permalink_tag_base', 'tag');
         }
 
-        return url($prefix.'/'.$archiveSlug.'/'.$tagBase.'/'.$slug);
+        return trailing_slash_url(url($prefix.'/'.$archiveSlug.'/'.$tagBase.'/'.$slug));
     }
 }

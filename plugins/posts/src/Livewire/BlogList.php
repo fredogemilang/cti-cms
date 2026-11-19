@@ -60,7 +60,7 @@ class BlogList extends Component
             });
         }
 
-        $posts = $query->latest()->paginate(9);
+        $posts = $query->latest('published_at')->paginate(9);
         $categories = Category::all();
 
         // Use custom pagination view

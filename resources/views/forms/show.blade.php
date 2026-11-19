@@ -93,7 +93,7 @@
 
         <div class="text-center mt-4">
             <small class="text-muted">
-                Powered by iCCom CMS
+                {{ setting('site_name', config('app.name')) }}
             </small>
         </div>
     </div>

@@ -348,7 +348,7 @@
                     <span class="text-[11px] text-gray-400">Bypass 120s timeout</span>
                 </div>
                 <div class="flex items-center gap-2 bg-black/50 p-3 rounded-xl font-mono text-xs text-green-400 overflow-x-auto select-all">
-                    <code>php artisan cms:import-wp --url={{ $wpUrl ?: 'https://www.centraldatatech.com' }} --wp-cpt={{ $selectedWpCpt ?: 'post' }} --target={{ $selectedCmsCpt ?: 'plugin_post' }}</code>
+                    <code>php artisan cms:import-wp --url={{ $wpUrl ?: 'https://example.com' }} --wp-cpt={{ $selectedWpCpt ?: 'post' }} --target={{ $selectedCmsCpt ?: 'plugin_post' }}</code>
                 </div>
                 <p class="text-[11px] text-gray-400 mt-2">💡 Salin perintah di atas dan jalankan di Terminal CLI Laragon untuk mengimpor seluruh postingan & gambar secara cepat tanpa batas waktu.</p>
             </div>

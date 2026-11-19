@@ -6,8 +6,10 @@ namespace App\Models;
 use App\Traits\HasRoles;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -65,5 +67,76 @@ class User extends Authenticatable
             'locked_until' => 'datetime',
             'failed_login_attempts' => 'integer',
         ];
+    }
+
+    /**
+     * Get pages authored by this user.
+     */
+    public function pages(): HasMany
+    {
+        return $this->hasMany(Page::class, 'author_id');
+    }
+
+    /**
+     * Get CPT entries authored by this user.
+     */
+    public function cptEntries(): HasMany
+    {
+        return $this->hasMany(CptEntry::class, 'author_id');
+    }
+
+    /**
+     * Get media uploaded by this user.
+     */
+    public function media(): HasMany
+    {
+        return $this->hasMany(Media::class, 'uploaded_by');
+    }
+
+    /**
+     * Get page revisions made by this user.
+     */
+    public function pageRevisions(): HasMany
+    {
+        return $this->hasMany(PageRevision::class, 'user_id');
+    }
+
+    /**
+     * Get counts of all content authored/uploaded by this user.
+     *
+     * @return array<string, int>
+     */
+    public function authoredContentCounts(): array
+    {
+        return [
+            'pages' => Page::where('author_id', $this->id)->count(),
+            'cpt_entries' => CptEntry::where('author_id', $this->id)->count(),
+            'media' => Media::where('uploaded_by', $this->id)->count(),
+        ];
+    }
+
+    /**
+     * Check if this user owns any published/draft content.
+     */
+    public function hasAuthoredContent(): bool
+    {
+        return array_sum($this->authoredContentCounts()) > 0;
+    }
+
+    /**
+     * Reassign all content authored or uploaded by this user to another target user.
+     */
+    public function reassignContentTo(User $targetUser): void
+    {
+        DB::transaction(function () use ($targetUser) {
+            Page::where('author_id', $this->id)->update(['author_id' => $targetUser->id]);
+            CptEntry::where('author_id', $this->id)->update(['author_id' => $targetUser->id]);
+            Media::where('uploaded_by', $this->id)->update(['uploaded_by' => $targetUser->id]);
+            PageRevision::where('user_id', $this->id)->update(['user_id' => $targetUser->id]);
+
+            if (class_exists(EditorialNote::class)) {
+                EditorialNote::where('user_id', $this->id)->update(['user_id' => $targetUser->id]);
+            }
+        });
     }
 }

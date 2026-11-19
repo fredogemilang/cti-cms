@@ -35,11 +35,11 @@ class DatabaseSeeder extends Seeder
             SettingsPermissionsSeeder::class,
             ActivityPermissionsSeeder::class,
             FormsPermissionsSeeder::class,
+            EditorialPermissionsSeeder::class,
 
             // ── UI & Content ───────────────────────
             MenuItemSeeder::class,
             EmailTemplateSeeder::class,
-            AwsCloudCreditsPageSeeder::class,
             FormsSeeder::class,
             StringTranslationsSeeder::class,
         ]);

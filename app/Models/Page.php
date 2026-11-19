@@ -445,10 +445,10 @@ class Page extends Model
 
         // Homepage resolves to root URL, not /home
         if ($slug === 'home' || $this->slug === 'home') {
-            return url($prefix ?: '/');
+            return trailing_slash_url(url($prefix ?: '/'));
         }
 
-        return url($prefix.'/'.$slug);
+        return trailing_slash_url(url($prefix.'/'.$slug));
     }
 
     /**
@@ -488,14 +488,7 @@ class Page extends Model
      */
     public function localizedUrl(string $locale): string
     {
-        $defaultLocale = static::defaultLocale();
-        $prefix = ($locale !== $defaultLocale && setting('locale_url_structure', 'prefix') === 'prefix')
-            ? '/'.$locale
-            : '';
-
-        $slug = $this->getTranslation('slug', $locale) ?? $this->slug;
-
-        return url($prefix.'/'.ltrim($slug, '/'));
+        return $this->getUrl($locale);
     }
 
     public function getMetaTitle(): string
