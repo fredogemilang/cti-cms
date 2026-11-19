@@ -246,9 +246,11 @@ class SeoRenderer
 
         if (! $entity) {
             foreach ($availableLocales as $loc) {
-                $hreflangs[$loc] = function_exists('current_page_localized_url') ? current_page_localized_url($loc) : url('/'.$loc);
+                $u = function_exists('current_page_localized_url') ? current_page_localized_url($loc) : url('/'.$loc);
+                $hreflangs[$loc] = $u ? trailing_slash_url($u) : $u;
             }
-            $hreflangs['x-default'] = function_exists('current_page_localized_url') ? current_page_localized_url($defaultLocale) : url('/');
+            $xd = function_exists('current_page_localized_url') ? current_page_localized_url($defaultLocale) : url('/');
+            $hreflangs['x-default'] = $xd ? trailing_slash_url($xd) : $xd;
 
             return array_filter($hreflangs);
         }
@@ -256,15 +258,19 @@ class SeoRenderer
         if (method_exists($entity, 'getUrl')) {
             foreach ($availableLocales as $loc) {
                 if ($loc === $defaultLocale || ! method_exists($entity, 'hasTranslationForLocale') || $entity->hasTranslationForLocale($loc)) {
-                    $hreflangs[$loc] = $entity->getUrl($loc);
+                    $u = $entity->getUrl($loc);
+                    $hreflangs[$loc] = $u ? trailing_slash_url($u) : $u;
                 }
             }
-            $hreflangs['x-default'] = $entity->getUrl($defaultLocale);
+            $xd = $entity->getUrl($defaultLocale);
+            $hreflangs['x-default'] = $xd ? trailing_slash_url($xd) : $xd;
         } elseif (method_exists($entity, 'getArchiveUrl')) {
             foreach ($availableLocales as $loc) {
-                $hreflangs[$loc] = $entity->getArchiveUrl($loc);
+                $u = $entity->getArchiveUrl($loc);
+                $hreflangs[$loc] = $u ? trailing_slash_url($u) : $u;
             }
-            $hreflangs['x-default'] = $entity->getArchiveUrl($defaultLocale);
+            $xd = $entity->getArchiveUrl($defaultLocale);
+            $hreflangs['x-default'] = $xd ? trailing_slash_url($xd) : $xd;
         }
 
         $filtered = array_filter($hreflangs);
