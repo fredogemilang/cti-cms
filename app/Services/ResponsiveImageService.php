@@ -76,7 +76,8 @@ class ResponsiveImageService
         }
 
         $picked = $variants[$size] ?? null;
-        $src = $picked ? $diskUrl($picked['path']) : $diskUrl($media->path);
+        $pickedRel = $picked ? (! empty($picked['webp']) ? $picked['webp'] : ($picked['path'] ?? null)) : null;
+        $src = $pickedRel ? $diskUrl($pickedRel) : $diskUrl($media->webp_path ?: $media->path);
 
         return [
             'src' => $src,
