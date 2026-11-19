@@ -97,6 +97,14 @@ class ResponsiveImageService
 
     protected function buildFromStringPath(string $originalUrl, string $cleanPath): array
     {
+        if (! preg_match('#^(https?://|/|data:)#i', $originalUrl) && function_exists('resolve_block_asset')) {
+            $resolved = resolve_block_asset($originalUrl);
+            if ($resolved !== '') {
+                $originalUrl = $resolved;
+                $cleanPath = ltrim((string) parse_url($resolved, PHP_URL_PATH), '/');
+            }
+        }
+
         $webpUrl = null;
         $ext = strtolower(pathinfo($cleanPath, PATHINFO_EXTENSION));
 
