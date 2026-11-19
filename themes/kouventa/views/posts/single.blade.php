@@ -19,15 +19,23 @@
         }
     }
 
-    // Extract Table of Contents (TOC) from H2 and H3
+    // Sanitize stray <br> tags inside table/list structural gaps so browsers don't foster-parent empty lines above tables
+    $sanitizedRaw = preg_replace('/(<(?:table|thead|tbody|tfoot|tr|ul|ol)[^>]*>)\s*(?:<br\s*\/?>\s*)+/i', '$1', $rawContent);
+    $sanitizedRaw = preg_replace('/(<\/(?:thead|tbody|tfoot|tr|td|th|li)>)\s*(?:<br\s*\/?>\s*)+/i', '$1', $sanitizedRaw);
+
+    // Extract Table of Contents (TOC) from H2 and H3 (skip empty headings)
     $tocItems = [];
     $headingCount = 0;
     $processedContent = preg_replace_callback('/<h([23])([^>]*)>(.*?)<\/h[23]>/i', function ($matches) use (&$tocItems, &$headingCount) {
         $level = (int) $matches[1];
         $attributes = $matches[2];
         $titleRaw = $matches[3];
-        $titleText = trim(strip_tags($titleRaw));
-        
+        $titleText = trim(html_entity_decode(strip_tags($titleRaw), ENT_QUOTES, 'UTF-8'));
+
+        if ($titleText === '') {
+            return '';
+        }
+
         $headingCount++;
         if (preg_match('/id=["\']([^"\']+)["\']/i', $attributes, $idMatch)) {
             $slug = $idMatch[1];
@@ -43,7 +51,14 @@
         ];
 
         return "<h{$level}{$attributes}>{$titleRaw}</h{$level}>";
-    }, $rawContent);
+    }, $sanitizedRaw);
+
+    // Wrap tables in responsive horizontal scroll container
+    $processedContent = preg_replace(
+        '/(?<!<div class="kv-table-scroll">)(<table\b.*?<\/table>)/is',
+        '<div class="kv-table-scroll">$1</div>',
+        $processedContent
+    );
 
     // Related Posts (Rule 15 Plugin Fail-Safe)
     $relatedPosts = collect();
