@@ -144,7 +144,7 @@
       @endif
 
       <!-- Interactive Google Maps Iframe -->
-      <div class="w-full h-[300px] sm:h-[355px] rounded-[5px] overflow-hidden border border-[#E4EBFA] bg-[#F0F5FF] relative shadow-xs">
+      <div class="w-full h-[300px] sm:h-[355px] rounded-[5px] overflow-hidden bg-[#F0F5FF] relative">
         <template x-if="currentEmbedUrl">
           <iframe
             :src="currentEmbedUrl"
@@ -165,40 +165,28 @@
                  tabindex="0"
                  @keydown.enter="activeOffice = {{ $idx }}"
                  @keydown.space.prevent="activeOffice = {{ $idx }}"
-                 :class="activeOffice === {{ $idx }} ? 'ring-1 ring-[#04B1C7] shadow-sm' : 'hover:ring-1 hover:ring-[#04B1C7]/45'"
-                 class="bg-[#F0F5FF] rounded-[10px] px-[21px] py-[18px] flex gap-[15px] items-start cursor-pointer transition-all text-left">
+                 class="bg-[#F0F5FF] hover:bg-[#E8F0FE] rounded-[10px] px-[21px] py-[18px] flex gap-[15px] items-start cursor-pointer transition-colors text-left">
               <!-- Figma 32x32 White Pin Badge (772:7294) -->
-              <div class="w-[32px] h-[32px] bg-white rounded-[5px] shrink-0 relative overflow-hidden flex items-center justify-center shadow-2xs" aria-hidden="true">
+              <div class="w-[32px] h-[32px] bg-white rounded-[5px] shrink-0 relative overflow-hidden flex items-center justify-center" aria-hidden="true">
                 <img src="{{ theme_asset('images/contact/pin-base.svg') }}" alt="" class="absolute bottom-[3.96px] left-1/2 -translate-x-1/2 w-[12.24px] h-[3.39px]" />
                 <img src="{{ theme_asset('images/contact/pin-body.svg') }}" alt="" class="absolute top-[4.06px] left-1/2 -translate-x-1/2 w-[15.58px] h-[22.16px]" />
                 <img src="{{ theme_asset('images/contact/pin-dot.svg') }}" alt="" class="absolute top-[8px] left-1/2 -translate-x-1/2 w-[6.58px] h-[6.58px]" />
               </div>
 
-              <div class="flex-1 min-w-0 flex flex-col gap-[8px] text-black">
-                <div class="flex items-center justify-between gap-2">
-                  <h3 class="text-[16px] font-bold leading-snug text-black">
-                    {{ $office['name'] ?? '' }}
-                  </h3>
-                  @if(!empty($office['maps_url']))
-                    <a href="{{ $office['maps_url'] }}"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       @click.stop
-                       class="text-[11px] font-semibold text-[#04B1C7] hover:text-[#2296E4] hover:underline shrink-0">
-                      {{ t('contact_page.open_maps', 'Open in Google Maps') }} &rarr;
-                    </a>
-                  @endif
-                </div>
+              <div class="flex-1 min-w-0 flex flex-col gap-[10px] text-black">
+                <h3 class="text-[16px] font-bold leading-none text-black">
+                  {{ $office['name'] ?? '' }}
+                </h3>
 
-                <div class="text-[13px] leading-[18px] text-black space-y-0.5">
+                <div class="text-[13px] leading-[18px] text-black">
                   @if(!empty($office['floor']))
                     <p class="font-bold leading-[21px]">{!! $formatOfficeFloor((string) $office['floor']) !!}</p>
                   @endif
                   @if(!empty($office['address']))
-                    <p class="font-normal">{{ $office['address'] }}</p>
+                    <p class="font-normal leading-[18px]">{{ $office['address'] }}</p>
                   @endif
                   @if(!empty($office['phone']))
-                    <p class="font-normal">{{ $office['phone'] }}</p>
+                    <p class="font-normal leading-[18px]">{{ $office['phone'] }}</p>
                   @endif
                 </div>
               </div>
