@@ -14,7 +14,7 @@
         }
     }
     $searchActionUrl = function_exists('localized_url') ? localized_url('/search') : url('/search');
-    $searchSuggestUrl = url('/_csi/search-suggest');
+    $searchSuggestUrl = function_exists('trailing_slash_url') ? trailing_slash_url(url('/_csi/search-suggest')) : url('/_csi/search-suggest').'/';
     $isIdLocale = app()->getLocale() === 'id';
   @endphp
 
