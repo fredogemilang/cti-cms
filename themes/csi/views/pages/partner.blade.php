@@ -23,9 +23,25 @@
     $promoPeriod = $page->block('promo_period', '');
     $promoCta = $page->buttonBlock('promo_cta', [
         'text' => 'Explore the Partner Reward Catalog',
-        'url' => '#contact',
+        'url' => '/partner-reward-catalog',
         'target' => '_self',
     ]);
+
+    if (
+        function_exists('is_plugin_active')
+        && is_plugin_active('partner-reward-catalog')
+        && class_exists(\Plugins\PartnerRewardCatalog\Support\CatalogStore::class)
+    ) {
+        $pluginBanner = \Plugins\PartnerRewardCatalog\Support\CatalogStore::promoBanner(app()->getLocale());
+        if (! empty($pluginBanner['cover_path'])) {
+            $promoImage = $pluginBanner['cover_path'];
+        }
+        $promoTitle = $pluginBanner['title'];
+        $promoDescription = $pluginBanner['description'];
+        $promoPeriod = $pluginBanner['period'];
+        $promoCta['text'] = $pluginBanner['cta_text'];
+        $promoCta['url'] = $pluginBanner['cta_url'];
+    }
 
     $storiesTitle = $page->block('stories_title', 'Partner Success Stories');
     $storiesSubtitle = $page->block('stories_subtitle', '');
@@ -122,7 +138,7 @@
         <!-- Left Promo Poster Image -->
         <div class="lg:col-span-6 relative rounded-[14px] overflow-hidden min-h-[240px] lg:min-h-[287px] bg-slate-100">
           @if($promoImage)
-            <x-image id="partner-promo-img" :src="$promoImage" alt="{{ $promoTitle }}" loading="eager" fetchpriority="high" sizes="(max-width: 1024px) 100vw, 520px" class="w-full h-full object-cover rounded-[14px] will-change-transform" style="object-position: 50% 24%;" />
+            <x-image id="partner-promo-img" :src="$promoImage" alt="{{ $promoTitle }}" loading="eager" fetchpriority="high" sizes="(max-width: 1024px) 100vw, 520px" class="w-full h-full object-cover object-center rounded-[14px] will-change-transform" />
           @endif
         </div>
 

@@ -88,4 +88,43 @@ class PartnerRewardCatalogTest extends TestCase
         $this->assertTrue(Storage::disk('public')->exists($secondPath));
         $this->assertDatabaseHas('media', ['id' => $secondMediaId, 'original_filename' => 'catalog-v2.pdf']);
     }
+
+    public function test_uploading_new_cover_banner_replaces_previous_cover_and_populates_promo_banner(): void
+    {
+        Storage::fake('public');
+        config(['media.disk' => 'public']);
+        $this->activatePlugin();
+
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
+
+        $firstCover = UploadedFile::fake()->image('cover-2026.png', 1200, 675);
+        $cfg1 = CatalogStore::saveCatalog([
+            'promo_title_en' => 'Annual Partner Incentive Trip 2027',
+            'promo_title_id' => 'Annual Partner Incentive Trip 2027',
+            'promo_cta_text_en' => 'Explore the Partner Reward Catalog',
+            'promo_cta_text_id' => 'Lihat Katalog Hadiah Mitra',
+        ], null, $firstCover);
+
+        $this->assertNotNull($cfg1['cover_media_id']);
+        $this->assertTrue(Storage::disk('public')->exists($cfg1['cover_image_path']));
+
+        $secondCover = UploadedFile::fake()->image('cover-2027.png', 1200, 675);
+        $cfg2 = CatalogStore::saveCatalog([
+            'promo_title_en' => 'Partner Trip Tokyo 2028',
+            'promo_title_id' => 'Perjalanan Mitra Tokyo 2028',
+        ], null, $secondCover);
+
+        $this->assertNotSame($cfg1['cover_media_id'], $cfg2['cover_media_id']);
+        $this->assertFalse(Storage::disk('public')->exists($cfg1['cover_image_path']));
+        $this->assertDatabaseMissing('media', ['id' => $cfg1['cover_media_id']]);
+        $this->assertTrue(Storage::disk('public')->exists($cfg2['cover_image_path']));
+
+        $bannerEn = CatalogStore::promoBanner('en');
+        $bannerId = CatalogStore::promoBanner('id');
+        $this->assertSame('/partner-reward-catalog', $bannerEn['cta_url']);
+        $this->assertSame('Partner Trip Tokyo 2028', $bannerEn['title']);
+        $this->assertSame('Perjalanan Mitra Tokyo 2028', $bannerId['title']);
+        $this->assertSame($cfg2['cover_image_path'], $bannerEn['cover_path']);
+    }
 }
