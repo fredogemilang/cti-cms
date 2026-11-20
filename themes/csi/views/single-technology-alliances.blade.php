@@ -80,7 +80,7 @@
 
         <!-- Right Visual Artwork -->
         <div id="alliance-hero-media" class="lg:col-span-6">
-          <div class="w-full h-[260px] sm:h-[310px] lg:h-[331px] rounded-[14px] overflow-hidden shadow-md bg-slate-900">
+          <div class="w-full h-[260px] sm:h-[310px] lg:h-[331px] rounded-[14px] overflow-hidden shadow-md bg-slate-100">
             @if(!empty($heroImage))
               <x-image id="alliance-hero-img" :src="$heroImage" :alt="$entryTitle" loading="eager" fetchpriority="high" sizes="(max-width: 1024px) 100vw, 580px" class="w-full h-full object-cover rounded-[14px] will-change-transform" />
             @endif

@@ -1179,10 +1179,10 @@ onReady(() => {
         if (document.getElementById('about-intro-img')) {
           gsap.fromTo(
             '#about-intro-img',
-            { scale: 1.07, yPercent: -2 },
+            { scale: 1.09, yPercent: -2 },
             {
-              scale: 1,
-              yPercent: 3,
+              scale: 1.07,
+              yPercent: 2,
               scrollTrigger: { trigger: '#about-intro-media', start: 'top 90%', end: 'bottom 10%', scrub: 0.9 },
             }
           );
@@ -1282,10 +1282,10 @@ onReady(() => {
         if (document.getElementById('partner-promo-img')) {
           gsap.fromTo(
             '#partner-promo-img',
-            { scale: 1.07, yPercent: -2 },
+            { scale: 1.09, yPercent: -2 },
             {
-              scale: 1,
-              yPercent: 3,
+              scale: 1.07,
+              yPercent: 2,
               scrollTrigger: { trigger: '#partner-promo-card', start: 'top 90%', end: 'bottom 10%', scrub: 0.9 },
             }
           );
@@ -1391,10 +1391,10 @@ onReady(() => {
         if (document.getElementById('alliance-hero-img')) {
           gsap.fromTo(
             '#alliance-hero-img',
-            { scale: 1.07, yPercent: -2 },
+            { scale: 1.09, yPercent: -2 },
             {
-              scale: 1,
-              yPercent: 3,
+              scale: 1.07,
+              yPercent: 2,
               scrollTrigger: { trigger: '#alliance-hero-media', start: 'top 90%', end: 'bottom 10%', scrub: 0.9 },
             }
           );
@@ -1618,10 +1618,10 @@ onReady(() => {
         if (contactPhoto) {
           gsap.fromTo(
             contactPhoto,
-            { scale: 1.07, yPercent: -3 },
+            { scale: 1.09, yPercent: -2.5 },
             {
-              scale: 1,
-              yPercent: 3,
+              scale: 1.08,
+              yPercent: 2.5,
               scrollTrigger: { trigger: '#contact-image-column', start: 'top 90%', end: 'bottom 10%', scrub: 0.9 },
             }
           );
