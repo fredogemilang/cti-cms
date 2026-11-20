@@ -129,7 +129,9 @@ class ContactPageTest extends TestCase
         $resEn->assertSee('+6221 806 22278');
         $resEn->assertSee('Converion Care Hub (WA)');
         $resEn->assertSee('+62822 9992 2278');
-        $resEn->assertSee('marketing@converion.com');
+        $resEn->assertSee(base64_encode('marketing@converion.com'));
+        $resEn->assertDontSee('mailto:marketing@converion.com', false);
+        $resEn->assertDontSee('/cdn-cgi/l/email-protection', false);
         $resEn->assertSee('<iframe', false);
         $resEn->assertDontSee('figma.com/api/mcp/asset', false);
 
@@ -144,7 +146,12 @@ class ContactPageTest extends TestCase
 
         $this->assertStringContainsString('Mari Terhubung dan Bertumbuh Bersama', $idHtml);
         $this->assertStringContainsString('Telepon', $idHtml);
-        $this->assertStringContainsString('marketing@converion.com', $idHtml);
+        $this->assertStringContainsString(base64_encode('marketing@converion.com'), $idHtml);
+        $this->assertStringNotContainsString('mailto:marketing@converion.com', $idHtml);
         $this->assertStringContainsString('<iframe', $idHtml);
+
+        $robots = $this->get('/robots.txt');
+        $robots->assertStatus(200);
+        $robots->assertSee('Disallow: /cdn-cgi/', false);
     }
 }

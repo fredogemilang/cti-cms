@@ -20,6 +20,7 @@ class RobotsController extends Controller
         } else {
             $lines[] = "Disallow: {$adminPath}";
             $lines[] = 'Disallow: /forms/';
+            $lines[] = 'Disallow: /cdn-cgi/';
         }
 
         if ($extra !== '') {
