@@ -295,10 +295,17 @@
              x-transition.opacity.duration.250ms
              class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-[15px] w-full">
           @foreach($matchingItems as $item)
-            <div class="alliance-sol-item h-[120px] rounded-[10px] border border-[#04B1C7]/25 bg-white/65 p-3 flex items-center justify-center hover:border-[#04B1C7] hover:-translate-y-1 transition-[box-shadow,border-color,translate] duration-300 shadow-xs"
+            <div class="alliance-sol-item min-h-[156px] rounded-[10px] border border-[#04B1C7]/25 bg-white/65 px-3.5 py-3 flex flex-col items-center justify-between gap-2.5 hover:border-[#04B1C7] hover:-translate-y-1 transition-[box-shadow,border-color,translate] duration-300 shadow-xs"
                  title="{{ $item['product_name'] ?? $entryTitle }}">
-              @if(!empty($item['product_image']))
-                <x-image :src="$item['product_image']" :alt="$item['product_name'] ?? $entryTitle" sizes="240px" :placeholder="false" class="max-h-[96px] w-auto object-contain" />
+              <div class="flex-1 w-full flex items-center justify-center min-h-[82px]">
+                @if(!empty($item['product_image']))
+                  <x-image :src="$item['product_image']" :alt="$item['product_name'] ?? $entryTitle" sizes="240px" :placeholder="false" class="max-h-[82px] max-w-full w-auto object-contain" />
+                @endif
+              </div>
+              @if(!empty($item['product_name']))
+                <p class="w-full text-center text-[13px] font-semibold leading-[1.4] pb-[1px] text-slate-900 line-clamp-2">
+                  {{ $item['product_name'] }}
+                </p>
               @endif
             </div>
           @endforeach
