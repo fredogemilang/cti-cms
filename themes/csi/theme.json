@@ -596,6 +596,123 @@
                     }
                 }
             ]
+        },
+        "contact": {
+            "label": "Contact Us Page",
+            "description": "Dedicated Contact Us page with Full-Bleed Hero Banner, Interactive Google Maps, Jakarta & Surabaya Office Cards, Contact Info Strip, and Contact Form.",
+            "blocks": [
+                {
+                    "name": "hero_bg_image",
+                    "type": "media",
+                    "label": "Hero Background Image",
+                    "default": ""
+                },
+                {
+                    "name": "hero_title",
+                    "type": "text",
+                    "label": "Hero Title",
+                    "default": "Let’s Connect and Grow Together"
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "Want to learn more about our solutions, services, or how Converion can accelerate your business’s digital transformation? Our team is ready to support you every step of the way."
+                },
+                {
+                    "name": "hero_cta",
+                    "type": "button",
+                    "label": "Hero CTA Button",
+                    "default": {
+                        "text": "Contact Us",
+                        "url": "#contact",
+                        "target": "_self"
+                    }
+                },
+                {
+                    "name": "offices_heading",
+                    "type": "text",
+                    "label": "Offices Section Heading",
+                    "default": "PT Converion Solution Informatica"
+                },
+                {
+                    "name": "offices_list",
+                    "type": "repeater",
+                    "label": "Office Locations",
+                    "options": {
+                        "button_label": "Add Office"
+                    },
+                    "children": [
+                        {
+                            "name": "name",
+                            "type": "text",
+                            "label": "Office Name"
+                        },
+                        {
+                            "name": "floor",
+                            "type": "text",
+                            "label": "Building / Floor"
+                        },
+                        {
+                            "name": "address",
+                            "type": "textarea",
+                            "label": "Street Address"
+                        },
+                        {
+                            "name": "phone",
+                            "type": "text",
+                            "label": "Phone Display Text"
+                        },
+                        {
+                            "name": "embed_url",
+                            "type": "text",
+                            "label": "Google Maps Embed URL (iframe)"
+                        },
+                        {
+                            "name": "maps_url",
+                            "type": "text",
+                            "label": "Google Maps External Link URL"
+                        }
+                    ],
+                    "default": []
+                },
+                {
+                    "name": "contact_highlights",
+                    "type": "repeater",
+                    "label": "Contact Info Bar Items",
+                    "options": {
+                        "button_label": "Add Contact Channel"
+                    },
+                    "children": [
+                        {
+                            "name": "icon_type",
+                            "type": "select",
+                            "label": "Icon Type",
+                            "options": {
+                                "phone": "Phone",
+                                "whatsapp": "WhatsApp",
+                                "email": "Email"
+                            }
+                        },
+                        {
+                            "name": "label",
+                            "type": "text",
+                            "label": "Channel Label"
+                        },
+                        {
+                            "name": "value",
+                            "type": "text",
+                            "label": "Display Value"
+                        },
+                        {
+                            "name": "url",
+                            "type": "text",
+                            "label": "Action Link (tel:, mailto:, https://)"
+                        }
+                    ],
+                    "default": []
+                }
+            ]
         }
     },
     "archive_settings": {

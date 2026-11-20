@@ -186,7 +186,10 @@
           {{ $ctaItem->localizedTitle($currentLocale) }}
         </a>
       @else
-        <a href="#contact" class="bg-[#ED7F22] hover:bg-[#d86f1b] text-white text-[14px] font-medium px-[23px] py-[11px] rounded-[6px] leading-[16px] transition-all shadow-xs hover:shadow-md active:scale-95">
+        @php
+          $fallbackContactUrl = $currentLocale === 'id' ? localized_url('/hubungi-kami') : localized_url('/contact-us');
+        @endphp
+        <a href="{{ $fallbackContactUrl }}" class="bg-[#ED7F22] hover:bg-[#d86f1b] text-white text-[14px] font-medium px-[23px] py-[11px] rounded-[6px] leading-[16px] transition-all shadow-xs hover:shadow-md active:scale-95">
           {{ t('nav.contact_us', 'Contact Us') }}
         </a>
       @endif

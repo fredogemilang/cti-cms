@@ -8,6 +8,7 @@
     $allianceCategoriesForSheet = CsiDataProvider::allianceCategories();
     $allianceTabsForSheet = CsiDataProvider::allianceCategoryTabs($allianceCategoriesForSheet);
     $postsActive = function_exists('is_plugin_active') && is_plugin_active('posts');
+    $dockContactUrl = $currentLocale === 'id' ? localized_url('/hubungi-kami') : localized_url('/contact-us');
 @endphp
 
 <!-- MOBILE BOTTOM NAVIGATION DOCK -->
@@ -32,7 +33,7 @@
 
       <!-- 3. Center Raised Action Button (Contact Us) -->
       <div class="flex-shrink-0 px-1 -mt-6">
-        <a href="#contact" class="flex flex-col items-center justify-center w-[54px] h-[54px] rounded-2xl bg-[#ED7F22] hover:bg-[#d86f1b] text-white shadow-[0_8px_20px_rgba(237,127,34,0.4)] border-4 border-white active:scale-95 transition-all cursor-pointer" title="{{ t('mobile_dock.contact', 'Contact Converion') }}">
+        <a href="{{ $dockContactUrl }}" class="flex flex-col items-center justify-center w-[54px] h-[54px] rounded-2xl bg-[#ED7F22] hover:bg-[#d86f1b] text-white shadow-[0_8px_20px_rgba(237,127,34,0.4)] border-4 border-white active:scale-95 transition-all cursor-pointer" title="{{ t('mobile_dock.contact', 'Contact Converion') }}">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
         </a>
       </div>
@@ -176,7 +177,7 @@
       @endforeach
     </div>
 
-    <a href="#contact" class="sheet-item block w-full py-3 rounded-xl bg-[#ED7F22] text-white text-center font-bold text-sm shadow-sm hover:bg-[#d86f1b] transition-colors">
+    <a href="{{ $dockContactUrl }}" class="sheet-item block w-full py-3 rounded-xl bg-[#ED7F22] text-white text-center font-bold text-sm shadow-sm hover:bg-[#d86f1b] transition-colors">
       {{ t('mobile_dock.contact_direct', 'Contact Us Directly') }}
     </a>
   </div>

@@ -117,6 +117,13 @@ class StringTranslationsSeeder extends Seeder
                 'en' => 'No technology alliances published yet.',
                 'id' => 'Belum ada mitra teknologi yang dipublikasikan.',
             ],
+            'contact_page.open_maps' => [
+                'group' => 'contact_page',
+                'key' => 'open_maps',
+                'default' => 'Open in Google Maps',
+                'en' => 'Open in Google Maps',
+                'id' => 'Buka di Google Maps',
+            ],
         ];
 
         foreach ($translations as $item) {
