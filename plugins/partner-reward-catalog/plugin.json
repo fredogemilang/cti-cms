@@ -1,0 +1,26 @@
+{
+    "name": "Partner Reward Catalog",
+    "slug": "partner-reward-catalog",
+    "version": "1.0.0",
+    "description": "Manage single-file Partner Reward Catalog PDF replacement in Admin with an interactive 3D flipbook viewer at /partner-reward-catalog.",
+    "author": "CSI",
+    "namespace": "Plugins\\PartnerRewardCatalog",
+    "provider": "Plugins\\PartnerRewardCatalog\\Providers\\PartnerRewardCatalogServiceProvider",
+    "permissions": {
+        "resources": [
+            {
+                "module": "partner-reward-catalog",
+                "actions": [
+                    "view",
+                    "edit"
+                ],
+                "icon": "menu_book",
+                "description": "Manage Partner Reward Catalog PDF"
+            }
+        ]
+    },
+    "requires": {
+        "php": ">=8.2",
+        "cms": ">=1.0"
+    }
+}
