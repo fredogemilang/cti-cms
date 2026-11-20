@@ -4,9 +4,9 @@
 @php
     $currentLocale = app()->getLocale();
     $archiveTitle = t('solutions_archive.hero_title', $postType->getTranslation('name', $currentLocale) ?: 'Our Solutions');
-    $archiveSubtitle = t('solutions_archive.hero_subtitle', 'Empowering your business with cutting-edge technology landscapes.');
-    $sectionHeadline = t('solutions_archive.section_headline', 'Accelerate Your Digital Transformation with an Integrated Enterprise Ecosystem');
-    $sectionDesc = t('solutions_archive.section_desc', 'A comprehensive, integrated enterprise technology portfolio designed to drive efficiency, scalability, and operational reliability.');
+    $archiveSubtitle = t('solutions_archive.hero_subtitle', 'Technology That Brings Your Business Together');
+    $sectionHeadline = t('solutions_archive.section_headline', 'Move Your Business Forward with Connected Enterprise Solutions');
+    $sectionDesc = t('solutions_archive.section_desc', 'From infrastructure to AI, we bring your technology together to streamline operations, accelerate growth, and keep your business ahead.');
     $exploreLabel = t('solutions_archive.explore_button', 'Explore Solution');
 
     $solutionItems = $entries->getCollection()
@@ -61,7 +61,9 @@
           @foreach($solutionItems as $idx => $sol)
             @php
                 $solTitle = $sol->getTranslation('title', $currentLocale) ?? $sol->title;
-                $solDesc = $sol->getMeta('hero_subtitle') ?: ($sol->getMeta('subtitle') ?: ($sol->getTranslation('excerpt', $currentLocale) ?? $sol->excerpt ?? ''));
+                $solDesc = $sol->getMeta('archive_summary') ?: ($sol->getMeta('hero_subtitle') ?: ($sol->getMeta('subtitle') ?: ($sol->getTranslation('excerpt', $currentLocale) ?? $sol->excerpt ?? '')));
+                $solBulletsRaw = (string) $sol->getMeta('archive_bullets', '');
+                $solBullets = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $solBulletsRaw) ?: [])));
                 $solCta = $sol->getMeta('cta_text') ?: $exploreLabel;
                 $solUrl = $sol->getUrl($currentLocale);
             @endphp
@@ -95,6 +97,24 @@
                       <p class="text-[13px] font-normal leading-[19px] text-black">
                         {{ $solDesc }}
                       </p>
+                    @endif
+                    @if(count($solBullets) > 0)
+                      <ul class="space-y-1.5 text-[13px] leading-[19px] text-black/85 list-disc pl-4">
+                        @foreach($solBullets as $bullet)
+                          @php
+                              $bullet = ltrim($bullet, "-• \t");
+                              $hasLabel = str_contains($bullet, ':');
+                              [$bulletLabel, $bulletBody] = $hasLabel ? array_map('trim', explode(':', $bullet, 2)) : ['', $bullet];
+                          @endphp
+                          <li>
+                            @if($hasLabel && $bulletLabel !== '')
+                              <strong class="font-semibold text-black">{{ $bulletLabel }}:</strong> {{ $bulletBody }}
+                            @else
+                              {{ $bullet }}
+                            @endif
+                          </li>
+                        @endforeach
+                      </ul>
                     @endif
                     <a href="{{ $solUrl }}"
                        :tabindex="activeSolution === {{ $idx }} ? 0 : -1"
