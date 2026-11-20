@@ -170,6 +170,32 @@ function initPartnerRewardFlipbook() {
         if (noticeEl) noticeEl.classList.remove('hidden');
       }
 
+      const updateBookCenter = (zeroBasedIndex, animate = true) => {
+        if (!bookEl || !pageFlip) return;
+
+        bookEl.style.transition = animate
+          ? 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1)'
+          : 'none';
+
+        const isLandscape = pageFlip.getOrientation() === 'landscape';
+        const hasCoverSpread = totalPages > 2;
+
+        if (!isLandscape || !hasCoverSpread) {
+          bookEl.style.transform = 'translateX(0%)';
+          return;
+        }
+
+        if (zeroBasedIndex === 0) {
+          // Front cover sits on the right half of a 2-page spread
+          bookEl.style.transform = 'translateX(-25%)';
+        } else if (totalPages % 2 === 0 && zeroBasedIndex >= totalPages - 1) {
+          // Even-count back cover sits alone on the left half of the final spread
+          bookEl.style.transform = 'translateX(25%)';
+        } else {
+          bookEl.style.transform = 'translateX(0%)';
+        }
+      };
+
       const isMobile = window.innerWidth < 768;
       pageFlip = new PageFlip(bookEl, {
         width: pageWidth,
@@ -182,15 +208,22 @@ function initPartnerRewardFlipbook() {
         maxShadowOpacity: 0.42,
         showCover: totalPages > 2,
         mobileScrollSupport: true,
-        usePortrait: isMobile,
+        usePortrait: isMobile || totalPages === 1,
         drawShadow: true,
         flippingTime: 750,
         swipeDistance: 30,
       });
 
       pageFlip.loadFromHTML(pageElements);
+      updateBookCenter(0, false);
+
       pageFlip.on('flip', (e) => {
         syncPageUi(e.data);
+        updateBookCenter(e.data, true);
+      });
+
+      pageFlip.on('changeOrientation', () => {
+        updateBookCenter(pageFlip.getCurrentPageIndex(), false);
       });
 
       if (loaderEl) loaderEl.classList.add('hidden');

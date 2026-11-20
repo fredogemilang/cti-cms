@@ -164,7 +164,7 @@
     "src": "node_modules/pdfjs-dist/build/pdf.worker.min.mjs"
   },
   "plugins/partner-reward-catalog/resources/js/flipbook.js": {
-    "file": "assets/flipbook-DQDmcjV0.js",
+    "file": "assets/flipbook-TupBQicF.js",
     "name": "flipbook",
     "src": "plugins/partner-reward-catalog/resources/js/flipbook.js",
     "isEntry": true,
@@ -173,7 +173,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-BmQ9bZl0.css",
+    "file": "assets/app-BGfGJjtd.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
