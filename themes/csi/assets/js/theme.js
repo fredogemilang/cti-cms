@@ -140,6 +140,128 @@ onReady(() => {
   const searchClose = document.getElementById('search-modal-close');
   const searchInput = document.getElementById('search-modal-input');
   const searchSubmit = document.getElementById('search-modal-submit');
+  const searchSuggestions = document.getElementById('search-modal-suggestions');
+  let searchDebounceTimer = null;
+  let activeSuggestAbort = null;
+
+  function escapeSearchHtml(str) {
+    return String(str || '').replace(/[&<>"']/g, (ch) => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    }[ch]));
+  }
+
+  function renderInstantSuggestions(data) {
+    if (!searchSuggestions) return;
+    const labels = csiData.searchLabels || {};
+    const q = (data && data.query) ? data.query : '';
+
+    if (!q || q.length < 2) {
+      searchSuggestions.classList.add('hidden');
+      searchSuggestions.innerHTML = '';
+      return;
+    }
+
+    const parts = [];
+    if (Array.isArray(data.solutions) && data.solutions.length > 0) {
+      parts.push(`
+        <div>
+          <p class="text-[11px] font-bold uppercase tracking-wider text-[#656F80] mb-2">${escapeSearchHtml(labels.solutions || 'Solutions')}</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            ${data.solutions.map((s) => `
+              <a href="${escapeSearchHtml(s.url)}" class="flex items-center gap-3 p-2.5 rounded-xl border border-[#E4EBFA] hover:border-[#04B1C7] bg-[#F8FAFC] hover:bg-[#EFFDFF] transition-colors">
+                ${s.image ? `<img src="${escapeSearchHtml(s.image)}" alt="" class="w-10 h-10 rounded-lg object-cover shrink-0 bg-slate-200" />` : ''}
+                <div class="min-w-0">
+                  <span class="block text-[10px] font-semibold text-[#04B1C7] truncate">${escapeSearchHtml(s.badge)}</span>
+                  <span class="block text-xs font-bold text-slate-900 truncate">${escapeSearchHtml(s.title)}</span>
+                </div>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `);
+    }
+
+    if (Array.isArray(data.products) && data.products.length > 0) {
+      parts.push(`
+        <div>
+          <p class="text-[11px] font-bold uppercase tracking-wider text-[#656F80] mb-2">${escapeSearchHtml(labels.products || 'Products')}</p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            ${data.products.map((p) => `
+              <a href="${escapeSearchHtml(p.url)}" class="flex items-center justify-center h-[52px] px-3 py-2 rounded-lg border border-[#D1DBE5] hover:border-[#04B1C7] bg-white hover:bg-[#EFFDFF] transition-colors" title="${escapeSearchHtml(p.name)}">
+                ${p.logo ? `<img src="${escapeSearchHtml(p.logo)}" alt="${escapeSearchHtml(p.name)}" class="max-h-full max-w-full object-contain" />` : `<span class="text-xs font-bold text-slate-800 truncate">${escapeSearchHtml(p.name)}</span>`}
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `);
+    }
+
+    if (Array.isArray(data.articles) && data.articles.length > 0) {
+      parts.push(`
+        <div>
+          <p class="text-[11px] font-bold uppercase tracking-wider text-[#656F80] mb-2">${escapeSearchHtml(labels.articles || 'Articles')}</p>
+          <div class="space-y-1.5">
+            ${data.articles.map((a) => `
+              <a href="${escapeSearchHtml(a.url)}" class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors">
+                ${a.image ? `<img src="${escapeSearchHtml(a.image)}" alt="" class="w-9 h-9 rounded-md object-cover shrink-0 bg-slate-100" />` : ''}
+                <span class="text-xs font-semibold text-slate-800 line-clamp-1">${escapeSearchHtml(a.title)}</span>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `);
+    }
+
+    if (parts.length === 0) {
+      parts.push(`<p class="text-xs text-slate-500 text-center py-2">${escapeSearchHtml(labels.empty || 'No instant matches.')}</p>`);
+    } else {
+      const baseUrl = csiData.searchUrl || '/search';
+      parts.push(`
+        <div class="pt-1 border-t border-slate-100 text-right">
+          <a href="${baseUrl}?q=${encodeURIComponent(q)}" class="inline-flex items-center gap-1 text-xs font-bold text-[#ED7F22] hover:underline">
+            <span>${escapeSearchHtml(labels.viewAll || 'View all results for')} “${escapeSearchHtml(q)}” (${Number(data.total || 0)}) &rarr;</span>
+          </a>
+        </div>
+      `);
+    }
+
+    searchSuggestions.innerHTML = parts.join('');
+    searchSuggestions.classList.remove('hidden');
+  }
+
+  function handleLiveSearchInput() {
+    if (!searchInput || !searchSuggestions) return;
+    const q = searchInput.value.trim();
+
+    if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+    if (q.length < 2) {
+      searchSuggestions.classList.add('hidden');
+      searchSuggestions.innerHTML = '';
+      return;
+    }
+
+    searchDebounceTimer = setTimeout(async () => {
+      if (!csiData.searchSuggestUrl) return;
+      if (activeSuggestAbort) activeSuggestAbort.abort();
+      activeSuggestAbort = new AbortController();
+
+      try {
+        const url = `${csiData.searchSuggestUrl}?locale=${encodeURIComponent(csiData.searchLocale || 'en')}&q=${encodeURIComponent(q)}`;
+        const resp = await fetch(url, { signal: activeSuggestAbort.signal, headers: { Accept: 'application/json' } });
+        if (!resp.ok) return;
+        const payload = await resp.json();
+        renderInstantSuggestions(payload);
+      } catch (err) {
+        if (err && err.name !== 'AbortError') {
+          // Fail silently on transient network abort
+        }
+      }
+    }, 220);
+  }
 
   function openSearchModal() {
     if (!searchModal || !searchCard) return;
@@ -207,6 +329,7 @@ onReady(() => {
 
   if (searchSubmit && searchInput) {
     searchSubmit.addEventListener('click', submitSearch);
+    searchInput.addEventListener('input', handleLiveSearchInput);
     searchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();

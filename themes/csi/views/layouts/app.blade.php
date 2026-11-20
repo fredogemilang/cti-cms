@@ -14,6 +14,8 @@
         }
     }
     $searchActionUrl = function_exists('localized_url') ? localized_url('/search') : url('/search');
+    $searchSuggestUrl = url('/_csi/search-suggest');
+    $isIdLocale = app()->getLocale() === 'id';
   @endphp
 
   <x-seo.head :entity="$seoCandidate" />
@@ -52,13 +54,16 @@
         <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <input id="search-modal-input" type="text" placeholder="{{ t('search.placeholder', 'Search...') }}" class="w-full text-base sm:text-lg text-slate-800 placeholder:text-slate-400 focus:outline-none bg-transparent" />
+        <input id="search-modal-input" type="text" autocomplete="off" placeholder="{{ t('search.placeholder', $isIdLocale ? 'Cari solusi, produk, atau artikel...' : 'Search solutions, products, or articles...') }}" class="w-full text-base sm:text-lg text-slate-800 placeholder:text-slate-400 focus:outline-none bg-transparent" />
         <button id="search-modal-close" type="button" class="p-1 text-slate-400 hover:text-slate-700 transition-colors rounded-full hover:bg-slate-100 cursor-pointer" aria-label="{{ t('search.close', 'Close search') }}">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
+
+      {{-- Live Instant Autocomplete Results Container --}}
+      <div id="search-modal-suggestions" class="hidden max-h-[55vh] overflow-y-auto px-5 py-4 space-y-4 bg-white border-b border-slate-100"></div>
 
       <div class="bg-[#F8FAFC] px-6 py-3.5 flex items-center justify-between">
         <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono text-slate-400 bg-white border border-slate-200 shadow-xs">
@@ -79,6 +84,15 @@
   <script>
     window.__CSI_DATA__ = Object.assign(window.__CSI_DATA__ || {}, {
       searchUrl: @json($searchActionUrl),
+      searchSuggestUrl: @json($searchSuggestUrl),
+      searchLocale: @json(app()->getLocale()),
+      searchLabels: {
+        solutions: @json($isIdLocale ? 'Solusi' : 'Solutions'),
+        products: @json($isIdLocale ? 'Produk & Mitra Teknologi' : 'Products & Alliances'),
+        articles: @json($isIdLocale ? 'Artikel' : 'Articles'),
+        viewAll: @json($isIdLocale ? 'Lihat semua hasil untuk' : 'View all results for'),
+        empty: @json($isIdLocale ? 'Tidak ada hasil instan. Tekan Enter untuk pencarian lengkap.' : 'No instant matches. Press Enter for full search.'),
+      },
     });
   </script>
 
