@@ -152,7 +152,19 @@ class SeoRenderer
                 $featuredImage = (string) $entity->featured_image;
             } elseif (method_exists($entity, 'getBlockValue')) {
                 $blockImg = $entity->getBlockValue('hero_bg_image')
-                    ?: ($entity->getBlockValue('image') ?: $entity->getBlockValue('banner_image'));
+                    ?: ($entity->getBlockValue('about_hero_image')
+                        ?: ($entity->getBlockValue('hero_image')
+                            ?: ($entity->getBlockValue('image')
+                                ?: ($entity->getBlockValue('banner_image')
+                                    ?: ($entity->getBlockValue('overview_image')
+                                        ?: $entity->getBlockValue('contact_image'))))));
+                if (empty($blockImg)) {
+                    $slidesRaw = $entity->getBlockValue('hero_slides');
+                    $slides = is_string($slidesRaw) ? json_decode($slidesRaw, true) : (is_array($slidesRaw) ? $slidesRaw : null);
+                    if (is_array($slides) && ! empty($slides[0]['image'])) {
+                        $blockImg = (string) $slides[0]['image'];
+                    }
+                }
                 if (! empty($blockImg) && trim((string) $blockImg) !== '') {
                     $featuredImage = (string) $blockImg;
                 }
@@ -234,9 +246,11 @@ class SeoRenderer
 
         if (! $entity) {
             foreach ($availableLocales as $loc) {
-                $hreflangs[$loc] = function_exists('current_page_localized_url') ? current_page_localized_url($loc) : url('/'.$loc);
+                $u = function_exists('current_page_localized_url') ? current_page_localized_url($loc) : url('/'.$loc);
+                $hreflangs[$loc] = $u ? trailing_slash_url($u) : $u;
             }
-            $hreflangs['x-default'] = function_exists('current_page_localized_url') ? current_page_localized_url($defaultLocale) : url('/');
+            $xd = function_exists('current_page_localized_url') ? current_page_localized_url($defaultLocale) : url('/');
+            $hreflangs['x-default'] = $xd ? trailing_slash_url($xd) : $xd;
 
             return array_filter($hreflangs);
         }
@@ -244,15 +258,19 @@ class SeoRenderer
         if (method_exists($entity, 'getUrl')) {
             foreach ($availableLocales as $loc) {
                 if ($loc === $defaultLocale || ! method_exists($entity, 'hasTranslationForLocale') || $entity->hasTranslationForLocale($loc)) {
-                    $hreflangs[$loc] = $entity->getUrl($loc);
+                    $u = $entity->getUrl($loc);
+                    $hreflangs[$loc] = $u ? trailing_slash_url($u) : $u;
                 }
             }
-            $hreflangs['x-default'] = $entity->getUrl($defaultLocale);
+            $xd = $entity->getUrl($defaultLocale);
+            $hreflangs['x-default'] = $xd ? trailing_slash_url($xd) : $xd;
         } elseif (method_exists($entity, 'getArchiveUrl')) {
             foreach ($availableLocales as $loc) {
-                $hreflangs[$loc] = $entity->getArchiveUrl($loc);
+                $u = $entity->getArchiveUrl($loc);
+                $hreflangs[$loc] = $u ? trailing_slash_url($u) : $u;
             }
-            $hreflangs['x-default'] = $entity->getArchiveUrl($defaultLocale);
+            $xd = $entity->getArchiveUrl($defaultLocale);
+            $hreflangs['x-default'] = $xd ? trailing_slash_url($xd) : $xd;
         }
 
         $filtered = array_filter($hreflangs);
@@ -430,7 +448,12 @@ class SeoRenderer
         }
         if (empty($excerpt) && method_exists($entity, 'getBlockValue')) {
             $excerpt = $entity->getBlockValue('hero_subtitle')
-                ?: ($entity->getBlockValue('subtitle') ?: ($entity->getBlockValue('description') ?: $entity->getBlockValue('intro')));
+                ?: ($entity->getBlockValue('hero_description')
+                    ?: ($entity->getBlockValue('subtitle')
+                        ?: ($entity->getBlockValue('description')
+                            ?: ($entity->getBlockValue('intro')
+                                ?: ($entity->getBlockValue('about_text')
+                                    ?: ($entity->getBlockValue('overview_text') ?: $entity->getBlockValue('contact_text')))))));
         }
         if (empty($excerpt) && method_exists($entity, 'getTranslation')) {
             $excerpt = $entity->getTranslation('description', $currentLocale);
@@ -461,9 +484,27 @@ class SeoRenderer
             $content = $entity->getMeta('content') ?: $entity->getMeta('overview');
         }
         if (empty($content) && method_exists($entity, 'blocks')) {
-            $block = $entity->blocks()->where('is_active', true)->whereNotNull('value')->where('value', '!=', '')->orderBy('order')->first();
-            if ($block) {
-                $content = $block->value;
+            $blocks = $entity->blocks()
+                ->where('is_active', true)
+                ->whereIn('type', ['text', 'textarea', 'wysiwyg'])
+                ->whereNotNull('value')
+                ->where('value', '!=', '')
+                ->orderBy('order')
+                ->get();
+
+            foreach ($blocks as $block) {
+                $val = trim((string) $block->value);
+                if ($val === '' || str_starts_with($val, '[') || str_starts_with($val, '{')) {
+                    continue;
+                }
+                if (preg_match('#^(media/|images/|https?://)#i', $val) || preg_match('/\.(png|jpe?g|webp|gif|svg)$/i', $val)) {
+                    continue;
+                }
+                $plain = preg_replace('/\s+/', ' ', trim(html_entity_decode(strip_tags($val), ENT_QUOTES, 'UTF-8')));
+                if (mb_strlen($plain) >= 15) {
+                    $content = $val;
+                    break;
+                }
             }
         }
 

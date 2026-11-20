@@ -482,11 +482,10 @@ if (! function_exists('current_page_localized_url')) {
         // 4. Fallback: Parse request path
         $path = ltrim(request()->path(), '/');
 
-        // Strip current non-default locale prefix if present at start of path
+        // Strip any locale prefix if present at start of path
         $available = available_locales();
-        $nonDefault = array_values(array_filter($available, fn ($l) => $l !== $defaultLocale));
         $cleanPath = $path;
-        foreach ($nonDefault as $l) {
+        foreach ($available as $l) {
             if ($cleanPath === $l) {
                 $cleanPath = '';
                 break;
@@ -525,10 +524,10 @@ if (! function_exists('current_page_localized_url')) {
                 $newPath = implode('/', $segments);
 
                 if ($targetLocale === $defaultLocale && $hideDefault) {
-                    return url('/'.$newPath);
+                    return trailing_slash_url(url('/'.$newPath));
                 }
 
-                return url('/'.$targetLocale.'/'.$newPath);
+                return trailing_slash_url(url('/'.$targetLocale.'/'.$newPath));
             }
         }
 

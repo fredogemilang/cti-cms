@@ -2,12 +2,15 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\Admin\Cpt\CptForm;
+use App\Livewire\Admin\Cpt\Entries\EntryForm;
 use App\Models\CptEntry;
 use App\Models\CptEntryRelationship;
 use App\Models\CustomPostType;
 use App\Models\MetaField;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class CptRelationshipTest extends TestCase
@@ -211,5 +214,155 @@ class CptRelationshipTest extends TestCase
 
         // Product2 (AirPods Pro) should KEEP its standalone URL /products/airpods-pro
         $this->assertEquals(trailing_slash_url(url('/products/airpods-pro')), $product2->getUrl());
+    }
+
+    public function test_cpt_form_persists_repeater_relationship_subfield_options()
+    {
+        $vendorCpt = CustomPostType::create([
+            'name' => 'vendor',
+            'singular_label' => 'Vendor',
+            'plural_label' => 'Vendors',
+            'slug' => 'vendors',
+            'is_active' => true,
+        ]);
+
+        Livewire::test(CptForm::class)
+            ->set('singularLabel', 'Solution')
+            ->set('pluralLabel', 'Solutions')
+            ->set('name', 'solution')
+            ->set('slug', 'solutions')
+            ->set('metaBoxes', [
+                ['id' => 'modules_box', 'title' => 'Modules', 'context' => 'normal'],
+            ])
+            ->set('metaFields', [
+                [
+                    'name' => 'modules',
+                    'label' => 'Modules',
+                    'type' => 'repeater',
+                    'field_group' => 'modules_box',
+                    'options' => [
+                        'repeater_fields' => [
+                            [
+                                'name' => 'title',
+                                'label' => 'Title',
+                                'type' => 'text',
+                            ],
+                            [
+                                'name' => 'related_vendors',
+                                'label' => 'Related Vendors',
+                                'type' => 'relationship',
+                                'options' => [
+                                    'target_post_type_id' => $vendorCpt->id,
+                                    'cardinality' => 'many_to_many',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ])
+            ->call('save');
+
+        $solutionCpt = CustomPostType::where('slug', 'solutions')->firstOrFail();
+        $modulesField = $solutionCpt->metaFields()->where('name', 'modules')->firstOrFail();
+        $sub = $modulesField->options['repeater_fields'][1] ?? null;
+
+        $this->assertEquals('relationship', $sub['type'] ?? null);
+        $this->assertEquals($vendorCpt->id, $sub['options']['target_post_type_id'] ?? null);
+        $this->assertEquals('many_to_many', $sub['options']['cardinality'] ?? null);
+    }
+
+    public function test_repeater_subfield_relationship_picker_saves_and_reloads()
+    {
+        $vendorCpt = CustomPostType::create([
+            'name' => 'vendor',
+            'singular_label' => 'Vendor',
+            'plural_label' => 'Vendors',
+            'slug' => 'vendors',
+            'is_active' => true,
+        ]);
+
+        $lenovo = CptEntry::create([
+            'post_type_id' => $vendorCpt->id,
+            'title' => 'Lenovo',
+            'slug' => 'lenovo',
+            'author_id' => $this->user->id,
+            'status' => 'published',
+        ]);
+
+        $netapp = CptEntry::create([
+            'post_type_id' => $vendorCpt->id,
+            'title' => 'NetApp',
+            'slug' => 'netapp',
+            'author_id' => $this->user->id,
+            'status' => 'published',
+        ]);
+
+        $solutionCpt = CustomPostType::create([
+            'name' => 'solution',
+            'singular_label' => 'Solution',
+            'plural_label' => 'Solutions',
+            'slug' => 'solutions',
+            'is_active' => true,
+            'settings' => [
+                'meta_boxes' => [
+                    ['id' => 'modules_box', 'title' => 'Modules', 'context' => 'normal'],
+                ],
+            ],
+        ]);
+
+        $modulesField = MetaField::create([
+            'fieldable_type' => CustomPostType::class,
+            'fieldable_id' => $solutionCpt->id,
+            'name' => 'modules',
+            'label' => 'Modules',
+            'type' => 'repeater',
+            'field_group' => 'modules_box',
+            'options' => [
+                'repeater_fields' => [
+                    ['name' => 'title', 'label' => 'Title', 'type' => 'text'],
+                    [
+                        'name' => 'related_vendors',
+                        'label' => 'Related Vendors',
+                        'type' => 'relationship',
+                        'options' => [
+                            'target_post_type_id' => $vendorCpt->id,
+                            'cardinality' => 'many_to_many',
+                        ],
+                    ],
+                ],
+            ],
+            'is_active' => true,
+        ]);
+
+        $component = Livewire::test(EntryForm::class, ['postType' => $solutionCpt])
+            ->set('title', 'Infrastructure')
+            ->set('slug', 'infrastructure')
+            ->set('status', 'published')
+            ->call('addRepeaterRow', 'modules')
+            ->set('meta.modules.0.title', 'Server and Storage Infrastructure')
+            ->call('openRelationshipModal', $modulesField->id, 0, 'related_vendors')
+            ->assertSet('showRelationshipModal', true)
+            ->assertSee('Lenovo')
+            ->assertSee('NetApp')
+            ->call('toggleRelationshipTempSelection', $netapp->id)
+            ->call('toggleRelationshipTempSelection', $lenovo->id)
+            ->call('confirmRelationshipSelection')
+            ->assertSet('showRelationshipModal', false)
+            ->assertSet('meta.modules.0.related_vendors', [(string) $netapp->id, (string) $lenovo->id])
+            ->call('save');
+
+        $savedEntry = CptEntry::where('post_type_id', $solutionCpt->id)->where('slug', 'infrastructure')->firstOrFail();
+        $this->assertEquals([(string) $netapp->id, (string) $lenovo->id], $savedEntry->meta['modules'][0]['related_vendors'] ?? []);
+
+        // Verify order preservation in CptEntry::resolveRelatedByIds()
+        $resolved = CptEntry::resolveRelatedByIds($savedEntry->meta['modules'][0]['related_vendors']);
+        $this->assertEquals(['NetApp', 'Lenovo'], $resolved->pluck('title')->all());
+
+        // Reload in EntryForm and test removing one chip from the repeater row
+        Livewire::test(EntryForm::class, ['postType' => $solutionCpt, 'id' => $savedEntry->id])
+            ->assertSee('NetApp')
+            ->assertSee('Lenovo')
+            ->call('removeRelationshipItem', 'modules', $netapp->id, 0, 'related_vendors')
+            ->assertSet('meta.modules.0.related_vendors', [(string) $lenovo->id]);
     }
 }

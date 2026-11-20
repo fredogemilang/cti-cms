@@ -76,7 +76,8 @@ class ResponsiveImageService
         }
 
         $picked = $variants[$size] ?? null;
-        $src = $picked ? $diskUrl($picked['path']) : $diskUrl($media->path);
+        $pickedRel = $picked ? (! empty($picked['webp']) ? $picked['webp'] : ($picked['path'] ?? null)) : null;
+        $src = $pickedRel ? $diskUrl($pickedRel) : $diskUrl($media->webp_path ?: $media->path);
 
         return [
             'src' => $src,
@@ -96,6 +97,14 @@ class ResponsiveImageService
 
     protected function buildFromStringPath(string $originalUrl, string $cleanPath): array
     {
+        if (! preg_match('#^(https?://|/|data:)#i', $originalUrl) && function_exists('resolve_block_asset')) {
+            $resolved = resolve_block_asset($originalUrl);
+            if ($resolved !== '') {
+                $originalUrl = $resolved;
+                $cleanPath = ltrim((string) parse_url($resolved, PHP_URL_PATH), '/');
+            }
+        }
+
         $webpUrl = null;
         $ext = strtolower(pathinfo($cleanPath, PATHINFO_EXTENSION));
 

@@ -39,10 +39,30 @@ class PageTemplateService
                 ->delete();
         }
 
-        $existingNames = $page->allBlocks()->pluck('name')->toArray();
+        // 2. Deduplicate existing top-level blocks (keep first instance of each name)
+        $existingTopBlocks = PageBlock::where('page_id', $page->id)
+            ->whereNull('parent_block_id')
+            ->orderBy('id')
+            ->get();
+
+        $seen = [];
+        foreach ($existingTopBlocks as $block) {
+            if (in_array($block->name, $seen, true)) {
+                // Delete duplicate top block and its children
+                PageBlock::where('parent_block_id', $block->id)->delete();
+                $block->delete();
+            } else {
+                $seen[] = $block->name;
+            }
+        }
+
+        $existingNames = PageBlock::where('page_id', $page->id)
+            ->whereNull('parent_block_id')
+            ->pluck('name')
+            ->toArray();
 
         foreach ($schema as $order => $blockDef) {
-            if (in_array($blockDef['name'], $existingNames)) {
+            if (in_array($blockDef['name'], $existingNames, true)) {
                 continue; // already exists, skip
             }
 
