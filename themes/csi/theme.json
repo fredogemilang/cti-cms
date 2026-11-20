@@ -713,6 +713,78 @@
                     "default": []
                 }
             ]
+        },
+        "privacy": {
+            "label": "Privacy Policy Page",
+            "description": "Structured Privacy Policy page with Introduction & Scope banner, sticky 11-clause table of contents, interactive clause reader, and Contact Form.",
+            "blocks": [
+                {
+                    "name": "hero_title",
+                    "type": "text",
+                    "label": "Hero Title",
+                    "default": "Privacy Policy"
+                },
+                {
+                    "name": "hero_subtitle",
+                    "type": "textarea",
+                    "label": "Hero Subtitle",
+                    "default": "At Converion Solution Informatica (CSI), ensuring the privacy, confidentiality, and security of your personal data is fundamental to our enterprise mission. Learn how we collect, safeguard, and process your information across all digital touchpoints."
+                },
+                {
+                    "name": "intro_heading",
+                    "type": "text",
+                    "label": "Introduction Card Heading",
+                    "default": "Introduction & Scope"
+                },
+                {
+                    "name": "intro_body",
+                    "type": "textarea",
+                    "label": "Introduction Card Body",
+                    "default": ""
+                },
+                {
+                    "name": "toc_heading",
+                    "type": "text",
+                    "label": "Policy Contents Sidebar Heading",
+                    "default": "Policy Contents"
+                },
+                {
+                    "name": "clauses_list",
+                    "type": "repeater",
+                    "label": "Privacy Policy Clauses",
+                    "options": {
+                        "button_label": "Add Clause"
+                    },
+                    "children": [
+                        {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Clause Title"
+                        },
+                        {
+                            "name": "intro",
+                            "type": "textarea",
+                            "label": "Opening Paragraph(s)"
+                        },
+                        {
+                            "name": "cards",
+                            "type": "textarea",
+                            "label": "3-Column Mini Cards (Optional JSON array of {icon, title, description})"
+                        },
+                        {
+                            "name": "items",
+                            "type": "textarea",
+                            "label": "Clause Sub-Points (One per line)"
+                        },
+                        {
+                            "name": "outro",
+                            "type": "textarea",
+                            "label": "Closing Paragraph(s)"
+                        }
+                    ],
+                    "default": []
+                }
+            ]
         }
     },
     "archive_settings": {

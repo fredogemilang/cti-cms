@@ -124,6 +124,48 @@ class StringTranslationsSeeder extends Seeder
                 'en' => 'Open in Google Maps',
                 'id' => 'Buka di Google Maps',
             ],
+            'privacy_page.reading' => [
+                'group' => 'privacy_page',
+                'key' => 'reading',
+                'default' => 'Reading:',
+                'en' => 'Reading:',
+                'id' => 'Membaca:',
+            ],
+            'privacy_page.clause' => [
+                'group' => 'privacy_page',
+                'key' => 'clause',
+                'default' => 'Clause',
+                'en' => 'Clause',
+                'id' => 'Klausul',
+            ],
+            'privacy_page.of' => [
+                'group' => 'privacy_page',
+                'key' => 'of',
+                'default' => 'of',
+                'en' => 'of',
+                'id' => 'dari',
+            ],
+            'privacy_page.next_clause' => [
+                'group' => 'privacy_page',
+                'key' => 'next_clause',
+                'default' => 'Next Clause',
+                'en' => 'Next Clause',
+                'id' => 'Klausul Berikutnya',
+            ],
+            'privacy_page.prev_clause' => [
+                'group' => 'privacy_page',
+                'key' => 'prev_clause',
+                'default' => 'Previous',
+                'en' => 'Previous',
+                'id' => 'Sebelumnya',
+            ],
+            'privacy_page.back_to_first' => [
+                'group' => 'privacy_page',
+                'key' => 'back_to_first',
+                'default' => 'Back to Clause 1',
+                'en' => 'Back to Clause 1',
+                'id' => 'Kembali ke Klausul 1',
+            ],
         ];
 
         foreach ($translations as $item) {
