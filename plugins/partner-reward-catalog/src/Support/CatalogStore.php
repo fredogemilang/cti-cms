@@ -116,8 +116,13 @@ class CatalogStore
 
         if (! empty($config['cover_media_id'])) {
             $media = Media::find($config['cover_media_id']);
-            if ($media && $media->path && $disk->exists($media->path)) {
-                return $media->path;
+            if ($media) {
+                $preferredPath = $media->webp_path && $disk->exists($media->webp_path)
+                    ? $media->webp_path
+                    : $media->path;
+                if ($preferredPath && $disk->exists($preferredPath)) {
+                    return $preferredPath;
+                }
             }
         }
 
@@ -200,20 +205,40 @@ class CatalogStore
         }
 
         if ($newCoverImage !== null) {
-            $oldCoverMediaId = $current['cover_media_id'] ?? null;
-            $oldCoverPath = $current['cover_image_path'] ?? null;
-
             $coverMedia = app(MediaService::class)->upload($newCoverImage, [
                 'title' => $next['promo_title_en'].' (Cover Banner)',
                 'alt_text' => $next['promo_title_en'],
                 'uploaded_by' => auth()->id() ?? 1,
             ]);
 
-            static::deletePhysicalAndRecord($oldCoverMediaId, $oldCoverPath, $coverMedia->id);
-
             $next['cover_media_id'] = $coverMedia->id;
-            $next['cover_image_path'] = $coverMedia->path;
+            $next['cover_image_path'] = $coverMedia->webp_path ?: $coverMedia->path;
             $next['cover_original_filename'] = $coverMedia->original_filename;
+            $next['updated_at'] = now()->toIso8601String();
+        } elseif (array_key_exists('cover_media_id', $metadata)) {
+            $coverMediaId = $metadata['cover_media_id'] ? (int) $metadata['cover_media_id'] : null;
+
+            if ($coverMediaId) {
+                $coverMedia = Media::find($coverMediaId);
+                if ($coverMedia) {
+                    $next['cover_media_id'] = $coverMedia->id;
+                    $next['cover_image_path'] = $coverMedia->webp_path ?: $coverMedia->path;
+                    $next['cover_original_filename'] = $coverMedia->original_filename;
+                }
+            } else {
+                $next['cover_media_id'] = null;
+                $next['cover_image_path'] = ! empty($metadata['cover_image_path']) ? (string) $metadata['cover_image_path'] : null;
+                $next['cover_original_filename'] = $next['cover_image_path'] ? basename($next['cover_image_path']) : null;
+            }
+
+            $next['updated_at'] = now()->toIso8601String();
+        } elseif (! empty($metadata['cover_image_path'])) {
+            $path = (string) $metadata['cover_image_path'];
+            $coverMedia = Media::where('path', $path)->orWhere('webp_path', $path)->first();
+
+            $next['cover_media_id'] = $coverMedia?->id;
+            $next['cover_image_path'] = $coverMedia ? ($coverMedia->webp_path ?: $coverMedia->path) : $path;
+            $next['cover_original_filename'] = $coverMedia?->original_filename ?? basename($path);
             $next['updated_at'] = now()->toIso8601String();
         }
 
@@ -246,12 +271,11 @@ class CatalogStore
     }
 
     /**
-     * Delete the active cover image and clear its references from settings.
+     * Clear the active Partner promo cover selection from settings (preserving Media Library item).
      */
     public static function removeCoverImage(): array
     {
         $current = static::getConfig();
-        static::deletePhysicalAndRecord($current['cover_media_id'] ?? null, $current['cover_image_path'] ?? null);
 
         $next = array_merge($current, [
             'cover_media_id' => null,

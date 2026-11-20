@@ -2,6 +2,8 @@
 
 namespace Plugins\PartnerRewardCatalog\Livewire;
 
+use App\Models\Media;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Plugins\PartnerRewardCatalog\Support\CatalogStore;
@@ -12,7 +14,13 @@ class CatalogManager extends Component
 
     public $pdfFile = null;
 
-    public $coverImageFile = null;
+    public ?int $coverMediaId = null;
+
+    public ?string $coverImagePath = null;
+
+    public ?string $coverOriginalFilename = null;
+
+    public bool $showMediaPicker = false;
 
     public string $titleEn = 'Partner Reward Catalog';
 
@@ -56,6 +64,9 @@ class CatalogManager extends Component
         $this->currentConfig = CatalogStore::getConfig();
         $this->activePdfUrl = CatalogStore::pdfUrl($this->currentConfig);
         $this->activeCoverUrl = CatalogStore::coverImageUrl($this->currentConfig);
+        $this->coverMediaId = $this->currentConfig['cover_media_id'];
+        $this->coverImagePath = CatalogStore::coverImagePath($this->currentConfig);
+        $this->coverOriginalFilename = $this->currentConfig['cover_original_filename'];
         $this->titleEn = $this->currentConfig['title_en'];
         $this->titleId = $this->currentConfig['title_id'];
         $this->subtitleEn = $this->currentConfig['subtitle_en'];
@@ -71,13 +82,49 @@ class CatalogManager extends Component
         $this->allowDownload = (bool) $this->currentConfig['allow_download'];
     }
 
+    public function openCoverMediaPicker(): void
+    {
+        $this->showMediaPicker = true;
+        $this->dispatch('open-media-picker', field: 'partner_cover_image');
+    }
+
+    #[On('media-selected')]
+    public function onMediaSelected(string $field, int $mediaId, string $mediaPath, string $mediaUrl): void
+    {
+        if ($field !== 'partner_cover_image') {
+            return;
+        }
+
+        $media = Media::find($mediaId);
+        $this->coverMediaId = $mediaId;
+        $this->coverImagePath = $mediaPath;
+        $this->activeCoverUrl = $mediaUrl;
+        $this->coverOriginalFilename = $media?->original_filename ?? basename($mediaPath);
+        $this->showMediaPicker = false;
+    }
+
+    #[On('media-picker-closed')]
+    public function onMediaPickerClosed(): void
+    {
+        $this->showMediaPicker = false;
+    }
+
+    public function clearCoverImage(): void
+    {
+        $this->coverMediaId = null;
+        $this->coverImagePath = null;
+        $this->coverOriginalFilename = null;
+        $this->activeCoverUrl = null;
+    }
+
     public function save(): void
     {
         $this->authorizeEdit();
 
         $this->validate([
             'pdfFile' => 'nullable|file|mimetypes:application/pdf,application/x-pdf|mimes:pdf|max:51200',
-            'coverImageFile' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
+            'coverMediaId' => 'nullable|integer|exists:media,id',
+            'coverImagePath' => 'nullable|string|max:500',
             'titleEn' => 'required|string|max:120',
             'titleId' => 'required|string|max:120',
             'subtitleEn' => 'nullable|string|max:400',
@@ -95,15 +142,15 @@ class CatalogManager extends Component
             'pdfFile.mimes' => 'File katalog harus berformat PDF (.pdf).',
             'pdfFile.mimetypes' => 'File katalog harus berupa dokumen PDF yang valid.',
             'pdfFile.max' => 'Ukuran maksimal file PDF adalah 50 MB.',
-            'coverImageFile.image' => 'Cover banner harus berupa file gambar yang valid.',
-            'coverImageFile.mimes' => 'Cover banner harus berformat JPG, PNG, atau WebP.',
-            'coverImageFile.max' => 'Ukuran maksimal cover banner adalah 10 MB.',
         ]);
 
         $replacedPdf = $this->pdfFile !== null;
-        $replacedCover = $this->coverImageFile !== null;
+        $coverChanged = ($this->coverMediaId !== ($this->currentConfig['cover_media_id'] ?? null))
+            || ($this->coverImagePath !== ($this->currentConfig['cover_image_path'] ?? null));
 
         CatalogStore::saveCatalog([
+            'cover_media_id' => $this->coverMediaId,
+            'cover_image_path' => $this->coverImagePath,
             'title_en' => $this->titleEn,
             'title_id' => $this->titleId,
             'subtitle_en' => $this->subtitleEn,
@@ -117,18 +164,17 @@ class CatalogManager extends Component
             'promo_cta_text_en' => $this->promoCtaTextEn,
             'promo_cta_text_id' => $this->promoCtaTextId,
             'allow_download' => $this->allowDownload,
-        ], $this->pdfFile, $this->coverImageFile);
+        ], $this->pdfFile);
 
         $this->pdfFile = null;
-        $this->coverImageFile = null;
         $this->reloadState();
 
         $parts = [];
         if ($replacedPdf) {
             $parts[] = 'Catalog PDF replaced';
         }
-        if ($replacedCover) {
-            $parts[] = 'Partner cover banner replaced';
+        if ($coverChanged) {
+            $parts[] = 'Partner cover updated';
         }
 
         session()->flash(
@@ -153,10 +199,10 @@ class CatalogManager extends Component
     {
         $this->authorizeEdit();
         CatalogStore::removeCoverImage();
-        $this->coverImageFile = null;
+        $this->clearCoverImage();
         $this->reloadState();
 
-        session()->flash('success', 'Active Partner cover banner has been removed.');
+        session()->flash('success', 'Partner cover banner cleared. Default page media fallback is now active.');
     }
 
     protected function authorizeEdit(): void

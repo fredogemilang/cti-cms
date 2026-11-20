@@ -89,7 +89,7 @@ class PartnerRewardCatalogTest extends TestCase
         $this->assertDatabaseHas('media', ['id' => $secondMediaId, 'original_filename' => 'catalog-v2.pdf']);
     }
 
-    public function test_uploading_new_cover_banner_replaces_previous_cover_and_populates_promo_banner(): void
+    public function test_selecting_and_clearing_cover_banner_from_media_library_preserves_media_records(): void
     {
         Storage::fake('public');
         config(['media.disk' => 'public']);
@@ -98,27 +98,38 @@ class PartnerRewardCatalogTest extends TestCase
         $admin = User::factory()->create();
         $this->actingAs($admin);
 
-        $firstCover = UploadedFile::fake()->image('cover-2026.png', 1200, 675);
+        $mediaService = app(\App\Services\MediaService::class);
+        $firstMedia = $mediaService->upload(UploadedFile::fake()->image('cover-2026.png', 1200, 675), [
+            'title' => 'Cover 2026',
+            'uploaded_by' => $admin->id,
+        ]);
+        $secondMedia = $mediaService->upload(UploadedFile::fake()->image('cover-2027.png', 1200, 675), [
+            'title' => 'Cover 2027',
+            'uploaded_by' => $admin->id,
+        ]);
+
         $cfg1 = CatalogStore::saveCatalog([
+            'cover_media_id' => $firstMedia->id,
             'promo_title_en' => 'Annual Partner Incentive Trip 2027',
             'promo_title_id' => 'Annual Partner Incentive Trip 2027',
             'promo_cta_text_en' => 'Explore the Partner Reward Catalog',
             'promo_cta_text_id' => 'Lihat Katalog Hadiah Mitra',
-        ], null, $firstCover);
+        ]);
 
-        $this->assertNotNull($cfg1['cover_media_id']);
+        $this->assertSame($firstMedia->id, $cfg1['cover_media_id']);
         $this->assertTrue(Storage::disk('public')->exists($cfg1['cover_image_path']));
 
-        $secondCover = UploadedFile::fake()->image('cover-2027.png', 1200, 675);
         $cfg2 = CatalogStore::saveCatalog([
+            'cover_media_id' => $secondMedia->id,
             'promo_title_en' => 'Partner Trip Tokyo 2028',
             'promo_title_id' => 'Perjalanan Mitra Tokyo 2028',
-        ], null, $secondCover);
+        ]);
 
-        $this->assertNotSame($cfg1['cover_media_id'], $cfg2['cover_media_id']);
-        $this->assertFalse(Storage::disk('public')->exists($cfg1['cover_image_path']));
-        $this->assertDatabaseMissing('media', ['id' => $cfg1['cover_media_id']]);
-        $this->assertTrue(Storage::disk('public')->exists($cfg2['cover_image_path']));
+        $this->assertSame($secondMedia->id, $cfg2['cover_media_id']);
+        // Both Media Library records must stay intact when swapping via Media Library picker
+        $this->assertDatabaseHas('media', ['id' => $firstMedia->id]);
+        $this->assertDatabaseHas('media', ['id' => $secondMedia->id]);
+        $this->assertTrue(Storage::disk('public')->exists($secondMedia->webp_path ?? $secondMedia->path));
 
         $bannerEn = CatalogStore::promoBanner('en');
         $bannerId = CatalogStore::promoBanner('id');
@@ -126,5 +137,11 @@ class PartnerRewardCatalogTest extends TestCase
         $this->assertSame('Partner Trip Tokyo 2028', $bannerEn['title']);
         $this->assertSame('Perjalanan Mitra Tokyo 2028', $bannerId['title']);
         $this->assertSame($cfg2['cover_image_path'], $bannerEn['cover_path']);
+
+        // Clearing cover selection must keep the Media Library item untouched
+        $cleared = CatalogStore::removeCoverImage();
+        $this->assertNull($cleared['cover_media_id']);
+        $this->assertNull($cleared['cover_image_path']);
+        $this->assertDatabaseHas('media', ['id' => $secondMedia->id]);
     }
 }
