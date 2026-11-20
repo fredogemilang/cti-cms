@@ -166,7 +166,7 @@ class CsiDataProvider
                         'title' => $entry->getTranslation('title') ?? $entry->title,
                         'subtitle' => $entry->getMeta('subtitle') ?: ($entry->getTranslation('excerpt') ?? $entry->excerpt ?? ''),
                         'cta' => $entry->getMeta('cta_text') ?: t('solutions.explore_prefix', 'Explore').' '.($entry->getTranslation('title') ?? $entry->title),
-                        'url' => function_exists('cpt_entry_url') ? cpt_entry_url($entry) : '#solutions',
+                        'url' => $entry->getUrl(),
                         'icon' => $rawIcon ? resolve_block_asset($rawIcon) : theme_asset('images/solution-icon-infrastructure.svg'),
                         'variant' => $isOrange ? 'orange' : 'cyan',
                     ];
