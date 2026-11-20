@@ -83,7 +83,10 @@
         </div>
       </a>
     @endforeach
-    <a href="#solutions" class="sheet-item block w-full py-3 rounded-xl bg-[#04B1C7] text-white text-center font-bold text-sm shadow-sm hover:bg-[#0398ab] transition-colors mt-2">
+    @php
+        $solutionsArchiveUrl = $currentLocale === 'id' ? localized_url('/solusi') : localized_url('/solutions');
+    @endphp
+    <a href="{{ $solutionsArchiveUrl }}" class="sheet-item block w-full py-3 rounded-xl bg-[#04B1C7] text-white text-center font-bold text-sm shadow-sm hover:bg-[#0398ab] transition-colors mt-2">
       {{ t('nav.explore_all_solutions', 'Explore All Solutions') }} →
     </a>
   </div>

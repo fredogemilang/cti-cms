@@ -1600,6 +1600,40 @@ onReady(() => {
         });
       }
 
+      // --- SOLUTIONS SINGLE & ARCHIVE: ARC PARALLAX + SERVICES REVEAL ---
+      if (document.getElementById('solution-hero')) {
+        gsap.to('#solution-arc-left', {
+          scrollTrigger: { trigger: '#solution-hero', start: 'top bottom', end: 'bottom top', scrub: 1.5 },
+          y: -45,
+        });
+        gsap.to('#solution-arc-right', {
+          scrollTrigger: { trigger: '#solution-hero', start: 'top bottom', end: 'bottom top', scrub: 1.4 },
+          y: 45,
+        });
+        if (document.getElementById('solution-services')) {
+          revealHeading('#solution-services-heading', '#solution-services');
+          gsap.utils.toArray('.solution-service-card').forEach((card, i) => {
+            revealMotion(
+              card,
+              { y: 28, opacity: 0 },
+              { y: 0, opacity: 1, delay: (i % 3) * 0.08, duration: 0.64, ease: 'power3.out' },
+              { trigger: card, start: 'top 90%', end: 'bottom 10%' }
+            );
+          });
+        }
+      }
+
+      if (document.getElementById('solutions-archive-hero')) {
+        gsap.to('#archive-solutions-arc-left', {
+          scrollTrigger: { trigger: '#solutions-archive-hero', start: 'top bottom', end: 'bottom top', scrub: 1.5 },
+          y: -45,
+        });
+        gsap.to('#archive-solutions-arc-right', {
+          scrollTrigger: { trigger: '#solutions-archive-hero', start: 'top bottom', end: 'bottom top', scrub: 1.4 },
+          y: 45,
+        });
+      }
+
       // --- SHARED: CONTACT SECTION ---
       if (document.getElementById('contact')) {
         revealMotion(

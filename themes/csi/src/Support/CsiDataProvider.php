@@ -160,13 +160,14 @@ class CsiDataProvider
             if ($entries->isNotEmpty()) {
                 return $entries->values()->map(function (CptEntry $entry, int $idx) {
                     $isOrange = ($entry->getMeta('accent_variant') === 'orange') || $idx >= 3;
+                    $rawIcon = $entry->getMeta('icon');
 
                     return [
                         'title' => $entry->getTranslation('title') ?? $entry->title,
                         'subtitle' => $entry->getMeta('subtitle') ?: ($entry->getTranslation('excerpt') ?? $entry->excerpt ?? ''),
                         'cta' => $entry->getMeta('cta_text') ?: t('solutions.explore_prefix', 'Explore').' '.($entry->getTranslation('title') ?? $entry->title),
                         'url' => function_exists('cpt_entry_url') ? cpt_entry_url($entry) : '#solutions',
-                        'icon' => $entry->getMeta('icon') ?: theme_asset('images/solution-icon-infrastructure.svg'),
+                        'icon' => $rawIcon ? resolve_block_asset($rawIcon) : theme_asset('images/solution-icon-infrastructure.svg'),
                         'variant' => $isOrange ? 'orange' : 'cyan',
                     ];
                 })->all();
