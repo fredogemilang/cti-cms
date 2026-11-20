@@ -29,6 +29,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'plugins/partner-reward-catalog/resources/js/flipbook.js',
                 ...discoverThemeAssets(),
             ],
             refresh: [

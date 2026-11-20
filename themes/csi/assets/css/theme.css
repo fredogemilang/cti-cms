@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 @source "../../views";
+@source "../../../plugins/partner-reward-catalog/resources/views";
 @source "../../../../resources/views/components";
 @source not "../../../../resources/views/admin";
 @source not "../../../../resources/views/livewire";

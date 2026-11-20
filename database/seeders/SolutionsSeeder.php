@@ -135,7 +135,7 @@ class SolutionsSeeder extends Seeder
                 'singular_label' => 'Solution',
                 'plural_label' => 'Solutions',
                 'description' => 'Enterprise IT solution pillars (Infrastructure, Cloud, Data & Platform, Security, AI).',
-                'icon' => 'squares-2x2',
+                'icon' => 'grid_view',
                 'has_archive' => true,
                 'publicly_queryable' => true,
                 'show_in_menu' => true,

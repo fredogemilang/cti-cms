@@ -159,6 +159,19 @@
     "file": "assets/plus-jakarta-sans-vietnamese-800-normal-CxbopLd3.woff2",
     "src": "node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-vietnamese-800-normal.woff2"
   },
+  "node_modules/pdfjs-dist/build/pdf.worker.min.mjs": {
+    "file": "assets/pdf.worker.min-CIqJB0yW.mjs",
+    "src": "node_modules/pdfjs-dist/build/pdf.worker.min.mjs"
+  },
+  "plugins/partner-reward-catalog/resources/js/flipbook.js": {
+    "file": "assets/flipbook-CwulvPBw.js",
+    "name": "flipbook",
+    "src": "plugins/partner-reward-catalog/resources/js/flipbook.js",
+    "isEntry": true,
+    "assets": [
+      "assets/pdf.worker.min-CIqJB0yW.mjs"
+    ]
+  },
   "resources/css/app.css": {
     "file": "assets/app-AoN1_o9e.css",
     "src": "resources/css/app.css",
