@@ -115,12 +115,12 @@
                       @click="activeModule = (activeModule === {{ $idx }} ? -1 : {{ $idx }})"
                       :aria-expanded="(activeModule === {{ $idx }}).toString()"
                       class="w-full flex items-start justify-between gap-4 px-[18px] py-[18px] text-left cursor-pointer group focus:outline-none">
-                <span class="text-[16px] font-bold leading-snug text-black group-hover:text-[#04B1C7] transition-colors flex-1"
+                <span class="text-[16px] font-bold leading-snug text-black group-hover:text-[#04B1C7] transition-colors duration-300 flex-1"
                       :class="activeModule === {{ $idx }} ? 'text-[#04B1C7]' : ''">
                   {{ $mod['title'] }}
                 </span>
 
-                <span class="shrink-0 w-[30px] h-[30px] flex items-center justify-center text-[#1E293B] transition-transform duration-300"
+                <span class="shrink-0 w-[30px] h-[30px] flex items-center justify-center text-[#1E293B] transition-all duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
                       :class="activeModule === {{ $idx }} ? 'rotate-45 text-[#04B1C7]' : 'rotate-0'">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
@@ -128,46 +128,51 @@
                 </span>
               </button>
 
-              <div x-show="activeModule === {{ $idx }}"
-                   x-collapse
-                   @if($idx !== 0) x-cloak @endif
-                   class="px-[18px] pb-[20px]">
-                @if($mod['description'] !== '')
-                  <p class="text-[14px] leading-[22px] text-[#334155] font-normal">
-                    {{ $mod['description'] }}
-                  </p>
-                @endif
+              <div :aria-hidden="(activeModule !== {{ $idx }}).toString()"
+                   class="grid transition-[grid-template-rows,opacity] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+                   :class="activeModule === {{ $idx }} ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'">
+                <div class="overflow-hidden min-h-0">
+                  <div class="px-[18px] pb-[20px] transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+                       :class="activeModule === {{ $idx }} ? 'translate-y-0' : '-translate-y-1.5'">
+                    @if($mod['description'] !== '')
+                      <p class="text-[14px] leading-[22px] text-[#334155] font-normal">
+                        {{ $mod['description'] }}
+                      </p>
+                    @endif
 
-                @if(count($mod['related_ids']) > 0)
-                  <div class="mt-4 pt-3.5 border-t border-[#E4EBFA]/80">
-                    <span class="block text-[11px] font-bold tracking-[0.14em] uppercase text-[#656F80] mb-2.5">
-                      {{ t('solutions.related_products', 'Related Products') }}
-                    </span>
+                    @if(count($mod['related_ids']) > 0)
+                      <div class="mt-4 pt-3.5 border-t border-[#E4EBFA]/80">
+                        <span class="block text-[11px] font-bold tracking-[0.14em] uppercase text-[#656F80] mb-2.5">
+                          {{ t('solutions.related_products', 'Related Products') }}
+                        </span>
 
-                    <div class="flex flex-wrap gap-2">
-                      @foreach($mod['related_ids'] as $vid)
-                        @php $vendor = $vendorsById->get($vid); @endphp
-                        @if($vendor)
-                          @php
-                              $vendorName = $vendor->getTranslation('title', $currentLocale) ?? $vendor->title;
-                              $vendorLogo = $vendor->getMeta('brand_logo') ?: $vendor->featured_image;
-                              $vendorUrl = $vendor->getUrl($currentLocale);
-                          @endphp
-                          <a href="{{ $vendorUrl }}"
-                             class="group/vendor inline-flex items-center gap-2 rounded-[8px] border border-[#D1DBE5] bg-white px-3 py-1.5 shadow-2xs hover:border-[#04B1C7] hover:-translate-y-0.5 hover:shadow-[0_6px_18px_rgba(4,177,199,0.14)] transition-all duration-200"
-                             title="{{ $vendorName }}">
-                            @if(!empty($vendorLogo))
-                              <img src="{{ resolve_block_asset($vendorLogo) }}" alt="{{ $vendorName }}" loading="lazy" class="h-[18px] max-w-[64px] w-auto object-contain shrink-0" />
+                        <div class="flex flex-wrap gap-2">
+                          @foreach($mod['related_ids'] as $vid)
+                            @php $vendor = $vendorsById->get($vid); @endphp
+                            @if($vendor)
+                              @php
+                                  $vendorName = $vendor->getTranslation('title', $currentLocale) ?? $vendor->title;
+                                  $vendorLogo = $vendor->getMeta('brand_logo') ?: $vendor->featured_image;
+                                  $vendorUrl = $vendor->getUrl($currentLocale);
+                              @endphp
+                              <a href="{{ $vendorUrl }}"
+                                 :tabindex="activeModule === {{ $idx }} ? 0 : -1"
+                                 class="group/vendor inline-flex items-center gap-2 rounded-[8px] border border-[#D1DBE5] bg-white px-3 py-1.5 shadow-2xs hover:border-[#04B1C7] hover:-translate-y-0.5 hover:shadow-[0_6px_18px_rgba(4,177,199,0.14)] transition-all duration-200"
+                                 title="{{ $vendorName }}">
+                                @if(!empty($vendorLogo))
+                                  <img src="{{ resolve_block_asset($vendorLogo) }}" alt="{{ $vendorName }}" loading="lazy" class="h-[18px] max-w-[64px] w-auto object-contain shrink-0" />
+                                @endif
+                                <span class="text-[12px] font-semibold text-slate-800 group-hover/vendor:text-[#04B1C7] transition-colors whitespace-nowrap">
+                                  {{ $vendorName }}
+                                </span>
+                              </a>
                             @endif
-                            <span class="text-[12px] font-semibold text-slate-800 group-hover/vendor:text-[#04B1C7] transition-colors whitespace-nowrap">
-                              {{ $vendorName }}
-                            </span>
-                          </a>
-                        @endif
-                      @endforeach
-                    </div>
+                          @endforeach
+                        </div>
+                      </div>
+                    @endif
                   </div>
-                @endif
+                </div>
               </div>
             </div>
           @endforeach

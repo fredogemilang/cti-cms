@@ -69,26 +69,35 @@
               <div class="h-px w-full bg-[#E4EBFA]"></div>
 
               <button type="button"
-                      @click="activeSolution = {{ $idx }}"
+                      @click="activeSolution = (activeSolution === {{ $idx }} ? -1 : {{ $idx }})"
                       :aria-expanded="(activeSolution === {{ $idx }}).toString()"
                       class="w-full flex items-start justify-between gap-4 px-[18px] py-[18px] text-left cursor-pointer group focus:outline-none">
-                <div class="flex flex-col gap-[10px] flex-1">
-                  <span class="text-[16px] font-bold leading-snug text-black group-hover:text-[#04B1C7] transition-colors"
-                        :class="activeSolution === {{ $idx }} ? 'text-[#04B1C7]' : ''">
-                    {{ $solTitle }}
-                  </span>
+                <span class="text-[16px] font-bold leading-snug text-black group-hover:text-[#04B1C7] transition-colors duration-300 flex-1"
+                      :class="activeSolution === {{ $idx }} ? 'text-[#04B1C7]' : ''">
+                  {{ $solTitle }}
+                </span>
 
-                  <div x-show="activeSolution === {{ $idx }}"
-                       x-collapse
-                       @if($idx !== 0) x-cloak @endif
-                       class="flex flex-col gap-3 items-start">
+                <span class="shrink-0 w-[30px] h-[30px] flex items-center justify-center text-[#1E293B] transition-all duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+                      :class="activeSolution === {{ $idx }} ? 'rotate-45 text-[#04B1C7]' : 'rotate-0'">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
+                  </svg>
+                </span>
+              </button>
+
+              <div :aria-hidden="(activeSolution !== {{ $idx }}).toString()"
+                   class="grid transition-[grid-template-rows,opacity] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+                   :class="activeSolution === {{ $idx }} ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'">
+                <div class="overflow-hidden min-h-0">
+                  <div class="px-[18px] pb-[20px] flex flex-col gap-3 items-start transition-transform duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+                       :class="activeSolution === {{ $idx }} ? 'translate-y-0' : '-translate-y-1.5'">
                     @if($solDesc !== '')
                       <p class="text-[13px] font-normal leading-[19px] text-black">
                         {{ $solDesc }}
                       </p>
                     @endif
                     <a href="{{ $solUrl }}"
-                       @click.stop
+                       :tabindex="activeSolution === {{ $idx }} ? 0 : -1"
                        class="inline-flex items-center gap-1.5 text-[13px] font-bold text-[#ED7F22] hover:text-[#d86f1b] hover:underline transition-colors">
                       <span>{{ $solCta }}</span>
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -97,14 +106,7 @@
                     </a>
                   </div>
                 </div>
-
-                <span class="shrink-0 w-[30px] h-[30px] flex items-center justify-center text-[#1E293B] transition-transform duration-300"
-                      :class="activeSolution === {{ $idx }} ? 'rotate-45 text-[#04B1C7]' : 'rotate-0'">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
-                  </svg>
-                </span>
-              </button>
+              </div>
             </div>
           @endforeach
           <div class="h-px w-full bg-[#E4EBFA]"></div>
@@ -122,7 +124,7 @@
                 @endphp
                 @if(!empty($solImg))
                   <a href="{{ $solUrl }}"
-                     x-show="activeSolution === {{ $idx }}"
+                     x-show="activeSolution === {{ $idx }} || (activeSolution === -1 && {{ $idx }} === 0)"
                      x-transition.opacity.duration.300ms
                      @if($idx !== 0) x-cloak @endif
                      class="block absolute inset-0 w-full h-full group/img">
