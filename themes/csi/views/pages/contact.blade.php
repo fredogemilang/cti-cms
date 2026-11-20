@@ -233,8 +233,11 @@
           @elseif($iconType === 'email')
             <img src="{{ theme_asset('images/contact/mail-icon.svg') }}" alt="" class="w-[20px] h-[16px] object-contain" />
           @else
-            <div class="relative w-[22px] h-[22px] flex items-center justify-center">
-              <img src="{{ theme_asset('images/contact/phone-ring-0.svg') }}" alt="" class="w-[20px] h-[20px] object-contain" />
+            <div class="relative w-[22px] h-[22px]">
+              <img src="{{ theme_asset('images/contact/phone-ring-0.svg') }}" alt="" class="absolute inset-[8.33%] w-[83.34%] h-[83.34%] object-contain" />
+              <img src="{{ theme_asset('images/contact/phone-ring-1.svg') }}" alt="" class="absolute top-[8.34%] right-[8.33%] bottom-[50.13%] left-[50.14%] w-[41.53%] h-[41.53%] object-contain" />
+              <img src="{{ theme_asset('images/contact/phone-ring-2.svg') }}" alt="" class="absolute top-[21.87%] right-[21.86%] bottom-[50.13%] left-[50.14%] w-[28%] h-[28%] object-contain" />
+              <img src="{{ theme_asset('images/contact/phone-ring-3.svg') }}" alt="" class="absolute top-[35.63%] right-[35.62%] bottom-[50.13%] left-[50.14%] w-[14.24%] h-[14.24%] object-contain" />
             </div>
           @endif
         </div>
