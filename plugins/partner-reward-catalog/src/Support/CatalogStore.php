@@ -4,6 +4,7 @@ namespace Plugins\PartnerRewardCatalog\Support;
 
 use App\Models\Media;
 use App\Models\Setting;
+use App\Services\CacheManager;
 use App\Services\MediaService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -127,6 +128,7 @@ class CatalogStore
         }
 
         Setting::set(self::SETTING_KEY, $next, 'partner-reward-catalog', 'json');
+        CacheManager::purgeAll();
 
         return $next;
     }
@@ -148,6 +150,7 @@ class CatalogStore
         ]);
 
         Setting::set(self::SETTING_KEY, $next, 'partner-reward-catalog', 'json');
+        CacheManager::purgeAll();
 
         return $next;
     }
