@@ -82,10 +82,45 @@ class StringTranslationsSeeder extends Seeder
                 'en' => 'From infrastructure to AI, we bring your technology together to streamline operations, accelerate growth, and keep your business ahead.',
                 'id' => 'Penuhi kebutuhan infrastruktur, cloud, data, keamanan, dan AI dengan teknologi yang mengoptimalkan operasional dan mendukung pertumbuhan bisnis.',
             ],
+            'alliances_archive.hero_title' => [
+                'group' => 'alliances_archive',
+                'key' => 'hero_title',
+                'default' => 'Technology Alliances',
+                'en' => 'Technology Alliances',
+                'id' => 'Kemitraan Teknologi',
+            ],
+            'alliances_archive.hero_subtitle' => [
+                'group' => 'alliances_archive',
+                'key' => 'hero_subtitle',
+                'default' => 'Through collaborations with leading global technology providers, we strengthen our product capabilities and integrate cutting-edge technologies into our solutions.',
+                'en' => 'Through collaborations with leading global technology providers, we strengthen our product capabilities and integrate cutting-edge technologies into our solutions.',
+                'id' => 'Melalui kemitraan dengan penyedia teknologi global, kami menghadirkan produk dengan kapabilitas yang lebih kuat serta solusi yang didukung teknologi terkini.',
+            ],
+            'alliances_archive.partners_heading' => [
+                'group' => 'alliances_archive',
+                'key' => 'partners_heading',
+                'default' => 'Our Strategic Partners',
+                'en' => 'Our Strategic Partners',
+                'id' => 'Partner Strategis Kami',
+            ],
+            'alliances_archive.cta_label' => [
+                'group' => 'alliances_archive',
+                'key' => 'cta_label',
+                'default' => 'Learn More',
+                'en' => 'Learn More',
+                'id' => 'Pelajari Lebih Lanjut',
+            ],
+            'alliances_archive.empty_notice' => [
+                'group' => 'alliances_archive',
+                'key' => 'empty_notice',
+                'default' => 'No technology alliances published yet.',
+                'en' => 'No technology alliances published yet.',
+                'id' => 'Belum ada mitra teknologi yang dipublikasikan.',
+            ],
         ];
 
         foreach ($translations as $item) {
-            StringTranslationKey::where('group', $item['group'])->where('key', $item['key'])->delete();
+            StringTranslationKey::where('group', $item['group'])->whereIn('key', [$item['key'], $item['group'].'.'.$item['key']])->delete();
             StringTranslationKey::where('group', 'ui')->where('key', $item['group'].'.'.$item['key'])->delete();
 
             $tk = StringTranslationKey::create([
