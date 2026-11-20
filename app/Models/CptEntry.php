@@ -6,6 +6,7 @@ use App\Services\Sitemap\SitemapBuilder;
 use App\Traits\HasSanitizedContent;
 use App\Traits\HasSeoMeta;
 use App\Traits\HasTranslations;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -281,6 +282,37 @@ class CptEntry extends Model
         }
 
         return $query;
+    }
+
+    /**
+     * Resolve published (or any) entries by an ordered list of IDs without N+1 queries.
+     *
+     * @param  array<int, int|string>|int|string|null  $ids
+     * @return Collection<int, self>
+     */
+    public static function resolveRelatedByIds(array|int|string|null $ids, bool $publishedOnly = true)
+    {
+        $rawIds = is_array($ids) ? $ids : ($ids !== null && $ids !== '' ? [$ids] : []);
+        $orderedIds = array_values(array_unique(array_filter(array_map('intval', $rawIds), fn (int $id) => $id > 0)));
+
+        if (empty($orderedIds)) {
+            return new Collection;
+        }
+
+        $query = static::query()->with('postType')->whereIn('id', $orderedIds);
+        if ($publishedOnly) {
+            $query->where('status', 'published');
+        }
+
+        $byId = $query->get()->keyBy('id');
+        $sorted = [];
+        foreach ($orderedIds as $id) {
+            if ($byId->has($id)) {
+                $sorted[] = $byId->get($id);
+            }
+        }
+
+        return new Collection($sorted);
     }
 
     /**
