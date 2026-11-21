@@ -125,9 +125,49 @@ class CaptchaService
 
         return '
         <div class="mb-3">
-            <div class="g-recaptcha" data-sitekey="'.e($siteKey).'"></div>
+            <div class="g-recaptcha" data-sitekey="'.e($siteKey).'" style="min-height:78px"></div>
         </div>
-        <script src="https://www.google.com/recaptcha/api.js" async defer></script>';
+        <script>
+        (function(){
+            if(window.__ctiRecaptchaLazyInit){return;}
+            window.__ctiRecaptchaLazyInit=true;
+            var loaded=false;
+            function loadRecaptcha(){
+                if(loaded){return;}
+                loaded=true;
+                if(document.querySelector(\'script[src*="google.com/recaptcha/api.js"]\')){return;}
+                var s=document.createElement("script");
+                s.src="https://www.google.com/recaptcha/api.js";
+                s.async=true;
+                s.defer=true;
+                document.head.appendChild(s);
+            }
+            function init(){
+                var els=document.querySelectorAll(".g-recaptcha");
+                if(!els.length){return;}
+                var obs=("IntersectionObserver" in window)?new IntersectionObserver(function(entries){
+                    for(var i=0;i<entries.length;i++){
+                        if(entries[i].isIntersecting){obs.disconnect();loadRecaptcha();break;}
+                    }
+                },{rootMargin:"250px 0px"}):null;
+                if(!obs){loadRecaptcha();return;}
+                for(var i=0;i<els.length;i++){
+                    obs.observe(els[i]);
+                    var form=els[i].closest("form");
+                    if(form){
+                        form.addEventListener("focusin",loadRecaptcha,{once:true,passive:true});
+                        form.addEventListener("pointerenter",loadRecaptcha,{once:true,passive:true});
+                        form.addEventListener("touchstart",loadRecaptcha,{once:true,passive:true});
+                    }
+                }
+            }
+            if(document.readyState==="loading"){
+                document.addEventListener("DOMContentLoaded",init,{once:true});
+            }else{
+                init();
+            }
+        })();
+        </script>';
     }
 
     /**

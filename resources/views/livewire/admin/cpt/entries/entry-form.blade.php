@@ -820,21 +820,34 @@
     @if($showRelationshipModal)
         @php
             $activeField = $postType->metaFields->where('id', $activeRelationshipFieldId)->first();
-            $candidates = $targetEntriesByField[$activeRelationshipFieldId] ?? collect();
+            $activeSubField = null;
+            if ($activeField && $activeRelationshipSubField !== null && $activeField->type === 'repeater') {
+                foreach ($activeField->options['repeater_fields'] ?? [] as $sfIdx => $sf) {
+                    $sfKey = $sf['name'] ?? $sf['id'] ?? \Illuminate\Support\Str::snake($sf['label'] ?? 'field_'.$sfIdx);
+                    if ($sfKey === $activeRelationshipSubField) {
+                        $activeSubField = $sf;
+                        break;
+                    }
+                }
+            }
+            $candidates = $activeRelationshipSubField !== null
+                ? ($targetEntriesBySubField["{$activeRelationshipFieldId}.{$activeRelationshipSubField}"] ?? collect())
+                : ($targetEntriesByField[$activeRelationshipFieldId] ?? collect());
             if(!empty($relationshipSearch)) {
                 $candidates = $candidates->filter(fn($item) => 
                     str_contains(strtolower($item->title), strtolower($relationshipSearch)) || 
                     str_contains(strtolower($item->slug), strtolower($relationshipSearch))
                 );
             }
-            $cardinality = $activeField->options['cardinality'] ?? 'many_to_many';
+            $modalLabel = $activeSubField['label'] ?? $activeField->label ?? 'Related Entries';
+            $cardinality = $activeSubField['options']['cardinality'] ?? $activeField->options['cardinality'] ?? 'many_to_many';
         @endphp
         <div class="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
             <div class="bg-white dark:bg-[#1A1A1A] border border-gray-200 dark:border-[#272B30] rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-6">
                 <div class="flex items-center justify-between pb-4 border-b border-gray-200 dark:border-[#272B30]">
                     <div>
                         <h3 class="text-base font-bold text-gray-900 dark:text-white">
-                            Select {{ $activeField->label ?? 'Related Entries' }}
+                            Select {{ $modalLabel }}
                         </h3>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
                             {{ $cardinality === 'one_to_many' ? 'Select 1 entry (Single)' : 'Select multiple entries (Multi-Check)' }}

@@ -79,11 +79,107 @@ class EntryForm extends Component
 
     public ?int $activeRelationshipFieldId = null;
 
+    public ?int $activeRelationshipRowIndex = null;
+
+    public ?string $activeRelationshipSubField = null;
+
     public string $relationshipSearch = '';
 
     public array $tempSelectedRelationshipIds = [];
 
-    public function openRelationshipModal(int $fieldId)
+    protected function normalizeRepeaterSubFieldKey(array $subField, int $fallbackIndex = 0): string
+    {
+        return $subField['name'] ?? $subField['id'] ?? Str::snake($subField['label'] ?? 'field_'.$fallbackIndex);
+    }
+
+    protected function findRepeaterSubField(MetaField $field, ?string $subFieldKey): ?array
+    {
+        if ($subFieldKey === null || $field->type !== 'repeater') {
+            return null;
+        }
+
+        foreach ($field->options['repeater_fields'] ?? [] as $idx => $subField) {
+            if ($this->normalizeRepeaterSubFieldKey($subField, $idx) === $subFieldKey) {
+                return $subField;
+            }
+        }
+
+        return null;
+    }
+
+    protected function resolveRelationshipOptions(MetaField $field, ?string $subFieldKey = null): array
+    {
+        if ($subFieldKey !== null) {
+            $subField = $this->findRepeaterSubField($field, $subFieldKey);
+            if ($subField && isset($subField['options']) && is_array($subField['options'])) {
+                return $subField['options'];
+            }
+        }
+
+        return is_array($field->options) ? $field->options : [];
+    }
+
+    protected function extractSelectedIds(mixed $rawValue): array
+    {
+        $rawList = is_array($rawValue) ? $rawValue : [$rawValue];
+        $ids = [];
+        foreach ($rawList as $v) {
+            if ($v !== '' && $v !== null) {
+                $ids[] = (int) $v;
+            }
+        }
+
+        return array_values(array_unique(array_filter($ids, fn (int $id) => $id > 0)));
+    }
+
+    protected function resolveTargetCptIds(array $options): array
+    {
+        if (! empty($options['target_post_type_ids']) && is_array($options['target_post_type_ids'])) {
+            return array_map('intval', $options['target_post_type_ids']);
+        }
+        if (! empty($options['target_cpt_ids']) && is_array($options['target_cpt_ids'])) {
+            return array_map('intval', $options['target_cpt_ids']);
+        }
+        if (! empty($options['target_cpt']) && is_array($options['target_cpt'])) {
+            return CustomPostType::whereIn('slug', $options['target_cpt'])->pluck('id')->toArray();
+        }
+        if (! empty($options['target_post_type_id'])) {
+            return is_array($options['target_post_type_id'])
+                ? array_map('intval', $options['target_post_type_id'])
+                : [(int) $options['target_post_type_id']];
+        }
+        if (! empty($options['target_cpt'])) {
+            $targetCpt = CustomPostType::where('slug', $options['target_cpt'])->first();
+
+            return $targetCpt ? [$targetCpt->id] : [];
+        }
+
+        return [];
+    }
+
+    protected function queryRelationshipCandidates(array $options, array $selectedIds = [])
+    {
+        $targetCptIds = $this->resolveTargetCptIds($options);
+
+        $query = CptEntry::query()
+            ->where('status', 'published')
+            ->where('id', '!=', $this->entryId ?? 0);
+
+        if (! empty($targetCptIds)) {
+            $query->where(function ($q) use ($targetCptIds, $selectedIds) {
+                $q->whereIn('post_type_id', $targetCptIds);
+                if (! empty($selectedIds)) {
+                    $q->orWhereIn('id', $selectedIds);
+                }
+            });
+        } elseif (! empty($selectedIds)) {
+            $query->whereIn('id', $selectedIds);
+        }
+
+        return $query->orderBy('title')->get(['id', 'title', 'slug']);
+    }
+
+    public function openRelationshipModal(int $fieldId, ?int $rowIndex = null, ?string $subFieldKey = null)
     {
         /** @var MetaField|null $field */
         $field = $this->postType->metaFields->where('id', $fieldId)->first();
@@ -92,11 +188,15 @@ class EntryForm extends Component
         }
 
         $this->activeRelationshipFieldId = $fieldId;
+        $this->activeRelationshipRowIndex = $rowIndex;
+        $this->activeRelationshipSubField = $subFieldKey;
         $this->relationshipSearch = '';
-        $val = $this->meta[$field->name] ?? [];
-        $this->tempSelectedRelationshipIds = is_array($val)
-            ? array_values(array_map('intval', array_filter($val, fn ($v) => $v !== '')))
-            : array_filter([(int) $val]);
+
+        $val = ($rowIndex !== null && $subFieldKey !== null)
+            ? ($this->meta[$field->name][$rowIndex][$subFieldKey] ?? [])
+            : ($this->meta[$field->name] ?? []);
+
+        $this->tempSelectedRelationshipIds = $this->extractSelectedIds($val);
         $this->showRelationshipModal = true;
     }
 
@@ -104,6 +204,8 @@ class EntryForm extends Component
     {
         $this->showRelationshipModal = false;
         $this->activeRelationshipFieldId = null;
+        $this->activeRelationshipRowIndex = null;
+        $this->activeRelationshipSubField = null;
         $this->relationshipSearch = '';
         $this->tempSelectedRelationshipIds = [];
     }
@@ -116,7 +218,8 @@ class EntryForm extends Component
             return;
         }
 
-        $cardinality = $field->options['cardinality'] ?? 'many_to_many';
+        $options = $this->resolveRelationshipOptions($field, $this->activeRelationshipSubField);
+        $cardinality = $options['cardinality'] ?? 'many_to_many';
         if ($cardinality === 'one_to_many') {
             $this->tempSelectedRelationshipIds = [$entryId];
         } else {
@@ -135,19 +238,43 @@ class EntryForm extends Component
         /** @var MetaField|null $field */
         $field = $this->postType->metaFields->where('id', $this->activeRelationshipFieldId)->first();
         if ($field) {
-            $cardinality = $field->options['cardinality'] ?? 'many_to_many';
-            if ($cardinality === 'one_to_many') {
-                $this->meta[$field->name] = ! empty($this->tempSelectedRelationshipIds) ? (string) $this->tempSelectedRelationshipIds[0] : '';
+            $options = $this->resolveRelationshipOptions($field, $this->activeRelationshipSubField);
+            $cardinality = $options['cardinality'] ?? 'many_to_many';
+            $formatted = $cardinality === 'one_to_many'
+                ? (! empty($this->tempSelectedRelationshipIds) ? (string) $this->tempSelectedRelationshipIds[0] : '')
+                : array_map('strval', $this->tempSelectedRelationshipIds);
+
+            if ($this->activeRelationshipRowIndex !== null && $this->activeRelationshipSubField !== null) {
+                if (! isset($this->meta[$field->name][$this->activeRelationshipRowIndex]) || ! is_array($this->meta[$field->name][$this->activeRelationshipRowIndex])) {
+                    $this->meta[$field->name][$this->activeRelationshipRowIndex] = [];
+                }
+                $this->meta[$field->name][$this->activeRelationshipRowIndex][$this->activeRelationshipSubField] = $formatted;
             } else {
-                $this->meta[$field->name] = array_map('strval', $this->tempSelectedRelationshipIds);
+                $this->meta[$field->name] = $formatted;
             }
         }
 
         $this->closeRelationshipModal();
     }
 
-    public function removeRelationshipItem(string $fieldName, int $entryId)
+    public function removeRelationshipItem(string $fieldName, int $entryId, ?int $rowIndex = null, ?string $subFieldKey = null)
     {
+        if ($rowIndex !== null && $subFieldKey !== null) {
+            if (! isset($this->meta[$fieldName][$rowIndex][$subFieldKey])) {
+                return;
+            }
+            $current = $this->meta[$fieldName][$rowIndex][$subFieldKey];
+            if (is_array($current)) {
+                $this->meta[$fieldName][$rowIndex][$subFieldKey] = array_values(
+                    array_filter($current, fn ($id) => (int) $id !== $entryId)
+                );
+            } elseif ((int) $current === $entryId) {
+                $this->meta[$fieldName][$rowIndex][$subFieldKey] = '';
+            }
+
+            return;
+        }
+
         if (isset($this->meta[$fieldName])) {
             if (is_array($this->meta[$fieldName])) {
                 $this->meta[$fieldName] = array_values(
@@ -296,17 +423,21 @@ class EntryForm extends Component
 
         if ($field && $field->type === 'repeater' && ! empty($subFields)) {
             $newRow = [];
-            foreach ($subFields as $subField) {
-                // Initialize based on sub-field type
-                $rowKey = $subField['name'] ?? $subField['id'] ?? Str::snake($subField['label'] ?? 'field_'.$loop->index);
+            foreach ($subFields as $sfIdx => $subField) {
+                $rowKey = $this->normalizeRepeaterSubFieldKey($subField, $sfIdx);
 
                 // Determine default value
-                $defaultValue = '';
-                if (isset($subField['options']['options_list']) && is_array($subField['options']['options_list'])) {
-                    foreach ($subField['options']['options_list'] as $option) {
-                        if (isset($option['is_default']) && $option['is_default']) {
-                            $defaultValue = $option['value'];
-                            break;
+                $subType = $subField['type'] ?? 'text';
+                if ($subType === 'relationship') {
+                    $defaultValue = (($subField['options']['cardinality'] ?? 'many_to_many') === 'one_to_many') ? '' : [];
+                } else {
+                    $defaultValue = '';
+                    if (isset($subField['options']['options_list']) && is_array($subField['options']['options_list'])) {
+                        foreach ($subField['options']['options_list'] as $option) {
+                            if (isset($option['is_default']) && $option['is_default']) {
+                                $defaultValue = $option['value'];
+                                break;
+                            }
                         }
                     }
                 }
@@ -1139,56 +1270,33 @@ class EntryForm extends Component
         }
 
         $targetEntriesByField = [];
+        $targetEntriesBySubField = [];
         foreach ($this->postType->metaFields as $field) {
             /** @var MetaField $field */
             if ($field->type === 'relationship') {
-                $targetCptIds = [];
-
-                if (! empty($field->options['target_post_type_ids']) && is_array($field->options['target_post_type_ids'])) {
-                    $targetCptIds = array_map('intval', $field->options['target_post_type_ids']);
-                } elseif (! empty($field->options['target_cpt_ids']) && is_array($field->options['target_cpt_ids'])) {
-                    $targetCptIds = array_map('intval', $field->options['target_cpt_ids']);
-                } elseif (! empty($field->options['target_cpt']) && is_array($field->options['target_cpt'])) {
-                    $targetCptIds = CustomPostType::whereIn('slug', $field->options['target_cpt'])->pluck('id')->toArray();
-                } elseif (! empty($field->options['target_post_type_id'])) {
-                    $targetCptIds = is_array($field->options['target_post_type_id'])
-                        ? array_map('intval', $field->options['target_post_type_id'])
-                        : [(int) $field->options['target_post_type_id']];
-                } elseif (! empty($field->options['target_cpt'])) {
-                    $targetCpt = CustomPostType::where('slug', $field->options['target_cpt'])->first();
-                    if ($targetCpt) {
-                        $targetCptIds = [$targetCpt->id];
+                $selectedIds = $this->extractSelectedIds($this->meta[$field->name] ?? []);
+                $targetEntriesByField[$field->id] = $this->queryRelationshipCandidates(
+                    is_array($field->options) ? $field->options : [],
+                    $selectedIds
+                );
+            } elseif ($field->type === 'repeater') {
+                $rows = is_array($this->meta[$field->name] ?? null) ? $this->meta[$field->name] : [];
+                foreach ($field->options['repeater_fields'] ?? [] as $sfIdx => $subField) {
+                    if (($subField['type'] ?? '') !== 'relationship') {
+                        continue;
                     }
-                }
-
-                $selectedValue = $this->meta[$field->name] ?? [];
-                $selectedRaw = is_array($selectedValue) ? $selectedValue : [$selectedValue];
-                $selectedIds = [];
-                foreach ($selectedRaw as $v) {
-                    if ($v !== '' && $v !== null) {
-                        $selectedIds[] = (int) $v;
-                    }
-                }
-                $selectedIds = array_filter($selectedIds);
-
-                $query = CptEntry::query()
-                    ->where('status', 'published')
-                    ->where('id', '!=', $this->entryId ?? 0);
-
-                if (! empty($targetCptIds)) {
-                    $query->where(function ($q) use ($targetCptIds, $selectedIds) {
-                        $q->whereIn('post_type_id', $targetCptIds);
-                        if (! empty($selectedIds)) {
-                            $q->orWhereIn('id', $selectedIds);
+                    $subKey = $this->normalizeRepeaterSubFieldKey($subField, $sfIdx);
+                    $pooledIds = [];
+                    foreach ($rows as $row) {
+                        if (is_array($row) && isset($row[$subKey])) {
+                            $pooledIds = array_merge($pooledIds, $this->extractSelectedIds($row[$subKey]));
                         }
-                    });
-                } else {
-                    if (! empty($selectedIds)) {
-                        $query->whereIn('id', $selectedIds);
                     }
+                    $targetEntriesBySubField["{$field->id}.{$subKey}"] = $this->queryRelationshipCandidates(
+                        is_array($subField['options'] ?? null) ? $subField['options'] : [],
+                        array_values(array_unique($pooledIds))
+                    );
                 }
-
-                $targetEntriesByField[$field->id] = $query->orderBy('title')->get(['id', 'title', 'slug']);
             }
         }
 
@@ -1232,6 +1340,7 @@ class EntryForm extends Component
             'metaBoxes' => $metaBoxes,
             'groupedFields' => $groupedFields,
             'targetEntriesByField' => $targetEntriesByField,
+            'targetEntriesBySubField' => $targetEntriesBySubField,
             'previewUrl' => $previewUrl,
             'permalinkPrefix' => $permalinkPrefix,
             'revisions' => $revisions,
