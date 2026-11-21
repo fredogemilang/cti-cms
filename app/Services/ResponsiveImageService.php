@@ -36,7 +36,7 @@ class ResponsiveImageService
         }
 
         $variants = (array) ($media->variants ?? []);
-        $diskUrl = fn ($p) => $p ? Storage::disk(config('media.disk', 'public'))->url($p) : null;
+        $diskUrl = fn (?string $p): ?string => $p ? $this->storageUrl($p) : null;
 
         $ext = strtolower(pathinfo($media->path, PATHINFO_EXTENSION));
         if ($media->mime_type === 'image/svg+xml' || $ext === 'svg') {
@@ -120,12 +120,12 @@ class ResponsiveImageService
             } elseif (file_exists(base_path($cleanPath.'.webp'))) {
                 $webpUrl = asset($cleanPath.'.webp');
             } else {
-                $storageRelative = preg_replace('#^storage/#', '', $webpCandidate);
-                $disk = Storage::disk(config('media.disk', 'public'));
-                if ($disk->exists($storageRelative)) {
-                    $webpUrl = $disk->url($storageRelative);
-                } elseif ($disk->exists($storageRelative.'.webp')) {
-                    $webpUrl = $disk->url($storageRelative.'.webp');
+                $storageRelative = (string) preg_replace('#^storage/#', '', (string) $webpCandidate);
+                $disk = Storage::disk((string) config('media.disk', 'public'));
+                if ($storageRelative !== '' && $disk->exists($storageRelative)) {
+                    $webpUrl = $this->storageUrl($storageRelative);
+                } elseif ($storageRelative !== '' && $disk->exists($storageRelative.'.webp')) {
+                    $webpUrl = $this->storageUrl($storageRelative.'.webp');
                 }
             }
         } elseif ($ext === 'webp') {
@@ -165,6 +165,16 @@ class ResponsiveImageService
             'alt' => null,
             'focal' => ['x' => 0.5, 'y' => 0.5],
         ];
+    }
+
+    protected function storageUrl(string $path): string
+    {
+        $diskName = (string) config('media.disk', 'public');
+        if ($diskName === 'public' && config("filesystems.disks.{$diskName}.driver") === 'local') {
+            return asset('storage/'.ltrim($path, '/'));
+        }
+
+        return Storage::disk($diskName)->url($path);
     }
 
     protected function blank(): array

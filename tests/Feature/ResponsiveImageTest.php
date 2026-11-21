@@ -6,6 +6,7 @@ use App\Models\Media;
 use App\Models\User;
 use App\Services\ResponsiveImageService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
 use Tests\TestCase;
 
@@ -86,5 +87,45 @@ class ResponsiveImageTest extends TestCase
         $this->assertStringContainsString('class="contents"', $html);
         $this->assertStringNotContainsString('srcset=', $html);
         $this->assertStringContainsString('w-full max-w-[200px]', $html);
+    }
+
+    public function test_responsive_image_service_uses_active_request_host_for_local_public_disk(): void
+    {
+        $user = User::factory()->create();
+
+        config([
+            'app.url' => 'https://example.com',
+            'filesystems.disks.public.url' => 'https://example.com/storage',
+            'media.disk' => 'public',
+        ]);
+
+        $request = Request::create('https://www.example.com/');
+        $this->app->instance('request', $request);
+        app('url')->setRequest($request);
+
+        $media = Media::create([
+            'disk' => 'public',
+            'path' => 'media/hero.webp',
+            'webp_path' => 'media/hero.webp',
+            'filename' => 'hero.webp',
+            'original_filename' => 'hero.webp',
+            'file_extension' => 'webp',
+            'mime_type' => 'image/webp',
+            'size' => 2048,
+            'width' => 1280,
+            'height' => 625,
+            'variants' => [
+                'md' => ['path' => 'media/hero-md.webp', 'webp' => 'media/hero-md.webp', 'width' => 768, 'height' => 375],
+            ],
+            'title' => 'Hero',
+            'uploaded_by' => $user->id,
+        ]);
+
+        $data = app(ResponsiveImageService::class)->build($media, 'lg');
+
+        $this->assertStringStartsWith('https://www.example.com/storage/', $data['src']);
+        $this->assertStringContainsString('https://www.example.com/storage/media/hero-md.webp', (string) $data['webp_srcset']);
+        $this->assertStringNotContainsString('https://example.com/storage/', $data['src']);
+        $this->assertStringNotContainsString('https://example.com/storage/', (string) $data['webp_srcset']);
     }
 }
