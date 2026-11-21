@@ -16,7 +16,7 @@
       <div class="footer-left-section">
         <!-- Logo column -->
         <div class="footer-logo-column">
-          <img src="{{ theme_asset('images/logo-footer.png') }}" alt="Xyora Logo" class="footer-logo" />
+          <img src="{{ theme_asset('images/logo-footer.webp') }}" alt="Xyora Logo" class="footer-logo" width="250" height="172" loading="lazy" decoding="async" />
         </div>
         
         <!-- Divider -->
@@ -354,7 +354,7 @@
     <div class="footer-container">
       <!-- Column 1: Logo -->
       <div class="footer-col footer-col-logo">
-        <img src="{{ theme_asset('images/logo-footer.png') }}" alt="Xyora Logo" class="footer-logo" />
+        <img src="{{ theme_asset('images/logo-footer.webp') }}" alt="Xyora Logo" class="footer-logo" width="250" height="172" loading="lazy" decoding="async" />
       </div>
 
       <!-- Column 2: Contact Info -->

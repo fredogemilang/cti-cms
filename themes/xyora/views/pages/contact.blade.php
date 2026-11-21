@@ -63,7 +63,7 @@
             {!! $contactText !!}
           </p>
           <div class="kontak-image-wrapper">
-            <x-image :src="$contactImage" alt="Hubungi Xyora" class="w-full h-full object-cover" sizes="100vw" />
+            <x-image :src="$contactImage" alt="Hubungi Xyora" class="w-full h-full object-cover" sizes="(max-width: 992px) 100vw, 50vw" />
           </div>
         </div>
 
@@ -322,7 +322,7 @@
             {!! $rmaText !!}
           </p>
           <div class="rma-image-wrapper">
-            <x-image :src="$rmaImage" alt="Ajukan RMA Xyora" class="w-full h-full object-cover" sizes="100vw" />
+            <x-image :src="$rmaImage" alt="Ajukan RMA Xyora" class="w-full h-full object-cover" sizes="(max-width: 992px) 100vw, 50vw" />
           </div>
         </div>
       </div>
@@ -417,7 +417,7 @@
 
         <!-- Right Column -->
         <div class="status-image-wrapper">
-          <x-image :src="$statusImage" alt="Cek Status RMA Xyora" class="w-full h-full object-cover" sizes="100vw" />
+          <x-image :src="$statusImage" alt="Cek Status RMA Xyora" class="w-full h-full object-cover" sizes="(max-width: 992px) 100vw, 50vw" />
         </div>
       </div>
     </section>

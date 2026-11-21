@@ -116,19 +116,19 @@
     <div class="mengapa-pills">
       <div class="mengapa-pill">
         <div class="pill-icon">
-          <img src="{{ theme_asset('icons/icon-why1.png') }}" alt="Adaptive" width="26" height="26" />
+          <img src="{{ theme_asset('icons/icon-why1.png') }}" alt="Adaptive" width="26" height="26" loading="lazy" decoding="async" />
         </div>
         <span class="pill-text">Adaptive</span>
       </div>
       <div class="mengapa-pill">
         <div class="pill-icon">
-          <img src="{{ theme_asset('icons/icon-why2.png') }}" alt="Seamless" width="26" height="26" />
+          <img src="{{ theme_asset('icons/icon-why2.png') }}" alt="Seamless" width="26" height="26" loading="lazy" decoding="async" />
         </div>
         <span class="pill-text">Seamless</span>
       </div>
       <div class="mengapa-pill">
         <div class="pill-icon">
-          <img src="{{ theme_asset('icons/icon-why3.png') }}" alt="Relevant" width="26" height="26" />
+          <img src="{{ theme_asset('icons/icon-why3.png') }}" alt="Relevant" width="26" height="26" loading="lazy" decoding="async" />
         </div>
         <span class="pill-text">Relevant</span>
       </div>
@@ -136,7 +136,10 @@
 
     <div class="mengapa-grid">
       @foreach(($homePage ? $homePage->repeaterBlock('why_cards', []) : []) as $card)
-        <div class="mengapa-card" style="background-image: url('{{ resolve_block_asset($card['image'] ?? '') }}')">
+        <div class="mengapa-card">
+          @if(!empty($card['image']))
+            <x-image :src="$card['image']" alt="" aria-hidden="true" loading="lazy" decoding="async" class="mengapa-card-bg" sizes="(max-width: 1024px) 100vw, 50vw" />
+          @endif
           <div class="mengapa-card-overlay">
             <h3 class="mengapa-card-title">{{ $card['title'] ?? '' }}</h3>
             <p class="mengapa-card-text">
@@ -163,7 +166,7 @@
             <div class="bisnis-card">
               <div class="bisnis-card-header">
                 <div class="bisnis-card-icon">
-                  <img src="{{ theme_asset('icons/icon-tantangan.png') }}" alt="Tantangan" width="24" height="24" />
+                  <img src="{{ theme_asset('icons/icon-tantangan.png') }}" alt="Tantangan" width="24" height="24" loading="lazy" decoding="async" />
                 </div>
                 <h3 class="bisnis-card-title">{{ t('usecase.challenge', 'Tantangan') }}</h3>
                 <div class="bisnis-card-chevron">
@@ -184,7 +187,7 @@
             <div class="bisnis-card">
               <div class="bisnis-card-header">
                 <div class="bisnis-card-icon">
-                  <img src="{{ theme_asset('icons/icon-solusi.png') }}" alt="Solusi Xyora" width="24" height="24" />
+                  <img src="{{ theme_asset('icons/icon-solusi.png') }}" alt="Solusi Xyora" width="24" height="24" loading="lazy" decoding="async" />
                 </div>
                 <h3 class="bisnis-card-title">{{ t('usecase.solution', 'Solusi Xyora') }}</h3>
                 <div class="bisnis-card-chevron">
@@ -208,7 +211,7 @@
           </div>
 
           <div class="bisnis-image-col">
-            <x-image :src="$slide['image'] ?? ''" alt="{{ $slide['image_caption'] ?? '' }}" class="bisnis-image" sizes="100vw" />
+            <x-image :src="$slide['image'] ?? ''" alt="{{ $slide['image_caption'] ?? '' }}" class="bisnis-image" sizes="(max-width: 540px) calc(100vw - 2rem), 500px" />
             <h3 class="bisnis-image-caption">{{ $slide['image_caption'] ?? '' }}</h3>
           </div>
         </div>
@@ -253,7 +256,7 @@
           <div class="artikel-card">
             <div class="artikel-img-wrapper">
               @if($postImg)
-                <x-image :src="$postImg" alt="{{ $post->getTranslation('title') }}" class="w-full h-full object-cover" sizes="100vw" />
+                <x-image :src="$postImg" alt="{{ $post->getTranslation('title') }}" class="w-full h-full object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px" />
               @else
                 <div class="artikel-img-placeholder">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="64" height="64">

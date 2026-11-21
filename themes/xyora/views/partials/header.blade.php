@@ -23,7 +23,7 @@
   <div class="header-container">
     <!-- Logo -->
     <a href="{{ url('/') }}" class="logo-link" id="header-logo-link" aria-label="Xyora Home">
-      <img src="{{ theme_asset('images/logo.svg') }}" alt="Xyora Logo" class="logo-img" />
+      <img src="{{ theme_asset('images/logo.webp') }}" alt="Xyora Logo" class="logo-img" width="233" height="67" loading="eager" decoding="async" />
     </a>
 
     <!-- Navigation Menu -->

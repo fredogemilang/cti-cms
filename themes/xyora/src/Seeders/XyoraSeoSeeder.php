@@ -76,9 +76,11 @@ body.has-admin-bar .site-header{top:32px}
 .slide-btn{display:inline-block;background-color:var(--accent-green);color:var(--text-dark);font-family:var(--font-body);font-weight:700;font-size:1.05rem;padding:.85rem 2.25rem;border-radius:8px;border:none;cursor:pointer;box-shadow:0 4px 6px -1px rgba(141,198,63,.2),0 2px 4px -1px rgba(141,198,63,.1)}
 .slide-visual{position:absolute;top:0;right:0;width:100%;height:100%;z-index:1}
 .slide-image{width:100%;height:100%;object-fit:cover;border-radius:0;box-shadow:none}
-.slider-pagination{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;gap:.75rem;z-index:20}
-.page-dot{width:10px;height:10px;border-radius:50%;background-color:#cbd5e1;border:none;cursor:pointer;padding:0}
-.page-dot.active{background-color:#64748b;width:24px;border-radius:5px}
+.slider-pagination{position:absolute;bottom:1.05rem;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:.25rem;z-index:20}
+.page-dot{position:relative;width:24px;height:24px;background:transparent;border:none;cursor:pointer;padding:0;display:inline-flex;align-items:center;justify-content:center}
+.page-dot::after{content:"";display:block;width:10px;height:10px;border-radius:50%;background-color:#cbd5e1}
+.page-dot.active{width:32px}
+.page-dot.active::after{background-color:#64748b;width:24px;border-radius:5px}
 @media(max-width:1024px){
 .site-header{padding:.5rem 0}
 .header-container{padding:.75rem 1.5rem}
