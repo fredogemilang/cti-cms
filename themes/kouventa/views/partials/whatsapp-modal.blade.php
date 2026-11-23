@@ -82,6 +82,15 @@
             payload.append('job_role', this.formData.job_role);
             payload.append('position', this.formData.position);
             payload.append('consent', this.formData.consent ? '1' : '');
+            payload.append('_submission_page', window.location.href.split('?')[0]);
+            if (typeof window.getCmsAttribution === 'function') {
+                payload.append('_attribution', JSON.stringify(window.getCmsAttribution()));
+            } else {
+                const attrMatch = document.cookie.match(/(?:^| )cms_attribution=([^;]+)/);
+                if (attrMatch) {
+                    try { payload.append('_attribution', decodeURIComponent(attrMatch[1])); } catch (e) {}
+                }
+            }
 
             const submitUrl = '{{ route('forms.submit.ajax', $waForm ? $waForm->slug : 'whatsapp-chat') }}';
             const response = await fetch(submitUrl, {
