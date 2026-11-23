@@ -38,6 +38,7 @@
     @endif
 
     @stack('styles')
+    @include('kouventa::partials.attribution-tracker')
 </head>
 <body class="bg-[#F4F6F5] text-[#0E1A24] antialiased {{ auth()->check() ? 'has-admin-bar' : '' }}">
     @auth

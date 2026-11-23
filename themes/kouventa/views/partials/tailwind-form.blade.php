@@ -5,6 +5,28 @@
           style="background: #FFFFFF; border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 22px; box-shadow: 0 24px 60px rgba(7,28,51,0.14)">
         @csrf
 
+        {{-- Auto-Injected Attribution Metadata Fields --}}
+        <input type="hidden" name="_submission_page" value="{{ url()->current() }}">
+        <input type="hidden" name="_attribution" id="_attribution_{{ $form->id }}" value="">
+        <script>
+        (function() {
+            function syncAttr() {
+                var el = document.getElementById('_attribution_{{ $form->id }}');
+                if (!el) return;
+                if (typeof window.getCmsAttribution === 'function') {
+                    el.value = JSON.stringify(window.getCmsAttribution());
+                    return;
+                }
+                var m = document.cookie.match(new RegExp('(^| )cms_attribution=([^;]+)'));
+                if (m) { try { el.value = decodeURIComponent(m[2]); } catch(e){} }
+            }
+            syncAttr();
+            var attrEl = document.getElementById('_attribution_{{ $form->id }}');
+            var formEl = attrEl && attrEl.closest ? attrEl.closest('form') : null;
+            if (formEl) { formEl.addEventListener('submit', syncAttr); }
+        })();
+        </script>
+
         <style>
             .kv-option-card { transition: all 0.2s ease; }
             .kv-option-card:hover { border-color: #2BD46A !important; background: #F0FDF4 !important; }
