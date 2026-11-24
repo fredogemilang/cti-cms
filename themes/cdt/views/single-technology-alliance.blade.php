@@ -523,7 +523,7 @@
         @endif
 
       </div>
-      <div class="w-full lg:w-1/2" data-gsap="fade-up" data-gsap-delay="0.2">
+      <div id="form" class="w-full lg:w-1/2" data-gsap="fade-up" data-gsap-delay="0.2">
         <div class="bg-white rounded-3xl border border-zinc-200/60 p-8 md:p-12 shadow-sm">
           <div class="mb-8">
             <span class="text-xs font-bold text-primary uppercase tracking-widest block mb-2">{{ t('alliance.request_consultation', 'Request Consultation') }}</span>

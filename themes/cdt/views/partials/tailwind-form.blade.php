@@ -81,9 +81,17 @@
         'serverErrors' => $fieldErrors,
         'captcha'      => $captchaProvider,
         'ajaxUrl'      => route('forms.submit.ajax', $form->slug),
+        'formSlug'     => $form->slug,
+        'formName'     => $form->name,
+        'formId'       => $form->id,
     ]) }})" class="{{ !empty($modalFooter) ? 'flex flex-col flex-1 min-h-0 overflow-hidden' : '' }}">
 
-    <form method="POST" action="{{ route('forms.submit', $form->slug) }}" class="elementor-form {{ !empty($modalFooter) ? 'flex flex-col flex-1 min-h-0 overflow-hidden' : 'space-y-8' }} {{ $formTextAlign }}"
+    <form id="form-{{ $form->slug }}"
+          name="{{ $form->name }}"
+          data-form-slug="{{ $form->slug }}"
+          method="POST"
+          action="{{ route('forms.submit', $form->slug) }}"
+          class="elementor-form {{ !empty($modalFooter) ? 'flex flex-col flex-1 min-h-0 overflow-hidden' : 'space-y-8' }} {{ $formTextAlign }}"
           novalidate
           @submit.prevent="validateAndSubmit">
 
@@ -95,7 +103,8 @@
 
     {{-- Form Success Alert --}}
     <div x-show="isSubmitted" x-transition
-         id="elementor-message-success"
+         id="elementor-message-success-{{ $form->slug }}"
+         data-form-slug="{{ $form->slug }}"
          class="elementor-message elementor-message-success elementor-help-inline bg-emerald-50 border border-emerald-200 rounded-2xl p-6 text-center mb-8"
          role="alert">
         <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -526,6 +535,23 @@ document.addEventListener('alpine:init', () => {
             this.submitting = false;
         },
 
+        pushDataLayer() {
+            try {
+                window.dataLayer = window.dataLayer || [];
+                const payload = {
+                    form_slug: config.formSlug || '',
+                    form_name: config.formName || '',
+                    form_id: config.formId || '',
+                    page_path: window.location.pathname,
+                    page_locale: document.documentElement.lang || 'en'
+                };
+                window.dataLayer.push(Object.assign({ event: 'cdt_form_submitted' }, payload));
+                if (config.formSlug === 'aws_credits_form') {
+                    window.dataLayer.push(Object.assign({ event: 'aws_credits_submit_success' }, payload));
+                }
+            } catch (err) {}
+        },
+
         validateAndSubmit(e) {
             this.errors = {};
             let valid = true;
@@ -619,8 +645,12 @@ document.addEventListener('alpine:init', () => {
                     this.submitting = false;
 
                     if (res.ok && data.success) {
+                        this.pushDataLayer();
+
                         if (data.redirect_url) {
-                            window.location.href = data.redirect_url;
+                            setTimeout(() => {
+                                window.location.href = data.redirect_url;
+                            }, 150);
                             return;
                         }
                         this.isSubmitted = true;
@@ -632,11 +662,16 @@ document.addEventListener('alpine:init', () => {
                             this.justSubmitted = false;
                         }, 3000);
 
-                        const banner = formEl.querySelector('#elementor-message-success');
+                        const banner = formEl.querySelector('.elementor-message-success');
                         if (banner) banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
                         try {
-                            const eventData = { form_id: formEl.getAttribute('action'), message: data.message };
+                            const eventData = {
+                                form_id: formEl.getAttribute('action'),
+                                form_slug: config.formSlug || '',
+                                form_name: config.formName || '',
+                                message: data.message
+                            };
                             window.dispatchEvent(new CustomEvent('submit_success', { detail: eventData }));
                             document.dispatchEvent(new CustomEvent('submit_success', { detail: eventData }));
                         } catch(e) {}
