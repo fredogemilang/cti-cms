@@ -38,9 +38,13 @@
     @endif
 
     @stack('styles')
+    @include('kouventa::partials.tracking-pixels')
     @include('kouventa::partials.attribution-tracker')
 </head>
 <body class="bg-[#F4F6F5] text-[#0E1A24] antialiased {{ auth()->check() ? 'has-admin-bar' : '' }}">
+    @if(str_contains((string) request()->getHost(), 'kouventa.ai'))
+        <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=7313138518763661&ev=PageView&noscript=1" alt=""></noscript>
+    @endif
     @auth
         @include('kouventa::partials.admin-bar')
     @endauth

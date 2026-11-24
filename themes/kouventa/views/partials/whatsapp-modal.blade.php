@@ -120,6 +120,17 @@
             this.success = true;
             this.loading = false;
 
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'kouventa_form_submitted',
+                form_slug: '{{ $waForm ? $waForm->slug : 'whatsapp-chat' }}',
+                form_name: '{{ $waForm ? addslashes($waForm->name) : 'WhatsApp Chat' }}',
+                entry_id: data.entry_id || null
+            });
+            if (typeof window.fbq === 'function') {
+                window.fbq('track', 'Lead', { content_name: 'WhatsApp Chat' });
+            }
+
             // Generate WhatsApp message
             const waNumber = '{{ function_exists('setting') ? setting('whatsapp_number', '628118496889') : '628118496889' }}';
             const msg = `Halo Kouventa,\nSaya ingin memulai percakapan.\n\n*Nama:* ${this.formData.name}\n*Email:* ${this.formData.working_email}\n*Perusahaan:* ${this.formData.company}\n*Jabatan:* ${this.formData.job_role}\n*Posisi:* ${this.formData.position}`;
@@ -160,6 +171,7 @@ class="kv-wa-widget-container"
          x-transition:leave-start="opacity-100 translate-y-0 scale-100"
          x-transition:leave-end="opacity-0 translate-y-6 scale-95"
          @click.outside="close()"
+         id="form-wa"
          class="kv-wa-card"
          role="dialog"
          aria-modal="true"
@@ -185,7 +197,7 @@ class="kv-wa-widget-container"
         <!-- Body Form -->
         <div class="kv-wa-body">
             <!-- Success State -->
-            <div x-show="success" class="kv-wa-success-state" style="display: none;">
+            <div x-show="success" class="kv-wa-success-state elementor-message-success" style="display: none;">
                 <div class="kv-wa-success-icon">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"/>

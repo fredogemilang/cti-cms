@@ -1,7 +1,8 @@
 @props(['form'])
 
 @if($form)
-    <form action="{{ route('forms.submit', $form->slug) }}" method="POST" aria-label="{{ $form->name }}"
+    <form id="{{ $form->slug === 'book-demo' ? 'form-quotation' : 'form-' . $form->slug }}"
+          action="{{ route('forms.submit', $form->slug) }}" method="POST" aria-label="{{ $form->name }}"
           style="background: #FFFFFF; border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 22px; box-shadow: 0 24px 60px rgba(7,28,51,0.14)">
         @csrf
 
@@ -38,9 +39,22 @@
         @endif
 
         @if(session('success_' . $form->slug) || session('success'))
-            <div style="padding: 16px 20px; border-radius: 12px; background: #E8F9EE; border: 1px solid #A4E8BC; color: #0B5C28; font-size: 15px; font-weight: 600">
+            <div class="elementor-message-success" style="padding: 16px 20px; border-radius: 12px; background: #E8F9EE; border: 1px solid #A4E8BC; color: #0B5C28; font-size: 15px; font-weight: 600">
                 {{ session('success_' . $form->slug) ?: session('success') }}
             </div>
+            <script>
+            (function() {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    event: 'kouventa_form_submitted',
+                    form_slug: '{{ $form->slug }}',
+                    form_name: '{{ addslashes($form->name) }}'
+                });
+                if (typeof window.fbq === 'function') {
+                    window.fbq('track', 'Lead', { content_name: '{{ addslashes($form->name) }}' });
+                }
+            })();
+            </script>
         @endif
 
         @if(isset($errors) && $errors->any())
